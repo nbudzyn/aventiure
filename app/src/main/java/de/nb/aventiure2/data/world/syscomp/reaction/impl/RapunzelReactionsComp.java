@@ -160,7 +160,7 @@ public class RapunzelReactionsComp
                 onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(from);
                 return;
             default:
-                // FIXME Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
+                // IDEA Konzept dafür entwickeln, dass der Benutzer Rapunzel gut gelaunt
                 //  verlässt und niedergeschlagen zu Rapunzel zurückkehrt und
                 //  Rapunzel auf den Wechsel reagiert (Mental Model für Rapunzel?)
                 return;

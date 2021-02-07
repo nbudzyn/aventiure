@@ -143,8 +143,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                         KOENNEN.mitLexikalischemKern(
                                                 HELFEN.mit(anaph()).mitAdverbialerAngabe(
                                                         InterrogativadverbVerbAllg.WIE))
-                                                // FIXME Generell: nicht P1, sondern P2 für
-                                                //  Aktionen!
                                                 .alsSatzMitSubjekt(getPersonalpronomenSC())),
                                 this::fragenWieSCHelfenKann),
                         st(this::rapunzelsFreiheitswunschBekannt,

@@ -116,12 +116,6 @@ public class Walkthrough {
                     "Dich mit der jungen Frau unterhalten",
                     "Der jungen Frau antworten: „Den Winter“",
                     "Der jungen Frau die goldene Kugel geben",
-                    // FIXME Einfügen
-                    //  "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
-                    //  "An den Haaren hinabsteigen",
-                    //  "Rufen: „Lass dein Haar herunter“",
-                    //  "An den Haaren hinaufsteigen",
-                    //  "Die goldene Kugel hochwerfen",
                     "Der jungen Frau dein Herz ausschütten",
                     "Die junge Frau fragen, wie du ihr helfen kannst",
                     "Der jungen Frau Rettung zusagen",
