@@ -173,7 +173,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         memoryComp.narrateAndUpgradeKnown(given);
 
         world.loadSC().feelingsComp().upgradeFeelingsTowards(
-                RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+                RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
         world.loadSC().feelingsComp().requestMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!

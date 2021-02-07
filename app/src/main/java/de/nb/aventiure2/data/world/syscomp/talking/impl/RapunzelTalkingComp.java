@@ -147,10 +147,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::haareHerunterlassenBitte_EntryReEntry),
                         st(this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
-                        st(SICH_UNTERHALTEN, this::unterhalten_allg),
-                        st(this::frageNachRapunzelsMutterSinnvoll,
-                                FRAGEN_NACH.mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
-                                this::nachRapunzelsZauberinFragen),
                         st(this::frageNachHelfenSinnvoll,
                                 // "Die junge Frau fragen, wie du ihr helfen kannst"
                                 FRAGEN_OB_W.mitIndirekterFragesatz(
@@ -162,6 +158,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         st(this::rapunzelsFreiheitswunschBekannt,
                                 ZUSAGEN.mitAkk(RETTUNG_OHNE_ART),
                                 this::rapunzelRettungZusagen),
+                        st(this::frageNachRapunzelsMutterSinnvoll,
+                                FRAGEN_NACH.mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
+                                this::nachRapunzelsZauberinFragen),
 
                         // FIXME "Ich muss dich noch was fragen!"
 
@@ -169,6 +168,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "Der jungen Frau dein Herz ausschütten"
                                 AUSSCHUETTEN.mitAkk(DEIN_HERZ),
                                 this::herzAusschuetten),
+                        st(SICH_UNTERHALTEN, this::unterhalten_allg),
                         exitSt(bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
                         immReEntryStSCHatteGespraechBeendet(
@@ -257,9 +257,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private boolean herzAusschuettenMoeglich() {
-        return counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) == 0 &&
-                loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
-                        RAPUNZEL, ZUNEIGUNG_ABNEIGUNG) >= FeelingIntensity.DEUTLICH;
+        return counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) == 0
+                && loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG)
+                >= FeelingIntensity.DEUTLICH
+                && feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= FeelingIntensity.DEUTLICH;
     }
 
     private void gespraechBeginnen_EntryReEntryImmReEntry() {
@@ -364,7 +366,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 0.25f, FeelingIntensity.MERKLICH);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
-                0.1f, FeelingIntensity.DEUTLICH);
+                0.3f, FeelingIntensity.STARK);
 
         setTalkingTo(SPIELER_CHARAKTER);
     }
@@ -652,9 +654,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .timed(secs(10)));
 
             feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                    0.2f, FeelingIntensity.MERKLICH);
+                    0.2f, FeelingIntensity.DEUTLICH);
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                    ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.MERKLICH);
+                    ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.DEUTLICH);
             loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_NAME);
             loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
         } else {
@@ -679,7 +681,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final SubstantivischePhrase anaph = anaph();
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
-                0.35f, FeelingIntensity.DEUTLICH);
+                0.35f, FeelingIntensity.STARK);
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 0.35f, FeelingIntensity.DEUTLICH);
 
@@ -715,9 +717,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .mitVorfeldSatzglied("ganz freundlich")
                     .undWartest()
                     .timed(mins(1)));
-
-            // FIXME Hier brauchen wir noch weitere, eher allgemeine Alternativen
         }
+
+        // FIXME Hier brauchen wir noch weitere, eher allgemeine Alternativen
+
 
         if (zuneigungZuRapunzel >= FeelingIntensity.MERKLICH &&
                 scHatSeltsameSacheMitFroschErlebt()) {
@@ -791,7 +794,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 .withCounterIdIncrementedIfTextIsNarrated(SCHWALBENGESCHICHTE_ERZAEHLT));
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
-                0.35f, FeelingIntensity.DEUTLICH);
+                0.35f, FeelingIntensity.STARK);
 
         stateComp.narrateAndSetState(NORMAL);
 
@@ -850,6 +853,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 1.5f, FeelingIntensity.DEUTLICH);
 
+        loadSC().feelingsComp().upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
+                0.5f, FeelingIntensity.STARK);
+
         setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().requestMoodMin(BEWEGT);
     }
@@ -881,7 +887,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 .timed(secs(25)));
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
-                0.1f, FeelingIntensity.STARK);
+                0.5f, FeelingIntensity.STARK);
 
         loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_FREIHEITSWUNSCH);
 

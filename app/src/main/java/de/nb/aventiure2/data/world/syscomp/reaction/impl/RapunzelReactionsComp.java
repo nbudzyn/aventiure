@@ -295,7 +295,7 @@ public class RapunzelReactionsComp
         // Rapunzel ist erst einmal verschreckt.
         feelingsComp.upgradeFeelingsTowards(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                -FeelingIntensity.NUR_LEICHT, FeelingIntensity.MERKLICH);
+                -1, FeelingIntensity.MERKLICH);
 
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             // Jetzt weiß der SC, wer so schön gesungen hat! Und schön ist sie obendrein noch!
@@ -338,13 +338,13 @@ public class RapunzelReactionsComp
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             // Jetzt weiß der SC, wer so schön gesungen hat!
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                    ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+                    ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
         }
         loadSC().feelingsComp().requestMoodMin(ANGESPANNT);
 
         feelingsComp.upgradeFeelingsTowards(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                -FeelingIntensity.DEUTLICH, FeelingIntensity.SEHR_STARK);
+                -3, FeelingIntensity.STARK);
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
@@ -413,7 +413,7 @@ public class RapunzelReactionsComp
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
+                ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
 
         final SubstantivischePhrase anaph = anaph(true);
 
@@ -829,7 +829,7 @@ public class RapunzelReactionsComp
 
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
+                ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen() {

@@ -404,8 +404,8 @@ public enum RapunzelStoryNode implements IStoryNode {
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 
         if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            alt.add(paragraph(
-                    "Ihr beiden könnt einander bestimmt noch besser kennenlernen"),
+            alt.add(duParagraph("hast", "noch so viele Fragen an",
+                    world.anaph(RAPUNZEL).akkK()),
                     duParagraph("hast",
                             "Eindruck, die schöne junge Frau hätte dir noch viel zu",
                             "erzählen"));
