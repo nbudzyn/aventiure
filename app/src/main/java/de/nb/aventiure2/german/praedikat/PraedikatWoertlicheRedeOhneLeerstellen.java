@@ -11,6 +11,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -48,10 +51,10 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
     private PraedikatWoertlicheRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
-            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.woertlicheRede = woertlicheRede;
@@ -72,7 +75,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -88,7 +91,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -104,7 +107,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -208,7 +211,18 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
-        return null;
+    public Konstituentenfolge getErstesInterrogativwort() {
+        @Nullable
+        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        if (res != null) {
+            return res;
+        }
+
+        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        if (res != null) {
+            return res;
+        }
+
+        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
     }
 }

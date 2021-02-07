@@ -5,22 +5,38 @@ import androidx.annotation.NonNull;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.FUER;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
+
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Präpositionalobjekt und
  * einem Akkusativ-Objekt steht.
  */
-public enum VerbSubjAkkPraep implements Praedikat {
+public enum VerbSubjAkkPraep implements VerbMitValenz {
+    // Verben ohne Partikel
     // "ein Gespräch mit Rapunzel beginnen"
     BEGINNEN("beginnen",
             "beginne", "beginnst", "beginnt", "beginnt",
             PraepositionMitKasus.MIT_DAT,
             Perfektbildung.HABEN, "begonnen"),
-
     // "die Zauberin nach ihrem Ziel fragen"
     FRAGEN_NACH("fragen",
             "frage", "fragst", "fragt", "fragt",
             PraepositionMitKasus.NACH,
-            Perfektbildung.HABEN, "gefragt");
+            Perfektbildung.HABEN, "gefragt"),
+    HALTEN("halten",
+            "halte", "hältst", "hält", "haltet",
+            FUER,
+            Perfektbildung.HABEN, "gehalten"),
+    SCHUETTEN("schütten",
+            "schütte", "schüttest", "schüttet", "schüttet",
+            PraepositionMitKasus.IN_AKK,
+            Perfektbildung.HABEN, "geschüttet"),
+
+    // Partikelverben
+    // "das Gespräch mit Rapunzel beginnen"
+    FORTSETZEN(SETZEN, PraepositionMitKasus.MIT_DAT, "fort",
+            Perfektbildung.HABEN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -43,6 +59,21 @@ public enum VerbSubjAkkPraep implements Praedikat {
                 praepositionMitKasus);
     }
 
+    VerbSubjAkkPraep(final VerbMitValenz verbMitValenz,
+                     final PraepositionMitKasus praepositionMitKasus,
+                     final String partikel,
+                     final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb(), praepositionMitKasus, partikel, perfektbildung);
+    }
+
+    VerbSubjAkkPraep(final Verb verbOhnePartikel,
+                     final PraepositionMitKasus praepositionMitKasus,
+                     final String partikel,
+                     final Perfektbildung perfektbildung) {
+        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung),
+                praepositionMitKasus);
+    }
+
     VerbSubjAkkPraep(final Verb verb,
                      final PraepositionMitKasus praepositionMitKasus) {
         this.verb = verb;
@@ -59,5 +90,11 @@ public enum VerbSubjAkkPraep implements Praedikat {
             final SubstantivischePhrase substPhrAkk) {
         return new PraedikatAkkPraepMitEinerPraepLeerstelle(
                 verb, praepositionMitKasus, substPhrAkk);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

@@ -13,6 +13,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -23,6 +26,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -73,10 +77,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final Kasus kasus,
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
-            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
@@ -100,7 +104,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Override
     public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -117,7 +121,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Override
     public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -135,7 +139,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Override
     public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -181,7 +185,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
@@ -235,7 +239,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
         return
-                Konstituentenfolge.joinToKonstituentenfolge(
+                joinToKonstituentenfolge(
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
@@ -255,11 +259,27 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativwort() {
+        @Nullable
+        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        if (res != null) {
+            return res;
+        }
+
+        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        if (res != null) {
+            return res;
+        }
+
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(kasus);
         }
 
-        return lexikalischerKern.getErstesInterrogativpronomen();
+        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        if (res != null) {
+            return res;
+        }
+
+        return lexikalischerKern.getErstesInterrogativwort();
     }
 }

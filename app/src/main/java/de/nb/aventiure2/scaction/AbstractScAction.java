@@ -14,11 +14,11 @@ import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
 import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An action the player could choose.
@@ -91,7 +91,7 @@ public abstract class AbstractScAction implements IPlayerAction {
     }
 
     private void updateWorld(final AvDateTime until) {
-        checkNotNull(until, "now is null");
+        requireNonNull(until, "now is null");
 
         if (timeTaker.now().isEqualOrAfter(until)) {
             return;

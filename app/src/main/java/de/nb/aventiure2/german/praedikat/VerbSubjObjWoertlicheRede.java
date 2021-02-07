@@ -10,19 +10,24 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.RUFEN;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Objekt und wörtlicher Rede
  * steht.
  */
-public enum VerbSubjObjWoertlicheRede implements Praedikat {
+public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
+    // Verben ohne Präfix
+    ANTWORTEN("antworten", DAT, "antworte", "antwortest",
+            "antwortet", "antwortett",
+            Perfektbildung.HABEN, "geantwortet"),
+
+    // Präfixverben
     ENTGEGENBLAFFEN("entgegenblaffen", DAT, "blaffe", "blaffst",
             "blafft", "blafft", "entgegen",
             Perfektbildung.HABEN, "entgegengeblafft"),
-    ENTGEGENRUFEN("entgegenrufen", DAT, "rufe", "rufst",
-            "ruft", "ruft", "entgegen",
-            Perfektbildung.HABEN, "entgegengerufen");
-
+    ENTGEGENRUFEN(RUFEN, DAT, "entgegen", Perfektbildung.HABEN);
+    
     /**
      * Das Verb an sich, ohne Ergänzungen, ohne Angaben
      */
@@ -42,10 +47,35 @@ public enum VerbSubjObjWoertlicheRede implements Praedikat {
                               final String duForm,
                               final String erSieEsForm,
                               final String ihrForm,
+                              final Perfektbildung perfektbildung, final String partizipII) {
+        this(infinitiv, kasusOderPraepositionalkasus, ichForm, duForm, erSieEsForm,
+                ihrForm, null, perfektbildung, partizipII);
+    }
+
+    VerbSubjObjWoertlicheRede(final String infinitiv,
+                              final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                              final String ichForm,
+                              final String duForm,
+                              final String erSieEsForm,
+                              final String ihrForm,
                               @Nullable final String partikel,
                               final Perfektbildung perfektbildung, final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
                 partizipII), kasusOderPraepositionalkasus);
+    }
+
+    VerbSubjObjWoertlicheRede(final VerbMitValenz verbMitValenz,
+                              final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                              final String partikel,
+                              final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb(), kasusOderPraepositionalkasus, partikel, perfektbildung);
+    }
+
+    VerbSubjObjWoertlicheRede(final Verb verbOhnePartikel,
+                              final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                              final String partikel,
+                              final Perfektbildung perfektbildung) {
+        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung), kasusOderPraepositionalkasus);
     }
 
     VerbSubjObjWoertlicheRede(final Verb verb,
@@ -76,5 +106,11 @@ public enum VerbSubjObjWoertlicheRede implements Praedikat {
             final WoertlicheRede woertlicheRede) {
         return new PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle(verb,
                 kasusOderPraepositionalkasus, woertlicheRede);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

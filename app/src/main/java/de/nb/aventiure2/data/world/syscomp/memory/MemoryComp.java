@@ -21,8 +21,8 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -33,7 +33,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     private final Map<GameObjectId, Known> initiallyKnown;
 
     private final World world;
-    private final LocationSystem locationSystem;
 
     /**
      * Constructor for {@link MemoryComp}.
@@ -41,11 +40,9 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     public MemoryComp(final GameObjectId gameObjectId,
                       final AvDatabase db,
                       final World world,
-                      final LocationSystem locationSystem,
                       final Map<GameObjectId, Known> initiallyKnown) {
         super(gameObjectId, db.memoryDao());
         this.world = world;
-        this.locationSystem = locationSystem;
         this.initiallyKnown = initiallyKnown;
     }
 
@@ -75,7 +72,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     @NonNull
     public Action getLastAction() {
-        return getPcd().getLastAction();
+        return requireNonNull(getPcd()).getLastAction();
     }
 
     public void setLastAction(final Action.Type actionType,
@@ -101,7 +98,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     public void setLastAction(final Action action) {
-        getPcd().setLastAction(checkNotNull(action, "action"));
+        requireNonNull(getPcd()).setLastAction(requireNonNull(action, "action"));
     }
 
     public boolean isKnown(final IGameObject otherGameObject) {
@@ -116,15 +113,15 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return getKnown(otherGameObjectId) == Known.KNOWN_FROM_LIGHT;
     }
 
-    public void forget(final GameObjectId... otherGameObjectIds) {
+    public void narretAndForget(final GameObjectId... otherGameObjectIds) {
         for (final GameObjectId otherGameObjectId : otherGameObjectIds) {
-            setKnown(otherGameObjectId, Known.UNKNOWN);
+            narrateAndSetKnown(otherGameObjectId, Known.UNKNOWN);
         }
     }
 
-    public void upgradeKnown(final Iterable<? extends IGameObject> objects) {
+    public void narrateAndUpgradeKnown(final Iterable<? extends IGameObject> objects) {
         for (final IGameObject object : objects) {
-            upgradeKnown(object);
+            narrateAndUpgradeKnown(object);
         }
     }
 
@@ -132,12 +129,12 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      * Sets the known value (based on the game object's location, but does not make
      * it worse than it is.
      */
-    public void upgradeKnown(final IGameObject otherGameObject) {
-        upgradeKnown(otherGameObject.getId());
+    public void narrateAndUpgradeKnown(final IGameObject otherGameObject) {
+        narrateAndUpgradeKnown(otherGameObject.getId());
     }
 
-    public void upgradeKnown(final GameObjectId otherGameObjectId) {
-        upgradeKnown(otherGameObjectId, getKnownForLocation(otherGameObjectId));
+    public void narrateAndUpgradeKnown(final GameObjectId otherGameObjectId) {
+        narrateAndUpgradeKnown(otherGameObjectId, getKnownForLocation(otherGameObjectId));
     }
 
     private Known getKnownForLocation(final GameObjectId otherGameObjectId) {
@@ -149,7 +146,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         }
 
         return Known.getKnown(
-                locationSystem.getLichtverhaeltnisse(
+                LocationSystem.getLichtverhaeltnisse(
                         ((ILocatableGO) otherGameObject).locationComp().getLocation()));
     }
 
@@ -158,40 +155,55 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
         return gameObjects.stream().filter(this::isKnown).collect(toImmutableList());
     }
 
-    public void upgradeKnown(
+    public void narrateAndUpgradeKnown(
             final Iterable<? extends IGameObject> objects,
             final Known minimalKnown) {
         for (final IGameObject object : objects) {
-            upgradeKnown(object, minimalKnown);
+            narrateAndUpgradeKnown(object, minimalKnown);
         }
     }
 
     /**
      * Sets the known value, but does not make it worse than it is.
+     * And tells all listeners to
+     * {@link de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions}
+     * about any change.
      */
-    public void upgradeKnown(final IGameObject otherGameObject,
-                             final Known minimalKnown) {
-        upgradeKnown(otherGameObject.getId(), minimalKnown);
+    public void narrateAndUpgradeKnown(final IGameObject otherGameObject,
+                                       final Known minimalKnown) {
+        narrateAndUpgradeKnown(otherGameObject.getId(), minimalKnown);
     }
 
     /**
      * Sets the known value, but does not make it worse than it is.
+     * And tells all listeners to
+     * {@link de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions}
+     * about any change.
      */
-    public void upgradeKnown(final GameObjectId otherGameObjectId,
-                             final Known minimalKnown) {
-        setKnown(otherGameObjectId, Known.max(
+    public void narrateAndUpgradeKnown(final GameObjectId otherGameObjectId,
+                                       final Known minimalKnown) {
+        narrateAndSetKnown(otherGameObjectId, Known.max(
                 minimalKnown,
                 getKnown(otherGameObjectId) // old value
         ));
     }
 
-    @NonNull
-    public Known getKnown(final GameObjectId otherGameObjectId) {
-        return getPcd().getKnown(otherGameObjectId);
+    private void narrateAndSetKnown(final GameObjectId otherGameObjectId,
+                                    final Known known) {
+        if (known.equals(getKnown(otherGameObjectId))) {
+            return;
+        }
+
+        final Known oldKnown = getKnown(otherGameObjectId);
+
+        requireNonNull(getPcd()).setKnown(otherGameObjectId, known);
+
+        world.narrateAndDoReactions().onKnownChanged(
+                getGameObjectId(), otherGameObjectId, oldKnown, known);
     }
 
-    private void setKnown(final GameObjectId otherGameObjectId,
-                          final Known known) {
-        getPcd().setKnown(otherGameObjectId, known);
+    @NonNull
+    public Known getKnown(final GameObjectId otherGameObjectId) {
+        return requireNonNull(getPcd()).getKnown(otherGameObjectId);
     }
 }

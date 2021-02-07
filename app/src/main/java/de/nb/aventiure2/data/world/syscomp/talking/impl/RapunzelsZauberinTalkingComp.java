@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
+import static de.nb.aventiure2.german.base.Nominalphrase.IHR_ZIEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -76,13 +77,9 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                         "ihrem Ziel")),
                                 this::frageNachZiel),
                         exitSt(this::gespraechBeenden),
-                        immReEntryStSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(
-                                np(N, null, "ihr Ziel",
-                                        "ihrem Ziel")),
+                        immReEntryStSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(IHR_ZIEL),
                                 this::frageNachZiel_ImmReEntrySCHatteGespraechBeendet),
-                        immReEntryStNSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(
-                                np(N, null, "ihr Ziel",
-                                        "ihrem Ziel")),
+                        immReEntryStNSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(IHR_ZIEL),
                                 this::frageNachZiel_ImmReEntryNSCHatteGespraechBeendet)
                 );
             case BEI_RAPUNZEL_OBEN_IM_TURM:
@@ -157,7 +154,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(altSaetze(altReaktionSaetze), secs(5));
 
-        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+        if (feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 <= -FeelingIntensity.STARK) {
             talkerBeendetGespraech();
         }
@@ -217,7 +215,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final AltDescriptionsBuilder alt = alt();
 
         final int zuneigungAbneigungGegenSC =
-                feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+                feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
         if (zuneigungAbneigungGegenSC >= -FeelingIntensity.MERKLICH) {
             alt.add(
                     neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet",

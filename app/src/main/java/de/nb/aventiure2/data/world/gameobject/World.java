@@ -100,6 +100,7 @@ public class World {
     public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
     public static final GameObjectId BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD =
             new GameObjectId(10_130);
+    public static final GameObjectId RAPUNZELS_HAARE = new GameObjectId(10_140);
 
     // - Movable
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
@@ -130,9 +131,14 @@ public class World {
     // INVISIBLES
     public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
-    public static final GameObjectId RAPUNZELS_GESANG = new GameObjectId(40_002);
-    public static final GameObjectId RAPUNZELS_HAARE = new GameObjectId(40_003);
+    public static final GameObjectId RAPUNZELS_NAME = new GameObjectId(40_002);
+    public static final GameObjectId RAPUNZELS_GESANG = new GameObjectId(40_003);
     public static final GameObjectId RAPUNZELRUF = new GameObjectId(40_004);
+    public static final GameObjectId RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU =
+            new GameObjectId(40_005);
+    public static final GameObjectId RAPUNZELS_FREIHEITSWUNSCH = new GameObjectId(40_006);
+    public static final GameObjectId SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT =
+            new GameObjectId(40_010);
 
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
@@ -226,7 +232,7 @@ public class World {
         final CreatureFactory creature = new CreatureFactory(db, timeTaker, n, this);
         final InvisibleFactory invisible = new InvisibleFactory(db, timeTaker, n, this);
         final MeaningFactory meaning = new MeaningFactory(db, timeTaker, n, this,
-                locationSystem, spatialConnectionSystem);
+                spatialConnectionSystem);
         final RoomFactory room = new RoomFactory(db, timeTaker, n, this);
         final SimpleConnectionCompFactory connection =
                 new SimpleConnectionCompFactory(db, timeTaker, n, this);
@@ -287,9 +293,13 @@ public class World {
 
                 invisible.createSchlossfest(),
                 invisible.createTageszeit(),
+                InvisibleFactory.create(RAPUNZELS_NAME),
                 InvisibleFactory.create(RAPUNZELS_GESANG),
-                InvisibleFactory.create(RAPUNZELS_HAARE),
                 InvisibleFactory.create(RAPUNZELRUF),
+                InvisibleFactory
+                        .create(RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU),
+                InvisibleFactory.create(RAPUNZELS_FREIHEITSWUNSCH),
+                InvisibleFactory.create(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                         // Weil nicht klar, welche Tasche -> kein Bezugsobjekt
                         np(F, INDEF, "Tasche"),
@@ -348,10 +358,10 @@ public class World {
                         null, null,
                         false,
                         TISCH),
-
                 schattenDerBaeume.createVorDemAltenTurm(),
                 bett.createInDerHuetteImWald(),
-                baum.createImGartenHinterDerHuetteImWald()
+                baum.createImGartenHinterDerHuetteImWald(),
+                GeneralObjectFactory.create(RAPUNZELS_HAARE)
         );
     }
 
@@ -840,12 +850,6 @@ public class World {
 
     public SubstantivischePhrase getDescriptionSingleOrReihung(
             final Collection<? extends IDescribableGO> objects) {
-        return getDescriptionSingleOrReihung(objects, false);
-    }
-
-    private SubstantivischePhrase getDescriptionSingleOrReihung(
-            final Collection<? extends IDescribableGO> objects,
-            final boolean shortIfKnown) {
         if (objects.isEmpty()) {
             return Indefinitpronomen.NICHTS;
         }
@@ -853,12 +857,12 @@ public class World {
         if (objects.size() == 1) {
             final IDescribableGO object = objects.iterator().next();
 
-            return getDescription(object, shortIfKnown);
+            return getDescription(object, false);
         }
 
         return new SubstPhrReihung(
                 objects.stream()
-                        .map(o -> getDescription(o, shortIfKnown))
+                        .map(o -> getDescription(o, false))
                         .collect(toList()));
     }
 
@@ -971,6 +975,15 @@ public class World {
     }
 
     /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     */
+    public Nominalphrase getDescription(final GameObjectId gameObjectId) {
+        return getDescription((IDescribableGO) load(gameObjectId));
+    }
+
+    /**
      * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
      * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
      * der Spieler das Game Object schon kennt oder nicht.
@@ -1079,15 +1092,6 @@ public class World {
     }
 
     /**
-     * Convenience-Methode: Lädt (sofern nicht schon geschehen) das {@link #SCHLOSSFEST} und gibt
-     * es zurück.
-     */
-    @Nonnull
-    public GameObject loadSchlossfest() {
-        return load(SCHLOSSFEST);
-    }
-
-    /**
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
      */
     @Nonnull
@@ -1128,6 +1132,7 @@ public class World {
         return res;
     }
 
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     public LocationSystem getLocationSystem() {
         return locationSystem;
     }

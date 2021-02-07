@@ -34,7 +34,8 @@ public class AbzweigImWaldConnectionCompTest extends AndroidTestBase {
     public void huetteBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(ABZWEIG_IM_WALD, VOR_DER_HUETTE_IM_WALD);
-        world.loadSC().memoryComp().upgradeKnown(VOR_DER_HUETTE_IM_WALD, KNOWN_FROM_DARKNESS);
+        world.loadSC().memoryComp()
+                .narrateAndUpgradeKnown(VOR_DER_HUETTE_IM_WALD, KNOWN_FROM_DARKNESS);
 
         // WHEN
         final String actionName = con.getActionName();
@@ -60,7 +61,8 @@ public class AbzweigImWaldConnectionCompTest extends AndroidTestBase {
     public void brunnenBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(ABZWEIG_IM_WALD, IM_WALD_BEIM_BRUNNEN);
-        world.loadSC().memoryComp().upgradeKnown(IM_WALD_BEIM_BRUNNEN, KNOWN_FROM_DARKNESS);
+        world.loadSC().memoryComp()
+                .narrateAndUpgradeKnown(IM_WALD_BEIM_BRUNNEN, KNOWN_FROM_DARKNESS);
 
         // WHEN
         final String actionName = con.getActionName();

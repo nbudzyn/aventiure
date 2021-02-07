@@ -8,6 +8,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -16,7 +19,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein zu-haben-Prädikat, bei dem alle Leerstellen gefüllt sind
- * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben/i>,
+ * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben</i>,
  * <i>zu schlafen haben</i>, <i>sich zu waschen haben</i>).
  */
 public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen {
@@ -48,7 +51,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Override
     public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         // Bei einem Prädikat wie "Leider noch etwas zu berichten haben"
         // kann man nicht differenzieren zwischen *"leider berichten" und *"leider zu haben".
         // Deshalb speichern wir die Angaben im lexikalischen Kern und erlauben keine
@@ -59,22 +62,22 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Override
     public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         return new ZuHabenPraedikatOhneLeerstellen(
                 lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @Override
     public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         return new ZuHabenPraedikatOhneLeerstellen(
                 lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
-        return lexikalischerKern.getErstesInterrogativpronomen();
+    public Konstituentenfolge getErstesInterrogativwort() {
+        return lexikalischerKern.getErstesInterrogativwort();
     }
 
     @Override

@@ -1,33 +1,26 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+
+import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.HALTEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.SCHUETTEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BIETEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
  * einem Akkusativ-Objekt steht.
  */
-public enum VerbSubjDatAkk implements Praedikat {
-    ANBIETEN("anbieten",
-            "biete", "bietest", "bietet", "bietet",
-            "an",
-            Perfektbildung.HABEN, "angeboten"),
-    AUSSCHUETTEN("ausschütten",
-            "schütte", "schüttest", "schüttet", "schüttet",
-            "aus",
-            Perfektbildung.HABEN, "ausgeschüttet"),
+public enum VerbSubjDatAkk implements VerbMitValenz {
+    // Verben ohne Präfix
     BERICHTEN("berichten",
             "berichte", "berichtest", "berichtet", "berichtet",
             Perfektbildung.HABEN, "berichtet"),
     GEBEN("geben",
             "gebe", "gibst", "gibt", "gebt",
             Perfektbildung.HABEN, "gegeben"),
-    HINHALTEN("hinhalten",
-            "halte", "hältst", "hält", "haltet",
-            "hin",
-            Perfektbildung.HABEN, "hingehalten"),
     // "dem Frosch Angebote machen"
     MACHEN("machen",
             "mache", "machst", "macht", "macht",
@@ -42,7 +35,12 @@ public enum VerbSubjDatAkk implements Praedikat {
     ZEIGEN("zeigen",
             "zeige", "zeigst", "zeigt", "zeigt",
             Perfektbildung.HABEN, "gezeigt"),
-    ;
+
+    // Präfixverben
+    ANBIETEN(BIETEN, "an", Perfektbildung.HABEN),
+    AUSSCHUETTEN(SCHUETTEN, "aus", Perfektbildung.HABEN),
+    HINHALTEN(HALTEN, "hin", Perfektbildung.HABEN),
+    ZUSAGEN(SAGEN, "zu", Perfektbildung.HABEN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -61,15 +59,16 @@ public enum VerbSubjDatAkk implements Praedikat {
                 partizipII));
     }
 
-    VerbSubjDatAkk(@NonNull final String infinitiv,
-                   @NonNull final String ichForm,
-                   @NonNull final String duForm,
-                   @NonNull final String erSieEsForm,
-                   @NonNull final String ihrForm,
-                   @Nullable final String partikel,
-                   final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
-                partizipII));
+    VerbSubjDatAkk(final VerbMitValenz verbMitValenz,
+                   final String partikel,
+                   final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb(), partikel, perfektbildung);
+    }
+
+    VerbSubjDatAkk(final Verb verbOhnePartikel,
+                   final String partikel,
+                   final Perfektbildung perfektbildung) {
+        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung));
     }
 
     VerbSubjDatAkk(final Verb verb) {
@@ -84,5 +83,11 @@ public enum VerbSubjDatAkk implements Praedikat {
     public PraedikatDatAkkMitEinerDatLeerstelle mitAkk(
             final SubstantivischePhrase substPhrAkk) {
         return new PraedikatDatAkkMitEinerDatLeerstelle(verb, substPhrAkk);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

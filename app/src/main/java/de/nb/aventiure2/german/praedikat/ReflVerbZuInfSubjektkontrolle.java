@@ -10,7 +10,7 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
  * Ein Verb wie "sich [Akk] freuen, zu ...". Dabei ist es das Subjekt, dass ... tut
  * ("Subjektkontrolle").
  */
-public enum ReflVerbZuInfSubjektkontrolle implements Praedikat {
+public enum ReflVerbZuInfSubjektkontrolle implements VerbMitValenz {
     SICH_FREUEN_ZU("freuen", AKK,
             "freue", "freust", "freut",
             "freut", "gefreut");
@@ -48,5 +48,11 @@ public enum ReflVerbZuInfSubjektkontrolle implements Praedikat {
             final PraedikatOhneLeerstellen lexikalischerKern) {
         return new PraedikatReflZuInfSubjektkontrollen(verb, kasus,
                 lexikalischerKern);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.satz.Satz;
 import static com.google.common.collect.ImmutableSet.builder;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -33,6 +34,22 @@ public class AltDescriptionsBuilder {
     private final ImmutableSet.Builder<AbstractDescription<?>> alt = builder();
 
     private UnaryOperator<AbstractDescription<?>> op = null;
+
+    /**
+     * Fügt diese Teile zu alternativen {@link AbstractDescription}s
+     * zusammen, die jeweils einen Paragraph bilden.
+     * Gibt es für mehrere Teile mehrere Alternativen, so werden
+     * alle Kombinationen erzeugt.
+     *
+     * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
+     * {@code null}-Werte enthält, wird die Collection auch den Wert
+     * {@code null} enthalten.
+     */
+    @Nonnull
+    @CheckReturnValue
+    public static AltDescriptionsBuilder altParagraphs(final Object... parts) {
+        return altNeueSaetze(PARAGRAPH, parts).beendet(PARAGRAPH);
+    }
 
     @Nonnull
     @CheckReturnValue
@@ -101,6 +118,27 @@ public class AltDescriptionsBuilder {
     private AltDescriptionsBuilder() {
     }
 
+    public AltDescriptionsBuilder addAllIfOtherwiseEmpty(final AltDescriptionsBuilder other) {
+        return addAllIfOtherwiseEmpty(other.alt);
+    }
+
+    public AltDescriptionsBuilder addAllIfOtherwiseEmpty(final Stream<?> stream) {
+        return addAllIfOtherwiseEmpty(stream.collect(toImmutableSet()));
+    }
+
+    private AltDescriptionsBuilder addAllIfOtherwiseEmpty(
+            final ImmutableCollection.Builder<?> builder) {
+        return addAllIfOtherwiseEmpty(builder.build());
+    }
+
+    private AltDescriptionsBuilder addAllIfOtherwiseEmpty(final Iterable<?> others) {
+        if (isEmpty()) {
+            addAll(others);
+        }
+
+        return this;
+    }
+
     public AltDescriptionsBuilder addAll(final AltDescriptionsBuilder other) {
         return addAll(other.alt);
     }
@@ -109,13 +147,11 @@ public class AltDescriptionsBuilder {
         return addAll(stream.collect(toImmutableSet()));
     }
 
-    public AltDescriptionsBuilder addAll(
-            final ImmutableCollection.Builder<?> builder) {
+    public AltDescriptionsBuilder addAll(final ImmutableCollection.Builder<?> builder) {
         return addAll(builder.build());
     }
 
-    public AltDescriptionsBuilder addAll(
-            final Iterable<?> others) {
+    public AltDescriptionsBuilder addAll(final Iterable<?> others) {
         for (final Object other : others) {
             if (other instanceof AbstractDescription<?>) {
                 add((AbstractDescription<?>) other);
@@ -124,6 +160,19 @@ public class AltDescriptionsBuilder {
             } else {
                 throw new IllegalArgumentException("Unexpected addition: " + other);
             }
+        }
+
+        return this;
+    }
+
+    public AltDescriptionsBuilder addIfOtherwiseEmpty(final Satz satz) {
+        return addIfOtherwiseEmpty(DescriptionBuilder.satz(satz));
+    }
+
+    public AltDescriptionsBuilder addIfOtherwiseEmpty(
+            final AbstractDescription<?>... altDescriptions) {
+        if (isEmpty()) {
+            add(altDescriptions);
         }
 
         return this;
@@ -188,6 +237,10 @@ public class AltDescriptionsBuilder {
 
     public AltTimedDescriptionsBuilder timed(final AvTimeSpan timeElapsed) {
         return new AltTimedDescriptionsBuilder(this, timeElapsed);
+    }
+
+    private boolean isEmpty() {
+        return alt.build().isEmpty();
     }
 
     public ImmutableSet<AbstractDescription<?>> build() {

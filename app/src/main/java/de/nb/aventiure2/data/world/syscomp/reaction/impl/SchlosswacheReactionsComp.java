@@ -242,7 +242,7 @@ public class SchlosswacheReactionsComp
                         .timed(secs(20)));
 
         stateComp.narrateAndSetState(AUFMERKSAM);
-        loadSC().memoryComp().upgradeKnown(SCHLOSSWACHE);
+        loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSWACHE);
         loadSC().mentalModelComp().setAssumedLocationToActual(SCHLOSSWACHE);
         sc.feelingsComp().requestMood(ANGESPANNT);
     }
@@ -455,7 +455,7 @@ public class SchlosswacheReactionsComp
                     sc.feelingsComp().requestMood(NEUTRAL);
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
-                    sc.memoryComp().upgradeKnown(SCHLOSSFEST);
+                    sc.memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
                 });
     }
 }

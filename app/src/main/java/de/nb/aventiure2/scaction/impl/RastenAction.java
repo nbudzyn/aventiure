@@ -135,7 +135,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang")
                         .beendet(SENTENCE));
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
 
     private void narrateAndDoDunkel() {

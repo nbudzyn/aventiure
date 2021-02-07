@@ -37,8 +37,7 @@ public enum Mood {
     BETRUEBT(-FeelingIntensity.DEUTLICH, AdjektivOhneErgaenzungen.BETRUEBT),
     VERDROSSEN(-FeelingIntensity.DEUTLICH, AdjektivOhneErgaenzungen.VERDROSSEN),
     TRAURIG(-FeelingIntensity.STARK, AdjektivOhneErgaenzungen.TRAURIG),
-    UNTROESTLICH(-FeelingIntensity.SEHR_STARK,
-            "voller Trauer");
+    UNTROESTLICH(-FeelingIntensity.SEHR_STARK, "voller Trauer");
 
     private final int gradDerFreude;
 

@@ -99,7 +99,7 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
-        return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt,
+        return FeelingsSaetzeUtil.altEindrueckSaetze(gameObjectSubjekt,
                 altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
                         targetDesc, feelingIntensity,
                         targetKnown));

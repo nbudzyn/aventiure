@@ -34,7 +34,8 @@ public class ImWaldBeimBrunnenConnectionCompTest extends AndroidTestBase {
     public void fruechteBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(IM_WALD_BEIM_BRUNNEN, WALDWILDNIS_HINTER_DEM_BRUNNEN);
-        world.loadSC().memoryComp().upgradeKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN, KNOWN_FROM_LIGHT);
+        world.loadSC().memoryComp()
+                .narrateAndUpgradeKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN, KNOWN_FROM_LIGHT);
 
         // WHEN
         final String actionName = con.getActionName();

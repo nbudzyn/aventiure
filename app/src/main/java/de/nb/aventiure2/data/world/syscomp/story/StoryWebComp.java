@@ -26,6 +26,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Managet die Stories, d.h. die kleinen
@@ -43,7 +44,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     private final TimeTaker timeTaker;
     protected final Narrator n;
 
-    private final LocationSystem locationSystem;
     private final SpatialConnectionSystem spatialConnectionSystem;
 
     private final SCActionStepCountDao scActionStepCountDao;
@@ -54,20 +54,18 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     public StoryWebComp(final AvDatabase db, final TimeTaker timeTaker,
                         final Narrator n,
                         final World world,
-                        final LocationSystem locationSystem,
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final Story... initialAktiveStories) {
-        this(db, timeTaker, n, world, locationSystem, spatialConnectionSystem,
+        this(db, timeTaker, n, world, spatialConnectionSystem,
                 asList(initialAktiveStories));
     }
 
     private StoryWebComp(final AvDatabase db,
                          final TimeTaker timeTaker, final Narrator n,
                          final World world,
-                         final LocationSystem locationSystem,
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Collection<Story> initialAktiveStories) {
-        this(db, timeTaker, n, world, locationSystem, spatialConnectionSystem,
+        this(db, timeTaker, n, world, spatialConnectionSystem,
                 toEmptyStoryDataMap(initialAktiveStories));
     }
 
@@ -85,7 +83,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     private StoryWebComp(final AvDatabase db, final TimeTaker timeTaker,
                          final Narrator n, final World world,
-                         final LocationSystem locationSystem,
                          final SpatialConnectionSystem spatialConnectionSystem,
                          final Map<Story, StoryData> initialStoryDataMap) {
         super(STORY_WEB, db.storyWebDao());
@@ -96,7 +93,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
         scActionStepCountDao = db.scActionStepCountDao();
         this.world = world;
-        this.locationSystem = locationSystem;
         this.spatialConnectionSystem = spatialConnectionSystem;
         this.initialStoryDataMap = initialStoryDataMap;
     }
@@ -108,7 +104,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     }
 
     public void reachStoryNode(final IStoryNode storyNode) {
-        getPcd().reachStoryNode(storyNode, scActionStepCountDao.stepCount());
+        requireNonNull(getPcd()).reachStoryNode(storyNode, scActionStepCountDao.stepCount());
     }
 
     public void narrateAndDoHintActionIfAny() {
@@ -129,17 +125,18 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             storyNode.narrateAndDoHintAction(db, timeTaker, n, world);
         }
 
-        getPcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
+        requireNonNull(getPcd()).setLastHintActionStepCount(scActionStepCountDao.stepCount());
     }
 
     public int getScore() {
-        return getPcd().getScore();
+        return requireNonNull(getPcd()).getScore();
     }
 
     @Nullable
     private IStoryNode getStoryNodeForHintAction() {
         final ImmutableSet<IStoryNode> storyNodesForHintAction =
-                getPcd().getStoryNodesForHintAction(scActionStepCountDao.stepCount());
+                requireNonNull(getPcd())
+                        .getStoryNodesForHintAction(scActionStepCountDao.stepCount());
 
         if (storyNodesForHintAction.isEmpty()) {
             return null;
@@ -194,7 +191,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         final ILocationGO storyNodeLocation = (ILocationGO) world.load(storyNodeLocationId);
 
         final ILocationGO outerMostStoryNodeLocation =
-                locationSystem.getOuterMostLocation(storyNodeLocation);
+                LocationSystem.getOuterMostLocation(storyNodeLocation);
         @Nullable final ILocationGO outerMostSCLocation =
                 world.loadSC().locationComp().getOuterMostLocation();
 

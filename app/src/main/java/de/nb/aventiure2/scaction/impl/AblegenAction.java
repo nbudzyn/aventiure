@@ -40,7 +40,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -126,7 +125,7 @@ public class AblegenAction
                 getPraedikat()
                         .mit(world.getDescription(gameObject, true))
                         .mitAdverbialerAngabe(getWohinDetail())
-                        .getInfinitiv(P1, SG).joinToString(
+                        .getInfinitiv(P2, SG).joinToString(
                 ));
     }
 
@@ -276,7 +275,7 @@ public class AblegenAction
     }
 
     private void narrateUpgradeKnownAndSetLocationAndAction() {
-        world.loadSC().memoryComp().upgradeKnown(gameObject);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
         gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }

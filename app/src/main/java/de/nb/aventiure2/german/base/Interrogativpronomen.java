@@ -7,7 +7,10 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.Person.P3;
 
-public class Interrogativpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
+public class Interrogativpronomen
+        extends SubstantivischesPronomenMitVollerFlexionsreihe
+        implements IInterrogativwort {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     public static final Interrogativpronomen WER =
             ip(M, fr("wer", "wem", "wen"));
     public static final Interrogativpronomen WAS =

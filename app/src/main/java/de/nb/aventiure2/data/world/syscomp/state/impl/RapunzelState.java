@@ -11,8 +11,9 @@ public enum RapunzelState {
     /**
      * Singt gerade nicht
      */
-    STILL,
+    NORMAL,
     SINGEND,
     HAARE_VOM_TURM_HERUNTERGELASSEN,
-    HAT_NACH_KUGEL_GEFRAGT
+    HAT_NACH_KUGEL_GEFRAGT,
+    HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 }

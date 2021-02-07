@@ -109,15 +109,26 @@ public class Walkthrough {
 
     private static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
             new Walkthrough(
-                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
-                    "An den Haaren hinabsteigen",
-                    "Rufen: „Lass dein Haar herunter“",
-                    "An den Haaren hinaufsteigen",
-                    "Die goldene Kugel hochwerfen",
+                    "Ein Gespräch mit der jungen Frau beginnen",
+                    "Die junge Frau nach ihrem Namen fragen",
+                    "Dich mit der jungen Frau unterhalten",
+                    "Dich mit der jungen Frau unterhalten",
+                    "Dich mit der jungen Frau unterhalten",
+                    "Der jungen Frau antworten: „Den Winter“",
                     "Der jungen Frau die goldene Kugel geben",
+                    // FIXME Einfügen
+                    //  "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
+                    //  "An den Haaren hinabsteigen",
+                    //  "Rufen: „Lass dein Haar herunter“",
+                    //  "An den Haaren hinaufsteigen",
+                    //  "Die goldene Kugel hochwerfen",
                     "Der jungen Frau dein Herz ausschütten",
+                    "Die junge Frau fragen, wie du ihr helfen kannst",
+                    "Der jungen Frau Rettung zusagen",
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen");
+
+    // FIXME join... nur mit CharSequences erlauben
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
@@ -152,7 +163,7 @@ public class Walkthrough {
                     "Tiefer in den Wald hineingehen"
             );
 
-    private static final Walkthrough SEP_1_IM_WALD_BIS_RAPUNZEL =
+    private static final Walkthrough SEP_1_IM_WALD_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
                     "In Richtung Schloss gehen",
                     "Die Frau ansprechen",
@@ -178,15 +189,41 @@ public class Walkthrough {
                     "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
                     "Aus dem Schatten der Bäume treten",
                     "Rufen: „Lass dein Haar herunter“",
-                    "An den Haaren hinaufsteigen",
-                    "Ein Gespräch mit der schönen jungen Frau beginnen",
-                    "Der jungen Frau die goldene Kugel geben",
-                    "Der jungen Frau dein Herz ausschütten",
-                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
+                    "An den Haaren hinaufsteigen"
             );
 
+    private static final Walkthrough SEP_1_OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL =
+            new Walkthrough(
+                    "Die goldene Kugel hochwerfen",
+                    "Der jungen Frau die goldene Kugel geben",
+                    "Die junge Frau nach ihrem Namen fragen",
+                    "Dich mit der jungen Frau unterhalten",
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
+                    "Die goldene Kugel hochwerfen",
+                    "An den Haaren hinabsteigen",
+                    "Rufen: „Lass dein Haar herunter“",
+                    "An den Haaren hinaufsteigen",
+                    "Ein Gespräch mit der jungen Frau beginnen",
+                    // FIXME "Hallihallo antwortet die junge Frau und die
+                    //  junge Frau scheint überrascht, dich wiederzusehen"
+                    "Der jungen Frau dein Herz ausschütten",
+                    "Die junge Frau fragen, wie du ihr helfen kannst",
+                    "Der jungen Frau Rettung zusagen",
+                    "Das Gespräch mit der jungen Frau fortsetzen",
+                    "Die junge Frau nach der mageren Frau fragen",
+                    "Dich mit der jungen Frau unterhalten",
+                    "Der jungen Frau antworten: „Den Frühling“",
+                    "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
+                    "An den Haaren hinabsteigen"
+            );
+
+    public static final Walkthrough SEP_1_BIS_OBEN_BEI_RAPUNZEL =
+            SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD
+                    .append(SEP_1_IM_WALD_BIS_OBEN_BEI_RAPUNZEL);
+
     public static final Walkthrough SEP_1_NUR_RAPUNZEL =
-            SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD.append(SEP_1_IM_WALD_BIS_RAPUNZEL);
+            SEP_1_BIS_OBEN_BEI_RAPUNZEL
+                    .append(SEP_1_OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL);
 
     private final ImmutableList<String> steps;
 

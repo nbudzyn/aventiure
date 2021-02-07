@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
@@ -9,7 +10,9 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * Hierzu rechnen wir auch entsprechende "Adverbialobjekte" wie
  * "Du stellst die Vase AUF DEN TISCH."
  */
-public class AdverbialeAngabeSkopusVerbWohinWoher extends AbstractAdverbialeAngabe {
+public class AdverbialeAngabeSkopusVerbWohinWoher
+        extends AbstractAdverbialeAngabe
+        implements IAdvAngabeOderInterrogativWohinWoher {
     public AdverbialeAngabeSkopusVerbWohinWoher(final String text) {
         super(text);
     }

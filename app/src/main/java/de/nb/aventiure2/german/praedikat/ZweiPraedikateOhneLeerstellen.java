@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -39,7 +42,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
                 zweiterSatz
@@ -48,7 +51,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
                 zweiterSatz
@@ -57,7 +60,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
                 zweiterSatz
@@ -176,19 +179,19 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativwort() {
         // Das hier ist etwas tricky.
         // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
-        // Interrogativpronomen angegeben sein.
-        final Konstituentenfolge erstesInterrogativpronomenErsterSatz =
-                ersterSatz.getErstesInterrogativpronomen();
-        final Konstituentenfolge erstesInterrogativpronomenZweiterSatz =
-                zweiterSatz.getErstesInterrogativpronomen();
+        // Interrogativwort angegeben sein.
+        final Konstituentenfolge erstesInterrogativwortErsterSatz =
+                ersterSatz.getErstesInterrogativwort();
+        final Konstituentenfolge erstesInterrogativwortZweiterSatz =
+                zweiterSatz.getErstesInterrogativwort();
 
         if (Objects.equals(
-                erstesInterrogativpronomenErsterSatz, erstesInterrogativpronomenZweiterSatz)) {
-            return erstesInterrogativpronomenErsterSatz;
+                erstesInterrogativwortErsterSatz, erstesInterrogativwortZweiterSatz)) {
+            return erstesInterrogativwortErsterSatz;
         }
 
         // Verhindern müssen wir so etwas wie *"Sie ist gespannt, was du aufhebst und die Kugel

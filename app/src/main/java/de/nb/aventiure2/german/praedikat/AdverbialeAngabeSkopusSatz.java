@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 
 /**
  * Eine adverbiale Angabe, die sich eher auf den gesamten Satz bezieht, z.B.
@@ -12,7 +13,9 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
  * möglich ist (Test): Es ist k der Fall, dass s', wobei s' aus s entsteht durch Weglassen von k.
  * ("vielleicht", "gestern", ...)
  */
-public class AdverbialeAngabeSkopusSatz extends AbstractAdverbialeAngabe {
+public class AdverbialeAngabeSkopusSatz
+        extends AbstractAdverbialeAngabe
+        implements IAdvAngabeOderInterrogativSkopusSatz {
     /**
      * Erzeugt eine adverbiale Bestimmung mit dem Skopus Satz; der Text darf
      * keine zu-Infinitive, keine Angabensätze (z.B. zum Adjektiv) und keine Ergönzungssätze
@@ -33,7 +36,8 @@ public class AdverbialeAngabeSkopusSatz extends AbstractAdverbialeAngabe {
      * Angabe-Nebensätzen sowie zu-Infinitiv-Phrasen. (Beispielsweise ist nicht erlaubt:
      * *"Sie schaut dich glücklich, dich zu sehen, an.")
      */
-    boolean imMittelfeldErlaubt() {
+    @Override
+    public boolean imMittelfeldErlaubt() {
         return !getAdjektivphrase().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
         // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
         //  dürfen nicht im Mittelfeld stehen.

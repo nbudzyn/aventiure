@@ -1,12 +1,10 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
@@ -16,7 +14,7 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
  * <p>
  * Zu direktiven Verben siehe Peter Eisenberg, Der Satz, S. 357 (Kapitel 11.2)
  */
-public enum DirektivesVerb implements Praedikat {
+public enum DirektivesVerb implements VerbMitValenz {
     // "Rapunzel bitten, die Haare herunterzulassen"
     BITTEN("bitten", AKK,
             "bitte", "bittest", "bittet", "bittet",
@@ -49,19 +47,6 @@ public enum DirektivesVerb implements Praedikat {
                 kasus);
     }
 
-    DirektivesVerb(@NonNull final String infinitiv,
-                   @NonNull final Kasus kasus,
-                   @NonNull final String ichForm,
-                   @NonNull final String duForm,
-                   @NonNull final String erSieEsForm,
-                   @NonNull final String ihrForm,
-                   @Nullable final String partikel,
-                   final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
-                        partizipII),
-                kasus);
-    }
-
     DirektivesVerb(@NonNull final Verb verb,
                    @NonNull final Kasus kasus) {
         Preconditions.checkArgument(
@@ -71,15 +56,14 @@ public enum DirektivesVerb implements Praedikat {
         this.kasus = kasus;
     }
 
-    public PraedikatDirektivesVerbMitEinerLexikalischerKernLeerstelle mitObj(
-            final SubstantivischePhrase objekt) {
-        return new PraedikatDirektivesVerbMitEinerLexikalischerKernLeerstelle(verb,
-                kasus,
-                objekt);
-    }
-
     public PraedikatDirektivesVerbMitEinerObjektLeerstelle mitLexikalischerKern(
             final PraedikatOhneLeerstellen lexikalischerKern) {
         return new PraedikatDirektivesVerbMitEinerObjektLeerstelle(verb, kasus, lexikalischerKern);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

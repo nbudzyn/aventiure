@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -50,7 +49,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         // Wird auch mit ImmutableList.subList() aufgerufen, was leider zu einer
         // Kopie führt. Daher ImmutableList verlangen!
 
-        checkNotNull(konstituenten, "konstituenten  is null");
+        requireNonNull(konstituenten, "konstituenten  is null");
         checkArgument(!konstituenten.isEmpty(), "konstituenten  is empty");
         checkArgument(konstituenten.stream().noneMatch(Objects::isNull));
 
@@ -136,6 +135,11 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     @Nonnull
     public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
+        // FIXME Es gibt einen Bug, wo hier in den Parts eine
+        //  TextDescription enthalten ist.
+        //  - Bug finden und fixen
+        //  - Ggf. Konstituentenfolge und AbstractDescription vereinheitlichen?
+
         ArrayList<ImmutableList.Builder<Konstituente>> alternativeKonstituentenfolgen =
                 new ArrayList<>();
 
@@ -144,16 +148,15 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         for (final Object part : parts) {
             final Collection<Konstituentenfolge> alternativePartKonstituentenfolgen;
 
-            if (part == null) {
+            if (part == null || "" .equals(part)) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
             } else if (part.getClass().isArray()) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(joinToNullKonstituentenfolge((Object[]) part));
             } else if (part instanceof Konstituentenfolge) {
                 alternativePartKonstituentenfolgen =
-                        Collections
-                                .singletonList(
-                                        joinToNullKonstituentenfolge((Konstituentenfolge) part));
+                        Collections.singletonList(
+                                joinToNullKonstituentenfolge((Konstituentenfolge) part));
             } else if (part instanceof Stream<?>) {
                 alternativePartKonstituentenfolgen =
                         ((Stream<?>) part)
@@ -273,7 +276,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             return false;
         }
 
-        return "es".equals(konstituenten.get(0).getString());
+        return "es" .equals(konstituenten.get(0).getString());
     }
 
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {

@@ -47,6 +47,12 @@ public abstract class CounterDao {
         set(id, newValue);
     }
 
+    public void reset(final String... ids) {
+        for (final String id : ids) {
+            reset(id);
+        }
+    }
+
     public void reset(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
         set(id, 0);

@@ -472,19 +472,23 @@ public class RapunzelsZauberinReactionsComp
 
         // Spieler wird verzaubert und vergisst alles.
         loadSC().mentalModelComp().unsetAssumedLocations(
-                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF);
-        loadSC().memoryComp().forget(
-                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF);
+                RAPUNZEL, RAPUNZELS_ZAUBERIN);
+        loadSC().memoryComp().narretAndForget(
+                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF,
+                SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT,
+                RAPUNZELS_NAME,
+                RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU,
+                RAPUNZELS_FREIHEITSWUNSCH);
         loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
         loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.NUR_LEICHT, hours(1)
         );
         counterDao.reset(VorDemTurmConnectionComp.COUNTER_ALTER_TURM_UMRUNDET);
-        counterDao.reset(RapunzelTalkingComp.SC_BEGRUESST);
-        counterDao.reset(RapunzelTalkingComp.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
-        loadRapunzel().memoryComp().forget(SPIELER_CHARAKTER, GOLDENE_KUGEL);
+        loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,
+                SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
+        loadRapunzel().talkingComp().forgetAll();
 
         // Die Zauberin ist schon weit auf dem Rückweg
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
@@ -492,7 +496,8 @@ public class RapunzelsZauberinReactionsComp
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
 
         // Rapunzel ist still (Rapunzel hat auch alles vergessen!)
-        loadRapunzel().stateComp().narrateAndSetState(RapunzelState.STILL);
+        loadRapunzel().stateComp().narrateAndSetState(
+                RapunzelState.NORMAL);
 
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Ohne Reactions - der Spieler bekommt ja nichts davon mit.

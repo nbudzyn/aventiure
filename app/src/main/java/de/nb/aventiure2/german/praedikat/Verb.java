@@ -13,6 +13,7 @@ import de.nb.federkiel.deutsch.grammatik.wortart.flexion.VerbFlektierer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.federkiel.string.StringUtil.stripPrefixIfAny;
 
 /**
  * Repräsentiert ein Verb als Lexem, von dem Wortformen gebildet werden können - jedoch <i>ohne
@@ -21,7 +22,8 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
  * Die Grundidee der Architektur ist:
  * <ul>
  * <li>Es gibt ein paar Kernklassen oder Kerninterfaces für Lexeme (z.B. <code>Verb</code>
- * für Verben gemeinsam mit {@link VerbSubjDatAkk} etc.)
+ * für Verben sowie die Implementierungen von {@link VerbMitValenz} z.B. {@link VerbSubjDatAkk}
+ * etc.)
  * <li>Aus den Lexem-Klassen werden Klassen für die einzelnen Phrasen erzeugt, z.B.
  * für die {@link Praedikat}e sowie für ganze Sätze. Diese Klassen halten die syntaktischen
  * Relationen fest, in denen die Lexeme und Teil-Phrasen stehen.
@@ -147,6 +149,28 @@ public class Verb {
         checkArgument(partikel == null || partizipII.startsWith(partikel),
                 "Partizip II beginnt nicht mit Partikel! Partikel: %s, "
                         + "Partizip II: %s", partikel, partizipII);
+    }
+
+    private Verb ohnePartikel(final Perfektbildung perfektbildung) {
+        if (partikel == null) {
+            return this;
+        }
+
+        return new Verb(stripPrefixIfAny(partikel, infinitiv),
+                ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
+                wirSieFormOhnePartikel, ihrFormOhnePartikel, perfektbildung,
+                stripPrefixIfAny(partikel, partizipII));
+    }
+
+    Verb mitPartikel(final String partikel, final Perfektbildung perfektbildung) {
+        if (partikel == null) {
+            return ohnePartikel(perfektbildung).mitPartikel(partikel, perfektbildung);
+        }
+
+        return new Verb(partikel + infinitiv,
+                ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
+                wirSieFormOhnePartikel, ihrFormOhnePartikel, partikel, perfektbildung,
+                partikel + partizipII);
     }
 
     public String getZuInfinitiv() {

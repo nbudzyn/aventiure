@@ -28,8 +28,7 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     public static TextDescription paragraph(final Object... parts) {
-        return neuerSatz(PARAGRAPH, parts)
-                .beendet(PARAGRAPH);
+        return neuerSatz(PARAGRAPH, parts).beendet(PARAGRAPH);
     }
 
     @CheckReturnValue
@@ -79,6 +78,12 @@ public class DescriptionBuilder {
     @CheckReturnValue
     private static TextDescription satzanschluss(final Konstituente konstituente) {
         return new TextDescription(StructuralElement.WORD, konstituente);
+    }
+
+    @CheckReturnValue
+    public static SimpleDuDescription duParagraph(
+            final String verb, final Object... remainderParts) {
+        return du(PARAGRAPH, verb, remainderParts).beendet(PARAGRAPH);
     }
 
     @CheckReturnValue

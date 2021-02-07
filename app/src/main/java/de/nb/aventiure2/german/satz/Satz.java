@@ -167,14 +167,15 @@ public class Satz {
      * <li>was zu erzählen du beginnen wirst
      * <li>was du zu erzählen beginnen wirst
      * <li>was du zu erzählen beginnen wirst
+     * <li>wie er helfen kann
+     * <li>wer wie geholfen hat
      * </ul>
      */
     public Konstituentenfolge getIndirekteFrage() {
         // Zurzeit unterstützen wir nur Interrogativpronomen für die normalen Kasus 
-        // wie "wer" oder "was".
+        // wie "wer" oder "was" - sowie Interrogativadverbialien ("wann").
         // Später sollten auch unterstützt werden:
         // - Interrogativpronomen mit Präposition ("mit wem")
-        // - Interrogativpronomen für Angaben ("wann")
         // - "substantivische Interrogativphrasen" wie "wessen Heldentaten"
         // - "Infinitiv-Interrogativphrasen" wie "was zu erzählen"
         if (subjekt instanceof Interrogativpronomen) {
@@ -182,21 +183,21 @@ public class Satz {
             return getIndirekteFrageNachSubjekt();
         }
 
-        @Nullable final Konstituentenfolge erstesInterrogativpronomenImPraedikat =
-                praedikat.getErstesInterrogativpronomen();
+        @Nullable final Konstituentenfolge erstesInterrogativwortImPraedikat =
+                praedikat.getErstesInterrogativwort();
 
-        if (erstesInterrogativpronomenImPraedikat == null) {
+        if (erstesInterrogativwortImPraedikat == null) {
             // "ob du etwas zu berichten hast"
             return getObFrage();
         }
 
-        // "was du zu berichten hast", "wem er was gegeben hat"
+        // "was du zu berichten hast", "wem er was gegeben hat", "wann er kommt"
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                erstesInterrogativpronomenImPraedikat, // "was" / "wem"
+                erstesInterrogativwortImPraedikat, // "was" / "wem" / "wann"
                 getVerbletztsatz().cutFirst(
-                        erstesInterrogativpronomenImPraedikat
-                ) // "du zu berichten hast", "wer zu berichten hat"
+                        erstesInterrogativwortImPraedikat
+                ) // "du zu berichten hast", "wer zu berichten hat", "er kommt"
         );
     }
 

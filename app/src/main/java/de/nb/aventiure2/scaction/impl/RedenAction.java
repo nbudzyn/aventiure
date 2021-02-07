@@ -27,7 +27,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
@@ -157,8 +157,8 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         return new RedenAction<>(scActionStepCountDao, timeTaker, n, world, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
-                // "Das Angebot von *mir* weisen"
-                praedikatOhneLeerstellen.getInfinitiv(P1, SG).capitalize().joinToString(
+                // "Das Angebot von *dir* weisen"
+                praedikatOhneLeerstellen.getInfinitiv(P2, SG).capitalize().joinToString(
                 ));
     }
 

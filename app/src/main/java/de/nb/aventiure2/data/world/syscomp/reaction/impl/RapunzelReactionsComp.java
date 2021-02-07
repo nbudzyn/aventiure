@@ -52,8 +52,9 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.STILL;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -168,7 +169,8 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_VorDemAltenTurm_Unauffaellig(final ILocationGO to) {
         if (to.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            stateComp.narrateAndSetState(STILL);
+            stateComp.narrateAndSetState(
+                    NORMAL);
             // Ab jetzt wird Rapunzel hin und wieder singen.
         }
     }
@@ -188,7 +190,7 @@ public class RapunzelReactionsComp
                     .timed(secs(20))
                     .beendet(PARAGRAPH));
 
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
             return;
         }
         n.narrateAlt(
@@ -206,13 +208,14 @@ public class RapunzelReactionsComp
                         .timed(NO_TIME)
         );
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
 
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
             @Nullable final ILocationGO from) {
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
-            stateComp.narrateAndSetState(STILL);
+            stateComp.narrateAndSetState(
+                    NORMAL);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
@@ -238,7 +241,7 @@ public class RapunzelReactionsComp
                     + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab")
                     .timed(NO_TIME));
 
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
             return;
         }
     }
@@ -262,7 +265,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber() {
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
         // "zu ihr"
@@ -285,8 +288,9 @@ public class RapunzelReactionsComp
                 "dich an")
                 .timed(secs(20)));
 
-        stateComp.setState(STILL);
-        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+        stateComp
+                .setState(NORMAL);
+        memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
         // Rapunzel ist erst einmal verschreckt.
         feelingsComp.upgradeFeelingsTowards(
@@ -303,7 +307,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
         // "ihre"
@@ -327,8 +331,9 @@ public class RapunzelReactionsComp
                 "vor dir in das dunkle Zimmer zurück")
                 .timed(secs(25)));
 
-        stateComp.setState(STILL);
-        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+        stateComp
+                .setState(NORMAL);
+        memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
             // Jetzt weiß der SC, wer so schön gesungen hat!
@@ -344,7 +349,8 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
-        stateComp.setState(STILL);
+        stateComp
+                .setState(NORMAL);
 
         if (timeTaker.now().getTageszeit() == NACHTS) {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts();
@@ -352,9 +358,9 @@ public class RapunzelReactionsComp
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber();
         }
 
-        memoryComp.upgradeKnown(SPIELER_CHARAKTER);
+        memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZEL);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber() {
@@ -373,7 +379,8 @@ public class RapunzelReactionsComp
         alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
 
         final int zuneigungSCTowardsRapunzel =
-                loadSC().feelingsComp().getFeelingTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+                loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
         if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
                 && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
 
@@ -457,7 +464,7 @@ public class RapunzelReactionsComp
                         .timed(secs(5))
                         .beendet(PARAGRAPH));
 
-                world.loadSC().memoryComp().upgradeKnown(RAPUNZELRUF);
+                world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELRUF);
             }
 
             return;
@@ -493,7 +500,7 @@ public class RapunzelReactionsComp
                 "einmal?“, fragt", anaph.persPron().nomK(), "dich")
                 .timed(secs(30)));
 
-        memoryComp.upgradeKnown(GOLDENE_KUGEL);
+        memoryComp.narrateAndUpgradeKnown(GOLDENE_KUGEL);
 
         talkingComp.setTalkingTo(SPIELER_CHARAKTER);
         stateComp.narrateAndSetState(HAT_NACH_KUGEL_GEFRAGT);
@@ -506,7 +513,8 @@ public class RapunzelReactionsComp
             n.narrateAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
         }
 
-        stateComp.narrateAndSetState(STILL);
+        stateComp.narrateAndSetState(
+                NORMAL);
     }
 
     @NonNull
@@ -565,7 +573,10 @@ public class RapunzelReactionsComp
     }
 
     private void onRapunzelruf() {
-        if (!stateComp.hasState(SINGEND, STILL)) {
+        if (!stateComp.hasState(SINGEND,
+                NORMAL,
+                HAT_NACH_KUGEL_GEFRAGT,
+                HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT)) {
             return;
         }
 
@@ -592,7 +603,7 @@ public class RapunzelReactionsComp
                                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
                 }
 
-                world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+                world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
             } else {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     n.narrate(
@@ -611,7 +622,7 @@ public class RapunzelReactionsComp
                 }
             }
 
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_HAARE);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
             return;
         }
@@ -693,7 +704,9 @@ public class RapunzelReactionsComp
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
-        if (!stateComp.hasState(STILL, SINGEND)) {
+        if (!stateComp.hasState(
+                NORMAL,
+                SINGEND)) {
             return false;
         }
 
@@ -737,7 +750,8 @@ public class RapunzelReactionsComp
     }
 
     private void onTimePassed_RapunzelMoechteSingen() {
-        if (stateComp.hasState(STILL)) {
+        if (stateComp.hasState(
+                NORMAL)) {
             stateComp.narrateAndSetState(SINGEND);
             onTimePassed_moechteSingen_bislangStill();
             return;
@@ -760,7 +774,7 @@ public class RapunzelReactionsComp
                             + "dem kleinen Fensterchen oben im Turm?")
                     .timed(secs(20)));
 
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
 
             loadSC().waitingComp().stopWaiting();
             return;
@@ -785,7 +799,7 @@ public class RapunzelReactionsComp
                             .timed(NO_TIME)
             );
 
-            world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
 
             return;
         }
@@ -812,14 +826,15 @@ public class RapunzelReactionsComp
                         .timed(NO_TIME)
         );
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 1, FeelingIntensity.DEUTLICH);
     }
 
     private void onTimePassed_RapunzelMoechteNichtSingen() {
         if (stateComp.hasState(SINGEND)) {
-            stateComp.narrateAndSetState(STILL);
+            stateComp.narrateAndSetState(
+                    NORMAL);
             onTimePassed_moechteNichtMehrSingen_bislangGesungen();
             return;
         }
@@ -861,7 +876,7 @@ public class RapunzelReactionsComp
 
         n.narrateAlt(alt, NO_TIME);
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
 
     @NonNull

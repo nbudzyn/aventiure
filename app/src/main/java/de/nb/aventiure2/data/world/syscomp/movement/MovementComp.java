@@ -24,13 +24,13 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
 import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -134,7 +134,7 @@ public class MovementComp
     public void startMovement(final AvDateTime now,
                               final GameObjectId targetLocationId,
                               final boolean firstStepTakesNoTime) {
-        checkNotNull(targetLocationId, "targetLocationId is null");
+        requireNonNull(targetLocationId, "targetLocationId is null");
         checkArgument(
                 !getGameObjectId().equals(targetLocationId),
                 "A game object cannot move inside itself.");
@@ -429,7 +429,7 @@ public class MovementComp
             final ILocationGO scTo) {
         narrateScTrifftMovingGOImDazwischen(scFrom, scTo);
 
-        world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(getGameObjectId());
     }
 
 
@@ -440,7 +440,7 @@ public class MovementComp
     public void narrateAndDoScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {
         narrateScTrifftStehendesMovingGOInTo(scTo);
 
-        world.loadSC().memoryComp().upgradeKnown(getGameObjectId());
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(getGameObjectId());
     }
 
     private void narrateScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {

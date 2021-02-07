@@ -25,7 +25,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
@@ -76,7 +76,7 @@ public class RufenAction extends AbstractScAction {
     @NonNull
     public String getName() {
         return GermanStringUtil.capitalize(
-                ruftyp.getName().getInfinitiv(P1, SG).joinToString(
+                ruftyp.getName().getInfinitiv(P2, SG).joinToString(
                 ));
     }
 

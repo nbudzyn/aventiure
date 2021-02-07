@@ -26,6 +26,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     IN_DAT("in", DAT, "im"),
     IN_AKK("in", AKK),
 
+    FUER("für", AKK), // "fürn" generieren wir nicht
+
     /**
      * "mit dem Frosch"
      */

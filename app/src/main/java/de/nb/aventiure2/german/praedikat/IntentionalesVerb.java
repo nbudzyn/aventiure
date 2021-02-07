@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 /**
  * Ein Verb wie versuchen, beabsichtigen, sich weigern, versäumen,
@@ -11,7 +10,7 @@ import androidx.annotation.Nullable;
  * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
  * Der Satz, S. 356 (Kapitel 11.2)
  */
-public enum IntentionalesVerb implements Praedikat {
+public enum IntentionalesVerb implements VerbMitValenz {
     // "Rapunzel versucht, die Haare herunterzulassen"
     VERSUCHEN("versuchen",
             "versuche", "versuchst", "versucht", "versucht",
@@ -36,17 +35,6 @@ public enum IntentionalesVerb implements Praedikat {
                 partizipII));
     }
 
-    IntentionalesVerb(@NonNull final String infinitiv,
-                      @NonNull final String ichForm,
-                      @NonNull final String duForm,
-                      @NonNull final String erSieEsForm,
-                      @NonNull final String ihrForm,
-                      @Nullable final String partikel,
-                      final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
-                partizipII));
-    }
-
     IntentionalesVerb(@NonNull final Verb verb) {
         this.verb = verb;
     }
@@ -58,5 +46,11 @@ public enum IntentionalesVerb implements Praedikat {
             final PraedikatOhneLeerstellen lexikalischerKern) {
         return new PraedikatIntentionalesVerbOhneLeerstellen(verb,
                 lexikalischerKern);
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

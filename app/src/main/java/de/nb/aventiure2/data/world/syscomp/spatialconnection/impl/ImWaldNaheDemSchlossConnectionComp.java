@@ -147,7 +147,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     getDescTo_DraussenVorDemSchloss_FestBegonnen(
             final AvTimeSpan timeSpan) {
         if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
-            world.loadSC().memoryComp().upgradeKnown(SCHLOSSFEST);
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
             return du("bist", "von dem Lärm überrascht, der dir "
                     + "schon von weitem "
                     + "entgegenschallt. Als du aus dem Wald heraustrittst, "

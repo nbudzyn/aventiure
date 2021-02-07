@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
@@ -13,7 +14,10 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * möglich ist (Test): Es ist k der Fall, dass s', wobei s' aus s entsteht durch Weglassen von k.)
  * Dazu siehe {@link AdverbialeAngabeSkopusSatz}
  */
-public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
+public class AdverbialeAngabeSkopusVerbAllg
+        extends AbstractAdverbialeAngabe
+        implements IAdvAngabeOderInterrogativVerbAllg {
+
     /**
      * Erzeugt eine adverbiale Angabe wie "aus lauter Wut".
      */
@@ -51,7 +55,8 @@ public class AdverbialeAngabeSkopusVerbAllg extends AbstractAdverbialeAngabe {
      * Angabe-Nebensätzen sowie zu-Infinitiv-Phrasen. (Beispielsweise ist nicht erlaubt:
      * *"Sie schaut dich glücklich, dich zu sehen, an.")
      */
-    boolean imMittelfeldErlaubt() {
+    @Override
+    public boolean imMittelfeldErlaubt() {
         return !getAdjektivphrase().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
         // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
         //  dürfen nicht im Mittelfeld stehen.

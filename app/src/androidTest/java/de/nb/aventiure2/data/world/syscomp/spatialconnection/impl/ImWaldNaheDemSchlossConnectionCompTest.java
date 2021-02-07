@@ -34,7 +34,7 @@ public class ImWaldNaheDemSchlossConnectionCompTest extends AndroidTestBase {
     public void gartenBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(VOR_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE);
-        world.loadSC().memoryComp().upgradeKnown(HINTER_DER_HUETTE, KNOWN_FROM_LIGHT);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(HINTER_DER_HUETTE, KNOWN_FROM_LIGHT);
 
         // WHEN
         final String actionName = con.getActionName();

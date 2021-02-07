@@ -13,11 +13,14 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
@@ -35,6 +38,7 @@ import static de.nb.aventiure2.data.time.AvDateTime.latest;
  */
 public class ReactionSystem
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
+        IKnownChangedReactions,
         IRufReactions,
         ITimePassedReactions,
         ISCActionReactions {
@@ -153,6 +157,25 @@ public class ReactionSystem
                         gameObject, oldState, newState));
     }
 
+    // IKnownChangedReactions
+    public void onKnownChanged(final GameObjectId knowerId, final GameObjectId knowee,
+                               final Known oldKnown, final Known newKnown) {
+        final IGameObject knower = world.load(knowerId);
+        if (!(knower instanceof IHasMemoryGO)) {
+            return;
+        }
+
+        onKnownChanged((IHasMemoryGO) knower, knowee, oldKnown, newKnown);
+    }
+
+    @Override
+    public void onKnownChanged(final IHasMemoryGO knower, final GameObjectId knowee,
+                               final Known oldKnown, final Known newKnown) {
+        doReactions(IKnownChangedReactions.class,
+                reactions -> reactions.onKnownChanged(
+                        knower, knowee, oldKnown, newKnown));
+    }
+
     // IRufReactions
     public void onRuf(final GameObjectId ruferId, final Ruftyp ruftyp) {
         final IGameObject rufer = world.load(ruferId);
@@ -204,6 +227,7 @@ public class ReactionSystem
      *     <li>and fulfil this <code>condition</code>.
      * </ul>
      */
+    @SuppressWarnings("unchecked")
     private <R extends IReactions> void doReactions(
             final Class<R> reactionsInterface,
             final Predicate<IResponder> condition,

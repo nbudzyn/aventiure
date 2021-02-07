@@ -6,6 +6,9 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -13,35 +16,32 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
-public enum VerbSubj implements PraedikatOhneLeerstellen {
-    ANKOMMEN("ankommen",
-            "komme", "kommst", "kommt", "kommt", "an",
-            Perfektbildung.SEIN, "angekommen"),
-    AUFSTEHEN("aufstehen",
-            "stehe", "stehst", "steht", "steht", "auf",
-            Perfektbildung.SEIN, "aufgestanden"),
-    AUFWACHEN("aufwachen",
-            "wache", "wachst", "wacht", "wacht", "auf",
-            Perfektbildung.SEIN, "aufgewacht"),
-    EINTRETEN("eintreten",
-            "trete", "trittst", "tritt", "tretet",
-            "ein",
-            Perfektbildung.SEIN, "eingetreten"),
-    HEREINKOMMEN("hereinkommen",
+public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
+    // Verben ohne Partikel
+    KOMMEN("kommen",
             "komme", "kommst", "kommt", "kommt",
-            "herein",
-            Perfektbildung.SEIN, "hereingekommen"),
-    HINABSTEIGEN("hinabsteigen",
-            "steige", "steigst", "steigt", "steigt",
-            "hinab",
-            Perfektbildung.SEIN, "hinabgestiegen"),
+            Perfektbildung.SEIN, "gekommen"),
     STRAHLEN("strahlen",
             "strahle", "strahlst", "strahlt", "strahlt",
-            Perfektbildung.HABEN, "gestrahlt");
+            Perfektbildung.HABEN, "gestrahlt"),
+    WACHEN("wachen",
+            "wache", "wachst", "wacht", "wacht",
+            Perfektbildung.HABEN, "gewacht"),
+
+    // Partikelverben
+    ANKOMMEN(KOMMEN, "an", Perfektbildung.SEIN),
+    AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
+    AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
+    EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
+    HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
+    HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -60,15 +60,16 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
                 partizipII));
     }
 
-    VerbSubj(@NonNull final String infinitiv,
-             @NonNull final String ichForm,
-             @NonNull final String duForm,
-             @NonNull final String erSieEsForm,
-             @NonNull final String ihrForm,
-             @Nullable final String partikel,
-             final Perfektbildung perfektbildung, final String partizipII) {
-        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
-                partizipII));
+    VerbSubj(final VerbMitValenz verbMitValenz,
+             final String partikel,
+             final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb(), partikel, perfektbildung);
+    }
+
+    VerbSubj(final Verb verbOhnePartikel,
+             final String partikel,
+             final Perfektbildung perfektbildung) {
+        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung));
     }
 
     VerbSubj(@NonNull final Verb verb) {
@@ -83,19 +84,19 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Override
     public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
     }
 
     @Override
     public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
     }
 
     @Override
     public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
     }
 
@@ -181,12 +182,6 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
     }
 
     @Nullable
-    public static Konstituente getSpeziellesVorfeld(final Person person,
-                                                    final Numerus numerus) {
-        return null;
-    }
-
-    @Nullable
     @Override
     public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
         return null;
@@ -194,7 +189,13 @@ public enum VerbSubj implements PraedikatOhneLeerstellen {
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativwort() {
         return null;
+    }
+
+    @Override
+    @NonNull
+    public Verb getVerb() {
+        return verb;
     }
 }

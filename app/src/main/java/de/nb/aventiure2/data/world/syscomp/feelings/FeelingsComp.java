@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
@@ -70,6 +71,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     protected final Narrator n;
 
+    private final World world;
     @Nullable
     private final WaitingComp waitingComp;
     @Nullable
@@ -104,6 +106,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     public FeelingsComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final TimeTaker timeTaker, final Narrator n,
+                        final World world,
                         @Nullable final WaitingComp waitingComp,
                         @Nullable final MemoryComp memoryComp,
                         final Mood initialMood,
@@ -119,6 +122,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.timeTaker = timeTaker;
         this.n = n;
         scActionStepCountDao = db.scActionStepCountDao();
+        this.world = world;
         this.waitingComp = waitingComp;
         this.memoryComp = memoryComp;
         this.initialMood = initialMood;
@@ -527,7 +531,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 1,
                 () -> {
                     final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
-                    return FeelingsSaetzeUtil.toEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
+                    return FeelingsSaetzeUtil
+                            .altEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
                 },
                 (feelingTowardsType) -> altEindruckBeiBegegnungSaetze(
                         gameObjectSubjekt,
@@ -623,7 +628,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         return type.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc,
-                getFeelingTowards(feelingTargetId, type),
+                getFeelingTowardsForActionsMitEmpathischerSchranke(feelingTargetId, type),
                 targetKnown);
     }
 
@@ -644,7 +649,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         return type.altReaktionWennTargetGehenMoechteSaetze(
                 gameObjectSubjekt, targetDesc,
-                getFeelingTowards(feelingTargetId, type),
+                getFeelingTowardsForActionsMitEmpathischerSchranke(feelingTargetId, type),
                 targetKnown);
     }
 
@@ -758,15 +763,35 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         getPcd().removeFeelingsTowards(target);
     }
 
+    /**
+     * Gibt den Feeling-Towards-Wert zurück - allerdings möglicherweise beschränkt,
+     * wenn das Target deutlich negativere Gefühle hat. (Liebesschwüre an jemanden, der
+     * einem egal ist, sind creepy und sollen vermieden werden.)
+     */
     @CheckReturnValue
-    public int getFeelingTowards(final GameObjectId target, final FeelingTowardsType type) {
-        return Math.round(getFeelingTowardsAsFloat(target, type));
+    public int getFeelingTowardsForActionsMitEmpathischerSchranke(final GameObjectId targetId,
+                                                                  final FeelingTowardsType type) {
+        final GameObject target = world.load(targetId);
+        final int upperBound;
+        if (!(target instanceof IFeelingBeingGO)) {
+            upperBound = Integer.MAX_VALUE;
+        } else {
+            upperBound = ((IFeelingBeingGO) target).feelingsComp()
+                    .getFeelingTowards(getGameObjectId(), type) + 2;
+        }
+
+        return Integer.min(getFeelingTowards(targetId, type), upperBound);
     }
 
     @CheckReturnValue
-    private float getFeelingTowardsAsFloat(final GameObjectId target,
+    public int getFeelingTowards(final GameObjectId targetId, final FeelingTowardsType type) {
+        return Math.round(getFeelingTowardsAsFloat(targetId, type));
+    }
+
+    @CheckReturnValue
+    private float getFeelingTowardsAsFloat(final GameObjectId targetId,
                                            final FeelingTowardsType type) {
-        final Float res = getPcd().getFeelingTowards(target, type);
+        final Float res = getPcd().getFeelingTowards(targetId, type);
 
         if (res != null) {
             return res;

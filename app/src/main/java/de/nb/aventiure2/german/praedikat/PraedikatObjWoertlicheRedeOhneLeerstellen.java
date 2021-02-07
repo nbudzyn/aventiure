@@ -11,6 +11,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -73,10 +76,10 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
             final SubstantivischePhrase objekt,
             final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
-            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
@@ -98,7 +101,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatObjWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -114,7 +117,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatObjWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -130,7 +133,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Override
     public PraedikatObjWoertlicheRedeOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -182,7 +185,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
-// ("mitten ins Gesicht" - sofern überhaupt möglich)
+                // ("mitten ins Gesicht" - sofern überhaupt möglich)
         );
     }
 
@@ -242,11 +245,22 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
+    public Konstituentenfolge getErstesInterrogativwort() {
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(kasusOderPraepositionalkasus);
         }
 
-        return null;
+        @Nullable
+        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        if (res != null) {
+            return res;
+        }
+
+        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        if (res != null) {
+            return res;
+        }
+
+        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
     }
 }

@@ -26,7 +26,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P1;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
 import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
@@ -96,7 +96,7 @@ public class GebenAction<
                 GEBEN
                         .mitDat(world.getDescription(taker, true))
                         .mit(world.getDescription(given))
-                        .getInfinitiv(P1, SG).joinToString(
+                        .getInfinitiv(P2, SG).joinToString(
                 ));
     }
 

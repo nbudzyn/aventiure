@@ -251,7 +251,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysOut) {
         narrateLeaves(spatialConnection, numberOfWaysOut);
 
-        world.loadSC().memoryComp().upgradeKnown(gameObjectId);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObjectId);
     }
 
     private void narrateLeaves(
@@ -355,7 +355,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysIn) {
         narrateEnters(from, to, spatialConnection, numberOfWaysIn);
 
-        world.loadSC().memoryComp().upgradeKnown(gameObjectId);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObjectId);
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO>

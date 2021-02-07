@@ -45,6 +45,32 @@ public class AltTimedDescriptionsBuilder {
         altDescriptions = ImmutableList.builder();
     }
 
+    public AltTimedDescriptionsBuilder addAllIfOtherwiseEmpty(
+            final AltTimedDescriptionsBuilder other) {
+        return addAllIfOtherwiseEmpty(other.altDescriptions);
+    }
+
+    public AltTimedDescriptionsBuilder addAllIfOtherwiseEmpty(
+            final Stream<? extends TimedDescription<? extends AbstractDescription<?>>> stream) {
+        return addAllIfOtherwiseEmpty(stream.collect(toImmutableSet()));
+    }
+
+    private AltTimedDescriptionsBuilder addAllIfOtherwiseEmpty(
+            final ImmutableCollection.Builder<
+                    ? extends TimedDescription<? extends AbstractDescription<?>>> builder) {
+        return addAllIfOtherwiseEmpty(builder.build());
+    }
+
+    private AltTimedDescriptionsBuilder addAllIfOtherwiseEmpty(
+            final Iterable<? extends TimedDescription<
+                    ? extends AbstractDescription<?>>> altTimed) {
+        if (isEmpty()) {
+            addAll(altTimed);
+        }
+
+        return this;
+    }
+
     public AltTimedDescriptionsBuilder addAll(final AltTimedDescriptionsBuilder other) {
         return addAll(other.altDescriptions);
     }
@@ -65,6 +91,16 @@ public class AltTimedDescriptionsBuilder {
     public AltTimedDescriptionsBuilder addAll(final Iterable<? extends TimedDescription<
             ? extends AbstractDescription<?>>> altTimed) {
         altDescriptions.addAll(altTimed);
+        return this;
+    }
+
+    @SafeVarargs
+    public final AltTimedDescriptionsBuilder addIfOtherwiseEmtpy(
+            final TimedDescription<? extends AbstractDescription<?>>... altTimed) {
+        if (isEmpty()) {
+            add(altTimed);
+        }
+
         return this;
     }
 
@@ -91,6 +127,10 @@ public class AltTimedDescriptionsBuilder {
         return map(d -> d.beendet(structuralElement));
     }
 
+    public AltTimedDescriptionsBuilder withCounterIdIncrementedIfTextIsNarrated(
+            final String counterId) {
+        return map(d -> d.withCounterIdIncrementedIfTextIsNarrated(counterId));
+    }
 
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
@@ -123,6 +163,10 @@ public class AltTimedDescriptionsBuilder {
         }
 
         return this;
+    }
+
+    private boolean isEmpty() {
+        return altDescriptions.build().isEmpty();
     }
 
     public ImmutableList<TimedDescription<? extends AbstractDescription<?>>> build() {

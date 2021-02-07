@@ -61,7 +61,7 @@ public class SchlossfestReactionsComp
         }
 
         // Der Spieler weiß jetzt, dass das Schlossfest läuft
-        loadSC().memoryComp().upgradeKnown(SCHLOSSFEST);
+        loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
 
         n.narrate(
                 neuerSatz(PARAGRAPH, "Dir fällt auf, dass Handwerker dabei sind, überall "

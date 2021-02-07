@@ -13,6 +13,9 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -64,10 +67,10 @@ public class PraedikatReflZuInfSubjektkontrollen
             final Verb verb,
             final Kasus kasus,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
-            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
@@ -91,7 +94,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Override
     public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -107,7 +110,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Override
     public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -124,7 +127,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Override
     public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
         if (adverbialeAngabe == null) {
             return this;
         }
@@ -164,9 +167,9 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+        @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz =
                 getAdverbialeAngabeSkopusSatz();
-        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+        @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
 
         return Konstituentenfolge.joinToKonstituentenfolge(
@@ -232,9 +235,9 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz =
+        @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz =
                 getAdverbialeAngabeSkopusSatz();
-        @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg =
+        @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg =
                 getAdverbialeAngabeSkopusVerbAllg();
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 adverbialeAngabeSkopusVerbAllg == null
@@ -268,7 +271,23 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Nullable
     @Override
-    public Konstituentenfolge getErstesInterrogativpronomen() {
-        return lexikalischerKern.getErstesInterrogativpronomen();
+    public Konstituentenfolge getErstesInterrogativwort() {
+        @Nullable
+        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        if (res != null) {
+            return res;
+        }
+
+        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        if (res != null) {
+            return res;
+        }
+
+        res = lexikalischerKern.getErstesInterrogativwort();
+        if (res != null) {
+            return res;
+        }
+
+        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
     }
 }

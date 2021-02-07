@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import androidx.annotation.NonNull;
+
 import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
@@ -28,6 +30,11 @@ class GeneralObjectFactory {
         this.db = db;
         this.timeTaker = timeTaker;
         this.world = world;
+    }
+
+    @NonNull
+    public static GameObject create(final GameObjectId id) {
+        return new GameObject(id);
     }
 
     GameObject create(final GameObjectId id,

@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.story.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
@@ -34,7 +35,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.duParagraph;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
@@ -59,26 +62,13 @@ public enum RapunzelStoryNode implements IStoryNode {
     ),
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
-            ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET);
+            ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET),
+    RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
+            RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
+            ZU_RAPUNZEL_HINAUFGESTIEGEN);
 
-    // FIXME "Mit RAPUNZEL unterhalten"
-    //  - "Du fragst sie nach ihrem Namen, aber der ist so ungewöhnlich, dass
-    //   du ihn dir nicht merken kannst. Es ist dir zu ungegenehm, noch einmal zu fragen."
-    //  - Ihr plaudert eine Weile - ihr versteht euch sehr gut.
-    //  - (Dann...) RAPUNZEL schwärmt vom Sonnenaufgang über dem Blätterdach. Ihre Augen leuchten.
-    //  - GGF Du erzählst IHR von dieser seltsamen Sache, die du mit dem Frosch erlebt hast. Sie
-    //    schaut dich nachdenklich an.
-    //  - "Welche Jahreszeit riechst du am liebsten?" fragt sie dich. Du entscheidest dich für
-    //    den Sommer. "Bei mir ist es der Frühling" sagt sie und strahlt bei dem Gedanken
-    //    "Ich wache auf und sofort weiß ich - die Krokusse sind aufgeblüht. Dann freue
-    //    ich mich schon auf die Schwalben, die in der Mauer über mir brüten"
-    //  - "Die Frau mit dieser... Nase - das ist deine..."  - ja, sie hält mich gefangen.
-    //    Aber sie ist gut zu mir. -> memoryComp: Spieler weiß, dass es die Zauberin ist,
-    //    DESCRIPTION ANPASSEN?!
-    //  - Wie kannst du ihr helfen, so fragst du sie. Wenn ich einen Ballen Seide hätte, sagt sie,
-    //    ich könnte mir eine Leiter flechten und steige daran herunter. Aber ein Ballen Seide -
-    //    der wäre ein Vermögen wert! (Meldung muss beim 3. Mal auch jeden Fall kommen ->
-    //    Status anpassen?! Kombinierter Status (X /Y)?)
+    // FIXME SC steigt erneut hinauf.
+    //  "Die Alte hat nichts gemerkt" (Foreshadowing!)
 
     // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
 
@@ -96,46 +86,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
     //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
     //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
-
-    // FIXME Oder: Man muss eine Strickleiter
-    //  besorgen - oder Seide kaufen und etwas zum Stricken??? Gold gabs vielleicht
-    //  vom Froschprinzen?
-
-    // FIXME fremdländisch aussehender Händler auf Schlossfest vor einem Zelt
-
-    // FIXME Seide für großen Klumpen Gold (goldene Kugel,
-    //  dabei stressen, das man sie lieb gewonnen hat)
-    //  "kaufst ihm ... ab"
-    //  Oder für ein Goldstück, das man vom Prinzen bekommen hat?
-    //  Oder Sterntaler / Münzen in Lichtung im Wald, die man brauchen kann, um Seide
-    //  für Rapunzel zu kaufen.
-
-    // FIXME Wieder hinaufsteigen mit schwerem Ballen Seide
-    //  "du warst mich heute schwer heraufzuziehen"
-    //  Unter dem Bett verstecken
-    //  "wie deine Augen noch nie eine erblickt hatten"
-
-    // STORY Wie im Märchen: Rapunzel hat sich verplappert, Zauberin
-    //  hat Rapunzel die Haare abgeschnitten. Und Rapunzel z.B. in
-    //  einen Vogel verwandelt (oder verzaubert Rapunzel in Anwesenheit
-    //  des SC). Vogel in Käfig.
-    //  SC hat Traum (Blume), Blume wächst am Wegesrand,
-    //  SC besiegt Zauberin (oder sie ist gerade nicht da?)
-    //  SC öffnet Käfig und berührt Rapunzel mit Bume (wie anderes Märchen)
-
-    // STORY Rapunzel: Will sich vom Spieler aus dem Wald führen lassen
-
-    // FIXME Rapunzel flicht die Leiter
-
-    // FIXME SC steigt erneut hinauf.
-    //  "Die Alte hat nichts gemerkt"
-
-    //  FIXME Die Leiter ist fertig.
-    //  FIXME Leiter oben am Fensterhaken fest
-    //   lässt sie herab
-    //   Beide steigen hinunter, die Leiter bleibt hängen (Raum bleibt zugänglich)
-
-    // STORY Spieler führt Rapunzel aus dem Wald hinaus - ENDE
 
     private static final String STORY_ADVANCE_COUNTER =
             "RapunzelStoryNode_STORY_ADVANCE_COUNTER";
@@ -391,6 +341,41 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         n.narrateAlt(alt, NO_TIME);
     }
+
+
+    private static void narrateAndDoHintAction_RapunzelRettungVersprochen(
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
+        final AltDescriptionsBuilder alt = alt();
+        final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
+
+        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+                alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));
+            } else {
+                alt.add(paragraph("Warum nicht oben im Turm einmal Hallo sagen?"),
+                        duParagraph("hättest",
+                                "Lust, wieder einmal bei der jungen Frau",
+                                "oben im Turm vorbeizuschauen"));
+            }
+        } else {
+            alt.addAll(altParagraphs("Die junge Frau oben im Turm",
+                    ImmutableList.of("geht", "will"),
+                    "dir nicht mehr aus dem Kopf"));
+            alt.addAll(altParagraphs("Die schöne junge Frau oben im Turm will dir nicht",
+                    ImmutableList.of("mehr", ""),
+                    "aus dem Kopf gehen"));
+            alt.add(duParagraph("fühlst", "dich etwas einsam"));
+            alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
+                    ImmutableList.of("netten", ""),
+                    "jungen Frau oben im Turm vorbeischauen?"));
+            alt.add(duParagraph("musst",
+                    "an die junge Frau oben im Turm denken. Freut die sich wohl,",
+                    "wenn du noch einmal bei ihr vorbeischaust?"));
+        }
+
+        n.narrateAlt(alt, NO_TIME);
+    }
+
 
     @CheckReturnValue
     private static ImmutableSet<AbstractDescription<?>> altTurmWohnenHineinHeraus(

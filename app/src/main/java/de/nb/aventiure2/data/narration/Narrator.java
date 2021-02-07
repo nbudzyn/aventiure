@@ -39,7 +39,6 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByKey;
@@ -47,6 +46,7 @@ import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescr
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 
 @ParametersAreNonnullByDefault
 public class Narrator {
@@ -263,7 +263,7 @@ public class Narrator {
      */
     private boolean narrateTemporaryNarrationAndTryCombiningWithAlternative(
             final Collection<? extends TimedDescription<?>> timedAlternatives) {
-        checkNotNull(temporaryNarration, "temporaryNarration is null");
+        requireNonNull(temporaryNarration, "temporaryNarration is null");
         checkArgument(!timedAlternatives.isEmpty(), "No timedAlternatives!");
 
         // Hier gibt es zwei Möglichkeiten:

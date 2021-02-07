@@ -11,7 +11,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 /**
- * Einfache Implementierung von {@link AbstractDescriptionComp} für den
+ * Implementierung von {@link AbstractDescriptionComp} für den
  * Froschprinzen.
  */
 public class FroschprinzDescriptionComp extends AbstractDescriptionComp {

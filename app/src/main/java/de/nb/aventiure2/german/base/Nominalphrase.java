@@ -9,6 +9,7 @@ import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -46,6 +47,13 @@ public class Nominalphrase
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");
+    public static final Nominalphrase IHR_NAME =
+            np(M, null, "ihr Name",
+                    "ihrem Namen", "ihren Namen");
+    public static final Nominalphrase IHR_ZIEL =
+            np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase RETTUNG_OHNE_ART =
+            np(F, null, "Rettung");
     public static final Nominalphrase WUT_OHNE_ART =
             np(F, null, "Wut");
 

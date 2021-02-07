@@ -16,8 +16,8 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Mutable - and therefore persistent - data of the {@link MemoryComp} component.
@@ -65,7 +65,7 @@ class MemoryPCD extends AbstractPersistentComponentData {
         }
 
         setChanged();
-        this.lastAction = checkNotNull(lastAction, "lastAction");
+        this.lastAction = requireNonNull(lastAction, "lastAction");
     }
 
     @NonNull

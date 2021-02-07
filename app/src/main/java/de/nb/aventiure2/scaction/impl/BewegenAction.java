@@ -221,7 +221,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     public void narrateAndDo() {
         narrateLocationOnly(loadTo());
 
-        world.loadSC().memoryComp().upgradeKnown(spatialConnection.getTo());
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(spatialConnection.getTo());
 
         // Die nicht-movable Objekte sollten in der Location-beschreibung
         // alle enthalten gewesen sein (mindestens implizit), auch rekursiv.
@@ -253,7 +253,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @NonNull final ILocationGO location) {
         final ImmutableList<LOC_DESC> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
-        sc.memoryComp().upgradeKnown(directlyContainedNonLivingNonMovables);
+        sc.memoryComp().narrateAndUpgradeKnown(directlyContainedNonLivingNonMovables);
         sc.mentalModelComp().setAssumedLocations(
                 directlyContainedNonLivingNonMovables, location);
 
@@ -444,7 +444,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final Pair<ILocationGO, ? extends List<? extends LOC_DESC>> locationAndDescribables) {
         requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
-        sc.memoryComp().upgradeKnown(locationAndDescribables.second);
+        sc.memoryComp().narrateAndUpgradeKnown(locationAndDescribables.second);
         sc.mentalModelComp().setAssumedLocations(
                 locationAndDescribables.second, locationAndDescribables.first);
 

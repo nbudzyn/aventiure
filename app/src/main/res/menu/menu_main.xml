@@ -25,6 +25,9 @@
             android:id="@+id/walk_sep_1_rapunzel_hoeren_und_in_den_wald"
             android:title="Rapunzel hören und in den Wald" />
         <item
+            android:id="@+id/walk_sep_1_bis_oben_bei_rapunzel"
+            android:title="Bis oben bei Rapunzel" />
+        <item
             android:id="@+id/walk_sep_1_nur_rapunzel"
             android:title="Nur Rapunzel" />
     </group>

@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzelsZauberinDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
@@ -143,13 +144,13 @@ class CreatureFactory {
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
         final MemoryComp memoryComp =
-                new MemoryComp(RAPUNZEL, db, world, world.getLocationSystem(),
+                new MemoryComp(RAPUNZEL, db, world,
                         createKnownMapForRapunzel());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =
                 new FeelingsComp(RAPUNZEL, db, timeTaker, n,
-                        null,
+                        world, null,
                         memoryComp,
                         Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
@@ -160,7 +161,8 @@ class CreatureFactory {
                         createDefaultFeelingsTowardsForRapunzel(),
                         createInitialFeelingsTowardsForRapunzel());
         final RapunzelTalkingComp talkingComp =
-                new RapunzelTalkingComp(db, timeTaker, n, world, stateComp, feelingsComp,
+                new RapunzelTalkingComp(db, timeTaker, n, world, memoryComp, stateComp,
+                        feelingsComp,
                         false);
         final RapunzelReactionsComp reactionsComp =
                 new RapunzelReactionsComp(timeTaker, n, world, memoryComp, stateComp,
@@ -202,10 +204,14 @@ class CreatureFactory {
     private static Map<GameObjectId, Known> createKnownMapForRapunzel() {
         return ImmutableMap.<GameObjectId, Known>builder()
                 .put(RAPUNZEL, KNOWN_FROM_LIGHT)
+                .put(RAPUNZELS_NAME, KNOWN_FROM_LIGHT)
                 .put(RAPUNZELS_GESANG, KNOWN_FROM_LIGHT)
                 .put(RAPUNZELS_HAARE, KNOWN_FROM_LIGHT)
                 .put(RAPUNZELRUF, KNOWN_FROM_LIGHT)
                 .put(RAPUNZELS_ZAUBERIN, KNOWN_FROM_LIGHT)
+                .put(RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU,
+                        KNOWN_FROM_LIGHT)
+                .put(RAPUNZELS_FREIHEITSWUNSCH, KNOWN_FROM_LIGHT)
                 .put(OBEN_IM_ALTEN_TURM, KNOWN_FROM_LIGHT)
                 .put(TAGESZEIT, KNOWN_FROM_LIGHT)
                 .build();
@@ -215,14 +221,7 @@ class CreatureFactory {
         final RapunzelsZauberinStateComp stateComp =
                 new RapunzelsZauberinStateComp(db, timeTaker, n, world);
         final AbstractDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(RAPUNZELS_ZAUBERIN,
-                        np(F, INDEF, "magere Frau mit krummer, bis zum Kinn "
-                                        + "reichender Nase",
-                                "mageren Frau mit krummer, bis zum Kinn "
-                                        + "reichender Nase", RAPUNZELS_ZAUBERIN),
-                        np(F, DEF, "magere Frau",
-                                "mageren Frau", RAPUNZELS_ZAUBERIN),
-                        np(F, DEF, "Frau", RAPUNZELS_ZAUBERIN));
+                new RapunzelsZauberinDescriptionComp(world);
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!
@@ -236,7 +235,7 @@ class CreatureFactory {
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =
                 new FeelingsComp(RAPUNZELS_ZAUBERIN, db, timeTaker, n,
-                        null,
+                        world, null,
                         null,
                         Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,

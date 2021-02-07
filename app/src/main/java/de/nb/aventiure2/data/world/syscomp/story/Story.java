@@ -39,9 +39,7 @@ public enum Story {
     //  Darauf ändern Sie die Kommunikation zum SC.
 
     FROSCHKOENIG(FroschkoenigStoryNode.class,
-            (db, timeTaker, n, world) ->
-
-            {
+            (db, timeTaker, n, world) -> {
                 return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);
             }),
 
@@ -125,10 +123,12 @@ public enum Story {
         return advancer.checkAndAdvanceIfAppropriate(db, timeTaker, n, world);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <N extends Enum<N> & IStoryNode> EnumSet<N> getNodes() {
         return (EnumSet<N>) EnumSet.allOf((Class<? extends Enum>) getNodeClass());
     }
 
+    @SuppressWarnings("unchecked")
     public <N extends Enum<?> & IStoryNode> Class<N> getNodeClass() {
         return (Class<N>) nodeClass;
     }

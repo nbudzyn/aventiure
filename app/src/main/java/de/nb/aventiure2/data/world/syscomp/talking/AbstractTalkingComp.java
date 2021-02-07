@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -46,7 +47,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                     "na dann, man sieht sich", "man sieht sich",
                     "auf ein andermal", "na, dann erstmal!");
 
-    protected final AvDatabase db;
+    protected final CounterDao counterDao;
     protected final TimeTaker timeTaker;
     protected final World world;
 
@@ -63,7 +64,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                                final World world,
                                final boolean initialSchonBegruesstMitSC) {
         super(gameObjectId, db.talkingDao());
-        this.db = db;
+        counterDao = db.counterDao();
         this.n = n;
         this.timeTaker = timeTaker;
         this.world = world;

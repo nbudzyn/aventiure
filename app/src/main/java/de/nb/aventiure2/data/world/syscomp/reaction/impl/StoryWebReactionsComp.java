@@ -3,14 +3,17 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
@@ -36,15 +39,15 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * <li>(Es passiert nichts.)
  * </ul>
  */
-@SuppressWarnings("UnnecessaryReturnStatement")
+@SuppressWarnings({"UnnecessaryReturnStatement", "unchecked"})
 public class StoryWebReactionsComp
         extends AbstractReactionsComp
-        implements IMovementReactions, IStateChangedReactions, ISCActionReactions {
+        implements IMovementReactions, IStateChangedReactions,
+        IKnownChangedReactions, ISCActionReactions {
     private final CounterDao counterDao;
     private final StoryWebComp storyWebComp;
 
-    public StoryWebReactionsComp(final AvDatabase db,
-                                 final CounterDao counterDao,
+    public StoryWebReactionsComp(final CounterDao counterDao,
                                  final Narrator n,
                                  final World world,
                                  final StoryWebComp storyWebComp) {
@@ -57,13 +60,12 @@ public class StoryWebReactionsComp
     public void onLeave(final ILocatableGO locatable, final ILocationGO from,
                         @Nullable final ILocationGO to) {
         if (world.isOrHasRecursiveLocation(FROSCHPRINZ, locatable)) {
-            onFroschprinzRecLeave(from, to);
+            onFroschprinzRecLeave(to);
             return;
         }
     }
 
-    private void onFroschprinzRecLeave(final ILocationGO from,
-                                       @Nullable final ILocationGO to) {
+    private void onFroschprinzRecLeave(@Nullable final ILocationGO to) {
         final IHasStateGO<FroschprinzState> froschprinz =
                 (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
         if (froschprinz.stateComp().hasState(
@@ -109,7 +111,7 @@ public class StoryWebReactionsComp
         // oder ein Container, der sie (ggf. rekursiv) enthält,
         // hat einen anderen Ort erreicht
         if (world.isOrHasRecursiveLocation(RAPUNZELS_ZAUBERIN, locatable)) {
-            onRapunzelsZauberinRecEnterAusserFromOrToUntenImBrunnen(from, to);
+            onRapunzelsZauberinRecEnterAusserFromOrToUntenImBrunnen(to);
             return;
         }
 
@@ -117,7 +119,7 @@ public class StoryWebReactionsComp
         // oder ein Container, der die Goldene Kugel (ggf. rekursiv) enthält,
         // hat einen anderen Ort erreicht
         if (world.isOrHasRecursiveLocation(GOLDENE_KUGEL, locatable)) {
-            onGoldeneKugelRecEnterAusserFromOrToUntenImBrunnen(from, to);
+            onGoldeneKugelRecEnterAusserFromOrToUntenImBrunnen(to);
             return;
         }
     }
@@ -172,7 +174,6 @@ public class StoryWebReactionsComp
      * (ggf. rekursiv) enthält, hat <code>to</code> erreicht.
      */
     private void onRapunzelsZauberinRecEnterAusserFromOrToUntenImBrunnen(
-            @Nullable final ILocationGO from,
             final ILocationGO to) {
         if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
             reachStoryNode(FroschkoenigStoryNode.KUGEL_GENOMMEN);
@@ -189,7 +190,6 @@ public class StoryWebReactionsComp
      * Goldene Kugel (ggf. rekursiv) enthält, hat <code>to</code> erreicht.
      */
     private void onGoldeneKugelRecEnterAusserFromOrToUntenImBrunnen(
-            @Nullable final ILocationGO from,
             final ILocationGO to) {
         if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)) {
             reachStoryNode(FroschkoenigStoryNode.KUGEL_GENOMMEN);
@@ -202,42 +202,40 @@ public class StoryWebReactionsComp
                                final Enum<?> newState) {
         if (gameObject.is(FROSCHPRINZ)) {
             onFroschprinzStateChanged(
-                    (FroschprinzState) oldState, (FroschprinzState) newState
+                    (FroschprinzState) newState
             );
             return;
         }
 
         if (gameObject.is(SCHLOSSFEST)) {
             onSchlossfestStateChanged(
-                    (SchlossfestState) oldState, (SchlossfestState) newState);
+                    (SchlossfestState) newState);
             return;
         }
 
         if (gameObject.is(RAPUNZEL)) {
             onRapunzelStateChanged(
-                    (RapunzelState) oldState, (RapunzelState) newState
+                    (RapunzelState) newState
             );
             return;
         }
 
         if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
             onRapunzelsZauberinStateChanged(
-                    (RapunzelsZauberinState) oldState, (RapunzelsZauberinState) newState
+                    (RapunzelsZauberinState) newState
             );
             return;
         }
     }
 
-    private void onFroschprinzStateChanged(final FroschprinzState oldState,
-                                           final FroschprinzState newState) {
+    private void onFroschprinzStateChanged(final FroschprinzState newState) {
         if (newState == FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE) {
             reachStoryNode(FroschkoenigStoryNode.PRINZ_IST_ERLOEST);
             return;
         }
     }
 
-    private void onRapunzelStateChanged(final RapunzelState oldState,
-                                        final RapunzelState newState) {
+    private void onRapunzelStateChanged(final RapunzelState newState) {
         if (newState == RapunzelState.SINGEND &&
                 loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
         ) {
@@ -253,21 +251,38 @@ public class StoryWebReactionsComp
         }
     }
 
-    private void onRapunzelsZauberinStateChanged(
-            final RapunzelsZauberinState oldState, final RapunzelsZauberinState newState) {
+    private void onRapunzelsZauberinStateChanged(final RapunzelsZauberinState newState) {
         if (newState == RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_MACHT_RAPUNZELBESUCHE);
             return;
         }
     }
 
-    private void onSchlossfestStateChanged(final SchlossfestState oldState,
-                                           final SchlossfestState newState) {
+    private void onSchlossfestStateChanged(final SchlossfestState newState) {
         if (newState == SchlossfestState.BEGONNEN &&
                 loadSC().locationComp().hasRecursiveLocation(
                         DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
                         SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
+            return;
+        }
+    }
+
+    @Override
+    public void onKnownChanged(final IHasMemoryGO knower,
+                               final GameObjectId knowee,
+                               final Known oldKnown,
+                               final Known newKnown) {
+        if (knower.is(SPIELER_CHARAKTER)) {
+            onSCKnownChanged(knowee, newKnown);
+            return;
+        }
+    }
+
+    private void onSCKnownChanged(final GameObjectId knowee,
+                                  final Known newKnown) {
+        if (knowee.equals(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT) && newKnown.isKnown()) {
+            reachStoryNode(RapunzelStoryNode.RAPUNZEL_RETTUNG_VERSPROCHEN);
             return;
         }
     }

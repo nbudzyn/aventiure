@@ -16,11 +16,15 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
  *     "[sich] von der Zauberin [verabschieden]"
  * </ul>
  */
-public enum ReflVerbSubjObj implements PraedikatMitEinerObjektleerstelle {
+public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
     AN_SICH_NEHMEN("nehmen", PraepositionMitKasus.AN_AKK, AKK,
             "nehme", "nimmst", "nimmt",
             "nehmt",
             Perfektbildung.HABEN, "genommen"),
+    SICH_UNTERHALTEN("unterhalten", AKK, PraepositionMitKasus.MIT_DAT,
+            "unterhalte", "unterhältst", "unterhält",
+            "unterhaltet",
+            Perfektbildung.HABEN, "unterhalten"),
     SICH_VERABSCHIEDEN("verabschieden", AKK, PraepositionMitKasus.VON,
             "verabschiede", "verabschiedest", "verabschiedet",
             "verabschiedet",
@@ -71,18 +75,9 @@ public enum ReflVerbSubjObj implements PraedikatMitEinerObjektleerstelle {
                 objektKasusOderPraepositionalkasus, substPhr);
     }
 
+    @Override
     @NonNull
     public Verb getVerb() {
         return verb;
-    }
-
-    @NonNull
-    public KasusOderPraepositionalkasus getReflKasusOderPraepositionalKasus() {
-        return reflKasusOderPraepositionalKasus;
-    }
-
-    @NonNull
-    public KasusOderPraepositionalkasus getObjektKasusOderPraepositionalkasus() {
-        return objektKasusOderPraepositionalkasus;
     }
 }

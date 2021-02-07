@@ -53,11 +53,11 @@ public class SpielerCharakterFactory {
     public SpielerCharakter create(final GameObjectId id) {
         final WaitingComp waitingComp = new WaitingComp(id, db, timeTaker);
         final MemoryComp memoryComp =
-                new MemoryComp(id, db, world, world.getLocationSystem(), createKnownMap());
+                new MemoryComp(id, db, world, createKnownMap());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, timeTaker, n,
-                waitingComp,
+                world, waitingComp,
                 memoryComp,
                 Mood.NEUTRAL,
                 muedigkeitsBiorhythmus,

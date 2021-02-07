@@ -10,6 +10,11 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativ;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
+import de.nb.aventiure2.german.base.IInterrogativadverb;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -24,6 +29,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -48,13 +54,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private final ImmutableList<Modalpartikel> modalpartikeln;
 
     @Nullable
-    private final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz;
+    private final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz;
 
     @Nullable
-    private final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg;
+    private final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg;
 
     @Nullable
-    private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
+    private final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
     public AbstractAngabenfaehigesPraedikatOhneLeerstellen(final Verb verb) {
         this(verb, ImmutableList.of(), null, null, null);
@@ -63,10 +69,10 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
-            final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
         this.modalpartikeln = ImmutableList.copyOf(modalpartikeln);
         this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
@@ -382,17 +388,17 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
-    AdverbialeAngabeSkopusSatz getAdverbialeAngabeSkopusSatz() {
+    IAdvAngabeOderInterrogativSkopusSatz getAdverbialeAngabeSkopusSatz() {
         return adverbialeAngabeSkopusSatz;
     }
 
     @Nullable
-    AdverbialeAngabeSkopusVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
+    IAdvAngabeOderInterrogativVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
         return adverbialeAngabeSkopusVerbAllg;
     }
 
     @Nullable
-    public AdverbialeAngabeSkopusVerbWohinWoher getAdverbialeAngabeSkopusVerbWohinWoher() {
+    public IAdvAngabeOderInterrogativWohinWoher getAdverbialeAngabeSkopusVerbWohinWoher() {
         return adverbialeAngabeSkopusVerbWohinWoher;
     }
 
@@ -412,6 +418,18 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 adverbialeAngabeSkopusVerbWohinWoher != null;
 
         // Sonst ("gehen", "endlich gehen") eher nicht.
+    }
+
+    @Nullable
+    static Konstituentenfolge interroAdverbToKF(
+            @Nullable final IAdvAngabeOderInterrogativ advAngabeOderInterrogativ) {
+        if (!(advAngabeOderInterrogativ instanceof IInterrogativadverb)) {
+            return null;
+        }
+
+        return joinToKonstituentenfolge(advAngabeOderInterrogativ.getDescription(
+                // Machen bei Interrogativadverbien keinen Unterschied
+                P3, SG));
     }
 }
 

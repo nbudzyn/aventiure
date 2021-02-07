@@ -7,8 +7,8 @@ import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Ein Kandidat, auf den sich ein Pronomen beziehen könnte, insbesondere ein Personalpronomen.
@@ -35,8 +35,8 @@ public class PhorikKandidat {
      */
     public PhorikKandidat(final NumerusGenus numerusGenus,
                           final IBezugsobjekt bezugsobjekt) {
-        checkNotNull(numerusGenus, "numerusGenus ist null");
-        checkNotNull(bezugsobjekt, "bezugsobjekt ist null");
+        requireNonNull(numerusGenus, "numerusGenus ist null");
+        requireNonNull(bezugsobjekt, "bezugsobjekt ist null");
 
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;

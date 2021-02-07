@@ -48,7 +48,7 @@ public class WartenActionTest extends AndroidTestBase {
     public <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
     void zauberinSchonDa_ManKannNichtAufSieWarten() {
         // GIVEN
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_ZAUBERIN);
         ((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
                 .setLocation(VOR_DEM_ALTEN_TURM);
 
@@ -66,7 +66,7 @@ public class WartenActionTest extends AndroidTestBase {
         // GIVEN
         db.counterDao().inc(RastenAction.COUNTER_RASTEN);
         db.counterDao().inc(RastenAction.COUNTER_RASTEN);
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_ZAUBERIN);
         ((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
                 .setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
 
@@ -81,8 +81,8 @@ public class WartenActionTest extends AndroidTestBase {
     @Test
     public void zauberinKommtNicht_tagsueber_WartenFuerMindestensDreiStunden() {
         // GIVEN
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_GESANG);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_ZAUBERIN);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
         world.loadSC().feelingsComp().saveSatt();
 
         // WHEN
@@ -103,7 +103,7 @@ public class WartenActionTest extends AndroidTestBase {
         // Verhindern, dass Rapunzel die Zauberin noch oben in den Turm hilft!
         ((ILocatableGO) world.load(RAPUNZEL)).locationComp().setLocation(HUETTE_IM_WALD);
 
-        world.loadSC().memoryComp().upgradeKnown(RAPUNZELS_ZAUBERIN);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_ZAUBERIN);
         Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(IM_WALD_NAHE_DEM_SCHLOSS);
         zauberin.stateComp().setState(RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL);

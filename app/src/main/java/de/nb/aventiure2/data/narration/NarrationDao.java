@@ -22,11 +22,11 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Android Room DAO for {@link Narration}s.
@@ -176,7 +176,7 @@ public abstract class NarrationDao {
 
     private void narrateInternal(final Narration.NarrationSource narrationSource,
                                  @NonNull final TextDescription textDescription) {
-        checkNotNull(textDescription, "textDescription is null");
+        requireNonNull(textDescription, "textDescription is null");
 
         @Nullable final Narration currentNarration = requireNarration();
 

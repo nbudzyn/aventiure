@@ -5,6 +5,9 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -154,14 +157,14 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     boolean isBezugAufNachzustandDesAktantenGegeben();
 
     PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable AdverbialeAngabeSkopusSatz adverbialeAngabe);
+            @Nullable IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe);
 
     PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable AdverbialeAngabeSkopusVerbAllg adverbialeAngabe);
+            @Nullable IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe);
 
     PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe);
+            @Nullable IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe);
 
     @Nullable
-    Konstituentenfolge getErstesInterrogativpronomen();
+    Konstituentenfolge getErstesInterrogativwort();
 }

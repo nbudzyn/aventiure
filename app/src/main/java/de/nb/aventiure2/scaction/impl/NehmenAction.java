@@ -42,7 +42,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -185,7 +184,7 @@ public class NehmenAction
         return GermanStringUtil.capitalize(
                 praedikat.mit(world.getDescription(gameObject, true))
                         // Relevant für etwas wie "Die Schale an *mich* nehmen"
-                        .getInfinitiv(P1, SG).joinToString(
+                        .getInfinitiv(P2, SG).joinToString(
                 ));
     }
 
@@ -258,7 +257,7 @@ public class NehmenAction
         gameObject.locationComp()
                 .narrateAndSetLocation(targetLocation,
                         () -> {
-                            world.loadSC().memoryComp().upgradeKnown(gameObject);
+                            world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
                             sc.feelingsComp().requestMood(NEUTRAL);
 
                             final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
@@ -313,7 +312,7 @@ public class NehmenAction
                 .narrateAndSetLocation(
                         targetLocation,
                         () -> {
-                            world.loadSC().memoryComp().upgradeKnown(gameObject);
+                            world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
                             sc.feelingsComp().requestMood(ANGESPANNT);
                         }
                 );
@@ -365,7 +364,7 @@ public class NehmenAction
     }
 
     private void narrateAndDoObject() {
-        world.loadSC().memoryComp().upgradeKnown(gameObject);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
 
         narrateObject();
 

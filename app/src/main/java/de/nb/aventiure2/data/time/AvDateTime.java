@@ -10,9 +10,9 @@ import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
 import static de.nb.aventiure2.data.time.AvTime.SECS_IN_A_DAY;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Value Object für Datum und Zeitpunkt.
@@ -62,31 +62,31 @@ public class AvDateTime {
     }
 
     public AvDateTime plus(final AvTimeSpan add) {
-        checkNotNull(add, "add is null");
+        requireNonNull(add, "add is null");
 
         return new AvDateTime(secsSinceBeginning + add.getSecs());
     }
 
     public AvDateTime minus(final AvTimeSpan sub) {
-        checkNotNull(sub, "sub is null");
+        requireNonNull(sub, "sub is null");
 
         return new AvDateTime(secsSinceBeginning - sub.getSecs());
     }
 
     public AvTimeSpan minus(final AvDateTime sub) {
-        checkNotNull(sub, "sub is null");
+        requireNonNull(sub, "sub is null");
 
         return new AvTimeSpan(secsSinceBeginning - sub.secsSinceBeginning);
     }
 
     public AvTimeSpan timeSpanUntil(final AvTime otherTime) {
-        checkNotNull(otherTime, "otherTime is null");
+        requireNonNull(otherTime, "otherTime is null");
 
         return getTime().timeSpanUntil(otherTime);
     }
 
     public AvDateTime goBackTo(final AvTime otherTime) {
-        checkNotNull(otherTime, "otherTime is null");
+        requireNonNull(otherTime, "otherTime is null");
 
         if (otherTime.isAfter(getTime())) {
             return new AvDateTime(getDay() - 1, otherTime);
@@ -97,33 +97,33 @@ public class AvDateTime {
 
     public boolean isWithin(final AvDateTime lowerBoundExclusive,
                             final AvDateTime upperBoundInclusive) {
-        checkNotNull(lowerBoundExclusive, "lowerBoundExclusive is null");
-        checkNotNull(upperBoundInclusive, "upperBoundInclusive is null");
+        requireNonNull(lowerBoundExclusive, "lowerBoundExclusive is null");
+        requireNonNull(upperBoundInclusive, "upperBoundInclusive is null");
 
         return lowerBoundExclusive.isBefore(this) &&
                 upperBoundInclusive.isEqualOrAfter(this);
     }
 
     public boolean isEqualOrBefore(final AvDateTime other) {
-        checkNotNull(other, "other is null");
+        requireNonNull(other, "other is null");
 
         return secsSinceBeginning <= other.secsSinceBeginning;
     }
 
     public boolean isBefore(final AvDateTime other) {
-        checkNotNull(other, "other is null");
+        requireNonNull(other, "other is null");
 
         return secsSinceBeginning < other.secsSinceBeginning;
     }
 
     public boolean isEqualOrAfter(final AvDateTime other) {
-        checkNotNull(other, "other is null");
+        requireNonNull(other, "other is null");
 
         return secsSinceBeginning >= other.secsSinceBeginning;
     }
 
     public boolean isAfter(final AvDateTime other) {
-        checkNotNull(other, "other is null");
+        requireNonNull(other, "other is null");
 
         return secsSinceBeginning > other.secsSinceBeginning;
     }

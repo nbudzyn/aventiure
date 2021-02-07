@@ -45,7 +45,7 @@ public class HeulenAction extends AbstractScAction {
             final Narrator n, final World world,
             final SpielerCharakter sc) {
         final ImmutableList.Builder<HeulenAction> res = ImmutableList.builder();
-        
+
         if (sc.feelingsComp().isTraurigerAls(BETRUEBT)) {
             res.add(new HeulenAction(scActionStepCountDao, timeTaker, n, world));
         }
@@ -130,7 +130,7 @@ public class HeulenAction extends AbstractScAction {
         froschprinz.stateComp().narrateAndSetState(HAT_SC_HILFSBEREIT_ANGESPROCHEN);
         froschprinz.talkingComp().setTalkingTo(sc);
         sc.feelingsComp().requestMood(NEUTRAL);
-        world.loadSC().memoryComp().upgradeKnown(FROSCHPRINZ);
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(FROSCHPRINZ);
         sc.mentalModelComp().setAssumedLocationToActual(FROSCHPRINZ);
     }
 
