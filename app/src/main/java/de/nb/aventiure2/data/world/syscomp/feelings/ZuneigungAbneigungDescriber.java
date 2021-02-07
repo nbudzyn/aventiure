@@ -193,7 +193,10 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
                     ));
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
-            return ImmutableList.of();
+            return ImmutableList.of(
+                    AdjektivOhneErgaenzungen.ERSTAUNT,
+                    AdjektivMitZuInfinitiv.ERSTAUNT
+                            .mitLexikalischerKern(sehenVerb.mit(targetDesc)));
         } else if (feelingIntensity == FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
                     AdjektivMitZuInfinitiv.UEBERRASCHT

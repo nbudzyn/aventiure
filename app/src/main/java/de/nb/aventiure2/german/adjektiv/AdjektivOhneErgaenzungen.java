@@ -19,6 +19,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     BEWEGT("bewegt"),
     ENTTAEUSCHT("enttäuscht"),
     ERLEICHTERT("erleichtert"),
+    ERSTAUNT("erstaunt"),
     ERSCHOEPFT("erschöpft"),
     FREUDESTRAHLEND("freudestrahlend"),
     FROEHLICH("fröhlich"),

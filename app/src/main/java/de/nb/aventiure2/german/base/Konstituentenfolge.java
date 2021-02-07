@@ -135,10 +135,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     @Nonnull
     public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
-        // FIXME Es gibt einen Bug, wo hier in den Parts eine
-        //  TextDescription enthalten ist.
-        //  - Bug finden und fixen
-        //  - Ggf. Konstituentenfolge und AbstractDescription vereinheitlichen?
+        // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 
         ArrayList<ImmutableList.Builder<Konstituente>> alternativeKonstituentenfolgen =
                 new ArrayList<>();

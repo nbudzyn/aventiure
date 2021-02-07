@@ -9,6 +9,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
  */
 public enum AdjektivMitZuInfinitiv implements Adjektivphrase {
     // "glücklich, Peter zu sehen"
+    ERSTAUNT("erstaunt"),
     GLUECKLICH("glücklich"),
     UEBERGLUECKLICH("überglücklich"),
     UEBERRASCHT("überrascht")

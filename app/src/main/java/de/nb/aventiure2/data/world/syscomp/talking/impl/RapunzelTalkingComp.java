@@ -46,6 +46,8 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.GEFRAGT_NACH_RAPUNZELN;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.RETTUNG_ZUGESAGT;
@@ -75,9 +77,12 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.duParagraph;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.praedikat.DirektivesVerb.BITTEN;
 import static de.nb.aventiure2.german.praedikat.Modalverb.KOENNEN;
@@ -99,7 +104,10 @@ import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 public class RapunzelTalkingComp extends AbstractTalkingComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
-        SC_BEGRUESST, RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG,
+        GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT,
+        SC_BEGRUESST,
+        RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG,
+        GEFRAGT_NACH_RAPUNZELN,
         SCHWALBENGESCHICHTE_ERZAEHLT,
         HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT,
         RETTUNG_ZUGESAGT
@@ -255,25 +263,108 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void gespraechBeginnen_EntryReEntryImmReEntry() {
+        counterDao.inc(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT);
+
         if (!isSchonBegruesstMitSC()) {
             begruessen_EntryReEntry();
             return;
         }
 
-        n.narrateAlt(secs(15),
-                neuerSatz(
-                        // FIXME Nur, wenn SC und Rapunzel sich noch nicht gut kennen
-                        "„Die letzen Tage waren ziemlich warm“, sagst du")
-                        .beendet(PARAGRAPH),
-                neuerSatz(
-                        // FIXME Nur, wenn SC und Rapunzel sich noch nicht gut kennen
-                        "„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du",
-                        "in den Raum")
-                        .beendet(PARAGRAPH)
-        );
+        final int zuneigungSCTowardsRapunzel =
+                loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+
+        final int zuneigungRapunzelTowardsSC =
+                feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+
+        final AltTimedDescriptionsBuilder alt = altTimed();
+
+        if (zuneigungSCTowardsRapunzel <= FeelingIntensity.MERKLICH) {
+            alt.add(paragraph("„Die letzen Tage waren ziemlich warm“, sagst du")
+                            .timed(secs(10)),
+                    paragraph("„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du",
+                            "in den Raum")
+                            .timed(secs(10)));
+        }
+
+        if (zuneigungSCTowardsRapunzel >= -FeelingIntensity.NUR_LEICHT) {
+            alt.add(neuerSatz(PARAGRAPH,
+                    "„Ist ja doch ein wenig eng hier oben, oder?“, bemerkst du. „",
+                    zuneigungRapunzelTowardsSC <= FeelingIntensity.MERKLICH ?
+                            "Meinst du?" : "Stimmt schon",
+                    "“, gibt",
+                    anaph().nomK(),
+                    "zurück").timed(secs(15)));
+
+            if (loadSC().memoryComp().isKnown(RAPUNZELS_NAME)
+                    && counterDao.get(GEFRAGT_NACH_RAPUNZELN) == 0
+                    && duzen(zuneigungRapunzelTowardsSC)) {
+                alt.add(paragraph(
+                        "„Du magst also Rapunzeln?“ – Sie strahlt übers",
+                        "ganze Gesicht. „Und wie! Manchmal bringt",
+                        "mir die Alte welche aus ihrem Garten mit.",
+                        "Frisch gezupft – die sind großartig, sag ich dir!“")
+                        .timed(secs(20))
+                        .withCounterIdIncrementedIfTextIsNarrated(GEFRAGT_NACH_RAPUNZELN));
+            }
+        }
+
+        if (duzen(zuneigungRapunzelTowardsSC) &&
+                zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
+            alt.add(duParagraph("willst",
+                    "gerade anfangen, zu sprechen, da fragt Rapunzel:",
+                    "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
+                    "langatmig von Hasen und Raben").timed(mins(2)));
+        }
+
+        if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0) {
+            alt.add(du("siehst",
+                    "dich um und dein Blick fällt auf die nackte Mauer.",
+                    "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
+                    "„Der gehört der Zauberin“, sagt",
+                    anaph().nomK(),
+                    zuneigungRapunzelTowardsSC >= FeelingIntensity.MERKLICH
+                            && duzen(zuneigungRapunzelTowardsSC) ?
+                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" : null,
+                    ".“").timed(secs(30)));
+        }
+
+        if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
+            alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du.",
+                    anaph().nomK().capitalize(),
+                    "schaut dich",
+                    ImmutableList.of("verständlos", "verwirrt", "irritiert"),
+                    "an").timed(secs(10)));
+        }
+
+        {
+            final AltDescriptionsBuilder altAntworten;
+            if (zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
+                altAntworten = altNeueSaetze(
+                        "„",
+                        ImmutableList.of("Absolut", "Klar"),
+                        "! Deshalb freu ich mich ja immer so, wenn mal jemand Nettes",
+                        "vorbeischaut.“",
+                        anaph().nomK().capitalize(),
+                        "zwinkert dir zu. – Oder du hast dir das eingebildet");
+            } else {
+                altAntworten = altNeueSaetze("Aber", anaph().nomK(), "antwortet nicht");
+                altAntworten.add(neuerSatz("Aber", anaph().nomK(), "bleibt still"));
+            }
+
+            alt.addAll(altNeueSaetze("„Wird",
+                    duzen(zuneigungSCTowardsRapunzel) ? "dir" : "euch",
+                    "hier nicht langweilig?“, fragst du.",
+                    altAntworten).timed(secs(20)));
+        }
+
+        n.narrateAlt(alt);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 0.25f, FeelingIntensity.MERKLICH);
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
+                0.1f, FeelingIntensity.DEUTLICH);
 
         setTalkingTo(SPIELER_CHARAKTER);
     }
