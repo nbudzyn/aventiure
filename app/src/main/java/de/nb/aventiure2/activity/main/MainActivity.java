@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
         narrationTextView = binding.narrationView;
 
-        // TODO Automatische Silbentrennung?!
         narrationScrollView = binding.narrationScrollView;
         narrationTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
