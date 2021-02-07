@@ -220,8 +220,9 @@ public class Satz {
      */
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
-                praedikat.getSpeziellesVorfeldAlsWeitereOption(subjekt.getPerson(),
-                        subjekt.getNumerus());
+                praedikat.getSpeziellesVorfeldAlsWeitereOption(
+                        subjekt.getPerson(), subjekt.getNumerus()
+                );
         if (speziellesVorfeld == null) {
             // Angabensätze können / sollten nur unter gewissen Voraussetzungen
             // ins Vorfeld gesetzt werden.
@@ -245,7 +246,8 @@ public class Satz {
 
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        subjekt.getPerson(), subjekt.getNumerus());
+                        subjekt.getPerson(), subjekt.getNumerus()
+                );
         if (speziellesVorfeld == null) {
             res.add(getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
         }
@@ -260,7 +262,8 @@ public class Satz {
     public Konstituentenfolge getVerbzweitsatzStandard() {
         @Nullable final Konstituente speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldSehrErwuenscht(
-                        subjekt.getPerson(), subjekt.getNumerus());
+                        subjekt.getPerson(), subjekt.getNumerus(),
+                        anschlusswort != null);
         if (speziellesVorfeld != null) {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }

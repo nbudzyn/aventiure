@@ -147,7 +147,8 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         }
 
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus
+        );
     }
 
     @Override

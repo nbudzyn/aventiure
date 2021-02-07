@@ -160,8 +160,9 @@ public class ZweiPraedikateOhneLeerstellen
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus) {
-        return ersterSatz.getSpeziellesVorfeldSehrErwuenscht(person, numerus);
+                                                           final Numerus numerus,
+                                                           final boolean nachAnschlusswort) {
+        return ersterSatz.getSpeziellesVorfeldSehrErwuenscht(person, numerus, nachAnschlusswort);
     }
 
     @Nullable

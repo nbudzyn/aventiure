@@ -149,15 +149,18 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus) {
-        return toPraedikatSubj().getSpeziellesVorfeldSehrErwuenscht(person, numerus);
+                                                           final Numerus numerus,
+                                                           final boolean nachAnschlusswort) {
+        return toPraedikatSubj().getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+                nachAnschlusswort);
     }
 
     @Nullable
     @Override
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
                                                                    final Numerus numerus) {
-        return toPraedikatSubj().getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+        return toPraedikatSubj().getSpeziellesVorfeldAlsWeitereOption(person, numerus
+        );
     }
 
     @Override

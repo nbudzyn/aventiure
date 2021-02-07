@@ -77,7 +77,8 @@ public class WalkerTest extends AndroidTestBase {
                 "\"", // Falsche Anführungszeichen
                 "„.", "„!", "„ ", "„?", ".„", "!„", "?„", "„,",
                 "“.", "“!", "“?", ",“", ", “",
-                "”" // Falsche Abführungszeichen
+                "”", // Falsche Abführungszeichen
+                "Und „", "Aber „", "Denn „"
         );
     }
 

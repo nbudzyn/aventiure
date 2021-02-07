@@ -222,9 +222,11 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus) {
+                                                           final Numerus numerus,
+                                                           final boolean nachAnschlusswort) {
         // "Danach möchtest du Spannendes berichten."
-        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(person, numerus);
+        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+                nachAnschlusswort);
     }
 
     @Nullable
@@ -232,7 +234,8 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
                                                                    final Numerus numerus) {
         // "Spannendes möchest du berichten."
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus
+        );
     }
 
     @Nullable

@@ -183,7 +183,7 @@ class PraedikatReflSubjObjOhneLeerstellen
             // "Nur die Kugel nimmst du"
             return objekt.imK(objektKasusOderPraepositionalkasus);
         }
-        
+
         return null;
     }
 

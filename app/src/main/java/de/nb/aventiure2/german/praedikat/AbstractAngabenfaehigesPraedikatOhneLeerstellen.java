@@ -164,7 +164,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
-                                                           final Numerus numerusSubjekt) {
+                                                           final Numerus numerusSubjekt,
+                                                           final boolean nachAnschlusswort) {
         if (adverbialeAngabeSkopusSatz != null) {
             return adverbialeAngabeSkopusSatz
                     .getDescription(personSubjekt, numerusSubjekt)

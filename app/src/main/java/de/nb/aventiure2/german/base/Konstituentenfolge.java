@@ -126,9 +126,6 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         return joinToAltKonstituentenfolgen(asList(parts));
     }
 
-    // FIXME "Und Lass dein Haar herunter rufst du" - vermeiden. Wörtliche
-    //  Rede nur im Vorfeld, wenn kein und.
-
     // FIXME dich hier raus!" -. Kein Punkt nach Gedankenstrich.
 
     // FIXME Doppelt gemoppelte Verzauberung nach "schaut oben aus dem Turmfenster

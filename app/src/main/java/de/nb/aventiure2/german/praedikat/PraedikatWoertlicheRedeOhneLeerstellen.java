@@ -130,14 +130,17 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
-                                                           final Numerus numerusSubjekt) {
+                                                           final Numerus numerusSubjekt,
+                                                           final boolean nachAnschlusswort) {
         final Konstituente speziellesVorfeldSehrErwuenschtFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(personSubjekt, numerusSubjekt);
+                super.getSpeziellesVorfeldSehrErwuenscht(personSubjekt, numerusSubjekt,
+                        nachAnschlusswort);
         if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
             return speziellesVorfeldSehrErwuenschtFromSuper;
         }
 
-        if (!woertlicheRede.isLangOderMehrteilig()) {
+        if (!nachAnschlusswort
+                && !woertlicheRede.isLangOderMehrteilig()) {
             return k(woertlicheRede.getDescription(),
                     true,
                     true); // "„Kommt alle her[“, ]"

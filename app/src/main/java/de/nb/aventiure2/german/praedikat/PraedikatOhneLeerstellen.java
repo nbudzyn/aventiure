@@ -121,13 +121,15 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * der Stellung, wo das Subjekt im Vorfeld ist, vorgezogen werden sollte.
      */
     @Nullable
-    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person personSubjekt, Numerus numerusSubjekt);
+    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person personSubjekt, Numerus numerusSubjekt,
+                                                    boolean nachAnschlusswort);
 
     /**
      * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
      * optional (um weitere Alternativen zu haben) verwendet werden kann.
      * <p>
-     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(Person, Numerus)} einen Wert zurückgibt,
+     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(Person, Numerus, boolean)} einen Wert
+     * zurückgibt,
      * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
      * <p>
      * Generell gibt es gewisse Regeln für das Vorfeld, die bei der Implementierung dieser
