@@ -317,7 +317,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
-                0.5f, FeelingIntensity.MERKLICH);
+                0.2f, FeelingIntensity.MERKLICH);
 
         setSchonBegruesstMitSC(true);
     }
@@ -439,6 +439,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
+            // FIXME "Hallo antwortet die junge Frau und die
+            //  junge Frau scheint überrascht, dich wiederzusehen" - wie kommt das?
             alt.addAll(altNeueSaetze(PARAGRAPH,
                     "„Hallo“, antwortet",
                     anaph.nomK(),
@@ -530,9 +532,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 anaph.akkK(),
                 "nach",
                 anaph.possArt().vor(M).datStr(),
-                "Namen, aber der ist so ungewöhnlich, dass du ihn dir nicht merken",
+                "Namen")
+                .timed(secs(10)));
+
+        n.narrate(satzanschluss(
+                ", aber der ist so ungewöhnlich, dass du ihn dir nicht merken",
                 "kannst. Es ist dir zu unangenehm, noch einmal zu fragen")
-                .timed(secs(30)));
+                .timed(secs(10)));
 
         // FIXME Namen Fragen:
         //  "Ach, sagt SIE, du kannst mich Rapunzel nennen."

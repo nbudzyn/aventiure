@@ -148,16 +148,8 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         for (final Object part : parts) {
             final Collection<Konstituentenfolge> alternativePartKonstituentenfolgen;
 
-            if (part == null || "" .equals(part)) {
-                alternativePartKonstituentenfolgen = Collections.singletonList(null);
-            } else if (part.getClass().isArray()) {
-                alternativePartKonstituentenfolgen =
-                        Collections.singletonList(joinToNullKonstituentenfolge((Object[]) part));
-            } else if (part instanceof Konstituentenfolge) {
-                alternativePartKonstituentenfolgen =
-                        Collections.singletonList(
-                                joinToNullKonstituentenfolge((Konstituentenfolge) part));
-            } else if (part instanceof Stream<?>) {
+            if (part instanceof Stream<?>) {
+                // Alternativen!
                 alternativePartKonstituentenfolgen =
                         ((Stream<?>) part)
                                 .map(Konstituentenfolge::joinToNullKonstituentenfolge)
@@ -165,14 +157,27 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                 // Früher stand hier dies:
                 // alternativePartKonstituentenfolgen =
                 //       joinToAltKonstituentenfolgen(((Stream<?>) part).collect(toSet()));
+            } else if (part != null && part.getClass().isArray()) {
+                // Alternativen!
+                alternativePartKonstituentenfolgen =
+                        Stream.of((Object[]) part)
+                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .collect(Collectors.toSet());
             } else if (part instanceof Collection<?>) {
+                // Alternativen!
                 alternativePartKonstituentenfolgen =
                         ((Collection<?>) part).stream()
                                 .map(Konstituentenfolge::joinToNullKonstituentenfolge)
                                 .collect(Collectors.toSet());
+            } else if (part instanceof Konstituentenfolge) {
+                alternativePartKonstituentenfolgen =
+                        Collections.singletonList(
+                                joinToNullKonstituentenfolge((Konstituentenfolge) part));
             } else if (part instanceof Konstituente) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(new Konstituentenfolge((Konstituente) part));
+            } else if (part == null || "".equals(part)) {
+                alternativePartKonstituentenfolgen = Collections.singletonList(null);
             } else {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(
@@ -276,7 +281,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             return false;
         }
 
-        return "es" .equals(konstituenten.get(0).getString());
+        return "es".equals(konstituenten.get(0).getString());
     }
 
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {

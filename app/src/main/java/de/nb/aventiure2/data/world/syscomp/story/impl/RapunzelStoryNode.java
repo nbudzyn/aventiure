@@ -348,7 +348,13 @@ public enum RapunzelStoryNode implements IStoryNode {
         final AltDescriptionsBuilder alt = alt();
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 
-        if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+        if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            alt.add(paragraph(
+                    "Ihr beiden könnt einander bestimmt noch besser kennenlernen"),
+                    duParagraph("hast",
+                            "Eindruck, die schöne junge Frau hätte dir noch viel zu",
+                            "erzählen"));
+        } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));
             } else {

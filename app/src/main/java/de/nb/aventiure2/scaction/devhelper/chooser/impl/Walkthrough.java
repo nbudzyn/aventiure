@@ -122,8 +122,6 @@ public class Walkthrough {
                     "Die junge Frau bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen");
 
-    // FIXME join... nur mit CharSequences erlauben
-
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
                     .append(FROSCHVERSPRECHEN_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
@@ -198,8 +196,6 @@ public class Walkthrough {
                     "Rufen: „Lass dein Haar herunter“",
                     "An den Haaren hinaufsteigen",
                     "Ein Gespräch mit der jungen Frau beginnen",
-                    // FIXME "Hallihallo antwortet die junge Frau und die
-                    //  junge Frau scheint überrascht, dich wiederzusehen"
                     "Der jungen Frau dein Herz ausschütten",
                     "Die junge Frau fragen, wie du ihr helfen kannst",
                     "Der jungen Frau Rettung zusagen",
