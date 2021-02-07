@@ -157,9 +157,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
                         // FIXME "Ich muss dich noch was fragen!"
 
-                        // FIXME "Deine Geanken kreisen immer wieder um die junge Frau
-                        //  oben im Turm..."
-
                         st(this::herzAusschuettenMoeglich,
                                 // "Der jungen Frau dein Herz ausschütten"
                                 AUSSCHUETTEN.mitAkk(DEIN_HERZ),

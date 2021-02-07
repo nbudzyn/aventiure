@@ -425,6 +425,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altParagraphs("Die schöne junge Frau oben im Turm will dir nicht",
                     ImmutableList.of("mehr", ""),
                     "aus dem Kopf gehen"));
+            alt.add(paragraph("Deine Gedanken kreisen immer wieder um",
+                    world.getDescription(RAPUNZEL).akkK()));
             alt.add(duParagraph("fühlst", "dich etwas einsam"));
             alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
                     ImmutableList.of("netten", ""),
