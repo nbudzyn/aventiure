@@ -54,7 +54,6 @@ public class SchlosswacheReactionsComp
         SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM
     }
 
-    private final CounterDao counterDao;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
@@ -62,8 +61,7 @@ public class SchlosswacheReactionsComp
                                      final Narrator n, final World world,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
-        super(SCHLOSSWACHE, n, world);
-        this.counterDao = counterDao;
+        super(SCHLOSSWACHE, counterDao, n, world);
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }

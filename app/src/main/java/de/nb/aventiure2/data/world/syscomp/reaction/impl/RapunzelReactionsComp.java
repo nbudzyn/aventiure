@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -50,6 +51,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT;
@@ -58,6 +60,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_N
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -78,6 +81,10 @@ public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IRufReactions,
         IStateChangedReactions, ITimePassedReactions {
+    enum Counter {
+        NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST
+    }
+
     private static final AvTimeSpan DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN = mins(3);
 
     private final TimeTaker timeTaker;
@@ -87,14 +94,15 @@ public class RapunzelReactionsComp
     private final FeelingsComp feelingsComp;
     private final RapunzelTalkingComp talkingComp;
 
-    public RapunzelReactionsComp(final TimeTaker timeTaker, final Narrator n,
+    public RapunzelReactionsComp(final CounterDao counterDao,
+                                 final TimeTaker timeTaker, final Narrator n,
                                  final World world,
                                  final MemoryComp memoryComp,
                                  final RapunzelStateComp stateComp,
                                  final LocationComp locationComp,
                                  final FeelingsComp feelingsComp,
                                  final RapunzelTalkingComp talkingComp) {
-        super(RAPUNZEL, n, world);
+        super(RAPUNZEL, counterDao, n, world);
         this.timeTaker = timeTaker;
         this.memoryComp = memoryComp;
         this.stateComp = stateComp;
@@ -216,14 +224,29 @@ public class RapunzelReactionsComp
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
             @Nullable final ILocationGO from) {
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
-            stateComp.narrateAndSetState(
-                    NORMAL);
+            stateComp.narrateAndSetState(NORMAL);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
-            // FIXME Wenn Rapunzel das mit der Zauberin erzählt hat (aber auch dann nur
-            //  einmal): „Aber komm nicht, wenn die Alte bei mir ist, ruft sie dir noch nach"
-            //  (Wäre das ein neuer RufTyp? Haben wir beim Frosch auch nicht...)
+
+            if (counterDao.get(NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST) == 0
+                    && counterDao.get(
+                    RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)
+                    > 0) {
+                final SubstantivischePhrase anaph = anaph();
+
+                alt.add(neuerSatz("Als",
+                        anaph.persPron().nomK(), // "sie"
+                        anaph.persPron().possArt().vor(N).akkStr(), // "ihr"
+                        "Haar wieder heraufgerafft hat, ruft",
+                        anaph.nomK(), // "Rapunzel"
+                        "dir noch nach: „Aber komm nicht, wenn die Alte bei mir ist!“",
+                        "Danach sieht der Turm wieder verlassen und unbewohnt aus")
+                        .beendet(PARAGRAPH)
+                        .timed(secs(20))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST));
+            }
 
             alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
                     + "wieder oben im Fenster")
@@ -231,7 +254,6 @@ public class RapunzelReactionsComp
                     .beendet(PARAGRAPH));
 
             n.narrateAlt(alt);
-
             return;
         }
 

@@ -102,7 +102,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
 
     // FIXME Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
-    //  Himmel bezieht sich.
+    //  Himmel bezieht sich. (Oder das passiert später...)
     //  Der Wind wird stärker
     //  Der Wind pfeift dir ums Gesicht
     //  In der Ferne hörst du Donnergrollen

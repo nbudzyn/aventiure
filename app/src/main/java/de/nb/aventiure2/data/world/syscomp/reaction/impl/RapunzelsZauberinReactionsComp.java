@@ -92,7 +92,6 @@ public class RapunzelsZauberinReactionsComp
     //  wieder los. Sie sieht ziemlich oft bei Rapunzel vorbei.
     private static final AvTimeSpan MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN = mins(47);
 
-    private final CounterDao counterDao;
     private final TimeTaker timeTaker;
 
     private final RapunzelsZauberinStateComp stateComp;
@@ -111,8 +110,7 @@ public class RapunzelsZauberinReactionsComp
                                           final FeelingsComp feelingsComp,
                                           final MovementComp movementComp,
                                           final RapunzelsZauberinTalkingComp talkingComp) {
-        super(RAPUNZELS_ZAUBERIN, n, world);
-        this.counterDao = counterDao;
+        super(RAPUNZELS_ZAUBERIN, counterDao, n, world);
         this.timeTaker = timeTaker;
         this.stateComp = stateComp;
         this.locationComp = locationComp;

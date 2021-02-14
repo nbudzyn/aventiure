@@ -160,7 +160,8 @@ class CreatureFactory {
                         feelingsComp,
                         false);
         final RapunzelReactionsComp reactionsComp =
-                new RapunzelReactionsComp(timeTaker, n, world, memoryComp, stateComp,
+                new RapunzelReactionsComp(db.counterDao(), timeTaker, n, world, memoryComp,
+                        stateComp,
                         locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =

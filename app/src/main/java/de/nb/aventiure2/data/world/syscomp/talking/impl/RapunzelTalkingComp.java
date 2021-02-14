@@ -107,6 +107,7 @@ import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 @SuppressWarnings({"DuplicateBranchesInSwitch", "unchecked"})
 public class RapunzelTalkingComp extends AbstractTalkingComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
     enum Counter {
         GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT,
         SC_BEGRUESST,
