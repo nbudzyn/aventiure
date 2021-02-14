@@ -7,6 +7,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 
 /**
  * Ein Verb wie "... an sich nehmen" oder "sich von jdm verabschieden", das
@@ -21,6 +22,10 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
             "nehme", "nimmst", "nimmt",
             "nehmt",
             Perfektbildung.HABEN, "genommen"),
+    SICH_ERLAUBEN("erlauben", DAT, AKK,
+            "erlaube", "erlaubst", "erlaubt",
+            "erlaubt",
+            Perfektbildung.HABEN, "erlaubt"),
     SICH_UNTERHALTEN("unterhalten", AKK, PraepositionMitKasus.MIT_DAT,
             "unterhalte", "unterhältst", "unterhält",
             "unterhaltet",

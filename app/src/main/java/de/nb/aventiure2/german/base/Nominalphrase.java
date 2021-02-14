@@ -38,6 +38,12 @@ public class Nominalphrase
             np(PL_MFN, DEF, "Dinge", "Dingen");
     public static final Nominalphrase EIN_GESPRAECH =
             np(N, INDEF, "Gespräch");
+    public static final Nominalphrase EIN_GROBER_ABRISS =
+            np(N, INDEF, "grober Abriss",
+                    "groben Abriss", "groben Abriss");
+    public static final Nominalphrase EINE_KLEINE_NOTLUEGE =
+            np(N, INDEF, "kleine Notlüge",
+                    "kleinen Notlüge");
     public static final Nominalphrase FREUDE_OHNE_ART =
             np(F, null, "Freude");
     public static final Nominalphrase GESPRAECH =
@@ -54,6 +60,8 @@ public class Nominalphrase
             np(N, null, "ihr Ziel", "ihrem Ziel");
     public static final Nominalphrase RETTUNG_OHNE_ART =
             np(F, null, "Rettung");
+    public static final Nominalphrase WAHRHEIT =
+            np(F, DEF, "Wahrheit");
     public static final Nominalphrase WUT_OHNE_ART =
             np(F, null, "Wut");
 

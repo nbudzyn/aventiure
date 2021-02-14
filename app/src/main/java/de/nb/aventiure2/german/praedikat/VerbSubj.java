@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
@@ -36,6 +37,7 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
             Perfektbildung.HABEN, "gewacht"),
 
     // Partikelverben
+    ANGEBEN(GEBEN, "an", Perfektbildung.HABEN),
     ANKOMMEN(KOMMEN, "an", Perfektbildung.SEIN),
     AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),

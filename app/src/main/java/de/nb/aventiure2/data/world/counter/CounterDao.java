@@ -5,6 +5,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import java.util.EnumSet;
 import java.util.stream.Stream;
 
 /**
@@ -27,7 +28,7 @@ public abstract class CounterDao {
      * zu übergeben.
      */
     public int incAndGet(final Enum<?> id) {
-        return incAndGet(id.name());
+        return incAndGet(enumToString(id));
     }
 
     /**
@@ -59,13 +60,13 @@ public abstract class CounterDao {
      * Erhöht diesen {@link Counter}.
      */
     public void inc(final Enum<?> id) {
-        inc(id.name());
+        inc(enumToString(id));
     }
 
     /**
      * Erhöht diesen {@link Counter}.
      */
-    public void inc(final String id) {
+    private void inc(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
 
         final int value = get(id);
@@ -74,8 +75,18 @@ public abstract class CounterDao {
         set(id, newValue);
     }
 
+    public <E extends Enum<E>> void reset(final Class<E> eenum) {
+        reset(EnumSet.allOf(eenum));
+    }
+
+    public void reset(final Iterable<? extends Enum<?>> ids) {
+        for (final Enum<?> id : ids) {
+            reset(id);
+        }
+    }
+
     public void reset(final Enum<?>... ids) {
-        Stream.of(ids).map(Enum::name).forEach(this::reset);
+        Stream.of(ids).map(CounterDao::enumToString).forEach(this::reset);
     }
 
     private void reset(final String id) {
@@ -90,9 +101,13 @@ public abstract class CounterDao {
     abstract void set(String id, int value);
 
     public int get(final Enum<?> id) {
-        return get(id.name());
+        return get(enumToString(id));
     }
 
     @Query("SELECT value from Counter where :id = id")
-    public abstract int get(String id);
+    abstract int get(String id);
+
+    private static String enumToString(final Enum<?> id) {
+        return id.getClass().getCanonicalName() + "#" + id.name();
+    }
 }

@@ -37,8 +37,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
 public class MainActivity extends AppCompatActivity {
     // IDEA "Mein Märchen" "Schneepunzel"? -> Appstore?
-
-    // IDEA Was sollte man in den AppStore schreiben?
+    //   Was sollte man in den AppStore schreiben?
     //  - Choose your own Adventure?
     //  - Abenteuer-Spielbuch?
     //  - In den (Grimmschen) Märchen
@@ -47,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     //  - Nostalgie
 
     // TODO Symbole für Bewegungsrichtungen (wie auf einer Karte) links am Rand der Buttons
-    //  Wie auf einer Karte von oben...
+    //  Wie auf einer Karte von oben... Oder
 
     // IDEA Weitere Symbole für grobe Typen von Aktionen (Gegenstände / Reden...)
 

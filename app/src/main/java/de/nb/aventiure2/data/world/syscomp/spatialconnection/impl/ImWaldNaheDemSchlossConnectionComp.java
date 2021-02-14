@@ -70,7 +70,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return ImmutableList.of(
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
-                        "Den Wald verlassen und in den Schloßgarten gehen",
+                        "Den Wald verlassen und in den Schlossgarten gehen",
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,

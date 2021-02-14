@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="400px"
+    android:height="60px"
+    android:viewportWidth="400"
+    android:viewportHeight="60">
+    <!-- https://medium.com/@ali.muzaffar/understanding-vectordrawable-pathdata-commands-in-android-d56a6054610e -->
+    <!-- Uppercase (M) means absolute position, lowercase (m) means relative position. -->
+    <!-- Mx,y: moveto - Weitere Koordinaten sind implizite lineto commands -->
+    <!-- Z: Schließ den Pfad -->
+    <path
+        android:fillColor="#3BC34C"
+        android:pathData="M200,60 399,42 399,0 0,0 0,42Z" />
+</vector><!--   android:pathData="M21.99,8c0,-0.72 -0.37,-1.35 -0.94,-1.7L12,1 2.95,6.3C2.38,6.65 2,7.28 2,8v10c0,1.1 0.9,2 2,2h16c1.1,0 2,-0.9 2,-2l-0.01,-10zM12,13L3.74,7.84 12,3l8.26,4.84L12,13z"/>
+-->

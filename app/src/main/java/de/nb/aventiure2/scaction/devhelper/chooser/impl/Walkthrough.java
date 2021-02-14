@@ -69,7 +69,7 @@ public class Walkthrough {
                     "Die Hütte verlassen",
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
-                    "Den Wald verlassen und in den Schloßgarten gehen",
+                    "Den Wald verlassen und in den Schlossgarten gehen",
                     "Das Schloss betreten");
 
     private static final Walkthrough SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT =

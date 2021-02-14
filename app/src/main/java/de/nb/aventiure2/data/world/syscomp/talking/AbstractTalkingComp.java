@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Component for a {@link GameObject}: Das Game Object kann mit einem anderen
@@ -37,7 +38,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * Spieler(-Charakter) an das {@link ITalkerGO} richten kann (und auf die das
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
-public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD> {
+public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD>
+        implements IScBegruessable {
     private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
 
@@ -126,7 +128,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return;
         }
 
-        getPcd().setTalkingToId(talkingToId);
+        requireNonNull(getPcd()).setTalkingToId(talkingToId);
 
         if (otherTalker != null &&
                 otherTalker.is(SPIELER_CHARAKTER) &&
@@ -153,7 +155,8 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @SuppressWarnings("WeakerAccess")
     public void unsetTalkingTo(final boolean esIstDerTalkerDerDasGespraechBeendet) {
         @Nullable final ITalkerGO<?> talkingTo = getTalkingTo();
-        getPcd().setTalkerHatletztesGespraechSelbstBeendet(esIstDerTalkerDerDasGespraechBeendet);
+        requireNonNull(getPcd())
+                .setTalkerHatletztesGespraechSelbstBeendet(esIstDerTalkerDerDasGespraechBeendet);
 
         if (talkingTo == null) {
             return;
@@ -187,11 +190,11 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     @Nullable
     private GameObjectId getTalkingToId() {
-        return getPcd().getTalkingToId();
+        return requireNonNull(getPcd()).getTalkingToId();
     }
 
     public boolean isTalkerHatLetztesGespraechSelbstBeendet() {
-        return getPcd().isTalkerHatletztesGespraechSelbstBeendet();
+        return requireNonNull(getPcd()).isTalkerHatletztesGespraechSelbstBeendet();
     }
 
     /**
@@ -213,18 +216,19 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                 .build();
     }
 
-    protected void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
+    @Override
+    public void setSchonBegruesstMitSC(final boolean schonBegruesstMitSC) {
         if (getGameObjectId() == SPIELER_CHARAKTER) {
             throw new IllegalStateException("setSchonBegruesstMitSC() für SPIELER_CHARAKTER - "
                     + "ergibt keinen Sinn");
         }
 
-        getPcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
+        requireNonNull(getPcd()).setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isSchonBegruesstMitSC() {
-        return getPcd().isSchonBegruesstMitSC();
+        return requireNonNull(getPcd()).isSchonBegruesstMitSC();
     }
 
     /**

@@ -51,6 +51,8 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
@@ -392,10 +394,12 @@ public class RapunzelReactionsComp
                             "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
                             .mitVorfeldSatzglied("oben")
                             .phorikKandidat(F, RAPUNZEL),
+                    // FIXME Begrüßung trennen von...
                     neuerSatz(
                             "„Die Alte hat nichts bemerkt“, sprudelt die "
                                     + "wunderschöne junge Frau los, „aber lange werden wir uns "
                                     + "nicht treffen können. Sie ist so neugierig!“"))
+                    // FIXME Begrüßung trennen von...
             );
         }
 
@@ -578,7 +582,9 @@ public class RapunzelReactionsComp
         if (!stateComp.hasState(SINGEND,
                 NORMAL,
                 HAT_NACH_KUGEL_GEFRAGT,
-                HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT)) {
+                HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT,
+                HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT,
+                HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT)) {
             return;
         }
 

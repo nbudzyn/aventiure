@@ -129,11 +129,6 @@ public class AltTimedDescriptionsBuilder {
 
     public AltTimedDescriptionsBuilder withCounterIdIncrementedIfTextIsNarrated(
             final Enum<?> counterId) {
-        return withCounterIdIncrementedIfTextIsNarrated(counterId.name());
-    }
-
-    public AltTimedDescriptionsBuilder withCounterIdIncrementedIfTextIsNarrated(
-            final String counterId) {
         return map(d -> d.withCounterIdIncrementedIfTextIsNarrated(counterId));
     }
 

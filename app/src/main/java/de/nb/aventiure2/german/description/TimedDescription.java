@@ -41,7 +41,7 @@ public class TimedDescription<
      * Wenn der Text sicher erzählt wird, wird dieser Counter hochgezählt.
      */
     @Nullable
-    private final String counterIdIncrementedIfTextIsNarrated;
+    private final Enum<?> counterIdIncrementedIfTextIsNarrated;
 
     @SafeVarargs
     @CheckReturnValue
@@ -65,7 +65,7 @@ public class TimedDescription<
     public static <D extends AbstractDescription<?>>
     ImmutableSet<TimedDescription<D>> toTimed(
             final Collection<D> descriptions, final AvTimeSpan timeElapsed,
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
+            @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
         return descriptions.stream()
                 .map(d -> new TimedDescription<>(
                         d, timeElapsed, counterIdIncrementedIfTextIsNarrated))
@@ -84,18 +84,12 @@ public class TimedDescription<
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed) {
-        this(description, timeElapsed, (String) null);
+        this(description, timeElapsed, null);
     }
 
     public TimedDescription(final D description,
                             final AvTimeSpan timeElapsed,
                             @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
-        this(description, timeElapsed, counterIdIncrementedIfTextIsNarrated.name());
-    }
-
-    public TimedDescription(final D description,
-                            final AvTimeSpan timeElapsed,
-                            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         this.description = description;
         this.timeElapsed = timeElapsed;
         this.counterIdIncrementedIfTextIsNarrated = counterIdIncrementedIfTextIsNarrated;
@@ -110,12 +104,6 @@ public class TimedDescription<
 
     public TimedDescription<D> withCounterIdIncrementedIfTextIsNarrated(
             @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
-        return new TimedDescription<>(description, timeElapsed,
-                counterIdIncrementedIfTextIsNarrated);
-    }
-
-    public TimedDescription<D> withCounterIdIncrementedIfTextIsNarrated(
-            @Nullable final String counterIdIncrementedIfTextIsNarrated) {
         return new TimedDescription<>(description, timeElapsed,
                 counterIdIncrementedIfTextIsNarrated);
     }
@@ -216,7 +204,7 @@ public class TimedDescription<
     }
 
     @Nullable
-    public String getCounterIdIncrementedIfTextIsNarrated() {
+    public Enum<?> getCounterIdIncrementedIfTextIsNarrated() {
         return counterIdIncrementedIfTextIsNarrated;
     }
 

@@ -67,9 +67,6 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN);
 
-    // FIXME SC steigt erneut hinauf.
-    //  "Die Alte hat nichts gemerkt" (Foreshadowing!)
-
     // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
     //  - Idee: Das Bett eraufbauen / Drunterkriechen erst ermöglichen, wenn Zauberin kommt
     //    ("versteck dich..." Du schaust um dich und dein Blick fällt auf das Bett")
@@ -286,7 +283,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
-        if (world.hasSameOuterMostLocationAsSC(loadZauberin(world))) {
+        if (world.hasSameOuterMostLocationAsSC(RAPUNZELS_ZAUBERIN)) {
             narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(n);
         } else {
             narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(

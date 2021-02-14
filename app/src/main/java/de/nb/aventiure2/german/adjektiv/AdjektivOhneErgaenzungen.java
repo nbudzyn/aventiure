@@ -24,6 +24,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     FREUDESTRAHLEND("freudestrahlend"),
     FROEHLICH("fröhlich"),
     GEKNICKT("geknickt"),
+    GENAU("genau"),
     GENERVT("genervt"),
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),

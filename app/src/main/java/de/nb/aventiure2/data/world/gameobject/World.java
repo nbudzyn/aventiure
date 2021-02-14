@@ -1054,6 +1054,14 @@ public class World {
                 observer.memoryComp().isKnown(describable), shortIfKnown);
     }
 
+    public final boolean hasSameOuterMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
+        if (gameObjectId == null) {
+            return false;
+        }
+
+        return hasSameOuterMostLocationAsSC(load(gameObjectId));
+    }
+
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final IGameObject gameObject) {
         if (gameObject == null) {
             return false;

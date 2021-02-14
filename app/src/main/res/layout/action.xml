@@ -5,11 +5,22 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical">
 
+    <!--FIXME LEFT / RIGHT / NONE entwerfen -->
+    <!-- FIXME Farbe bei NONE setzen -->
+    <!-- FIXME UP / DOWN / LEFT / RIGHT / NONE richtig entscheiden -->
+    <!-- FIXME Paddings richtig setzen -->
+    <!-- FIXME Richtig sortieren -->
+    <!-- UP: android:paddingTop="24dp" android:paddingBottom="4dp" -->
+    <!-- DOWN: android:paddingTop="4dp" android:paddingBottom="24dp" -->
     <Button
         android:id="@+id/actionView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="Den Drachen erschlagen"
-        android:background="@android:color/holo_orange_light"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:background="@drawable/ic_button_arrow_down"
+        android:backgroundTint="@drawable/action_button_background_tint"
+        android:backgroundTintMode="multiply"
+        android:paddingTop="4dp"
+        android:paddingBottom="24dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="Den Drachen erschlagen" />
 </FrameLayout>

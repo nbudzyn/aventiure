@@ -114,7 +114,6 @@ public class PraedikatDatAkkOhneLeerstellen
         );
     }
 
-
     @Override
     public PraedikatDatAkkOhneLeerstellen mitAdverbialerAngabe(
             @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
