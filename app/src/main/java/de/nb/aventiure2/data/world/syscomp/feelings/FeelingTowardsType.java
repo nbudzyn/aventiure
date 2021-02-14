@@ -75,13 +75,13 @@ public enum FeelingTowardsType {
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
                 altEindruckWennTargetGehenMoechteAdjPhr(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
                         targetDesc, feelingIntensity, targetKnown
                 );
-
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toReaktionSaetze(
                 gameObjectSubjekt, targetDesc, altEindruckAdjPhr);

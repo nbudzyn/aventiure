@@ -33,7 +33,7 @@ public class TageszeitReactionsComp
             return;
         }
 
-        // TODO Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
+        // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?
         //  - Hinweise, dass die Nacht allmählich naht.

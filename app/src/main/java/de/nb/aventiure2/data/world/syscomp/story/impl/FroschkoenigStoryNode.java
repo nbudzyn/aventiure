@@ -371,7 +371,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Heut ist ein heißer Tag!"));
         alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
 
-        // TODO ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
+        // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
         //  Heiß vielleicht irhendwo am wasser...
 
         return alt.build();

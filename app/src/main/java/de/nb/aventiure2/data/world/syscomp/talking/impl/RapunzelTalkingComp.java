@@ -1162,6 +1162,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunter() {
+        final int zuneigungZumSC =
+                feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung: "
@@ -1194,14 +1197,24 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             .map(TextDescription::toSingleKonstituente)
             ));
 
+            if (zuneigungZumSC > FeelingIntensity.MERKLICH) {
+                alt.addAll(altNeueSaetze(
+                        "„Oh, ich wünschte,",
+                        duzen(zuneigungZumSC) ? "du könntest" : "ihr könntet",
+                        "noch einen Moment bleiben!“, antwortet",
+                        anaph().nomK(),
+                        ".",
+                        altAberDochHaareFestbinden(rapunzelDesc).stream()
+                                .flatMap(d -> d.altTextDescriptions().stream())
+                                .map(TextDescription::toSingleKonstituente)
+                ));
+            }
+
             alt.add(neuerSatz(rapunzelDesc.nomK(),
                     "wickelt",
                     rapunzelDesc.possArt().vor(PL_MFN).akkStr(), // "ihre"
                     "Haare wieder um den Fensterhaken")
                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-
-            //  FIXME "Oh, ich wünschte, ihr könntet noch einen Moment bleiben!" antwortet RAPUNZEL.
-            //    Aber sie knotet doch ihrer Haare wieder über den Haken am Fenster"
 
             n.narrateAlt(alt, secs(10));
         }
@@ -1222,12 +1235,47 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "dann knotet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
+                        "Haare wieder über den Haken am Fenster"))
+                .add(satzanschluss(
+                        "dann knotet",
+                        rapunzelDesc.persPron().nomK(), //"sie"
+                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
                         "Haare wieder um den Fensterhaken"))
                 .add(satzanschluss(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
                         rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
                         "Haare wieder am Fenster fest"))
+                .build();
+    }
+
+    private static ImmutableSet<AbstractDescription<?>> altAberDochHaareFestbinden(
+            final Nominalphrase rapunzelDesc) {
+        return alt()
+                .add(satzanschluss(
+                        "Aber",
+                        rapunzelDesc.persPron().nomK(), //"sie"
+                        "bindet",
+                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
+                        "Haare doch um den Haken am Fenster"))
+                .add(satzanschluss(
+                        "Aber",
+                        rapunzelDesc.persPron().nomK(), //"sie"
+                        "knotet",
+                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
+                        "Haare doch über den Haken am Fenster"))
+                .add(satzanschluss(
+                        "Aber",
+                        rapunzelDesc.persPron().nomK(), //"sie"
+                        "knotet",
+                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
+                        "Haare doch um den Fensterhaken"))
+                .add(satzanschluss(
+                        "Aber",
+                        rapunzelDesc.persPron().nomK(), //"sie"
+                        "bindet",
+                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
+                        "Haare doch am Fenster fest"))
                 .build();
     }
 
