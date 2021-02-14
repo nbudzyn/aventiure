@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
@@ -508,6 +509,7 @@ public class RapunzelsZauberinReactionsComp
         loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,
                 SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
         loadRapunzel().talkingComp().forgetAll();
+        ((RapunzelReactionsComp) loadRapunzel().reactionsComp()).forgetAll();
 
         // Rapunzel ist still
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.NORMAL);
@@ -761,7 +763,8 @@ public class RapunzelsZauberinReactionsComp
     private <R extends
             IHasMemoryGO &
             IHasStateGO<RapunzelState> &
-            ITalkerGO<RapunzelTalkingComp>>
+            ITalkerGO<RapunzelTalkingComp> &
+            IResponder>
     R loadRapunzel() {
         return (R) world.load(RAPUNZEL);
     }

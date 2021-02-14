@@ -433,17 +433,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void rapunzelBeantwortetBegruessung() {
-        // FIXME Als mögliche Begrüssung, wenn Herz ausgeschüttet:
-        //  "Die Alte hat nichts gemerkt" (Foreshadowing!)
-
-        // FIXME Als mögliche Begrüssung, wenn schon bekannt und sympathisch:
-        //  Hast du den Falken gesehen?
-        //  sprudelt SIE hervor - die armen Rotkehlchen!! Du reagierst sehr verständnisvoll
-        //  (endsSentence).dann"
-
         final boolean scBereitsZuvorSchonEinmalGetroffen =
                 counterDao.get(RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG) > 0;
-
         final SubstantivischePhrase anaph = anaph();
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
@@ -608,6 +599,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 alt.add(neuerSatz("„Schön, dich wiederzusehen!“, freut",
                         anaph.nomK(),
                         "sich"));
+                alt.add(neuerSatz(
+                        "„Hast du den Falken gesehen?“, sprudelt",
+                        anaph.nomK(),
+                        "hervor. „Die armen Rotkehlchen!“ Du reagierst sehr verständnisvoll")
+                        .dann());
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.STARK) {
             alt.add(neuerSatz(anaph.nomK(), "strahlt dich nur an"));

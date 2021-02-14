@@ -51,6 +51,8 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
@@ -70,7 +72,6 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaet
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -81,8 +82,11 @@ public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IRufReactions,
         IStateChangedReactions, ITimePassedReactions {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
-        NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST
+        NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST,
+        BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN,
+        BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG
     }
 
     private static final AvTimeSpan DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN = mins(3);
@@ -395,35 +399,53 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.75f, FeelingIntensity.DEUTLICH);
 
+        final int zuneigungSCTowardsRapunzel =
+                loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
+        if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
+                && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH
+                && counterDao.get(
+                RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)
+                > 0) {
+
+            final AltTimedDescriptionsBuilder alt = altTimed();
+
+            if (counterDao.get(BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN) == 0) {
+                alt.add(du("findest", "oben", anaph.akkK(),
+                        "ganz aufgeregt vor: „Da bist du wieder!“, sagt",
+                        anaph.persPron().nomK(),
+                        ",",
+                        "„Kannst du mir nun helfen?“")
+                        .mitVorfeldSatzglied("oben")
+                        .timed(secs(15))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN));
+            }
+
+            if (counterDao.get(BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG) == 0) {
+                alt.add(neuerSatz(
+                        "„Die Alte hat nichts bemerkt“, sprudelt die wunderschöne",
+                        "junge Frau los, „aber lange werden wir uns",
+                        "nicht treffen können. Sie ist so neugierig!“")
+                        .timed(secs(15))
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG));
+            }
+
+            if (!alt.isEmpty()) {
+                n.narrateAlt(alt);
+                talkingComp.setSchonBegruesstMitSC(true);
+                talkingComp.setTalkingTo(SPIELER_CHARAKTER);
+                return;
+            }
+        }
+
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
-
-        final int zuneigungSCTowardsRapunzel =
-                loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
-                        RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
-        if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
-                && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH) {
-
-            // FIXME Dies beides darf erst erscheinen, wenn Rapunzel von der Zauberin erzählt hat
-            //  und den SC um Hilfe gebeten oder der SC Hilfe angeboten hat
-            alt.addAll(toTimed(secs(15),
-                    du("findest", "oben die junge Frau ganz ",
-                            "aufgeregt vor: „Du bist schon ",
-                            "wieder da!“, sagt sie, „Kannst du mir nun helfen?“")
-                            .mitVorfeldSatzglied("oben")
-                            .phorikKandidat(F, RAPUNZEL),
-                    // FIXME Begrüßung trennen von...
-                    neuerSatz(
-                            "„Die Alte hat nichts bemerkt“, sprudelt die "
-                                    + "wunderschöne junge Frau los, „aber lange werden wir uns "
-                                    + "nicht treffen können. Sie ist so neugierig!“"))
-                    // FIXME Begrüßung trennen von...
-            );
-        }
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(altNeueSaetze("Am Fenster sitzt die junge Frau, schön als",
@@ -911,5 +933,9 @@ public class RapunzelReactionsComp
     @NonNull
     private ILocatableGO loadZauberin() {
         return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+    }
+
+    void forgetAll() {
+        counterDao.reset(RapunzelTalkingComp.Counter.class);
     }
 }

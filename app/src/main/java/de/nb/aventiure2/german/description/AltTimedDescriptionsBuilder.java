@@ -165,7 +165,7 @@ public class AltTimedDescriptionsBuilder {
         return this;
     }
 
-    private boolean isEmpty() {
+    public boolean isEmpty() {
         return altDescriptions.build().isEmpty();
     }
 
