@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -61,6 +62,12 @@ public class SchlafenAction extends AbstractScAction {
     @NonNull
     public String getName() {
         return "Ein Nickerchen machen";
+    }
+
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
     }
 
     @Override

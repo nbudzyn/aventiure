@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -16,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -186,6 +188,12 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         return name;
     }
 
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
+    }
+    
     @Override
     public void narrateAndDo() {
         sc.memoryComp().setLastAction(buildMemorizedAction());

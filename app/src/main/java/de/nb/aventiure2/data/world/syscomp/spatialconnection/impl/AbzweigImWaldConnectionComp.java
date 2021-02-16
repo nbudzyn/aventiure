@@ -33,6 +33,9 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -64,11 +67,11 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
                 con(IM_WALD_NAHE_DEM_SCHLOSS, "auf dem Weg zum Schloss",
-                        "In Richtung Schloss gehen", mins(5),
+                        WEST, "In Richtung Schloss gehen", mins(5),
                         this::getDescTo_ImWaldNaheDemSchloss),
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in all dem Unkraut",
-                        this::getActionNameTo_HinterDerHuette,
+                        NORTH, this::getActionNameTo_HinterDerHuette,
                         mins(2),
                         du(SENTENCE, "fasst", "dir ein Herz und stapfst zwischen "
                                 + "dem Unkraut einen Weg entlang, "
@@ -106,7 +109,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 ),
 
                 con(IM_WALD_BEIM_BRUNNEN, "auf dem breiten Weg tiefer in den Wald",
-                        this::getActionNameTo_ImWaldBeimBrunnen, mins(3),
+                        EAST, this::getActionNameTo_ImWaldBeimBrunnen, mins(3),
                         this::getDescTo_ImWaldBeimBrunnen));
     }
 

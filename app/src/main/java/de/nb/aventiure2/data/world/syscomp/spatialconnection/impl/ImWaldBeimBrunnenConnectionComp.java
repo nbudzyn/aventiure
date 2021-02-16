@@ -23,6 +23,8 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
@@ -58,7 +60,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
 
         resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
                 "auf dem Weg",
-                "Den Weg Richtung Schloss gehen",
+                WEST, "Den Weg Richtung Schloss gehen",
                 mins(3),
                 du(SENTENCE, "verlässt", "den Brunnen und erreichst bald "
                         + "die Stelle, wo der überwachsene Weg "
@@ -69,6 +71,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                 world.loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "im Wald",
+                    EAST,
                     this::getActionNameTo_WildnisHinterDemBrunnen,
                     mins(4),
                     du(SENTENCE, "verlässt", "den Brunnen und schlägst dich in die "

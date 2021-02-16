@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,6 +15,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -103,6 +105,12 @@ public class GebenAction<
     @Override
     public String getType() {
         return "actionGeben";
+    }
+
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
     }
 
     @Override

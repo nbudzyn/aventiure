@@ -32,6 +32,9 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -70,16 +73,17 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return ImmutableList.of(
                 con(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
-                        "Den Wald verlassen und in den Schlossgarten gehen",
+                        WEST, "Den Wald verlassen und in den Schlossgarten gehen",
                         mins(10),
                         this::getDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
                         "auf dem schmalen Pfad den Hügel hinauf",
-                        this::getActionNameTo_VorDemAltenTurm,
+                        NORTH, this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
                         this::getDescTo_VorDemAltenTurm),
                 con(ABZWEIG_IM_WALD,
                         "auf dem Weg in den Wald hinein",
+                        EAST,
                         "Tiefer in den Wald hineingehen",
                         mins(5),
                         du(PARAGRAPH, "gehst",

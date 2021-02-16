@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class SimpleConnectionCompFactory {
@@ -38,7 +39,7 @@ public class SimpleConnectionCompFactory {
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "in der Tür",
-                        "Die Hütte verlassen",
+                        SOUTH, "Die Hütte verlassen",
                         secs(15),
                         du("zwängst", "dich wieder durch die Tür nach draußen")
                                 .undWartest()
@@ -54,7 +55,7 @@ public class SimpleConnectionCompFactory {
                 world,
                 con(VOR_DER_HUETTE_IM_WALD,
                         "auf dem Weg",
-                        "Zur Vorderseite der Hütte gehen",
+                        SOUTH, "Zur Vorderseite der Hütte gehen",
                         secs(30),
                         du("kehrst", "zurück zur Vorderseite der Hütte")
                                 .undWartest()

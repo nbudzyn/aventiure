@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -11,6 +12,7 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -50,6 +52,9 @@ public abstract class AbstractScAction implements IPlayerAction {
      * Returns the name of the action as it is displayed to the player.
      */
     abstract public String getName();
+
+    @Nullable
+    public abstract CardinalDirection getCardinalDirection();
 
     /**
      * Führt die Aktion aus (inkl. Erzählung), lässt die entsprechende Zeit verstreichen.

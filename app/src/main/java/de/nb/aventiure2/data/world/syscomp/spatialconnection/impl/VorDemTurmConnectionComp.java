@@ -26,6 +26,8 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -67,12 +69,13 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
 
         res.add(con(VOR_DEM_ALTEN_TURM,
                 "auf der anderen Seite des Turms",
-                "Um den Turm herumgehen",
+                NORTH, "Um den Turm herumgehen",
                 secs(90),
                 this::getDescTo_VorDemTurm
         ));
         res.add(con(IM_WALD_NAHE_DEM_SCHLOSS,
                 "auf dem Pfad den Hügel hinab",
+                SOUTH,
                 "Den Pfad zurückgehen",
                 mins(18),
                 du(PARAGRAPH, "gehst",

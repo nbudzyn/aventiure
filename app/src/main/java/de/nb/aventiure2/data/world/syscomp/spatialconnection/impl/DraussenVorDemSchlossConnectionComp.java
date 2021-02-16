@@ -25,6 +25,9 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_BEGONNEN;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -61,15 +64,17 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
         return ImmutableList.of(
                 SpatialConnection.con(SCHLOSS_VORHALLE,
                         "auf der Treppe",
-                        "Das Schloss betreten",
+                        WEST, "Das Schloss betreten",
                         secs(90),
                         this::getDescTo_SchlossVorhalle),
                 SpatialConnection.conNichtSC(
                         ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         "zwischen den Buchsbaumhecken",
+                        NORTH,
                         secs(90)),
                 SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg",
+                        EAST,
                         "In den Wald gehen",
                         mins(10),
                         du("folgst",

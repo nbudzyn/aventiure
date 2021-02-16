@@ -22,6 +22,8 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -48,7 +50,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
         return ImmutableList.of(
                 con(ABZWEIG_IM_WALD,
                         "auf dem Weg",
-                        "Auf den Waldweg zurückkehren",
+                        SOUTH, "Auf den Waldweg zurückkehren",
                         mins(2),
                         du("gehst",
                                 "durch Farn und Gestrüpp zurück zum Waldweg")
@@ -58,6 +60,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                 ),
                 con(HUETTE_IM_WALD,
                         "in der Tür",
+                        NORTH,
                         "Die Hütte betreten",
                         secs(15),
                         du(SENTENCE, "schiebst", "die Tür zur Seite und "
@@ -96,7 +99,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                 //  ordentlich aufgeheizt" oder ähnlich
                 con(HINTER_DER_HUETTE,
                         "im Garten",
-                        this::getActionNameTo_HinterDerHuette,
+                        NORTH, this::getActionNameTo_HinterDerHuette,
                         secs(30),
                         neuerSatz("Ein paar Schritte um die Hütte herum und "
                                 + "du kommst in einen kleinen, völlig "

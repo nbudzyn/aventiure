@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -10,6 +11,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -70,6 +72,12 @@ public class RufenAction extends AbstractScAction {
     @Override
     public String getType() {
         return "actionRedenRufen";
+    }
+
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
     }
 
     @Override

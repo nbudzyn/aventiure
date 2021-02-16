@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -16,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -102,6 +104,12 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     public String getType() {
         return "actionHochwerfen";
+    }
+
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
     }
 
     @Override

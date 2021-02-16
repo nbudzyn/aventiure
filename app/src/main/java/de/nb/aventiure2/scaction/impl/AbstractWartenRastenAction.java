@@ -1,11 +1,14 @@
 package de.nb.aventiure2.scaction.impl;
 
+import androidx.annotation.Nullable;
+
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -30,6 +33,12 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
     @Override
     public String getType() {
         return "actionRastenWarten";
+    }
+
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return null;
     }
 
     boolean automatischesEinschlafen() {

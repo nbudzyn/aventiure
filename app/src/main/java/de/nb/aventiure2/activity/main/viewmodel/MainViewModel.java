@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -130,6 +131,12 @@ public class MainViewModel extends AndroidViewModel {
             @Override
             public String getActionType() {
                 return playerAction.getType();
+            }
+
+            @Nullable
+            @Override
+            public CardinalDirection getCardinalDirection() {
+                return playerAction.getCardinalDirection();
             }
 
             @Override

@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
@@ -69,7 +70,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
         res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "auf der Treppe",
-                this::getActionNameTo_DraussenVorDemSchloss,
+                EAST, this::getActionNameTo_DraussenVorDemSchloss,
                 secs(90),
                 this::getDescTo_DraussenVorDemSchloss));
 

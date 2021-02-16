@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import java.util.function.Supplier;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -42,21 +43,39 @@ public class SpatialConnectionData {
     @Nullable
     private final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider;
 
-    public static SpatialConnectionData conData(
-            final String wo,
-            final String actionDescription,
-            final AvTimeSpan standardDuration,
-            final AbstractDescription<?> newLocationDescription) {
-        return conData(wo, actionDescription, standardDuration,
-                newLocationDescription.timed(standardDuration));
-    }
+    /**
+     * Himmelrichtung der Bewegung. Kann {@code null}, selbst wenn der SC diese Bewengung
+     * durchführen kann (z.B. bei einer Bewegung nach oben oder unten).
+     */
+    @Nullable
+    private final CardinalDirection cardinalDirection;
 
     public static SpatialConnectionData conData(
             final String wo,
             final String actionDescription,
             final AvTimeSpan standardDuration,
+            final AbstractDescription<?> newLocationDescription) {
+        return conData(wo, null, actionDescription, standardDuration,
+                newLocationDescription);
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionDescription,
+            final AvTimeSpan standardDuration,
+            final AbstractDescription<?> newLocationDescription) {
+        return conData(wo, cardinalDirection, actionDescription, standardDuration,
+                newLocationDescription.timed(standardDuration));
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionDescription,
+            final AvTimeSpan standardDuration,
             final TimedDescription<?> newLocationDescription) {
-        return conData(wo, actionDescription, standardDuration,
+        return conData(wo, cardinalDirection, actionDescription, standardDuration,
                 (SCMoveTimedDescriptionProvider)
                         (isnewLocationKnown, lichtverhaeltnisseInNewLocation) ->
                                 newLocationDescription);
@@ -67,7 +86,16 @@ public class SpatialConnectionData {
             final String actionName,
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
-        return conData(wo, actionName, standardDuration,
+        return conData(wo, null, actionName, standardDuration, scMoveDescriptionProvider);
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final SCMoveDescriptionProvider scMoveDescriptionProvider) {
+        return conData(wo, cardinalDirection, actionName, standardDuration,
                 (Known k, Lichtverhaeltnisse l) ->
                         scMoveDescriptionProvider.getSCMoveDescription(k, l)
                                 .timed(standardDuration));
@@ -78,15 +106,27 @@ public class SpatialConnectionData {
             final String actionName,
             final AvTimeSpan standardDuration,
             final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
-        return conData(wo, () -> actionName, standardDuration, scMoveTimedDescriptionProvider);
+        return conData(wo, null, actionName, standardDuration,
+                scMoveTimedDescriptionProvider);
     }
 
     public static SpatialConnectionData conData(
             final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+        return conData(wo, cardinalDirection, () -> actionName, standardDuration,
+                scMoveTimedDescriptionProvider);
+    }
+
+    public static SpatialConnectionData conData(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
             final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             final SCMoveDescriptionProvider scMoveDescriptionProvider) {
-        return conData(wo, actionNameProvider, standardDuration,
+        return conData(wo, cardinalDirection, actionNameProvider, standardDuration,
                 (Known k, Lichtverhaeltnisse l) ->
                         scMoveDescriptionProvider.getSCMoveDescription(k, l)
                                 .timed(standardDuration));
@@ -99,23 +139,34 @@ public class SpatialConnectionData {
     static SpatialConnectionData conDataNichtSC(
             final String wo,
             final AvTimeSpan standardDuration) {
+        return conDataNichtSC(wo, null, standardDuration);
+    }
+
+    /**
+     * Erzeugt ein SpatialConnectionData, das der SC niemals benutzen kann. Damit können z.B.
+     * die NSCs "in der Ferne verschwinden" o.Ä.
+     */
+    static SpatialConnectionData conDataNichtSC(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final AvTimeSpan standardDuration) {
         return new SpatialConnectionData(
                 wo,
-                null,
+                cardinalDirection, null,
                 standardDuration,
                 null
         );
     }
 
-
     public static SpatialConnectionData conData(
             final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return new SpatialConnectionData(
                 wo,
-                actionNameProvider,
+                cardinalDirection, actionNameProvider,
                 standardDuration,
                 scMoveTimedDescriptionProvider
         );
@@ -123,6 +174,7 @@ public class SpatialConnectionData {
 
     private SpatialConnectionData(
             final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
@@ -136,6 +188,7 @@ public class SpatialConnectionData {
                 scMoveTimedDescriptionProvider);
 
         this.wo = wo;
+        this.cardinalDirection = cardinalDirection;
         this.actionNameProvider = actionNameProvider;
         this.standardDuration = standardDuration;
         this.scMoveTimedDescriptionProvider = scMoveTimedDescriptionProvider;
@@ -165,6 +218,15 @@ public class SpatialConnectionData {
     @Nullable
     SCMoveTimedDescriptionProvider getSCMoveTimedDescriptionProvider() {
         return scMoveTimedDescriptionProvider;
+    }
+
+    /**
+     * Die Himmelsrichtung der Bewegung. Kann nur {@code null}, sein wenn der SC diese
+     * Bewegung niemals durchführen kann.
+     */
+    @Nullable
+    public CardinalDirection getCardinalDirection() {
+        return cardinalDirection;
     }
 
     @FunctionalInterface

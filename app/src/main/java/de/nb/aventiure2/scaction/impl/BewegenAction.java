@@ -10,7 +10,6 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Contract;
 
 import java.util.List;
-import java.util.Objects;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -32,6 +31,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
@@ -211,10 +211,19 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return "actionBewegen";
     }
 
+    /**
+     * Die Himmelsrichtung der Bewegung.
+     */
+    @Nullable
+    @Override
+    public CardinalDirection getCardinalDirection() {
+        return spatialConnection.getCardinalDirection();
+    }
+
     @Override
     @NonNull
     public String getName() {
-        return Objects.requireNonNull(spatialConnection.getActionName());
+        return requireNonNull(spatialConnection.getActionName());
     }
 
     @Override
@@ -762,7 +771,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     TimedDescription<?> getStandardDescription(final Known newLocationKnown,
                                                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
-        return Objects.requireNonNull(spatialConnection.getSCMoveDescriptionProvider())
+        return requireNonNull(spatialConnection.getSCMoveDescriptionProvider())
                 .getSCMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
                 .multiplyTimeElapsedWith(calcSpeedFactor());
     }

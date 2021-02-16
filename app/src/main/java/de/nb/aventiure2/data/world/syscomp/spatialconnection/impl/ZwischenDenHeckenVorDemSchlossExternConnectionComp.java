@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.conNichtSC;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -48,6 +49,7 @@ public class ZwischenDenHeckenVorDemSchlossExternConnectionComp
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
         res.add(conNichtSC(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "zwischen Hecken und Beeten",
+                SOUTH,
                 secs(90)));
 
         return res.build();
