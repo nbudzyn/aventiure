@@ -444,8 +444,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         // Könnte leer sein
-        final ImmutableList<Satz> altEindruckSaetze =
-                feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph);
+        final ImmutableList<Satz> altEindruckSaetzeAnaphPersPron =
+                feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph.persPron());
 
         // Könnte ebenfalls leer sein
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAdvAngaben =
@@ -548,12 +548,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .beendet(PARAGRAPH));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.NUR_LEICHT) {
-            // FIXME "Hallo antwortet die junge Frau und die
-            //  junge Frau scheint überrascht, dich wiederzusehen" - wie kommt das?
             alt.addAll(altNeueSaetze(PARAGRAPH,
                     "„Hallo“, antwortet",
                     anaph.nomK(),
-                    altEindruckSaetze.stream()
+                    altEindruckSaetzeAnaphPersPron.stream()
                             .map(s -> s.mitAnschlusswort("und").altVerzweitsaetze())));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altNeueSaetze(
@@ -593,7 +591,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 alt.addAll(altNeueSaetze(
                         "„Oh, wie schön, dasss du wieder da bist“, antwortet",
                         anaph.nomK(), // autom. Phorik-Kandidat!
-                        altEindruckSaetze.stream()
+                        altEindruckSaetzeAnaphPersPron.stream()
                                 .map(s -> s.mitAnschlusswort("und").getSatzanschlussOhneSubjekt()))
                         .beendet(PARAGRAPH));
                 alt.add(neuerSatz("„Schön, dich wiederzusehen!“, freut",
@@ -621,7 +619,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "erwartet“, antwortet",
                         anaph.nomK(), // autom. Phorik-Kandidat
                         "dir",
-                        altEindruckSaetze.stream()
+                        altEindruckSaetzeAnaphPersPron.stream()
                                 .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard()))
                         .beendet(PARAGRAPH));
 

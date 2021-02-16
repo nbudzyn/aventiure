@@ -476,8 +476,6 @@ public class RapunzelReactionsComp
                         .collect(toList()))
                 .timed(secs(15)));
 
-        // Sie
-        // Sie
         alt.add(du(SENTENCE, "hast", anaph.akkK(),
                 "offenbar aus dem Bett geholt.",
                 anaph.persPron().nomK().capitalize(), // Sie

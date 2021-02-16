@@ -655,6 +655,7 @@ public class RapunzelsZauberinReactionsComp
 
         // FIXME Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
         //  heruntergelassen hat, davon aus, dass Rapunzel befreit wurde.
+        //  (Oder der SC wird zuvor enttarnt.)
 
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
