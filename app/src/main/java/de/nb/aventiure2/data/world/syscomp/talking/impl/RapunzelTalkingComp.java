@@ -206,6 +206,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::haareHerunterlassenBitte_ExitImmReEntry));
             case SINGEND:
                 // FALL-THROUGH
+            case PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN:
+                // FALL-THROUGH
+            case DO_START_HAARE_VOM_TURM_HERUNTERLASSEN:
+                // FALL-THROUGH
             case HAARE_VOM_TURM_HERUNTERGELASSEN:
                 return ImmutableList.of();
             case HAT_NACH_KUGEL_GEFRAGT:
@@ -1066,7 +1070,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 0.25f, FeelingIntensity.MERKLICH);
 
         setSchonBegruesstMitSC(true);
-        haareHerunterlassen();
+        rapunzelLaesstHaareZumAbstiegHerunter();
+
+        // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
+        //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
+        //  (kein Auswürfeln), aber simulierte Welt
         gespraechspartnerBeendetGespraech();
     }
 
@@ -1117,7 +1125,17 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
-        haareHerunterlassen();
+        rapunzelLaesstHaareZumAbstiegHerunter();
+
+        // FIXME Wenn der Spieler oben im Turm ist und Rapunzel ausreichend zugeneigt
+        //  und Zauberin unten vor dem Turm steht:
+        //  "Rapunzel schaut kurz aus dem Fenster, dann erschrickt sie: Du musst dich / Ihr
+        //  solltet euch besser verstecken. Die ALte kommt. / Unten steht die Alte
+        //  Kurze Zeit (eine Aktion?!) warten, dann Haare herunter.
+
+        // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
+        //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
+        //  (kein Auswürfeln), aber simulierte Welt
         gespraechspartnerBeendetGespraech();
     }
 
@@ -1147,16 +1165,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt);
 
         setSchonBegruesstMitSC(true);
-        haareHerunterlassen();
-        gespraechspartnerBeendetGespraech();
-    }
-
-    private void haareHerunterlassen() {
         rapunzelLaesstHaareZumAbstiegHerunter();
 
         // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
         //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
         //  (kein Auswürfeln), aber simulierte Welt
+        gespraechspartnerBeendetGespraech();
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunter() {
@@ -1221,7 +1235,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // Ggf. steigt die Zauberin als Reaktion daran herunter
     }
 
-    private static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
+    public static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
             final Nominalphrase rapunzelDesc) {
         return alt()
                 .add(satzanschluss(

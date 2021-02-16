@@ -46,8 +46,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
     public <GIVEN extends IDescribableGO & ILocatableGO>
     SCTakeAction<GIVEN> getAction(final GIVEN given) {
         if (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT)) {
-            stateComp.narrateAndSetState(
-                    NORMAL);
+            stateComp.narrateAndSetState(NORMAL);
         }
 
         if (given.is(GOLDENE_KUGEL)) {

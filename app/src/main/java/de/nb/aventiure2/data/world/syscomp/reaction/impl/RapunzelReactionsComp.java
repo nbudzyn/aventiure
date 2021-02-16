@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -33,6 +34,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -54,13 +56,16 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.DO_START_HAARE_VOM_TURM_HERUNTERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -81,7 +86,7 @@ import static java.util.stream.Collectors.toList;
 public class RapunzelReactionsComp
         extends AbstractDescribableReactionsComp
         implements IMovementReactions, IRufReactions,
-        IStateChangedReactions, ITimePassedReactions {
+        IStateChangedReactions, ITimePassedReactions, ISCActionDoneListenerComponent {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST,
@@ -180,8 +185,7 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_VorDemAltenTurm_Unauffaellig(final ILocationGO to) {
         if (to.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
-            stateComp.narrateAndSetState(
-                    NORMAL);
+            stateComp.narrateAndSetState(NORMAL);
             // Ab jetzt wird Rapunzel hin und wieder singen.
         }
     }
@@ -558,8 +562,7 @@ public class RapunzelReactionsComp
             n.narrateAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
         }
 
-        stateComp.narrateAndSetState(
-                NORMAL);
+        stateComp.narrateAndSetState(NORMAL);
     }
 
     @NonNull
@@ -689,15 +692,12 @@ public class RapunzelReactionsComp
                             "ihr Blick auf das Bett")
                             .timed(secs(20))
                             .phorikKandidat(F, RAPUNZEL)
-                    // Hier wäre "dann" nur sinnvoll, wenn Rapunzel etwas tut, nicht der SC
             );
 
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                     ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
 
-            // FIXME Hier ruft die Hexe sofort noch einmal - und Hexe und Rapunzel landen
-            //  in einer ewigen Rückkopplungsschleife (Anwendung hängt). Die Hexe sollte einen
-            //  Zusatndswechsel haben und nach dem Rufen (erst einmal) abwarten, ob sich was tut!
+            stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
 
             return;
         }
@@ -709,8 +709,7 @@ public class RapunzelReactionsComp
     public void onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
                                final Enum<?> newState) {
         if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
-            onZauberinStateChanged(
-                    (RapunzelsZauberinState) newState);
+            onZauberinStateChanged((RapunzelsZauberinState) newState);
             return;
         }
     }
@@ -733,6 +732,23 @@ public class RapunzelReactionsComp
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
+            // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und ergänzen)
+            //if (sc unter dem Bett){
+            //  "Du hörst wie ...";
+            //} else
+            if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+                n.narrateAlt(altNeueSaetze(
+                        altDannHaareFestbinden(getDescription(true)).stream()
+                                .flatMap(d -> d.altTextDescriptions().stream())
+                                .map(TextDescription::toSingleKonstituente)
+                ), secs(10));
+            }
+
+            stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
+            return;
+        }
+
         if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
                 endTime.isAfter(
                         stateComp.getStateDateTime().plus(
@@ -750,9 +766,7 @@ public class RapunzelReactionsComp
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
-        if (!stateComp.hasState(
-                NORMAL,
-                SINGEND)) {
+        if (!stateComp.hasState(NORMAL, SINGEND)) {
             return false;
         }
 
@@ -796,8 +810,7 @@ public class RapunzelReactionsComp
     }
 
     private void onTimePassed_RapunzelMoechteSingen() {
-        if (stateComp.hasState(
-                NORMAL)) {
+        if (stateComp.hasState(NORMAL)) {
             stateComp.narrateAndSetState(SINGEND);
             onTimePassed_moechteSingen_bislangStill();
             return;
@@ -879,8 +892,7 @@ public class RapunzelReactionsComp
 
     private void onTimePassed_RapunzelMoechteNichtSingen() {
         if (stateComp.hasState(SINGEND)) {
-            stateComp.narrateAndSetState(
-                    NORMAL);
+            stateComp.narrateAndSetState(NORMAL);
             onTimePassed_moechteNichtMehrSingen_bislangGesungen();
             return;
         }
@@ -923,6 +935,13 @@ public class RapunzelReactionsComp
         n.narrateAlt(alt, NO_TIME);
 
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+    }
+
+    @Override
+    public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
+        if (stateComp.hasState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            stateComp.narrateAndSetState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN);
+        }
     }
 
     @NonNull

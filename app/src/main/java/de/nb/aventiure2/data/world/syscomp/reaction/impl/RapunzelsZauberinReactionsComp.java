@@ -167,12 +167,6 @@ public class RapunzelsZauberinReactionsComp
             if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
-
-            // FIXME Wenn der Spieler oben im Turm ist
-            //  "Unten vor dem Turm steht eine..."?
-            //  Zumindest, wenn der Spieler aus dem Fenster schaut?!
-            //  Oder schaut vielleicht Rapunzel aus dem Fenster, bevor sie die
-            //  Haare herunterlässt?
             return;
         }
     }
