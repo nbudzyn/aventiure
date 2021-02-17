@@ -38,6 +38,10 @@ public enum Story {
     //  erfahren - zum Beispiel, wenn sie jemand anderen treffen.
     //  Darauf ändern Sie die Kommunikation zum SC.
 
+    // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
+    //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
+    //  (kein Auswürfeln), aber simulierte Welt
+
     FROSCHKOENIG(FroschkoenigStoryNode.class,
             (db, timeTaker, n, world) -> {
                 return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);

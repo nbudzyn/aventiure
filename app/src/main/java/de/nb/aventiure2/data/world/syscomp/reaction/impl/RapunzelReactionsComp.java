@@ -29,6 +29,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -339,10 +340,6 @@ public class RapunzelReactionsComp
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
         final Nominalphrase desc = getDescription();
 
-        // "ihre"
-        // "sie"
-        // "ihre"
-        // "sie"
         n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
                 "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem",
                 "Nachtschlaf geweckt.",
@@ -360,8 +357,7 @@ public class RapunzelReactionsComp
                 "vor dir in das dunkle Zimmer zurück")
                 .timed(secs(25)));
 
-        stateComp
-                .setState(NORMAL);
+        stateComp.setState(NORMAL);
         memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
@@ -452,7 +448,8 @@ public class RapunzelReactionsComp
             alt.addAll(altNeueSaetze("Am Fenster sitzt die junge Frau, schön als",
                     "du unter der Sonne noch keine gesehen hast.",
                     "Ihre Haare glänzen fein wie gesponnen Gold.",
-                    altReaktionSaetze.stream().flatMap(s -> s.altVerzweitsaetze().stream()))
+                    altReaktionSaetze.stream().flatMap(s -> s.altVerzweitsaetze().stream())
+                            .map(Konstituentenfolge::capitalize))
                     .timed(secs(30)));
         }
         n.narrateAlt(alt);
@@ -588,8 +585,6 @@ public class RapunzelReactionsComp
     altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
         final SubstantivischePhrase anaph = anaph(false);
 
-        // "die junge Frau"
-        // "ihre"
         return ImmutableList.of(
                 neuerSatz("Jetzt zieht",
                         anaph.nomK(), // "die junge Frau"
@@ -678,21 +673,10 @@ public class RapunzelReactionsComp
         }
 
         // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
-        if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM)) {
-            n.narrateAlt(
-                    neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen",
-                            "Frau. „Du musst dich verstecken! Sie",
-                            "ist eine mächtige Zauberin!“")
-                            .timed(secs(10)),
-                    neuerSatz("„O nein, die Alte kommt schon wieder!“, sagt",
-                            "die junge Frau entsetzt. „Versteck dich",
-                            "schnell!“")
-                            .timed(secs(15)),
-                    neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert",
-                            "ihr Blick auf das Bett")
-                            .timed(secs(20))
-                            .phorikKandidat(F, RAPUNZEL)
-            );
+        if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM) &&
+                feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                        >= -FeelingIntensity.MERKLICH) {
+            talkingComp.narrateOWehZauberinKommt();
 
             loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                     ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
@@ -725,13 +709,53 @@ public class RapunzelReactionsComp
         if (loadZauberin().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 !stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            talkingComp.rapunzelLaesstHaareZumAbstiegHerunter();
+            talkingComp.rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
             return;
         }
     }
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        // FIXME Bett, ähnlich "unter den Bäumen"
+        //  "Du kriechst unter das Bett. Es ist eng und staubig"
+        //  - Idee: "Du schaust um dich und dein Blick fällt auf das Bett"
+        //  SC kriecht unter das Bett. 
+
+        // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
+
+        // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
+        //  einander nichts zu sagen."
+        //  - Die ZAUBERIN erzählt von ihren täglichen Verrichtungen und RAPUNZEL hört
+        //    artig zu.
+        //  - Die Zauberin begrüßt RAPUNZEL, dann ist sie auf einmal still.
+        //    "Wonach riecht es hier?" fragt die Zauberin mit scharfer Stimme
+        //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt sich
+        //    vor
+        //    das Bett. Dir pocht das Herz"
+        //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
+        //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
+        // - "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
+        //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
+
+        // FIXME Alle Verwendungen von OBEN prüfen, ggf. anders für UNTER DEM BETT
+        //  Idee: Rapunzel kann nicht schauen und spricht nicht
+        //   mit SC, der unter dem Bett liegt. Außer "willst du nicht wieder rauskommen??"
+        //   Danach... Rapunzel schaut...
+        //   "Was sollte jetzt das?"
+
+        // FIXME Reaktionen der Zauberin auf BEWEGUNG UNTER DAS Bett und UNTER DEM BETT HERVOR
+
+        // FIXME Reaktionen von Rapunzel bei BEWEGUNG UNTER DAS Bett und UNTER DEM BETT HERVOR
+        //  unter-Bett erhöht ggf. Abneigung
+
+        // FIXME Alle Reaktionen der Zauberin, wenn SC unter dem Bett ist
+        //  (wird evtl. bemerkt)
+
+        // FIXME Alle Reaktionen von Rapunzel, wenn SC unter dem Bett ist
+
+        // FIXME Rapunzel räumt Kugel o.Ä. automatisch unter das Bett, wenn
+        //  Zauberin kommt
+
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und ergänzen)
             //if (sc unter dem Bett){

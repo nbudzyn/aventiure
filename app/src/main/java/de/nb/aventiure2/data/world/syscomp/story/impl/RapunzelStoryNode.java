@@ -66,36 +66,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN);
-
-    // FIXME Wenn Zauberin kommt: "Du kriechst unter das Bett. Es ist eng und staubig"
-    //  - Idee: Das Bett eraufbauen / Drunterkriechen erst ermöglichen, wenn Zauberin kommt
-    //    ("versteck dich..." Du schaust um dich und dein Blick fällt auf das Bett")
-    //  - Oder: unter-Bett ist immer zugänglich, erhöht Abneigung.
-    //  SC kriecht unter das Bett. Achtung: Rapunzel kann nicht schauen und spricht nicht
-    //   mit SC, der unter dem Bett liegt. Außer "willst du nicht wieder rauskommen??"
-    //   Danach... Rapunzel schaut...
-    //   "Was sollte jetzt das?"
-
-    // FIXME "Vergiss deine Kugel / ... nicht (collective) ruft sie dir noch nach, aber
-    //  da bist du schon unten / stehst du schon vor...
-
-    // FIXME Vor dem Absteigen: Prüfen ob Zauberin da ist?
-
-    // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
-    //  einander nichts zu sagen."
-    //  - Die ZAUBERIN erzählt von ihren täglichen Verrichtungen und RAPUNZEL hört
-    //    artig zu.
-    //  - Die Zauberin begrüßt RAPUNZEL, dann ist sie auf einmal still.
-    //    "Wonach riecht es hier?" fragt die Zauberin mit scharfer Stimme
-    //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt sich vor
-    //    das Bett. Dir pocht das Herz"
-    //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
-    //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
-
-    // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
-    //  "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
-    //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
-
+    
     // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)

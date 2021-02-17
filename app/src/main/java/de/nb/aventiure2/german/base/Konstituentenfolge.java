@@ -19,6 +19,8 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.satz.Satz;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -149,7 +151,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                 // Alternativen!
                 alternativePartKonstituentenfolgen =
                         ((Stream<?>) part)
-                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
                 // Früher stand hier dies:
                 // alternativePartKonstituentenfolgen =
@@ -158,14 +160,18 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                 // Alternativen!
                 alternativePartKonstituentenfolgen =
                         Stream.of((Object[]) part)
-                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
             } else if (part instanceof Collection<?>) {
                 // Alternativen!
                 alternativePartKonstituentenfolgen =
                         ((Collection<?>) part).stream()
-                                .map(Konstituentenfolge::joinToNullKonstituentenfolge)
+                                .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
+            } else if (part instanceof Satz) {
+                // Alternativen!
+                alternativePartKonstituentenfolgen =
+                        ((Satz) part).altVerzweitsaetze();
             } else if (part instanceof Konstituentenfolge) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(

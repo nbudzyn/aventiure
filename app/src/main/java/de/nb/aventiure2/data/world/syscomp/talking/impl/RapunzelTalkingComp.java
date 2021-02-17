@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -13,6 +15,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
@@ -48,6 +51,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.GEFRAGT_NACH_RAPUNZELN;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT;
@@ -556,17 +560,19 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet",
                     anaph.nomK(),
                     altEindruckSaetzeAnaphPersPron.stream()
-                            .map(s -> s.mitAnschlusswort("und").altVerzweitsaetze())));
+                            .map(s -> s.mitAnschlusswort("und"))));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altNeueSaetze(
                         "„Ach, ihr seid es wieder.“",
                         altReaktionSaetze.stream()
-                                .flatMap(s -> s.altVerzweitsaetze().stream()))
+                                .flatMap(s -> s.altVerzweitsaetze().stream())
+                                .map(Konstituentenfolge::capitalize))
                         .beendet(PARAGRAPH));
                 alt.addAll(altNeueSaetze(
                         "„Oh, ihr seid es wieder.“",
                         altReaktionSaetze.stream()
-                                .flatMap(s -> s.altVerzweitsaetze().stream()))
+                                .flatMap(s -> s.altVerzweitsaetze().stream())
+                                .map(Konstituentenfolge::capitalize))
                         .beendet(PARAGRAPH));
                 alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder ",
                         "vorbeischaut! Willkommen.“ –")
@@ -1070,11 +1076,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 0.25f, FeelingIntensity.MERKLICH);
 
         setSchonBegruesstMitSC(true);
-        rapunzelLaesstHaareZumAbstiegHerunter();
+        rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
-        // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
-        //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
-        //  (kein Auswürfeln), aber simulierte Welt
         gespraechspartnerBeendetGespraech();
     }
 
@@ -1125,13 +1128,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
-        rapunzelLaesstHaareZumAbstiegHerunter();
-
-        // FIXME Wenn der Spieler oben im Turm ist und Rapunzel ausreichend zugeneigt
-        //  und Zauberin unten vor dem Turm steht:
-        //  "Rapunzel schaut kurz aus dem Fenster, dann erschrickt sie: Du musst dich / Ihr
-        //  solltet euch besser verstecken. Die ALte kommt. / Unten steht die Alte
-        //  Kurze Zeit (eine Aktion?!) warten, dann Haare herunter.
+        rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
         // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
         //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
@@ -1165,7 +1162,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt);
 
         setSchonBegruesstMitSC(true);
-        rapunzelLaesstHaareZumAbstiegHerunter();
+        rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
         // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
         //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
@@ -1173,7 +1170,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         gespraechspartnerBeendetGespraech();
     }
 
-    public void rapunzelLaesstHaareZumAbstiegHerunter() {
+    public void rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken() {
         final int zuneigungZumSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
 
@@ -1192,7 +1189,35 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .dann());
             }
             world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
-        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
+                && feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= -FeelingIntensity.MERKLICH) {
+            if (loadZauberin().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+                final Nominalphrase rapunzelDesc = getDescription(true);
+
+                final ImmutableList<Satz> altReaktionSaetze
+                        = feelingsComp.altReaktionWennTargetGehenMoechteSaetze(rapunzelDesc);
+
+                n.narrateAlt(altNeueSaetze(
+                        altReaktionSaetze,
+                        ImmutableList.of(
+                                joinToAltKonstituentenfolgen(
+                                        rapunzelDesc.persPron().nomK().capitalize(),
+                                        ImmutableList.of(
+                                                "schaut noch einmal vorsichtig aus dem Turmfenster",
+                                                "blickt schnell noch einmal aus dem Fenster",
+                                                "wirft noch einen Blick aus dem Fenster",
+                                                "wirft noch einen Blick aus dem Turmfenster")),
+                                "Noch ein kurzer Blick aus dem Fenster…")),
+                        secs(10));
+
+                narrateOWehZauberinKommt();
+
+                stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
+
+                return;
+            }
+
             final Nominalphrase rapunzelDesc = getDescription(true);
 
             final AltDescriptionsBuilder alt = alt();
@@ -1204,7 +1229,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     altReaktionSaetze.stream()
                             .flatMap(s -> s.altVerzweitsaetze().stream()),
                     ",",
-                    altDannHaareFestbinden(rapunzelDesc).stream()
+                    altDannHaareFestbinden(rapunzelDesc.persPron()).stream()
                             .flatMap(d -> d.altTextDescriptions().stream())
                             .map(TextDescription::toSingleKonstituente)
             ));
@@ -1235,8 +1260,36 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         // Ggf. steigt die Zauberin als Reaktion daran herunter
     }
 
+    @NonNull
+    private ILocatableGO loadZauberin() {
+        return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+    }
+
+    public void narrateOWehZauberinKommt() {
+        final int zuneigung = feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+
+        n.narrateAlt(
+                neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen",
+                        "Frau. „",
+                        duzen(zuneigung) ? "Du musst dich" : "Ihr müsst euch",
+                        "verstecken! Sie",
+                        "ist eine mächtige Zauberin!“")
+                        .timed(secs(10)),
+                neuerSatz("„O nein, die Alte kommt schon wieder!“, sagt",
+                        "die junge Frau entsetzt. „",
+                        duzen(zuneigung) ? "Versteck dich" : "Versteckt euch",
+                        "schnell!“")
+                        .timed(secs(15)),
+                neuerSatz("Alarmiert schaut die junge Frau dich an. Dann wandert",
+                        "ihr Blick auf das Bett")
+                        .timed(secs(20))
+                        .phorikKandidat(F, RAPUNZEL)
+        );
+    }
+
     public static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
-            final Nominalphrase rapunzelDesc) {
+            final SubstantivischePhrase rapunzelDesc) {
         return alt()
                 .add(satzanschluss(
                         "dann bindet",

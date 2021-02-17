@@ -45,11 +45,6 @@ public class MainActivity extends AppCompatActivity {
     //  - Rollenspiel
     //  - Nostalgie
 
-    // TODO Symbole für Bewegungsrichtungen (wie auf einer Karte) links am Rand der Buttons
-    //  Wie auf einer Karte von oben... Oder
-
-    // IDEA Weitere Symbole für grobe Typen von Aktionen (Gegenstände / Reden...)
-
     private static final Logger LOGGER = Logger.getLogger();
 
     private MainActivityBinding binding;
