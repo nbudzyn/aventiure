@@ -326,14 +326,13 @@ public enum RapunzelStoryNode implements IStoryNode {
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            alt.add(du(PARAGRAPH, "wirst", "bestimmt noch den Turm hinaufkommen!")
-                    .mitVorfeldSatzglied("bestimmt")
-                    .beendet(PARAGRAPH));
+            alt.add(du(PARAGRAPH, "wirst",
+                    "bestimmt noch den Turm hinaufkommen!", PARAGRAPH)
+                    .mitVorfeldSatzglied("bestimmt"));
             alt.add(du(PARAGRAPH, "wirst",
                     "bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
-                            + "hineinkommt?").mitVorfeldSatzglied("bestimmt")
-                    .beendet(PARAGRAPH));
+                            + "hineinkommt?", PARAGRAPH).mitVorfeldSatzglied("bestimmt"));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -436,9 +435,8 @@ public enum RapunzelStoryNode implements IStoryNode {
         } else {
             alt.add(du(PARAGRAPH, "musst",
                     "wieder an den alten Turm denken… wenn dort jemand wohnt, "
-                            + "wie kommt der bloß hinein oder heraus?")
-                    .mitVorfeldSatzglied("wieder")
-                    .beendet(PARAGRAPH));
+                            + "wie kommt der bloß hinein oder heraus?", PARAGRAPH)
+                    .mitVorfeldSatzglied("wieder"));
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
                             + "Wer wird darinnen wohl wohnen?"));

@@ -15,7 +15,6 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -43,36 +42,30 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(anaph.nomK(),
-                "kommt daher")
-                .beendet(PARAGRAPH));
+                "kommt daher", PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
             alt.add(neuerSatz(anaph.nomK(),
                     "kommt",
                     spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
-                    "daher")
-                    .beendet(PARAGRAPH));
+                    "daher", PARAGRAPH));
         }
 
         if (!n.isThema(gameObjectId)) {
             if (spatialConnectionMovingGO != null) {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
-                        "kommt", desc.nomK(), "gegangen")
-                        .beendet(PARAGRAPH));
+                        "kommt", desc.nomK(), "gegangen", PARAGRAPH));
             }
 
-            alt.add(neuerSatz("Es kommt dir", desc.nomK(), "entgegen")
-                    .beendet(PARAGRAPH));
-            alt.add(neuerSatz(PARAGRAPH, "Dir kommt", desc.nomK(), "entgegen")
-                    .beendet(PARAGRAPH));
+            alt.add(neuerSatz("Es kommt dir", desc.nomK(), "entgegen", PARAGRAPH));
+            alt.add(neuerSatz(PARAGRAPH, "Dir kommt", desc.nomK(), "entgegen", PARAGRAPH));
         }
 
         if (world.isOrHasRecursiveLocation(movingGOFrom, IM_WALD_NAHE_DEM_SCHLOSS) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz("Den Pfad herauf kommt",
-                        desc.nomK())
-                        .beendet(SENTENCE));
+                        desc.nomK()));
             }
 
             n.narrateAlt(alt, NO_TIME);
@@ -85,8 +78,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt dir", desc.nomK(), "entgegen")
-                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                        .beendet(SENTENCE));
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN));
             }
 
             n.narrateAlt(alt, NO_TIME);
@@ -100,8 +92,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             if (!n.isThema(gameObjectId)) {
                 alt.add(neuerSatz(PARAGRAPH,
                         "Von dem Pfad her kommt", desc.nomK())
-                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN)
-                        .beendet(SENTENCE));
+                        .phorikKandidat(desc, RAPUNZELS_ZAUBERIN));
             }
 
             n.narrateAlt(alt, NO_TIME);

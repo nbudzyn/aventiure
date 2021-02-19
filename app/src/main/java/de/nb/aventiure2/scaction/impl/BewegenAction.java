@@ -37,7 +37,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -678,7 +677,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private void narrateLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
+            if (n.paragraphHasDefinitelyNotEnded() && n.dann()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
                 final TextDescription satzEvtlMitDann = timedDescription.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")

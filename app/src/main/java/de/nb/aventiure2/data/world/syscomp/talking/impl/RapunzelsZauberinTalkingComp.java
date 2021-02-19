@@ -221,24 +221,20 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
             alt.add(
                     neuerSatz("„Ihr habt es wohl eilig?“ – „So ist es“, antwortet",
                             anaph.persPron().nomK(),
-                            "dir")
-                            .beendet(PARAGRAPH)
+                            "dir", PARAGRAPH)
             );
         } else {
             alt.add(
                     neuerSatz("„Wohin seid ihr auf dem Weg?“ – „Das ist meine",
                             "Sache!“, antwortet",
-                            anaph.nomK())
-                            .beendet(PARAGRAPH),
+                            anaph.nomK(), PARAGRAPH),
                     neuerSatz("„Wohin des Wegs?“ – „Was geht es dich an?“, ist",
                             anaph.possArt().vor(F).nomStr(), // "ihre"
-                            "abweisende Antwort")
-                            .beendet(PARAGRAPH),
+                            "abweisende Antwort", PARAGRAPH),
                     neuerSatz("„Wohin geht es denn heute?“ – „Das geht dich überhaupt",
                             "nichts an!“, gibt",
                             anaph.nomK(),
-                            "pampig zurück")
-                            .beendet(PARAGRAPH)
+                            "pampig zurück", PARAGRAPH)
             );
         }
 

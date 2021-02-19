@@ -181,9 +181,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     "den schmalen Pfad, der sich lange durch",
                     "den Wald aufwärts windet. Ein Hase kreuzt den Weg",
                     (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : null),
-                    ". Ganz am Ende – auf der Hügelkuppe – kommst du an einen alten Turm")
-                    .timed(mins(25))
-                    .beendet(PARAGRAPH);
+                    ". Ganz am Ende – auf der Hügelkuppe – kommst du an einen alten Turm",
+                    PARAGRAPH)
+                    .timed(mins(25));
         }
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
             return neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
@@ -191,9 +191,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "den nächtlichen Wald aufwärts windet. "
                     + "Du erschrickst, als eine Nachteule laut „uhu“ schreit, "
                     + "auch, als es laut neben dir im Unterholz raschelt. "
-                    + "Endlich endet der Pfad an einen alten Turm")
-                    .timed(mins(40))
-                    .beendet(PARAGRAPH);
+                    + "Endlich endet der Pfad an einen alten Turm", PARAGRAPH)
+                    .timed(mins(40));
         }
         if (newLocationKnown == KNOWN_FROM_DARKNESS
                 && lichtverhaeltnisse == HELL) {

@@ -28,7 +28,6 @@ import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialConnectionComp {
@@ -86,7 +85,6 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
         return du("suchst",
                 "dir einen Weg zurück. Kaum am Brunnen, musst du "
                         + "wieder an den Verlust denken. Du wirst traurig").timed(mins(3))
-                .beendet(SENTENCE)
                 .dann();
     }
 

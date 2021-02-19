@@ -161,9 +161,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             alt.add(du(PARAGRAPH, "fühlst",
-                    "dich von der goldenen Kugel magisch angezogen")
-                    .mitVorfeldSatzglied("von der goldenen Kugel")
-                    .beendet(PARAGRAPH));
+                    "dich von der goldenen Kugel magisch angezogen", PARAGRAPH)
+                    .mitVorfeldSatzglied("von der goldenen Kugel"));
         } else {
             alt.add(paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
                     + "Kopf: Hättest du vielleicht die goldene Kugel mitnehmen sollen?"));
@@ -173,17 +172,15 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
             alt.add(du(PARAGRAPH, "musst",
                     "auf einmal wieder an die goldene Kugel denken, die dich im",
-                    "Schloss so angelacht hat")
-                    .mitVorfeldSatzglied("auf einmal")
-                    .beendet(PARAGRAPH));
+                    "Schloss so angelacht hat", PARAGRAPH)
+                    .mitVorfeldSatzglied("auf einmal"));
 
             alt.add(du(PARAGRAPH,
                     "musst",
                     "spontan denken: Bei den reichen Leuten liegen oft so",
                     "viele Herrlichkeiten ungenutzt herum… – wie kommst du jetzt",
-                    "bloß darauf?")
-                    .mitVorfeldSatzglied("spontan")
-                    .beendet(PARAGRAPH));
+                    "bloß darauf?", PARAGRAPH)
+                    .mitVorfeldSatzglied("spontan"));
 
             alt.add(paragraph("Deine Gedanken schweifen ab und du musst an die goldene Kugel "
                     + "denken, die du im Schloss gelassen hast. Warum eigentlich?"));
@@ -227,8 +224,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "
-                            + "zu spielen")
-                    .beendet(PARAGRAPH));
+                            + "zu spielen", PARAGRAPH));
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
                 if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                     alt.addAll(altNachtsSchlafen(world));
@@ -327,8 +323,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(du(PARAGRAPH,
                 "willst",
-                "auch sehen, was vor dem Schloss geschieht!")
-                .beendet(PARAGRAPH));
+                "auch sehen, was vor dem Schloss geschieht!", PARAGRAPH));
 
         n.narrateAlt(alt, NO_TIME);
     }
@@ -341,13 +336,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         if (world.loadSC().locationComp().hasRecursiveLocation(HUETTE_IM_WALD)) {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
                 alt.add(du(PARAGRAPH, "wirst",
-                        "ausgeschlafen mehr ausrichten können")
-                        .mitVorfeldSatzglied("ausgeschlafen")
-                        .beendet(PARAGRAPH));
+                        "ausgeschlafen mehr ausrichten können", PARAGRAPH)
+                        .mitVorfeldSatzglied("ausgeschlafen"));
             } else {
                 alt.add(du(PARAGRAPH,
-                        "bist", "vom Tag noch ganz aufgedreht")
-                        .beendet(PARAGRAPH));
+                        "bist", "vom Tag noch ganz aufgedreht", PARAGRAPH));
             }
         } else {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {

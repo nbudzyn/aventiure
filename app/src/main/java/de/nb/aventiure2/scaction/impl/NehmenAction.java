@@ -285,18 +285,16 @@ public class NehmenAction
                                                     anaph.possArt().vor(NumerusGenus.N).nomStr()),
                                             "gedämpftes Quaken könnte",
                                             "wohlig sein oder",
-                                            "genauso gut vorwurfsvoll")
-                                            .timed(secs(10))
-                                            .beendet(PARAGRAPH),
+                                            "genauso gut vorwurfsvoll", PARAGRAPH)
+                                            .timed(secs(10)),
                                     du("versenkst", anaph.akkK(), // "ihn"
                                             "tief in deine Tasche. Du",
                                             "versuchst, deine Hand an der",
                                             "Kleidung zu reinigen, aber der",
                                             "Schleim verteilt sich nur",
-                                            "überall – igitt!")
+                                            "überall – igitt!", PARAGRAPH)
                                             .mitVorfeldSatzglied("tief in deine Tasche")
-                                            .timed(secs(10))
-                                            .beendet(PARAGRAPH),
+                                            .timed(secs(10)),
                                     du("packst",
                                             anaph.akkK(), // "ihn"
                                             "in deine Tasche.",

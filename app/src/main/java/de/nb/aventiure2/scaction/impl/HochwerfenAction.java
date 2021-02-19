@@ -252,11 +252,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         "sofort in den Brunnen:",
                         "Platsch! – weg",
                         SeinUtil.istSind(objectDesc.getNumerusGenus()),
-                        objectDesc.persPron().akkK())
+                        objectDesc.persPron().akkK(), PARAGRAPH)
                         .mitVorfeldSatzglied("nur ein einziges Mal")
                         .timed(secs(10))
-                        .dann(!n.dann())
-                        .beendet(PARAGRAPH));
+                        .dann(!n.dann()));
 
         object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
     }
@@ -293,9 +292,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     world.getDescription(object, true).nomK(),
                     "verschwindet, und der Brunnen ist tief, so tief, dass",
                     "man keinen Grund sieht",
-                    dunkelheitNachsatz).mitVorfeldSatzglied("noch einmal")
-                    .timed(secs(10))
-                    .beendet(PARAGRAPH));
+                    dunkelheitNachsatz, PARAGRAPH).mitVorfeldSatzglied("noch einmal")
+                    .timed(secs(10)));
 
             sc.feelingsComp().requestMoodMax(UNTROESTLICH);
 

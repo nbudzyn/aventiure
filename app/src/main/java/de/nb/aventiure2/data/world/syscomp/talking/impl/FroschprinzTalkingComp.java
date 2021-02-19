@@ -310,9 +310,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getDescription(true).nomK(),
                 ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich",
                 getAkkShortOrPersPron(objectsInDenBrunnenGefallen).akkK(),
-                "wieder heraufhole?“")
-                .timed(secs(15))
-                .beendet(PARAGRAPH));
+                "wieder heraufhole?“", PARAGRAPH)
+                .timed(secs(15)));
 
         setSchonBegruesstMitSC(true);
         stateComp.narrateAndSetState(HAT_NACH_BELOHNUNG_GEFRAGT);
@@ -353,9 +352,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 // die goldene Kugel / die Dinge
                 world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
                         .akkK(),
-                "wieder heraufholen.“")
-                .timed(secs(15))
-                .beendet(PARAGRAPH));
+                "wieder heraufholen.“", PARAGRAPH)
+                .timed(secs(15)));
 
         setSchonBegruesstMitSC(true);
         stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
@@ -400,9 +398,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "hinuntersteigen und dir",
                 // die goldene Kugel / die Dinge
                 world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkK(),
-                " wieder herauf holen.“")
-                .timed(secs(15))
-                .beendet(PARAGRAPH));
+                " wieder herauf holen.“", PARAGRAPH)
+                .timed(secs(15)));
 
         stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
     }
@@ -546,8 +543,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .undWartest(),
                 neuerSatz("„Wenn ich darüber nachdenke… – nein!“"),
                 neuerSatz("„Am Ende willst du noch in meinem Bettchen schlafen! Schäm dich, "
-                        + "Frosch!“")
-                        .beendet(PARAGRAPH));
+                        + "Frosch!“", PARAGRAPH));
 
         setSchonBegruesstMitSC(true);
         gespraechspartnerBeendetGespraech();
@@ -603,9 +599,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschReagiertNicht() {
-        n.narrate(neuerSatz("Der Frosch reagiert nicht")
-                .timed(secs(3))
-                .beendet(PARAGRAPH));
+        n.narrate(neuerSatz("Der Frosch reagiert nicht", PARAGRAPH)
+                .timed(secs(3)));
 
         talkerBeendetGespraech();
     }
@@ -623,17 +618,15 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
                 getDescription().nomK(),
-                "schon zuvor: „Wir sehen uns noch!“").beendet(PARAGRAPH),
+                "schon zuvor: „Wir sehen uns noch!“", PARAGRAPH),
                 neuerSatz("„Und jetzt, Frosch?“ –",
-                        "„Du weißt, was du versprochen hast“, gibt er zurück"
-                ).beendet(PARAGRAPH));
+                        "„Du weißt, was du versprochen hast“, gibt er zurück", PARAGRAPH));
         if (!immediateReEntry) {
             alt.add(du("sprichst",
                     getDescription(true).akkK(),
                     // FIXME Überall nach "Wetter", "heiß"... suchen und zentralisieren
                     "an: „Wie läuft's, Frosch? Schönes Wetter heut.“",
-                    "„Vergiss dein Versprechen nicht“, sagt er nur")
-                    .beendet(PARAGRAPH));
+                    "„Vergiss dein Versprechen nicht“, sagt er nur", PARAGRAPH));
         }
 
         n.narrateAlt(alt, secs(15));
@@ -656,8 +649,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         "ein bisschen herum und faselst etwas von",
                         "hygienischen Gründen.",
                         desc.nomK().capitalize(),
-                        " schaut dich nur… traurig? verächtlich?… an")
-                        .timed(secs(15)).beendet(PARAGRAPH));
+                        " schaut dich nur… traurig? verächtlich?… an", PARAGRAPH)
+                        .timed(secs(15)));
 
         setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();

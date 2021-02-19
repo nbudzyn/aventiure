@@ -208,8 +208,8 @@ public class EssenAction extends AbstractScAction {
 
         n.narrateAlt(mins(10),
                 du(PARAGRAPH,
-                        "füllst", "dir von dem Eintopf ein und langst kräftig zu")
-                        .beendet(PARAGRAPH),
+                        "füllst", "dir von dem Eintopf ein und langst",
+                        "kräftig zu", PARAGRAPH),
                 du(PARAGRAPH, "nimmst", "dir eine gute Kelle von dem Eintopf und isst")
                         .dann(),
                 du(PARAGRAPH, "nimmst", "dir vom Eintopf und isst, als wenn du vier Wochen "
@@ -224,8 +224,8 @@ public class EssenAction extends AbstractScAction {
                         .komma()
                         .undWartest()
                         .dann(),
-                du(PARAGRAPH, "bedienst", "dich am Eintopf und löffelst los")
-                        .beendet(PARAGRAPH)
+                du(PARAGRAPH, "bedienst", "dich am Eintopf und löffelst los",
+                        PARAGRAPH)
                         .dann(),
                 du(PARAGRAPH, "isst", "vom Eintopf und stillst deinen Hunger")
                         .dann()

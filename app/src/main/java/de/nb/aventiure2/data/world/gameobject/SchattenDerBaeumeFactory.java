@@ -31,7 +31,6 @@ import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class SchattenDerBaeumeFactory {
@@ -107,7 +106,6 @@ class SchattenDerBaeumeFactory {
                     .timed(mins(5))
                     .withCounterIdIncrementedIfTextIsNarrated(
                             DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME)
-                    .beendet(SENTENCE)
                     .dann();
         }
 
@@ -160,7 +158,6 @@ class SchattenDerBaeumeFactory {
 
         return du(PARAGRAPH, "erhebst",
                 "dich wieder und trittst aus dem Schatten der Bäume hervor")
-                .beendet(SENTENCE)
                 .dann();
     }
 }

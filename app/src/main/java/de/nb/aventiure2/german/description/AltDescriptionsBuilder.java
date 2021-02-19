@@ -48,7 +48,7 @@ public class AltDescriptionsBuilder {
     @Nonnull
     @CheckReturnValue
     public static AltDescriptionsBuilder altParagraphs(final Object... parts) {
-        return altNeueSaetze(PARAGRAPH, parts).beendet(PARAGRAPH);
+        return altNeueSaetze(PARAGRAPH, DescriptionBuilder.appendObject(parts, PARAGRAPH));
     }
 
     @Nonnull
@@ -198,11 +198,7 @@ public class AltDescriptionsBuilder {
     public AltDescriptionsBuilder dann() {
         return map(AbstractDescription::dann);
     }
-
-    public AltDescriptionsBuilder beendet(final StructuralElement structuralElement) {
-        return map(d -> d.beendet(structuralElement));
-    }
-
+    
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!

@@ -184,8 +184,8 @@ public class TageszeitReactionsComp
                 return;
             case MORGENS:
                 n.narrateAlt(AvTimeSpan.NO_TIME,
-                        neuerSatz(PARAGRAPH, "Unterdessen hat der neue Tag begonnen")
-                                .beendet(PARAGRAPH),
+                        neuerSatz(PARAGRAPH, "Unterdessen hat der neue Tag begonnen",
+                                PARAGRAPH),
                         neuerSatz(PARAGRAPH, "Es ist schon der nächste Morgen"),
                         neuerSatz(PARAGRAPH, "Die Nacht ist vorbei und es wird schon "
                                 + "wieder hell"),
@@ -218,8 +218,7 @@ public class TageszeitReactionsComp
                 return;
             case MORGENS:
                 n.narrateAlt(AvTimeSpan.NO_TIME,
-                        neuerSatz("Unterdessen hat der neue Tag begonnen")
-                                .beendet(PARAGRAPH),
+                        neuerSatz("Unterdessen hat der neue Tag begonnen", PARAGRAPH),
                         neuerSatz("Es ist schon der nächste Morgen"),
                         neuerSatz("Die Nacht ist vorbei und es wird schon "
                                 + "wieder hell"),

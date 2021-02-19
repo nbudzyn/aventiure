@@ -61,7 +61,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -410,8 +409,9 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             final Nominalphrase desc = getDescription();
             n.narrate(
-                    du("siehst", ", wie", desc.nomK(), "an den Haaren herabsteigt")
-                            .timed(mins(1)).komma().beendet(SENTENCE));
+                    du("siehst", ", wie", desc.nomK(),
+                            "an den Haaren herabsteigt")
+                            .timed(mins(1)).komma());
 
             if (!loadSC().locationComp().hasRecursiveLocation(
                     VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)

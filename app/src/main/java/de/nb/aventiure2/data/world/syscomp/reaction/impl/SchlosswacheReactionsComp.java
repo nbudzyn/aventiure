@@ -151,17 +151,14 @@ public class SchlosswacheReactionsComp
                         + schlossVerlassenWohinDescription(
                         raumAusDemDerSCDasSchlossBetretenHat)
                         // "in den Sonnenschein"
-                        + " hinaus")
-                        .beendet(PARAGRAPH),
+                        + " hinaus", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
                                 + "„Als ob hier ein jeder "
                                 + "nach Belieben hereinspazieren könnt. Das würde dem König so "
                                 + "passen. Und "
                                 + "seinem Kerkermeister auch.“ "
-                                + "Du bleibst besser draußen")
-                        .beendet(PARAGRAPH)
-
+                                + "Du bleibst besser draußen", PARAGRAPH)
                 // IDEA Eine Nacht im Kerker! (Ist auch ein Übernachten!)
         );
 
@@ -451,9 +448,8 @@ public class SchlosswacheReactionsComp
                             + "der Zugang zum Schloss jetzt für alle "
                             + "geöffnet. Aus dem Schloss "
                             + "weht dich der "
-                            + "Geruch von Gebratenem an.")
-                            .timed(mins(44))
-                            .beendet(PARAGRAPH));
+                            + "Geruch von Gebratenem an.", PARAGRAPH)
+                            .timed(mins(44)));
 
                     sc.feelingsComp().requestMood(NEUTRAL);
 

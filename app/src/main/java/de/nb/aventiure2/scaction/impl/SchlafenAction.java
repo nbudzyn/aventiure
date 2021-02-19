@@ -126,23 +126,19 @@ public class SchlafenAction extends AbstractScAction {
                 "nur kurz die Augen. Die Erlebnisse der letzten Stunden "
                         + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
                         + "Kaum hast du die Augen geschlossen, bist du auch schon "
-                        + "eingeschlafen")
-                        .mitVorfeldSatzglied("nur kurz")
-                        .beendet(CHAPTER),
+                        + "eingeschlafen", CHAPTER)
+                        .mitVorfeldSatzglied("nur kurz"),
                 du("fühlst",
                         "dich auf einmal warm und schwer. Du kuschelst dich an",
-                        "das harte Holz und schon bist du eingeschlafen")
-                        .mitVorfeldSatzglied("warm und schwer")
-                        .beendet(CHAPTER),
+                        "das harte Holz und schon bist du eingeschlafen", CHAPTER)
+                        .mitVorfeldSatzglied("warm und schwer"),
                 du("brauchst", "keines Einwiegens, sondern schläfst sogleich",
-                        "ein")
-                        .beendet(CHAPTER)
+                        "ein", CHAPTER)
         );
 
         if (world.loadSC().feelingsComp().getMuedigkeit() < FeelingIntensity.STARK) {
             alt.add(neuerSatz("Jetzt, da du liegst, fällt dir erst auf, wir erschöpft du "
-                    + "eigentlich bist. Nur ganz kurz die Augen schließen…")
-                    .beendet(CHAPTER));
+                    + "eigentlich bist. Nur ganz kurz die Augen schließen…", CHAPTER));
         }
 
         n.narrateAlt(alt, schlafdauer);

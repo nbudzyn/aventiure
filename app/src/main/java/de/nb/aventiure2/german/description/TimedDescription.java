@@ -157,11 +157,6 @@ public class TimedDescription<
         return getDescription().isDann();
     }
 
-    public TimedDescription<D> beendet(final StructuralElement structuralElement) {
-        getDescription().beendet(structuralElement);
-        return this;
-    }
-
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!

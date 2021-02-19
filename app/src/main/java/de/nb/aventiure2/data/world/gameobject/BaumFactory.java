@@ -177,11 +177,10 @@ public class BaumFactory {
     }
 
     private static TimedDescription<?> getDescOutZweitesMal() {
-        return neuerSatz("Dann geht es vorsichtig wieder hinunter")
+        return neuerSatz("Dann geht es vorsichtig wieder hinunter", PARAGRAPH)
                 .timed(mins(4))
                 .withCounterIdIncrementedIfTextIsNarrated(
-                        HINABKLETTERN)
-                .beendet(PARAGRAPH);
+                        HINABKLETTERN);
     }
 
     @CheckReturnValue

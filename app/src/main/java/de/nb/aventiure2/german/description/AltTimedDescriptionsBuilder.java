@@ -11,7 +11,6 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
@@ -121,10 +120,6 @@ public class AltTimedDescriptionsBuilder {
 
     public AltTimedDescriptionsBuilder dann() {
         return map(TimedDescription::dann);
-    }
-
-    public AltTimedDescriptionsBuilder beendet(final StructuralElement structuralElement) {
-        return map(d -> d.beendet(structuralElement));
     }
 
     public AltTimedDescriptionsBuilder withCounterIdIncrementedIfTextIsNarrated(

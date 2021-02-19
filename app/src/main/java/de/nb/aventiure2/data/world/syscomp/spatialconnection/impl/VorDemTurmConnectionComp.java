@@ -80,9 +80,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                 mins(18),
                 du(PARAGRAPH, "gehst",
                         "den langen Pfad wieder zurück, den Hügel hinab, bis "
-                                + "zum Waldweg")
-                        .timed(mins(20))
-                        .beendet(PARAGRAPH),
+                                + "zum Waldweg", PARAGRAPH)
+                        .timed(mins(20)),
                 du(PARAGRAPH, "gehst",
                         "den Hügel auf dem gewundenen Pfad wieder hinab, "
                                 + "bis du unten am Waldweg ankommst")

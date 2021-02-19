@@ -81,9 +81,8 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 + " einer Holzhütte. "
                                 + "Die Fensterläden sind "
                                 + "geschlossen, die Tür hängt nur noch lose "
-                                + "in den Angeln")
-                                .timed(mins(2))
-                                .beendet(PARAGRAPH),
+                                + "in den Angeln", PARAGRAPH)
+                                .timed(mins(2)),
 
                         neuerSatz("Hat gerade neben dir im Unterholz geknarzt? "
                                 + "Wie auch immer, du fasst dir ein Herz und "
@@ -199,10 +198,9 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 + "Du setzt "
                 + "dich an den Brunnenrand – "
                 + "hier ist es "
-                + "angenehm kühl")
+                + "angenehm kühl", PARAGRAPH)
                 .timed(mins(5))
-                .dann()
-                .beendet(PARAGRAPH);
+                .dann();
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>

@@ -15,7 +15,6 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
@@ -27,11 +26,6 @@ public class Narration {
     public enum NarrationSource {
         INITIALIZATION, SC_ACTION, REACTIONS,
     }
-
-    /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
-     */
-    private final StructuralElement endsThis;
 
     @PrimaryKey
     @NonNull
@@ -102,13 +96,12 @@ public class Narration {
     private final NarrationSource lastNarrationSource;
 
     public Narration(@NonNull final NarrationSource lastNarrationSource,
-                     @NonNull final StructuralElement endsThis,
                      @NonNull final String text,
                      final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(lastNarrationSource, endsThis, text, woertlicheRedeNochOffen, kommaStehtAus,
+        this(lastNarrationSource, text, woertlicheRedeNochOffen, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 phorikKandidat != null ?
                         ((GameObjectId) phorikKandidat.getBezugsobjekt()) : null,
@@ -116,21 +109,15 @@ public class Narration {
                         phorikKandidat.getNumerusGenus() : null);
     }
 
-    Narration(@NonNull final NarrationSource lastNarrationSource,
-              @NonNull final StructuralElement endsThis,
-              @NonNull final String text,
-              final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
-              final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-              final boolean dann,
-              @Nullable final GameObjectId phorikKandidatBezugsobjekt,
-              @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
-        checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
-                        || endsThis == StructuralElement.WORD,
-                "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
-                        + "|| endsThis == StructuralElement.WORD verletzt");
+    public Narration(@NonNull final NarrationSource lastNarrationSource,
+                     @NonNull final String text,
+                     final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
+                     final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+                     final boolean dann,
+                     @Nullable final GameObjectId phorikKandidatBezugsobjekt,
+                     @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.lastNarrationSource = lastNarrationSource;
-        this.endsThis = endsThis;
         this.text = text;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
@@ -138,10 +125,6 @@ public class Narration {
         this.dann = dann;
         this.phorikKandidatBezugsobjekt = phorikKandidatBezugsobjekt;
         this.phorikKandidatNumerusGenus = phorikKandidatNumerusGenus;
-    }
-
-    StructuralElement getEndsThis() {
-        return endsThis;
     }
 
     @NonNull
@@ -234,8 +217,7 @@ public class Narration {
                   final TextDescription textDescription) {
         final StringBuilder resText = new StringBuilder(text.trim());
 
-        final StructuralElement separation =
-                StructuralElement.max(endsThis, textDescription.getStartsNew());
+        final StructuralElement separation = textDescription.getStartsNew();
 
         final String text = textDescription.getText();
         switch (separation) {
@@ -317,7 +299,6 @@ public class Narration {
 
         return new Narration(
                 narrationSource,
-                textDescription.getEndsThis(),
                 resText.toString(),
                 textDescription.isWoertlicheRedeNochOffen(), textDescription.isKommaStehtAus(),
                 textDescription.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),

@@ -189,10 +189,9 @@ public class AblegenAction
                 "schauert's dich und",
                 "der nasse Frosch sitzt in deiner Hand. Schnell",
                 location.storingPlaceComp().getLocationMode().getWohin(false),
-                "mit ihm!")
+                "mit ihm!", PARAGRAPH)
                 .timed(secs(7))
-                .dann()
-                .beendet(PARAGRAPH));
+                .dann());
 
         if (getWohinDetail() == null) {
             // Wenn kein wohin-Detail nötig ist, dann ist es wohl kein Tisch o.Ä. und "fällt" passt.
@@ -200,10 +199,9 @@ public class AblegenAction
                     "deine Tasche aus, bis der Frosch endlich",
                     location.storingPlaceComp().getLocationMode()
                             .getWohin(false),
-                    "fällt. Puh.")
+                    "fällt. Puh.", PARAGRAPH)
                     .timed(secs(7))
-                    .dann()
-                    .beendet(PARAGRAPH));
+                    .dann());
         }
 
         alt.add(du(PARAGRAPH, "wühlst",

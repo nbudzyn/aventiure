@@ -28,7 +28,16 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     public static TextDescription paragraph(final Object... parts) {
-        return neuerSatz(PARAGRAPH, parts).beendet(PARAGRAPH);
+        return neuerSatz(PARAGRAPH, appendObject(parts, PARAGRAPH));
+    }
+
+    @NonNull
+    @CheckReturnValue
+    static Object[] appendObject(final Object[] objects, final Object object) {
+        final Object[] newParts = new Object[objects.length + 1];
+        System.arraycopy(objects, 0, newParts, 0, objects.length);
+        newParts[newParts.length - 1] = object;
+        return newParts;
     }
 
     @CheckReturnValue
@@ -83,7 +92,7 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static SimpleDuDescription duParagraph(
             final String verb, final Object... remainderParts) {
-        return du(PARAGRAPH, verb, remainderParts).beendet(PARAGRAPH);
+        return du(PARAGRAPH, verb, appendObject(remainderParts, PARAGRAPH));
     }
 
     @CheckReturnValue

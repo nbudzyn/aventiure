@@ -30,7 +30,6 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
@@ -418,10 +417,11 @@ public class Narrator {
                 .isAnaphorischerBezugMoeglich(pk, gameObjectId));
     }
 
-    public boolean endsThisIsExactly(final StructuralElement structuralElement) {
+    public boolean paragraphHasDefinitelyNotEnded() {
         return applyToNarration(
-                d -> d.getEndsThis() == structuralElement,
-                n -> n.getEndsThis() == structuralElement
+                d -> d.altTextDescriptions().stream().noneMatch(
+                        textDesc -> textDesc.getText().endsWith("\n")),
+                n -> !n.getText().endsWith("\n")
         );
     }
 

@@ -202,9 +202,8 @@ public class RapunzelReactionsComp
             n.narrate(neuerSatz(PARAGRAPH,
                     "Wie du näher kommst, hörst du einen Gesang, so lieblich, dass es "
                             + "dir das Herz rührt. Du hältst still und horchst: Kommt die "
-                            + "Stimme aus dem kleinen Fensterchen oben im Turm?")
-                    .timed(secs(20))
-                    .beendet(PARAGRAPH));
+                            + "Stimme aus dem kleinen Fensterchen oben im Turm?", PARAGRAPH)
+                    .timed(secs(20)));
 
             world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
             return;
@@ -216,10 +215,9 @@ public class RapunzelReactionsComp
                 du("hörst", "es wieder von oben aus dem Turm singen")
                         .mitVorfeldSatzglied("von oben aus dem Turm")
                         .timed(NO_TIME),
-                du(PARAGRAPH, "hörst", "wieder Gesang von oben")
+                du(PARAGRAPH, "hörst", "wieder Gesang von oben", PARAGRAPH)
                         .mitVorfeldSatzglied("wieder")
-                        .timed(NO_TIME)
-                        .beendet(PARAGRAPH),
+                        .timed(NO_TIME),
                 neuerSatz("Erneut hörst du den Gesang aus dem Turmfenster")
                         .timed(NO_TIME)
         );
@@ -247,17 +245,15 @@ public class RapunzelReactionsComp
                         "Haar wieder heraufgerafft hat, ruft",
                         anaph.nomK(), // "Rapunzel"
                         "dir noch nach: „Aber komm nicht, wenn die Alte bei mir ist!“",
-                        "Danach sieht der Turm wieder verlassen und unbewohnt aus")
-                        .beendet(PARAGRAPH)
+                        "Danach sieht der Turm wieder verlassen und unbewohnt aus", PARAGRAPH)
                         .timed(secs(20))
                         .withCounterIdIncrementedIfTextIsNarrated(
                                 NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST));
             }
 
             alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
-                    + "wieder oben im Fenster")
-                    .timed(secs(15))
-                    .beendet(PARAGRAPH));
+                    + "wieder oben im Fenster", PARAGRAPH)
+                    .timed(secs(15)));
 
             n.narrateAlt(alt);
             return;
@@ -504,9 +500,8 @@ public class RapunzelReactionsComp
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                     !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
                 n.narrate(neuerSatz("„Das ist also die Leiter, auf welcher man hinaufkommt!“, "
-                        + "denkst du bei dir")
-                        .timed(secs(5))
-                        .beendet(PARAGRAPH));
+                        + "denkst du bei dir", PARAGRAPH)
+                        .timed(secs(5)));
 
                 world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELRUF);
             }
@@ -566,18 +561,16 @@ public class RapunzelReactionsComp
     private static ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
         return ImmutableList.of(
-                neuerSatz("Dann verschwinden die prächtigen Haare wieder oben im Fenster")
-                        .timed(secs(15))
-                        .beendet(PARAGRAPH),
+                neuerSatz("Dann verschwinden die prächtigen Haare wieder oben im Fenster",
+                        PARAGRAPH)
+                        .timed(secs(15)),
                 du("schaust", "fasziniert zu, wie die langen Haare wieder in "
                         + "das Turmfenster "
-                        + "zurückgezogen werden").mitVorfeldSatzglied("fasziniert")
-                        .timed(secs(15))
-                        .beendet(PARAGRAPH),
+                        + "zurückgezogen werden", PARAGRAPH).mitVorfeldSatzglied("fasziniert")
+                        .timed(secs(15)),
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
-                        + "wieder oben im Fenster verschwunden")
+                        + "wieder oben im Fenster verschwunden", PARAGRAPH)
                         .timed(secs(10))
-                        .beendet(PARAGRAPH)
         );
     }
 
@@ -589,14 +582,12 @@ public class RapunzelReactionsComp
                 neuerSatz("Jetzt zieht",
                         anaph.nomK(), // "die junge Frau"
                         anaph.possArt().vor(PL_MFN).akkStr(), // "ihre"
-                        "Haare wieder hoch")
-                        .timed(secs(15))
-                        .beendet(PARAGRAPH),
+                        "Haare wieder hoch", PARAGRAPH)
+                        .timed(secs(15)),
                 neuerSatz("Die Haare zieht",
                         anaph.nomK(),
-                        "wieder hoch")
+                        "wieder hoch", PARAGRAPH)
                         .timed(secs(15))
-                        .beendet(PARAGRAPH)
         );
     }
 
@@ -871,10 +862,10 @@ public class RapunzelReactionsComp
                     du("hörst", "es von oben aus dem Turm singen")
                             .mitVorfeldSatzglied("von oben aus dem Turm")
                             .timed(NO_TIME),
-                    du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen")
+                    du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen",
+                            PARAGRAPH)
                             .mitVorfeldSatzglied("wieder")
-                            .timed(NO_TIME)
-                            .beendet(PARAGRAPH),
+                            .timed(NO_TIME),
                     neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang")
                             .timed(NO_TIME),
                     du("hörst", "den Gesang erneut")
@@ -897,10 +888,9 @@ public class RapunzelReactionsComp
                         .phorikKandidat(F, RAPUNZEL),
                 du(SENTENCE, "hörst",
                         "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du",
-                        "die junge Frau endlich retten können?")
+                        "die junge Frau endlich retten können?", PARAGRAPH)
                         .mitVorfeldSatzglied("plötzlich")
                         .timed(NO_TIME)
-                        .beendet(PARAGRAPH)
                         .phorikKandidat(F, RAPUNZEL),
                 du("hörst", "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
                         + "weißt du "
@@ -934,26 +924,23 @@ public class RapunzelReactionsComp
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(
-                neuerSatz("Plötzlich endet der Gesang")
-                        .beendet(PARAGRAPH),
+                neuerSatz("Plötzlich endet der Gesang", PARAGRAPH),
                 neuerSatz("Plötzlich wird es still"),
                 neuerSatz(PARAGRAPH,
                         "Nun hat der Gesang geendet - wie gern würdest noch länger "
-                                + "zuhören!")
-                        .beendet(PARAGRAPH),
+                                + "zuhören!", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         "Nun ist es wieder still"),
                 neuerSatz(PARAGRAPH,
                         "Jetzt hat der süße Gesang aufgehört"),
                 neuerSatz(PARAGRAPH,
-                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt")
-                        .beendet(PARAGRAPH));
+                        "Jetzt ist es wieder still. Dein Herz ist noch ganz bewegt",
+                        PARAGRAPH));
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Auf einmal ist nichts mehr zu hören. Es lässt dir keine Ruhe: "
-                                    + "Wer mag dort oben so lieblich singen?")
-                            .beendet(PARAGRAPH));
+                                    + "Wer mag dort oben so lieblich singen?", PARAGRAPH));
         }
 
         n.narrateAlt(alt, NO_TIME);

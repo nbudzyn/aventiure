@@ -21,14 +21,6 @@ public class DescriptionParams {
      * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
     private StructuralElement startsNew;
-    /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
-     */
-    private StructuralElement endsThis;
-    /**
-     * Whether the narration can be continued by a Satzreihenglied without subject where
-     * the player character is the implicit subject (such as " und gehst durch die Tür.")
-     */
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
     private boolean dann;
     /**
@@ -58,22 +50,20 @@ public class DescriptionParams {
     private PhorikKandidat phorikKandidat;
 
     DescriptionParams copy() {
-        return new DescriptionParams(startsNew, endsThis,
+        return new DescriptionParams(startsNew,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
     DescriptionParams(final StructuralElement startsNew,
                       @Nullable final PhorikKandidat phorikKandidat) {
-        this(startsNew, StructuralElement.WORD,
-                false, false, phorikKandidat);
+        this(startsNew, false, false, phorikKandidat);
     }
 
-    private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
+    private DescriptionParams(final StructuralElement startsNew,
                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                               final boolean dann,
                               @Nullable final PhorikKandidat phorikKandidat) {
         this.startsNew = startsNew;
-        this.endsThis = endsThis;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -136,10 +126,6 @@ public class DescriptionParams {
         this.phorikKandidat = phorikKandidat;
     }
 
-    public void beendet(final StructuralElement structuralElement) {
-        endsThis = structuralElement;
-    }
-
     /**
      * Sets a flag that the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
@@ -164,10 +150,6 @@ public class DescriptionParams {
 
     public StructuralElement getStartsNew() {
         return startsNew;
-    }
-
-    StructuralElement getEndsThis() {
-        return endsThis;
     }
 
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {

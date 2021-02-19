@@ -156,16 +156,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.isDann();
     }
 
-    @SuppressWarnings("unchecked")
-    public SELF beendet(final StructuralElement structuralElement) {
-        params.beendet(structuralElement);
-        return (SELF) this;
-    }
-
-    public StructuralElement getEndsThis() {
-        return params.getEndsThis();
-    }
-
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!

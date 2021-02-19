@@ -135,10 +135,8 @@ public class RastenAction extends AbstractWartenRastenAction {
                         .undWartest()
                         .dann(),
                 du(SENTENCE, "sitzt", "glücklich da und genießt")
-                        .mitVorfeldSatzglied("glücklich")
-                        .beendet(SENTENCE),
-                neuerSatz("Dein Herz wird ganz warm von dem Gesang")
-                        .beendet(SENTENCE));
+                        .mitVorfeldSatzglied("glücklich"),
+                neuerSatz("Dein Herz wird ganz warm von dem Gesang"));
 
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
@@ -149,12 +147,10 @@ public class RastenAction extends AbstractWartenRastenAction {
         n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
                 neuerSatz("Die Bäume rauschen in "
                         + "der Dunkelheit, die Eulen schnarren, und "
-                        + "und es fängt an, dir angst zu werden")
-                        .beendet(SENTENCE),
+                        + "und es fängt an, dir angst zu werden"),
                 neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
                         + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts "
-                        + "erkennen")
-                        .beendet(SENTENCE),
+                        + "erkennen"),
                 neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
     }
 
@@ -180,23 +176,19 @@ public class RastenAction extends AbstractWartenRastenAction {
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast")
                         .mitVorfeldSatzglied("verborgen unter den Bäumen")
-                        .beendet(SENTENCE)
                         .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
                         + "Vögel und die Grillen zirpen")
-                        .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
                         + "in den "
                         + "Ästen über dir. Ein Rabe setzt "
                         + "sich neben dich und fliegt nach einer Weile wieder fort")
-                        .beendet(SENTENCE)
                         .dann(),
                 du(SENTENCE, "ruhst",
                         "noch eine Weile aus und lauschst, wie die Insekten",
                         "zirpen und der Wind saust")
                         .mitVorfeldSatzglied("eine Weile")
-                        .beendet(SENTENCE)
                         .dann()
         );
 
@@ -205,7 +197,6 @@ public class RastenAction extends AbstractWartenRastenAction {
                     + "still und die Vögel setzen sich "
                     + "auf die Äste über dir "
                     + "und singen, was sie nur wissen")
-                    .beendet(SENTENCE)
                     .dann();
         }
 

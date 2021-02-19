@@ -284,8 +284,7 @@ public class DescriptionUmformulierer {
                         max(d.getStartsNew(), SENTENCE),
                         praefixVerb,
                         praefixRemainder,
-                        d.toSingleKonstituente().capitalize())
-                        .beendet(d.getEndsThis()))
+                        d.toSingleKonstituente().capitalize()))
                 .collect(Collectors.toSet());
     }
 
@@ -308,10 +307,10 @@ public class DescriptionUmformulierer {
                 praefixVerb,
                 praefixRemainder,
                 "und",
-                desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente())
+                desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente(),
+                desc.getEndsThis())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
-                .dann(desc.isDann())
-                .beendet(desc.getEndsThis());
+                .dann(desc.isDann());
     }
 
     @CheckReturnValue

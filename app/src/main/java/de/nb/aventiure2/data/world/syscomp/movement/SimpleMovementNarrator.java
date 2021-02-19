@@ -27,7 +27,6 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -124,22 +123,18 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(NO_TIME,
                 neuerSatz(wo,
                         "steht",
-                        desc.nomK())
-                        .beendet(PARAGRAPH),
+                        desc.nomK(), PARAGRAPH),
                 neuerSatz(wo,
                         "siehst du",
                         descShort.nomK(),
-                        "stehen")
-                        .beendet(PARAGRAPH),
+                        "stehen", PARAGRAPH),
                 neuerSatz(wo,
                         "begegnest du",
-                        desc.datK())
-                        .beendet(PARAGRAPH),
+                        desc.datK(), PARAGRAPH),
                 neuerSatz(wo,
                         "scheint",
                         desc.nomK(),
-                        "geradezu auf dich zu warten")
-                        .beendet(PARAGRAPH)
+                        "geradezu auf dich zu warten", PARAGRAPH)
         );
     }
 
@@ -181,18 +176,15 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(NO_TIME,
                 du("gehst",
                         woDabei,
-                        "an", desc.datK(), "vorbei")
-                        .beendet(SENTENCE),
+                        "an", desc.datK(), "vorbei"),
                 du("gehst",
                         woDabei,
                         "schnellen Schrittes an", desc.datK(), "vorüber")
-                        .mitVorfeldSatzglied(woDabei)
-                        .beendet(SENTENCE),
+                        .mitVorfeldSatzglied(woDabei),
                 du("gehst",
                         woDabei,
                         "mit schnellen Schritten an", desc.datK(), "vorüber")
                         .mitVorfeldSatzglied(woDabei)
-                        .beendet(SENTENCE)
         );
     }
 
@@ -200,7 +192,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final Nominalphrase desc = getDescription();
 
         n.narrateAlt(NO_TIME,
-                neuerSatz(PARAGRAPH, "Dir begegnet", desc.nomK()).beendet(PARAGRAPH),
+                neuerSatz(PARAGRAPH, "Dir begegnet", desc.nomK(), PARAGRAPH),
                 du("begegnest", desc.datK()));
     }
 
@@ -216,27 +208,23 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         alt.add(
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "kommt auf dich zu und geht an dir vorbei")
-                        .beendet(PARAGRAPH));
+                        "kommt auf dich zu und geht an dir vorbei", PARAGRAPH));
         alt.add(
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "kommt auf dich zu und läuft vorbei")
-                        .beendet(PARAGRAPH));
+                        "kommt auf dich zu und läuft vorbei", PARAGRAPH));
 
         if (!n.isThema(gameObjectId)) {
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt",
                             desc.nomK(),
-                            "entgegen und geht an dir vorbei")
-                            .beendet(PARAGRAPH));
+                            "entgegen und geht an dir vorbei", PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt",
                             desc.nomK(),
-                            "entgegen und geht hinter dir davon")
-                            .beendet(PARAGRAPH));
+                            "entgegen und geht hinter dir davon", PARAGRAPH));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -282,25 +270,21 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt auf dich zu und geht an dir vorbei")
-                .beendet(PARAGRAPH));
+                "kommt auf dich zu und geht an dir vorbei", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt auf dich zu und läuft vorbei")
-                .beendet(PARAGRAPH));
+                "kommt auf dich zu und läuft vorbei", PARAGRAPH));
 
         if (!n.isThema(gameObjectId)) {
             alt.add(neuerSatz(PARAGRAPH,
                     "Dir kommt",
                     desc.nomK(),
-                    "entgegen und geht an dir vorbei")
-                    .beendet(PARAGRAPH));
+                    "entgegen und geht an dir vorbei", PARAGRAPH));
             // IDEA "Dir kommt ... entgegen und geht hinter dir seiner / ihrer Wege (Genitiv!...)
             alt.add(neuerSatz(PARAGRAPH,
                     "Dir kommt",
                     desc.nomK(),
-                    "entgegen und geht hinter dir davon")
-                    .beendet(PARAGRAPH));
+                    "entgegen und geht hinter dir davon", PARAGRAPH));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -318,32 +302,26 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         anaph.nomK(),
                         "geht",
                         wo, // "auf dem Weg "
-                        "davon")
-                        .beendet(PARAGRAPH),
+                        "davon", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
                         "geht",
                         wo, // "auf dem Weg "
-                        "weiter")
-                        .beendet(PARAGRAPH),
+                        "weiter", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "geht weg")
-                        .beendet(PARAGRAPH),
+                        "geht weg", PARAGRAPH),
                 // IDEA: "X geht seines / ihres Wegs" - Possessivartikel vor Genitiv!
                 // IDEA: "X geht seiner / ihrer Wege" - Possessivartikel vor Genitiv!
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "geht fort")
-                        .beendet(PARAGRAPH),
+                        "geht fort", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "läuft vorbei")
-                        .beendet(PARAGRAPH),
+                        "läuft vorbei", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         anaph.nomK(),
-                        "läuft weiter")
-                        .beendet(PARAGRAPH)
+                        "läuft weiter", PARAGRAPH)
         );
     }
 
@@ -405,31 +383,25 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 anaph.nomK(),
                 "kommt dir",
                 wo,
-                "hinterher")
-                .beendet(PARAGRAPH));
+                "hinterher", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt dir hinterher")
-                .beendet(PARAGRAPH));
+                "kommt dir hinterher", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt hinter dir her")
-                .beendet(PARAGRAPH));
+                "kommt hinter dir her", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt dir hinterhergegangen")
-                .beendet(PARAGRAPH));
+                "kommt dir hinterhergegangen", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "ist dir nachgekommen")
-                .beendet(PARAGRAPH));
+                "ist dir nachgekommen", PARAGRAPH));
 
         if (!n.isThema(gameObjectId)) {
             alt.add(neuerSatz(PARAGRAPH,
                     "Hinter dir kommt",
                     desc.nomK(),
-                    "gegangen")
-                    .beendet(PARAGRAPH));
+                    "gegangen", PARAGRAPH));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -458,8 +430,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final AltDescriptionsBuilder alt = alt();
 
 
-        alt.add(neuerSatz(desc.nomK(), "kommt dir entgegen")
-                .beendet(PARAGRAPH));
+        alt.add(neuerSatz(desc.nomK(), "kommt dir entgegen", PARAGRAPH));
 
         n.narrateAlt(alt, NO_TIME);
     }
@@ -476,15 +447,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(neuerSatz(anaph.nomK(),
-                "kommt daher")
-                .beendet(PARAGRAPH));
+                "kommt daher", PARAGRAPH));
 
         if (spatialConnectionMovingGO != null) {
             alt.add(neuerSatz(anaph.nomK(),
                     "kommt",
                     spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
-                    "daher")
-                    .beendet(PARAGRAPH));
+                    "daher", PARAGRAPH));
         }
 
         if (!n.isThema(gameObjectId)) {
@@ -492,21 +461,18 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 alt.add(neuerSatz(spatialConnectionMovingGO.getWo(), // "auf dem Pfad "
                         "kommt",
                         desc.nomK(),
-                        "gegangen")
-                        .beendet(PARAGRAPH));
+                        "gegangen", PARAGRAPH));
             }
 
             alt.add(
                     neuerSatz("Es kommt dir",
                             desc.nomK(),
-                            "entgegen")
-                            .beendet(PARAGRAPH));
+                            "entgegen", PARAGRAPH));
             alt.add(
                     neuerSatz(PARAGRAPH,
                             "Dir kommt",
                             desc.nomK(),
-                            "entgegen")
-                            .beendet(PARAGRAPH));
+                            "entgegen", PARAGRAPH));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -523,20 +489,17 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 neuerSatz(PARAGRAPH,
                         wo, // "auf dem Weg "
                         "kommt",
-                        desc.nomK())
-                        .beendet(PARAGRAPH),
+                        desc.nomK(), PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         desc.nomK(),
                         "kommt",
                         wo, // "auf dem Weg "
-                        "daher")
-                        .beendet(PARAGRAPH),
+                        "daher", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         desc.nomK(),
                         "kommt",
                         wo, // "auf dem Weg "
-                        "gegangen")
-                        .beendet(PARAGRAPH)
+                        "gegangen", PARAGRAPH)
         );
     }
 
