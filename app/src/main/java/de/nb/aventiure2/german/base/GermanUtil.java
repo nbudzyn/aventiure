@@ -94,6 +94,111 @@ public class GermanUtil {
         return res.toString();
     }
 
+    static String getWhatsNeededToEndChapter(@Nullable final CharSequence base,
+                                             @Nullable final CharSequence addition) {
+        if (base == null || base.length() == 0 ||
+                addition == null || addition.length() == 0) {
+            return "";
+        }
+
+        final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
+        if ("\n".contentEquals(lastCharBase)) {
+            if (base.length() >= 2) {
+                final CharSequence secondLastCharBase =
+                        base.subSequence(base.length() - 2, base.length() - 1);
+                if (" ,;.:!?…\n„".contains(secondLastCharBase)) {
+                    // Sind vor \n nicht erlaubt, kein weiteres \n einfügen
+                    return "";
+                }
+            }
+
+            final CharSequence firstCharAddition = addition.subSequence(0, 1);
+            if (" ,;.:!?“\n".contains(firstCharAddition)) {
+                // Sind nach \n nicht erlaubt, kein weiteres \n einfügen!
+                return "";
+            }
+
+            return "\n";
+        }
+
+        // lastCharBase hört nicht mit "\n" auf
+
+        final CharSequence firstCharAddition = addition.subSequence(0, 1);
+        if ("\n".contentEquals(firstCharAddition)) {
+            if (addition.length() >= 2 && "\n\n".contentEquals(addition.subSequence(0, 2))) {
+                return "";
+            }
+
+            if (" ,;„".contains(lastCharBase)) {
+                // Sind vor \n nicht erlaubt, kein weiteres \n einfügen
+                return "";
+            }
+
+            return "\n";
+        }
+
+        // lastCharBase hört nicht mit "\n" auf und firstCharAddition fängt auch nicht mit "\n" an
+
+        if (" ,;„".contains(lastCharBase)) {
+            // Sind vor \n nicht erlaubt, kein \n\n einfügen
+            return "";
+        }
+
+        if (" ,;.:!?“".contains(firstCharAddition)) {
+            // Sind nach \n nicht erlaubt, kein \n\n einfügen!
+            return "";
+        }
+
+        // Regelfall
+        return "\n\n";
+    }
+
+    static boolean newLineNeededToStartNewParagraph(@Nullable final CharSequence base,
+                                                    @Nullable final CharSequence addition) {
+        if (base == null || base.length() == 0 ||
+                addition == null || addition.length() == 0) {
+            return false;
+        }
+
+        final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
+        if (" ,;„\n".contains(lastCharBase)) {
+            return false;
+        }
+
+        final CharSequence firstCharAddition = addition.subSequence(0, 1);
+        return !" ,;.:!?“\n".contains(firstCharAddition);
+    }
+
+    static boolean fullStopNeededToEndSentence(@Nullable final CharSequence base,
+                                               @Nullable final CharSequence addition) {
+        if (base == null || base.length() == 0 ||
+                addition == null || addition.length() == 0) {
+            return false;
+        }
+
+        final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
+        final CharSequence firstCharAddition = addition.subSequence(0, 1);
+
+        if (base.length() >= 2) {
+            if ("“".contentEquals(lastCharBase)) {
+                final CharSequence secondLastCharBase =
+                        base.subSequence(base.length() - 2, base.length() - 1);
+                return !" ,;.:!?…\n„".contains(secondLastCharBase);
+            }
+        }
+
+        if (addition.length() >= 2 && "“.".contentEquals(addition.subSequence(0, 2))) {
+            return false;
+        }
+
+        if (" ,;.:!?…\n„".contains(lastCharBase)) {
+            return false;
+        }
+
+        return !".:!?…".contains(firstCharAddition);
+    }
+
+
     public static boolean spaceNeeded(@Nullable final CharSequence base,
                                       @Nullable final CharSequence addition) {
         if (base == null || base.length() == 0 ||
@@ -107,7 +212,7 @@ public class GermanUtil {
         }
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
-        return !" ,;.:!?“\n".contains(firstCharAddition);
+        return !" ,;.:!?“…\n".contains(firstCharAddition);
     }
 
     static boolean beginnDecktKommaAb(final CharSequence charSequence) {
@@ -121,7 +226,8 @@ public class GermanUtil {
                 + "Komma unterzubringen.");
 
         checkArgument(!"“".contains(firstChar), "charSequence beginnt "
-                + "mit Abführungszeichen. Hier müsste man eigentlich erst das Abführungszeichen "
+                + "mit Abführungszeichen. Hier müsste man eigentlich erst das "
+                + "Abführungszeichen "
                 + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
                 + "implementiert");
 
@@ -139,7 +245,8 @@ public class GermanUtil {
                 + "Komma unterzubringen.");
 
         checkArgument(!"“".contains(firstChar), "charSequence beginnt "
-                + "mit Abführungszeichen. Hier müsste man eigentlich erst das Abführungszeichen "
+                + "mit Abführungszeichen. Hier müsste man eigentlich erst das "
+                + "Abführungszeichen "
                 + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
                 + "implementiert");
 

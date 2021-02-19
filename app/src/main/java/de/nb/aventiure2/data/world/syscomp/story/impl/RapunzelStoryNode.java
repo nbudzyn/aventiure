@@ -43,6 +43,22 @@ import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnnecessaryReturnStatement")
 public enum RapunzelStoryNode implements IStoryNode {
+    // FIXME Die zentrale Dramatische Frage für des Märchens ermitteln:
+    //  Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
+    //  Zwei oder mehr Charaktere, ein gewünschtes Ergebnis
+    //  Oft ist X der Actor, Y der Resistor.
+    //  Im Idealfall können wir die zentrale dramatische Frage des Märchen direkt übernehmen. Je
+    //  früher man sie einführt, desto besser.
+    //  Das Ergebnis / Ziel sollte (für den Character / den SC) schwer zu
+    //  erreichen sein. Das erzeugt Spannung.
+
+    //FIXME Es sollte nach jedem Story Beat noch eine offene Dramatische Frage geben.
+    // Bestenfalls die zentrale Dramatische Frage des Märchens - oder eine andere.
+    // Die Tipps könnten auf die / eine noch offene dramatische Frage Bezug nehmen -
+    // wenn die Frage nicht zu allgemein ist.
+    // Oft ist es dramatisch interessanter, wenn eine dramatische Frage mit
+    // Nein beantwortet wird.
+
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
     RAPUNZEL_SINGEN_GEHOERT(10, VOR_DEM_ALTEN_TURM,
@@ -66,7 +82,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN);
-    
+
     // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)

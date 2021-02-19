@@ -15,7 +15,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 @Immutable
-public class Konstituente {
+public class Konstituente implements IKonstituenteOrStructuralElement {
     /**
      * Die eigentlichen Wörter und Satzzeichen
      */

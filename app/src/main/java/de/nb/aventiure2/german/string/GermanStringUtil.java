@@ -6,6 +6,12 @@ import java.util.Collection;
 import java.util.Locale;
 
 public class GermanStringUtil {
+    public static String capitalize(final String string, final int index) {
+        return string.substring(0, index)
+                + capitalize(string.substring(index, index + 1))
+                + string.substring(index + 1);
+    }
+
     public static String uncapitalize(final String str) {
         if (str.isEmpty()) {
             return "";

@@ -124,7 +124,7 @@ public class SubstPhrReihung extends SubstantivischePhrase {
 
     private static Konstituentenfolge toAufzaehlung(
             final List<? extends Konstituentenfolge> elemente) {
-        final ImmutableList.Builder<Konstituente> res = ImmutableList.builder();
+        final ImmutableList.Builder<IKonstituenteOrStructuralElement> res = ImmutableList.builder();
 
         for (int i = 0; i < elemente.size(); i++) {
             if (i == 0) {

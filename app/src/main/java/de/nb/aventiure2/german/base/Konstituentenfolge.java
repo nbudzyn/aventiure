@@ -20,13 +20,22 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.GermanUtil.fullStopNeededToEndSentence;
+import static de.nb.aventiure2.german.base.GermanUtil.getWhatsNeededToEndChapter;
+import static de.nb.aventiure2.german.base.GermanUtil.newLineNeededToStartNewParagraph;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -34,9 +43,9 @@ import static java.util.Objects.requireNonNull;
  * Eine Folge von {@link Konstituente}n.
  */
 @Immutable
-public class Konstituentenfolge implements Iterable<Konstituente> {
+public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralElement> {
     private static final int GEDAECHTNISWEITE_PHORIK = 6;
-    private final ImmutableList<Konstituente> konstituenten;
+    private final ImmutableList<IKonstituenteOrStructuralElement> konstituenten;
 
     @Nullable
     public static Konstituentenfolge kf(final Iterable<?> parts) {
@@ -47,15 +56,25 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         this(ImmutableList.of(konstituente));
     }
 
-    private Konstituentenfolge(final ImmutableList<Konstituente> konstituenten) {
+    private Konstituentenfolge(
+            final ImmutableList<IKonstituenteOrStructuralElement> konstituenten) {
         // Wird auch mit ImmutableList.subList() aufgerufen, was leider zu einer
         // Kopie führt. Daher ImmutableList verlangen!
 
         requireNonNull(konstituenten, "konstituenten  is null");
-        checkArgument(!konstituenten.isEmpty(), "konstituenten  is empty");
         checkArgument(konstituenten.stream().noneMatch(Objects::isNull));
 
-        this.konstituenten = konstituenten;
+        if (konstituenten.contains(WORD)) {
+            // WORD als "Trenner" ist sinnlos. wir entfernen es hier.
+            this.konstituenten = konstituenten.stream()
+                    .filter(k -> !k.equals(WORD))
+                    .collect(toImmutableList());
+        } else {
+            this.konstituenten = konstituenten;
+        }
+
+        checkArgument(!this.konstituenten.isEmpty(),
+                "konstituenten is empty or contained only WORD elements");
     }
 
     /**
@@ -139,8 +158,8 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             final Iterable<?> parts) {
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 
-        ArrayList<ImmutableList.Builder<Konstituente>> alternativeKonstituentenfolgen =
-                new ArrayList<>();
+        ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                alternativeKonstituentenfolgen = new ArrayList<>();
 
         alternativeKonstituentenfolgen.add(ImmutableList.builder());
 
@@ -187,16 +206,16 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                                 new Konstituentenfolge(Konstituente.k(part.toString())));
             }
 
-            final ArrayList<ImmutableList.Builder<Konstituente>>
+            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
                     ergaenzteAlternativeKonstituentenfolgen = new ArrayList<>();
 
-            for (final ImmutableList.Builder<Konstituente> alternative :
+            for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> alternative :
                     alternativeKonstituentenfolgen) {
                 for (final Konstituentenfolge alternativePartKonstituentenfolge :
                         alternativePartKonstituentenfolgen) {
                     if (alternativePartKonstituentenfolge != null) {
-                        final ImmutableList.Builder<Konstituente> ergaenzteKonstituentenfolge =
-                                ImmutableList.builder();
+                        final ImmutableList.Builder<IKonstituenteOrStructuralElement>
+                                ergaenzteKonstituentenfolge = ImmutableList.builder();
                         ergaenzteKonstituentenfolge.addAll(alternative.build());
                         ergaenzteKonstituentenfolge
                                 .addAll(alternativePartKonstituentenfolge.konstituenten);
@@ -211,9 +230,10 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         }
 
         final HashSet<Konstituentenfolge> res = new HashSet<>();
-        for (final ImmutableList.Builder<Konstituente> alternative :
+        for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> alternative :
                 alternativeKonstituentenfolgen) {
-            final ImmutableList<Konstituente> konstituenten = alternative.build();
+            final ImmutableList<IKonstituenteOrStructuralElement> konstituenten =
+                    alternative.build();
 
             if (konstituenten.isEmpty()) {
                 res.add(null);
@@ -276,15 +296,17 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     public boolean kommaStehtAus() {
-        return konstituenten.get(konstituenten.size() - 1).kommaStehtAus();
-    }
-
-    public boolean isPersonalpronomenEs() {
-        if (konstituenten.size() > 1) {
+        final int i = konstituenten.size() - 1;
+        final IKonstituenteOrStructuralElement konst = konstituenten.get(i);
+        if (konst instanceof StructuralElement) {
             return false;
         }
 
-        return "es".equals(konstituenten.get(0).getString());
+        if (konst instanceof Konstituente) {
+            return ((Konstituente) konst).kommaStehtAus();
+        }
+
+        throw new IllegalStateException("Unexpected konst: " + konst);
     }
 
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
@@ -317,42 +339,53 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         Integer indexKandidat = null;
 
         for (int i = 0; i < size(); i++) {
-            final Konstituente konstituente = get(i);
+            final IKonstituenteOrStructuralElement konst = get(i);
+            if (konst instanceof Konstituente) {
+                final Konstituente konstituente = (Konstituente) konst;
+                if (konstituente.getPhorikKandidat() != null
+                        && konstituente.getPhorikKandidat().getNumerusGenus()
+                        .equals(numerusGenus)) {
+                    if (indexKandidat != null
+                            && !requireNonNull(
+                            ((Konstituente) get(indexKandidat)).getPhorikKandidat())
+                            .getBezugsobjekt().equals(
+                                    konstituente.getPhorikKandidat().getBezugsobjekt())) {
+                        // Es gab bereits ein Bezugsobjekt, und zwar ein anderes!
+                        indexVorigerAbweichenderKandidat = indexKandidat;
+                    }
 
-            if (konstituente.getPhorikKandidat() != null
-                    && konstituente.getPhorikKandidat().getNumerusGenus().equals(numerusGenus)) {
-                if (indexKandidat != null
-                        && !requireNonNull(
-                        get(indexKandidat).getPhorikKandidat())
-                        .getBezugsobjekt().equals(
-                                konstituente.getPhorikKandidat().getBezugsobjekt())) {
-                    // Es gab bereits ein Bezugsobjekt, und zwar ein anderes!
+                    indexKandidat = i;
+                } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)
+                        && indexKandidat != null) {
+
+                    //  Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst
+                    //  ihn
+                    //  in die Luft."
                     indexVorigerAbweichenderKandidat = indexKandidat;
+                    indexKandidat = i;
                 }
 
-                indexKandidat = i;
-            } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)
-                    && indexKandidat != null) {
+                if (indexVorigerAbweichenderKandidat != null
+                        && i - indexVorigerAbweichenderKandidat > GEDAECHTNISWEITE_PHORIK) {
+                    indexVorigerAbweichenderKandidat = null;
+                }
 
-                //  Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst ihn
-                //  in die Luft."
-                indexVorigerAbweichenderKandidat = indexKandidat;
-                indexKandidat = i;
-            }
+                if (indexKandidat != null
+                        && i - indexKandidat > GEDAECHTNISWEITE_PHORIK) {
+                    // Irgendwann wird der Abstand zu groß. Dinge vermeiden wie "Du stellst
+                    // die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+                    // schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder
+                    // in die Hand."
 
-            if (indexVorigerAbweichenderKandidat != null
-                    && i - indexVorigerAbweichenderKandidat > GEDAECHTNISWEITE_PHORIK) {
-                indexVorigerAbweichenderKandidat = null;
-            }
-
-            if (indexKandidat != null
-                    && i - indexKandidat > GEDAECHTNISWEITE_PHORIK) {
-                // Irgendwann wird der Abstand zu groß. Dinge vermeiden wie "Du stellst
-                // die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
-                // schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder
-                // in die Hand."
-
-                indexKandidat = null;
+                    indexKandidat = null;
+                }
+            } else if (konst instanceof StructuralElement) {
+                if (konst == CHAPTER) {
+                    indexVorigerAbweichenderKandidat = null;
+                    indexKandidat = null;
+                }
+            } else {
+                throw new IllegalStateException("Unexpected konst: " + konst);
             }
         }
 
@@ -368,7 +401,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             return new Pair<>(null, true);
         }
 
-        if (get(indexKandidat).getPhorikKandidat() == null) {
+        if (((Konstituente) get(indexKandidat)).getPhorikKandidat() == null) {
             // Etwas anderes (bei dem kein Bezugsobjekt angegeben wurde) könnte
             // als Bezugsobjekt verstanden werden.
             return new Pair<>(null, false);
@@ -404,7 +437,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
             return null;
         }
 
-        return get(bestIndex).getPhorikKandidat();
+        return ((Konstituente) get(bestIndex)).getPhorikKandidat();
     }
 
     /**
@@ -426,56 +459,138 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     @NonNull
     public Konstituente joinToSingleKonstituente() {
         final StringBuilder resString = new StringBuilder(size() * 25);
-        boolean first = true;
+        boolean firstAbgesehenVonWORD = true;
         boolean vorkommaNoetig = false;
         boolean vordoppelpunktNoetig = false;
+        StructuralElement startsNew = WORD;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
-        for (final Konstituente konstituente : this) {
-            final String konstituentenString = konstituente.getString();
-            if (woertlicheRedeNochOffen) {
-                if (resString.toString().trim().endsWith(".")) {
-                    resString.append("“");
-                } else if (!konstituentenString.trim().startsWith(".“")
-                        && !konstituentenString.trim().startsWith("!“")
-                        && !konstituentenString.trim().startsWith("?“")
-                        && !konstituentenString.trim().startsWith("…“")
-                        // Kein Satzende
-                        && !konstituentenString.trim().startsWith("“")) {
-                    resString.append("“");
-                }
-            }
+        for (final IKonstituenteOrStructuralElement konst : this) {
+            if (konst instanceof StructuralElement) {
+                startsNew = StructuralElement.max(startsNew, (StructuralElement) konst);
 
-            if (first) {
-                vorkommaNoetig =
-                        konstituente.vorkommaNoetig() &&
-                                !GermanUtil.beginnDecktKommaAb(konstituentenString);
-                vordoppelpunktNoetig =
-                        konstituente.vordoppelpunktNoetig() &&
-                                !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString);
-            }
-
-            if (!first && konstituente.vordoppelpunktNoetig()
-                    && !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString)) {
-                resString.append(":");
-                if (spaceNeeded(":", konstituentenString)) {
-                    resString.append(" ");
+                if (konst != WORD) {
+                    // Vorkomma und Vordoppelpunkt sind in neuem Satz, Absatz, ... nicht nötig
+                    firstAbgesehenVonWORD = false;
                 }
-            } else if ((kommaStehtAus
-                    || (!first && konstituente.vorkommaNoetig()))
-                    && !GermanUtil.beginnDecktKommaAb(konstituentenString)) {
-                resString.append(",");
-                if (spaceNeeded(",", konstituentenString)) {
-                    resString.append(" ");
-                }
-            } else if (spaceNeeded(resString, konstituentenString)) {
-                resString.append(" ");
-            }
+            } else if (konst instanceof Konstituente) {
+                final Konstituente konstituente = (Konstituente) konst;
 
-            resString.append(konstituentenString);
-            kommaStehtAus = konstituente.kommaStehtAus();
-            woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
-            first = false;
+                final String konstituentenString = konstituente.getString();
+                if (woertlicheRedeNochOffen) {
+                    if (resString.toString().trim().endsWith(".")) {
+                        resString.append("“");
+                    } else if (!konstituentenString.trim().startsWith(".“")
+                            && !konstituentenString.trim().startsWith("!“")
+                            && !konstituentenString.trim().startsWith("?“")
+                            && !konstituentenString.trim().startsWith("…“")
+                            // Kein Satzende
+                            && !konstituentenString.trim().startsWith("“")) {
+                        resString.append("“");
+                    }
+                }
+
+                if (firstAbgesehenVonWORD) {
+                    vorkommaNoetig =
+                            konstituente.vorkommaNoetig() &&
+                                    !GermanUtil.beginnDecktKommaAb(konstituentenString);
+                    vordoppelpunktNoetig =
+                            konstituente.vordoppelpunktNoetig() &&
+                                    !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString);
+                }
+
+                boolean erstenBuchstabenInKonstituenteTendenziellGrossschreiben = false;
+
+                if (!firstAbgesehenVonWORD && startsNew != CHAPTER
+                        && startsNew != PARAGRAPH
+                        && konstituente.vordoppelpunktNoetig()
+                        && !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString)) {
+
+                    resString.append(":");
+                    if (spaceNeeded(":", konstituentenString)) {
+                        resString.append(" ");
+                    }
+
+                    if (startsNew != WORD) {
+                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben = true;
+                    }
+                } else if ((kommaStehtAus && startsNew == WORD
+                        || (!firstAbgesehenVonWORD && konstituente.vorkommaNoetig()))
+                        && !GermanUtil.beginnDecktKommaAb(konstituentenString)) {
+                    resString.append(",");
+                    if (spaceNeeded(",", konstituentenString)) {
+                        resString.append(" ");
+                    }
+                } else {
+                    if (startsNew != WORD) {
+                        if (fullStopNeededToEndSentence(resString, konstituentenString)) {
+                            resString.append(".");
+                        }
+
+                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben = true;
+                    }
+
+                    if (startsNew == CHAPTER) {
+                        resString.append(
+                                getWhatsNeededToEndChapter(resString, konstituentenString));
+                    } else if (startsNew == PARAGRAPH) {
+                        if (newLineNeededToStartNewParagraph(resString, konstituentenString)) {
+                            resString.append("\n");
+                        }
+                    }
+
+                    if (spaceNeeded(resString, konstituentenString)) {
+                        resString.append(" ");
+                    }
+                }
+
+                boolean esSollGrossgeschriebenWerden =
+                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben;
+                int indexDerGrossgeschriebenWerdenSoll = 0;
+                if (erstenBuchstabenInKonstituenteTendenziellGrossschreiben) {
+                    while (indexDerGrossgeschriebenWerdenSoll < konstituentenString.length()) {
+                        final String currentZeichen = konstituentenString.substring(
+                                indexDerGrossgeschriebenWerdenSoll,
+                                indexDerGrossgeschriebenWerdenSoll + 1);
+                        if ("– „\".:!?".contains(currentZeichen)) {
+                            // Diese Zeichen einfach überspringen - DANACH soll
+                            // großgeschrieben werden
+                            indexDerGrossgeschriebenWerdenSoll++;
+                            continue;
+                        }
+                        if (",;…".contains(currentZeichen)) {
+                            // Danach soll nicht großgeschrieben werden
+                            esSollGrossgeschriebenWerden = false;
+                            break;
+                        }
+
+                        // Normaler Buchstabe gefunden! Es soll großgeschrieben werden
+                        break;
+                    }
+                }
+
+                if (esSollGrossgeschriebenWerden) {
+                    if (indexDerGrossgeschriebenWerdenSoll <= konstituentenString.length()) {
+                        resString.append(
+                                GermanStringUtil.capitalize(
+                                        konstituentenString, indexDerGrossgeschriebenWerdenSoll));
+                        startsNew = WORD;
+                    } else {
+                        // Der nachfolgende Text soll großgeschrieben werden.
+                        resString.append(konstituentenString); // Enthält keine Buchstaben
+                        startsNew = SENTENCE;
+                    }
+                } else {
+                    resString.append(konstituentenString);
+                    startsNew = WORD;
+                }
+
+                kommaStehtAus = konstituente.kommaStehtAus();
+                woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
+                firstAbgesehenVonWORD = false;
+            } else {
+                throw new IllegalArgumentException("Unexpected konst: " + konst);
+            }
         }
 
         final PhorikKandidat phorikKandidat = findPhorikKandidat();
@@ -484,7 +599,9 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
                         phorikKandidat.getNumerusGenus() :
                         calcKannAlsBezugsobjektVerstandenWerdenFuer();
 
-        return new Konstituente(
+        return new
+
+                Konstituente(
                 resString.toString().trim(),
                 vorkommaNoetig,
                 vordoppelpunktNoetig, woertlicheRedeNochOffen,
@@ -494,16 +611,10 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         );
     }
 
-    @Nullable
-    public Konstituentenfolge cutFirst(
-            @Nullable final Konstituente part) {
-        if (part == null) {
-            return this;
-        }
-
-        return cutFirst(new Konstituentenfolge(part));
-    }
-
+    /**
+     * Entfernt das letzte Vorkommen dieser Konstituentenfolge - wobei auch die enthaltenen
+     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die Vorkommata etc.
+     */
     @Nullable
     public Konstituentenfolge cutLast(
             @Nullable final Konstituentenfolge parts) {
@@ -521,28 +632,42 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     private Konstituentenfolge withKommaStehtAus() {
+        if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
+            // Am Ende der Konstituentenfolge endet der Satz. Kein Komma nötig.
+            return this;
+        }
+
         return new Konstituentenfolge(
-                ImmutableList.<Konstituente>builder()
+                ImmutableList.<IKonstituenteOrStructuralElement>builder()
                         .addAll(subFolge(0, size() - 1))
-                        .add(get(size() - 1).withKommaStehtAus())
+                        .add(((Konstituente) get(size() - 1)).withKommaStehtAus())
                         .build());
     }
 
     public Konstituentenfolge withVorkommaNoetig() {
+        if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
+            // Mit der Konstituentenfolge beginnt ein neuer Satz. Kein Vorkomma nötig.
+            return this;
+        }
+
         return new Konstituentenfolge(
-                ImmutableList.<Konstituente>builder()
-                        .add(get(0).withVorkommaNoetig(true))
+                ImmutableList.<IKonstituenteOrStructuralElement>builder()
+                        .add(((Konstituente) get(0)).withVorkommaNoetig(true))
                         .addAll(subFolge(1, size()))
                         .build());
     }
 
+    /**
+     * Entfernt das erste Vorkommen dieser Konstituentenfolge - wobei auch die enthaltenen
+     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die Vorkommata etc.
+     */
     @SuppressWarnings("UnstableApiUsage")
     @Nullable
     public Konstituentenfolge cutFirst(@Nullable final Konstituentenfolge part) {
         if (part == null) {
             return this;
         }
-        final ImmutableList.Builder<Konstituente> resBuilder =
+        final ImmutableList.Builder<IKonstituenteOrStructuralElement> resBuilder =
                 ImmutableList.builderWithExpectedSize(size() - part.size());
         boolean found = false;
         int i = 0;
@@ -564,7 +689,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
         checkArgument(found, "Konstituente(n) nicht gefunden. "
                 + "Konstituente(n) %s nicht gefunden in %s", part, this);
 
-        final ImmutableList<Konstituente> res = resBuilder.build();
+        final ImmutableList<IKonstituenteOrStructuralElement> res = resBuilder.build();
 
         if (res.isEmpty()) {
             return null;
@@ -574,11 +699,22 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     public Konstituentenfolge capitalize() {
-        return new Konstituentenfolge(
-                ImmutableList.<Konstituente>builder()
-                        .add(konstituenten.get(0).capitalize())
-                        .addAll(konstituenten.subList(1, konstituenten.size()))
-                        .build());
+        // FIXME Verwendungen suchen - und durch StructuralElement.SENTENCE ersetzen?!
+
+        final ImmutableList.Builder<IKonstituenteOrStructuralElement> res =
+                ImmutableList.builder();
+
+        boolean alreadyCapitalized = false;
+        for (int i = 0; i < size(); i++) {
+            if (!alreadyCapitalized && konstituenten.get(i) instanceof Konstituente) {
+                res.add(((Konstituente) konstituenten.get(i)).capitalize());
+                alreadyCapitalized = true;
+            } else {
+                res.add(konstituenten.get(i));
+            }
+        }
+
+        return new Konstituentenfolge(res.build());
     }
 
     private Konstituentenfolge reverse() {
@@ -587,7 +723,7 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
 
     @NonNull
     @Override
-    public Iterator<Konstituente> iterator() {
+    public Iterator<IKonstituenteOrStructuralElement> iterator() {
         return konstituenten.iterator();
     }
 
@@ -600,11 +736,11 @@ public class Konstituentenfolge implements Iterable<Konstituente> {
     }
 
     @NonNull
-    public Stream<Konstituente> stream() {
+    public Stream<IKonstituenteOrStructuralElement> stream() {
         return konstituenten.stream();
     }
 
-    public Konstituente get(final int index) {
+    public IKonstituenteOrStructuralElement get(final int index) {
         return konstituenten.get(index);
     }
 

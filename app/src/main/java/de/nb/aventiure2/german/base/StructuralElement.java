@@ -1,6 +1,9 @@
 package de.nb.aventiure2.german.base;
 
-public enum StructuralElement {
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
+public enum StructuralElement implements IKonstituenteOrStructuralElement {
     // Reihenfolge ist relevant! Siehe #max()!
     CHAPTER, PARAGRAPH, SENTENCE, WORD;
 
