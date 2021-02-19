@@ -224,20 +224,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     /**
-     * Gibt zurück, ob sich das Game Object an einer dieser <code>locations</code> befindet
-     * (<i>nicht</i> rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
-     */
-    public boolean hasLocation(final ILocationGO... locations) {
-        for (@Nullable final ILocationGO location : locations) {
-            if (hasLocation(location)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Gibt zurück, ob sich das Game Object an dieser <code>location</code> befindet (<i>nicht</i>
      * rekursiv, also <i>nicht</i> auf einem Tisch in diesem Raum).
      */
@@ -271,7 +257,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     public GameObjectId getLocationId() {
-        return getPcd().getLocationId();
+        return requirePcd().getLocationId();
     }
 
     /**
@@ -292,9 +278,9 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             throw new IllegalStateException("A game object cannot contain itself.");
         }
 
-        getPcd().setLastLocationId(getLocationId());
+        requirePcd().setLastLocationId(getLocationId());
 
-        getPcd().setLocationId(locationId);
+        requirePcd().setLocationId(locationId);
     }
 
     public boolean lastLocationWas(final @Nullable ILocationGO gameObject) {
@@ -302,7 +288,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public boolean lastLocationWas(final @Nullable GameObjectId locationId) {
-        return Objects.equals(getPcd().getLastLocationId(), locationId);
+        return Objects.equals(requirePcd().getLastLocationId(), locationId);
     }
 
     @Nullable
@@ -317,7 +303,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     private GameObjectId getLastLocationId() {
-        return getPcd().getLastLocationId();
+        return requirePcd().getLastLocationId();
     }
 
     public boolean isMovable() {

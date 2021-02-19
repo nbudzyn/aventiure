@@ -6,10 +6,8 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
@@ -144,44 +142,6 @@ public class Narration {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
     }
 
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist.
-     * <br/>
-     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     */
-    @Nullable
-    Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
-        return getAnaphPersPronWennMgl(gameObject.getId());
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer (rückgreifender) Bezug auf dieses
-     * Game Object möglich ist.
-     * <br/>
-     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     */
-    @Nullable
-    private Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
-        return PhorikKandidat.getAnaphPersPronWennMgl(getPhorikKandidat(), gameObjectId);
-    }
-
-    /**
-     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
-     * Game Object möglich ist.
-     * <br/>
-     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe mittels des Personalpronomens "sie" möglich:
-     * "... und nimmst sie mit."
-     */
-    boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
-        return PhorikKandidat.isAnaphorischerBezugMoeglich(getPhorikKandidat(), gameObjectId);
-    }
-
     @Nullable
     PhorikKandidat getPhorikKandidat() {
         if (phorikKandidatBezugsobjekt == null ||
@@ -215,7 +175,7 @@ public class Narration {
 
     Narration add(final NarrationSource narrationSource,
                   final TextDescription textDescription) {
-        final StringBuilder resText = new StringBuilder(text.trim());
+        final StringBuilder resText = new StringBuilder(text);
 
         final StructuralElement separation = textDescription.getStartsNew();
 
@@ -308,25 +268,22 @@ public class Narration {
 
     private static int howManyNewlinesNeedeToStartNewChapter(
             final String base, final String addition) {
-        final String baseTrimmed = base.trim();
-        final String additionTrimmed = addition.trim();
-
-        if (baseTrimmed.endsWith("\n\n")) {
+        if (base.endsWith("\n\n")) {
             return 0;
         }
 
-        if (additionTrimmed.startsWith("\n\n")) {
+        if (addition.startsWith("\n\n")) {
             return 0;
         }
 
-        if (baseTrimmed.endsWith("\n")) {
-            if (additionTrimmed.startsWith("\n")) {
+        if (base.endsWith("\n")) {
+            if (addition.startsWith("\n")) {
                 return 0;
             }
             return 1;
         }
 
-        if (additionTrimmed.startsWith("\n")) {
+        if (addition.startsWith("\n")) {
             return 1;
         }
 
@@ -335,13 +292,11 @@ public class Narration {
 
     private static boolean newlineNeededToStartNewParagraph(
             final String base, final String addition) {
-        final String baseTrimmed = base.trim();
-        if (baseTrimmed.endsWith("\n")) {
+        if (base.endsWith("\n")) {
             return false;
         }
 
-        final String additionTrimmed = addition.trim();
-        return !additionTrimmed.startsWith("\n");
+        return !addition.startsWith("\n");
     }
 
     private boolean kommaNeeded(final String base, final String addition) {
@@ -355,11 +310,7 @@ public class Narration {
         }
 
         final String firstCharAdditional = addition.substring(0, 1);
-        if (".,;!?\n".contains(firstCharAdditional)) {
-            return false;
-        }
-
-        return true;
+        return !".,;!?\n".contains(firstCharAdditional);
     }
 
     /**
@@ -447,17 +398,14 @@ public class Narration {
 
     private static boolean periodNeededToStartNewSentence(
             final String base, final String addition) {
-        final String baseTrimmed = base.trim();
-
         final String lastRelevantCharBase =
-                baseTrimmed.substring(baseTrimmed.length() - 1);
+                base.substring(base.length() - 1);
         if ("….!?:\"“–\n".contains(lastRelevantCharBase)) {
             return false;
         }
 
-        final String firstCharAdditional =
-                addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAdditional);
+        final String firstCharAddition = addition.trim().substring(0, 1);
+        return !".!?".contains(firstCharAddition);
     }
 
     NarrationSource getLastNarrationSource() {

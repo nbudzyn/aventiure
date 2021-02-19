@@ -190,7 +190,7 @@ public abstract class AvDatabase extends RoomDatabase {
      * goldene Kugel.</code>
      */
     private static Narration buildInitialNarration(final World world) {
-        final StringBuilder text = new StringBuilder();
+        final StringBuilder text = new StringBuilder(200);
 
         text.append(
                 "Diese Geschichte spielt in den alten Zeiten, wo das Wünschen noch geholfen hat. "
@@ -239,7 +239,7 @@ public abstract class AvDatabase extends RoomDatabase {
      */
     private static String buildObjectsInRoomDescriptionList(
             final List<? extends IDescribableGO> objectsInRoom) {
-        final StringBuilder res = new StringBuilder();
+        final StringBuilder res = new StringBuilder(100);
         for (int i = 0; i < objectsInRoom.size(); i++) {
             res.append(
                     objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nomStr());

@@ -47,11 +47,11 @@ public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
     }
 
     public void startWaiting(final AvDateTime endTime) {
-        getPcd().setEndTime(endTime);
+        requirePcd().setEndTime(endTime);
     }
 
     public void stopWaiting() {
-        getPcd().setEndTime(timeTaker.now().minus(secs(1)));
+        requirePcd().setEndTime(timeTaker.now().minus(secs(1)));
     }
 
     public void ifWaitingDoWaitStep(final AvDateTime now) {
@@ -64,6 +64,6 @@ public class WaitingComp extends AbstractStatefulComponent<WaitingPCD> {
     }
 
     private AvDateTime getEndTime() {
-        return getPcd().getEndTime();
+        return requirePcd().getEndTime();
     }
 }

@@ -128,7 +128,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return;
         }
 
-        requireNonNull(getPcd()).setTalkingToId(talkingToId);
+        requirePcd().setTalkingToId(talkingToId);
 
         if (otherTalker != null &&
                 otherTalker.is(SPIELER_CHARAKTER) &&
@@ -155,14 +155,14 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @SuppressWarnings("WeakerAccess")
     public void unsetTalkingTo(final boolean esIstDerTalkerDerDasGespraechBeendet) {
         @Nullable final ITalkerGO<?> talkingTo = getTalkingTo();
-        requireNonNull(getPcd())
+        requireNonNull(requirePcd())
                 .setTalkerHatletztesGespraechSelbstBeendet(esIstDerTalkerDerDasGespraechBeendet);
 
         if (talkingTo == null) {
             return;
         }
 
-        getPcd().setTalkingToId(null);
+        requirePcd().setTalkingToId(null);
         talkingTo.talkingComp().unsetTalkingTo(!esIstDerTalkerDerDasGespraechBeendet);
     }
 
@@ -190,11 +190,11 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
     @Nullable
     private GameObjectId getTalkingToId() {
-        return requireNonNull(getPcd()).getTalkingToId();
+        return requirePcd().getTalkingToId();
     }
 
     public boolean isTalkerHatLetztesGespraechSelbstBeendet() {
-        return requireNonNull(getPcd()).isTalkerHatletztesGespraechSelbstBeendet();
+        return requirePcd().isTalkerHatletztesGespraechSelbstBeendet();
     }
 
     /**
@@ -223,12 +223,12 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
                     + "ergibt keinen Sinn");
         }
 
-        requireNonNull(getPcd()).setSchonBegruesstMitSC(schonBegruesstMitSC);
+        requirePcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isSchonBegruesstMitSC() {
-        return requireNonNull(getPcd()).isSchonBegruesstMitSC();
+        return requirePcd().isSchonBegruesstMitSC();
     }
 
     /**

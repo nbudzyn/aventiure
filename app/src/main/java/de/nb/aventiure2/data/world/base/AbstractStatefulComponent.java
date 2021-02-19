@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.Nullable;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Abstract super-class for {@link AbstractComponent}s that have mutable - and therefore
  * persistent - data.
@@ -77,8 +79,12 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         dao.insert(pcd);
     }
 
+    public PCD requirePcd() {
+        return requireNonNull(getPcd());
+    }
+
     @Nullable
-    public PCD getPcd() {
+    private PCD getPcd() {
         return pcd;
     }
 }

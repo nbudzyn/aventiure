@@ -149,9 +149,9 @@ public class MovementComp
 
     @Override
     public void onSCActionDone(final AvDateTime startTimeOfUserAction) {
-        requireNonNull(getPcd()).setHatDenSCGeradeVerlassen(false);
+        requirePcd().setHatDenSCGeradeVerlassen(false);
 
-        if (getPcd().getPauseForSCAction() == PAUSED && !stayPaused()) {
+        if (requirePcd().getPauseForSCAction() == PAUSED && !stayPaused()) {
             setupNextStepIfNecessaryAndPossible(startTimeOfUserAction);
         }
     }
@@ -179,12 +179,12 @@ public class MovementComp
         // Wurde das Game Object zwischenzeitlich versetzt?
         if (locationComp.getLocation() != null &&
                 !locationComp.hasLocation(getCurrentStepToId()) &&
-                requireNonNull(getPcd()).getPauseForSCAction() == UNPAUSED) {
+                requirePcd().getPauseForSCAction() == UNPAUSED) {
             setupNextStepIfNecessaryAndPossible(now);
             pauseIfSameOuterMostLocationWithSC();
         }
 
-        if (!hasCurrentStep() || requireNonNull(getPcd()).getPauseForSCAction() == PAUSED) {
+        if (!hasCurrentStep() || requirePcd().getPauseForSCAction() == PAUSED) {
             return;
         }
 
@@ -200,7 +200,7 @@ public class MovementComp
     private void narrateAndMove(final AvDateTime now) {
         checkState(hasCurrentStep(), "No current step");
 
-        if (getPcd().getPauseForSCAction() == DO_START_LEAVING) {
+        if (requirePcd().getPauseForSCAction() == DO_START_LEAVING) {
             narrateAndDoMovementLeaves();
         }
 
@@ -269,7 +269,7 @@ public class MovementComp
             //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
             //  Narration geben...)
         ) {
-            requireNonNull(getPcd()).setPauseForSCAction(PAUSED);
+            requirePcd().setPauseForSCAction(PAUSED);
             return true;
         }
 
@@ -326,9 +326,9 @@ public class MovementComp
             return;
         }
 
-        requireNonNull(getPcd()).setCurrentStep(calculateStep(startTime, stepTakesNoTime));
+        requirePcd().setCurrentStep(calculateStep(startTime, stepTakesNoTime));
 
-        getPcd().setPauseForSCAction(DO_START_LEAVING);
+        requirePcd().setPauseForSCAction(DO_START_LEAVING);
     }
 
     /**
@@ -395,7 +395,7 @@ public class MovementComp
     }
 
     private void narrateAndDoMovementLeaves() {
-        requireNonNull(getPcd()).setPauseForSCAction(UNPAUSED);
+        requirePcd().setPauseForSCAction(UNPAUSED);
 
         if (world.loadSC().locationComp().hasRecursiveLocation(getCurrentStepFromId())) {
             narrateAndDoLeaves();
@@ -417,7 +417,7 @@ public class MovementComp
                 from.spatialConnectionComp().getConnection(getCurrentStepToId()),
                 from.spatialConnectionComp().getNumberOfWaysOut());
 
-        getPcd().setHatDenSCGeradeVerlassen(true);
+        requirePcd().setHatDenSCGeradeVerlassen(true);
     }
 
     public void narrateAndDoScTrifftMovingGOImDazwischen(
@@ -455,14 +455,14 @@ public class MovementComp
     }
 
     public boolean isMoving() {
-        return requireNonNull(getPcd()).getTargetLocationId() != null;
+        return requirePcd().getTargetLocationId() != null;
     }
 
     /**
      * Beendet die Bewegung.
      */
     private void stopMovement() {
-        requireNonNull(getPcd()).stopMovement();
+        requirePcd().stopMovement();
     }
 
     @Nullable
@@ -477,11 +477,11 @@ public class MovementComp
 
     @Nullable
     private GameObjectId getTargetLocationId() {
-        return requireNonNull(getPcd()).getTargetLocationId();
+        return requirePcd().getTargetLocationId();
     }
 
     private void setTargetLocationId(final GameObjectId targetLocationId) {
-        requireNonNull(getPcd()).setTargetLocationId(targetLocationId);
+        requirePcd().setTargetLocationId(targetLocationId);
     }
 
     private boolean hasCurrentStep() {
@@ -521,6 +521,6 @@ public class MovementComp
 
     @Nullable
     private MovementStep getCurrentStep() {
-        return requireNonNull(getPcd()).getCurrentStep();
+        return requirePcd().getCurrentStep();
     }
 }

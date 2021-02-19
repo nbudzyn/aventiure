@@ -137,13 +137,22 @@ public class DescriptionBuilder {
     @CheckReturnValue
     public static StructuredDescription du(final StructuralElement startsNew,
                                            final PraedikatOhneLeerstellen praedikat) {
+        return du(startsNew, praedikat, WORD);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static StructuredDescription du(final StructuralElement startsNew,
+                                           final PraedikatOhneLeerstellen praedikat,
+                                           final StructuralElement endsThis) {
         return satz(startsNew,
                 praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
                         // Wir behaupten hier, der Adressat wäre männlich.
                         // Es ist die Verantwortung des Aufrufers, keine
                         // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
                         // weibliche Adressaten ("du, die du") ausschließen.
-                        M, SPIELER_CHARAKTER)));
+                        M, SPIELER_CHARAKTER)),
+                endsThis);
     }
 
     @NonNull
@@ -155,6 +164,13 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     public static StructuredDescription satz(final StructuralElement startsNew, final Satz satz) {
-        return new StructuredDescription(startsNew, satz);
+        return satz(startsNew, satz, WORD);
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static StructuredDescription satz(final StructuralElement startsNew, final Satz satz,
+                                             final StructuralElement endsThis) {
+        return new StructuredDescription(startsNew, satz, endsThis);
     }
 }

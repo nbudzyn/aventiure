@@ -21,6 +21,7 @@ import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 
 /**
@@ -59,8 +60,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public TextDescription(final StructuralElement startsNew,
                            final Konstituente konstituente) {
         this(new DescriptionParams(startsNew, konstituente.getPhorikKandidat()),
-                konstituente.getString(), konstituente.woertlicheRedeNochOffen(),
-                konstituente.kommaStehtAus());
+                konstituente.getEndsThis() == WORD ?
+                        konstituente.getString() :
+                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
+                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
+                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
@@ -190,7 +194,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     public Konstituente toSingleKonstituente() {
         @Nullable final PhorikKandidat phorikKandidat = copyParams().getPhorikKandidat();
         return k(text, woertlicheRedeNochOffen, isKommaStehtAus(),
-                phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
+                WORD, phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
                 phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null);
     }
 

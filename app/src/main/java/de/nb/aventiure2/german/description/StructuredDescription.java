@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -21,6 +22,7 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
@@ -29,13 +31,25 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 public class StructuredDescription extends AbstractFlexibleDescription<StructuredDescription> {
     private final Satz satz;
 
+    /**
+     * This {@link Narration} ends this ... (paragraph, e.g.)
+     */
+    private final StructuralElement endsThis;
+
+    private StructuredDescription(final StructuralElement startsNew,
+                                  final Satz satz) {
+        this(startsNew, satz, WORD);
+    }
+
     StructuredDescription(final StructuralElement startsNew,
-                          final Satz satz) {
+                          final Satz satz,
+                          final StructuralElement endsThis) {
         super(startsNew,
                 // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
                 // Bei Bedarf kann man das in den Params noch überschreiben.
                 guessPhorikKandidat(satz));
         this.satz = satz;
+        this.endsThis = endsThis;
     }
 
     private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
@@ -136,6 +150,10 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         // (Aber die Methode erleichert das Handling, sodass z.B. die
         // TimedDescription problemlos komma() implementieren kann etc.)
         return this;
+    }
+
+    StructuralElement getEndsThis() {
+        return endsThis;
     }
 
     @Override

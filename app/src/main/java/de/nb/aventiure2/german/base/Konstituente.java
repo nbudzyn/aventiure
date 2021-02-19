@@ -12,6 +12,13 @@ import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.german.base.GermanUtil.fullStopNeededToEndSentence;
+import static de.nb.aventiure2.german.base.GermanUtil.getWhatsNeededToEndChapter;
+import static de.nb.aventiure2.german.base.GermanUtil.newLineNeededToStartNewParagraph;
+import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static java.util.Objects.requireNonNull;
 
 @Immutable
@@ -56,6 +63,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      */
     private final boolean kommmaStehtAus;
 
+    private final StructuralElement endsThis;
+
     /**
      * Wenn nicht <code>null</code>, dann kann diese Konstituente also Bezugsobjekt
      * (oder ihrerseits als anaphorischer Bezug auf ein Bezugsobjekt) verstanden werden,
@@ -79,13 +88,13 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
         return new Konstituente(string, vorkommaNoetig, vordoppelpunktNoetig,
                 woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     public Konstituente withVordoppelpunktNoetig() {
         return new Konstituente(string, vorkommaNoetig, true,
                 woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     Konstituente withKommaStehtAus() {
@@ -94,7 +103,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     public Konstituente withKommaStehtAus(final boolean kommmaStehtAus) {
         return k(string, woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer,
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt
         );
     }
@@ -133,7 +142,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
         // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
         return k(string.trim(), false, false,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
+                WORD, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
         );
     }
 
@@ -146,23 +155,26 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus) {
         return k(string, woertlicheRedeNochOffen, kommaStehtAus,
-                null, null);
+                WORD, null, null);
     }
 
     public static Konstituente k(final @Nonnull String string,
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus,
+                                 final StructuralElement endsThis,
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Konstituente(string, false, false,
-                woertlicheRedeNochOffen, kommaStehtAus, kannAlsBezugsobjektVerstandenWerdenFuer,
+                woertlicheRedeNochOffen, kommaStehtAus, endsThis,
+                kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt);
     }
 
     Konstituente(final String string, final boolean vorkommaNoetig,
                  final boolean vordoppelpunktNoetig,
                  final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus,
+                 final StructuralElement endsThis,
                  @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                  @Nullable final IBezugsobjekt bezugsobjekt) {
         checkArgument(!vorkommaNoetig || !vordoppelpunktNoetig,
@@ -182,6 +194,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         this.vordoppelpunktNoetig = vordoppelpunktNoetig;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.kommmaStehtAus = kommmaStehtAus;
+        this.endsThis = endsThis;
         this.bezugsobjekt = bezugsobjekt;
         this.kannAlsBezugsobjektVerstandenWerdenFuer =
                 kannAlsBezugsobjektVerstandenWerdenFuer;
@@ -198,16 +211,18 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return new Konstituente(
                 resultString, vorkommaNoetig,
                 vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer,
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt);
     }
 
     public Konstituente capitalize() {
+        // FIXME Prüfen, wo man vielleicht eher SENTENCE schreiben sollte
+
         return new Konstituente(GermanStringUtil.capitalize(string),
                 // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
                 // setzen zu vollen.
                 false, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     public Konstituente mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
@@ -217,22 +232,53 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
         return new Konstituente(string,
                 vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
-                phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
+                endsThis, phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
     }
 
     Konstituente ohneBezugsobjekt() {
         return new Konstituente(string,
                 vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
-                kannAlsBezugsobjektVerstandenWerdenFuer, null);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
     @NonNull
-    String toStringFixWoertlicheRedeNochOffen() {
+    public String toStringFixWoertlicheRedeNochOffenUndEndsThis() {
+        final StringBuilder res = new StringBuilder(getString());
+
         if (woertlicheRedeNochOffen()) {
-            return getString() + "“";
+            res.append("“");
         }
 
-        return getString();
+        res.append(insertStructuralBreak(res.toString(), endsThis, ""));
+
+        return res.toString();
+    }
+
+    static String insertStructuralBreak(final String base,
+                                        final StructuralElement structuralElement,
+                                        final String addition) {
+        final StringBuilder res = new StringBuilder(5);
+
+        if (structuralElement != WORD) {
+            if (fullStopNeededToEndSentence(base + res, addition)) {
+                res.append(".");
+            }
+        }
+
+        if (structuralElement == CHAPTER) {
+            res.append(
+                    getWhatsNeededToEndChapter(base + res, addition));
+        } else if (structuralElement == PARAGRAPH) {
+            if (newLineNeededToStartNewParagraph(base + res, addition)) {
+                res.append("\n");
+            }
+        }
+
+        if (spaceNeeded(base + res, addition)) {
+            res.append(" ");
+        }
+
+        return res.toString();
     }
 
     @Nonnull
@@ -295,6 +341,10 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     boolean koennteAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
         return kannAlsBezugsobjektVerstandenWerdenFuer == numerusGenus;
+    }
+
+    public StructuralElement getEndsThis() {
+        return endsThis;
     }
 
     @Override

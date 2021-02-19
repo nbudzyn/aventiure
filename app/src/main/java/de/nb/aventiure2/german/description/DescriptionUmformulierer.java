@@ -308,7 +308,8 @@ public class DescriptionUmformulierer {
                 praefixRemainder,
                 "und",
                 desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente(),
-                desc.getEndsThis())
+                desc instanceof StructuredDescription ?
+                        ((StructuredDescription) desc).getEndsThis() : null)
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann());
     }
@@ -328,11 +329,11 @@ public class DescriptionUmformulierer {
                 desc.getSatz().mitAdverbialerAngabe(
                         // "Erneut gibst du der Frau die Kugel"
                         // "Du gibst erneut der Frau die Kugel"
-                        advAngabe))
+                        advAngabe),
+                desc.getEndsThis())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
-                .phorikKandidat(desc.getPhorikKandidat())
-                .beendet(desc.getEndsThis());
+                .phorikKandidat(desc.getPhorikKandidat());
     }
 
     @CheckReturnValue
@@ -343,10 +344,10 @@ public class DescriptionUmformulierer {
                 max(desc.getStartsNew(), PARAGRAPH),
                 desc.getSatz().mitAdverbialerAngabe(
                         // "gibst der Frau die Kugel noch einmal"
-                        advAngabe))
+                        advAngabe),
+                desc.getEndsThis())
                 .undWartest(desc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt())
                 .dann(desc.isDann())
-                .phorikKandidat(desc.getPhorikKandidat())
-                .beendet(desc.getEndsThis());
+                .phorikKandidat(desc.getPhorikKandidat());
     }
 }

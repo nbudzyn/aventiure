@@ -147,7 +147,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return getPcd().getMuedigkeitsData().altAdverbialeAngabenSkopusSatz();
+            return requirePcd().getMuedigkeitsData().altAdverbialeAngabenSkopusSatz();
         }
 
         return getMood().altAdverbialeAngabenSkopusSatz();
@@ -158,7 +158,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return getPcd().getMuedigkeitsData().altAdverbialeAngabenSkopusVerbAllg();
+            return requirePcd().getMuedigkeitsData().altAdverbialeAngabenSkopusVerbAllg();
         }
 
         return getMood().altAdverbialeAngabenSkopusVerbAllg();
@@ -173,7 +173,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             // Häufig wird diese Phrase wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return getPcd().getMuedigkeitsData().altAdjektivphrase();
+            return requirePcd().getMuedigkeitsData().altAdjektivphrase();
         }
 
         return getMood().altAdjPhr();
@@ -184,7 +184,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private void resetMuedigkeitshinweisStepCount(final int scActionStepCount) {
-        getPcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
+        requirePcd().resetNextMuedigkeitshinweisActionStepCount(scActionStepCount);
     }
 
     public boolean hasMood(final Mood mood) {
@@ -204,30 +204,30 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     private Mood getMood() {
-        return getPcd().getMood();
+        return requirePcd().getMood();
     }
 
     public void requestMoodMin(final Mood mood) {
-        getPcd().requestMoodMin(mood);
+        requirePcd().requestMoodMin(mood);
     }
 
     public void requestMoodMax(final Mood mood) {
-        getPcd().requestMoodMax(mood);
+        requirePcd().requestMoodMax(mood);
     }
 
     public void requestMood(final Mood mood) {
-        getPcd().requestMood(mood);
+        requirePcd().requestMood(mood);
     }
 
     public Hunger getHunger() {
-        return getPcd().getHunger();
+        return requirePcd().getHunger();
     }
 
     /**
      * Gibt zurück, wie stark man durch die Müdigkeit im Gehen verlangsamt wird.
      */
     public double getMovementSpeedFactor() {
-        return getPcd().getMovementSpeedFactor();
+        return requirePcd().getMovementSpeedFactor();
     }
 
     // IDEA Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
@@ -378,7 +378,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     }
 
     public void ausgeschlafen(final AvTimeSpan ausschlafenEffektHaeltVorFuer) {
-        getPcd().ausgeschlafen(timeTaker.now(),
+        requirePcd().ausgeschlafen(timeTaker.now(),
                 scActionStepCountDao.stepCount(),
                 ausschlafenEffektHaeltVorFuer,
                 getMuedigkeitGemaessBiorhythmus());
@@ -389,11 +389,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * {@link FeelingIntensity#NEUTRAL} meint <i>wach</i>.
      */
     public int getMuedigkeit() {
-        return getPcd().getMuedigkeit();
+        return requirePcd().getMuedigkeit();
     }
 
     private void updateHunger() {
-        getPcd().updateHunger(timeTaker.now());
+        requirePcd().updateHunger(timeTaker.now());
     }
 
     /**
@@ -401,7 +401,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * auf Laune und Müdigkeit.
      */
     public void saveSatt() {
-        getPcd().saveSatt(timeTaker.now(), zeitspanneNachEssenBisWiederHungrig,
+        requirePcd().saveSatt(timeTaker.now(), zeitspanneNachEssenBisWiederHungrig,
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
     }
@@ -750,7 +750,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             newValue = Math.max(oldValue + increment, -Math.abs(bound));
         }
 
-        getPcd().setFeelingTowards(target, type, newValue);
+        requirePcd().setFeelingTowards(target, type, newValue);
     }
 
     /**
@@ -760,7 +760,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * und alle Gefühle zu jemand anderem vergisst.
      */
     public void resetFeelingsTowards(final GameObjectId target) {
-        getPcd().removeFeelingsTowards(target);
+        requirePcd().removeFeelingsTowards(target);
     }
 
     /**
@@ -791,7 +791,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @CheckReturnValue
     private float getFeelingTowardsAsFloat(final GameObjectId targetId,
                                            final FeelingTowardsType type) {
-        final Float res = getPcd().getFeelingTowards(targetId, type);
+        final Float res = requirePcd().getFeelingTowards(targetId, type);
 
         if (res != null) {
             return res;
@@ -921,7 +921,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private void narrateAndUpdateMuedigkeit() {
         final int muedigkeitBisher = getMuedigkeit();
 
-        getPcd().updateMuedigkeit(
+        requirePcd().updateMuedigkeit(
                 timeTaker.now(),
                 scActionStepCountDao.stepCount(),
                 getMuedigkeitGemaessBiorhythmus());
@@ -942,31 +942,31 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p)).beendet(PARAGRAPH))
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p), PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p)).beendet(PARAGRAPH))
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
                         "dich auf einmal", p.getPraedikativ(P2, SG), PARAGRAPH)
                         .mitVorfeldSatzglied("auf einmal"))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH,
                         praedikativumPraedikatMit(p).mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusSatz("auf einmal")))
-                        .beendet(PARAGRAPH))
+                                new AdverbialeAngabeSkopusSatz("auf einmal")),
+                        PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdverbialerAngabe(
-                        new AdverbialeAngabeSkopusSatz("mit einem Mal")))
-                        .beendet(PARAGRAPH))
+                        new AdverbialeAngabeSkopusSatz("mit einem Mal")),
+                        PARAGRAPH))
                 .collect(toList()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
@@ -1037,7 +1037,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             final int temporaereMinimalmuedigkeit, final AvTimeSpan duration) {
         final int muedigkeitBisher = getMuedigkeit();
 
-        getPcd().upgradeTemporaereMinimalmuedigkeit(
+        requirePcd().upgradeTemporaereMinimalmuedigkeit(
                 timeTaker.now(), scActionStepCountDao.stepCount(),
                 temporaereMinimalmuedigkeit, duration,
                 getMuedigkeitGemaessBiorhythmus());
@@ -1069,7 +1069,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         }
 
         final int scActionStepCount = scActionStepCountDao.stepCount();
-        if (!getPcd().muedigkeitshinweisNoetig(scActionStepCount)) {
+        if (!requirePcd().muedigkeitshinweisNoetig(scActionStepCount)) {
             return;
         }
 
@@ -1087,11 +1087,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p)).beendet(PARAGRAPH))
-                .collect(toList()));
+        res.addAll(
+                requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                        .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH))
+                        .collect(toList()));
 
-        res.addAll(getPcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
                         "dich", p.getPraedikativ(P2, SG), PARAGRAPH))
                 .collect(toList()));

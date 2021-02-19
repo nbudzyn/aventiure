@@ -11,8 +11,6 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 
-import static java.util.Objects.requireNonNull;
-
 /**
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
  * über die Zeit ändern kann).
@@ -66,7 +64,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     }
 
     public S getState() {
-        return fromString(requireNonNull(getPcd()).getState());
+        return fromString(requirePcd().getState());
     }
 
     public void narrateAndSetState(final S state) {
@@ -87,12 +85,12 @@ public abstract class AbstractStateComp<S extends Enum<S>>
             return;
         }
 
-        requireNonNull(getPcd()).setState(toString(state));
-        getPcd().setStateDateTime(timeTaker.now());
+        requirePcd().setState(toString(state));
+        requirePcd().setStateDateTime(timeTaker.now());
     }
 
     public AvDateTime getStateDateTime() {
-        return requireNonNull(getPcd()).getStateDateTime();
+        return requirePcd().getStateDateTime();
     }
 
     private S fromString(@NonNull final String stateString) {

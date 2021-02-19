@@ -67,7 +67,7 @@ public class GermanUtil {
             return null;
         }
 
-        return res.joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffen();
+        return res.joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffenUndEndsThis();
     }
 
     /**
@@ -96,8 +96,7 @@ public class GermanUtil {
 
     static String getWhatsNeededToEndChapter(@Nullable final CharSequence base,
                                              @Nullable final CharSequence addition) {
-        if (base == null || base.length() == 0 ||
-                addition == null || addition.length() == 0) {
+        if (base == null || base.length() == 0) {
             return "";
         }
 
@@ -112,6 +111,10 @@ public class GermanUtil {
                 }
             }
 
+            if (addition == null || addition.length() == 0) {
+                return "\n";
+            }
+
             final CharSequence firstCharAddition = addition.subSequence(0, 1);
             if (" ,;.:!?“\n".contains(firstCharAddition)) {
                 // Sind nach \n nicht erlaubt, kein weiteres \n einfügen!
@@ -122,6 +125,10 @@ public class GermanUtil {
         }
 
         // lastCharBase hört nicht mit "\n" auf
+
+        if (addition == null || addition.length() == 0) {
+            return "\n\n";
+        }
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
         if ("\n".contentEquals(firstCharAddition)) {
@@ -155,8 +162,7 @@ public class GermanUtil {
 
     static boolean newLineNeededToStartNewParagraph(@Nullable final CharSequence base,
                                                     @Nullable final CharSequence addition) {
-        if (base == null || base.length() == 0 ||
-                addition == null || addition.length() == 0) {
+        if (base == null || base.length() == 0) {
             return false;
         }
 
@@ -165,20 +171,21 @@ public class GermanUtil {
             return false;
         }
 
+        if (addition == null || addition.length() == 0) {
+            return true;
+        }
+
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
         return !" ,;.:!?“\n".contains(firstCharAddition);
     }
 
     static boolean fullStopNeededToEndSentence(@Nullable final CharSequence base,
                                                @Nullable final CharSequence addition) {
-        if (base == null || base.length() == 0 ||
-                addition == null || addition.length() == 0) {
+        if (base == null || base.length() == 0) {
             return false;
         }
 
         final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
-        final CharSequence firstCharAddition = addition.subSequence(0, 1);
-
         if (base.length() >= 2) {
             if ("“".contentEquals(lastCharBase)) {
                 final CharSequence secondLastCharBase =
@@ -187,7 +194,9 @@ public class GermanUtil {
             }
         }
 
-        if (addition.length() >= 2 && "“.".contentEquals(addition.subSequence(0, 2))) {
+        if (addition != null
+                && addition.length() >= 2
+                && "“.".contentEquals(addition.subSequence(0, 2))) {
             return false;
         }
 
@@ -195,6 +204,12 @@ public class GermanUtil {
             return false;
         }
 
+        if (addition == null || addition.length() == 0) {
+            return true;
+        }
+
+
+        final CharSequence firstCharAddition = addition.subSequence(0, 1);
         return !".:!?…".contains(firstCharAddition);
     }
 

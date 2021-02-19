@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * Abstract superclass for a description.
@@ -84,14 +85,17 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         //  übernehmen und hier separat speichern?
         //  Aus den params entfernen und params unverändert übergeben?
         final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(StructuralElement.WORD);
+        newParams.setStartsNew(WORD);
         if (konstituente.getPhorikKandidat() != null) {
             newParams.phorikKandidat(konstituente.getPhorikKandidat());
         }
-        return new TextDescription(
-                newParams,
-                konstituente.getString(),
-                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+
+        return new TextDescription(newParams,
+                konstituente.getEndsThis() == WORD ?
+                        konstituente.getString() :
+                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
+                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
+                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
     }
 
     @NonNull
@@ -105,8 +109,11 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         }
         return new TextDescription(
                 newParams,
-                konstituente.getString(),
-                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+                konstituente.getEndsThis() == WORD ?
+                        konstituente.getString() :
+                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
+                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
+                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
     }
 
     @SuppressWarnings("unchecked")

@@ -72,7 +72,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     @NonNull
     public Action getLastAction() {
-        return requireNonNull(getPcd()).getLastAction();
+        return requirePcd().getLastAction();
     }
 
     public void setLastAction(final Action.Type actionType,
@@ -98,7 +98,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     public void setLastAction(final Action action) {
-        requireNonNull(getPcd()).setLastAction(requireNonNull(action, "action"));
+        requirePcd().setLastAction(requireNonNull(action, "action"));
     }
 
     public boolean isKnown(final IGameObject otherGameObject) {
@@ -196,7 +196,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
         final Known oldKnown = getKnown(otherGameObjectId);
 
-        requireNonNull(getPcd()).setKnown(otherGameObjectId, known);
+        requirePcd().setKnown(otherGameObjectId, known);
 
         world.narrateAndDoReactions().onKnownChanged(
                 getGameObjectId(), otherGameObjectId, oldKnown, known);
@@ -204,6 +204,6 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     @NonNull
     public Known getKnown(final GameObjectId otherGameObjectId) {
-        return requireNonNull(getPcd()).getKnown(otherGameObjectId);
+        return requirePcd().getKnown(otherGameObjectId);
     }
 }

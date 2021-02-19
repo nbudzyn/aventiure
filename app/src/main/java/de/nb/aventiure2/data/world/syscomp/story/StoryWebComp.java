@@ -26,7 +26,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Managet die Stories, d.h. die kleinen
@@ -104,7 +103,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     }
 
     public void reachStoryNode(final IStoryNode storyNode) {
-        requireNonNull(getPcd()).reachStoryNode(storyNode, scActionStepCountDao.stepCount());
+        requirePcd().reachStoryNode(storyNode, scActionStepCountDao.stepCount());
     }
 
     public void narrateAndDoHintActionIfAny() {
@@ -125,18 +124,17 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             storyNode.narrateAndDoHintAction(db, timeTaker, n, world);
         }
 
-        requireNonNull(getPcd()).setLastHintActionStepCount(scActionStepCountDao.stepCount());
+        requirePcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
     }
 
     public int getScore() {
-        return requireNonNull(getPcd()).getScore();
+        return requirePcd().getScore();
     }
 
     @Nullable
     private IStoryNode getStoryNodeForHintAction() {
         final ImmutableSet<IStoryNode> storyNodesForHintAction =
-                requireNonNull(getPcd())
-                        .getStoryNodesForHintAction(scActionStepCountDao.stepCount());
+                requirePcd().getStoryNodesForHintAction(scActionStepCountDao.stepCount());
 
         if (storyNodesForHintAction.isEmpty()) {
             return null;

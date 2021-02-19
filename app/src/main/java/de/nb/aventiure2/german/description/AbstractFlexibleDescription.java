@@ -5,17 +5,12 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-    /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
-     */
-    private StructuralElement endsThis;
 
     /**
      * Whether the narration can be continued by a Satzreihenglied without subject where
@@ -61,14 +56,4 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();
 
     public abstract boolean hasSubjektDu();
-
-    @SuppressWarnings("unchecked")
-    public SELF beendet(final StructuralElement structuralElement) {
-        endsThis = structuralElement;
-        return (SELF) this;
-    }
-
-    StructuralElement getEndsThis() {
-        return endsThis;
-    }
 }
