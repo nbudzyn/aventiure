@@ -248,7 +248,8 @@ public class Narration {
                 narrationSource,
                 resEndsThis,
                 resText.toString().trim(),
-                additionDesc.isWoertlicheRedeNochOffen(), additionDesc.isKommaStehtAus(),
+                additionDesc.toSingleKonstituente().woertlicheRedeNochOffen(),
+                additionDesc.isKommaStehtAus(),
                 additionDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
                 additionDesc.isDann(),
                 additionDesc.getPhorikKandidat());

@@ -12,13 +12,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.base.StructuralElement.max;
 
 /**
  * A general description. The subject may be anything.
@@ -26,22 +25,10 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
 @ParametersAreNonnullByDefault
 public class TextDescription extends AbstractDescription<TextDescription> {
     /**
-     * Something like "Der Weg führt weiter in den Wald hinein. Dann stehst du vor einer Kirche"
+     * {@link Konstituente} für etwas wie "Der Weg führt weiter in den Wald hinein. Dann stehst
+     * du vor einer Kirche"
      */
-    private final String text;
-
-    /**
-     * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
-     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
-     * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
-     */
-    private final boolean woertlicheRedeNochOffen;
-
-    /**
-     * Ob ein Komma aussteht. Wenn ein Komma aussteht, muss als nächstes ein Komma folgen -
-     * oder das Satzende.
-     */
-    private boolean kommaStehtAus;
+    private Konstituente konstituente;
 
     // IDEA Das Konzept könnte man verallgemeinern: Die TextDescription könnte am Ende
     //  Koordination (d.h. und-Verbindungen) auf verschiedenen Ebenen erlauben:
@@ -53,20 +40,23 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
-    public TextDescription(final Konstituente konstituente) {
-        this(new DescriptionParams(konstituente.getStartsNew(), konstituente.getEndsThis(),
-                        konstituente.getPhorikKandidat()),
-                konstituente.getText(), konstituente.woertlicheRedeNochOffen(),
-                konstituente.kommaStehtAus());
-    }
-
     public TextDescription(final DescriptionParams descriptionParams,
                            final String text, final boolean woertlicheRedeNochOffen,
                            final boolean kommaStehtAus) {
         super(descriptionParams);
-        this.kommaStehtAus = kommaStehtAus;
-        this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-        this.text = text;
+        konstituente = k(text, descriptionParams.getStartsNew(),
+                woertlicheRedeNochOffen, kommaStehtAus, descriptionParams.getEndsThis(),
+                descriptionParams.getPhorikKandidat() != null ?
+                        descriptionParams.getPhorikKandidat().getNumerusGenus() : null,
+                descriptionParams.getPhorikKandidat() != null ?
+                        descriptionParams.getPhorikKandidat().getBezugsobjekt() : null);
+    }
+
+    public TextDescription(final Konstituente konstituente) {
+        super(new DescriptionParams(konstituente.getStartsNew(), konstituente.getEndsThis(),
+                konstituente.getPhorikKandidat()));
+
+        this.konstituente = konstituente;
     }
 
     @Override
@@ -85,6 +75,33 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return mitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
     }
 
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    public TextDescription mitPraefix(final String praefix) {
+        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
+
+        final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
+                getStartsNew(),
+                praefix,
+                konstituente).joinToSingleKonstituente();
+
+        final DescriptionParams newParams = copyParams();
+        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
+        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
+
+        return new TextDescription(
+                newParams,
+                konstituenteMitPraefix.getText(),
+                konstituenteMitPraefix.woertlicheRedeNochOffen(),
+                konstituenteMitPraefix.kommaStehtAus());
+    }
+
     /**
      * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
      * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
@@ -93,35 +110,22 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @NonNull
     @CheckReturnValue
     private TextDescription mitPraefix(final Konstituente praefixKonstituente) {
-        final Konstituente konstituente = joinToKonstituentenfolge(
+        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
+
+        final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
                 getStartsNew(),
                 praefixKonstituente,
-                text,
-                getEndsThis()).joinToSingleKonstituente();
+                konstituente).joinToSingleKonstituente();
 
         final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(konstituente.getStartsNew());
-        newParams.setEndsThis(konstituente.getEndsThis());
+        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
+        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
 
         return new TextDescription(
                 newParams,
-                konstituente.getText(),
-                woertlicheRedeNochOffen,
-                kommaStehtAus);
-    }
-
-    /**
-     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
-     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
-     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
-     * Wird dazwischen ein Leerzeichen erwartet, so muss das Präfix mit diesem Leerzeichen enden.
-     */
-    @NonNull
-    @CheckReturnValue
-    public TextDescription mitPraefix(final String praefix) {
-        return new TextDescription(
-                copyParams(),
-                praefix + text, woertlicheRedeNochOffen, kommaStehtAus);
+                konstituenteMitPraefix.getText(),
+                konstituenteMitPraefix.woertlicheRedeNochOffen(),
+                konstituenteMitPraefix.kommaStehtAus());
     }
 
     /**
@@ -136,10 +140,22 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @CheckReturnValue
     public TextDescription mitPraefixCapitalize(final String praefix) {
         // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
+
+        final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
+                getStartsNew(),
+                praefix,
+                SENTENCE,
+                konstituente).joinToSingleKonstituente();
+
+        final DescriptionParams newParams = copyParams();
+        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
+        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
+
         return new TextDescription(
-                copyParams(),
-                praefix + GermanStringUtil.capitalize(text), woertlicheRedeNochOffen,
-                kommaStehtAus);
+                newParams,
+                konstituenteMitPraefix.getText(),
+                konstituenteMitPraefix.woertlicheRedeNochOffen(),
+                konstituenteMitPraefix.kommaStehtAus());
     }
 
     @Override
@@ -158,7 +174,12 @@ public class TextDescription extends AbstractDescription<TextDescription> {
             return this;
         }
 
-        getParamsMutable().setStartsNew(max(getStartsNew(), zumindest));
+        konstituente = joinToKonstituentenfolge(
+                zumindest,
+                konstituente).joinToSingleKonstituente();
+
+        getParamsMutable().setStartsNew(konstituente.getStartsNew());
+
         return this;
     }
 
@@ -166,20 +187,12 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @CheckReturnValue
     @NonNull
     public Konstituente toSingleKonstituente() {
-        @Nullable final PhorikKandidat phorikKandidat = copyParams().getPhorikKandidat();
-        return Konstituente.k(text, getStartsNew(),
-                woertlicheRedeNochOffen, isKommaStehtAus(),
-                getParamsMutable().getEndsThis(),
-                phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
-                phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null);
+        return konstituente;
     }
 
     public String getText() {
-        return text;
-    }
-
-    public boolean isWoertlicheRedeNochOffen() {
-        return woertlicheRedeNochOffen;
+        // FIXME Verwendungen prüfen. Ggf. toTextOhneKontext... oder toSingleKonstituente()
+        return konstituente.getText();
     }
 
     @Override
@@ -189,12 +202,12 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     @Override
     public TextDescription komma(final boolean kommaStehtAus) {
-        this.kommaStehtAus = kommaStehtAus;
+        konstituente = konstituente.withKommaStehtAus(kommaStehtAus);
         return this;
     }
 
     public boolean isKommaStehtAus() {
-        return kommaStehtAus;
+        return toSingleKonstituente().kommaStehtAus();
     }
 
     @Override
@@ -209,13 +222,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
             return false;
         }
         final TextDescription that = (TextDescription) o;
-        return woertlicheRedeNochOffen == that.woertlicheRedeNochOffen &&
-                kommaStehtAus == that.kommaStehtAus &&
-                text.equals(that.text);
+        return Objects.equals(konstituente, that.konstituente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), text);
+        return Objects.hash(super.hashCode(), konstituente);
     }
 }
