@@ -145,11 +145,11 @@ public class DescriptionUmformulierer {
         final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription)) {
-            alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixNeuerSatz("gibst", "aber nicht auf:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("versuchst", "es noch einmal:",
+            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es noch einmal:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixNeuerSatz("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -213,15 +213,15 @@ public class DescriptionUmformulierer {
         final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
-            alt.addAll(duMitPraefixCapitalize("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixNeuerSatz("gibst", "aber nicht auf:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("versuchst", "es weiter:",
+            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es weiter:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("versuchst", "es noch weiter:",
+            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es noch weiter:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("versuchst", "es weiterhin:",
+            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es weiterhin:",
                     desc));
-            alt.addAll(duMitPraefixCapitalize("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixNeuerSatz("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -271,11 +271,11 @@ public class DescriptionUmformulierer {
     public static Collection<TextDescription> mitPraefixCap(final String praefix,
                                                             final AbstractDescription<?> desc) {
         return desc.altTextDescriptions().stream()
-                .map(d -> d.mitPraefixCapitalize(praefix + " ").beginntZumindestSentence())
+                .map(d -> d.mitPraefixCapitalize(praefix + " ").beginntZumindest(SENTENCE))
                 .collect(Collectors.toSet());
     }
 
-    private static Collection<AbstractFlexibleDescription<?>> duMitPraefixCapitalize(
+    private static Collection<AbstractFlexibleDescription<?>> duMitPraefixNeuerSatz(
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
@@ -284,7 +284,8 @@ public class DescriptionUmformulierer {
                         max(d.getStartsNew(), SENTENCE),
                         praefixVerb,
                         praefixRemainder,
-                        d.toSingleKonstituente().capitalize()))
+                        SENTENCE,
+                        d.toSingleKonstituente()))
                 .collect(Collectors.toSet());
     }
 
@@ -308,8 +309,7 @@ public class DescriptionUmformulierer {
                 praefixRemainder,
                 "und",
                 desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente(),
-                desc instanceof StructuredDescription ?
-                        ((StructuredDescription) desc).getEndsThis() : null)
+                desc.getEndsThis())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann());
     }
@@ -318,7 +318,7 @@ public class DescriptionUmformulierer {
     private static TextDescription toTextDescriptionMindestensParagraphMitVorfeld(
             final String vorfeld,
             final AbstractFlexibleDescription<?> desc) {
-        return desc.toTextDescriptionMitVorfeld(vorfeld).beginntZumindestParagraph();
+        return desc.toTextDescriptionMitVorfeld(vorfeld).beginntZumindest(PARAGRAPH);
     }
 
     private static AbstractDescription<?> mitAdvAngabe(

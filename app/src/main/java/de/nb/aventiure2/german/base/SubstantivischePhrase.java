@@ -84,7 +84,7 @@ public abstract class SubstantivischePhrase
             return praepositionMitKasus.getDescription(this)
                     // Das dürfen wir machen, weil nach der substantivischen Phrase ganz sicher
                     // kein Komma aussteht
-                    .getString();
+                    .getText();
         }
 
         throw new IllegalArgumentException("Unexpected Kasus or Präpositionalkasus: " +

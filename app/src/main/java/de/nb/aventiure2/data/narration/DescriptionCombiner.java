@@ -3,11 +3,12 @@ package de.nb.aventiure2.data.narration;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
+import java.util.EnumSet;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
@@ -17,6 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 class DescriptionCombiner {
@@ -104,17 +106,22 @@ class DescriptionCombiner {
                 second.getStartsNew() == WORD) {
             final Konstituente descriptionPartizipIIPhrase =
                     first.getDescriptionPartizipIIPhrase(P2, SG);
-            final String vorfeld =
-                    // "unten angekommen"
-                    GermanUtil.joinToString(descriptionPartizipIIPhrase) +
-                            (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
-            // Einen Phorik-Kandidat aus first übernehmen wir nicht - das Vorfeld ist
-            // schließlich maximal weit vom Satzende entfernt.
+            if (!descriptionPartizipIIPhrase.vordoppelpunktNoetig() &&
+                    EnumSet.of(WORD, SENTENCE)
+                            .contains(descriptionPartizipIIPhrase.getEndsThis())) {
+                final String vorfeld =
+                        // "unten angekommen"
+                        descriptionPartizipIIPhrase.toTextOhneKontext() +
+                                (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
+                // Einen Phorik-Kandidat aus first übernehmen wir nicht - das Vorfeld ist
+                // schließlich maximal weit vom Satzende entfernt.
 
-            res.add(
-                    // "Unten angekommen bist du ziemlich erschäpft"
-                    second.toTextDescriptionMitVorfeld(vorfeld)
-                            .beginntZumindestSentence());
+                res.add(
+                        // "Unten angekommen bist du ziemlich erschäpft"
+                        second.toTextDescriptionMitVorfeld(vorfeld)
+                                .beginntZumindest(
+                                        StructuralElement.max(SENTENCE, first.getStartsNew())));
+            }
         }
 
         return res.build();

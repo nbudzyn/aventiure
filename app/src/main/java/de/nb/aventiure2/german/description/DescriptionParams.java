@@ -17,10 +17,21 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * Parameter einer {@link AbstractDescription} - mutable!
  */
 public class DescriptionParams {
+    // FIXME startsNew aus DescriptionParams umziehen.
+    //  In TextDescription nicht mehr nötig.
+
     /**
      * This {@link Narration} starts a new ... (paragraph, e.g.)
      */
     private StructuralElement startsNew;
+    /**
+     * This {@link Narration} ends this ... (paragraph, e.g.)
+     */
+    private StructuralElement endsThis;
+    /**
+     * Whether the narration can be continued by a Satzreihenglied without subject where
+     * the player character is the implicit subject (such as " und gehst durch die Tür.")
+     */
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
     private boolean dann;
     /**
@@ -50,20 +61,23 @@ public class DescriptionParams {
     private PhorikKandidat phorikKandidat;
 
     DescriptionParams copy() {
-        return new DescriptionParams(startsNew,
+        return new DescriptionParams(startsNew, endsThis,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
     DescriptionParams(final StructuralElement startsNew,
+                      final StructuralElement endsThis,
                       @Nullable final PhorikKandidat phorikKandidat) {
-        this(startsNew, false, false, phorikKandidat);
+        this(startsNew, endsThis,
+                false, false, phorikKandidat);
     }
 
-    private DescriptionParams(final StructuralElement startsNew,
+    private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
                               final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                               final boolean dann,
                               @Nullable final PhorikKandidat phorikKandidat) {
         this.startsNew = startsNew;
+        this.endsThis = endsThis;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -84,6 +98,12 @@ public class DescriptionParams {
      */
     void setStartsNew(final StructuralElement startsNew) {
         this.startsNew = startsNew;
+    }
+
+    // FIXME Prüfen, ob capitalize() zu oft oder zu früh aufgerufen wird?
+
+    public void setEndsThis(final StructuralElement endsThis) {
+        this.endsThis = endsThis;
     }
 
     /**
@@ -152,6 +172,10 @@ public class DescriptionParams {
         return startsNew;
     }
 
+    StructuralElement getEndsThis() {
+        return endsThis;
+    }
+
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
     }
@@ -164,4 +188,5 @@ public class DescriptionParams {
     public PhorikKandidat getPhorikKandidat() {
         return phorikKandidat;
     }
+
 }

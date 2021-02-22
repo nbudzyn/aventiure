@@ -29,19 +29,6 @@ public abstract class EinzelneSubstantivischePhrase extends SubstantivischePhras
     @Nullable
     private final IBezugsobjekt bezugsobjekt;
 
-    /**
-     * Erzeugt eine substantivische Phrase ohne Bezugsobjekt (jedenfalls nicht für die Phrase
-     * im Ganzen) und ohne Fokuspartikel.
-     */
-    protected EinzelneSubstantivischePhrase(final NumerusGenus numerusGenus) {
-        this(null, numerusGenus, null);
-    }
-
-    public EinzelneSubstantivischePhrase(final NumerusGenus numerusGenus,
-                                         @Nullable final IBezugsobjekt bezugsobjekt) {
-        this(null, numerusGenus, bezugsobjekt);
-    }
-
     EinzelneSubstantivischePhrase(@Nullable final String fokuspartikel,
                                   final NumerusGenus numerusGenus,
                                   @Nullable final IBezugsobjekt bezugsobjekt) {

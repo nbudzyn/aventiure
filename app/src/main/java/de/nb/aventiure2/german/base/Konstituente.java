@@ -12,12 +12,8 @@ import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.german.base.GermanUtil.fullStopNeededToEndSentence;
-import static de.nb.aventiure2.german.base.GermanUtil.getWhatsNeededToEndChapter;
-import static de.nb.aventiure2.german.base.GermanUtil.newLineNeededToStartNewParagraph;
-import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static java.util.Objects.requireNonNull;
 
@@ -27,7 +23,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * Die eigentlichen Wörter und Satzzeichen
      */
     @Nonnull
-    private final String string;
+    private final String text;
 
     /**
      * Ob noch ein Komma <i>vor dieser Konstituente</i> nötig ist. Alternativ kann ein Punkt,
@@ -49,6 +45,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      */
     private final boolean vordoppelpunktNoetig;
 
+    private final StructuralElement startsNew;
+
     /**
      * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
      * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
@@ -61,7 +59,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * oder es folgt ein Punkt, ein Ausrufezeichen, ein Fragezeichen, ein Doppelpunkt oder
      * ein Semikolon, das ebenfalls das Komma "abdeckt".
      */
-    private final boolean kommmaStehtAus;
+    private final boolean kommaStehtAus;
 
     private final StructuralElement endsThis;
 
@@ -86,14 +84,15 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     private final IBezugsobjekt bezugsobjekt;
 
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
-        return new Konstituente(string, vorkommaNoetig, vordoppelpunktNoetig,
-                woertlicheRedeNochOffen, kommmaStehtAus,
+        return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,
+                startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     public Konstituente withVordoppelpunktNoetig() {
-        return new Konstituente(string, vorkommaNoetig, true,
-                woertlicheRedeNochOffen, kommmaStehtAus,
+        return new Konstituente(text, vorkommaNoetig,
+                true,
+                startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
@@ -102,7 +101,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     }
 
     public Konstituente withKommaStehtAus(final boolean kommmaStehtAus) {
-        return k(string, woertlicheRedeNochOffen, kommmaStehtAus,
+        return k(text, startsNew, woertlicheRedeNochOffen, kommmaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt
         );
@@ -115,8 +114,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * (man kann also nicht nachfolgende "sie", "ihm" oder "es" schreiben und diese
      * Konsituente meinen).
      */
-    public static Konstituente k(final @Nonnull String string) {
-        return k(string, null, null);
+    public static Konstituente k(final @Nonnull String text) {
+        return k(text, null, null);
     }
 
     /**
@@ -124,24 +123,24 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * String (getrimmt) mit Komma geendet hat. Die Konstituente enthält keinen
      * Phorik-Kandidaten.
      */
-    public static Konstituente k(final @Nonnull String string,
+    public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus koennteAlsBezugsobjektVerstandenWerdenFuer) {
-        return k(string, koennteAlsBezugsobjektVerstandenWerdenFuer, null);
+        return k(text, koennteAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
     /**
      * Erzeugt eine Konstituente, bei der nur dann kein Komma aussteht, wenn der
      * String (getrimmt) mit Komma geendet hat.
      */
-    public static Konstituente k(final @Nonnull String string,
+    public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
         // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
         // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
-        return k(string.trim(), false, false,
+        return k(text.trim(), WORD, false, false,
                 WORD, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
         );
     }
@@ -151,78 +150,69 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * kann (man kann also nicht nachfolgende "sie", "ihm" oder "es" schreiben und diese
      * Konsituente meinen).
      */
-    public static Konstituente k(final @Nonnull String string,
+    public static Konstituente k(final @Nonnull String text,
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus) {
-        return k(string, woertlicheRedeNochOffen, kommaStehtAus,
+        return k(text, WORD, woertlicheRedeNochOffen, kommaStehtAus,
                 WORD, null, null);
     }
 
-    public static Konstituente k(final @Nonnull String string,
+    public static Konstituente k(final @Nonnull String text,
+                                 final StructuralElement startsNew,
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus,
                                  final StructuralElement endsThis,
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
-        return new Konstituente(string, false, false,
-                woertlicheRedeNochOffen, kommaStehtAus, endsThis,
+        return new Konstituente(text, false, false,
+                startsNew, woertlicheRedeNochOffen, kommaStehtAus, endsThis,
                 kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt);
     }
 
-    Konstituente(final String string, final boolean vorkommaNoetig,
+    Konstituente(final String text, final boolean vorkommaNoetig,
                  final boolean vordoppelpunktNoetig,
-                 final boolean woertlicheRedeNochOffen, final boolean kommmaStehtAus,
+                 final StructuralElement startsNew,
+                 final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                  final StructuralElement endsThis,
                  @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
                  @Nullable final IBezugsobjekt bezugsobjekt) {
         checkArgument(!vorkommaNoetig || !vordoppelpunktNoetig,
                 "Vorkomma und Vordoppelpunkt können nicht gleichzeitig nötig "
-                        + "sein! String: %s", string);
-        requireNonNull(string, "string");
-        checkArgument(!string.isEmpty(), "String ist empty");
-        checkArgument(!string.startsWith(" "));
-        checkArgument(!string.endsWith(" "));
+                        + "sein! String: %s", text);
+        requireNonNull(text, "string");
+        checkArgument(!text.isEmpty(), "String ist empty");
+        checkArgument(!text.startsWith(" "));
+        checkArgument(!text.endsWith(" "));
         checkArgument(bezugsobjekt == null ||
                         kannAlsBezugsobjektVerstandenWerdenFuer != null,
                 "Bezugsobjekt angegeben, aber kein Numerus / Genus! Bezugsobjekt: %s",
                 bezugsobjekt);
 
-        this.string = string;
+        this.text = text;
         this.vorkommaNoetig = vorkommaNoetig;
+        this.startsNew = startsNew;
         this.vordoppelpunktNoetig = vordoppelpunktNoetig;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-        this.kommmaStehtAus = kommmaStehtAus;
+        this.kommaStehtAus = kommaStehtAus;
         this.endsThis = endsThis;
         this.bezugsobjekt = bezugsobjekt;
-        this.kannAlsBezugsobjektVerstandenWerdenFuer =
-                kannAlsBezugsobjektVerstandenWerdenFuer;
+        this.kannAlsBezugsobjektVerstandenWerdenFuer = kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 
-    @Nullable
-    public Konstituente cutFirst(final String subString) {
-        @Nullable final String resultString = GermanUtil.cutFirst(string, subString);
+    public IKonstituenteOrStructuralElement cutFirst(final String subText) {
+        @Nullable final String resultString = GermanUtil.cutFirst(text, subText);
 
         if (resultString == null) {
-            return null;
+            return StructuralElement.max(startsNew, endsThis);
         }
 
         return new Konstituente(
                 resultString, vorkommaNoetig,
-                vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+                vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt);
-    }
-
-    public Konstituente capitalize() {
-        // FIXME Prüfen, wo man vielleicht eher SENTENCE schreiben sollte
-
-        return new Konstituente(GermanStringUtil.capitalize(string),
-                // Wenn großgeschrieben werden soll, wäre es sinnlos, ein Komma zuvor
-                // setzen zu vollen.
-                false, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
-                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     public Konstituente mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
@@ -230,68 +220,75 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
             return ohneBezugsobjekt();
         }
 
-        return new Konstituente(string,
-                vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+        return new Konstituente(text,
+                vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
+                kommaStehtAus,
                 endsThis, phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
     }
 
     Konstituente ohneBezugsobjekt() {
-        return new Konstituente(string,
-                vorkommaNoetig, vordoppelpunktNoetig, woertlicheRedeNochOffen, kommmaStehtAus,
+        return new Konstituente(text,
+                vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
+                kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, null);
     }
 
+    /**
+     * Gibt den Text zurück, ohne den folgenden Text zu berücksichtigen.
+     * Das kann leicht zu Zeichensetzungsfehlern führen, und man sollte diese
+     * Methode nur verwenden, wenn man weiß, um was für einen Text es sich handelt
+     * und was für ein Text noch folgt. Der Aufrufer muss Vorkomma, Vordoppelpunkt
+     * {@link #startsNew}, Großschreibung sowie {@link #endsThis} und Folgekomma selbst
+     * bearbeiten. Großschreibung geschieht hingegen automatisch und die wörtliche Rede wird
+     * automatisch geschlossen. Es wird kein automatischer Punkt gesetzt.
+     */
     @NonNull
-    public String toStringFixWoertlicheRedeNochOffenUndEndsThis() {
-        final StringBuilder res = new StringBuilder(getString());
+    public String toTextOhneKontext() {
+        final String res = woertlicheRedeNochOffen() ? getText() + "“" : getText();
 
-        if (woertlicheRedeNochOffen()) {
-            res.append("“");
+        if (startsNew.isAtLeast(SENTENCE)) {
+            return GermanStringUtil.capitalizeFirstLetter(res);
         }
 
-        res.append(insertStructuralBreak(res.toString(), endsThis, ""));
-
-        return res.toString();
+        return res;
     }
 
-    static String insertStructuralBreak(final String base,
-                                        final StructuralElement structuralElement,
-                                        final String addition) {
-        final StringBuilder res = new StringBuilder(5);
+    Konstituente capitalizeFirstLetter() {
+        return mitText(GermanStringUtil.capitalizeFirstLetter(text));
+    }
 
-        if (structuralElement != WORD) {
-            if (fullStopNeededToEndSentence(base + res, addition)) {
-                res.append(".");
-            }
+    private Konstituente mitText(final String text) {
+        if (this.text.equals(text)) {
+            // Speicher und Zeit sparen
+            return this;
         }
 
-        if (structuralElement == CHAPTER) {
-            res.append(
-                    getWhatsNeededToEndChapter(base + res, addition));
-        } else if (structuralElement == PARAGRAPH) {
-            if (newLineNeededToStartNewParagraph(base + res, addition)) {
-                res.append("\n");
-            }
-        }
-
-        if (spaceNeeded(base + res, addition)) {
-            res.append(" ");
-        }
-
-        return res.toString();
+        return new Konstituente(text,
+                vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
+                kommaStehtAus,
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     @Nonnull
-    public String getString() {
-        return string;
+    public String getText() {
+        // FIXME Wird startsNew überall richtig berücksichtigt?
+        // FIXME Wird endsThis überall richtig berücksichtigt?
+        // FIXME Wird vorDoppelpunktNoetig() überall richtig berücksichtigt?
+        // FIXME Wird vorkommaNoetig() überall richtig berücksichtigt?
+        // FIXME Wird woertlicheRedeNochOffen() überall richtig berücksichtigt?
+        // FIXME Wird kommaStehtAus() überall richtig berücksichtigt?
+        // FIXME Wird getPhorikKandidat() überall richtig berücksichtigt?
+        // FIXME Wird koennteAlsBezugsobjektVerstandenWerdenFuer überall richtig berücksichtigt?
+        //  Vielleicht ist toTextOhneKontext() sinnvoll - oder withStartNewSentence...
+        return text;
     }
 
     public boolean vorkommaNoetig() {
-        return vorkommaNoetig;
+        return vorkommaNoetig && startsNew == WORD && !GermanUtil.beginnDecktKommaAb(text);
     }
 
     public boolean vordoppelpunktNoetig() {
-        return vordoppelpunktNoetig;
+        return vordoppelpunktNoetig && !GermanUtil.beginnDecktDoppelpunktAb(text);
     }
 
     public boolean woertlicheRedeNochOffen() {
@@ -299,7 +296,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     }
 
     public boolean kommaStehtAus() {
-        return kommmaStehtAus;
+        return kommaStehtAus && endsThis == WORD && !endeDecktKommaAb(toTextOhneKontext());
     }
 
     /**
@@ -343,6 +340,10 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return kannAlsBezugsobjektVerstandenWerdenFuer == numerusGenus;
     }
 
+    public StructuralElement getStartsNew() {
+        return startsNew;
+    }
+
     public StructuralElement getEndsThis() {
         return endsThis;
     }
@@ -358,14 +359,14 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         final Konstituente that = (Konstituente) o;
         // WICHTIG: Hier darf man nur den Text vergleichen, nicht die Kommata!
         // Ansonsten funktioniert das Ausschneiden nicht mehr richtig
-        return string.equals(that.string);
+        return text.equals(that.text);
     }
 
     @Override
     public int hashCode() {
         // WICHTIG: Hier darf man nur den Text eingehen lassen, damit die Methode
         // konsistent mit equals arbeitet.
-        return Objects.hash(string);
+        return Objects.hash(text);
     }
 
     @NonNull
@@ -373,9 +374,11 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public String toString() {
         return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode())
                 + ": \""
-                + (vorkommaNoetig ? "[, ]" : "")
-                + string
-                + (kommmaStehtAus ? "[, ]" : "")
+                + (startsNew != WORD ? "[starts new " + startsNew + "]" : "")
+                + (vorkommaNoetig() ? "[, ]" : "")
+                + toTextOhneKontext()
+                + (kommaStehtAus() ? "[, ]" : "")
+                + (endsThis != WORD ? "[ends this " + endsThis + "]" : "")
                 + "\"";
     }
 }

@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -33,6 +32,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
+import static de.nb.aventiure2.german.string.GermanStringUtil.breakToString;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -448,26 +449,52 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      */
     @NonNull
     public String joinToString() {
-        return joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffenUndEndsThis();
+        return joinToSingleKonstituente().toTextOhneKontext();
     }
 
     /**
      * Fügt diese Konstituenten zu einer einzigen Konsituente zusammen. Damit gehen natürlich
      * Detailinformationen verloren, und man kann nachträglich nicht mehr gut einzelne
      * Teile entfernen, weil z.B. unklar ist, ob auch Kommata entfernt werden müssen.
+     * Die Ergebnis-Konsituente wird nicht automatisch großgeschrieben.
      */
     @NonNull
     public Konstituente joinToSingleKonstituente() {
-        final StringBuilder resString = new StringBuilder(size() * 25);
+        final IKonstituenteOrStructuralElement res = joinToSingleKonstituenteOrStructuralElement();
+        if (!(res instanceof Konstituente)) {
+            throw new IllegalStateException("Joining result was " + res);
+        }
+
+        return (Konstituente) res;
+    }
+
+    /**
+     * Fügt diese Konstituenten zu einer einzigen Konsituente oder eine StructuralElement
+     * zusammen. Damit gehen natürlich Detailinformationen verloren, und man kann nachträglich
+     * nicht mehr gut einzelne
+     * Teile entfernen, weil z.B. unklar ist, ob auch Kommata entfernt werden müssen.
+     * Die Ergebnis-Konstituente wird nicht automatisch großgeschrieben.
+     */
+    @NonNull
+    public IKonstituenteOrStructuralElement joinToSingleKonstituenteOrStructuralElement() {
+        final StringBuilder resTextBuilder = new StringBuilder(size() * 25);
         boolean firstAbgesehenVonWORD = true;
-        boolean vorkommaNoetig = false;
-        boolean vordoppelpunktNoetig = false;
-        StructuralElement startsNew = WORD;
+        boolean firstKonstituente = true;
+        boolean resVorkommaNoetig = false;
+        boolean resVordoppelpunktNoetig = false;
+        StructuralElement resStartsNew = WORD;
+        StructuralElement brreak = WORD;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
         for (final IKonstituenteOrStructuralElement konst : this) {
             if (konst instanceof StructuralElement) {
-                startsNew = StructuralElement.max(startsNew, (StructuralElement) konst);
+                brreak =
+                        StructuralElement
+                                .max(brreak, (StructuralElement) konst);
+
+                if (firstAbgesehenVonWORD) {
+                    resStartsNew = brreak;
+                }
 
                 if (konst != WORD) {
                     // Vorkomma und Vordoppelpunkt sind in neuem Satz, Absatz, ... nicht nötig
@@ -476,99 +503,77 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
             } else if (konst instanceof Konstituente) {
                 final Konstituente konstituente = (Konstituente) konst;
 
-                final String konstituentenString = konstituente.getString();
+                final String konstituentenText = konstituente.getText();
                 if (woertlicheRedeNochOffen) {
-                    if (resString.toString().trim().endsWith(".")) {
-                        resString.append("“");
-                    } else if (!konstituentenString.trim().startsWith(".“")
-                            && !konstituentenString.trim().startsWith("!“")
-                            && !konstituentenString.trim().startsWith("?“")
-                            && !konstituentenString.trim().startsWith("…“")
+                    if (resTextBuilder.toString().trim().endsWith(".")) {
+                        resTextBuilder.append("“");
+                    } else if (!konstituentenText.trim().startsWith(".“")
+                            && !konstituentenText.trim().startsWith("!“")
+                            && !konstituentenText.trim().startsWith("?“")
+                            && !konstituentenText.trim().startsWith("…“")
                             // Kein Satzende
-                            && !konstituentenString.trim().startsWith("“")) {
-                        resString.append("“");
+                            && !konstituentenText.trim().startsWith("“")) {
+                        resTextBuilder.append("“");
                     }
+                }
+
+                if (firstKonstituente) {
+                    resStartsNew =
+                            StructuralElement.max(resStartsNew, konstituente.getStartsNew());
+                    firstKonstituente = false;
                 }
 
                 if (firstAbgesehenVonWORD) {
-                    vorkommaNoetig =
-                            konstituente.vorkommaNoetig() &&
-                                    !GermanUtil.beginnDecktKommaAb(konstituentenString);
-                    vordoppelpunktNoetig =
-                            konstituente.vordoppelpunktNoetig() &&
-                                    !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString);
+                    resVorkommaNoetig =
+                            konstituente.vorkommaNoetig() && resStartsNew == WORD;
+                    resVordoppelpunktNoetig = konstituente.vordoppelpunktNoetig();
                 }
 
-                boolean erstenBuchstabenInKonstituenteTendenziellGrossschreiben = false;
+                boolean capitalize = false;
 
-                if (!firstAbgesehenVonWORD && startsNew != CHAPTER
-                        && startsNew != PARAGRAPH
-                        && konstituente.vordoppelpunktNoetig()
-                        && !GermanUtil.beginnDecktDoppelpunktAb(konstituentenString)) {
-
-                    resString.append(":");
-                    if (spaceNeeded(":", konstituentenString)) {
-                        resString.append(" ");
+                if (!firstAbgesehenVonWORD && brreak != CHAPTER
+                        && brreak != PARAGRAPH
+                        && konstituente.vordoppelpunktNoetig()) {
+                    resTextBuilder.append(":");
+                    if (spaceNeeded(":", konstituentenText)) {
+                        resTextBuilder.append(" ");
                     }
 
-                    if (startsNew != WORD) {
-                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben = true;
+                    if (brreak != WORD) {
+                        capitalize = true;
                     }
-                } else if ((kommaStehtAus && startsNew == WORD
-                        || (!firstAbgesehenVonWORD && konstituente.vorkommaNoetig()))
-                        && !GermanUtil.beginnDecktKommaAb(konstituentenString)) {
-                    resString.append(",");
-                    if (spaceNeeded(",", konstituentenString)) {
-                        resString.append(" ");
+                } else if (kommaStehtAus && brreak == WORD
+                        || (!firstAbgesehenVonWORD && konstituente.vorkommaNoetig())) {
+                    resTextBuilder.append(",");
+                    if (spaceNeeded(",", konstituentenText)) {
+                        resTextBuilder.append(" ");
                     }
                 } else {
-                    if (startsNew != WORD) {
-                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben = true;
+                    if (!firstAbgesehenVonWORD && brreak != WORD) {
+                        capitalize = true;
                     }
 
-                    resString.append(Konstituente.insertStructuralBreak(
-                            resString.toString(), startsNew, konstituentenString));
+                    resTextBuilder.append(breakToString(
+                            resTextBuilder.toString(), brreak,
+                            konstituentenText));
                 }
 
-                boolean esSollGrossgeschriebenWerden =
-                        erstenBuchstabenInKonstituenteTendenziellGrossschreiben;
-                int indexDerGrossgeschriebenWerdenSoll = 0;
-                if (erstenBuchstabenInKonstituenteTendenziellGrossschreiben) {
-                    while (indexDerGrossgeschriebenWerdenSoll < konstituentenString.length()) {
-                        final String currentZeichen = konstituentenString.substring(
-                                indexDerGrossgeschriebenWerdenSoll,
-                                indexDerGrossgeschriebenWerdenSoll + 1);
-                        if ("– „\".:!?".contains(currentZeichen)) {
-                            // Diese Zeichen einfach überspringen - DANACH soll
-                            // großgeschrieben werden
-                            indexDerGrossgeschriebenWerdenSoll++;
-                            continue;
-                        }
-                        if (",;…".contains(currentZeichen)) {
-                            // Danach soll nicht großgeschrieben werden
-                            esSollGrossgeschriebenWerden = false;
-                            break;
-                        }
+                if (capitalize && beginnStehtCapitalizeNichtImWeg(konstituentenText)) {
+                    final Konstituente capitalizedKonstituente =
+                            konstituente.capitalizeFirstLetter();
+                    resTextBuilder.append(capitalizedKonstituente.getText());
 
-                        // Normaler Buchstabe gefunden! Es soll großgeschrieben werden
-                        break;
-                    }
-                }
-
-                if (esSollGrossgeschriebenWerden) {
-                    if (indexDerGrossgeschriebenWerdenSoll <= konstituentenString.length()) {
-                        resString.append(
-                                GermanStringUtil.capitalize(
-                                        konstituentenString, indexDerGrossgeschriebenWerdenSoll));
-                        startsNew = konstituente.getEndsThis();
+                    if (!capitalizedKonstituente.getText().equals(konstituente.getText())) {
+                        brreak = capitalizedKonstituente.getEndsThis();
                     } else {
-                        // Der nachfolgende Text soll großgeschrieben werden.
-                        resString.append(konstituentenString); // Enthält keine Buchstaben
-                        startsNew = StructuralElement.min(SENTENCE, konstituente.getEndsThis());
+                        // Diese Konstituente war nur etwas wie "„".
+                        // Der Text der folgenden Konstituente muss großgeschrieben werden.
+                        brreak = StructuralElement.min(SENTENCE,
+                                capitalizedKonstituente.getEndsThis());
                     }
                 } else {
-                    resString.append(konstituentenString);
-                    startsNew = konstituente.getEndsThis();
+                    resTextBuilder.append(konstituentenText);
+                    brreak = konstituente.getEndsThis();
                 }
 
                 kommaStehtAus = konstituente.kommaStehtAus();
@@ -579,22 +584,27 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
             }
         }
 
-        final PhorikKandidat phorikKandidat = findPhorikKandidat();
-        final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer =
-                phorikKandidat != null ?
-                        phorikKandidat.getNumerusGenus() :
+        final PhorikKandidat resPhorikKandidat = findPhorikKandidat();
+        final NumerusGenus resKannAlsBezugsobjektVerstandenWerdenFuer =
+                resPhorikKandidat != null ?
+                        resPhorikKandidat.getNumerusGenus() :
                         calcKannAlsBezugsobjektVerstandenWerdenFuer();
 
+        final String resText = resTextBuilder.toString().trim();
+
+        if (resText.isEmpty()) {
+            return StructuralElement.max(resStartsNew, brreak);
+        }
+
         return new Konstituente(
-                resString.toString().trim(),
-                vorkommaNoetig,
-                vordoppelpunktNoetig, woertlicheRedeNochOffen,
+                resText,
+                resVorkommaNoetig,
+                resVordoppelpunktNoetig, resStartsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
-                startsNew, kannAlsBezugsobjektVerstandenWerdenFuer,
-                phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null
+                brreak, resKannAlsBezugsobjektVerstandenWerdenFuer,
+                resPhorikKandidat != null ? resPhorikKandidat.getBezugsobjekt() : null
         );
     }
-
 
     /**
      * Entfernt das letzte Vorkommen dieser Konstituentenfolge - wobei auch die enthaltenen
@@ -681,25 +691,6 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
         }
 
         return new Konstituentenfolge(res);
-    }
-
-    public Konstituentenfolge capitalize() {
-        // FIXME Verwendungen suchen - und durch StructuralElement.SENTENCE ersetzen?!
-
-        final ImmutableList.Builder<IKonstituenteOrStructuralElement> res =
-                ImmutableList.builder();
-
-        boolean alreadyCapitalized = false;
-        for (int i = 0; i < size(); i++) {
-            if (!alreadyCapitalized && konstituenten.get(i) instanceof Konstituente) {
-                res.add(((Konstituente) konstituenten.get(i)).capitalize());
-                alreadyCapitalized = true;
-            } else {
-                res.add(konstituenten.get(i));
-            }
-        }
-
-        return new Konstituentenfolge(res.build());
     }
 
     private Konstituentenfolge reverse() {

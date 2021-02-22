@@ -24,7 +24,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstitue
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.prependObject;
 import static java.util.Arrays.asList;
 
 /**
@@ -48,7 +48,8 @@ public class AltDescriptionsBuilder {
     @Nonnull
     @CheckReturnValue
     public static AltDescriptionsBuilder altParagraphs(final Object... parts) {
-        return altNeueSaetze(PARAGRAPH, DescriptionBuilder.appendObject(parts, PARAGRAPH));
+        return altNeueSaetze(DescriptionBuilder.prependAndAppendObjects(
+                PARAGRAPH, parts, PARAGRAPH));
     }
 
     @Nonnull
@@ -80,8 +81,7 @@ public class AltDescriptionsBuilder {
     /**
      * Fügt diese Teile zu alternativen {@link AbstractDescription}s
      * zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
-     * alle Kombinationen erzeugt. Jede der Alternativen beginnt
-     * einen neuen Satz im Sinne von {@link StructuralElement#SENTENCE}.
+     * alle Kombinationen erzeugt.
      *
      * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
      * {@code null}-Werte enthält, wird die Collection auch den Wert
@@ -90,25 +90,12 @@ public class AltDescriptionsBuilder {
     @Nonnull
     @CheckReturnValue
     public static AltDescriptionsBuilder altNeueSaetze(final Object... parts) {
-        return altNeueSaetze(SENTENCE, parts);
-    }
+        if (!(parts[0] instanceof StructuralElement)) {
+            return altNeueSaetze(prependObject(SENTENCE, parts));
+        }
 
-    /**
-     * Fügt diese Teile zu alternativen {@link AbstractDescription}s
-     * zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
-     * alle Kombinationen erzeugt. Jede der Alternativen beginnt das
-     * structuralElement neu (z.B. einen neuen Absatz).
-     *
-     * @return Mehrere alternative Wortfolgen. Wenn eine der Kombinationen ausschließlich
-     * {@code null}-Werte enthält, wird die Collection auch den Wert
-     * {@code null} enthalten.
-     */
-    @Nonnull
-    @CheckReturnValue
-    public static AltDescriptionsBuilder altNeueSaetze(final StructuralElement structuralElement,
-                                                       final Object... parts) {
         return alt().addAll(joinToAltKonstituentenfolgen(parts).stream()
-                .map(k -> neuerSatz(structuralElement, k)));
+                .map(DescriptionBuilder::neuerSatz));
     }
 
     public static AltDescriptionsBuilder alt() {
@@ -198,7 +185,7 @@ public class AltDescriptionsBuilder {
     public AltDescriptionsBuilder dann() {
         return map(AbstractDescription::dann);
     }
-    
+
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!

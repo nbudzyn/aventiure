@@ -120,14 +120,14 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt()
                         .addAll(altNeueSaetze(PARAGRAPH,
                                 "„",
-                                altBegruessungenCap(),
+                                altBegruessungen(),
                                 // "Einen schönen guten Tag"
                                 "“, sprichst du",
                                 anaph.akkK(),
                                 "an"))
                         .addAll(altNeueSaetze(PARAGRAPH,
                                 "„",
-                                altBegruessungenCap(),
+                                altBegruessungen(),
                                 // "Einen schönen guten Tag"
                                 "“, redest du",
                                 anaph.akkK(),
@@ -167,14 +167,14 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt()
                 .addAll(altNeueSaetze(
                         "„",
-                        altVerabschiedungenCap(),
+                        altVerabschiedungen(),
                         // "Tschüss"
                         "!“ Du wendest dich ab").undWartest().dann())
                 .add(du("sagst", anaph.datK(), "Abschied"),
                         du(SICH_VERABSCHIEDEN.mit(anaph)))
                 .addAll(altNeueSaetze(
                         "„",
-                        altVerabschiedungenCap(),
+                        altVerabschiedungen(),
                         // "Tschüss"
                         "“, verabschiedest du dich",
                         PraepositionMitKasus.VON.mit(anaph).getDescription())

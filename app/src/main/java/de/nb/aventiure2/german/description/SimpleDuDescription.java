@@ -6,12 +6,15 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
@@ -41,14 +44,29 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
-                        @Nullable final Konstituente remainder) {
-        super(startsNew, remainder != null ? remainder.getPhorikKandidat() : null);
+                        @Nullable final IKonstituenteOrStructuralElement remainder) {
+        this(startsNew, verb,
+                remainder instanceof Konstituente ? (Konstituente) remainder : null,
+                toEndsThis(remainder));
+    }
+
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
+     *
+     * @see #mitVorfeldSatzglied(String)
+     */
+    private SimpleDuDescription(final StructuralElement startsNew,
+                                final String verb,
+                                @Nullable final Konstituente remainder,
+                                final StructuralElement endsThis) {
+        super(startsNew, endsThis,
+                remainder != null ? remainder.getPhorikKandidat() : null);
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
 
         checkArgument(vorfeldSatzglied == null ||
-                        remainder.getString().contains(vorfeldSatzglied),
+                        remainder.getText().contains(vorfeldSatzglied),
                 "vorfeldSatzglied nicht im remainder enthalten. Remainder: "
                         + "%s, vorfeldSatzglied: %s",
                 remainder, vorfeldSatzglied);
@@ -57,23 +75,39 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         this.remainder = remainder;
     }
 
+    private static StructuralElement toEndsThis(
+            @Nullable final IKonstituenteOrStructuralElement remainder) {
+        if (remainder == null) {
+            return WORD;
+        }
+
+        if (remainder instanceof StructuralElement) {
+            return (StructuralElement) remainder;
+        }
+
+        if (remainder instanceof Konstituente) {
+            return ((Konstituente) remainder).getEndsThis();
+        }
+
+        throw new IllegalStateException("Unexpected remainder: " + remainder);
+    }
+
     @Override
     public ImmutableList<TextDescription> altTextDescriptions() {
         final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
-        res.add(toTextDescription()
-                // Bei einer SimpleDuDescription ist der Hauptsatz-Standard ein echter
-                // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                .beginntZumindestSentence());
+        // Bei einer SimpleDuDescription ist der Hauptsatz-Standard ein echter
+        // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+        res.add(toTextDescription().beginntZumindest(SENTENCE));
 
         @Nullable final Konstituente hauptsatzMitSpeziellemVorfeld =
                 toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
-            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
-                    // Bei einer SimpleDuDescription ist auch dieser Hauptsatz ein echter
-                    // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-                    .beginntZumindestSentence());
+            // Bei einer SimpleDuDescription ist auch dieser Hauptsatz ein echter
+            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+            res.add(toTextDescriptionKeepOtherParams(hauptsatzMitSpeziellemVorfeld)
+                    .beginntZumindest(SENTENCE));
         }
 
         return res.build();
@@ -82,10 +116,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Override
     public Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld) {
         return joinToKonstituentenfolge(
+                getStartsNew(),
                 vorfeld, // "dann"
                 verb, // "gehst"
                 "du", // "du"
-                remainder) // "den Fluss entlang"
+                remainder,  // "den Fluss entlang"
+                getEndsThis())
                 .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
@@ -93,6 +129,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Override
     public Konstituente toSingleKonstituente() {
         return joinToKonstituentenfolge(
+                getStartsNew(),
                 "du",
                 toSingleKonstituenteSatzanschlussOhneSubjekt())
                 .joinToSingleKonstituente();
@@ -111,10 +148,12 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         }
 
         return joinToKonstituentenfolge(
+                getStartsNew(),
                 vorfeldSatzglied,
                 verb,
                 "du",
-                remainder.cutFirst(vorfeldSatzglied))
+                remainder.cutFirst(vorfeldSatzglied),
+                getEndsThis())
                 .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }
@@ -124,7 +163,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
-        return joinToKonstituentenfolge(verb, remainder)
+        return joinToKonstituentenfolge(verb, remainder, getEndsThis())
                 .joinToSingleKonstituente()
                 .mitPhorikKandidat(copyParams().getPhorikKandidat());
     }

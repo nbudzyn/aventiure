@@ -48,6 +48,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.german.base.Nominalphrase.HOEHE;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -304,8 +305,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         n.narrate(du("schleuderst",
                 world.getDescription(object).akkK(),
                 "übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir",
-                "dieses Mal nicht gelingen.",
-                world.getDescription(object, true).nomK().capitalize(),
+                "dieses Mal nicht gelingen",
+                SENTENCE,
+                world.getDescription(object, true).nomK(),
                 "landet",
                 location.storingPlaceComp().getLocationMode().getWo(false))
                 .mitVorfeldSatzglied("übermütig")

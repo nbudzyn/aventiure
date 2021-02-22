@@ -102,7 +102,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZUSAGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HELFEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObjIndirekterFragesatz.FRAGEN_OB_W;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler
@@ -377,7 +376,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
             alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du.",
-                    anaph().nomK().capitalize(),
+                    SENTENCE,
+                    anaph().nomK(),
                     "schaut dich",
                     ImmutableList.of("verständlos", "verwirrt", "irritiert"),
                     "an").timed(secs(10)));
@@ -478,8 +478,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, sagt",
                     anaph.nomK(),
                     altEindruckAdvAngaben.stream()
-                            .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())),
-                    PARAGRAPH));
+                            .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus()))));
         }
 
         if (zuneigungTowardsSC <= -FeelingIntensity.SEHR_STARK) {
@@ -548,20 +547,20 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 alt.addAll(altNeueSaetze(
                         "„Ach, ihr seid es wieder.“",
-                        altReaktionSaetze.stream()
-                                .flatMap(s -> s.altVerzweitsaetze().stream())
-                                .map(Konstituentenfolge::capitalize), PARAGRAPH));
+                        SENTENCE,
+                        altReaktionSaetze,
+                        PARAGRAPH));
                 alt.addAll(altNeueSaetze(
                         "„Oh, ihr seid es wieder.“",
-                        altReaktionSaetze.stream()
-                                .flatMap(s -> s.altVerzweitsaetze().stream())
-                                .map(Konstituentenfolge::capitalize), PARAGRAPH));
+                        SENTENCE,
+                        altReaktionSaetze, PARAGRAPH));
                 alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder ",
                         "vorbeischaut! Willkommen.“ –"));
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.MERKLICH) {
             alt.add(neuerSatz("„Ah, hallo! – Willkommen!“",
-                    anaph.nomK().capitalize(),
+                    SENTENCE,
+                    anaph.nomK(),
                     "schaut dich freundlich an")
             );
 
@@ -653,7 +652,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             n.narrate(neuerSatz(
                     "„Ach“, sagt",
                     anaph.nomK(), ", „du kannst mich einfach Rapunzel nennen.“",
-                    anaph.persPron().nomK().capitalize(), "grinst verlegen.",
+                    SENTENCE,
+                    anaph.persPron().nomK(), "grinst verlegen.",
                     "„Ich ess die so gern.“", PARAGRAPH)
                     .timed(secs(10)));
 
@@ -738,10 +738,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             final Konstituentenfolge antwort;
             if (zuneigungRapunzelZumSC < FeelingIntensity.DEUTLICH) {
                 antwort = joinToKonstituentenfolge(
-                        anaph.persPron().nomK().capitalize(), "guckt dich nur verunsichert an");
+                        SENTENCE,
+                        anaph.persPron().nomK(),
+                        "guckt dich nur verunsichert an");
             } else {
                 antwort = joinToKonstituentenfolge(
-                        anaph.persPron().nomK().capitalize(),
+                        SENTENCE,
+                        anaph.persPron().nomK(),
                         "grinst dich an. „Und wenn nicht?“, fragt",
                         anaph.persPron().nomK(),
                         "zurück");
@@ -774,7 +777,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         ImmutableList.of("Absolut", "Klar"),
                         "! Deshalb freu ich mich ja immer so, wenn mal jemand Nettes",
                         "vorbeischaut.“",
-                        anaph().nomK().capitalize(),
+                        SENTENCE,
+                        anaph().nomK(),
                         "zwinkert dir zu. – Oder du hast dir das eingebildet");
             } else {
                 altAntworten = ImmutableList.of(
@@ -804,8 +808,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 scHatSeltsameSacheMitFroschErlebt()) {
             alt.add(du("erzählst",
                     anaph.datK(),
-                    "von dieser seltsamen Sache, die du mit dem Frosch erlebt hast.",
-                    anaph.persPron().nomK().capitalize(),
+                    "von dieser seltsamen Sache, die du mit dem Frosch erlebt hast",
+                    SENTENCE,
+                    anaph.persPron().nomK(),
                     "schaut dich nachdenklich an")
                     .timed(mins(4)));
         }
@@ -816,11 +821,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.add(neuerSatz(PARAGRAPH,
                     "„Ich habe im Leben noch nie so lange Haare gesehen!“, sagst du.",
                     "„Wirklich?“",
-                    anaph.nomK().capitalize(),
+                    SENTENCE,
+                    anaph.nomK(),
                     "schaut dich überrascht an.",
                     "„Und die jungen Frauen draußen, wie…?“ Naja, du hüstelst verlegen; dann",
                     "fällt dir ein: „Dir stehen sie am besten.“",
-                    anaph.persPron().nomK().capitalize(),
+                    SENTENCE,
+                    anaph.persPron().nomK(),
                     "lächelt")
                     .timed(secs(20))
                     .withCounterIdIncrementedIfTextIsNarrated(
@@ -829,8 +836,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         if (zuneigungRapunzelZumSC >= FeelingIntensity.DEUTLICH) {
             alt.add(neuerSatz(anaph.nomK(),
-                    "schwärmt vom Sonnenaufgang über dem Blätterdach.",
-                    capitalize(anaph.possArt().vor(PL_MFN).nomStr()),
+                    "schwärmt vom Sonnenaufgang über dem Blätterdach",
+                    SENTENCE,
+                    anaph.possArt().vor(PL_MFN).nomStr(),
                     "Augen leuchten")
                     .timed(mins(2)));
         }
@@ -841,12 +849,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.add(
                     neuerSatz(
                             "„Was hat du dir eigentlich schon immer gewünscht?“ –",
-                            anaph.nomK().capitalize(),
+                            SENTENCE,
+                            anaph.nomK(),
                             "denkt kurz nach. „Soll ich ehrlich sein?“",
-                            anaph.persPron().nomK().capitalize(), "hält kurz inne",
+                            SENTENCE,
+                            anaph.persPron().nomK(), "hält kurz inne",
                             "„Fliegen zu können, das hab ich mir immer gewünscht. Hoch oben im",
                             "Wind. Wie die Gänse, die im Herbst über den Wald ziehen.“",
-                            anaph.persPron().nomK().capitalize(),
+                            SENTENCE,
+                            anaph.persPron().nomK(),
                             "lächelt verlegen").timed(secs(30))
                             .withCounterIdIncrementedIfTextIsNarrated(
                                     SCHON_IMMER_GEWUENSCHT_GEFRAGT));
@@ -1172,7 +1183,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         altReaktionSaetze,
                         ImmutableList.of(
                                 joinToAltKonstituentenfolgen(
-                                        rapunzelDesc.persPron().nomK().capitalize(),
+                                        SENTENCE,
+                                        rapunzelDesc.persPron().nomK(),
                                         ImmutableList.of(
                                                 "schaut noch einmal vorsichtig aus dem Turmfenster",
                                                 "blickt schnell noch einmal aus dem Fenster",

@@ -247,7 +247,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(altNeueSaetze(
                 "„",
-                altBegruessungenCap(),
+                altBegruessungen(),
                 // "Hallo"
                 ", du hässlicher Frosch!“, redest du ihn an")
                         .undWartest().dann(),
@@ -267,7 +267,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             final SubstantivischePhrase objectsDesc =
                     world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
             n.narrate(neuerSatz("„Ich weine über",
-                    objectsDesc.akkK().kommaStehtAus(), // die goldene Kugel
+                    objectsDesc.akkK(), // die goldene Kugel
+                    ",",
                     objectsDesc.relPron().akkK(), // die
                     "mir in den Brunnen hinabgefallen",
                     istSind(objectsDesc.getNumerusGenus()),
@@ -282,7 +283,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.narrate(neuerSatz("„",
-                    world.getDescription(objectInDenBrunnenGefallen).nomK().capitalize(),
+                    world.getDescription(objectInDenBrunnenGefallen).nomK(),
                     "ist mir in den Brunnen hinabgefallen.“")
                     .timed(secs(10)));
             setSchonBegruesstMitSC(true);
@@ -567,13 +568,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
             alt.addAll(altNeueSaetze(
                     "„",
-                    altBegruessungenCap(),
+                    altBegruessungen(),
                     // "Hallo" / "Einen schönen guten Morgen"
                     ", Kollege Frosch!“"));
 
             alt.addAll(altNeueSaetze(
                     "„",
-                    altBegruessungenCap(),
+                    altBegruessungen(),
                     // "Hallo" / "Einen schönen guten Morgen"
                     "„, du hässlicher Frosch!“, redest du ihn an")
                     .undWartest().dann());
@@ -647,8 +648,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .timed(secs(10)),
                 du(SENTENCE, "druckst",
                         "ein bisschen herum und faselst etwas von",
-                        "hygienischen Gründen.",
-                        desc.nomK().capitalize(),
+                        "hygienischen Gründen",
+                        SENTENCE,
+                        desc.nomK(),
                         " schaut dich nur… traurig? verächtlich?… an", PARAGRAPH)
                         .timed(secs(15)));
 

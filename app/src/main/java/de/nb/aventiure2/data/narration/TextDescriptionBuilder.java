@@ -23,6 +23,7 @@ import de.nb.aventiure2.german.description.TextDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
@@ -98,7 +99,7 @@ class TextDescriptionBuilder {
                 desc.getSatz().mitAnschlusswort("und")
                         .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
 
-        return desc.toSatzanschlussTextDescriptionKeepParams(satzanschlussMitUnd)
+        return desc.toSatzanschlussTextDescriptionKeepOtherParams(satzanschlussMitUnd)
                 // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
                 .undWartest(false);
     }
@@ -122,7 +123,7 @@ class TextDescriptionBuilder {
         if (desc instanceof AbstractFlexibleDescription) {
             // Bei einer AbstractFlexibleDescription ist der Hauptsatz ein echter
             // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-            res.beginntZumindestSentence();
+            res.beginntZumindest(SENTENCE);
         }
         // else: Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
         // die Vorgabe WORD soll dann erhalten bleiben

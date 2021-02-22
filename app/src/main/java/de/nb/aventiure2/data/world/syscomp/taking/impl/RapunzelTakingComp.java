@@ -23,6 +23,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -77,7 +78,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         rapunzelAnaph.possArt().vor(F).nomStr(),
                         "Reaktion"),
                 neuerSatz("„Das ist nett“, sagt",
-                        rapunzelAnaph.nomK().kommaStehtAus(),
+                        rapunzelAnaph.nomK(),
+                        ",",
                         "„aber was mache ich damit?“ Du steckst",
                         givenDesc.akkK(),
                         "wieder ein"),
@@ -97,7 +99,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         DeklinierbarePhraseUtil.getIndefinitAnapherZaehlbar(
                                 givenDesc.getNumerusGenus()).akkK(),// "eine" / "welche"
                         "bekommen kann.“",
-                        rapunzelAnaph.persPron().nomK().capitalize(),
+                        SENTENCE,
+                        rapunzelAnaph.persPron().nomK(),
                         "lächelt dich",
                         (getZuneigungAbneigungTowardsSCMitEmpathischerSchranke()
                                 > FeelingIntensity.NEUTRAL ?
@@ -144,8 +147,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                     (stateComp.hasState(HAT_NACH_KUGEL_GEFRAGT) ? "glücklich" : "überrascht"),
                     "an und nimmt",
                     givenDescShort.akkK(),
-                    ".",
-                    rapunzelAnaph.persPron().nomK().capitalize(),
+                    SENTENCE,
+                    rapunzelAnaph.persPron().nomK(),
                     "spielt",
                     "eine Weile damit herum, dann gibt",
                     rapunzelAnaph.persPron().nomK(),
@@ -158,8 +161,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                             givenDescShort.akkK(),
                             "und versucht,",
                             rapunzelAnaph.reflPron().akk(), // sich
-                            "darin zu spiegeln.",
-                            rapunzelAnaph.persPron().nomK().capitalize(),
+                            "darin zu spiegeln",
+                            SENTENCE,
+                            rapunzelAnaph.persPron().nomK(),
                             "streicht eine Locke zurecht, dann gibt",
                             rapunzelAnaph.persPron().nomK(),
                             givenDescShort.persPron().akkK(),

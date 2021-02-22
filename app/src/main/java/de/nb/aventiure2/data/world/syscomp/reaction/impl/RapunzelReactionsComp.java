@@ -29,7 +29,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -302,8 +301,9 @@ public class RapunzelReactionsComp
                 "du unter der Sonne noch keine gesehen hast.",
                 "Ihre Haare, fein wie gesponnen",
                 "Gold, hat sie um einen Fensterhaken gewickelt, so konntest du",
-                "daran heraufsteigen.\n",
-                desc.nomK().capitalize(),
+                "daran heraufsteigen",
+                PARAGRAPH,
+                desc.nomK(),
                 "erschrickt gewaltig, als du",
                 PraepositionMitKasus.ZU.getDescription(desc.persPron()), // "zu ihr"
                 "hereinkommst. Schnell bindet",
@@ -338,8 +338,9 @@ public class RapunzelReactionsComp
 
         n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
                 "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem",
-                "Nachtschlaf geweckt.",
-                desc.nomK().capitalize(),
+                "Nachtschlaf geweckt",
+                SENTENCE,
+                desc.nomK(),
                 "ist in ein paar Decken gewickelt,",
                 desc.possArt().vor(PL_MFN).akkStr(), // "ihre"
                 "langen Haare hat sie um einen Fensterhaken gewickelt, so",
@@ -443,9 +444,9 @@ public class RapunzelReactionsComp
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(altNeueSaetze("Am Fenster sitzt die junge Frau, schön als",
                     "du unter der Sonne noch keine gesehen hast.",
-                    "Ihre Haare glänzen fein wie gesponnen Gold.",
-                    altReaktionSaetze.stream().flatMap(s -> s.altVerzweitsaetze().stream())
-                            .map(Konstituentenfolge::capitalize))
+                    "Ihre Haare glänzen fein wie gesponnen Gold",
+                    SENTENCE,
+                    altReaktionSaetze)
                     .timed(secs(30)));
         }
         n.narrateAlt(alt);
@@ -474,8 +475,9 @@ public class RapunzelReactionsComp
                 .timed(secs(15)));
 
         alt.add(du(SENTENCE, "hast", anaph.akkK(),
-                "offenbar aus dem Bett geholt.",
-                anaph.persPron().nomK().capitalize(), // Sie
+                "offenbar aus dem Bett geholt",
+                SENTENCE,
+                anaph.persPron().nomK(), // Sie
                 "sieht sehr zerknittert aus")
                 .mitVorfeldSatzglied("offenbar")
                 .timed(secs(30)));

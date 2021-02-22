@@ -28,8 +28,10 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
@@ -160,8 +162,10 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *dir* weisen"
-                praedikatOhneLeerstellen.getInfinitiv(P2, SG).capitalize().joinToString(
-                ));
+                joinToKonstituentenfolge(
+                        SENTENCE,
+                        praedikatOhneLeerstellen.getInfinitiv(P2, SG))
+                        .joinToString());
     }
 
     private RedenAction(final SCActionStepCountDao scActionStepCountDao,
@@ -193,7 +197,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     public CardinalDirection getCardinalDirection() {
         return null;
     }
-    
+
     @Override
     public void narrateAndDo() {
         sc.memoryComp().setLastAction(buildMemorizedAction());

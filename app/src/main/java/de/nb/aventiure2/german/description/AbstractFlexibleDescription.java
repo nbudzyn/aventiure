@@ -11,21 +11,16 @@ import de.nb.aventiure2.german.base.StructuralElement;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-
-    /**
-     * Whether the narration can be continued by a Satzreihenglied without subject where
-     * the player character is the implicit subject (such as " und gehst durch die Tür.")
-     */
-
     AbstractFlexibleDescription(final StructuralElement startsNew,
+                                final StructuralElement endsThis,
                                 @Nullable final PhorikKandidat phorikKandidat) {
-        super(startsNew, phorikKandidat);
+        super(startsNew, endsThis, phorikKandidat);
     }
 
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
-        return toTextDescriptionKeepParams(toSingleKonstituenteMitVorfeld(vorfeld));
+        return toTextDescriptionKeepOtherParams(toSingleKonstituenteMitVorfeld(vorfeld));
     }
 
     @Override
@@ -49,7 +44,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
-        return toSatzanschlussTextDescriptionKeepParams(
+        return toSatzanschlussTextDescriptionKeepOtherParams(
                 toSingleKonstituenteSatzanschlussOhneSubjekt());
     }
 

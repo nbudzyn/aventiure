@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -21,9 +22,11 @@ public class GermanUtil {
 
     /**
      * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
-     * * String das Ergebnis sein muss. . Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
+     * String das Ergebnis sein muss.
+     * Fügt diese Teile zu einem String zusammen. Der Aufrufer muss Vorkomma, Vordoppelpunkt
+     * {@code startsNew}, Großschreibung sowie {@code endsThis} und Folgekomma selbst
+     * behandeln. Die wörtliche Rede wird automatisch geschlossen, es wird kein
+     * automatischer Punkt gesetzt.
      */
     public static String joinToString(final Object... parts) {
         return checkJoiningResultNotNull(joinToNullString(parts), parts);
@@ -46,9 +49,10 @@ public class GermanUtil {
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
+     * Fügt diese Teile zu einem String zusammen. Der Aufrufer muss Vorkomma, Vordoppelpunkt
+     * {@code startsNew}, Großschreibung sowie {@code endsThis} und Folgekomma selbst
+     * behandeln. Die wörtliche Rede wird automatisch geschlossen, es wird kein
+     * automatischer Punkt gesetzt.
      */
     @Nullable
     private static String joinToNullString(final Object... parts) {
@@ -56,9 +60,10 @@ public class GermanUtil {
     }
 
     /**
-     * Fügt diese Teile zu einem String zusammen. Diese Methode darf nur verwendet werden,
-     * wenn nach dem letzten der Teile definitiv kein Komma aussteht - oder das
-     * ausstehende Kommma auf andere Weise behandelt wird.
+     * Fügt diese Teile zu einem String zusammen. Der Aufrufer muss Vorkomma, Vordoppelpunkt
+     * {@code startsNew}, Großschreibung sowie {@code endsThis} und Folgekomma selbst
+     * behandeln. Die wörtliche Rede wird automatisch geschlossen, es wird kein
+     * automatischer Punkt gesetzt.
      */
     @Nullable
     private static String joinToNullString(final Iterable<?> parts) {
@@ -67,7 +72,14 @@ public class GermanUtil {
             return null;
         }
 
-        return res.joinToSingleKonstituente().toStringFixWoertlicheRedeNochOffenUndEndsThis();
+        final IKonstituenteOrStructuralElement konstituenteOrStructuralElement =
+                res.joinToSingleKonstituenteOrStructuralElement();
+
+        if (!(konstituenteOrStructuralElement instanceof Konstituente)) {
+            return null;
+        }
+
+        return ((Konstituente) konstituenteOrStructuralElement).toTextOhneKontext();
     }
 
     /**
@@ -94,9 +106,12 @@ public class GermanUtil {
         return res.toString();
     }
 
-    static String getWhatsNeededToEndChapter(@Nullable final CharSequence base,
-                                             @Nullable final CharSequence addition) {
-        if (base == null || base.length() == 0) {
+    public static String getWhatsNeededToStartNewChapter(final CharSequence base,
+                                                         final CharSequence addition) {
+        checkNotNull(addition, "addition is null");
+        checkArgument(addition.length() > 0, "addition is empty");
+
+        if (base.length() == 0) {
             return "";
         }
 
@@ -105,19 +120,16 @@ public class GermanUtil {
             if (base.length() >= 2) {
                 final CharSequence secondLastCharBase =
                         base.subSequence(base.length() - 2, base.length() - 1);
-                if (" ,;.:!?…\n„".contains(secondLastCharBase)) {
-                    // Sind vor \n nicht erlaubt, kein weiteres \n einfügen
+                if (" ,;„\n".contains(secondLastCharBase)) {
+                    // Diese Zeichen (außer \n) sind  vor \n nicht erlaubt, kein weiteres \n
+                    // einfügen
                     return "";
                 }
             }
 
-            if (addition == null || addition.length() == 0) {
-                return "\n";
-            }
-
             final CharSequence firstCharAddition = addition.subSequence(0, 1);
             if (" ,;.:!?“\n".contains(firstCharAddition)) {
-                // Sind nach \n nicht erlaubt, kein weiteres \n einfügen!
+                // Diese Zeichen (außer \n) sind nach \n nicht erlaubt, kein weiteres \n einfügen!
                 return "";
             }
 
@@ -125,11 +137,6 @@ public class GermanUtil {
         }
 
         // lastCharBase hört nicht mit "\n" auf
-
-        if (addition == null || addition.length() == 0) {
-            return "\n\n";
-        }
-
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
         if ("\n".contentEquals(firstCharAddition)) {
             if (addition.length() >= 2 && "\n\n".contentEquals(addition.subSequence(0, 2))) {
@@ -160,8 +167,8 @@ public class GermanUtil {
         return "\n\n";
     }
 
-    static boolean newLineNeededToStartNewParagraph(@Nullable final CharSequence base,
-                                                    @Nullable final CharSequence addition) {
+    public static boolean newLineNeededToStartNewParagraph(@Nullable final CharSequence base,
+                                                           @Nullable final CharSequence addition) {
         if (base == null || base.length() == 0) {
             return false;
         }
@@ -179,8 +186,8 @@ public class GermanUtil {
         return !" ,;.:!?“\n".contains(firstCharAddition);
     }
 
-    static boolean fullStopNeededToEndSentence(@Nullable final CharSequence base,
-                                               @Nullable final CharSequence addition) {
+    public static boolean periodNeededToStartNewSentence(@Nullable final CharSequence base,
+                                                         @Nullable final CharSequence addition) {
         if (base == null || base.length() == 0) {
             return false;
         }
@@ -230,23 +237,38 @@ public class GermanUtil {
         return !" ,;.:!?“…\n".contains(firstCharAddition);
     }
 
-    static boolean beginnDecktKommaAb(final CharSequence charSequence) {
+    public static boolean endeDecktKommaAb(final CharSequence charSequence) {
+        requireNonNull(charSequence, "charSequence");
+        checkArgument(charSequence.length() > 0, "charSequence was empty");
+
+        final CharSequence lastChar =
+                charSequence.subSequence(charSequence.length() - 1, charSequence.length());
+        return charDecktKommaAb(lastChar);
+    }
+
+    public static boolean beginnDecktKommaAb(final CharSequence charSequence) {
         requireNonNull(charSequence, "charSequence");
         checkArgument(charSequence.length() > 0, "charSequence was empty");
 
         final CharSequence firstChar = charSequence.subSequence(0, 1);
 
-        checkArgument(!"\n".contentEquals(firstChar), "charSequence beginnt mit "
-                + "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
-                + "Komma unterzubringen.");
+        checkArgument(!"“".contains(firstChar),
+                "Abführungszeichen. Hier müsste man eigentlich erst das "
+                        + "Abführungszeichen schreiben und dann das Komma. Diese Logik ist noch "
+                        + "nicht implementiert");
 
-        checkArgument(!"“".contains(firstChar), "charSequence beginnt "
-                + "mit Abführungszeichen. Hier müsste man eigentlich erst das "
-                + "Abführungszeichen "
-                + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
-                + "implementiert");
+        checkArgument(!"\n".contentEquals(firstChar),
+                "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
+                        + "Komma unterzubringen.");
 
-        return ",;.:!?".contains(firstChar);
+        return charDecktKommaAb(firstChar);
+    }
+
+    private static boolean charDecktKommaAb(final CharSequence oneChar) {
+        requireNonNull(oneChar, "charSequence");
+        checkArgument(oneChar.length() == 1, "charSequence nicht Länge 1");
+
+        return ",;.:!?\n".contains(oneChar);
     }
 
     static boolean beginnDecktDoppelpunktAb(final CharSequence charSequence) {
@@ -262,7 +284,7 @@ public class GermanUtil {
         checkArgument(!"“".contains(firstChar), "charSequence beginnt "
                 + "mit Abführungszeichen. Hier müsste man eigentlich erst das "
                 + "Abführungszeichen "
-                + "schreiben und dann das Komma (oder Punkt o.Ä.). Diese Logik ist noch nicht "
+                + "schreiben und dann den Doppelpunkt. Diese Logik ist noch nicht "
                 + "implementiert");
 
         return ",;.:!?".contains(firstChar);

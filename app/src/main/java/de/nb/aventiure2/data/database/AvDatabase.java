@@ -65,6 +65,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingDao;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingPCD;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -200,9 +201,9 @@ public abstract class AvDatabase extends RoomDatabase {
         final List<IDescribableGO> objectsInRoom = ImmutableList.of(
                 (IDescribableGO) world.load(GOLDENE_KUGEL));
         text.append(buildObjectsInRoomDescription(objectsInRoom));
-        text.append(".\n");
 
         return new Narration(Narration.NarrationSource.INITIALIZATION,
+                StructuralElement.PARAGRAPH,
                 text.toString(), false, false,
                 false, false,
                 null);

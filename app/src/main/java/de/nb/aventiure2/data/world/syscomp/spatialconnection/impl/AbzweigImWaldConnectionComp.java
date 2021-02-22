@@ -84,7 +84,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 + "in den Angeln", PARAGRAPH)
                                 .timed(mins(2)),
 
-                        neuerSatz("Hat gerade neben dir im Unterholz geknarzt? "
+                        neuerSatz("Hat es gerade neben dir im Unterholz geknarzt? "
                                 + "Wie auch immer, du fasst dir ein Herz und "
                                 + "stapfst durch das "
                                 + "dem Unkraut einen düsteren Trampelpfad entlang. "

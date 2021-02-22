@@ -28,8 +28,9 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     private final DescriptionParams params;
 
     protected AbstractDescription(final StructuralElement startsNew,
+                                  final StructuralElement endsThis,
                                   @Nullable final PhorikKandidat phorikKandidat) {
-        this(new DescriptionParams(startsNew, phorikKandidat));
+        this(new DescriptionParams(startsNew, endsThis, phorikKandidat));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -44,12 +45,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.getStartsNew();
     }
 
+    public StructuralElement getEndsThis() {
+        return params.getEndsThis();
+    }
+
     public abstract ImmutableList<TextDescription> altTextDescriptions();
 
     @NonNull
     @CheckReturnValue
     final TextDescription toTextDescription() {
-        return toTextDescriptionKeepParams(toSingleKonstituente());
+        return toTextDescriptionKeepOtherParams(toSingleKonstituente());
     }
 
     /**
@@ -67,7 +72,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        return toTextDescriptionKeepParams(
+        return toTextDescriptionKeepOtherParams(
                 toSingleKonstituenteMitKonjunktionaladverbWennNoetig(konjunktionaladverb));
     }
 
@@ -79,41 +84,33 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    public TextDescription toSatzanschlussTextDescriptionKeepParams(
+    public TextDescription toSatzanschlussTextDescriptionKeepOtherParams(
             final Konstituente konstituente) {
-        // IDEA Hier den PhorikKandidaten aus der Konstituente
-        //  übernehmen und hier separat speichern?
-        //  Aus den params entfernen und params unverändert übergeben?
         final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(WORD);
         if (konstituente.getPhorikKandidat() != null) {
             newParams.phorikKandidat(konstituente.getPhorikKandidat());
         }
+        newParams.setStartsNew(WORD);
+        newParams.setEndsThis(konstituente.getEndsThis());
 
-        return new TextDescription(newParams,
-                konstituente.getEndsThis() == WORD ?
-                        konstituente.getString() :
-                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
-                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
-                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
+        return new TextDescription(
+                newParams,
+                konstituente.getText(),
+                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
     }
 
     @NonNull
-    TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
-        // IDEA Hier den PhorikKandidaten aus der Konstituente
-        //  übernehmen und hier separat speichern?
-        //  Aus den params entfernen und params unverändert übergeben?
+    TextDescription toTextDescriptionKeepOtherParams(final Konstituente konstituente) {
         final DescriptionParams newParams = copyParams();
         if (konstituente.getPhorikKandidat() != null) {
             newParams.phorikKandidat(konstituente.getPhorikKandidat());
         }
+        newParams.setStartsNew(konstituente.getStartsNew());
+        newParams.setEndsThis(konstituente.getEndsThis());
         return new TextDescription(
                 newParams,
-                konstituente.getEndsThis() == WORD ?
-                        konstituente.getString() :
-                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
-                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
-                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
+                konstituente.getText(),
+                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
     }
 
     @SuppressWarnings("unchecked")

@@ -28,7 +28,7 @@ public class SatzTest {
         // THEN
         assertThat(actual.vorkommaNoetig()).isFalse();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
-        assertThat(actual.getString())
+        assertThat(actual.getText())
                 .isEqualTo("sie blafft dir entgegen: „Vergiss es! Nie wieder!");
         assertThat(actual.kommaStehtAus()).isTrue(); // Wenn der Satz nach der wörtlichen Rede
         // weiter geht, dann erst nach einem Komma
@@ -49,7 +49,7 @@ public class SatzTest {
         // THEN
         assertThat(actual.vorkommaNoetig()).isFalse();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
-        assertThat(actual.getString()).isEqualTo("„Du schon wieder!“, ruft sie dir entgegen");
+        assertThat(actual.getText()).isEqualTo("„Du schon wieder!“, ruft sie dir entgegen");
         assertThat(actual.kommaStehtAus()).isFalse();
         assertThat(actual.woertlicheRedeNochOffen()).isFalse();
     }

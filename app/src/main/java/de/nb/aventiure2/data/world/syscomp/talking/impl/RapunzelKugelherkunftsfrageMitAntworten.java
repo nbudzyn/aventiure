@@ -24,11 +24,11 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.base.Nominalphrase.EINE_KLEINE_NOTLUEGE;
 import static de.nb.aventiure2.german.base.Nominalphrase.WAHRHEIT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_ERLAUBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANGEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 
 class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -49,7 +49,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
         final SubstantivischePhrase anaph = anaph();
 
         n.narrate(neuerSatz(
-                capitalize(anaph.possArt().vor(M).nomStr()), // "Ihr"
+                anaph.possArt().vor(M).nomStr(), // "Ihr"
                 "Blick fällt auf",
                 world.getDescription(GOLDENE_KUGEL, true),
                 // FIXME Eigabe Anführungszeichen, Gedankenstrich, Auslassungspunkte erleichern?
@@ -74,8 +74,9 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
     }
 
     private void notluege() {
-        n.narrate(neuerSatz("„Ach das war ein Geschenk“, sagst du.",
-                anaph().nomK().capitalize(),
+        n.narrate(neuerSatz("„Ach das war ein Geschenk“, sagst du",
+                SENTENCE,
+                anaph().nomK(),
                 "runzelt die Stirn")
                 .timed(secs(15))
                 .withCounterIdIncrementedIfTextIsNarrated(FRAGE_BEANTWORTET));

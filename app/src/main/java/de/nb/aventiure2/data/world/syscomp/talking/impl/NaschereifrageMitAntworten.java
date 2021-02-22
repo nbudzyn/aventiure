@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GROBER_ABRISS;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ERKLAEREN;
@@ -79,8 +80,9 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
         final SubstantivischePhrase anaph = anaph();
         n.narrate(du("erklärst",
                 anaph.datK(),
-                "alles ganz genau mit den Bienchen und den Blümchen.",
-                anaph.nomK().capitalize(),
+                "alles ganz genau mit den Bienchen und den Blümchen",
+                SENTENCE,
+                anaph.nomK(),
                 "zeigt großes Interesse")
                 .timed(mins(5))
                 .withCounterIdIncrementedIfTextIsNarrated(FRAGE_BEANTWORTET));
@@ -97,8 +99,9 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
         final SubstantivischePhrase anaph = anaph();
         n.narrate(du("gibst",
                 anaph.datK(),
-                "einen groben Abriss.",
-                anaph.persPron().nomK().capitalize(),
+                "einen groben Abriss",
+                SENTENCE,
+                anaph.persPron().nomK(),
                 "verliert bald das Interesse")
                 .timed(secs(45))
                 .withCounterIdIncrementedIfTextIsNarrated(FRAGE_BEANTWORTET));

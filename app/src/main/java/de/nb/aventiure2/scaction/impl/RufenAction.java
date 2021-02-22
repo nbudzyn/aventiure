@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -26,8 +25,10 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
@@ -83,9 +84,10 @@ public class RufenAction extends AbstractScAction {
     @Override
     @NonNull
     public String getName() {
-        return GermanStringUtil.capitalize(
-                ruftyp.getName().getInfinitiv(P2, SG).joinToString(
-                ));
+        return joinToKonstituentenfolge(
+                SENTENCE,
+                ruftyp.getName().getInfinitiv(P2, SG))
+                .joinToString();
     }
 
     @Override

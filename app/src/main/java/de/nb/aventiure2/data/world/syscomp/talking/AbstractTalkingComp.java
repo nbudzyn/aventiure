@@ -25,7 +25,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static java.util.Objects.requireNonNull;
@@ -198,18 +197,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     /**
-     * Gibt alternative Grüße zurück, jeweils beginnend mit Großbuchstaben,
-     * aber ohne Satzschlusszeichen
-     */
-    protected ImmutableList<String> altBegruessungenCap() {
-        return GermanStringUtil.capitalize(altBegruessungen());
-    }
-
-    /**
      * Gibt alternative Begrüßungen zurück, jeweils beginnend mit Kleinbuchstaben
      * und ohne Satzschlusszeichen
      */
-    private ImmutableList<String> altBegruessungen() {
+    protected ImmutableList<String> altBegruessungen() {
         return ImmutableList.<String>builder()
                 .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeBegruessungen())
                 .addAll(TAGESZEITUNABHAENGIE_BEGRUESSUNGEN)
@@ -232,18 +223,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     /**
-     * Gibt alternative Grüße zurück, jeweils beginnend mit Großbuchstaben,
-     * aber  ohne Satzschlusszeichen
-     */
-    protected ImmutableList<String> altVerabschiedungenCap() {
-        return GermanStringUtil.capitalize(altVerabschiedungen());
-    }
-
-    /**
      * Gibt alternative Verabschiedungen zurück, jeweils beginnend mit Kleinbuchstaben
      * und ohne Satzschlusszeichen
      */
-    private ImmutableList<String> altVerabschiedungen() {
+    protected ImmutableList<String> altVerabschiedungen() {
         return ImmutableList.<String>builder()
                 .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeVerabschiedungen())
                 .addAll(TAGESZEITUNABHAENGIE_VERABSCHIEDUNGEN)

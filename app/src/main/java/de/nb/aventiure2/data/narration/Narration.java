@@ -6,14 +6,21 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.GermanUtil.beginnDecktKommaAb;
+import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
+import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
+import static de.nb.aventiure2.german.string.GermanStringUtil.breakToString;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
+import static de.nb.aventiure2.german.string.GermanStringUtil.schliesseWoertlicheRede;
 
 /**
  * The text of the narration, together with state relevant for going on with the narration.
@@ -25,6 +32,10 @@ public class Narration {
         INITIALIZATION, SC_ACTION, REACTIONS,
     }
 
+    /**
+     * This {@link Narration} ends this ... (paragraph, e.g.)
+     */
+    private final StructuralElement endsThis;
     @PrimaryKey
     @NonNull
     private final String text;
@@ -94,12 +105,13 @@ public class Narration {
     private final NarrationSource lastNarrationSource;
 
     public Narration(@NonNull final NarrationSource lastNarrationSource,
+                     @NonNull final StructuralElement endsThis,
                      @NonNull final String text,
                      final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(lastNarrationSource, text, woertlicheRedeNochOffen, kommaStehtAus,
+        this(lastNarrationSource, endsThis, text, woertlicheRedeNochOffen, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 phorikKandidat != null ?
                         ((GameObjectId) phorikKandidat.getBezugsobjekt()) : null,
@@ -108,14 +120,20 @@ public class Narration {
     }
 
     public Narration(@NonNull final NarrationSource lastNarrationSource,
+                     @NonNull final StructuralElement endsThis,
                      @NonNull final String text,
                      final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final GameObjectId phorikKandidatBezugsobjekt,
                      @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
+        checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
+                        || endsThis == WORD,
+                "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
+                        + "|| endsThis == StructuralElement.WORD verletzt");
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.lastNarrationSource = lastNarrationSource;
+        this.endsThis = endsThis;
         this.text = text;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
@@ -123,6 +141,10 @@ public class Narration {
         this.dann = dann;
         this.phorikKandidatBezugsobjekt = phorikKandidatBezugsobjekt;
         this.phorikKandidatNumerusGenus = phorikKandidatNumerusGenus;
+    }
+
+    StructuralElement getEndsThis() {
+        return endsThis;
     }
 
     @NonNull
@@ -174,129 +196,62 @@ public class Narration {
     }
 
     Narration add(final NarrationSource narrationSource,
-                  final TextDescription textDescription) {
-        final StringBuilder resText = new StringBuilder(text);
+                  final TextDescription additionDesc) {
+        final StringBuilder resText = new StringBuilder(text.trim());
 
-        final StructuralElement separation = textDescription.getStartsNew();
+        final StructuralElement brreak =
+                StructuralElement.max(endsThis, additionDesc.getStartsNew());
 
-        final String text = textDescription.getText();
-        switch (separation) {
-            case WORD:
-                resText.append(schliesseWoertlicheRedeFallsNoetig(
-                        resText.toString(),
-                        text,
-                        false));
+        final String addition = additionDesc.getText();
 
-                if (kommaNeeded(resText.toString(),
-                        text)) {
-                    resText.append(",");
-                }
+        resText.append(schliesseWoertlicheRedeFallsNoetig(
+                resText.toString(),
+                addition,
+                brreak != WORD));
 
-                if (GermanUtil.spaceNeeded(resText.toString(),
-                        text)) {
-                    resText.append(" ");
-                }
-                break;
-            case SENTENCE:
-                resText.append(schliesseWoertlicheRedeFallsNoetig(
-                        resText.toString(),
-                        text,
-                        true));
+        boolean capitalize = false;
 
-                if (periodNeededToStartNewSentence(resText.toString(),
-                        text)) {
-                    resText.append(".");
-                }
-                if (GermanUtil.spaceNeeded(
-                        resText.toString(),
-                        text)) {
-                    resText.append(" ");
-                }
-                break;
-            case PARAGRAPH:
-                resText.append(schliesseWoertlicheRedeFallsNoetig(
-                        resText.toString(),
-                        text,
-                        true));
+        if (kommaNeeded(resText.toString(), addition) && brreak == WORD) {
+            resText.append(",");
+            if (spaceNeeded(",", addition)) {
+                resText.append(" ");
+            }
+        } else {
+            resText.append(breakToString(resText.toString(),
+                    brreak,
+                    addition));
 
-                if (periodNeededToStartNewSentence(resText.toString(),
-                        text)) {
-                    resText.append(".");
-                }
-                if (newlineNeededToStartNewParagraph(resText.toString(),
-                        text)) {
-                    resText.append("\n");
-                }
-                break;
-            case CHAPTER:
-                resText.append(schliesseWoertlicheRedeFallsNoetig(
-                        resText.toString(),
-                        text,
-                        true));
-
-                if (periodNeededToStartNewSentence(resText.toString(),
-                        text)) {
-                    resText.append(".");
-                }
-
-                final int numNewlinesNeeded =
-                        howManyNewlinesNeedeToStartNewChapter(resText.toString(),
-                                text);
-                for (int i = 0; i < numNewlinesNeeded; i++) {
-                    resText.append("\n");
-                }
-                break;
-            default:
-                throw new IllegalStateException("Unexpected structural element value: "
-                        + separation);
+            if (brreak != WORD) {
+                capitalize = true;
+            }
         }
 
-        if (SENTENCE == StructuralElement.min(textDescription.getStartsNew(), SENTENCE)) {
-            resText.append(GermanStringUtil.capitalize(text));
+        final StructuralElement resEndsThis;
+        if (capitalize && beginnStehtCapitalizeNichtImWeg(addition)) {
+            final String capitalizedAddition = capitalizeFirstLetter(addition);
+            resText.append(capitalizedAddition);
+
+            if (!capitalizedAddition.equals(addition)) {
+                resEndsThis = additionDesc.getEndsThis();
+            } else {
+                // Diese TextDescription war nur etwas wie "„".
+                // Der Text der folgenden TextDescription muss großgeschrieben werden.
+                resEndsThis = StructuralElement.min(SENTENCE,
+                        additionDesc.getEndsThis());
+            }
         } else {
-            resText.append(text);
+            resText.append(addition);
+            resEndsThis = additionDesc.getEndsThis();
         }
 
         return new Narration(
                 narrationSource,
-                resText.toString(),
-                textDescription.isWoertlicheRedeNochOffen(), textDescription.isKommaStehtAus(),
-                textDescription.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
-                textDescription.isDann(),
-                textDescription.getPhorikKandidat());
-    }
-
-    private static int howManyNewlinesNeedeToStartNewChapter(
-            final String base, final String addition) {
-        if (base.endsWith("\n\n")) {
-            return 0;
-        }
-
-        if (addition.startsWith("\n\n")) {
-            return 0;
-        }
-
-        if (base.endsWith("\n")) {
-            if (addition.startsWith("\n")) {
-                return 0;
-            }
-            return 1;
-        }
-
-        if (addition.startsWith("\n")) {
-            return 1;
-        }
-
-        return 2;
-    }
-
-    private static boolean newlineNeededToStartNewParagraph(
-            final String base, final String addition) {
-        if (base.endsWith("\n")) {
-            return false;
-        }
-
-        return !addition.startsWith("\n");
+                resEndsThis,
+                resText.toString().trim(),
+                additionDesc.isWoertlicheRedeNochOffen(), additionDesc.isKommaStehtAus(),
+                additionDesc.isAllowsAdditionalDuSatzreihengliedOhneSubjekt(),
+                additionDesc.isDann(),
+                additionDesc.getPhorikKandidat());
     }
 
     private boolean kommaNeeded(final String base, final String addition) {
@@ -304,13 +259,11 @@ public class Narration {
             return false;
         }
 
-        final String lastCharBase = base.substring(base.length() - 1);
-        if (lastCharBase.equals(",")) {
+        if (endeDecktKommaAb(base)) {
             return false;
         }
 
-        final String firstCharAdditional = addition.substring(0, 1);
-        return !".,;!?\n".contains(firstCharAdditional);
+        return !beginnDecktKommaAb(addition);
     }
 
     /**
@@ -326,86 +279,6 @@ public class Narration {
         }
 
         return schliesseWoertlicheRede(base, addition, satzende);
-    }
-
-    /**
-     * Gibt den String zurück, mit dem die noch offene wörtliche Rede abgeschlossen wird.
-     * Dies können ein Leerstring, "“" oder ".“" sein.
-     *
-     * @param satzende Ob der Satz damit beendet werden soll
-     */
-    private static String schliesseWoertlicheRede(
-            final String base, final String addition, final boolean satzende) {
-
-        if (satzende) {
-            return schliesseWoertlicheRedeSatzende(base, addition);
-        }
-
-        return schliesseWoertlicheRedeNichtSatzende(base, addition);
-    }
-
-    @NonNull
-    private static String schliesseWoertlicheRedeSatzende(final String base,
-                                                          final String addition) {
-        final String baseTrimmed = base.trim();
-        final String additionTrimmed = addition.trim();
-
-        final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?:\"“".contains(lastRelevantCharBase)) {
-            if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
-                    || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
-                    || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
-                    || baseTrimmed.endsWith("!\"") || baseTrimmed.endsWith("?\"")) {
-                return "";
-            }
-
-            if (additionTrimmed.startsWith("“")) {
-                return "";
-            }
-
-            return "“";
-        }
-
-        if (additionTrimmed.startsWith(".“")) {
-            return "";
-        }
-
-        if (additionTrimmed.startsWith("“")) {
-            return ".";
-        }
-
-        return ".“";
-    }
-
-    @NonNull
-    private static String schliesseWoertlicheRedeNichtSatzende(final String base,
-                                                               final String addition) {
-        final String baseTrimmed = base.trim();
-        final String additionTrimmed = addition.trim();
-
-        if (baseTrimmed.endsWith("“")) {
-            return "";
-        }
-
-        if (additionTrimmed.startsWith("“")) {
-            return "";
-        }
-
-        return "“";
-
-        // Das Komma sollte ohnehin durch kommaStehtAus gefordert sein
-    }
-
-    private static boolean periodNeededToStartNewSentence(
-            final String base, final String addition) {
-        final String lastRelevantCharBase =
-                base.substring(base.length() - 1);
-        if ("….!?:\"“–\n".contains(lastRelevantCharBase)) {
-            return false;
-        }
-
-        final String firstCharAddition = addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAddition);
     }
 
     NarrationSource getLastNarrationSource() {

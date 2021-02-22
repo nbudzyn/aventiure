@@ -57,9 +57,7 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
 
     @Override
     public String datStr() {
-        return joinToString(
-                getFokuspartikel(),
-                flexionsreihe.dat());
+        return joinToString(getFokuspartikel(), flexionsreihe.dat());
     }
 
     @Override

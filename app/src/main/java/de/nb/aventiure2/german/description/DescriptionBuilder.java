@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -28,47 +29,47 @@ public class DescriptionBuilder {
 
     @CheckReturnValue
     public static TextDescription paragraph(final Object... parts) {
-        return neuerSatz(PARAGRAPH, appendObject(parts, PARAGRAPH));
+        return neuerSatz(DescriptionBuilder.prependAndAppendObjects(
+                PARAGRAPH, parts, PARAGRAPH));
     }
 
     @NonNull
     @CheckReturnValue
-    static Object[] appendObject(final Object[] objects, final Object object) {
-        final Object[] newParts = new Object[objects.length + 1];
-        System.arraycopy(objects, 0, newParts, 0, objects.length);
-        newParts[newParts.length - 1] = object;
-        return newParts;
+    static Object[] prependAndAppendObjects(final Object firstObject,
+                                            final Object[] objects, final Object lastObject) {
+        final Object[] res = new Object[objects.length + 2];
+        System.arraycopy(objects, 0, res, 1, objects.length);
+        res[0] = firstObject;
+        res[res.length - 1] = lastObject;
+        return res;
+    }
+
+    @NonNull
+    @CheckReturnValue
+    static Object[] prependObject(final Object object, final Object[] objects) {
+        final Object[] res = new Object[objects.length + 1];
+        System.arraycopy(objects, 0, res, 1, objects.length);
+        res[0] = object;
+        return res;
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private static Object[] appendObject(final Object[] objects, final Object object) {
+        final Object[] res = new Object[objects.length + 1];
+        System.arraycopy(objects, 0, res, 0, objects.length);
+        res[res.length - 1] = object;
+        return res;
     }
 
     @CheckReturnValue
     public static TextDescription neuerSatz(final Object... parts) {
-        return neuerSatz(SENTENCE, parts);
-    }
+        checkArgument(parts.length > 0, "parts was empty");
+        if (!(parts[0] instanceof StructuralElement)) {
+            return neuerSatz(prependObject(SENTENCE, parts));
+        }
 
-    @NonNull
-    @CheckReturnValue
-    public static TextDescription neuerSatz(
-            final StructuralElement startsNew,
-            final Object... parts) {
-        return neuerSatz(startsNew, joinToKonstituentenfolge(parts));
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TextDescription neuerSatz(final StructuralElement startsNew,
-                                            final Konstituentenfolge konstituentenfolge) {
-        return neuerSatz(startsNew,
-                konstituentenfolge.joinToSingleKonstituente());
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public static TextDescription neuerSatz(final StructuralElement startsNew,
-                                            final Konstituente konstituente) {
-        checkArgument(startsNew != WORD,
-                "Neuer Satz unmöglich für " + startsNew);
-
-        return new TextDescription(startsNew, konstituente);
+        return new TextDescription(joinToKonstituentenfolge(parts).joinToSingleKonstituente());
     }
 
     @NonNull
@@ -80,13 +81,7 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     private static TextDescription satzanschluss(final Konstituentenfolge konstituentenfolge) {
-        return satzanschluss(konstituentenfolge.joinToSingleKonstituente());
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private static TextDescription satzanschluss(final Konstituente konstituente) {
-        return new TextDescription(StructuralElement.WORD, konstituente);
+        return new TextDescription(konstituentenfolge.joinToSingleKonstituente());
     }
 
     @CheckReturnValue
@@ -100,18 +95,29 @@ public class DescriptionBuilder {
         return du(WORD, verb, remainderParts);
     }
 
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied. Es ist erlaubt, dass
+     * die {@code }remainderParts} nichts als ein {@link StructuralElement} sind, z.B. ein
+     * {@link StructuralElement#PARAGRAPH}.
+     */
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew,
                                          final String verb, final Object... remainderParts) {
         return du(startsNew, verb, joinToNullKonstituentenfolge(remainderParts));
     }
 
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied. Es ist erlaubt, dass
+     * die Konstituentenfolge nichts als ein {@link StructuralElement} enthält, z.B.
+     * {@link StructuralElement#PARAGRAPH}.
+     */
     @NonNull
     @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
                                          @Nullable final Konstituentenfolge konstituentenfolge) {
         return du(startsNew, verb,
-                konstituentenfolge != null ? konstituentenfolge.joinToSingleKonstituente() : null);
+                konstituentenfolge != null ?
+                        konstituentenfolge.joinToSingleKonstituenteOrStructuralElement() : null);
     }
 
     @NonNull
@@ -123,8 +129,19 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
+    public static SimpleDuDescription du(final String verb,
+                                         @Nullable final StructuralElement endsWith) {
+        return du(WORD, verb, endsWith);
+    }
+
+    /**
+     * Erzeugt eine {@link SimpleDuDescription} ohne Vorfeld-Satzglied.
+     */
+    @NonNull
+    @CheckReturnValue
     public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable final Konstituente remainder) {
+                                         @Nullable
+                                         final IKonstituenteOrStructuralElement remainder) {
         return new SimpleDuDescription(startsNew, verb, remainder);
     }
 

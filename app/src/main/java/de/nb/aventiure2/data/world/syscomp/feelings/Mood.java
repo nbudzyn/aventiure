@@ -68,8 +68,7 @@ public enum Mood {
                         .map(a -> new AdverbialeAngabeSkopusSatz(
                                 a.getPraedikativ(
                                         // irrelevant für AdjektivOhneErgaenzungen
-                                        P2, SG).joinToString(
-                                )))
+                                        P2, SG).joinToString()))
                         .collect(toList()));
     }
 

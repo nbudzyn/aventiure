@@ -37,6 +37,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -59,6 +60,8 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -661,14 +664,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
             alt.add(((AbstractFlexibleDescription<?>) timedDescription.getDescription())
                     .toTextDescriptionMitVorfeld("dann")
-                    .mitPraefix("Du siehst dich nur kurz um, ")
-                    .beginntZumindestSentence()
+                    .mitPraefix("Du siehst dich nur kurz um, ").beginntZumindest(SENTENCE)
                     .timed(timedDescription.getTimeElapsed()));
         } else {
             alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
                     .map(d -> d.mitPraefixCapitalize(
-                            "Was willst du hier eigentlich? ")
-                            .beginntZumindestParagraph()
+                            "Was willst du hier eigentlich? ").beginntZumindest(PARAGRAPH)
                             .timed(timedDescription.getTimeElapsed())));
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
         }
@@ -677,11 +678,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private void narrateLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.paragraphHasDefinitelyNotEnded() && n.dann()) {
+            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
                 final TextDescription satzEvtlMitDann = timedDescription.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")
-                        .beginntZumindestSentence();
+                        .beginntZumindest(SENTENCE);
                 if (satzEvtlMitDann.getText().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
                 }
@@ -697,8 +698,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             n.narrate(timedDescription.withDescription(
                     timedDescription.getDescription()
                             .toTextDescriptionMitKonjunktionaladverbWennNoetig(
-                                    "danach")
-                            .beginntZumindestParagraph()));
+                                    "danach").beginntZumindest(PARAGRAPH)));
             return;
         }
 

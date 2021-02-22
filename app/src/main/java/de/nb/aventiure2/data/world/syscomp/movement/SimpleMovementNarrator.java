@@ -27,6 +27,7 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -82,10 +83,10 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         );
 
         alt.addAll(DescriptionUmformulierer.mitPraefixCap(
-                GermanUtil.joinToString("Schnell", anaph.datStr(), "hinterher!"),
+                GermanUtil.joinToString("Schnell", anaph.datK(), "hinterher!"),
                 normalDesc.getDescription()));
         alt.addAll(DescriptionUmformulierer.mitPraefixCap(
-                GermanUtil.joinToString("Schnell", anaph.datStr(), "gefolgt!"),
+                GermanUtil.joinToString("Schnell", anaph.datK(), "gefolgt!"),
                 normalDesc.getDescription()));
 
         if (normalDesc.getDescription() instanceof AbstractFlexibleDescription<?>) {
@@ -94,9 +95,9 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             if (fDesc.hasSubjektDu()) {
                 alt.add(
                         fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " hinterher")
-                                .beginntZumindestSentence(),
+                                .beginntZumindest(SENTENCE),
                         fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " folgend")
-                                .beginntZumindestSentence()
+                                .beginntZumindest(SENTENCE)
                 );
 
                 if (normalDesc.getDescription() instanceof StructuredDescription) {

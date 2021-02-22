@@ -21,15 +21,16 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
@@ -78,12 +79,12 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @NonNull
     public String getName() {
         // "Auf die magere Frau warten"
-        return GermanStringUtil.capitalize(
+        return joinToKonstituentenfolge(
+                SENTENCE,
                 WARTEN
                         .mit(world.getDescription(erwartet))
-                        .getInfinitiv(P2, SG).joinToString(
-                )
-        );
+                        .getInfinitiv(P2, SG))
+                .joinToString();
     }
 
     @Override

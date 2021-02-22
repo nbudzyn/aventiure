@@ -3,7 +3,6 @@ package de.nb.aventiure2.german.description;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
@@ -17,10 +16,7 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
 
@@ -32,7 +28,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     /**
      * Something like "Der Weg führt weiter in den Wald hinein. Dann stehst du vor einer Kirche"
      */
-    private String text;
+    private final String text;
 
     /**
      * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
@@ -57,30 +53,20 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
-    public TextDescription(final StructuralElement startsNew,
-                           final Konstituente konstituente) {
-        this(new DescriptionParams(startsNew, konstituente.getPhorikKandidat()),
-                konstituente.getEndsThis() == WORD ?
-                        konstituente.getString() :
-                        konstituente.toStringFixWoertlicheRedeNochOffenUndEndsThis(),
-                konstituente.getEndsThis() == WORD && konstituente.woertlicheRedeNochOffen(),
-                konstituente.getEndsThis() == WORD && konstituente.kommaStehtAus());
+    public TextDescription(final Konstituente konstituente) {
+        this(new DescriptionParams(konstituente.getStartsNew(), konstituente.getEndsThis(),
+                        konstituente.getPhorikKandidat()),
+                konstituente.getText(), konstituente.woertlicheRedeNochOffen(),
+                konstituente.kommaStehtAus());
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
-                           final String description, final boolean woertlicheRedeNochOffen,
+                           final String text, final boolean woertlicheRedeNochOffen,
                            final boolean kommaStehtAus) {
         super(descriptionParams);
         this.kommaStehtAus = kommaStehtAus;
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
-        text =
-                // Wenn eine Description als "neuer Satz" (oder Paragraph...) gekenzeichnet
-                // wurde, darf man ihr nichts mehr voranstellen - außer andere vollständige
-                // Sätze. (uncapitalize() wäre sicher ein Bug, weil man nicht weiß,
-                // ob die Description mit einem Nomen anfängt oder nicht). Dann können wir
-                // sie auch jetzt gleich capitalizen!
-                StructuralElement.min(descriptionParams.getStartsNew(), SENTENCE) == SENTENCE ?
-                        GermanStringUtil.capitalize(description) : description;
+        this.text = text;
     }
 
     @Override
@@ -107,15 +93,22 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @NonNull
     @CheckReturnValue
     private TextDescription mitPraefix(final Konstituente praefixKonstituente) {
+        final Konstituente konstituente = joinToKonstituentenfolge(
+                getStartsNew(),
+                praefixKonstituente,
+                text,
+                getEndsThis()).joinToSingleKonstituente();
+
+        final DescriptionParams newParams = copyParams();
+        newParams.setStartsNew(konstituente.getStartsNew());
+        newParams.setEndsThis(konstituente.getEndsThis());
+
         return new TextDescription(
-                copyParams(),
-                joinToKonstituentenfolge(
-                        praefixKonstituente,
-                        text).joinToSingleKonstituente().getString(),
+                newParams,
+                konstituente.getText(),
                 woertlicheRedeNochOffen,
                 kommaStehtAus);
     }
-
 
     /**
      * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
@@ -142,6 +135,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @NonNull
     @CheckReturnValue
     public TextDescription mitPraefixCapitalize(final String praefix) {
+        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
         return new TextDescription(
                 copyParams(),
                 praefix + GermanStringUtil.capitalize(text), woertlicheRedeNochOffen,
@@ -157,35 +151,15 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return toSingleKonstituente();
     }
 
-    @NonNull
-    public TextDescription beginntZumindestParagraph() {
-        beginntZumindest(PARAGRAPH);
-        text = GermanStringUtil.capitalize(text);
+    public TextDescription beginntZumindest(final StructuralElement zumindest) {
+        // FIXME Verwendungen suchen und ggf. umbauen
+
+        if (zumindest == WORD) {
+            return this;
+        }
+
+        getParamsMutable().setStartsNew(max(getStartsNew(), zumindest));
         return this;
-    }
-
-    @NonNull
-    public TextDescription beginntZumindestSentence() {
-        beginntZumindest(SENTENCE);
-        text = GermanStringUtil.capitalize(text);
-        return this;
-    }
-
-    private void beginntZumindest(final StructuralElement zumindest) {
-        Preconditions.checkArgument(SENTENCE == StructuralElement.min(SENTENCE, zumindest),
-                // Hier muss man bedenken, dass neuerSatz() ein capitalize() des übergebenen
-                // Textes macht. Den kann man auch nachträglich nicht mehr zurückdrehen,
-                // weil man nicht weiß, ob die description mit einem Nomen oder z.B. einem
-                // Adjektiv beginnt. Also darf man bei einer mit neuerSatz() erzeugten
-                // AbstractDescription nicht einfach das startsNew nachträglich wieder
-                // auf WORD setzen.
-                "Hier ist unbekannt, ob die description nicht vielleicht schon " +
-                        "großgeschrieben wurde. Man kann nicht auf WORD zurücksetzen. Man "
-                        + "sollte auch keinen Code schreiben, der das versucht"
-        );
-
-        getParamsMutable().setStartsNew(
-                max(copyParams().getStartsNew(), zumindest));
     }
 
     @Override
@@ -193,8 +167,10 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @NonNull
     public Konstituente toSingleKonstituente() {
         @Nullable final PhorikKandidat phorikKandidat = copyParams().getPhorikKandidat();
-        return k(text, woertlicheRedeNochOffen, isKommaStehtAus(),
-                WORD, phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
+        return Konstituente.k(text, getStartsNew(),
+                woertlicheRedeNochOffen, isKommaStehtAus(),
+                getParamsMutable().getEndsThis(),
+                phorikKandidat != null ? phorikKandidat.getNumerusGenus() : null,
                 phorikKandidat != null ? phorikKandidat.getBezugsobjekt() : null);
     }
 

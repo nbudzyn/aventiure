@@ -27,7 +27,6 @@ import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -39,10 +38,12 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -122,12 +123,13 @@ public class AblegenAction
     @Override
     @NonNull
     public String getName() {
-        return GermanStringUtil.capitalize(
+        return joinToKonstituentenfolge(
+                SENTENCE,
                 getPraedikat()
                         .mit(world.getDescription(gameObject, true))
                         .mitAdverbialerAngabe(getWohinDetail())
-                        .getInfinitiv(P2, SG).joinToString(
-                ));
+                        .getInfinitiv(P2, SG))
+                .joinToString();
     }
 
     @Nullable
