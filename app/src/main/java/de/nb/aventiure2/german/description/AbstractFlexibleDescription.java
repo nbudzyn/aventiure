@@ -7,20 +7,17 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.PhorikKandidat;
-import de.nb.aventiure2.german.base.StructuralElement;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-    AbstractFlexibleDescription(final StructuralElement startsNew,
-                                final StructuralElement endsThis,
-                                @Nullable final PhorikKandidat phorikKandidat) {
-        super(startsNew, endsThis, phorikKandidat);
+    AbstractFlexibleDescription(@Nullable final PhorikKandidat phorikKandidat) {
+        super(phorikKandidat);
     }
 
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
-        return toTextDescriptionKeepOtherParams(toSingleKonstituenteMitVorfeld(vorfeld));
+        return toTextDescriptionKeepParams(toSingleKonstituenteMitVorfeld(vorfeld));
     }
 
     @Override
@@ -44,7 +41,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
-        return toSatzanschlussTextDescriptionKeepOtherParams(
+        return toSatzanschlussTextDescriptionKeepParams(
                 toSingleKonstituenteSatzanschlussOhneSubjekt());
     }
 

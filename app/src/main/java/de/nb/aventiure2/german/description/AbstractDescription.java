@@ -19,7 +19,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * Abstract superclass for a description.
@@ -27,10 +26,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    protected AbstractDescription(final StructuralElement startsNew,
-                                  final StructuralElement endsThis,
-                                  @Nullable final PhorikKandidat phorikKandidat) {
-        this(new DescriptionParams(startsNew, endsThis, phorikKandidat));
+    @Nullable
+    private PhorikKandidat phorikKandidat;
+
+    protected AbstractDescription(@Nullable final PhorikKandidat phorikKandidat) {
+        this(new DescriptionParams(phorikKandidat));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -41,20 +41,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.copy();
     }
 
-    public StructuralElement getStartsNew() {
-        return params.getStartsNew();
-    }
+    public abstract StructuralElement getStartsNew();
 
-    public StructuralElement getEndsThis() {
-        return params.getEndsThis();
-    }
+    public abstract StructuralElement getEndsThis();
 
     public abstract ImmutableList<TextDescription> altTextDescriptions();
 
     @NonNull
     @CheckReturnValue
     final TextDescription toTextDescription() {
-        return toTextDescriptionKeepOtherParams(toSingleKonstituente());
+        return toTextDescriptionKeepParams(toSingleKonstituente());
     }
 
     /**
@@ -72,7 +68,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
-        return toTextDescriptionKeepOtherParams(
+        return toTextDescriptionKeepParams(
                 toSingleKonstituenteMitKonjunktionaladverbWennNoetig(konjunktionaladverb));
     }
 
@@ -84,33 +80,16 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    public TextDescription toSatzanschlussTextDescriptionKeepOtherParams(
+    public TextDescription toSatzanschlussTextDescriptionKeepParams(
             final Konstituente konstituente) {
-        final DescriptionParams newParams = copyParams();
-        if (konstituente.getPhorikKandidat() != null) {
-            newParams.phorikKandidat(konstituente.getPhorikKandidat());
-        }
-        newParams.setStartsNew(WORD);
-        newParams.setEndsThis(konstituente.getEndsThis());
-
-        return new TextDescription(
-                newParams,
-                konstituente.getText(),
-                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+        // FIXME Prüfen: Funktioniert das noch wie gewünscht?
+        //  Ggf. entfernen
+        return new TextDescription(copyParams(), konstituente);
     }
 
     @NonNull
-    TextDescription toTextDescriptionKeepOtherParams(final Konstituente konstituente) {
-        final DescriptionParams newParams = copyParams();
-        if (konstituente.getPhorikKandidat() != null) {
-            newParams.phorikKandidat(konstituente.getPhorikKandidat());
-        }
-        newParams.setStartsNew(konstituente.getStartsNew());
-        newParams.setEndsThis(konstituente.getEndsThis());
-        return new TextDescription(
-                newParams,
-                konstituente.getText(),
-                konstituente.woertlicheRedeNochOffen(), konstituente.kommaStehtAus());
+    TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
+        return new TextDescription(copyParams(), konstituente);
     }
 
     @SuppressWarnings("unchecked")

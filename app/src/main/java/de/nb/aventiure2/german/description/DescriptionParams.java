@@ -2,12 +2,10 @@ package de.nb.aventiure2.german.description;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
-import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -17,17 +15,6 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * Parameter einer {@link AbstractDescription} - mutable!
  */
 public class DescriptionParams {
-    // FIXME startsNew aus DescriptionParams umziehen.
-    //  In TextDescription nicht mehr nötig.
-
-    /**
-     * This {@link Narration} starts a new ... (paragraph, e.g.)
-     */
-    private StructuralElement startsNew;
-    /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
-     */
-    private StructuralElement endsThis;
     /**
      * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")
@@ -61,49 +48,21 @@ public class DescriptionParams {
     private PhorikKandidat phorikKandidat;
 
     DescriptionParams copy() {
-        return new DescriptionParams(startsNew, endsThis,
+        return new DescriptionParams(
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, phorikKandidat);
     }
 
-    DescriptionParams(final StructuralElement startsNew,
-                      final StructuralElement endsThis,
-                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(startsNew, endsThis,
-                false, false, phorikKandidat);
+    DescriptionParams(@Nullable final PhorikKandidat phorikKandidat) {
+        this(false, false, phorikKandidat);
     }
 
-    private DescriptionParams(final StructuralElement startsNew, final StructuralElement endsThis,
-                              final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+    private DescriptionParams(final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                               final boolean dann,
                               @Nullable final PhorikKandidat phorikKandidat) {
-        this.startsNew = startsNew;
-        this.endsThis = endsThis;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
         this.phorikKandidat = phorikKandidat;
-    }
-
-    /**
-     * Ändert das {@link #startsNew} der Parameter. Wer das hier aufruft,
-     * muss bedenken, dass möglicherweise bereits der Text
-     * in Großschreibung gesetzt wurde, weil es sich um einen Satz
-     * handeln sollte. Das lässt sich im allgemeinen Fall nicht
-     * zurückdrehen, da man dann nicht weiß, ob der Text vielleicht
-     * mit einem Nomen begann, dass auch inmitten eines Satzes
-     * großgeschrieben werden muss, also nicht uncapitalizet werden darf.
-     * Man darf diese Methode also nur mit Bedacht verwenden und sollte
-     * sehr skeptisch sein, wenn man startsNew auf {@link StructuralElement#WORD}
-     * zurücksetzen möchte.
-     */
-    void setStartsNew(final StructuralElement startsNew) {
-        this.startsNew = startsNew;
-    }
-
-    // FIXME Prüfen, ob capitalize() zu oft oder zu früh aufgerufen wird?
-
-    public void setEndsThis(final StructuralElement endsThis) {
-        this.endsThis = endsThis;
     }
 
     /**
@@ -166,14 +125,6 @@ public class DescriptionParams {
 
     public void dann(final boolean dann) {
         this.dann = dann;
-    }
-
-    public StructuralElement getStartsNew() {
-        return startsNew;
-    }
-
-    StructuralElement getEndsThis() {
-        return endsThis;
     }
 
     public boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {

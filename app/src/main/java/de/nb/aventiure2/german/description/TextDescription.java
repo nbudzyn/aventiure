@@ -14,7 +14,6 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.StructuralElement;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -40,23 +39,26 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
-    public TextDescription(final DescriptionParams descriptionParams,
-                           final String text, final boolean woertlicheRedeNochOffen,
-                           final boolean kommaStehtAus) {
-        super(descriptionParams);
-        konstituente = k(text, descriptionParams.getStartsNew(),
-                woertlicheRedeNochOffen, kommaStehtAus, descriptionParams.getEndsThis(),
-                descriptionParams.getPhorikKandidat() != null ?
-                        descriptionParams.getPhorikKandidat().getNumerusGenus() : null,
-                descriptionParams.getPhorikKandidat() != null ?
-                        descriptionParams.getPhorikKandidat().getBezugsobjekt() : null);
-    }
-
     public TextDescription(final Konstituente konstituente) {
-        super(new DescriptionParams(konstituente.getStartsNew(), konstituente.getEndsThis(),
-                konstituente.getPhorikKandidat()));
+        super(new DescriptionParams(konstituente.getPhorikKandidat()));
 
         this.konstituente = konstituente;
+    }
+
+    public TextDescription(final DescriptionParams descriptionParams,
+                           final Konstituente konstituente) {
+        super(descriptionParams);
+        this.konstituente = konstituente;
+    }
+
+    @Override
+    public StructuralElement getStartsNew() {
+        return konstituente.getStartsNew();
+    }
+
+    @Override
+    public StructuralElement getEndsThis() {
+        return konstituente.getEndsThis();
     }
 
     @Override
@@ -91,15 +93,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 praefix,
                 konstituente).joinToSingleKonstituente();
 
-        final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
-        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
-
-        return new TextDescription(
-                newParams,
-                konstituenteMitPraefix.getText(),
-                konstituenteMitPraefix.woertlicheRedeNochOffen(),
-                konstituenteMitPraefix.kommaStehtAus());
+        return new TextDescription(copyParams(), konstituenteMitPraefix);
     }
 
     /**
@@ -117,15 +111,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 praefixKonstituente,
                 konstituente).joinToSingleKonstituente();
 
-        final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
-        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
-
-        return new TextDescription(
-                newParams,
-                konstituenteMitPraefix.getText(),
-                konstituenteMitPraefix.woertlicheRedeNochOffen(),
-                konstituenteMitPraefix.kommaStehtAus());
+        return new TextDescription(copyParams(), konstituenteMitPraefix);
     }
 
     /**
@@ -147,15 +133,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
                 SENTENCE,
                 konstituente).joinToSingleKonstituente();
 
-        final DescriptionParams newParams = copyParams();
-        newParams.setStartsNew(konstituenteMitPraefix.getStartsNew());
-        newParams.setEndsThis(konstituenteMitPraefix.getEndsThis());
-
-        return new TextDescription(
-                newParams,
-                konstituenteMitPraefix.getText(),
-                konstituenteMitPraefix.woertlicheRedeNochOffen(),
-                konstituenteMitPraefix.kommaStehtAus());
+        return new TextDescription(copyParams(), konstituenteMitPraefix);
     }
 
     @Override
@@ -177,8 +155,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         konstituente = joinToKonstituentenfolge(
                 zumindest,
                 konstituente).joinToSingleKonstituente();
-
-        getParamsMutable().setStartsNew(konstituente.getStartsNew());
 
         return this;
     }

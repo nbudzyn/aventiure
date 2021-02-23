@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -22,23 +23,33 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
  */
 public class StructuredDescription extends AbstractFlexibleDescription<StructuredDescription> {
+    /**
+     * This {@link Narration} starts a new ... (paragraph, e.g.)
+     */
+    private final StructuralElement startsNew;
+    /**
+     * This {@link Narration} ends this ... (paragraph, e.g.)
+     */
+    private final StructuralElement endsThis;
+
     private final Satz satz;
 
     StructuredDescription(final StructuralElement startsNew,
                           final Satz satz,
                           final StructuralElement endsThis) {
-        super(startsNew, endsThis,
+        super(
                 // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
                 // Bei Bedarf kann man das in den Params noch überschreiben.
                 guessPhorikKandidat(satz));
+        this.startsNew = startsNew;
         this.satz = satz;
+        this.endsThis = endsThis;
     }
 
     private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
@@ -65,18 +76,27 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
+    public StructuralElement getStartsNew() {
+        return startsNew;
+    }
+
+    @Override
+    public StructuralElement getEndsThis() {
+        return endsThis;
+    }
+
+    @Override
     public ImmutableList<TextDescription> altTextDescriptions() {
         return satz.altVerzweitsaetze().stream()
                 .map(kf ->
                         joinToKonstituentenfolge(
-                                // Ist das min SENTENCEwirktlich nötig?
-                                StructuralElement.min(SENTENCE, getStartsNew()),
+                                getStartsNew(),
                                 kf,
                                 getEndsThis()
                         )
                 )
                 .map(Konstituentenfolge::joinToSingleKonstituente)
-                .map(this::toTextDescriptionKeepOtherParams)
+                .map(this::toTextDescriptionKeepParams)
                 .collect(toImmutableList());
     }
 
@@ -109,7 +129,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     public Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld) {
         return
                 joinToKonstituentenfolge(
-                        // Ist das min SENTENCE wirktlich nötig?
                         getStartsNew(),
                         satz.getVerbzweitsatzMitVorfeld(vorfeld),
                         getEndsThis()

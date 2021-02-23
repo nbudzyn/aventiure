@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -21,6 +22,11 @@ import static de.nb.aventiure2.german.base.StructuralElement.WORD;
  * "Du gehst in den Wald."
  */
 public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDescription> {
+    /**
+     * This {@link Narration} starts a new ... (paragraph, e.g.)
+     */
+    private final StructuralElement startsNew;
+
     /**
      * Something like "gehst"
      */
@@ -45,9 +51,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     SimpleDuDescription(final StructuralElement startsNew,
                         final String verb,
                         @Nullable final IKonstituenteOrStructuralElement remainder) {
-        this(startsNew, verb,
-                remainder instanceof Konstituente ? (Konstituente) remainder : null,
-                toEndsThis(remainder));
+        this(startsNew,
+                verb,
+                remainder instanceof Konstituente ? (Konstituente) remainder : null);
     }
 
     /**
@@ -57,10 +63,9 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     private SimpleDuDescription(final StructuralElement startsNew,
                                 final String verb,
-                                @Nullable final Konstituente remainder,
-                                final StructuralElement endsThis) {
-        super(startsNew, endsThis,
-                remainder != null ? remainder.getPhorikKandidat() : null);
+                                @Nullable final Konstituente remainder) {
+        super(remainder != null ? remainder.getPhorikKandidat() : null);
+        this.startsNew = startsNew;
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
                 "Kein remainder, aber ein vorfeldSatzglied? Unmöglich!");
@@ -75,21 +80,14 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         this.remainder = remainder;
     }
 
-    private static StructuralElement toEndsThis(
-            @Nullable final IKonstituenteOrStructuralElement remainder) {
-        if (remainder == null) {
-            return WORD;
-        }
+    @Override
+    public StructuralElement getStartsNew() {
+        return startsNew;
+    }
 
-        if (remainder instanceof StructuralElement) {
-            return (StructuralElement) remainder;
-        }
-
-        if (remainder instanceof Konstituente) {
-            return ((Konstituente) remainder).getEndsThis();
-        }
-
-        throw new IllegalStateException("Unexpected remainder: " + remainder);
+    @Override
+    public StructuralElement getEndsThis() {
+        return remainder == null ? WORD : remainder.getEndsThis();
     }
 
     @Override
@@ -106,7 +104,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         if (hauptsatzMitSpeziellemVorfeld != null) {
             // Bei einer SimpleDuDescription ist auch dieser Hauptsatz ein echter
             // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-            res.add(toTextDescriptionKeepOtherParams(hauptsatzMitSpeziellemVorfeld)
+            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
                     .beginntZumindest(SENTENCE));
         }
 

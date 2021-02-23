@@ -99,7 +99,7 @@ class TextDescriptionBuilder {
                 desc.getSatz().mitAnschlusswort("und")
                         .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
 
-        return desc.toSatzanschlussTextDescriptionKeepOtherParams(satzanschlussMitUnd)
+        return desc.toSatzanschlussTextDescriptionKeepParams(satzanschlussMitUnd)
                 // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
                 .undWartest(false);
     }
