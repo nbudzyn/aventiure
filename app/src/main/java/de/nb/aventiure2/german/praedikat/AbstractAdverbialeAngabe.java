@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.Adjektiv;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -43,12 +45,14 @@ public abstract class AbstractAdverbialeAngabe {
         this.adjektivphrase = adjektivphrase;
     }
 
+    @CheckReturnValue
     public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
         // Anscheinend muss die gesamte adverbiale Phrase kontinuierlich bleiben.
         // Dann können wir sie ohne Verlust zu einer einzigen Konstituente zusammenfassen.
         return joinToKonstituente(adjektivphrase, personSubjekt, numerusSubjekt);
     }
 
+    @CheckReturnValue
     private static Konstituente joinToKonstituente(final AdjPhrOhneLeerstellen adjektivphrase,
                                                    final Person personSubjekt,
                                                    final Numerus numerusSubjekt) {

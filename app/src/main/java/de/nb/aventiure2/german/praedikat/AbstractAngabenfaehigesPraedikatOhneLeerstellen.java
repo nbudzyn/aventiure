@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativ;
@@ -193,6 +194,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return null;
     }
 
+    @CheckReturnValue
     private Konstituentenfolge getMittelfeld(
             final Person personSubjekt,
             final Numerus numerusSubjekt) {

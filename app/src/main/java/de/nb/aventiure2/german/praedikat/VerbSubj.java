@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -124,6 +125,7 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     }
 
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
         return new Konstituentenfolge(k(verb.getPartizipII()));
     }
@@ -139,6 +141,7 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     }
 
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }

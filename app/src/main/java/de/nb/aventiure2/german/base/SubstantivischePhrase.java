@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -25,6 +27,7 @@ public abstract class SubstantivischePhrase
     public abstract SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
 
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
         // Ein Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
         // *"Petra ist Professor. Er ..."

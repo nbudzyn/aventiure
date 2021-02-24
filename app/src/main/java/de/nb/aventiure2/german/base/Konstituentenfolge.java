@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
@@ -46,6 +47,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
     private final ImmutableList<IKonstituenteOrStructuralElement> konstituenten;
 
     @Nullable
+    @CheckReturnValue
     public static Konstituentenfolge kf(final Iterable<?> parts) {
         return joinToNullKonstituentenfolge(parts);
     }
@@ -81,6 +83,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      */
     @SuppressWarnings("GrazieInspection")
     @Nullable
+    @CheckReturnValue
     public static Konstituentenfolge schliesseInKommaEin(
             @Nullable final Konstituentenfolge input) {
         if (input == null) {
@@ -107,6 +110,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * @return Eine Konstituentenfolge - oder <code>null</code>
      */
     @Nullable
+    @CheckReturnValue
     public static Konstituentenfolge joinToNullKonstituentenfolge(final Object... parts) {
         return joinToNullKonstituentenfolge(asList(parts));
     }
@@ -117,6 +121,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * @return Eine Konstituentenfolge - oder <code>null</code>
      */
     @Nullable
+    @CheckReturnValue
     static Konstituentenfolge joinToNullKonstituentenfolge(final Iterable<?> parts) {
         final Collection<Konstituentenfolge> alternatives = joinToAltKonstituentenfolgen(parts);
         if (alternatives.isEmpty()) {
@@ -140,6 +145,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * Konstituentenfolge auch <code>null</code> enthalten.
      */
     @Nonnull
+    @CheckReturnValue
     public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Object... parts) {
         return joinToAltKonstituentenfolgen(asList(parts));
@@ -152,6 +158,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * Konstituentenfolge auch <code>null</code> enthalten.
      */
     @Nonnull
+    @CheckReturnValue
     public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
@@ -448,6 +455,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * ausstehende Kommma auf andere Weise behandelt wird.
      */
     @NonNull
+    @CheckReturnValue
     public String joinToString() {
         return joinToSingleKonstituente().toTextOhneKontext();
     }
@@ -459,6 +467,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * Die Ergebnis-Konsituente wird nicht automatisch großgeschrieben.
      */
     @NonNull
+    @CheckReturnValue
     public Konstituente joinToSingleKonstituente() {
         final IKonstituenteOrStructuralElement res = joinToSingleKonstituenteOrStructuralElement();
         if (!(res instanceof Konstituente)) {
@@ -476,6 +485,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      * Die Ergebnis-Konstituente wird nicht automatisch großgeschrieben.
      */
     @NonNull
+    @CheckReturnValue
     public IKonstituenteOrStructuralElement joinToSingleKonstituenteOrStructuralElement() {
         final StringBuilder resTextBuilder = new StringBuilder(size() * 25);
         boolean firstAbgesehenVonWORD = true;
@@ -639,6 +649,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                         .build());
     }
 
+    @CheckReturnValue
     public Konstituentenfolge withVorkommaNoetig() {
         if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
             // Mit der Konstituentenfolge beginnt ein neuer Satz. Kein Vorkomma nötig.

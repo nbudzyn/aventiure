@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.annotation.CheckReturnValue;
+
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
@@ -122,6 +124,7 @@ public class SubstPhrReihung extends SubstantivischePhrase {
         return toAufzaehlung(stream.collect(toList()));
     }
 
+    @CheckReturnValue
     private static Konstituentenfolge toAufzaehlung(
             final List<? extends Konstituentenfolge> elemente) {
         final ImmutableList.Builder<IKonstituenteOrStructuralElement> res = ImmutableList.builder();

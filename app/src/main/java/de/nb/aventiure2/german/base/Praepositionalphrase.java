@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -44,6 +45,7 @@ public class Praepositionalphrase implements Praedikativum {
     }
 
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
         return joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,

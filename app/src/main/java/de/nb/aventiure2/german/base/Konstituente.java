@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
@@ -79,16 +80,35 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * den Numerus und Genus besitzen, die in {@link #kannAlsBezugsobjektVerstandenWerdenFuer}
      * angegeben sind. - Jedenfalls muss <code>kannAlsBezugsobjektVerstandenWerdenFuer</code>
      * gesetzt sein, wenn <code>bezugsobjekt</code> gesetzt ist.
+     * <p>
+     * Dieses Feld sollte nur gesetzt werden, wenn es keine
+     * Fehlreferenzierungen, Doppeldeutigkeiten
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
+     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
+     * <p>
+     * Negatitvbeispiele wäre:
+     * <ul>
+     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
+     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
+     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
+     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
+     *     Wiederholung)
+     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
+     *     (Referenziertes Objekt zu weit entfernt.)
+     * </ul>
      */
     @Nullable
     private final IBezugsobjekt bezugsobjekt;
 
+    @CheckReturnValue
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
         return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
+    @CheckReturnValue
     public Konstituente withVordoppelpunktNoetig() {
         return new Konstituente(text, vorkommaNoetig,
                 true,
@@ -96,10 +116,12 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
+    @CheckReturnValue
     Konstituente withKommaStehtAus() {
         return withKommaStehtAus(true);
     }
 
+    @CheckReturnValue
     public Konstituente withKommaStehtAus(final boolean kommmaStehtAus) {
         return k(text, startsNew, woertlicheRedeNochOffen, kommmaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
@@ -114,6 +136,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * (man kann also nicht nachfolgende "sie", "ihm" oder "es" schreiben und diese
      * Konsituente meinen).
      */
+    @CheckReturnValue
     public static Konstituente k(final @Nonnull String text) {
         return k(text, null, null);
     }
@@ -123,6 +146,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * String (getrimmt) mit Komma geendet hat. Die Konstituente enthält keinen
      * Phorik-Kandidaten.
      */
+    @CheckReturnValue
     public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus koennteAlsBezugsobjektVerstandenWerdenFuer) {
@@ -133,6 +157,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * Erzeugt eine Konstituente, bei der nur dann kein Komma aussteht, wenn der
      * String (getrimmt) mit Komma geendet hat.
      */
+    @CheckReturnValue
     public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
@@ -150,6 +175,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      * kann (man kann also nicht nachfolgende "sie", "ihm" oder "es" schreiben und diese
      * Konsituente meinen).
      */
+    @CheckReturnValue
     public static Konstituente k(final @Nonnull String text,
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus) {
@@ -157,6 +183,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 WORD, null, null);
     }
 
+    @CheckReturnValue
     public static Konstituente k(final @Nonnull String text,
                                  final StructuralElement startsNew,
                                  final boolean woertlicheRedeNochOffen,
@@ -201,6 +228,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         this.kannAlsBezugsobjektVerstandenWerdenFuer = kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 
+    @CheckReturnValue
     public IKonstituenteOrStructuralElement cutFirst(final String subText) {
         @Nullable final String resultString = GermanUtil.cutFirst(text, subText);
 
@@ -215,6 +243,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 bezugsobjekt);
     }
 
+    @CheckReturnValue
     public Konstituente mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         if (phorikKandidat == null) {
             return ohneBezugsobjekt();
@@ -226,6 +255,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 endsThis, phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
     }
 
+    @CheckReturnValue
     Konstituente ohneBezugsobjekt() {
         return new Konstituente(text,
                 vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
@@ -253,10 +283,12 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return res;
     }
 
+    @CheckReturnValue
     Konstituente capitalizeFirstLetter() {
         return mitText(GermanStringUtil.capitalizeFirstLetter(text));
     }
 
+    @CheckReturnValue
     private Konstituente mitText(final String text) {
         if (this.text.equals(text)) {
             // Speicher und Zeit sparen

@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
@@ -11,6 +13,7 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird, - ohne den Anteil, der nach Möglichkeit
      * ins Nachfeld gestellt werden soll.
      */
+    @CheckReturnValue
     default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus) {
         return getPraedikativ(person, numerus).cutLast(
@@ -33,6 +36,7 @@ public interface Praedikativum {
      * zu sehen."
      */
     @Nullable
+    @CheckReturnValue
     Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus);
 

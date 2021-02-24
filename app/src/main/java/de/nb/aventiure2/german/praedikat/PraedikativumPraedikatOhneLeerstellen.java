@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -158,6 +159,7 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     @Nullable
+    @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
@@ -217,6 +219,7 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());

@@ -6,14 +6,22 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
@@ -64,7 +72,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     private SimpleDuDescription(final StructuralElement startsNew,
                                 final String verb,
                                 @Nullable final Konstituente remainder) {
-        super(remainder != null ? remainder.getPhorikKandidat() : null);
+        super();
         this.startsNew = startsNew;
 
         checkArgument(vorfeldSatzglied == null || remainder != null,
@@ -112,6 +120,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
+    @CheckReturnValue
     public Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld) {
         return joinToKonstituentenfolge(
                 getStartsNew(),
@@ -121,10 +130,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 remainder,  // "den Fluss entlang"
                 getEndsThis())
                 .joinToSingleKonstituente()
-                .mitPhorikKandidat(copyParams().getPhorikKandidat());
+                .mitPhorikKandidat(getPhorikKandidat());
     }
 
     @Override
+    @CheckReturnValue
     public Konstituente toSingleKonstituente() {
         return joinToKonstituentenfolge(
                 getStartsNew(),
@@ -135,6 +145,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
 
     @Override
     @Nullable
+    @CheckReturnValue
     protected Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull() {
         if (vorfeldSatzglied == null) {
             return null;
@@ -153,17 +164,18 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
                 remainder.cutFirst(vorfeldSatzglied),
                 getEndsThis())
                 .joinToSingleKonstituente()
-                .mitPhorikKandidat(copyParams().getPhorikKandidat());
+                .mitPhorikKandidat(getPhorikKandidat());
     }
 
     /**
      * Gibt etwas zurück wie "gehst weiter"
      */
     @Override
+    @CheckReturnValue
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(verb, remainder, getEndsThis())
                 .joinToSingleKonstituente()
-                .mitPhorikKandidat(copyParams().getPhorikKandidat());
+                .mitPhorikKandidat(getPhorikKandidat());
     }
 
     public SimpleDuDescription mitVorfeldSatzglied(@Nullable final String vorfeldSatzglied) {
@@ -214,5 +226,42 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), verb, remainder);
+    }
+
+    @Override
+    public SimpleDuDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                                              final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase %s hat falsche "
+                        + "Person: %s. Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
+                substantivischePhrase.getPerson());
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+    }
+
+    @Override
+    public void phorikKandidat(final NumerusGenus numerusGenus,
+                               final IGameObject gameObject) {
+        phorikKandidat(numerusGenus, gameObject.getId());
+    }
+
+    @Override
+    public SimpleDuDescription phorikKandidat(final NumerusGenus numerusGenus,
+                                              final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    }
+
+    @Override
+    public SimpleDuDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        if (remainder != null) {
+            remainder = remainder.mitPhorikKandidat(phorikKandidat);
+        }
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public PhorikKandidat getPhorikKandidat() {
+        return remainder != null ? remainder.getPhorikKandidat() : null;
     }
 }

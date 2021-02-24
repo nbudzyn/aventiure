@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -58,6 +59,7 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     }
 
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
                                                           final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(

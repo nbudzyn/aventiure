@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import javax.annotation.CheckReturnValue;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
@@ -117,6 +119,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
         return getDescriptionUnverschmolzen(substPhrOderReflPron);
     }
 
+    @CheckReturnValue
     public Konstituente getDescription(final SubstantivischePhrase substantivischePhrase) {
         if (kasus == DAT &&
                 // AKK unterstützen wir derzeit nicht
@@ -145,6 +148,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     @NonNull
+    @CheckReturnValue
     private Konstituente getDescriptionUnverschmolzen(
             final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
         return joinToKonstituentenfolge(

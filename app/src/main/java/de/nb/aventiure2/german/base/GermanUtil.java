@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import java.util.List;
 
+import javax.annotation.CheckReturnValue;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
@@ -28,6 +30,7 @@ public class GermanUtil {
      * behandeln. Die wörtliche Rede wird automatisch geschlossen, es wird kein
      * automatischer Punkt gesetzt.
      */
+    @CheckReturnValue
     public static String joinToString(final Object... parts) {
         return checkJoiningResultNotNull(joinToNullString(parts), parts);
     }
@@ -55,6 +58,7 @@ public class GermanUtil {
      * automatischer Punkt gesetzt.
      */
     @Nullable
+    @CheckReturnValue
     private static String joinToNullString(final Object... parts) {
         return joinToNullString(asList(parts));
     }
@@ -66,6 +70,7 @@ public class GermanUtil {
      * automatischer Punkt gesetzt.
      */
     @Nullable
+    @CheckReturnValue
     private static String joinToNullString(final Iterable<?> parts) {
         @Nullable final Konstituentenfolge res = joinToNullKonstituentenfolge(parts);
         if (res == null) {

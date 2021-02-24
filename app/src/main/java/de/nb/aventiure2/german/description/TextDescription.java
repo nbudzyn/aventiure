@@ -10,11 +10,18 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
@@ -40,8 +47,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
     public TextDescription(final Konstituente konstituente) {
-        super(new DescriptionParams(konstituente.getPhorikKandidat()));
-
+        super(new DescriptionParams());
         this.konstituente = konstituente;
     }
 
@@ -204,5 +210,40 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), konstituente);
+    }
+
+    @Override
+    public TextDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                                          final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase %s hat falsche "
+                        + "Person: %s. Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
+                substantivischePhrase.getPerson());
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+    }
+
+    @Override
+    public void phorikKandidat(final NumerusGenus numerusGenus,
+                               final IGameObject gameObject) {
+        phorikKandidat(numerusGenus, gameObject.getId());
+    }
+
+    @Override
+    public TextDescription phorikKandidat(final NumerusGenus numerusGenus,
+                                          final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    }
+
+    @Override
+    public TextDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        konstituente = konstituente.mitPhorikKandidat(phorikKandidat);
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public PhorikKandidat getPhorikKandidat() {
+        return konstituente.getPhorikKandidat();
     }
 }

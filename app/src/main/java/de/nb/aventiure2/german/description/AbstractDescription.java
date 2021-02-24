@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -17,20 +18,14 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Person.P3;
-
 /**
  * Abstract superclass for a description.
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    @Nullable
-    private PhorikKandidat phorikKandidat;
-
-    protected AbstractDescription(@Nullable final PhorikKandidat phorikKandidat) {
-        this(new DescriptionParams(phorikKandidat));
+    protected AbstractDescription() {
+        this(new DescriptionParams(false, false));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -145,43 +140,27 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      *
      * @param substantivischePhrase Substantivische Phrase in der dritten Person
      */
-    public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                               final IBezugsobjekt bezugsobjekt) {
-        checkArgument(substantivischePhrase.getPerson() == P3,
-                "Substantivische Phrase %s hat falsche "
-                        + "Person: %s. Für Phorik-Kandiaten "
-                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
-                substantivischePhrase.getPerson());
-        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
-    }
+    public abstract SELF phorikKandidat(SubstantivischePhrase substantivischePhrase,
+                                        IBezugsobjekt bezugsobjekt);
 
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!
      */
-    public SELF phorikKandidat(final NumerusGenus numerusGenus,
-                               final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
-    }
-
-    @SuppressWarnings("unchecked")
-    public SELF phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
-        params.phorikKandidat(phorikKandidat);
-        return (SELF) this;
-    }
-
-    @Nullable
-    public PhorikKandidat getPhorikKandidat() {
-        return params.getPhorikKandidat();
-    }
+    public abstract void phorikKandidat(NumerusGenus numerusGenus,
+                                        IGameObject gameObject);
 
     /**
-     * Gibt die Parameter veränderbar zurück. Das hier  wird man selten
-     * aufrufen!
+     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
+     * Phorik-Kandidaten in der dritten Person!
      */
-    DescriptionParams getParamsMutable() {
-        return params;
-    }
+    public abstract SELF phorikKandidat(NumerusGenus numerusGenus,
+                                        IBezugsobjekt bezugsobjekt);
+
+    public abstract SELF phorikKandidat(@Nullable PhorikKandidat phorikKandidat);
+
+    @Nullable
+    public abstract PhorikKandidat getPhorikKandidat();
 
     @Override
     public boolean equals(final Object o) {

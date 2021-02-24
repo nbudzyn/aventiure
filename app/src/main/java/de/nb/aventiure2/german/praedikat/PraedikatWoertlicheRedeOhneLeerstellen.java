@@ -7,6 +7,7 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -151,6 +152,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Override
     @Nullable
+    @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(

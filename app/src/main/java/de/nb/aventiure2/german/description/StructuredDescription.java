@@ -9,20 +9,26 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.narration.Narration;
+import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
@@ -40,21 +46,48 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     private final Satz satz;
 
+    /**
+     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
+     * danach (<i>anaphorisch</i>) beziehen. Dazu müssen (in aller Regel) die grammatischen
+     * Merkmale übereinstimmen und es muss mit dem Pronomen dieses Bezugsobjekt
+     * gemeint sein.
+     * <p>
+     * Dieses Feld sollte nur gesetzt werden wenn man sich sicher ist, wenn es also keine
+     * Fehlreferenzierungen, Doppeldeutigkeiten
+     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
+     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
+     * <p>
+     * Negatitvbeispiele wäre:
+     * <ul>
+     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
+     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
+     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
+     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
+     *     Wiederholung)
+     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
+     *     (Referenziertes Objekt zu weit entfernt.)
+     * </ul>
+     */
+    @Nullable
+    private PhorikKandidat phorikKandidat;
+
     StructuredDescription(final StructuralElement startsNew,
                           final Satz satz,
                           final StructuralElement endsThis) {
-        super(
-                // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
-                // Bei Bedarf kann man das in den Params noch überschreiben.
-                guessPhorikKandidat(satz));
+        super();
+        // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
+        // Bei Bedarf kann man das in den Params noch überschreiben.
+        phorikKandidat = guessPhorikKandidat(startsNew, satz, endsThis);
         this.startsNew = startsNew;
         this.satz = satz;
         this.endsThis = endsThis;
     }
 
-    private static PhorikKandidat guessPhorikKandidat(final Satz satz) {
-        return satz.getVerbzweitsatzStandard().joinToSingleKonstituente()
-                .getPhorikKandidat();
+    private static PhorikKandidat guessPhorikKandidat(
+            final StructuralElement startsNew, final Satz satz,
+            final StructuralElement endsThis) {
+        return toSingleKonstituente(startsNew, satz, endsThis).getPhorikKandidat();
     }
 
     @CheckReturnValue
@@ -86,6 +119,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
+    @CheckReturnValue
     public ImmutableList<TextDescription> altTextDescriptions() {
         return satz.altVerzweitsaetze().stream()
                 .map(kf ->
@@ -110,6 +144,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
+    @CheckReturnValue
     public Konstituente getDescriptionPartizipIIPhrase(final Person person,
                                                        final Numerus numerus) {
         return getPraedikat().getPartizipIIPhrase(person, numerus).joinToSingleKonstituente();
@@ -138,17 +173,23 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Override
     public Konstituente toSingleKonstituente() {
-        return
-                joinToKonstituentenfolge(
-                        getStartsNew(),
-                        satz.getVerbzweitsatzStandard(),
-                        getEndsThis()
-                )
-                        .joinToSingleKonstituente();
+        return toSingleKonstituente(getStartsNew(), satz, getEndsThis());
+    }
+
+    @CheckReturnValue
+    private static Konstituente toSingleKonstituente(final StructuralElement startsNew,
+                                                     final Satz satz,
+                                                     final StructuralElement endsThis) {
+        return joinToKonstituentenfolge(
+                startsNew,
+                satz.getVerbzweitsatzStandard(),
+                endsThis
+        ).joinToSingleKonstituente();
     }
 
     @Override
     @Nullable
+    @CheckReturnValue
     protected Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
@@ -164,6 +205,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
+    @CheckReturnValue
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(
                 getPraedikat().getVerbzweit(satz.getSubjekt()),
@@ -205,5 +247,40 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), satz);
+    }
+
+    @Override
+    public StructuredDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                                                final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase %s hat falsche "
+                        + "Person: %s. Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
+                substantivischePhrase.getPerson());
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+    }
+
+    @Override
+    public void phorikKandidat(final NumerusGenus numerusGenus,
+                               final IGameObject gameObject) {
+        phorikKandidat(numerusGenus, gameObject.getId());
+    }
+
+    @Override
+    public StructuredDescription phorikKandidat(final NumerusGenus numerusGenus,
+                                                final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    }
+
+    @Override
+    public StructuredDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        this.phorikKandidat = phorikKandidat;
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public PhorikKandidat getPhorikKandidat() {
+        return phorikKandidat;
     }
 }

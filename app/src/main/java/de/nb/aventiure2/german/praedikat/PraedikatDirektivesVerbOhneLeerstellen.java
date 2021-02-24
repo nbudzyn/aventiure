@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -194,6 +195,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
+    @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return joinToKonstituentenfolge(

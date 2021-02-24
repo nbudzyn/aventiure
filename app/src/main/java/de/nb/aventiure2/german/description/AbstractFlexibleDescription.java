@@ -6,12 +6,12 @@ import androidx.annotation.Nullable;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.PhorikKandidat;
 
 public abstract class AbstractFlexibleDescription<SELF extends AbstractDescription<SELF>>
         extends AbstractDescription<SELF> {
-    AbstractFlexibleDescription(@Nullable final PhorikKandidat phorikKandidat) {
-        super(phorikKandidat);
+
+    AbstractFlexibleDescription() {
+        super();
     }
 
     @NonNull
@@ -21,6 +21,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     }
 
     @Override
+    @CheckReturnValue
     public Konstituente toSingleKonstituenteMitKonjunktionaladverbWennNoetig(
             final String konjunktionaladverb) {
         @Nullable final Konstituente mitSpeziellemVorfeldOrNull =

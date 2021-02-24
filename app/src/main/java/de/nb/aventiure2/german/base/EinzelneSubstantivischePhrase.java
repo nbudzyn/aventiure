@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
@@ -53,12 +55,14 @@ public abstract class EinzelneSubstantivischePhrase extends SubstantivischePhras
     }
 
     @Override
+    @CheckReturnValue
     Konstituentenfolge artikellosDatK() {
         return joinToKonstituentenfolge(
                 k(artikellosDatStr(), getNumerusGenus(), getBezugsobjekt()));
     }
 
     @Override
+    @CheckReturnValue
     public final Konstituentenfolge imK(
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         return joinToKonstituentenfolge(
