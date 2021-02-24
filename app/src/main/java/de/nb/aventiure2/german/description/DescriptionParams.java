@@ -27,13 +27,9 @@ public class DescriptionParams {
     }
 
     /**
-     * Sets a flag that the text can be continued by a Satzreihenglied without subject where
+     * Sets a flag whether the text can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject
      */
-    public void undWartest() {
-        undWartest(true);
-    }
-
     public void undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         allowsAdditionalDuSatzreihengliedOhneSubjekt =

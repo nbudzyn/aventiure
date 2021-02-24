@@ -60,6 +60,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -664,13 +665,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
             alt.add(((AbstractFlexibleDescription<?>) timedDescription.getDescription())
                     .toTextDescriptionMitVorfeld("dann")
-                    .mitPraefix("Du siehst dich nur kurz um, ").beginntZumindest(SENTENCE)
+                    .mitPraefix(joinToKonstituentenfolge(
+                            SENTENCE,
+                            "Du siehst dich nur kurz um, "))
                     .timed(timedDescription.getTimeElapsed()));
         } else {
-            alt.addAll(timedDescription.getDescription().altTextDescriptions().stream()
-                    .map(d -> d.mitPraefixCapitalize(
-                            "Was willst du hier eigentlich? ").beginntZumindest(PARAGRAPH)
-                            .timed(timedDescription.getTimeElapsed())));
+            alt.addAll(timedDescription.altMitPraefix(joinToKonstituentenfolge(
+                    PARAGRAPH,
+                    "Was willst du hier eigentlich? ",
+                    SENTENCE)));
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
         }
         n.narrateAlt(alt);
@@ -683,7 +686,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 final TextDescription satzEvtlMitDann = timedDescription.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")
                         .beginntZumindest(SENTENCE);
-                if (satzEvtlMitDann.getText().startsWith("Dann")) {
+                if (satzEvtlMitDann.getTextOhneKontext().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
                 }
                 n.narrate(timedDescription.withDescription(satzEvtlMitDann));

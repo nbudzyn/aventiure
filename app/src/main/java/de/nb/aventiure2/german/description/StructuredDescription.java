@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.description;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -9,26 +10,20 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.narration.Narration;
-import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
@@ -88,6 +83,17 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
             final StructuralElement startsNew, final Satz satz,
             final StructuralElement endsThis) {
         return toSingleKonstituente(startsNew, satz, endsThis).getPhorikKandidat();
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public TextDescription toTextDescriptionsatzanschlussMitUnd() {
+        final Konstituente satzanschlussMitUnd =
+                getSatz().mitAnschlusswort("und")
+                        .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
+        return toTextDescriptionKeepParams(satzanschlussMitUnd)
+                // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
+                .undWartest(false);
     }
 
     @CheckReturnValue
@@ -247,29 +253,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), satz);
-    }
-
-    @Override
-    public StructuredDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                                final IBezugsobjekt bezugsobjekt) {
-        checkArgument(substantivischePhrase.getPerson() == P3,
-                "Substantivische Phrase %s hat falsche "
-                        + "Person: %s. Für Phorik-Kandiaten "
-                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
-                substantivischePhrase.getPerson());
-        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
-    }
-
-    @Override
-    public void phorikKandidat(final NumerusGenus numerusGenus,
-                               final IGameObject gameObject) {
-        phorikKandidat(numerusGenus, gameObject.getId());
-    }
-
-    @Override
-    public StructuredDescription phorikKandidat(final NumerusGenus numerusGenus,
-                                                final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
     }
 
     @Override

@@ -42,8 +42,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
-        return toSatzanschlussTextDescriptionKeepParams(
-                toSingleKonstituenteSatzanschlussOhneSubjekt());
+        return toTextDescriptionKeepParams(toSingleKonstituenteSatzanschlussOhneSubjekt());
     }
 
     abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();

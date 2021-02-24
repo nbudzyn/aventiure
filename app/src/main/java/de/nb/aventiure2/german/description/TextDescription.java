@@ -10,19 +10,11 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
@@ -77,69 +69,21 @@ public class TextDescription extends AbstractDescription<TextDescription> {
      * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
      * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
      */
+    @Override
     @NonNull
     @CheckReturnValue
-    public TextDescription mitPraefix(final Konstituentenfolge praefixKonstituentenfolge) {
-        return mitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
-    }
-
-
-    /**
-     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
-     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
-     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
-     */
-    @NonNull
-    @CheckReturnValue
-    public TextDescription mitPraefix(final String praefix) {
-        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
-
+    TextDescription mitPraefix(final Konstituente praefixKonstituente) {
         final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
                 getStartsNew(),
-                praefix,
-                konstituente).joinToSingleKonstituente();
-
-        return new TextDescription(copyParams(), konstituenteMitPraefix);
-    }
-
-    /**
-     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
-     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
-     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
-     */
-    @NonNull
-    @CheckReturnValue
-    private TextDescription mitPraefix(final Konstituente praefixKonstituente) {
-        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
-
-        final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
-                getStartsNew(),
+                // Erzeugt das Maximum aus getStartsNew und praefixKonstituente.getStartsNew().
+                // Wenn also this einen neuen PARAGRAPH fordert, fordert auch das Ergebnis
+                // einen neuen PARAGRAPH. Und wenn die praefixKonstituente einen neuen
+                // PARAGRAPH fordert, fordert auch das Ergebnis einen neuen
+                // PARAGRAPH.
                 praefixKonstituente,
                 konstituente).joinToSingleKonstituente();
 
-        return new TextDescription(copyParams(), konstituenteMitPraefix);
-    }
-
-    /**
-     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
-     * ergänzt ist, wobei die alte <code>TextDescription</code> großgeschrieben
-     * (capitalized) wird. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
-     * oder Ähnliches, sondern es wird ein Präfix vorangestellt, z.B. ein ganz neuer
-     * Satz.
-     * Wird dazwischen ein Leerzeichen erwartet, so muss das Präfix mit diesem Leerzeichen enden.
-     */
-    @NonNull
-    @CheckReturnValue
-    public TextDescription mitPraefixCapitalize(final String praefix) {
-        // FIXME Prüfen, ggf. ersetzen und möglichst ausbauen
-
-        final Konstituente konstituenteMitPraefix = joinToKonstituentenfolge(
-                getStartsNew(),
-                praefix,
-                SENTENCE,
-                konstituente).joinToSingleKonstituente();
-
-        return new TextDescription(copyParams(), konstituenteMitPraefix);
+        return toTextDescriptionKeepParams(konstituenteMitPraefix);
     }
 
     @Override
@@ -152,8 +96,6 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     }
 
     public TextDescription beginntZumindest(final StructuralElement zumindest) {
-        // FIXME Verwendungen suchen und ggf. umbauen
-
         if (zumindest == WORD) {
             return this;
         }
@@ -172,8 +114,11 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return konstituente;
     }
 
+    public String getTextOhneKontext() {
+        return konstituente.toTextOhneKontext();
+    }
+
     public String getText() {
-        // FIXME Verwendungen prüfen. Ggf. toTextOhneKontext... oder toSingleKonstituente()
         return konstituente.getText();
     }
 
@@ -190,6 +135,18 @@ public class TextDescription extends AbstractDescription<TextDescription> {
 
     public boolean isKommaStehtAus() {
         return toSingleKonstituente().kommaStehtAus();
+    }
+
+    @Override
+    public TextDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
+        konstituente = konstituente.mitPhorikKandidat(phorikKandidat);
+        return this;
+    }
+
+    @Override
+    @Nullable
+    public PhorikKandidat getPhorikKandidat() {
+        return konstituente.getPhorikKandidat();
     }
 
     @Override
@@ -210,40 +167,5 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), konstituente);
-    }
-
-    @Override
-    public TextDescription phorikKandidat(final SubstantivischePhrase substantivischePhrase,
-                                          final IBezugsobjekt bezugsobjekt) {
-        checkArgument(substantivischePhrase.getPerson() == P3,
-                "Substantivische Phrase %s hat falsche "
-                        + "Person: %s. Für Phorik-Kandiaten "
-                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
-                substantivischePhrase.getPerson());
-        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
-    }
-
-    @Override
-    public void phorikKandidat(final NumerusGenus numerusGenus,
-                               final IGameObject gameObject) {
-        phorikKandidat(numerusGenus, gameObject.getId());
-    }
-
-    @Override
-    public TextDescription phorikKandidat(final NumerusGenus numerusGenus,
-                                          final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
-    }
-
-    @Override
-    public TextDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
-        konstituente = konstituente.mitPhorikKandidat(phorikKandidat);
-        return this;
-    }
-
-    @Override
-    @Nullable
-    public PhorikKandidat getPhorikKandidat() {
-        return konstituente.getPhorikKandidat();
     }
 }

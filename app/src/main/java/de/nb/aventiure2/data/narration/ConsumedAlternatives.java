@@ -32,7 +32,7 @@ class ConsumedAlternatives {
      * Wiederholungen zu vermeiden.
      */
     boolean isConsumed(final TextDescription alternative) {
-        return isConsumed(alternative.getText());
+        return isConsumed(alternative.getTextOhneKontext());
     }
 
     /**

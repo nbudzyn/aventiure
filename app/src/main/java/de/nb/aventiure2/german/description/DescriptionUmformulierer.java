@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.max;
@@ -132,8 +133,10 @@ public class DescriptionUmformulierer {
                         .phorikKandidat(fDesc.getPhorikKandidat()));
             }
         } else {
-            alt.addAll(mitPraefixCap("Aber dir kommt ein Gedanke:", desc));
-            alt.addAll(mitPraefixCap("Dir kommt ein Gedanke:", desc));
+            alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
+                    SENTENCE, "Aber dir kommt ein Gedanke:", SENTENCE)));
+            alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
+                    SENTENCE, "Dir kommt ein Gedanke:", SENTENCE)));
         }
 
         return alt.build();
@@ -265,14 +268,6 @@ public class DescriptionUmformulierer {
         }
 
         return alt.build();
-    }
-
-    @CheckReturnValue
-    public static Collection<TextDescription> mitPraefixCap(final String praefix,
-                                                            final AbstractDescription<?> desc) {
-        return desc.altTextDescriptions().stream()
-                .map(d -> d.mitPraefixCapitalize(praefix + " ").beginntZumindest(SENTENCE))
-                .collect(Collectors.toSet());
     }
 
     private static Collection<AbstractFlexibleDescription<?>> duMitPraefixNeuerSatz(

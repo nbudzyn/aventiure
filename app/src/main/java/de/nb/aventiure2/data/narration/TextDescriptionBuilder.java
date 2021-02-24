@@ -13,10 +13,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
-import de.nb.aventiure2.german.description.DescriptionParams;
 import de.nb.aventiure2.german.description.SimpleDuDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
@@ -40,7 +38,7 @@ class TextDescriptionBuilder {
             final Narration initialNarration) {
         return altDescriptions.stream()
                 .flatMap(d -> toTextDescriptions(initialNarration, d).stream())
-                .filter(distinctByKey(TextDescription::getText))
+                .filter(distinctByKey(TextDescription::getTextOhneKontext))
                 .collect(toImmutableList());
     }
 
@@ -63,7 +61,7 @@ class TextDescriptionBuilder {
             } else if (desc instanceof StructuredDescription
                     && ((StructuredDescription) desc).hasSubjektDu()) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                res.add(toTextDescriptionsatzanschlussMitUnd((StructuredDescription) desc));
+                res.add(((StructuredDescription) desc).toTextDescriptionsatzanschlussMitUnd());
                 if (initialNarration.dann()) {
                     res.add(toTextDescriptionMitKommaDann((StructuredDescription) desc));
                 }
@@ -74,7 +72,7 @@ class TextDescriptionBuilder {
         if (initialNarration.dann()) {
             return toTextDescriptionsImDannFall(desc);
         } else {
-            return toDefaultTextDescriptions(desc);
+            return desc.altTextDescriptions();
         }
     }
 
@@ -85,22 +83,7 @@ class TextDescriptionBuilder {
         checkArgument(duDesc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für %s", duDesc.getStartsNew());
 
-        final DescriptionParams params = duDesc.copyParams();
-        params.undWartest(false);
-
-        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt().mitPraefix("und ");
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private static TextDescription toTextDescriptionsatzanschlussMitUnd(
-            final StructuredDescription desc) {
-        final Konstituente satzanschlussMitUnd =
-                desc.getSatz().mitAnschlusswort("und")
-                        .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
-
-        return desc.toSatzanschlussTextDescriptionKeepParams(satzanschlussMitUnd)
-                // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
+        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt().mitPraefix("und ")
                 .undWartest(false);
     }
 
@@ -111,7 +94,7 @@ class TextDescriptionBuilder {
         checkArgument(desc.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für %s", desc);
 
-        return desc.toTextDescriptionMitVorfeld("dann").dann(false).mitPraefix(", ");
+        return desc.toTextDescriptionMitVorfeld("dann").mitPraefix(", ").dann(false);
     }
 
     @NonNull
@@ -128,23 +111,13 @@ class TextDescriptionBuilder {
         // else: Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
         // die Vorgabe WORD soll dann erhalten bleiben
 
-        if (res.getText().startsWith("Dann")) {
+        if (res.getTextOhneKontext().startsWith("Dann")) {
             res.dann(false);
         }
 
         return ImmutableList.of(res);
     }
 
-
-    @CheckReturnValue
-    private static List<TextDescription> toDefaultTextDescriptions(
-            final AbstractDescription<?> desc) {
-        if (desc instanceof AbstractFlexibleDescription) {
-            return ((AbstractFlexibleDescription<?>) desc).altTextDescriptions();
-        }
-
-        return ImmutableList.of((TextDescription) desc);
-    }
 
     static <T> Predicate<T> distinctByKey(final Function<? super T, ?> keyExtractor) {
         final Set<Object> seen = ConcurrentHashMap.newKeySet();

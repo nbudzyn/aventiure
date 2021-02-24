@@ -33,7 +33,8 @@ public class ConsumedNarrationAlternativeInfo {
     @Ignore
     ConsumedNarrationAlternativeInfo(final ImmutableList<? extends TextDescription> alternatives,
                                      final TextDescription consumedAlternative) {
-        this(calcAlternativesStringHash(alternatives), consumedAlternative.getText().hashCode());
+        this(calcAlternativesStringHash(alternatives),
+                consumedAlternative.getTextOhneKontext().hashCode());
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -54,7 +55,7 @@ public class ConsumedNarrationAlternativeInfo {
     static int calcAlternativesStringHash(
             final Collection<? extends TextDescription> alternatives) {
         return alternatives.stream()
-                .map(TextDescription::getText)
+                .map(TextDescription::getTextOhneKontext)
                 .collect(toImmutableList()).hashCode();
     }
 

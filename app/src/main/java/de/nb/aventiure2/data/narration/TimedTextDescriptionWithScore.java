@@ -40,7 +40,8 @@ class TimedTextDescriptionWithScore {
     @Override
     public String toString() {
         return "TimedTextDescriptionWithScore{" +
-                "allgTimedDescription=" + timedTextDescription.getDescription().getText() +
+                "allgTimedDescription=" + timedTextDescription.getDescription().getTextOhneKontext()
+                +
                 ", score=" + score +
                 '}';
     }

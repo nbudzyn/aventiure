@@ -13,10 +13,16 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Abstract superclass for a description.
@@ -32,13 +38,63 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         this.params = params;
     }
 
-    public DescriptionParams copyParams() {
-        return params.copy();
-    }
-
     public abstract StructuralElement getStartsNew();
 
     public abstract StructuralElement getEndsThis();
+
+    @NonNull
+    @CheckReturnValue
+    ImmutableList<TextDescription> altMitPraefix(final String praefix) {
+        return altMitPraefix(k(praefix));
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public ImmutableList<TextDescription> altMitPraefix(
+            final Konstituentenfolge praefixKonstituentenfolge) {
+        return altMitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
+    }
+
+    @NonNull
+    @CheckReturnValue
+    ImmutableList<TextDescription> altMitPraefix(final Konstituente praefixKonstituente) {
+        return altTextDescriptions().stream()
+                .map(d -> d.mitPraefix(praefixKonstituente))
+                .collect(toImmutableList());
+    }
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    public TextDescription mitPraefix(final String praefix) {
+        return mitPraefix(k(praefix));
+    }
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    public TextDescription mitPraefix(final Konstituentenfolge praefixKonstituentenfolge) {
+        return mitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
+    }
+
+    /**
+     * Gibt eine neue <code>TextDescription</code> zurück, die um dieses Präfix
+     * ergänzt ist. Hier wird also keinesfalls ein Satzglied in das Vorfeld gestellt
+     * oder Ähnliches, sondern es wird rein mechanisch ein Präfix vorangestellt.
+     */
+    @NonNull
+    @CheckReturnValue
+    TextDescription mitPraefix(final Konstituente praefixKonstituente) {
+        return toTextDescription().mitPraefix(praefixKonstituente);
+    }
 
     public abstract ImmutableList<TextDescription> altTextDescriptions();
 
@@ -75,16 +131,8 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    public TextDescription toSatzanschlussTextDescriptionKeepParams(
-            final Konstituente konstituente) {
-        // FIXME Prüfen: Funktioniert das noch wie gewünscht?
-        //  Ggf. entfernen
-        return new TextDescription(copyParams(), konstituente);
-    }
-
-    @NonNull
     TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
-        return new TextDescription(copyParams(), konstituente);
+        return new TextDescription(params.copy(), konstituente);
     }
 
     @SuppressWarnings("unchecked")
@@ -134,30 +182,27 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.isDann();
     }
 
-    /**
-     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
-     * Phorik-Kandidaten in der dritten Person!
-     *
-     * @param substantivischePhrase Substantivische Phrase in der dritten Person
-     */
-    public abstract SELF phorikKandidat(SubstantivischePhrase substantivischePhrase,
-                                        IBezugsobjekt bezugsobjekt);
+    public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
+                               final IBezugsobjekt bezugsobjekt) {
+        checkArgument(substantivischePhrase.getPerson() == P3,
+                "Substantivische Phrase %s hat falsche "
+                        + "Person: %s. Für Phorik-Kandiaten "
+                        + "ist nur 3. Person zugelassen.", substantivischePhrase,
+                substantivischePhrase.getPerson());
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+    }
 
-    /**
-     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
-     * Phorik-Kandidaten in der dritten Person!
-     */
-    public abstract void phorikKandidat(NumerusGenus numerusGenus,
-                                        IGameObject gameObject);
+    public SELF phorikKandidat(final NumerusGenus numerusGenus,
+                               final IGameObject gameObject) {
+        return phorikKandidat(numerusGenus, gameObject.getId());
+    }
 
-    /**
-     * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
-     * Phorik-Kandidaten in der dritten Person!
-     */
-    public abstract SELF phorikKandidat(NumerusGenus numerusGenus,
-                                        IBezugsobjekt bezugsobjekt);
+    public SELF phorikKandidat(final NumerusGenus numerusGenus,
+                               final IBezugsobjekt bezugsobjekt) {
+        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+    }
 
-    public abstract SELF phorikKandidat(@Nullable PhorikKandidat phorikKandidat);
+    protected abstract SELF phorikKandidat(PhorikKandidat phorikKandidat);
 
     @Nullable
     public abstract PhorikKandidat getPhorikKandidat();

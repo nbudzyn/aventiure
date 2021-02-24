@@ -311,7 +311,7 @@ public class Narrator {
             final ImmutableList<TimedDescription<TextDescription>>
                     alternativeCombinationsOhneDuplikate =
                     alternativeCombinations.stream()
-                            .filter(distinctByKey(t -> t.getDescription().getText()))
+                            .filter(distinctByKey(t -> t.getDescription().getTextOhneKontext()))
                             .collect(toImmutableList());
 
             final NarrationDao.IndexAndScore indexAndScoreCombined =

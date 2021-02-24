@@ -13,12 +13,10 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -26,6 +24,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -82,12 +81,14 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .mitVorfeldSatzglied("da")
         );
 
-        alt.addAll(DescriptionUmformulierer.mitPraefixCap(
-                GermanUtil.joinToString("Schnell", anaph.datK(), "hinterher!"),
-                normalDesc.getDescription()));
-        alt.addAll(DescriptionUmformulierer.mitPraefixCap(
-                GermanUtil.joinToString("Schnell", anaph.datK(), "gefolgt!"),
-                normalDesc.getDescription()));
+        alt.addAll(normalDesc.getDescription().altMitPraefix(joinToKonstituentenfolge(
+                SENTENCE,
+                "Schnell", anaph.datK(), "hinterher!",
+                SENTENCE)));
+        alt.addAll(normalDesc.getDescription().altMitPraefix(joinToKonstituentenfolge(
+                SENTENCE,
+                "Schnell", anaph.datK(), "gefolgt!",
+                SENTENCE)));
 
         if (normalDesc.getDescription() instanceof AbstractFlexibleDescription<?>) {
             final AbstractFlexibleDescription<?> fDesc =

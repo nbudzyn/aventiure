@@ -755,11 +755,12 @@ public class RapunzelReactionsComp
             //  "Du hörst wie ...";
             //} else
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-                n.narrateAlt(altNeueSaetze(
-                        altDannHaareFestbinden(getDescription(true)).stream()
-                                .flatMap(d -> d.altTextDescriptions().stream())
-                                .map(TextDescription::toSingleKonstituente)
-                ), secs(10));
+                n.narrateAlt(
+                        altNeueSaetze(
+                                altDannHaareFestbinden(getDescription(true)).stream()
+                                        .flatMap(d -> d.altTextDescriptions().stream())
+                                        .map(TextDescription::toSingleKonstituente)
+                        ), secs(10));
             }
 
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
