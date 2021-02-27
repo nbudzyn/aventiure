@@ -54,7 +54,7 @@ class TextDescriptionBuilder {
             if (desc instanceof SimpleDuDescription) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
                 res.add(toTextDescriptionsatzanschlussMitUnd((SimpleDuDescription) desc));
-                if (initialNarration.dann()) {
+                if (initialNarration.dann() && !desc.isSchonLaenger()) {
                     res.add(toTextDescriptionMitKommaDann((SimpleDuDescription) desc));
                 }
                 return res.build();
@@ -62,14 +62,14 @@ class TextDescriptionBuilder {
                     && ((StructuredDescription) desc).hasSubjektDu()) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
                 res.add(((StructuredDescription) desc).toTextDescriptionsatzanschlussMitUnd());
-                if (initialNarration.dann()) {
+                if (initialNarration.dann() && !desc.isSchonLaenger()) {
                     res.add(toTextDescriptionMitKommaDann((StructuredDescription) desc));
                 }
                 return res.build();
             }
         }
 
-        if (initialNarration.dann()) {
+        if (initialNarration.dann() && !desc.isSchonLaenger()) {
             return toTextDescriptionsImDannFall(desc);
         } else {
             return desc.altTextDescriptions();

@@ -40,7 +40,7 @@ public class SchlafenAction extends AbstractScAction {
             final Narrator n, final World world,
             @Nullable final IGameObject location) {
         final ImmutableList.Builder<SchlafenAction> res = ImmutableList.builder();
-        if (location != null && location.is(BETT_IN_DER_HUETTE_IM_WALD)) {
+        if (location != null && location.is(BETTGESTELL_IN_DER_HUETTE_IM_WALD)) {
             res.add(new SchlafenAction(scActionStepCountDao, timeTaker, n, world));
         }
 
@@ -92,11 +92,13 @@ public class SchlafenAction extends AbstractScAction {
                     "kurz die Augen. Die Aufregung der letzten Stunden "
                             + "steckt dir noch in den Knochen – an Einschlafen ist "
                             + "nicht zu denken").mitVorfeldSatzglied("kurz")
+                    .schonLaenger()
                     .timed(mins(1)));
         }
 
         alt.add(du(SENTENCE, "bist", "noch nicht müde")
                 .mitVorfeldSatzglied("müde")
+                .schonLaenger()
                 .timed(mins(1))
                 .dann());
 
@@ -105,6 +107,7 @@ public class SchlafenAction extends AbstractScAction {
 
         alt.add(du("drehst", "dich von einer Seite auf die andere")
                 .mitVorfeldSatzglied("von einer Seite")
+                .schonLaenger()
                 .timed(mins(1)));
 
         n.narrateAlt(alt);
@@ -127,6 +130,7 @@ public class SchlafenAction extends AbstractScAction {
                         + "gehen dir durch den Kopf. Was wäre wohl passiert, wenn du…\n"
                         + "Kaum hast du die Augen geschlossen, bist du auch schon "
                         + "eingeschlafen", CHAPTER)
+                        .schonLaenger()
                         .mitVorfeldSatzglied("nur kurz"),
                 du("fühlst",
                         "dich auf einmal warm und schwer. Du kuschelst dich an",
@@ -134,6 +138,7 @@ public class SchlafenAction extends AbstractScAction {
                         .mitVorfeldSatzglied("warm und schwer"),
                 du("brauchst", "keines Einwiegens, sondern schläfst sogleich",
                         "ein", CHAPTER)
+                        .schonLaenger()
         );
 
         if (world.loadSC().feelingsComp().getMuedigkeit() < FeelingIntensity.STARK) {

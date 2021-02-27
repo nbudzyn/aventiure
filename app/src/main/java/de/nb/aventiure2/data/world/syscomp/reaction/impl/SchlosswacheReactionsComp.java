@@ -337,6 +337,7 @@ public class SchlosswacheReactionsComp
             alt.add(satzanschluss(", während",
                     getDescription().nomK(),
                     "gerade damit beschäftigt ist, ihre Waffen zu polieren")
+                    .schonLaenger()
                     .timed(secs(3))
                     .dann());
         } else {
@@ -344,6 +345,7 @@ public class SchlosswacheReactionsComp
                     du("hast", "großes Glück, denn",
                             getDescription().nomK(),
                             "ist gerade damit beschäftigt, ihre Waffen zu polieren")
+                            .schonLaenger()
                             .komma(true).timed(secs(3))
                             .dann());
         }

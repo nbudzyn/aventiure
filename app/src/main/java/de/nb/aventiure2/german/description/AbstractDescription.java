@@ -31,7 +31,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     private final DescriptionParams params;
 
     protected AbstractDescription() {
-        this(new DescriptionParams(false, false));
+        this(new DescriptionParams(false, false, false));
     }
 
     protected AbstractDescription(final DescriptionParams params) {
@@ -180,6 +180,20 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     public boolean isDann() {
         return params.isDann();
+    }
+
+    public SELF schonLaenger() {
+        return schonLaenger(true);
+    }
+
+    @SuppressWarnings("unchecked")
+    SELF schonLaenger(final boolean schonLaenger) {
+        params.schonLaenger(schonLaenger);
+        return (SELF) this;
+    }
+
+    public boolean isSchonLaenger() {
+        return params.isSchonLaenger();
     }
 
     public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,

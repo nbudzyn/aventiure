@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
@@ -12,6 +11,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUS;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.AN_SICH_NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HERVORHOLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
 
@@ -59,7 +59,8 @@ public enum StoringPlaceType {
             "auf den steinigen Grund vor dem Turm", VOR_TURM),
     TURMZIMMER("im Turmzimmer", "in das Turmzimmer"),
     HOLZDIELEN_OBEN_IM_TURM("auf den Holzdielen", "auf die Holzdielen", TURMZIMMER),
-    UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN);
+    UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN),
+    UNTER_DEM_BETT("unter dem Bett", "unter das Bett", HERVORHOLEN);
 
     private final String wo;
 
@@ -103,14 +104,9 @@ public enum StoringPlaceType {
         this.forBelebtUndEherGross = forBelebtUndEherGross;
     }
 
-    public AdverbialeAngabeSkopusVerbAllg getWoAdvAngabe(final boolean forBelebtUndEherGross) {
-        // "Peter singt dem Frosch auf dem Flur ein Lied."
-        return new AdverbialeAngabeSkopusVerbAllg(getWo(forBelebtUndEherGross));
-    }
-
     public String getWo(final boolean forBelebtUndEherGross) {
         if (forBelebtUndEherGross && this.forBelebtUndEherGross != null) {
-            return this.forBelebtUndEherGross.getWo(forBelebtUndEherGross);
+            return this.forBelebtUndEherGross.getWo(true);
         }
 
         return wo;
@@ -124,7 +120,7 @@ public enum StoringPlaceType {
 
     public String getWohin(final boolean forBelebtUndEherGross) {
         if (forBelebtUndEherGross && this.forBelebtUndEherGross != null) {
-            return this.forBelebtUndEherGross.getWohin(forBelebtUndEherGross);
+            return this.forBelebtUndEherGross.getWohin(true);
         }
 
         return wohin;

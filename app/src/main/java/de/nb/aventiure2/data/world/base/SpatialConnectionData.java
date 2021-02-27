@@ -16,11 +16,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 public class SpatialConnectionData {
     /**
-     * Eine Adverbiale Angabe, die diese Verbinung
-     * räumlich beschreibt
-     * (aus Sicht des
-     * {@link ILocationGO},
-     * nicht unbedingt aus Sicht von <code>to</code>:
+     * Eine Adverbiale Angabe, die diese Verbindung räumlich beschreibt (aus Sicht des
+     * {@link ILocationGO}, nicht unbedingt aus Sicht von <code>to</code>:
      * "auf dem Weg" o.Ä.
      * <p>
      * Die Beschreibung sollte sich auf etwas beziehen, auf dem man sich eine längere Zeit

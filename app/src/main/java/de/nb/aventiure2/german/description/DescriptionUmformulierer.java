@@ -114,7 +114,8 @@ public class DescriptionUmformulierer {
                         new AdverbialeAngabeSkopusVerbAllg("erneut")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")));
+                        new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")).schonLaenger()
+                );
 
                 final Konstituente duNimmstDieKugelBesserDoch =
                         sDesc.getSatz()
@@ -148,11 +149,11 @@ public class DescriptionUmformulierer {
         final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription)) {
-            alt.addAll(duMitPraefixNeuerSatz("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es noch einmal:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch einmal:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -162,11 +163,13 @@ public class DescriptionUmformulierer {
             if (fDesc.hasSubjektDu()) {
                 alt.add(duMitPraefixUndSatzanschluss(
                         "gibst", "nicht auf",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "gibst aber", "nicht auf",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "versuchst", "es noch einmal",
@@ -200,10 +203,12 @@ public class DescriptionUmformulierer {
                         new AdverbialeAngabeSkopusSatz("ein weiteres Mal")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("nochmals")));
+                        new AdverbialeAngabeSkopusSatz("nochmals")).schonLaenger()
+                );
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("wieder")));
+                        new AdverbialeAngabeSkopusSatz("wieder")).schonLaenger()
+                );
             }
         }
 
@@ -216,15 +221,15 @@ public class DescriptionUmformulierer {
         final AltDescriptionsBuilder alt = alt();
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
-            alt.addAll(duMitPraefixNeuerSatz("gibst", "aber nicht auf:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es weiter:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiter:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es noch weiter:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch weiter:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("versuchst", "es weiterhin:",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiterhin:",
                     desc));
-            alt.addAll(duMitPraefixNeuerSatz("lässt", "dich nicht entmutigen.",
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
                     desc));
         }
 
@@ -234,28 +239,34 @@ public class DescriptionUmformulierer {
             if (fDesc.hasSubjektDu()) {
                 alt.add(duMitPraefixUndSatzanschluss(
                         "gibst", "nicht auf",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "gibst aber", "nicht auf",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "versuchst", "es weiter",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "versuchst", "es noch weiter",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "versuchst", "es weiterhin",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
 
                 alt.add(duMitPraefixUndSatzanschluss(
                         "versuchst", "es unverdrossen weiter",
                         "unverdrossen",
-                        fDesc));
+                        fDesc).schonLaenger()
+                );
             }
 
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
@@ -263,14 +274,16 @@ public class DescriptionUmformulierer {
             if (desc instanceof StructuredDescription) {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
-                alt.add(mitAdvAngabe(sDesc, new AdverbialeAngabeSkopusSatz("immer noch")));
+                alt.add(mitAdvAngabe(sDesc, new AdverbialeAngabeSkopusSatz("immer noch"))
+                        .schonLaenger()
+                );
             }
         }
 
         return alt.build();
     }
 
-    private static Collection<AbstractFlexibleDescription<?>> duMitPraefixNeuerSatz(
+    private static Collection<AbstractFlexibleDescription<?>> duMitPraefixAltNeueSaetzeSchonLaenger(
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
@@ -280,7 +293,7 @@ public class DescriptionUmformulierer {
                         praefixVerb,
                         praefixRemainder,
                         SENTENCE,
-                        d.toSingleKonstituente()))
+                        d.toSingleKonstituente()).schonLaenger())
                 .collect(Collectors.toSet());
     }
 

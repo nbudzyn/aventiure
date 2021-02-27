@@ -109,12 +109,15 @@ public class HeulenAction extends AbstractScAction {
         final AltTimedDescriptionsBuilder alt = altTimed();
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(du("weinst").timed(mins(1))
+                    .schonLaenger()
                     .undWartest());
             alt.add(satzanschluss(", so viele Tränen haben sich angestaut")
+                    .schonLaenger()
                     .timed(mins(1)));
         }
 
-        alt.add(du("kannst", "dich gar nicht mehr beruhigen").timed(mins(1))
+        alt.add(du("kannst", "dich gar nicht mehr beruhigen").schonLaenger()
+                .timed(mins(1))
                 .undWartest());
         n.narrateAlt(alt);
     }
@@ -132,6 +135,7 @@ public class HeulenAction extends AbstractScAction {
                 "dich um, woher",
                 "die Stimme käme, da erblickst du",
                 world.getDescription(froschprinz).akkK())
+                .schonLaenger()
                 .mitVorfeldSatzglied("immer lauter")
                 .timed(secs(30)));
 
@@ -155,6 +159,7 @@ public class HeulenAction extends AbstractScAction {
         }
 
         alt.add(du("weinst").timed(mins(1))
+                .schonLaenger()
                 .undWartest()
                 .dann());
         n.narrateAlt(alt);

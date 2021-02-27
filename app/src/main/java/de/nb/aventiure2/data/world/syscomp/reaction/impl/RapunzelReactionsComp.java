@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -158,7 +159,8 @@ public class RapunzelReactionsComp
             return;
         }
 
-        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+        if (!LocationSystem.haveSameOuterMostLocation(from, to)
+                && loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             onSCEnter_ObenImAltenTurm();
             return;
         }
@@ -411,6 +413,7 @@ public class RapunzelReactionsComp
                         ",",
                         "„Kannst du mir nun helfen?“")
                         .mitVorfeldSatzglied("oben")
+                        .schonLaenger()
                         .timed(secs(15))
                         .withCounterIdIncrementedIfTextIsNarrated(
                                 BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN));
@@ -439,7 +442,7 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
+        alt.addAll(altSaetze(altReaktionSaetze).schonLaenger().timed(secs(5)));
 
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_DARKNESS) {
             alt.addAll(altNeueSaetze("Am Fenster sitzt die junge Frau, schön als",
@@ -463,7 +466,7 @@ public class RapunzelReactionsComp
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        alt.addAll(altSaetze(altReaktionSaetze).timed(secs(5)));
+        alt.addAll(altSaetze(altReaktionSaetze).schonLaenger().timed(secs(5)));
 
         alt.addAll(altSaetze(
                 feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
@@ -471,7 +474,7 @@ public class RapunzelReactionsComp
                         // ...aber noch nicht mit dieser Ergänzung:
                         .map(s -> s.mitAdverbialerAngabe(
                                 new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
-                        .collect(toList()))
+                        .collect(toList())).schonLaenger()
                 .timed(secs(15)));
 
         alt.add(du(SENTENCE, "hast", anaph.akkK(),
@@ -480,6 +483,7 @@ public class RapunzelReactionsComp
                 anaph.persPron().nomK(), // Sie
                 "sieht sehr zerknittert aus")
                 .mitVorfeldSatzglied("offenbar")
+                .schonLaenger()
                 .timed(secs(30)));
         if (loadSC().memoryComp().getKnown(RAPUNZEL) == KNOWN_FROM_LIGHT) {
             alt.add(neuerSatz(anaph.persPron().nomK(),
@@ -496,7 +500,7 @@ public class RapunzelReactionsComp
     private void onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 from != null && from.is(VOR_DEM_ALTEN_TURM) &&
-                to.is(OBEN_IM_ALTEN_TURM)) {
+                world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
             rapunzelZiehtHaareWiederHoch();
 
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
@@ -512,7 +516,7 @@ public class RapunzelReactionsComp
         }
 
         if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
-                from != null && from.is(OBEN_IM_ALTEN_TURM) &&
+                from != null && world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM) &&
                 to.is(VOR_DEM_ALTEN_TURM)) {
             rapunzelZiehtHaareWiederHoch();
             return;
@@ -569,6 +573,7 @@ public class RapunzelReactionsComp
                 du("schaust", "fasziniert zu, wie die langen Haare wieder in "
                         + "das Turmfenster "
                         + "zurückgezogen werden", PARAGRAPH).mitVorfeldSatzglied("fasziniert")
+                        .schonLaenger()
                         .timed(secs(15)),
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
                         + "wieder oben im Fenster verschwunden", PARAGRAPH)
@@ -709,11 +714,6 @@ public class RapunzelReactionsComp
 
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        // FIXME Bett, ähnlich "unter den Bäumen"
-        //  "Du kriechst unter das Bett. Es ist eng und staubig"
-        //  - Idee: "Du schaust um dich und dein Blick fällt auf das Bett"
-        //  SC kriecht unter das Bett. 
-
         // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
 
         // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
@@ -748,6 +748,30 @@ public class RapunzelReactionsComp
 
         // FIXME Rapunzel räumt Kugel o.Ä. automatisch unter das Bett, wenn
         //  Zauberin kommt
+
+        // FIXME Man kommt unter dem Bett nicht mehr raus?! Bug
+
+        // FIXME Die ganze "SIEHT DICH AN"-etc. Reaktionen nur, wenn
+        //  das TALKINGGO den SC sehen kann. Das wiederum hängt davon ab,
+        //  ob zwischen den beiden LocationGOs eine "Sichtverbindung" besteht.
+        //  Das ist der Fall, wenn es zwischen äußerstem LocationGO und jedem der
+        //  innersten LocationGOs manKannHineinUndHinaussehen immmer == true ist.
+
+        // FIXME Wenn SC ohne guten Grund unter Bett kriecht:
+//        "RAPUNZEL wirkt sehr verwirrt"
+//        "Was soll das jetzt? fragt Rapunzel"
+//        "Was ist jetzt los? fragt Rapunzel"
+//        "Was ist denn jetzt wieder los? fragt Rapunzel genervt"
+
+        // FIXME Wenn Zauberin da ist und SC unter Bett kriecht
+//        "DIE ZAUBERIN lacht höhnisch"
+//        "DIE ZAUBERIN lacht laut auf"
+//        "DIE ZAUBERIN lacht dich aus"
+
+        // FIXME Wenn SC etwas ohne guten Grund unter das Bett legt
+//        "RAPUNZEL scheint nicht genau zu wissen, was sie davon halten soll"
+//        "RAPUNZEL scheint das egal zu sein"
+//        (Oder RAPUNZEL reagiert nicht.)
 
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und ergänzen)
@@ -864,10 +888,12 @@ public class RapunzelReactionsComp
                             .timed(secs(10)),
                     du("hörst", "es von oben aus dem Turm singen")
                             .mitVorfeldSatzglied("von oben aus dem Turm")
+                            .schonLaenger()
                             .timed(NO_TIME),
                     du(PARAGRAPH, "hörst", "wieder Gesang von oben schallen",
                             PARAGRAPH)
                             .mitVorfeldSatzglied("wieder")
+                            .schonLaenger()
                             .timed(NO_TIME),
                     neuerSatz(PARAGRAPH, "Plötzlich erschallt über dir wieder Gesang")
                             .timed(NO_TIME),
@@ -886,6 +912,7 @@ public class RapunzelReactionsComp
                         "aus dem Turmfenster die junge Frau singen. Dir wird ganz",
                         "warm beim Zuhören")
                         .mitVorfeldSatzglied("aus dem Turmfenster")
+                        .schonLaenger()
                         .timed(secs(10))
                         .undWartest()
                         .phorikKandidat(F, RAPUNZEL),

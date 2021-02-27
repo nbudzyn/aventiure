@@ -11,16 +11,26 @@ public class DescriptionParams {
     private boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
     private boolean dann;
 
+    /**
+     * Ob die {@link AbstractDescription} (genauer: ihr Anfang) etwas beschreibt, das
+     * schon schon eine Zeit lang vorliegt. Also nichts, was auf einmal passiert oder getan wird.
+     * Wenn etwas schon eine Zeit lang vorliegt, wird ein Satzanschluss mit "Dann..." verhindert.
+     */
+    private boolean schonLaenger;
+
     DescriptionParams copy() {
-        return new DescriptionParams(allowsAdditionalDuSatzreihengliedOhneSubjekt, dann);
+        return new DescriptionParams(schonLaenger, allowsAdditionalDuSatzreihengliedOhneSubjekt,
+                dann);
     }
 
     DescriptionParams() {
-        this(false, false);
+        this(false, false, false);
     }
 
-    DescriptionParams(final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
+    DescriptionParams(final boolean schonLaenger,
+                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                       final boolean dann) {
+        this.schonLaenger = schonLaenger;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
@@ -36,16 +46,23 @@ public class DescriptionParams {
                 allowsAdditionalPlayerSatzreihengliedOhneSubjekt;
     }
 
-    void dann(final boolean dann) {
-        this.dann = dann;
-    }
-
     boolean isAllowsAdditionalDuSatzreihengliedOhneSubjekt() {
         return allowsAdditionalDuSatzreihengliedOhneSubjekt;
+    }
+
+    void dann(final boolean dann) {
+        this.dann = dann;
     }
 
     boolean isDann() {
         return dann;
     }
 
+    void schonLaenger(final boolean schonLaenger) {
+        this.schonLaenger = schonLaenger;
+    }
+
+    boolean isSchonLaenger() {
+        return schonLaenger;
+    }
 }

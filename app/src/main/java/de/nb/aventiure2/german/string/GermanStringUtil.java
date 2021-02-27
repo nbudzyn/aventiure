@@ -20,11 +20,12 @@ public class GermanStringUtil {
     /**
      * Versetzt den ersten <i>Buchstaben</i> in Großschreibung.
      */
-    public static String capitalizeFirstLetter(final String string) {
+    public static String capitalizeFirstLetter(final String string)
+            throws NoLetterException {
         int i = 0;
         while (i < string.length()) {
             final String currentZeichen = string.substring(i, i + 1);
-            if ("– „\".:!?".contains(currentZeichen)) {
+            if ("– „\".:!?" .contains(currentZeichen)) {
                 // Diese Zeichen einfach überspringen - DANACH soll
                 // großgeschrieben werden
                 i++;
@@ -35,8 +36,8 @@ public class GermanStringUtil {
             return capitalize(string, i);
         }
 
-        // Kein normaler Buchstabe gefunden. Dann wird auch nichts groß geschrieben
-        return string;
+        // Kein normaler Buchstabe gefunden.
+        throw new NoLetterException("No letter found in \"" + string + "\"");
     }
 
     public static String capitalize(final String string, final int index) {
@@ -106,7 +107,7 @@ public class GermanStringUtil {
         final String additionTrimmed = addition.trim();
 
         final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?:\"“".contains(lastRelevantCharBase)) {
+        if ("….!?:\"“" .contains(lastRelevantCharBase)) {
             if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
                     || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
                     || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
@@ -159,12 +160,12 @@ public class GermanStringUtil {
 
         final String lastRelevantCharBase =
                 base.substring(base.length() - 1);
-        if ("….!?:\"“–\n".contains(lastRelevantCharBase)) {
+        if ("….!?:\"„“–\n" .contains(lastRelevantCharBase)) {
             return false;
         }
 
         final String firstCharAddition = addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAddition);
+        return !".!?" .contains(firstCharAddition);
     }
 
     public static String breakToString(final String base,

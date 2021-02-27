@@ -28,8 +28,10 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp.Counter.HERABGESTIEGEN;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABKLETTERN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABSTEIGEN;
 
 /**
@@ -84,6 +86,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
             // 2.Mal, 4. Mal, ...
             return du(WORD, "bist", "schnell wieder hinab")
                     .mitVorfeldSatzglied("schnell")
+                    .schonLaenger()
                     .timed(secs(30))
                     .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                     .undWartest()
@@ -93,14 +96,16 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du(WORD, HINABSTEIGEN
                     .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("daran")))
+                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
                     .timed(mins(1))
                     .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                     .undWartest()
                     .dann();
         }
 
-        return du(WORD, HINABSTEIGEN
-                .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("wieder")))
+        return du(WORD, HINABKLETTERN
+                .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("an den Haaren")))
+                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
                 .timed(mins(1))
                 .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                 .undWartest()

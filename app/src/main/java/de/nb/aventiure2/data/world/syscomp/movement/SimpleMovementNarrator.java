@@ -70,14 +70,21 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         // ja dasselbe.
         // Möglich wäre etwas wie "Der Frau gefolgt bis da schnell auf dem Hügel" o.Ä. -
         // aber wir können hier ja nicht die normalDesc inhaltlich ändern.
-        alt.add(du("folgst", anaph.datK()).undWartest(),
-                du("folgst", anaph.datK(), "nach"),
-                du("gehst", anaph.datK(), "hinterher").undWartest(),
-                du("gehst", anaph.datK(), "hinterher:"),
-                du("läufst", anaph.datK(), "hinterher"),
-                du("gehst", anaph.datK(), "nach"),
-                du("machst", "es wie", anaph.nomK()).undWartest(),
-                du("willst", "da besser schnell hinterher")
+        alt.add(du("folgst", anaph.datK()).schonLaenger()
+                        .undWartest(),
+                du("folgst", anaph.datK(), "nach").schonLaenger()
+                ,
+                du("gehst", anaph.datK(), "hinterher").schonLaenger()
+                        .undWartest(),
+                du("gehst", anaph.datK(), "hinterher:").schonLaenger()
+                ,
+                du("läufst", anaph.datK(), "hinterher").schonLaenger()
+                ,
+                du("gehst", anaph.datK(), "nach").schonLaenger()
+                ,
+                du("machst", "es wie", anaph.nomK()).schonLaenger()
+                        .undWartest(),
+                du("willst", "da besser schnell hinterher").schonLaenger()
                         .mitVorfeldSatzglied("da")
         );
 

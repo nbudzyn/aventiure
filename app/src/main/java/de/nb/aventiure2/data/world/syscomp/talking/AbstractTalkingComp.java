@@ -140,7 +140,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
     }
 
-    protected void talkerBeendetGespraech() {
+    public void talkerBeendetGespraech() {
         unsetTalkingTo(true);
     }
 

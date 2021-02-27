@@ -250,6 +250,7 @@ public class NehmenAction
                         "dich sehr, aber mit einiger Überwindung nimmst du",
                         froschDesc.akkK(),
                         "in die Hand")
+                        .schonLaenger()
                         .undWartest()
                         .dann(),
                 neuerSatz(PARAGRAPH,
@@ -261,6 +262,7 @@ public class NehmenAction
                         .dann(),
                 du(PARAGRAPH,
                         "erbarmst", "dich")
+                        .schonLaenger()
                         .undWartest()
         );
 
@@ -272,10 +274,6 @@ public class NehmenAction
 
                             final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
-                            // "ihn"
-                            // "ihn"
-                            // "Er"
-                            // "ihn"
                             n.narrateAlt(
                                     neuerSatz(anaph.nomK(),// "Er"
                                             "ist glibschig und",
@@ -359,6 +357,7 @@ public class NehmenAction
                         "und dein Herz klopft gewaltig, als du endlich",
                         world.getDescription(gameObject, true).akkK(),
                         "greifst")
+                        .schonLaenger()
                         .timed(secs(5))
                         .komma()
                         .dann(),

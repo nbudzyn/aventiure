@@ -207,6 +207,21 @@ public class TimedDescription<
         return getDescription().isDann();
     }
 
+
+    public TimedDescription<D> schonLaenger() {
+        getDescription().schonLaenger(true);
+        return this;
+    }
+
+    public TimedDescription<D> schonLaenger(final boolean schonLaenger) {
+        getDescription().schonLaenger(schonLaenger);
+        return this;
+    }
+
+    public boolean isSchonLaenger() {
+        return getDescription().isSchonLaenger();
+    }
+
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!

@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.string.GermanStringUtil;
+import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
@@ -277,14 +278,18 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         final String res = woertlicheRedeNochOffen() ? getText() + "“" : getText();
 
         if (startsNew.isAtLeast(SENTENCE)) {
-            return GermanStringUtil.capitalizeFirstLetter(res);
+            try {
+                return GermanStringUtil.capitalizeFirstLetter(res);
+            } catch (final NoLetterException e) {
+                return res;
+            }
         }
 
         return res;
     }
 
     @CheckReturnValue
-    Konstituente capitalizeFirstLetter() {
+    Konstituente capitalizeFirstLetter() throws NoLetterException {
         return mitText(GermanStringUtil.capitalizeFirstLetter(text));
     }
 

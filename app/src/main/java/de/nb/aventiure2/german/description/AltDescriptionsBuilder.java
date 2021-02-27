@@ -186,6 +186,10 @@ public class AltDescriptionsBuilder {
         return map(AbstractDescription::dann);
     }
 
+    public AltDescriptionsBuilder schonLaenger() {
+        return map(AbstractDescription::schonLaenger);
+    }
+
     /**
      * Erzeugt einen {@link PhorikKandidat}en. Wir unterstützen nur
      * Phorik-Kandidaten in der dritten Person!
@@ -240,4 +244,5 @@ public class AltDescriptionsBuilder {
 
         return res.build();
     }
+
 }

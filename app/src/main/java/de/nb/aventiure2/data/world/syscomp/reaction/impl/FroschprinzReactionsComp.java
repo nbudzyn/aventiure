@@ -262,7 +262,8 @@ public class FroschprinzReactionsComp
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", getDescription().akkK()).timed(NO_TIME));
+        n.narrate(du("siehst", getDescription().akkK()).schonLaenger()
+                .timed(NO_TIME));
     }
 
     private void prinzVerlaesstSchlossVorhalle() {
@@ -291,6 +292,7 @@ public class FroschprinzReactionsComp
                 du("siehst",
                         "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
                                 + "jedes mit weißen Straußfedern auf dem Kopf", CHAPTER)
+                        .schonLaenger()
                         .timed(mins(2)));
 
         // TODO Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme

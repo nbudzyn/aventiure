@@ -174,13 +174,15 @@ public class RapunzelsZauberinReactionsComp
         final SubstantivischePhrase anaph = anaph();
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
-        alt.addAll(altNachsehenHinterhersehenSaetze(anaph, getPersonalpronomenSC()));
+        alt.addAll(altNachsehenHinterhersehenSaetze(anaph, getPersonalpronomenSC())
+        );
         alt.addAll(altZusehenSaetze(anaph, getPersonalpronomenSC(),
                 ImmutableList.of("ärgerlich", "verdrossen").stream()
                         .map(AdverbialeAngabeSkopusVerbAllg::new)
-                        .collect(toList())));
+                        .collect(toList()))
+        );
 
-        n.narrateAlt(alt, NO_TIME);
+        n.narrateAlt(alt.schonLaenger(), NO_TIME);
     }
 
     private void narrateAndDoScTrifftEvtlZauberinImDazwischen(final ILocationGO scFrom,
@@ -393,8 +395,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onRapunzelStateChangedAufDemRueckwegVonRapunzel(
-            final RapunzelState newState
-    ) {
+            final RapunzelState newState) {
         if (!locationComp.hasLocation(OBEN_IM_ALTEN_TURM)) {
             return;
         }

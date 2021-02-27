@@ -326,14 +326,18 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (schlafdauer.longerThanOrEqual(hours(7))) {
             alt.add(du(CHAPTER, "wachst",
                     "nach einem langen Schlaf gut erholt wieder auf")
-                            .mitVorfeldSatzglied("nach einem langen Schlaf"),
+                            .mitVorfeldSatzglied("nach einem langen Schlaf")
+                            .schonLaenger()
+                    ,
                     du(CHAPTER, "schläfst", "deine Müdigkeit aus; erst nach langem",
-                            "Schlaf erwachst du wieder"));
+                            "Schlaf erwachst du wieder").schonLaenger()
+            );
         }
 
         if (schlafdauer.longerThanOrEqual(hours(4))) {
             alt.add(du(CHAPTER, "schläfst",
                     "tief und fest und wachst erst nach einigen Stunden wieder auf")
+                    .schonLaenger()
                     .mitVorfeldSatzglied("tief"));
         }
 
@@ -353,9 +357,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     "Keine Stunde und du erwachst wieder"),
                     du(CHAPTER, "bist",
                             "nach einem kurzen Nickerchen wieder wach")
-                            .mitVorfeldSatzglied("nach einem kurzen Nickerchen"),
+                            .mitVorfeldSatzglied("nach einem kurzen Nickerchen")
+                            .schonLaenger(),
                     du(CHAPTER, "bist", "nach knapp einer Stunde wieder wach")
-                            .mitVorfeldSatzglied("nach knapp einer Stunde"));
+                            .mitVorfeldSatzglied("nach knapp einer Stunde").schonLaenger()
+            );
         }
 
         if (schlafdauer.shorterThanOrEqual(mins(20))) {
@@ -825,10 +831,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private void narrateAndDoScWirdHungrig() {
         n.narrateAlt(NO_TIME,
                 du(PARAGRAPH, "fühlst", "dich allmählich etwas hungrig")
+                        .schonLaenger()
                         .undWartest(),
                 neuerSatz("Wann hast du eigentlich zuletzt etwas gegessen? Das "
                         + "muss schon eine Weile her sein."),
                 du(PARAGRAPH, "bekommst", "so langsam Hunger")
+                        .schonLaenger()
                         .mitVorfeldSatzglied("so langsam"),
                 neuerSatz(PARAGRAPH, "Allmählich überkommt dich der Hunger"),
                 neuerSatz(PARAGRAPH, "Allmählich regt sich wieder der Hunger")
@@ -836,6 +844,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 neuerSatz("Dir fällt auf, dass du Hunger hast")
                         .komma(),
                 du(SENTENCE, "empfindest", "wieder leichten Hunger")
+                        .schonLaenger()
                         .undWartest()
         );
 
@@ -869,18 +878,23 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             case FeelingIntensity.DEUTLICH:
                 n.narrateAlt(NO_TIME,
                         du(SENTENCE,
-                                "solltest", "etwas schlafen", PARAGRAPH),
+                                "solltest", "etwas schlafen", PARAGRAPH)
+                                .schonLaenger()
+                        ,
                         du(SENTENCE,
                                 "kannst", "gewiss eine Mütze Schlaf",
-                                "gebrauchen!", PARAGRAPH),
+                                "gebrauchen!", PARAGRAPH).schonLaenger()
+                        ,
                         paragraph("Ein Bett!"));
                 return;
             case FeelingIntensity.STARK:
                 n.narrateAlt(NO_TIME,
                         du(SENTENCE,
-                                "musst", "schlafen", PARAGRAPH),
+                                "musst", "schlafen", PARAGRAPH).schonLaenger()
+                        ,
                         du(SENTENCE,
-                                "willst", "schlafen", PARAGRAPH),
+                                "willst", "schlafen", PARAGRAPH).schonLaenger()
+                        ,
                         neuerSatz(SENTENCE,
                                 "es ist Zeit, schlafen zu gehen!", PARAGRAPH),
                         neuerSatz(SENTENCE,
@@ -910,8 +924,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 neuerSatz("Mmh!", PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen"),
                 du(SENTENCE, "hast", "Hunger")
+                        .schonLaenger()
                         .undWartest(),
                 du(SENTENCE, "bist", "hungrig")
+                        .schonLaenger()
                         .undWartest(),
                 neuerSatz("Dir fällt auf, wie hungrig du bist")
                         .komma()
@@ -974,11 +990,16 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
             res.add(
                     du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft",
-                            PARAGRAPH),
-                    du(PARAGRAPH, "spürst", "die Anstrengung", PARAGRAPH),
-                    du("wirst", "etwas schläfrig", PARAGRAPH),
+                            PARAGRAPH).schonLaenger()
+                    ,
+                    du(PARAGRAPH, "spürst", "die Anstrengung", PARAGRAPH)
+                            .schonLaenger()
+                    ,
+                    du("wirst", "etwas schläfrig", PARAGRAPH).schonLaenger()
+                    ,
                     du(SENTENCE, "bist", "darüber etwas schläfrig geworden")
                             .mitVorfeldSatzglied("darüber")
+                            .schonLaenger()
             );
         }
 
@@ -988,9 +1009,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
                     // "Unten angekommen bist du ziemlich erschöpft..."
                     du("bist", "ziemlich erschöpft; ein Nickerchen täte dir "
-                            + "gut", PARAGRAPH),
+                            + "gut", PARAGRAPH).schonLaenger()
+                    ,
                     du(SENTENCE, "bist", "ziemlich erschöpft. Und müde",
-                            PARAGRAPH),
+                            PARAGRAPH).schonLaenger()
+                    ,
                     neuerSatz("Das war alles anstrengend!", PARAGRAPH)
             );
         }
@@ -998,11 +1021,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         if (getMuedigkeit() == FeelingIntensity.DEUTLICH) {
             //  DEUTLICH: "müde"
             res.add(
-                    du("beginnst", "müde zu werden"),
+                    du("beginnst", "müde zu werden").schonLaenger()
+                    ,
                     du(PARAGRAPH, "bist", "jetzt müde")
                             .mitVorfeldSatzglied("jetzt"),
                     du(PARAGRAPH, "bist", "indessen müde geworden")
-                            .mitVorfeldSatzglied("indessen"),
+                            .mitVorfeldSatzglied("indessen")
+                            .schonLaenger()
+                    ,
                     neuerSatz("da wollen dir deine Augen nicht länger offen bleiben "
                             + "und du bekommst Lust zu schlafen")
             );
@@ -1010,12 +1036,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         if (getMuedigkeit() == FeelingIntensity.STARK) {
             //  STARK: "völlig übermüdet"
-            res.add(du(SENTENCE, "bist", "ganz müde"));
+            res.add(du(SENTENCE, "bist", "ganz müde").schonLaenger()
+            );
         }
 
         if (getMuedigkeit() == FeelingIntensity.SEHR_STARK) {
             // SEHR_STARK: "todmüde"
-            res.add(du(SENTENCE, "bist", "hundemüde", PARAGRAPH),
+            res.add(du(SENTENCE, "bist", "hundemüde", PARAGRAPH).schonLaenger()
+                    ,
                     neuerSatz("auf einmal beginnen dir die Augen zuzufallen")
             );
         }
@@ -1089,12 +1117,15 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         res.addAll(
                 requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
-                        .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH))
+                        .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)
+                                .schonLaenger())
                         .collect(toList()));
 
         res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
-                        "dich", p.getPraedikativ(P2, SG), PARAGRAPH))
+                        "dich", p.getPraedikativ(P2, SG), PARAGRAPH)
+                        .schonLaenger()
+                )
                 .collect(toList()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
@@ -1102,8 +1133,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
             res.add(
                     du(PARAGRAPH, "fühlst", "dich ein wenig erschöpft",
-                            PARAGRAPH),
+                            PARAGRAPH).schonLaenger()
+                    ,
                     du(PARAGRAPH, "bist", "etwas erschöpft", PARAGRAPH)
+                            .schonLaenger()
             );
         }
 
@@ -1113,27 +1146,42 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     // Kann z.B. mit dem Vorsatz kombiniert werden zu etwas wie
                     // "Unten angekommen bist du ziemlich erschöpft..."
                     du(PARAGRAPH, "bist", "ziemlich erschöpft; ein "
-                            + "Nickerchen täte dir gut", PARAGRAPH),
-                    du(PARAGRAPH, "solltest", "etwas ruhen", PARAGRAPH),
+                            + "Nickerchen täte dir gut", PARAGRAPH).schonLaenger()
+                    ,
+                    du(PARAGRAPH, "solltest", "etwas ruhen", PARAGRAPH)
+                            .schonLaenger()
+                    ,
                     du(SENTENCE, "möchtest", "ein wenig ruhen", PARAGRAPH)
+                            .schonLaenger()
+
             );
         }
 
         if (getMuedigkeit() == FeelingIntensity.DEUTLICH) {
             //  DEUTLICH: "müde"
             res.add(
-                    du(PARAGRAPH, "musst", "ein wenig schlafen"),
-                    du(PARAGRAPH, "würdest", "gern ein wenig schlafen"),
-                    du(PARAGRAPH, "möchtest", "dich schlafen legen"),
+                    du(PARAGRAPH, "musst", "ein wenig schlafen")
+                            .schonLaenger()
+                    ,
+                    du(PARAGRAPH, "würdest", "gern ein wenig schlafen")
+                            .schonLaenger()
+                    ,
+                    du(PARAGRAPH, "möchtest", "dich schlafen legen")
+                            .schonLaenger()
+                    ,
                     du(PARAGRAPH, "bist", "müde und möchtest gern schlafen",
-                            PARAGRAPH),
+                            PARAGRAPH).schonLaenger()
+                    ,
                     du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in dass du dich "
-                            + "legen und schlafen kannst?", PARAGRAPH),
-                    du(PARAGRAPH, "bist", "matt und müde")
+                            + "legen und schlafen kannst?", PARAGRAPH).schonLaenger()
+                    ,
+                    du(PARAGRAPH, "bist", "matt und müde").schonLaenger()
+
                             .mitVorfeldSatzglied("matt"),
                     neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht"),
                     du(PARAGRAPH, "möchtest", "gern ein Auge zutun", PARAGRAPH)
-                            .mitVorfeldSatzglied("gern")
+                            .mitVorfeldSatzglied("gern").schonLaenger()
+
             );
 
             if (timeTaker.now().getTageszeit() == Tageszeit.NACHTS) {
@@ -1145,12 +1193,18 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             //  STARK: "völlig übermüdet"
 
             res.add(
-                    du(SENTENCE, "kannst", "kaum mehr die Augen offenhalten"),
-                    du(PARAGRAPH, "musst", "endlich wieder einmal ausschlafen!"),
+                    du(SENTENCE, "kannst", "kaum mehr die Augen offenhalten")
+                            .schonLaenger()
+                    ,
+                    du(PARAGRAPH, "musst", "endlich wieder einmal ausschlafen!")
+                            .schonLaenger()
+                    ,
                     paragraph("wenn du dich doch schlafen legen könntest!"),
                     paragraph("könntest du dich doch in ein Bett legen!"),
                     du(SENTENCE, "bist",
                             "so müde, du kannst kaum mehr weiter")
+                            .schonLaenger()
+
             );
         }
 
@@ -1160,18 +1214,23 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du(PARAGRAPH, "bist",
                             "so müde, dass du auf der Stelle einschlafen könntest",
                             PARAGRAPH)
-                            .komma(),
+                            .komma()
+                            .schonLaenger()
+                    ,
                     du(PARAGRAPH, "bist",
                             "so müde von allem, dass du auf der Stelle einschlafen",
                             "könntest", PARAGRAPH)
                             .mitVorfeldSatzglied("von allem")
+                            .schonLaenger()
                             .komma(),
                     neuerSatz("immer wieder fallen dir die Augen zu"),
                     du(SENTENCE, "bist", "so müde, dass du die",
-                            "Augen kaum aufhalten magst"),
+                            "Augen kaum aufhalten magst").schonLaenger()
+                    ,
                     neuerSatz(SENTENCE, "dir ist, als könntest du vor Müdigkeit kaum mehr "
                             + "ein Glied regen"),
                     du("kannst", "dich des Schlafes kaum wehren", PARAGRAPH)
+                            .schonLaenger()
             );
         }
 
@@ -1181,9 +1240,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du(SENTENCE, "empfindest",
                             "so große Müdigkeit, dass dich deine Glieder "
                                     + "kaum halten")
+                            .schonLaenger()
                             .komma(),
-                    du("kannst", "dich des Schlafes kaum wehren", PARAGRAPH),
+                    du("kannst", "dich des Schlafes kaum wehren", PARAGRAPH)
+                            .schonLaenger()
+                    ,
                     du(PARAGRAPH, "fühlst", "dich wie eingeschläfert")
+                            .schonLaenger()
             );
         }
 

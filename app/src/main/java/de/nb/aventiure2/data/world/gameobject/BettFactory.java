@@ -12,6 +12,8 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -19,19 +21,20 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.BettFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class BettFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
-        BETT__DESC_IN
+        BETT_DRUNTERKRIECHEN_VERSTECKEN,
+        BETT_DRUNTERKRIECHEN_OHNE_SINN
     }
 
     private final AvDatabase db;
@@ -46,34 +49,36 @@ class BettFactory {
         this.world = world;
     }
 
-    GameObject createInDerHuetteImWald() {
-        return create(BETT_IN_DER_HUETTE_IM_WALD, HUETTE_IM_WALD);
+    GameObject createObenImAltenTurm() {
+        return create(BETT_OBEN_IM_ALTEN_TURM, OBEN_IM_ALTEN_TURM);
     }
 
     @NonNull
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(N, INDEF, "Bettgestell", id),
-                        np(N, DEF, "Bettgestell", id),
-                        np(N, DEF, "Bettgestell", id));
+                        np(N, INDEF, "Bett", id),
+                        np(N, DEF, "Bett", id),
+                        np(N, DEF, "Bett", id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,
                 null, false);
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
-                ECKE_IM_BETTGESTELL,
+                UNTER_DEM_BETT,
                 null,
-                conData("auf der Bettkante",
-                        "In das Bett legen",
-                        secs(15),
-                        this::getDescIn),
-                conData("auf der Bettkante",
-                        "Aufstehen",
+                conData("auf dem Holzboden",
+                        "Unter das Bett kriechen",
+                        secs(5),
+                        this::getDescDrunter),
+                conData("im Staub unter dem Bett",
+                        "Unter dem Bett hervorkriechen",
                         secs(10),
-                        du(SENTENCE, "reckst", "dich noch einmal und stehst "
-                                + "wieder auf")
+                        du("kriechst", "etwas mühevoll wieder unter dem",
+                                "Bett hervor")
+                                .mitVorfeldSatzglied("etwas mühevoll")
+                                .undWartest()
                                 .dann()));
 
         return new StoringPlaceObject(id,
@@ -83,22 +88,44 @@ class BettFactory {
     }
 
 
+    @SuppressWarnings("unchecked")
     @CheckReturnValue
-    private TimedDescription<?> getDescIn(
+    private TimedDescription<?> getDescDrunter(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (db.counterDao().get(BETT__DESC_IN) == 0) {
-            return du(PARAGRAPH, "legst", "dich in das hölzere Bettgestell. "
-                    + "Gemütlich ist etwas anderes, aber nach den "
-                    + "vielen Schritten tut es sehr gut, sich "
-                    + "einmal auszustrecken")
-                    .timed(secs(15))
-                    .withCounterIdIncrementedIfTextIsNarrated(BETT__DESC_IN);
+        if (((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp().hasState(
+                PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            if (db.counterDao().get(BETT_DRUNTERKRIECHEN_VERSTECKEN) == 0) {
+                return du(SENTENCE, "schaust",
+                        "um dich und dein Blick fällt auf das",
+                        "Bett", SENTENCE, "schnell kriechst du darunter")
+                        .timed(secs(5))
+                        .withCounterIdIncrementedIfTextIsNarrated(BETT_DRUNTERKRIECHEN_VERSTECKEN);
+            }
+
+            return du("versteckst", "dich eilig",
+                    "unters Bett")
+                    .mitVorfeldSatzglied("eilig")
+                    .undWartest()
+                    .dann()
+                    .timed(secs(5))
+                    .withCounterIdIncrementedIfTextIsNarrated(BETT_DRUNTERKRIECHEN_VERSTECKEN);
         }
 
-        return du("legst", "dich noch einmal in das Holzbett")
+        if (db.counterDao().get(BETT_DRUNTERKRIECHEN_OHNE_SINN) == 0) {
+            return du("kriechst",
+                    "unter das Bett. Hier ist es eng und staubig")
+                    .undWartest()
+                    .dann()
+                    .timed(secs(10))
+                    .withCounterIdIncrementedIfTextIsNarrated(BETT_DRUNTERKRIECHEN_OHNE_SINN);
+        }
+
+        return du("kriechst",
+                "noch einmal unter das Bett")
                 .mitVorfeldSatzglied("noch einmal")
-                .timed(secs(15))
                 .undWartest()
-                .dann();
+                .dann()
+                .timed(secs(10))
+                .withCounterIdIncrementedIfTextIsNarrated(BETT_DRUNTERKRIECHEN_OHNE_SINN);
     }
 }

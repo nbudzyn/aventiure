@@ -128,6 +128,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                                     + "und suchst rundherum nach einer Türe des Turms, aber es "
                                     + "ist keine "
                                     + "zu finden")
+                            .schonLaenger()
                             .timed(mins(2))
                             .withCounterIdIncrementedIfTextIsNarrated(ALTER_TURM_UMRUNDET)
                             .dann();

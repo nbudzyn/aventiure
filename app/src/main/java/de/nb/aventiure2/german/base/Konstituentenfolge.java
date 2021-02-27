@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -206,7 +207,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                                 part == WORD ? null :
                                         new Konstituentenfolge(
                                                 (IKonstituenteOrStructuralElement) part));
-            } else if (part == null || "".equals(part)) {
+            } else if (part == null || "" .equals(part)) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
             } else {
                 alternativePartKonstituentenfolgen =
@@ -569,17 +570,14 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                 }
 
                 if (capitalize && beginnStehtCapitalizeNichtImWeg(konstituentenText)) {
-                    final Konstituente capitalizedKonstituente =
-                            konstituente.capitalizeFirstLetter();
-                    resTextBuilder.append(capitalizedKonstituente.getText());
-
-                    if (!capitalizedKonstituente.getText().equals(konstituente.getText())) {
-                        brreak = capitalizedKonstituente.getEndsThis();
-                    } else {
+                    try {
+                        resTextBuilder.append(konstituente.capitalizeFirstLetter().getText());
+                        brreak = konstituente.getEndsThis();
+                    } catch (final NoLetterException e) {
                         // Diese Konstituente war nur etwas wie "„".
                         // Der Text der folgenden Konstituente muss großgeschrieben werden.
-                        brreak = StructuralElement.min(SENTENCE,
-                                capitalizedKonstituente.getEndsThis());
+                        resTextBuilder.append(konstituente.getText());
+                        brreak = StructuralElement.max(SENTENCE, konstituente.getEndsThis());
                     }
                 } else {
                     resTextBuilder.append(konstituentenText);

@@ -113,12 +113,15 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         n.narrateAlt(schlafdauer,
                 du(PARAGRAPH, "wirst",
                         "über dem Warten schläfrig und nickst schließlich ein")
-                        .mitVorfeldSatzglied("über dem Warten"),
+                        .mitVorfeldSatzglied("über dem Warten").schonLaenger()
+                ,
                 neuerSatz("da fallen dir die Augen zu, und schon schläfst du fest"),
                 du("willst", "wachen und warten, aber dann überkommt dich",
                         "doch der Schlaf")
+                        .schonLaenger()
                         .mitVorfeldSatzglied("wachen und warten"),
                 du("fängst", "an, einzuschlafen")
+                        .schonLaenger()
                         .komma().undWartest(),
                 du(PARAGRAPH, "machst", "ganz kurz die Augen zu, da bist du",
                         "auch schon eingeschlafen").mitVorfeldSatzglied("ganz kurz"));
@@ -144,7 +147,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                                     .mitAdverbialerAngabe(
                                             new AdverbialeAngabeSkopusSatz("weiter")
                                     )
-                            )
+                            ).schonLaenger()
+
                                     .dann()),
                     secs(5), WARTEN_ODER_RASTEN_IN_FOLGE);
         }

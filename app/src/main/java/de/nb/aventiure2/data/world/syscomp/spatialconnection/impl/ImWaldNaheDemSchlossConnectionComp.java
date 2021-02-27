@@ -116,14 +116,16 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         if (timeTaker.now().getTageszeit() == TAGSUEBER) {
             return du("erreichst", "bald das helle "
                     + "Tageslicht, in dem der Schlossgarten "
-                    + "liegt").mitVorfeldSatzglied("bald")
+                    + "liegt").schonLaenger()
+                    .mitVorfeldSatzglied("bald")
                     .timed(mins(10))
                     .undWartest()
                     .komma();
         }
 
         if (lichtverhaeltnisse == HELL) {
-            return du("erreichst", "bald den Schlossgarten").mitVorfeldSatzglied("bald")
+            return du("erreichst", "bald den Schlossgarten").schonLaenger()
+                    .mitVorfeldSatzglied("bald")
                     .timed(mins(10))
                     .undWartest()
                     .komma();
@@ -134,6 +136,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
                         + "unter dem Sternenhimmel")
                 .mitVorfeldSatzglied("noch eine Weile")
+                .schonLaenger()
                 .timed(mins(15));
         // TODO Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
         //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",

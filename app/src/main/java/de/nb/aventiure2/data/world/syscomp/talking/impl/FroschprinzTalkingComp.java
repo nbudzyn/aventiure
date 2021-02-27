@@ -231,7 +231,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             return;
         }
 
-        n.narrate(du("bleibst", "beharrlich:").timed(NO_TIME));
+        n.narrate(du("bleibst", "beharrlich:").schonLaenger()
+                .timed(NO_TIME));
 
         froschHatAngesprochen_ReEntry();
     }
@@ -323,6 +324,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 .timed(secs(3))
                 .komma()
                 .undWartest()
+                .schonLaenger()
                 .dann());
 
         gespraechspartnerBeendetGespraech();
@@ -619,7 +621,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
                 getDescription().nomK(),
-                "schon zuvor: „Wir sehen uns noch!“", PARAGRAPH),
+                "schon zuvor: „Wir sehen uns noch!“", PARAGRAPH).schonLaenger()
+                ,
                 neuerSatz("„Und jetzt, Frosch?“ –",
                         "„Du weißt, was du versprochen hast“, gibt er zurück", PARAGRAPH));
         if (!immediateReEntry) {
@@ -645,6 +648,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         desc.persPron().nomK(),
                         "dich laut an")
                         .mitVorfeldSatzglied("gerade")
+                        .schonLaenger()
                         .timed(secs(10)),
                 du(SENTENCE, "druckst",
                         "ein bisschen herum und faselst etwas von",
@@ -652,6 +656,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         SENTENCE,
                         desc.nomK(),
                         " schaut dich nur… traurig? verächtlich?… an", PARAGRAPH)
+                        .schonLaenger()
                         .timed(secs(15)));
 
         setSchonBegruesstMitSC(true);

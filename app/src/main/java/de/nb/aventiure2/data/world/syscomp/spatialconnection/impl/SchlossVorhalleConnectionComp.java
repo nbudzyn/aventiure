@@ -34,6 +34,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -132,7 +133,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             //  noch nicht?
             return du("gehst",
                     "über eine Marmortreppe hinaus in die Gärten vor dem",
-                    "Schloss.\n\n",
+                    "Schloss.", CHAPTER,
                     // FIXME Wetter zentralisieren
                     "Draußen scheint dir die",
                     "Sonne ins Gesicht;",
@@ -145,7 +146,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
 
         return du("gehst", "über eine Marmortreppe hinaus den "
-                        + "Garten vor dem Schloss.\n\n",
+                        + "Garten vor dem Schloss.", CHAPTER,
                 // FIXME Wie hängen Tageszeiten und Wetter zusammen?
                 "Draußen ist es dunkel.",
                 "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")

@@ -436,7 +436,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 neuerSatz(aufzaehlung.nomK(), istSind, "verschwunden"),
                 neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "geblieben?"),
                 neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "abgeblieben?"),
-                du("kannst", aufzaehlung.akkK(), "nirgendwo entdecken"),
+                du("kannst", aufzaehlung.akkK(), "nirgendwo entdecken")
+                        .schonLaenger()
+                ,
                 neuerSatz("von", aufzaehlung.datK(), "keine Spur!")
         );
 
@@ -681,7 +683,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private void narrateLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()) {
+            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()
+                    && !timedDescription.isSchonLaenger()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
                 final TextDescription satzEvtlMitDann = timedDescription.getDescription()
                         .toTextDescriptionMitKonjunktionaladverbWennNoetig("dann")

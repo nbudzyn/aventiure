@@ -10,6 +10,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.beginnDecktKommaAb;
@@ -211,7 +212,7 @@ public class Narration {
 
         boolean capitalize = false;
 
-        if (kommaNeeded(resText.toString(), addition) && brreak == WORD) {
+        if (brreak == WORD && kommaNeeded(resText.toString(), addition)) {
             resText.append(",");
             if (spaceNeeded(",", addition)) {
                 resText.append(" ");
@@ -226,18 +227,16 @@ public class Narration {
             }
         }
 
-        final StructuralElement resEndsThis;
+        StructuralElement resEndsThis;
         if (capitalize && beginnStehtCapitalizeNichtImWeg(addition)) {
-            final String capitalizedAddition = capitalizeFirstLetter(addition);
-            resText.append(capitalizedAddition);
-
-            if (!capitalizedAddition.equals(addition)) {
+            try {
+                resText.append(capitalizeFirstLetter(addition));
                 resEndsThis = additionDesc.getEndsThis();
-            } else {
+            } catch (final NoLetterException e) {
                 // Diese TextDescription war nur etwas wie "„".
                 // Der Text der folgenden TextDescription muss großgeschrieben werden.
-                resEndsThis = StructuralElement.min(SENTENCE,
-                        additionDesc.getEndsThis());
+                resText.append(addition);
+                resEndsThis = StructuralElement.max(SENTENCE, additionDesc.getEndsThis());
             }
         } else {
             resText.append(addition);

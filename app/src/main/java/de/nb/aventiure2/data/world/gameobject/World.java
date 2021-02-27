@@ -85,10 +85,6 @@ public class World {
     public static final GameObjectId HAENDE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_000);
     public static final GameObjectId EINE_TASCHE_DES_SPIELER_CHARAKTERS = new GameObjectId(10_001);
 
-    // IDEA Alles im Spiel sollte eine Hintergrundgeschichte haben ("Lore").
-    //  Die sollte in konsistenten Details durchscheinen. Also wissen, wer in XYZ
-    //  gewohnt hat o.Ä. und durchblicken lassen.
-
     // - Non-Movable
     public static final GameObjectId SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST =
             new GameObjectId(10_100);
@@ -97,10 +93,11 @@ public class World {
     public static final GameObjectId VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME =
             // (in deren Schatten man sich setzen kann)
             new GameObjectId(10_110);
-    public static final GameObjectId BETT_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
+    public static final GameObjectId BETTGESTELL_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
     public static final GameObjectId BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD =
             new GameObjectId(10_130);
     public static final GameObjectId RAPUNZELS_HAARE = new GameObjectId(10_140);
+    static final GameObjectId BETT_OBEN_IM_ALTEN_TURM = new GameObjectId(10_150);
 
     // - Movable
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
@@ -227,6 +224,7 @@ public class World {
                 new BankAmTischBeimSchlossfestFactory(db, timeTaker, this);
         final SchattenDerBaeumeFactory schattenDerBaeume =
                 new SchattenDerBaeumeFactory(db, timeTaker, this);
+        final BettgestellFactory bettgestell = new BettgestellFactory(db, timeTaker, this);
         final BettFactory bett = new BettFactory(db, timeTaker, this);
         final BaumFactory baum = new BaumFactory(db, timeTaker, this);
         final CreatureFactory creature = new CreatureFactory(db, timeTaker, n, this);
@@ -359,7 +357,8 @@ public class World {
                         false,
                         TISCH),
                 schattenDerBaeume.createVorDemAltenTurm(),
-                bett.createInDerHuetteImWald(),
+                bettgestell.createInDerHuetteImWald(),
+                bett.createObenImAltenTurm(),
                 baum.createImGartenHinterDerHuetteImWald(),
                 GeneralObjectFactory.create(RAPUNZELS_HAARE)
         );

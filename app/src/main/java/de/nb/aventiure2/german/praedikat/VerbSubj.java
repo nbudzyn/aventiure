@@ -27,9 +27,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
  */
 public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     // Verben ohne Partikel
+    KLETTERN("klettern",
+            "klettere", "kletterst", "klettert", "klettert",
+            Perfektbildung.SEIN, "geklettert"),
     KOMMEN("kommen",
             "komme", "kommst", "kommt", "kommt",
             Perfektbildung.SEIN, "gekommen"),
+    KRIECHEN("kriechen",
+            "krieche", "kriechst", "kriecht", "kriecht",
+            Perfektbildung.SEIN, "gekrochen"),
     STRAHLEN("strahlen",
             "strahle", "strahlst", "strahlt", "strahlt",
             Perfektbildung.HABEN, "gestrahlt"),
@@ -44,6 +50,7 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
+    HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN);
 
     /**

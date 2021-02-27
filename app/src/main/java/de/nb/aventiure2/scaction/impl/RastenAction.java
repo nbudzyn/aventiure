@@ -129,13 +129,16 @@ public class RastenAction extends AbstractWartenRastenAction {
 
         n.narrateAlt(mins(4), WARTEN_ODER_RASTEN_IN_FOLGE,
                 du("bist", "ganz still")
+                        .schonLaenger()
                         .undWartest()
                         .dann(),
                 du("genießt deine Rast")
+                        .schonLaenger()
                         .undWartest()
                         .dann(),
                 du(SENTENCE, "sitzt", "glücklich da und genießt")
-                        .mitVorfeldSatzglied("glücklich"),
+                        .mitVorfeldSatzglied("glücklich").schonLaenger()
+                ,
                 neuerSatz("Dein Herz wird ganz warm von dem Gesang"));
 
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
@@ -175,6 +178,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         alt.add(
                 du(SENTENCE, "hältst",
                         "verborgen unter den Bäumen noch eine Zeitlang Rast")
+                        .schonLaenger()
                         .mitVorfeldSatzglied("verborgen unter den Bäumen")
                         .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
@@ -184,10 +188,12 @@ public class RastenAction extends AbstractWartenRastenAction {
                         + "in den "
                         + "Ästen über dir. Ein Rabe setzt "
                         + "sich neben dich und fliegt nach einer Weile wieder fort")
+                        .schonLaenger()
                         .dann(),
                 du(SENTENCE, "ruhst",
                         "noch eine Weile aus und lauschst, wie die Insekten",
                         "zirpen und der Wind saust")
+                        .schonLaenger()
                         .mitVorfeldSatzglied("eine Weile")
                         .dann()
         );
@@ -197,6 +203,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                     + "still und die Vögel setzen sich "
                     + "auf die Äste über dir "
                     + "und singen, was sie nur wissen")
+                    .schonLaenger()
                     .dann();
         }
 

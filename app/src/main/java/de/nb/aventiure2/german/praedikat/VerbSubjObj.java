@@ -48,6 +48,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             "hebt", Perfektbildung.HABEN, "gehoben"),
     HELFEN("helfen", DAT, "helfe", "hilfst", "hilft",
             "helft", Perfektbildung.HABEN, "geholfen"),
+    HOLEN("holen", AKK,
+            "hole", "holst", "holt",
+            "holt", Perfektbildung.HABEN, "geholt"),
     IGNORIEREN("ignorieren", AKK, "ignoriere", "ignorierst", "ignoriert",
             "ignoriert",
             Perfektbildung.HABEN, "ignoriert"),
@@ -82,7 +85,6 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     STEIGEN_AUF("steigen", AUF_AKK,
             "steige", "steigst", "steigt", "steigt",
             Perfektbildung.SEIN, "gestiegen"),
-
     // Z.B. "jm. vor Augen stehen"
     STEHEN("stehen", DAT, "stehe", "stehst", "steht",
             "steht",
@@ -109,6 +111,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     AUFFANGEN(FANGEN, AKK, "auf", Perfektbildung.HABEN),
     AUFHEBEN(HEBEN, AKK, "auf", Perfektbildung.HABEN),
     AUFSTEHEN_VON(STEHEN, VON, "auf", Perfektbildung.SEIN),
+    HERVORHOLEN(HOLEN, AKK, "hervor", Perfektbildung.HABEN),
     HERAUSKLAUBEN("herausklauben", AKK,
             "klaube", "klaubst", "klaubt",
             "klaubt",

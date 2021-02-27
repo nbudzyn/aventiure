@@ -152,7 +152,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
-        n.narrateAlt(altSaetze(altReaktionSaetze), secs(5));
+        n.narrateAlt(altSaetze(altReaktionSaetze).schonLaenger(), secs(5));
 
         if (feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
@@ -171,7 +171,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         // "Tschüss"
                         "!“ Du wendest dich ab").undWartest().dann())
                 .add(du("sagst", anaph.datK(), "Abschied"),
-                        du(SICH_VERABSCHIEDEN.mit(anaph)))
+                        du(SICH_VERABSCHIEDEN.mit(anaph)).schonLaenger()
+                )
                 .addAll(altNeueSaetze(
                         "„",
                         altVerabschiedungen(),

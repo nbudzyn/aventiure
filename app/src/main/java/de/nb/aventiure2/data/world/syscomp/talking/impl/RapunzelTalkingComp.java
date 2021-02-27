@@ -371,7 +371,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.add(duParagraph("willst",
                     "gerade anfangen, zu sprechen, da fragt Rapunzel:",
                     "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
-                    "langatmig von Hasen und Raben").timed(mins(2)));
+                    "langatmig von Hasen und Raben").schonLaenger()
+                    .timed(mins(2)));
         }
 
         if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
@@ -512,6 +513,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         } else if (zuneigungTowardsSC == -FeelingIntensity.MERKLICH) {
             alt.add(
                     du("erhältst", "nur ein knappes Nicken zurück", PARAGRAPH)
+                            .schonLaenger()
                             .mitVorfeldSatzglied("nur ein knappes Nicken"),
                     neuerSatz(anaph.nomK(),
                             "nickt dir nur knapp zu")
@@ -639,7 +641,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 du("fragst", anaph.akkK(), ", wie",
                         anaph.persPron().nomK(), "heißt"),
                 du("möchtest",
-                        anaph.possArt().vor(M).akkStr(), "Namen wissen"));
+                        anaph.possArt().vor(M).akkStr(), "Namen wissen")
+                        .schonLaenger()
+        );
 
         setSchonBegruesstMitSC(true);
     }
@@ -730,6 +734,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "ganz freundlich mit",
                     anaph.datK())
                     .mitVorfeldSatzglied("ganz freundlich")
+                    .schonLaenger()
                     .undWartest()
                     .timed(mins(1)));
         }
@@ -801,7 +806,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
                             && duzen(zuneigungZuRapunzel) ?
                             "Der muss sehr alt sein. Und magisch, wenn du mich fragst" : null,
-                    ".“").timed(secs(30)));
+                    ".“").schonLaenger()
+                    .timed(secs(30)));
         }
 
         if (zuneigungZuRapunzel >= FeelingIntensity.MERKLICH &&
@@ -976,6 +982,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             n.narrate(du("siehst",
                     anaph().akkK(),
                     "bedeutungsschwer an: „Vertrau mir, wir bringen dich hier raus!“ –", PARAGRAPH)
+                    .schonLaenger()
                     .timed(secs(10)).withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
 
             final int rettungZugesagtCount = counterDao.get(RETTUNG_ZUGESAGT);
@@ -991,12 +998,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if ((rettungZugesagtCount == 3 && zuneigungZuSC >= FeelingIntensity.NEUTRAL)
                     || zuneigungZuSC >= FeelingIntensity.STARK) {
                 alt.addAll(altAnsehenSaetze(anaph(), getPersonalpronomenSC(),
-                        BEGEISTERT));
+                        BEGEISTERT)
+                );
             }
 
             if (rettungZugesagtCount == 4 && zuneigungZuSC >= -FeelingIntensity.DEUTLICH) {
                 alt.add(neuerSatz(anaph().nomK(), "zieht eine Augenbraue hoch"));
-                alt.addAll(altEindrueckSaetze(anaph(), SKEPTISCH.mitGraduativerAngabe("etwas")));
+                alt.addAll(altEindrueckSaetze(anaph(), SKEPTISCH.mitGraduativerAngabe("etwas"))
+                );
             }
 
             if (rettungZugesagtCount == 5
@@ -1009,7 +1018,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if ((rettungZugesagtCount == 6 && zuneigungZuSC <= FeelingIntensity.STARK)
                     || zuneigungZuSC <= -FeelingIntensity.DEUTLICH) {
-                alt.addAll(altEindrueckSaetze(anaph(), GENERVT));
+                alt.addAll(altEindrueckSaetze(anaph(), GENERVT)
+                );
             }
 
             if ((rettungZugesagtCount >= 7 && zuneigungZuSC <= FeelingIntensity.STARK)
@@ -1023,7 +1033,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             alt.addIfOtherwiseEmpty(neuerSatz(anaph().nomK(), "wendet den Blick ab"));
 
             n.narrateAlt(
-                    alt.timed(secs(5)).withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
+                    alt.schonLaenger().timed(secs(5))
+                            .withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
 
             feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                     -0.4f, -FeelingIntensity.STARK);
@@ -1268,6 +1279,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .timed(secs(20))
                         .phorikKandidat(F, RAPUNZEL)
         );
+
+        setSchonBegruesstMitSC(true);
+        talkerBeendetGespraech();
     }
 
     public static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(

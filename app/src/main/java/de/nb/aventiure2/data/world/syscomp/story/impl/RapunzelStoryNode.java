@@ -307,11 +307,13 @@ public enum RapunzelStoryNode implements IStoryNode {
                 du(PARAGRAPH, "musst", "an die magere Frau denken; du "
                         + "wirst ihr Geheimnis schon knacken! Aber nachts – da schläft "
                         + "sie ja"
-                        + " wohl?"),
+                        + " wohl?").schonLaenger()
+                ,
                 paragraph("dir fällt auf: Nachts ist dir die magere Frau noch nie "
                         + "begegnet"),
                 paragraph("des Nachts scheint hier kaum jemand auf den Beinen zu sein - "
-                        + "außer dir"),
+                        + "außer dir").schonLaenger()
+                ,
                 paragraph("Es scheint, ein jeder liegt nachts in seinem Bettchen. Und "
                         + "du?"));
     }
@@ -328,11 +330,13 @@ public enum RapunzelStoryNode implements IStoryNode {
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(du(PARAGRAPH, "wirst",
                     "bestimmt noch den Turm hinaufkommen!", PARAGRAPH)
+                    .schonLaenger()
                     .mitVorfeldSatzglied("bestimmt"));
             alt.add(du(PARAGRAPH, "wirst",
                     "bestimmt noch den Turm hinaufkommen – vielleicht musst du dich "
                             + "nur einmal auf die Lauer legen und beobachten, ob jemand "
-                            + "hineinkommt?", PARAGRAPH).mitVorfeldSatzglied("bestimmt"));
+                            + "hineinkommt?", PARAGRAPH)
+                    .schonLaenger().mitVorfeldSatzglied("bestimmt"));
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -388,10 +392,12 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             alt.add(duParagraph("hast", "noch so viele Fragen an",
-                    world.anaph(RAPUNZEL).akkK()),
+                    world.anaph(RAPUNZEL).akkK()).schonLaenger()
+                    ,
                     duParagraph("hast",
                             "Eindruck, die schöne junge Frau hätte dir noch viel zu",
-                            "erzählen"));
+                            "erzählen").schonLaenger()
+            );
         } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));
@@ -399,24 +405,30 @@ public enum RapunzelStoryNode implements IStoryNode {
                 alt.add(paragraph("Warum nicht oben im Turm einmal Hallo sagen?"),
                         duParagraph("hättest",
                                 "Lust, wieder einmal bei der jungen Frau",
-                                "oben im Turm vorbeizuschauen"));
+                                "oben im Turm vorbeizuschauen").schonLaenger()
+                );
             }
         } else {
             alt.addAll(altParagraphs("Die junge Frau oben im Turm",
                     ImmutableList.of("geht", "will"),
-                    "dir nicht mehr aus dem Kopf"));
+                    "dir nicht mehr aus dem Kopf").schonLaenger()
+            );
             alt.addAll(altParagraphs("Die schöne junge Frau oben im Turm will dir nicht",
                     ImmutableList.of("mehr", ""),
-                    "aus dem Kopf gehen"));
+                    "aus dem Kopf gehen").schonLaenger()
+            );
             alt.add(paragraph("Deine Gedanken kreisen immer wieder um",
-                    world.getDescription(RAPUNZEL).akkK()));
-            alt.add(duParagraph("fühlst", "dich etwas einsam"));
+                    world.getDescription(RAPUNZEL).akkK()).schonLaenger()
+            );
+            alt.add(duParagraph("fühlst", "dich etwas einsam").schonLaenger()
+            );
             alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
                     ImmutableList.of("netten", ""),
                     "jungen Frau oben im Turm vorbeischauen?"));
             alt.add(duParagraph("musst",
                     "an die junge Frau oben im Turm denken. Freut die sich wohl,",
-                    "wenn du noch einmal bei ihr vorbeischaust?"));
+                    "wenn du noch einmal bei ihr vorbeischaust?").schonLaenger()
+            );
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -436,7 +448,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH, "musst",
                     "wieder an den alten Turm denken… wenn dort jemand wohnt, "
                             + "wie kommt der bloß hinein oder heraus?", PARAGRAPH)
-                    .mitVorfeldSatzglied("wieder"));
+                    .mitVorfeldSatzglied("wieder").schonLaenger()
+            );
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
                             + "Wer wird darinnen wohl wohnen?"));

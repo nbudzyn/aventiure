@@ -82,6 +82,7 @@ class RapunzelJahreszeitenFrageMitAntworten extends AbstractFrageMitAntworten {
 
     private void narrateEntscheidestDichFuer(final String jahrezeitAkk) {
         n.narrate(du("entscheidest", "dich für", jahrezeitAkk)
+                .schonLaenger()
                 .timed(secs(15))
                 .undWartest());
     }

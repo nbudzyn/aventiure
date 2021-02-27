@@ -84,6 +84,7 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
                 SENTENCE,
                 anaph.nomK(),
                 "zeigt großes Interesse")
+                .schonLaenger()
                 .timed(mins(5))
                 .withCounterIdIncrementedIfTextIsNarrated(FRAGE_BEANTWORTET));
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,

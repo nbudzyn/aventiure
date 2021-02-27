@@ -162,6 +162,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         if (world.loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             alt.add(du(PARAGRAPH, "fühlst",
                     "dich von der goldenen Kugel magisch angezogen", PARAGRAPH)
+                    .schonLaenger()
                     .mitVorfeldSatzglied("von der goldenen Kugel"));
         } else {
             alt.add(paragraph("Zusammenhanglos kommt dir ein Gedanke in den "
@@ -224,7 +225,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "
-                            + "zu spielen", PARAGRAPH));
+                            + "zu spielen", PARAGRAPH).schonLaenger()
+            );
             if (!world.loadSC().locationComp().hasRecursiveLocation(IM_WALD_BEIM_BRUNNEN)) {
                 if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                     alt.addAll(altNachtsSchlafen(world));
@@ -323,7 +325,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(du(PARAGRAPH,
                 "willst",
-                "auch sehen, was vor dem Schloss geschieht!", PARAGRAPH));
+                "auch sehen, was vor dem Schloss geschieht!", PARAGRAPH)
+                .schonLaenger());
 
         n.narrateAlt(alt, NO_TIME);
     }
@@ -337,10 +340,13 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
                 alt.add(du(PARAGRAPH, "wirst",
                         "ausgeschlafen mehr ausrichten können", PARAGRAPH)
-                        .mitVorfeldSatzglied("ausgeschlafen"));
+                        .mitVorfeldSatzglied("ausgeschlafen").schonLaenger()
+                );
             } else {
                 alt.add(du(PARAGRAPH,
-                        "bist", "vom Tag noch ganz aufgedreht", PARAGRAPH));
+                        "bist", "vom Tag noch ganz aufgedreht", PARAGRAPH)
+                        .schonLaenger()
+                );
             }
         } else {
             if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {

@@ -240,11 +240,13 @@ public class EssenAction extends AbstractScAction {
                         + "von dem Eintopf und isst")
                         .dann(),
                 du("isst", "ein paar Löffel vom Eintopf")
+                        .schonLaenger()
                         .undWartest()
                         .dann(),
                 du(SENTENCE, "bist", "eigentlich satt, aber einen oder zwei Löffel Eintopf "
                         + "lässt du "
                         + "dir trotzdem schmecken").mitVorfeldSatzglied("eigentlich")
+                        .schonLaenger()
                         .dann());
     }
 
@@ -315,6 +317,7 @@ public class EssenAction extends AbstractScAction {
                         "nur wenig Hunger und beißt lustlos in eine der Früchte")
                         .mitVorfeldSatzglied("Hunger")
                         .timed(mins(3))
+                        .schonLaenger()
                         .dann());
         if (counterDao.get(FELSENBIRNEN_SEIT_ENTER) == 0) {
             n.narrateAlt(du(SENTENCE, "lässt",
@@ -324,6 +327,7 @@ public class EssenAction extends AbstractScAction {
                     .timed(mins(3))
                     .komma()
                     .undWartest()
+                    .schonLaenger()
                     .dann());
         }
     }

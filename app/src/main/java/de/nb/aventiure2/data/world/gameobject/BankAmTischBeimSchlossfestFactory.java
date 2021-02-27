@@ -104,12 +104,14 @@ class BankAmTischBeimSchlossfestFactory {
                     + "goldenen Tellern vor Fasan und anderem Wildbret. "
                     + "Immerhin stellt "
                     + "dir ein eifriger Diener einen leeren Holzteller und einen "
-                    + "Löffel bereit").timed(mins(3))
+                    + "Löffel bereit").schonLaenger()
+                    .timed(mins(3))
                     .withCounterIdIncrementedIfTextIsNarrated(
                             BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN);
         }
 
         return du("suchst", "dir erneut im Gedränge einen Platz an einem Tisch")
+                .schonLaenger()
                 .mitVorfeldSatzglied("erneut")
                 .timed(mins(3));
     }

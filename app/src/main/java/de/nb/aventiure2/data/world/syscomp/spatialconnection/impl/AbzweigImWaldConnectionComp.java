@@ -119,7 +119,9 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
             return du("gehst", "zurück in Richtung Schloss").timed(mins(5));
         }
 
-        return du("gehst", "weiter in Richtung Schloss").timed(mins(5));
+        return du("gehst", "weiter in Richtung Schloss")
+                .schonLaenger()
+                .timed(mins(5));
     }
 
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
