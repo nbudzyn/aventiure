@@ -820,12 +820,6 @@ public class RapunzelReactionsComp
         //  (wird evtl. bemerkt)
 
         // FIXME Alle Reaktionen von Rapunzel, wenn SC unter dem Bett ist
-
-        // FIXME Wenn Zauberin da ist und SC unter Bett kriecht
-//        "DIE ZAUBERIN lacht höhnisch"
-//        "DIE ZAUBERIN lacht laut auf"
-//        "DIE ZAUBERIN lacht dich aus"
-
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und
             //  ergänzen)

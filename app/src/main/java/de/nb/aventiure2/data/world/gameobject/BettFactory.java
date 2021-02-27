@@ -30,8 +30,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-class BettFactory {
+public class BettFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
     enum Counter {
         BETT_DRUNTERKRIECHEN_VERSTECKEN,
         BETT_DRUNTERKRIECHEN_OHNE_SINN
