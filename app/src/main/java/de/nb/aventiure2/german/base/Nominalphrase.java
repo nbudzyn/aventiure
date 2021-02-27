@@ -46,6 +46,8 @@ public class Nominalphrase
                     "kleinen Notlüge");
     public static final Nominalphrase FREUDE_OHNE_ART =
             np(F, null, "Freude");
+    public static final Nominalphrase FUSS =
+            np(M, DEF, "Fuß");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
     public static final Nominalphrase HOEHE =

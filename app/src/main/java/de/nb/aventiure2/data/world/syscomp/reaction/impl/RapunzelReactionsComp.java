@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -36,8 +37,11 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -65,9 +69,12 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
+import static de.nb.aventiure2.german.base.Nominalphrase.FUSS;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -76,6 +83,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaet
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SCHIEBEN;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -653,6 +661,11 @@ public class RapunzelReactionsComp
         }
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                    >= -FeelingIntensity.NUR_LEICHT) {
+                rapunzelSchiebtFremdeGegenstaendeUntersBett();
+            }
+
             if (stateComp.hasState(SINGEND)) {
                 if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     n.narrate(
@@ -699,17 +712,52 @@ public class RapunzelReactionsComp
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM) &&
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                         >= -FeelingIntensity.MERKLICH) {
-            talkingComp.narrateOWehZauberinKommt();
+            if (!loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
+                talkingComp.narrateOWehZauberinKommt();
 
-            loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                    ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
+                rapunzelSchiebtFremdeGegenstaendeUntersBett();
 
-            stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
+                loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                        ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
 
-            return;
+                stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
+                return;
+            }
+        }
+
+        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= -FeelingIntensity.NUR_LEICHT) {
+            rapunzelSchiebtFremdeGegenstaendeUntersBett();
         }
 
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
+    }
+
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    void rapunzelSchiebtFremdeGegenstaendeUntersBett() {
+        final ImmutableList<LOC_DESC> gegenstaendeFuerUntersBett =
+                world.<LOC_DESC>loadDescribableNonLivingMovableInventory(OBEN_IM_ALTEN_TURM)
+                        .stream()
+                        .filter(o -> !o.locationComp()
+                                .hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM))
+                        .collect(toImmutableList());
+        if (gegenstaendeFuerUntersBett.isEmpty()) {
+            return;
+        }
+
+        n.narrate(neuerSatz(SCHIEBEN
+                .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
+                .mitAdverbialerAngabe(
+                        new AdverbialeAngabeSkopusVerbWohinWoher(UNTER.mit(
+                                world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
+                .mitAdverbialerAngabe(
+                        new AdverbialeAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
+                .alsSatzMitSubjekt(anaph()))
+                .timed(secs(5)));
+
+        for (final LOC_DESC object : gegenstaendeFuerUntersBett) {
+            object.locationComp().narrateAndSetLocation(BETT_OBEN_IM_ALTEN_TURM);
+        }
     }
 
     @Override
@@ -772,9 +820,6 @@ public class RapunzelReactionsComp
         //  (wird evtl. bemerkt)
 
         // FIXME Alle Reaktionen von Rapunzel, wenn SC unter dem Bett ist
-
-        // FIXME Rapunzel räumt Kugel o.Ä. automatisch unter das Bett, wenn
-        //  Zauberin kommt
 
         // FIXME Wenn Zauberin da ist und SC unter Bett kriecht
 //        "DIE ZAUBERIN lacht höhnisch"
