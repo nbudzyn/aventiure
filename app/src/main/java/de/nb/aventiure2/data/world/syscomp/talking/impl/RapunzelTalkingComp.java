@@ -112,6 +112,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObjIndirekterFragesatz.F
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "unchecked"})
 public class RapunzelTalkingComp extends AbstractTalkingComp {
+
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public
     enum Counter {
@@ -1332,6 +1333,27 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         talkerBeendetGespraech();
     }
+
+    public void perhapsNarrateZauberinIstGegangen() {
+        final AltDescriptionsBuilder alt = alt();
+        final int zuneigungRapunzelZuSc =
+                feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
+                        SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+
+        alt.add(neuerSatz("„Sie ist weg“, hörst du", anaph().nomK(), "sagen"));
+
+        if (duzen(zuneigungRapunzelZuSc)) {
+            alt.add(neuerSatz("„Kannst rauskommen“, sagt", anaph().nomK()));
+        }
+
+        if (zuneigungRapunzelZuSc >= FeelingIntensity.MERKLICH) {
+            alt.add(neuerSatz("„Die Luft ist rein“, flüstert",
+                    anaph().nomK(), "in den Raum"));
+        }
+
+        n.narrateAlt(alt, secs(5));
+    }
+
 
     public static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
             final SubstantivischePhrase rapunzelDesc) {

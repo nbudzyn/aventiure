@@ -17,7 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -146,8 +145,17 @@ public class RapunzelReactionsComp
             return;
         }
 
-        if (locatable.is(GOLDENE_KUGEL)) {
-            onGoldeneKugelEnter(to);
+        if (talkingComp.scUndRapunzelKoennenEinanderSehen()
+                && locationComp.hasSameOuterMostLocationAs(to)
+                && world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)
+                && locatable.is(GOLDENE_KUGEL)
+                // Der Spieler hat die goldene Kugel genommen, aufgefangen o.Ä.
+                && !memoryComp.isKnown(GOLDENE_KUGEL)
+                // und Rapunzel kennt die goldene Kugel noch nicht
+                && stateComp.hasState(NORMAL)
+            // und Rapunzel hat nicht gerade die Haare heruntergelassen o.Ä.
+        ) {
+            rapunzelMoechteGoldeneKugelHaben();
             return;
         }
     }
@@ -158,9 +166,8 @@ public class RapunzelReactionsComp
             return;
         }
 
-        if (!LocationSystem.haveSameOuterMostLocation(from, to)
-                && loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            onSCEnter_ObenImAltenTurm();
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            onSCEnter_ObenImAltenTurm(from, to);
             return;
         }
 
@@ -272,13 +279,49 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void onSCEnter_ObenImAltenTurm() {
+    private void onSCEnter_ObenImAltenTurm(@Nullable final ILocationGO from,
+                                           final ILocationGO to) {
+        if (from != null && from.is(OBEN_IM_ALTEN_TURM)
+                && to.is(BETT_OBEN_IM_ALTEN_TURM)
+                && !stateComp.hasState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            onSCEnter_UnterBettObenImAltenTurm_unnuetz();
+
+            return;
+        }
+
         if (!loadSC().memoryComp().isKnown(RAPUNZEL)) {
             onSCEnter_ObenImAltenTurm_RapunzelUnbekannt();
             return;
         }
 
         onSCEnter_ObenImAltenTurm_RapunzelBekannt();
+    }
+
+    private void onSCEnter_UnterBettObenImAltenTurm_unnuetz() {
+        final int zuneigungRapunzelZumSc =
+                feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        if (zuneigungRapunzelZumSc <= -FeelingIntensity.DEUTLICH) {
+            alt.add(neuerSatz("„Was ist denn jetzt wieder los?“, fragt",
+                    anaph().nomK(), "genervt"));
+        }
+
+        if (zuneigungRapunzelZumSc >= -FeelingIntensity.DEUTLICH
+                && zuneigungRapunzelZumSc <= FeelingIntensity.NEUTRAL) {
+            alt.add(neuerSatz("„Was soll das jetzt?“, fragt", anaph().nomK()));
+        }
+
+        if (zuneigungRapunzelZumSc >= -FeelingIntensity.MERKLICH) {
+            alt.add(neuerSatz("„Was ist jetzt los?“, fragt", anaph().nomK()));
+        }
+
+        if (zuneigungRapunzelZumSc >= FeelingIntensity.NUR_LEICHT) {
+            alt.add(neuerSatz("„Alles gut?“, hörst du", anaph().nomK(), "fragen"));
+        }
+
+        n.narrateAlt(alt, secs(10));
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt() {
@@ -522,24 +565,6 @@ public class RapunzelReactionsComp
         }
     }
 
-    private void onGoldeneKugelEnter(final ILocationGO to) {
-        if (!locationComp.hasSameOuterMostLocationAs(to)) {
-            return;
-        }
-
-        if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)
-                // Der Spieler hat die goldene Kugel genommen, aufgefangen o.Ä.
-                && talkingComp.scUndRapunzelKoennenEinanderSehen()
-                && !memoryComp.isKnown(GOLDENE_KUGEL)
-                // und Rapunzel kennt die goldene Kugel noch nicht
-                && stateComp.hasState(NORMAL)
-            // und Rapunzel hat nicht gerade die Haare heruntergelassen o.Ä.
-        ) {
-            rapunzelMoechteGoldeneKugelHaben();
-            return;
-        }
-    }
-
     private void rapunzelMoechteGoldeneKugelHaben() {
         final SubstantivischePhrase anaph = anaph();
         n.narrate(neuerSatz(anaph.nomK(),
@@ -707,7 +732,8 @@ public class RapunzelReactionsComp
         if (loadZauberin().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
                 !stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            talkingComp.rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
+            talkingComp
+                    .rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
             return;
         }
     }
@@ -722,7 +748,8 @@ public class RapunzelReactionsComp
         //    artig zu.
         //  - Die Zauberin begrüßt RAPUNZEL, dann ist sie auf einmal still.
         //    "Wonach riecht es hier?" fragt die Zauberin mit scharfer Stimme
-        //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt sich
+        //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt
+        //    sich
         //    vor
         //    das Bett. Dir pocht das Herz"
         //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
@@ -749,24 +776,14 @@ public class RapunzelReactionsComp
         // FIXME Rapunzel räumt Kugel o.Ä. automatisch unter das Bett, wenn
         //  Zauberin kommt
 
-        // FIXME Wenn SC ohne guten Grund unter Bett kriecht:
-//        "RAPUNZEL wirkt sehr verwirrt"
-//        "Was soll das jetzt? fragt Rapunzel"
-//        "Was ist jetzt los? fragt Rapunzel"
-//        "Was ist denn jetzt wieder los? fragt Rapunzel genervt"
-
         // FIXME Wenn Zauberin da ist und SC unter Bett kriecht
 //        "DIE ZAUBERIN lacht höhnisch"
 //        "DIE ZAUBERIN lacht laut auf"
 //        "DIE ZAUBERIN lacht dich aus"
 
-        // FIXME Wenn SC etwas ohne guten Grund unter das Bett legt
-//        "RAPUNZEL scheint nicht genau zu wissen, was sie davon halten soll"
-//        "RAPUNZEL scheint das egal zu sein"
-//        (Oder RAPUNZEL reagiert nicht.)
-
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
-            // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und ergänzen)
+            // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und
+            //  ergänzen)
             //  "Du hörst, wie..."
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                     && talkingComp.scUndRapunzelKoennenEinanderSehen()) {

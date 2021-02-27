@@ -408,9 +408,8 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinSteigtAnDenHaarenHerab() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription();
             n.narrate(
-                    du("siehst", ", wie", desc.nomK(),
+                    du("siehst", ", wie", getDescription().nomK(),
                             "an den Haaren herabsteigt")
                             .timed(mins(1)).komma());
 
@@ -426,11 +425,11 @@ public class RapunzelsZauberinReactionsComp
 
             n.narrate(neuerSatz(anaph(true).nomK(),
                     "hat dich nicht bemerkt").timed(NO_TIME));
+        } else if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
+            loadRapunzel().talkingComp().perhapsNarrateZauberinIstGegangen();
         }
-        // FIXME UNTER_DEM_BETT_OBEN_IM_ALTEN_TURM
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
-
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
     }
 

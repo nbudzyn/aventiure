@@ -308,15 +308,6 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     @Nonnull
     public String getText() {
-        // FIXME Wird startsNew überall richtig berücksichtigt?
-        // FIXME Wird endsThis überall richtig berücksichtigt?
-        // FIXME Wird vorDoppelpunktNoetig() überall richtig berücksichtigt?
-        // FIXME Wird vorkommaNoetig() überall richtig berücksichtigt?
-        // FIXME Wird woertlicheRedeNochOffen() überall richtig berücksichtigt?
-        // FIXME Wird kommaStehtAus() überall richtig berücksichtigt?
-        // FIXME Wird getPhorikKandidat() überall richtig berücksichtigt?
-        // FIXME Wird koennteAlsBezugsobjektVerstandenWerdenFuer überall richtig berücksichtigt?
-        //  Vielleicht ist toTextOhneKontext() sinnvoll - oder withStartNewSentence...
         return text;
     }
 
