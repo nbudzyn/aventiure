@@ -42,7 +42,7 @@ public class RoomFactory {
 
     public GameObject createImWaldBeimBrunnen() {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN,
-                timeTaker, null, StoringPlaceType.NEBEN_DEM_BRUNNEN);
+                timeTaker, null, StoringPlaceType.NEBEN_DEM_BRUNNEN, false);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
                 new ImWaldBeimBrunnenConnectionComp(db, timeTaker, n, world, storingPlaceComp));
@@ -54,12 +54,13 @@ public class RoomFactory {
      */
     public GameObject create(final GameObjectId id,
                              final StoringPlaceType locationMode,
+                             final boolean niedrig,
                              @Nullable
                              final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier,
                              final AbstractSpatialConnectionComp spatialConnectionComp) {
         return new Room(id,
                 new StoringPlaceComp(id, timeTaker, null, locationMode,
-                        lichtverhaeltnisseSupplier),
+                        niedrig, lichtverhaeltnisseSupplier),
                 spatialConnectionComp);
     }
 

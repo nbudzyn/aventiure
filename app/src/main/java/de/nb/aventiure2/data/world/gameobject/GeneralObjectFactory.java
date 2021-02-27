@@ -57,11 +57,12 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
+                      final boolean niedrig,
                       final StoringPlaceType locationMode) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, null);
+                movable, locationMode, niedrig, null);
     }
 
     public GameObject create(final GameObjectId id,
@@ -70,6 +71,7 @@ class GeneralObjectFactory {
                              @Nullable final GameObjectId initialLastLocationId,
                              final boolean movable,
                              final StoringPlaceType locationMode,
+                             final boolean niedrig,
                              @Nullable
                              final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
         return create(id,
@@ -77,7 +79,7 @@ class GeneralObjectFactory {
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, lichtverhaeltnisseSupplier);
+                movable, locationMode, niedrig, lichtverhaeltnisseSupplier);
     }
 
     GameObject create(final GameObjectId id,
@@ -87,11 +89,12 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
-                      final StoringPlaceType locationMode) {
+                      final StoringPlaceType locationMode,
+                      final boolean niedrig) {
         return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown,
                 initialLocationId, initialLastLocationId, movable, locationMode,
-                null);
+                niedrig, null);
     }
 
     private GameObject create(final GameObjectId id,
@@ -102,6 +105,7 @@ class GeneralObjectFactory {
                               @Nullable final GameObjectId initialLastLocationId,
                               final boolean movable,
                               final StoringPlaceType locationMode,
+                              final boolean niedrig,
                               @Nullable
                               final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
         final LocationComp locationComp =
@@ -113,6 +117,6 @@ class GeneralObjectFactory {
                         shortDescriptionWhenKnown),
                 locationComp,
                 new StoringPlaceComp(id, timeTaker, locationComp, locationMode,
-                        lichtverhaeltnisseSupplier));
+                        niedrig, lichtverhaeltnisseSupplier));
     }
 }

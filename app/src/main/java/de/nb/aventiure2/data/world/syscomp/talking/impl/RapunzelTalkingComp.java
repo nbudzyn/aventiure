@@ -60,6 +60,9 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingCo
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.RETTUNG_ZUGESAGT;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.SCHON_IMMER_GEWUENSCHT_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.SC_BEGRUESST;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.ENTRY_RE_ENTRY;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entryReEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
@@ -166,8 +169,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         entryReEntrySt(this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
                         // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
-                        entryReEntrySt(bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
+                        st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
                         st(this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
                         st(this::frageNachHelfenSinnvoll,
@@ -178,7 +180,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                                         InterrogativadverbVerbAllg.WIE))
                                                 .alsSatzMitSubjekt(getPersonalpronomenSC())),
                                 this::fragenWieSCHelfenKann),
-                        st(this::rapunzelsFreiheitswunschBekannt,
+                        st(this::rapunzelsFreiheitswunschBekanntUndRapunzelUndScKoennenEinanderSehen,
                                 ZUSAGEN.mitAkk(RETTUNG_OHNE_ART),
                                 this::rapunzelRettungZusagen),
                         st(this::frageNachRapunzelsMutterSinnvoll,
@@ -189,8 +191,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 AUSSCHUETTEN.mitAkk(DEIN_HERZ),
                                 this::herzAusschuetten),
                         st(SICH_UNTERHALTEN, this::unterhalten_allg),
-                        exitSt(bittenHaareHerunterzulassenPraedikat(),
+                        exitSt(this::scUnmittelbarObenImTurm,
+                                bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
+                        exitSt(this::scNichtUnmittelbarObenImTurm,
+                                this::scReagiertNicht_Exit),
                         immReEntryStSCHatteGespraechBeendet(
                                 VerbSubjAkkPraep.FORTSETZEN.mitAkk(GESPRAECH),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
@@ -217,70 +222,68 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of();
             case HAT_NACH_KUGEL_GEFRAGT:
                 return ImmutableList.of(
-                        entryReEntrySt(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
-                        exitSt(
+                        st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
+                        exitSt(this::scUnmittelbarObenImTurm,
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::hatNachKugelGefragt_haareHerunterlassenBitte_Exit),
-                        immReEntryStSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
-                        immReEntryStNSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry)
+                        exitSt(this::scNichtUnmittelbarObenImTurm,
+                                this::scReagiertNicht_Exit),
+                        st_HaareHerunterlassenBitte(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET),
+                        st_HaareHerunterlassenBitte(IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET)
                 );
             case HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT: {
                 final ImmutableList.Builder<SCTalkAction> res = ImmutableList.builder();
-                res.add(entryReEntrySt(
-                        bittenHaareHerunterzulassenPraedikat(),
-                        this::haareHerunterlassenBitte_EntryReEntry),
-                        exitSt(bittenHaareHerunterzulassenPraedikat(),
+                res.add(st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
+                        exitSt(this::scUnmittelbarObenImTurm,
+                                bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
-                        immReEntryStSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
-                        immReEntryStNSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry));
+                        exitSt(this::scNichtUnmittelbarObenImTurm,
+                                this::scReagiertNicht_Exit),
+                        st_HaareHerunterlassenBitte(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET),
+                        st_HaareHerunterlassenBitte(
+                                IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET));
                 res.addAll(jahreszeitenFrage.getAntwortActions());
                 return res.build();
             }
             case HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT: {
                 final ImmutableList.Builder<SCTalkAction> res = ImmutableList.builder();
-                res.add(entryReEntrySt(
-                        bittenHaareHerunterzulassenPraedikat(),
-                        this::haareHerunterlassenBitte_EntryReEntry),
-                        exitSt(bittenHaareHerunterzulassenPraedikat(),
+                res.add(st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
+                        exitSt(this::scUnmittelbarObenImTurm,
+                                bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
-                        immReEntryStSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
-                        immReEntryStNSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry));
+                        exitSt(this::scNichtUnmittelbarObenImTurm,
+                                this::scReagiertNicht_Exit),
+                        st_HaareHerunterlassenBitte(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET),
+                        st_HaareHerunterlassenBitte(
+                                IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET));
                 res.addAll(kugelherkunftsfrage.getAntwortActions());
                 return res.build();
             }
             case HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT: {
                 final ImmutableList.Builder<SCTalkAction> res = ImmutableList.builder();
-                res.add(entryReEntrySt(
-                        bittenHaareHerunterzulassenPraedikat(),
-                        this::haareHerunterlassenBitte_EntryReEntry),
-                        exitSt(bittenHaareHerunterzulassenPraedikat(),
+                res.add(st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
+                        exitSt(this::scUnmittelbarObenImTurm,
+                                bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
-                        immReEntryStSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry),
-                        immReEntryStNSCHatteGespraechBeendet(
-                                bittenHaareHerunterzulassenPraedikat(),
-                                this::haareHerunterlassenBitte_EntryReEntry));
+                        exitSt(this::scNichtUnmittelbarObenImTurm,
+                                this::scReagiertNicht_Exit),
+                        st_HaareHerunterlassenBitte(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET),
+                        st_HaareHerunterlassenBitte(
+                                IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET));
                 res.addAll(naschereifrage.getAntwortActions());
                 return res.build();
             }
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());
         }
+    }
+
+    @NonNull
+    private SCTalkAction st_HaareHerunterlassenBitte(final SCTalkAction.Type talkActionType) {
+        return new SCTalkAction(talkActionType,
+                this::scUnmittelbarObenImTurm,
+                bittenHaareHerunterzulassenPraedikat(),
+                this::haareHerunterlassenBitte_EntryReEntry);
     }
 
     private boolean frageNachRapunzelsMutterSinnvoll() {
@@ -376,12 +379,16 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         }
 
         if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
-            alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du.",
+            alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du",
                     SENTENCE,
                     anaph().nomK(),
-                    "schaut dich",
-                    ImmutableList.of("verständlos", "verwirrt", "irritiert"),
-                    "an").timed(secs(10)));
+                    scUndRapunzelKoennenEinanderSehen() ?
+                            joinToAltKonstituentenfolgen(
+                                    "schaut dich",
+                                    ImmutableList.of("verständlos", "verwirrt", "irritiert"),
+                                    "an") :
+                            "– Keine Reaktion zu hören"
+            ).timed(secs(10)));
         }
 
         n.narrateAlt(alt);
@@ -454,7 +461,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         // Könnte leer sein
         final ImmutableList<Satz> altEindruckSaetzeAnaphPersPron =
-                feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph.persPron());
+                feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph.persPron(),
+                        true);
 
         // Könnte ebenfalls leer sein
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAdvAngaben =
@@ -624,6 +632,15 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         setTalkingTo(SPIELER_CHARAKTER);
     }
 
+    private boolean scNichtUnmittelbarObenImTurm() {
+        return !scUnmittelbarObenImTurm();
+    }
+
+    private boolean scUnmittelbarObenImTurm() {
+        // (also nicht z.B. unter dem Bett)
+        return loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM);
+    }
+
     private boolean scKenntRapunzelsNamenNicht() {
         return !loadSC().memoryComp().isKnown(RAPUNZELS_NAME);
     }
@@ -783,8 +800,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "! Deshalb freu ich mich ja immer so, wenn mal jemand Nettes",
                         "vorbeischaut.“",
                         SENTENCE,
-                        anaph().nomK(),
-                        "zwinkert dir zu. – Oder du hast dir das eingebildet");
+                        scUndRapunzelKoennenEinanderSehen() ?
+                                joinToAltKonstituentenfolgen(
+                                        anaph().nomK(),
+                                        "zwinkert dir zu. – Oder du hast dir das eingebildet") :
+                                null);
             } else {
                 altAntworten = ImmutableList.of(
                         joinToKonstituentenfolge("Aber", anaph().nomK(), "antwortet nicht"),
@@ -797,7 +817,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     altAntworten).timed(secs(20)));
         }
 
-        if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0) {
+        if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0
+                && scUndRapunzelKoennenEinanderSehen()) {
             alt.add(du("siehst",
                     "dich um und dein Blick fällt auf die nackte Mauer.",
                     "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
@@ -809,6 +830,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     ".“").schonLaenger()
                     .timed(secs(30)));
         }
+
 
         if (zuneigungZuRapunzel >= FeelingIntensity.MERKLICH &&
                 scHatSeltsameSacheMitFroschErlebt()) {
@@ -850,7 +872,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         }
 
         if (zuneigungZuRapunzel >= FeelingIntensity.DEUTLICH
-                && duzen(zuneigungZuRapunzel)
+                &&
+
+                duzen(zuneigungZuRapunzel)
                 && counterDao.get(SCHON_IMMER_GEWUENSCHT_GEFRAGT) == 0) {
             alt.add(
                     neuerSatz(
@@ -872,6 +896,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrateAlt(alt);
 
         setSchonBegruesstMitSC(true);
+
         loadSC().feelingsComp().requestMoodMin(BETRUEBT);
     }
 
@@ -968,11 +993,21 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         loadSC().feelingsComp().requestMoodMin(BEWEGT);
     }
 
-    private boolean rapunzelsFreiheitswunschBekannt() {
-        return loadSC().memoryComp().isKnown(RAPUNZELS_FREIHEITSWUNSCH);
+    private boolean rapunzelsFreiheitswunschBekanntUndRapunzelUndScKoennenEinanderSehen() {
+        return loadSC().memoryComp().isKnown(RAPUNZELS_FREIHEITSWUNSCH)
+                // SC liegt nicht unter dem Bett
+                && scUndRapunzelKoennenEinanderSehen();
+    }
+
+    public boolean scUndRapunzelKoennenEinanderSehen() {
+        return world.hasSameOuterMostLocationAsSC(RAPUNZEL)
+                && !loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM);
     }
 
     private void rapunzelRettungZusagen() {
+        // Das hier passiert nur, wenn SC und Rapunzel einander sehen.
+        // Nicht, wenn der SC unter dem Bett liegt.
+
         if (counterDao.get(RETTUNG_ZUGESAGT) == 0) {
             n.narrate(neuerSatz("„Du hast mein Wort!“",
                     "Du siehst ihr in die Augen. „Vertrau mir, mir fällt etwas ein! Wir bringen",
@@ -1004,7 +1039,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if (rettungZugesagtCount == 4 && zuneigungZuSC >= -FeelingIntensity.DEUTLICH) {
                 alt.add(neuerSatz(anaph().nomK(), "zieht eine Augenbraue hoch"));
-                alt.addAll(altEindrueckSaetze(anaph(), SKEPTISCH.mitGraduativerAngabe("etwas"))
+                alt.addAll(altEindrueckSaetze(anaph(), true,
+                        SKEPTISCH.mitGraduativerAngabe("etwas"))
                 );
             }
 
@@ -1018,7 +1054,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if ((rettungZugesagtCount == 6 && zuneigungZuSC <= FeelingIntensity.STARK)
                     || zuneigungZuSC <= -FeelingIntensity.DEUTLICH) {
-                alt.addAll(altEindrueckSaetze(anaph(), GENERVT)
+                alt.addAll(altEindrueckSaetze(anaph(), true, GENERVT)
                 );
             }
 
@@ -1043,7 +1079,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         memoryComp.narrateAndUpgradeKnown(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
         loadSC().memoryComp().narrateAndUpgradeKnown(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
 
-        setSchonBegruesstMitSC(true);
         gespraechspartnerBeendetGespraech();
     }
 
@@ -1072,7 +1107,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 0.25f, FeelingIntensity.MERKLICH);
 
-        setSchonBegruesstMitSC(true);
         rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
         gespraechspartnerBeendetGespraech();
@@ -1118,8 +1152,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt);
 
-        setSchonBegruesstMitSC(true);
-
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
 
         rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
@@ -1153,13 +1185,29 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt);
 
-        setSchonBegruesstMitSC(true);
         rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
         // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
         //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
         //  (kein Auswürfeln), aber simulierte Welt
         gespraechspartnerBeendetGespraech();
+    }
+
+    private void scReagiertNicht_Exit() {
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.add(neuerSatz("aber du reagierst gar nicht", SENTENCE),
+                neuerSatz("aber du schweigst nur").undWartest().dann(),
+                du("schweigst").schonLaenger().undWartest().dann(),
+                du("erwiderst nichts").schonLaenger().undWartest().dann(),
+                du("bist einfach nur still").schonLaenger().dann());
+
+        n.narrateAlt(alt.timed(secs(10)));
+
+        gespraechspartnerBeendetGespraech();
+
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 1,
+                FeelingIntensity.MERKLICH);
     }
 
     public void rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken() {
@@ -1187,6 +1235,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (loadZauberin().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
                 final Nominalphrase rapunzelDesc = getDescription(true);
 
+                // Hier kommen wir nur hin, wenn Rapunzel und SC einander sehen können, wenn
+                // der SC also nicht unter dem Bett liegt.
                 final ImmutableList<Satz> altReaktionSaetze
                         = feelingsComp.altReaktionWennTargetGehenMoechteSaetze(rapunzelDesc);
 
@@ -1280,7 +1330,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .phorikKandidat(F, RAPUNZEL)
         );
 
-        setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();
     }
 

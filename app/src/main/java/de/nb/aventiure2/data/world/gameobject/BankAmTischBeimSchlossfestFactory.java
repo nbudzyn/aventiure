@@ -68,7 +68,7 @@ class BankAmTischBeimSchlossfestFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 NEBEN_SC_AUF_EINER_BANK,
-                null,
+                false, null,
                 conData("neben einer Bank an einem Tisch",
                         "An einen Tisch setzen",
                         mins(3),

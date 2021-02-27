@@ -54,7 +54,8 @@ public enum FeelingTowardsType {
 
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
         res.addAll(FeelingsSaetzeUtil.
-                toReaktionSaetze(gameObjectSubjekt, targetDesc, altEindruckAdjPhr,
+                toReaktionSaetze(gameObjectSubjekt, targetDesc,
+                        true, altEindruckAdjPhr,
                         adverbialeAngaben));
 
         res.addAll(feelingsDescriber.altReaktionBeiBegegnungSaetze(
@@ -70,6 +71,8 @@ public enum FeelingTowardsType {
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
+     * <p>
+     * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
@@ -84,7 +87,8 @@ public enum FeelingTowardsType {
                 );
 
         final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toReaktionSaetze(
-                gameObjectSubjekt, targetDesc, altEindruckAdjPhr);
+                gameObjectSubjekt, targetDesc, true,
+                altEindruckAdjPhr);
 
         res.addAll(saetze);
 
@@ -98,9 +102,10 @@ public enum FeelingTowardsType {
     public ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc,
+            final boolean targetKannSubjektSehen,
             final int feelingIntensity, final boolean targetKnown) {
         return FeelingsSaetzeUtil.altEindrueckSaetze(gameObjectSubjekt,
-                altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
+                targetKannSubjektSehen, altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
                         targetDesc, feelingIntensity,
                         targetKnown));
     }
@@ -129,7 +134,7 @@ public enum FeelingTowardsType {
      * <i>wirken</i> oder <i>scheinen</i> verbunden werden.
      * <p>
      * Diese Sätze sind in
-     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, SubstantivischePhrase, int, boolean, boolean)}
+     * {@link #altReaktionBeiBegegnungSaetze(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
      * bereits enthalten.
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder

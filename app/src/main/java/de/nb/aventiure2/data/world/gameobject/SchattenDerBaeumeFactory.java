@@ -69,7 +69,7 @@ class SchattenDerBaeumeFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 STAMM_EINES_BAUMS,
-                null,
+                false, null,
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),

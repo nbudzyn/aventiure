@@ -140,7 +140,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
     }
 
-    public void talkerBeendetGespraech() {
+    protected void talkerBeendetGespraech() {
         unsetTalkingTo(true);
     }
 
@@ -159,6 +159,10 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
 
         if (talkingTo == null) {
             return;
+        }
+
+        if (talkingTo.is(SPIELER_CHARAKTER)) {
+            setSchonBegruesstMitSC(true);
         }
 
         requirePcd().setTalkingToId(null);

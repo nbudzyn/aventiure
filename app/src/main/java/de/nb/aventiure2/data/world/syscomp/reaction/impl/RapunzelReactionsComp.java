@@ -530,6 +530,7 @@ public class RapunzelReactionsComp
 
         if (world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)
                 // Der Spieler hat die goldene Kugel genommen, aufgefangen o.Ä.
+                && talkingComp.scUndRapunzelKoennenEinanderSehen()
                 && !memoryComp.isKnown(GOLDENE_KUGEL)
                 // und Rapunzel kennt die goldene Kugel noch nicht
                 && stateComp.hasState(NORMAL)
@@ -731,8 +732,8 @@ public class RapunzelReactionsComp
         //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
 
         // FIXME Alle Verwendungen von OBEN prüfen, ggf. anders für UNTER DEM BETT
-        //  Idee: Rapunzel kann nicht schauen und spricht nicht
-        //   mit SC, der unter dem Bett liegt. Außer "willst du nicht wieder rauskommen??"
+        //  Idee: Rapunzel sagt etwas wie "willst du nicht wieder rauskommen??"
+        //   Wenn der SC unter dem Bett liegt.
         //   Danach... Rapunzel schaut...
         //   "Was sollte jetzt das?"
 
@@ -748,14 +749,6 @@ public class RapunzelReactionsComp
 
         // FIXME Rapunzel räumt Kugel o.Ä. automatisch unter das Bett, wenn
         //  Zauberin kommt
-
-        // FIXME Man kommt unter dem Bett nicht mehr raus?! Bug
-
-        // FIXME Die ganze "SIEHT DICH AN"-etc. Reaktionen nur, wenn
-        //  das TALKINGGO den SC sehen kann. Das wiederum hängt davon ab,
-        //  ob zwischen den beiden LocationGOs eine "Sichtverbindung" besteht.
-        //  Das ist der Fall, wenn es zwischen äußerstem LocationGO und jedem der
-        //  innersten LocationGOs manKannHineinUndHinaussehen immmer == true ist.
 
         // FIXME Wenn SC ohne guten Grund unter Bett kriecht:
 //        "RAPUNZEL wirkt sehr verwirrt"

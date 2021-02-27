@@ -5,13 +5,13 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -49,12 +49,14 @@ public class FeelingsSaetzeUtil {
     static ImmutableList<Satz> toReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
+            final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
         final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
                 AdjPhrOhneLeerstellen
                         .toAdvAngabenSkopusVerbAllg(subjekt, eindruckAdjPhr);
 
-        return toReaktionSaetze(subjekt, feelingTargetDesc, eindruckAdjPhr,
+        return toReaktionSaetze(subjekt, feelingTargetDesc,
+                subjektUndFeelingTargetKoennenEinanderSehen, eindruckAdjPhr,
                 adverbialeAngaben);
     }
 
@@ -65,18 +67,22 @@ public class FeelingsSaetzeUtil {
     static ImmutableList<Satz> toReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
+            final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr,
             final ImmutableList<AdverbialeAngabeSkopusVerbAllg> eindruckAdverbialeAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        res.addAll(altAnsehenSaetze(
-                subjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
+        if (subjektUndFeelingTargetKoennenEinanderSehen) {
+            res.addAll(altAnsehenSaetze(
+                    subjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
+        }
 
-        res.addAll(altEindrueckSaetze(subjekt, eindruckAdjPhr));
+        res.addAll(altEindrueckSaetze(subjekt, subjektUndFeelingTargetKoennenEinanderSehen,
+                eindruckAdjPhr));
 
         res.addAll(eindruckAdjPhr.stream()
                 .flatMap(adjPhr ->
-                        Stream.of("offenkundig", "sichtlich", "offenbar", "ganz offenbar")
+                        altEindruckAdverbien(subjektUndFeelingTargetKoennenEinanderSehen).stream()
                                 .map(
                                         advAng ->
                                                 praedikativumPraedikatMit(adjPhr)
@@ -86,6 +92,18 @@ public class FeelingsSaetzeUtil {
                                                         .alsSatzMitSubjekt(subjekt)
                                 )
                 ).collect(toImmutableList()));
+
+        return res.build();
+    }
+
+    private static ImmutableList<String> altEindruckAdverbien(final boolean istZuSehen) {
+        final ImmutableList.Builder<String> res = ImmutableList.builder();
+
+        if (istZuSehen) {
+            res.add("sichtlich");
+        }
+
+        res.add("offenkundig", "offenbar", "ganz offenbar");
 
         return res.build();
     }
@@ -102,6 +120,7 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+
         return altAnsehenSaetze(subjekt, angesehenDesc,
                 ImmutableList.of(adverbialeAngabe));
     }
@@ -147,16 +166,32 @@ public class FeelingsSaetzeUtil {
 
     public static ImmutableList<Satz> altEindrueckSaetze(
             final SubstantivischePhrase subjekt,
+            final boolean subjektIstZuSehen,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
-        return altEindrueckSaetze(subjekt, ImmutableList.of(adjektivPhrase));
+        return altEindrueckSaetze(subjekt, subjektIstZuSehen, ImmutableList.of(adjektivPhrase));
     }
 
-    public static ImmutableList<Satz> altEindrueckSaetze(
+    static ImmutableList<Satz> altEindrueckSaetze(
             final SubstantivischePhrase subjekt,
+            final boolean subjektIstZuSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen) {
         return adjektivPhrasen.stream()
-                .flatMap(ap -> Stream.of(AUSSEHEN, DREINSCHAUEN, GUCKEN, SCHAUEN, SCHEINEN, WIRKEN)
+                .flatMap(ap -> altEindrueckPraedikate(subjektIstZuSehen).stream()
                         .map(v -> v.mit(ap).alsSatzMitSubjekt(subjekt)))
                 .collect(toImmutableList());
+    }
+
+    private static ImmutableList<VerbSubjPraedikativeAdjektivphrase> altEindrueckPraedikate(
+            final boolean subjektIstZuSehen) {
+        final ImmutableList.Builder<VerbSubjPraedikativeAdjektivphrase> res =
+                ImmutableList.builder();
+
+        if (subjektIstZuSehen) {
+            res.add(AUSSEHEN, DREINSCHAUEN, GUCKEN, SCHAUEN);
+        }
+
+        res.add(SCHEINEN, WIRKEN);
+
+        return res.build();
     }
 }

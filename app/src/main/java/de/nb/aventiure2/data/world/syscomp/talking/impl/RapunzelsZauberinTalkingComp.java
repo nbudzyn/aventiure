@@ -241,8 +241,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt, secs(10));
 
-        setSchonBegruesstMitSC(true);
-
         if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 <= -FeelingIntensity.DEUTLICH) {
             talkerBeendetGespraech();

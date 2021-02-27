@@ -64,7 +64,7 @@ class BettgestellFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 ECKE_IM_BETTGESTELL,
-                null,
+                false, null,
                 conData("auf der Bettkante",
                         "In das Bett legen",
                         secs(15),

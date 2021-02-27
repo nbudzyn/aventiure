@@ -81,9 +81,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             final CounterDao counterDao,
             final Narrator n, final World world,
             final ILocationGO location, @NonNull final OBJ gameObject) {
-        // FIXME In die Höhe werfen unter dem Bett ist nicht möglich
-
-        if (gameObject instanceof ILivingBeingGO) {
+        if (gameObject instanceof ILivingBeingGO
+                || location.storingPlaceComp().isNiedrig()) {
             return of();
         }
 

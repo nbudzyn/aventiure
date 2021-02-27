@@ -67,7 +67,7 @@ class BettFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 UNTER_DEM_BETT,
-                null,
+                true, null,
                 conData("auf dem Holzboden",
                         "Unter das Bett kriechen",
                         secs(5),

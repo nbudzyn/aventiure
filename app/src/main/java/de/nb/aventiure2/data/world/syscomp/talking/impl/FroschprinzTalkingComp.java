@@ -189,7 +189,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     .undWartest()
                     .dann());
 
-            setSchonBegruesstMitSC(true);
             gespraechspartnerBeendetGespraech();
             return;
         }
@@ -413,7 +412,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         + "und Juwelen? – Vergiss es!“")
                         .timed(secs(5)));
 
-        setSchonBegruesstMitSC(true);
         gespraechspartnerBeendetGespraech();
     }
 
@@ -536,7 +534,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);
 
-        setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();
     }
 
@@ -548,7 +545,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz("„Am Ende willst du noch in meinem Bettchen schlafen! Schäm dich, "
                         + "Frosch!“", PARAGRAPH));
 
-        setSchonBegruesstMitSC(true);
         gespraechspartnerBeendetGespraech();
     }
 
@@ -635,7 +631,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrateAlt(alt, secs(15));
 
-        setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();
     }
 
@@ -659,7 +654,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         .schonLaenger()
                         .timed(secs(15)));
 
-        setSchonBegruesstMitSC(true);
         talkerBeendetGespraech();
     }
 

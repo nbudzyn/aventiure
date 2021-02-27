@@ -75,8 +75,9 @@ public class SpielerCharakterFactory {
                 new MentalModelComp(id, db, world, ImmutableMap.of());
         return new SpielerCharakter(id,
                 locationComp,
-                mentalModelComp, new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
-                null),
+                mentalModelComp,
+                new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
+                        false, null),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

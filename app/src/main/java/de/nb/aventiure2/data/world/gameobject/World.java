@@ -97,7 +97,7 @@ public class World {
     public static final GameObjectId BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD =
             new GameObjectId(10_130);
     public static final GameObjectId RAPUNZELS_HAARE = new GameObjectId(10_140);
-    static final GameObjectId BETT_OBEN_IM_ALTEN_TURM = new GameObjectId(10_150);
+    public static final GameObjectId BETT_OBEN_IM_ALTEN_TURM = new GameObjectId(10_150);
 
     // - Movable
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
@@ -239,48 +239,48 @@ public class World {
         all.putAll(
                 spieler.create(SPIELER_CHARAKTER),
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                        Lichtverhaeltnisse.DAUERHAFT_HELL,
+                        false, Lichtverhaeltnisse.DAUERHAFT_HELL,
                         new SchlossVorhalleConnectionComp(db, timeTaker, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                        null,
+                        false, null,
                         new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                        null,
+                        false, null,
                         new ZwischenDenHeckenVorDemSchlossExternConnectionComp(db, timeTaker, n,
                                 this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
-                        null,
+                        false, null,
                         new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DEM_ALTEN_TURM,
                         StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
-                        null,
+                        false, null,
                         new VorDemTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
-                        null,
+                        false, null,
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
-                        null,
+                        false, null,
                         new AbzweigImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DER_HUETTE_IM_WALD,
                         StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
-                        null,
+                        false, null,
                         new VorDerHuetteImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                        null,
+                        false, null,
                         connection.createHuetteImWald()),
                 room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                        null,
+                        false, null,
                         connection.createHinterDerHuette()),
                 room.createImWaldBeimBrunnen(),
                 room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                        null,
+                        false, null,
                         connection.createNoConnections(UNTEN_IM_BRUNNEN)),
                 room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         StoringPlaceType.MATSCHIGER_WALDBODEN,
-                        null,
+                        false, null,
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
                 creature.createFroschprinz(),
@@ -304,13 +304,13 @@ public class World {
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,
-                        Lichtverhaeltnisse.DAUERHAFT_DUNKEL),
+                        true, Lichtverhaeltnisse.DAUERHAFT_DUNKEL),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
                         np(PL_MFN, DEF, "Hände", "Händen",
                                 HAENDE_DES_SPIELER_CHARAKTERS),
                         SPIELER_CHARAKTER, null,
                         false,
-                        HAENDE),
+                        false, HAENDE),
                 object.create(GOLDENE_KUGEL,
                         np(F, INDEF, "goldene Kugel",
                                 "goldenen Kugel", GOLDENE_KUGEL),
@@ -355,7 +355,7 @@ public class World {
                         // der SC ggf. alle relevanten Gegenstände automatisch mitnimmt.)
                         null, null,
                         false,
-                        TISCH),
+                        TISCH, false),
                 schattenDerBaeume.createVorDemAltenTurm(),
                 bettgestell.createInDerHuetteImWald(),
                 bett.createObenImAltenTurm(),
@@ -383,6 +383,7 @@ public class World {
             gameObject.scActionDone(startTimeOfUserAction);
         }
     }
+
 
     /**
      * Gibt <code>true</code> zurück falls das Game Object eines dieser anderen ist oder

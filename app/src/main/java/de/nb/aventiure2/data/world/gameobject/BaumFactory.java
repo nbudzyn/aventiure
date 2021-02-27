@@ -71,7 +71,7 @@ public class BaumFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 ASTGABEL,
-                null,
+                false, null,
                 conData("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),

@@ -255,6 +255,11 @@ public class SCTalkAction {
         return exitSt(DEFAULT_EXIT_NAME, narrationAndAction);
     }
 
+    static SCTalkAction exitSt(final SCTalkAction.Condition condition,
+                               final SCTalkAction.NarrationAndAction narrationAndAction) {
+        return exitSt(condition, DEFAULT_EXIT_NAME, narrationAndAction);
+    }
+
     static SCTalkAction exitSt(final Praedikat exitName,
                                final SCTalkAction.NarrationAndAction narrationAndAction) {
         return exitSt(ALWAYS_POSSIBLE,
@@ -276,7 +281,7 @@ public class SCTalkAction {
      * @param condition If this condition does not hold, this step is impossible
      *                  (there won't be an action for this step).
      */
-    private SCTalkAction(
+    SCTalkAction(
 
             final Type stepType,
             final Condition condition,
@@ -289,7 +294,8 @@ public class SCTalkAction {
     }
 
     /**
-     * Whether the step is possible. (If a step is impossible, there won't be an action for the step.)
+     * Whether the step is possible. (If a step is impossible, there won't be an action for the
+     * step.)
      */
     public boolean isPossible() {
         return condition.isStepPossible();

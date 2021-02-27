@@ -429,7 +429,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdverbialeAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, getPersonalpronomenSC(), altAdjPhr,
+                            gameObjectSubjekt, getPersonalpronomenSC(),
+                            true, altAdjPhr,
                             adverbialeAngaben);
                 },
                 (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
@@ -439,6 +440,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     /**
      * Gibt alternative Sätze zurück, die die gefühlsmäßige Reaktion dieses Feeling Beings
      * beschreiben, wenn der SC gehen möchte.
+     * <p>
+     * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
     public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
@@ -452,7 +455,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdverbialeAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, getPersonalpronomenSC(), altAdjPhr,
+                            gameObjectSubjekt, getPersonalpronomenSC(),
+                            true, altAdjPhr,
                             adverbialeAngaben);
                 },
                 (feelingTowardsType) -> altReaktionWennTargetGehenMoechteSaetze(
@@ -478,6 +482,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     /**
      * Gibt alternative Sätze zurück, die die durch dieses Gefühl hervorgerufene
      * Reaktion dieses Feeling Beings beschreiben, wenn der SC gehen möchte.
+     * <p>
+     * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
     private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
@@ -531,19 +537,21 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
     public ImmutableList<Satz> altEindruckAufScBeiBegegnungSaetze(
-            final SubstantivischePhrase gameObjectSubjekt) {
+            final SubstantivischePhrase gameObjectSubjekt,
+            final boolean scKannGameObjectSubjektSehen) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
                 1,
                 () -> {
                     final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
                     return FeelingsSaetzeUtil
-                            .altEindrueckSaetze(gameObjectSubjekt, adjektivPhrasen);
+                            .altEindrueckSaetze(gameObjectSubjekt, scKannGameObjectSubjektSehen,
+                                    adjektivPhrasen);
                 },
                 (feelingTowardsType) -> altEindruckBeiBegegnungSaetze(
                         gameObjectSubjekt,
                         SPIELER_CHARAKTER,
-                        getPersonalpronomenSC(),
+                        scKannGameObjectSubjektSehen, getPersonalpronomenSC(),
                         feelingTowardsType));
     }
 
@@ -644,6 +652,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * <p>
      * Die Methode garantiert, dass niemals etwas wie "du, der du..." oder
      * "du, die du..." oder "du, das du..." generiert wird.
+     * <p>
+     * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
     private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
@@ -672,10 +682,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     private ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
+            final boolean targetKannSubjektSehen,
             final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
         return type.altEindruckBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc,
-                getFeelingTowards(feelingTargetId, type),
+                targetKannSubjektSehen, getFeelingTowards(feelingTargetId, type),
                 isTargetKnown(feelingTargetId));
     }
 

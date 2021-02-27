@@ -40,6 +40,11 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     private final SpatialConnectionData spatialConnectionOutData;
 
     /**
+     * Ob die Location <i>niedrig</i> ist, so dass man z.B. hier keine Kugel hochwerfen kann
+     */
+    private boolean niedrig;
+
+    /**
      * Ermittelt, ob dieses Game Object (z.B. dieser Raum oder diese Tasche) seine
      * Lichtverhältnisse eigenständig festlegt. Beispielsweise ist ein Raum viellicht
      * immer beleuchtet und eine Tasche vielleicht immer dunkel (oder dunkel, wenn
@@ -60,16 +65,18 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     public StoringPlaceComp(final GameObjectId id,
                             final TimeTaker timeTaker,
                             @Nullable final LocationComp locationComp,
-                            final StoringPlaceType locationMode) {
-        this(id, timeTaker, locationComp, locationMode, null);
+                            final StoringPlaceType locationMode,
+                            final boolean niedrig) {
+        this(id, timeTaker, locationComp, locationMode, niedrig, null);
     }
 
     public StoringPlaceComp(final GameObjectId id,
                             final TimeTaker timeTaker,
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
+                            final boolean niedrig,
                             final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseErmittler) {
-        this(id, timeTaker, locationComp, locationMode, lichtverhaeltnisseErmittler,
+        this(id, timeTaker, locationComp, locationMode, niedrig, lichtverhaeltnisseErmittler,
                 null, null);
     }
 
@@ -77,6 +84,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             final TimeTaker timeTaker,
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
+                            final boolean niedrig,
                             @Nullable
                             final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseErmittler,
                             @Nullable final SpatialConnectionData spatialConnectionInData,
@@ -85,14 +93,18 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         this.timeTaker = timeTaker;
         this.locationComp = locationComp;
         this.locationMode = locationMode;
+        this.niedrig = this.niedrig;
         this.lichtverhaeltnisseErmittler = lichtverhaeltnisseErmittler;
         this.spatialConnectionInData = spatialConnectionInData;
         this.spatialConnectionOutData = spatialConnectionOutData;
     }
 
-
     public StoringPlaceType getLocationMode() {
         return locationMode;
+    }
+
+    public boolean isNiedrig() {
+        return niedrig;
     }
 
     /**
