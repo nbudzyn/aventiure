@@ -35,7 +35,6 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -768,16 +767,11 @@ public class RapunzelReactionsComp
 
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und ergänzen)
-            //if (sc unter dem Bett){
-            //  "Du hörst wie ...";
-            //} else
-            if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-                n.narrateAlt(
-                        altNeueSaetze(
-                                altDannHaareFestbinden(getDescription(true)).stream()
-                                        .flatMap(d -> d.altTextDescriptions().stream())
-                                        .map(TextDescription::toSingleKonstituente)
-                        ), secs(10));
+            //  "Du hörst, wie..."
+            if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
+                    && talkingComp.scUndRapunzelKoennenEinanderSehen()) {
+                n.narrateAlt(altDannHaareFestbinden(getDescription(true)), secs(10));
+
             }
 
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
@@ -798,6 +792,7 @@ public class RapunzelReactionsComp
         }
 
         onTimePassed_RapunzelMoechteNichtSingen();
+
     }
 
     private boolean rapunzelMoechteSingen(final AvDateTime now) {
