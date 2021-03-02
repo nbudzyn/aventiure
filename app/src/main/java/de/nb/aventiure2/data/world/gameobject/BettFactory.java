@@ -68,7 +68,7 @@ public class BettFactory {
 
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 UNTER_DEM_BETT,
-                true, null,
+                true, Lichtverhaeltnisse.DAUERHAFT_DUNKEL,
                 conData("auf dem Holzboden",
                         "Unter das Bett kriechen",
                         secs(5),

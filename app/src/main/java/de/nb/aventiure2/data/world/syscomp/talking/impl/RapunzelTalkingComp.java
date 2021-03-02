@@ -1233,32 +1233,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                 && feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 >= -FeelingIntensity.MERKLICH) {
-            if (loadZauberin().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-                final Nominalphrase rapunzelDesc = getDescription(true);
-
-                // Hier kommen wir nur hin, wenn Rapunzel und SC einander sehen können, wenn
-                // der SC also nicht unter dem Bett liegt.
-                final ImmutableList<Satz> altReaktionSaetze
-                        = feelingsComp.altReaktionWennTargetGehenMoechteSaetze(rapunzelDesc);
-
-                n.narrateAlt(altNeueSaetze(
-                        altReaktionSaetze,
-                        ImmutableList.of(
-                                joinToAltKonstituentenfolgen(
-                                        SENTENCE,
-                                        rapunzelDesc.persPron().nomK(),
-                                        ImmutableList.of(
-                                                "schaut noch einmal vorsichtig aus dem Turmfenster",
-                                                "blickt schnell noch einmal aus dem Fenster",
-                                                "wirft noch einen Blick aus dem Fenster",
-                                                "wirft noch einen Blick aus dem Turmfenster")),
-                                "Noch ein kurzer Blick aus dem Fenster…")),
-                        secs(10));
-
-                narrateOWehZauberinKommt();
-
-                stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
-
+            if (loadZauberin().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)
+                    && !loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
+                rapunzelGibtSCNochZeitZumVerstecken();
                 return;
             }
 
@@ -1302,6 +1279,31 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
         // Ggf. steigt die Zauberin als Reaktion daran herunter
+    }
+
+    private void rapunzelGibtSCNochZeitZumVerstecken() {
+        final Nominalphrase rapunzelDesc = getDescription(true);
+
+        final ImmutableList<Satz> altReaktionSaetze
+                = feelingsComp.altReaktionWennTargetGehenMoechteSaetze(rapunzelDesc);
+
+        n.narrateAlt(altNeueSaetze(
+                altReaktionSaetze,
+                ImmutableList.of(
+                        joinToAltKonstituentenfolgen(
+                                SENTENCE,
+                                rapunzelDesc.persPron().nomK(),
+                                ImmutableList.of(
+                                        "schaut noch einmal vorsichtig aus dem Turmfenster",
+                                        "blickt schnell noch einmal aus dem Fenster",
+                                        "wirft noch einen Blick aus dem Fenster",
+                                        "wirft noch einen Blick aus dem Turmfenster")),
+                        "Noch ein kurzer Blick aus dem Fenster…")),
+                secs(10));
+
+        narrateOWehZauberinKommt();
+
+        stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
     @NonNull

@@ -94,15 +94,49 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Der Wind pfeift dir ums Gesicht
     //  In der Ferne hörst du Donnergrollen
     //  Hat es eben geblitzt?
+    //  "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
     //  Ein Sturm zieht auf
     //  Hoffentlich bleibt es wenigstens trocken
     //  (Kein Regen - keine nassen Klamotten o.Ä.)
+    //  "Die Äste biegen sich"
+    //  "das Gezweig"
+    //  "es kommt ein starker Wind"
+    //  "es weht beständig ein harter Wind"
+    //  "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
+    //  "der Wind saust"
     //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
     //  Der Sturm biegt die Bäume.
+    //  "darin bist du vor Wind und Wetter geschützt"
+    //  "Dich friert" "Um Mitternacht geht der Wind so kalt, dass
+    //  dir nicht warm werden will"
+    //  "du frierst am ganzen Leibe"
+    //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
+    //  "du reibst die Hände"
+    //  "du bist so erfroren"
+    //  "Sobald die Sonne wieder warm scheint, gehst du..."
+    //  "dich wärmen"
+    //  "Es ist warmes Wetter"
+    //  "der Tag ist warm, die Sonne sticht"
+    //  "warmes Wetter"
+    //  "du erwärmst dich"
+    //  "du schmachtest in der Hitze"
+    //  "Die Hitze wird drückender, je näher der Mittag kommt"
+    //  "Es wird dir ganz heiß"
+    //  "von der Hitze des Tages ermüdet"
+    //  "die Sonnenhitze brennt gar zu stark"
+    //  "du bist von der Sonnenhitze müde"
+    //  "Sturm"
+    //  "es stürmt", "du findest darin Schutz"
+    //  "der Wind rauscht draußen in den Bäumen"
+    //  "Weil aber das Wetter so schlecht geworden, und Wind und Regen stürmte,
+    //   kannst du nicht weiter und kehrst [...] ein."
     //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
     //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
     //  wäre schön.
     //  Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich ab.
+    //  "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein Blättchen mehr"
+    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
+    //  "Kein Wind weht"
     //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
     //  Das Wetter müsste quasi eine "Tendenz" erhalten, nach der es sich langsam
     //  entwickelt. Und man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
@@ -121,8 +155,13 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Holz herum, kleine und große Äste.
     // - Du klaubst Holz auf 
     // - Holz in armlange Stücke brechen
+    // - "du sammelst Holz"
 
     // FIXME Binsen, Seil flechten...
+    // - "du rupfst Binsen und flichst ein weiches Seil daraus"
+    // - "Binsenseil"
+    // - "Sprossen"
+    // - "steigst die Leiter herauf"
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {

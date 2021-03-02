@@ -12,6 +12,8 @@ import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
 /**
  * Eine Teil-Geschichte (z.B. ein einzelnes Märchen). Besteht aus einzelnen
  * Schritten ({@link IStoryNode}s).
+ * <p>
+ * Storys sind in gewisser Weise mit "Missionen" vergleichbar.
  */
 public enum Story {
     // FIXME Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?

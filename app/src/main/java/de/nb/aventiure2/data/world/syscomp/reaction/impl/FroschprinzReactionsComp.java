@@ -300,6 +300,14 @@ public class FroschprinzReactionsComp
         //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
         //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
         //  und einen Tipp!
+        // "Vor dem Schloss sind viele Leute zzsammengekimmen.
+        //  Ein einfach gekleideter Mann spricht dich von der Seite an: Ein Prinz azs einen
+        //  fernen Land!
+        // Ich habe erzählen hören, er sei verzaubert gewesen. Ein Unfug, wenn Ihr mich fragt!
+        // Aber sein Vatwr wird überglücklich sein, dass er wieder aufgetaucht ist!
+        // Du bist kurz in Gedanken. Als du dich ihm zuwwnden Willsr, ist der Mann schon in der
+        // Menge verscgwunden.
+
         locationComp.narrateAndUnsetLocation();
     }
 

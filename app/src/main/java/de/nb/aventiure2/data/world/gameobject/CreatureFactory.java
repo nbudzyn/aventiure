@@ -209,6 +209,7 @@ class CreatureFactory {
                         KNOWN_FROM_LIGHT)
                 .put(RAPUNZELS_FREIHEITSWUNSCH, KNOWN_FROM_LIGHT)
                 .put(OBEN_IM_ALTEN_TURM, KNOWN_FROM_LIGHT)
+                .put(BETT_OBEN_IM_ALTEN_TURM, KNOWN_FROM_LIGHT)
                 .put(TAGESZEIT, KNOWN_FROM_LIGHT)
                 .build();
     }

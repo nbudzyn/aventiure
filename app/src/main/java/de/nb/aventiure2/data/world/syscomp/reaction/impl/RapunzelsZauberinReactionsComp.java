@@ -15,7 +15,6 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
@@ -401,19 +400,6 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
         stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM);
-
-        if (((IFeelingBeingGO) loadRapunzel()).feelingsComp().getFeelingTowards(
-                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG) <= -FeelingIntensity.MERKLICH) {
-            n.narrate(neuerSatz(
-                    "„Unter meinem Bett liegt ein Einbrecher“, hörst du",
-                    world.getDescription(RAPUNZEL).akkK(),
-                    "sagen").timed(secs(5)));
-
-            zauberinZaubertVergessenszauber();
-            return;
-        }
-
-        return;
     }
 
     private void onRapunzelStateChangedAufDemRueckwegVonRapunzel(
@@ -455,7 +441,7 @@ public class RapunzelsZauberinReactionsComp
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
     }
 
-    private void zauberinZaubertVergessenszauber() {
+    void zauberinZaubertVergessenszauber() {
         narrateUnmittelbarerVergessenszauber();
 
         // Zauberin kann den Spieler nicht mehr ausstehen
@@ -484,15 +470,14 @@ public class RapunzelsZauberinReactionsComp
                     "die magere Frau",
                     "unters Bett – und dir direkt in die Augen. Du bist wie",
                     "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau",
-                    "murmeln etwas…")
+                    "murmelt etwas…")
                     .timed(mins(5)));
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut "
-                    + "zum Fenster "
-                    + "herein. Ihr Blick fällt auf dich – und mit einem Mal "
-                    + "sieht sie direkt in die Augen. Du bist wie "
-                    + "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau "
-                    + "scheint etwas zu murmeln…")
+            n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut",
+                    "zum Fenster herein. Ihr Blick fällt auf dich – und mit einem Mal",
+                    "sieht sie dir direkt in die Augen. Du bist wie",
+                    "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau",
+                    "scheint etwas zu murmeln…")
                     .timed(mins(5)));
         } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "

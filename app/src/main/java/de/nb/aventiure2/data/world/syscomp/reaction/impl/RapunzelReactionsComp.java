@@ -18,8 +18,10 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
@@ -169,12 +171,12 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
             onSCEnter_VorDemAltenTurm(from, to);
             return;
         }
 
-        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
             onSCEnter_ObenImAltenTurm(from, to);
             return;
         }
@@ -289,11 +291,17 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm(@Nullable final ILocationGO from,
                                            final ILocationGO to) {
-        if (from != null && from.is(OBEN_IM_ALTEN_TURM)
-                && to.is(BETT_OBEN_IM_ALTEN_TURM)
-                && !stateComp.hasState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            onSCEnter_UnterBettObenImAltenTurm_unnuetz();
+        if (!world.isOrHasRecursiveLocation(from, BETT_OBEN_IM_ALTEN_TURM)
+                && to.is(BETT_OBEN_IM_ALTEN_TURM)) {
+            if (!stateComp.hasState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+                onSCEnter_UnterBettObenImAltenTurm_unnuetz();
+                return;
+            }
 
+            return;
+        }
+
+        if (LocationSystem.haveSameOuterMostLocation(from, to)) {
             return;
         }
 
@@ -548,9 +556,22 @@ public class RapunzelReactionsComp
     }
 
     private void onZauberinEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM) &&
-                from != null && from.is(VOR_DEM_ALTEN_TURM) &&
-                world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(from, VOR_DEM_ALTEN_TURM)
+                && world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
+            onZauberinEnterFromVorTurmToOben();
+            return;
+        }
+
+        if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)
+                && to.is(VOR_DEM_ALTEN_TURM)
+                && stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            rapunzelZiehtHaareWiederHoch();
+            return;
+        }
+    }
+
+    private void onZauberinEnterFromVorTurmToOben() {
+        if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             rapunzelZiehtHaareWiederHoch();
 
             if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
@@ -560,16 +581,21 @@ public class RapunzelReactionsComp
                         .timed(secs(5)));
 
                 world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELRUF);
+                return;
             }
 
-            return;
-        }
+            if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)
+                    && feelingsComp.getFeelingTowards(
+                    SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG) <= -FeelingIntensity.MERKLICH) {
+                n.narrate(neuerSatz(
+                        "„Unter meinem Bett liegt ein Einbrecher“, hörst du",
+                        world.getDescription(RAPUNZEL).akkK(),
+                        "sagen").timed(secs(5)));
 
-        if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
-                from != null && world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM) &&
-                to.is(VOR_DEM_ALTEN_TURM)) {
-            rapunzelZiehtHaareWiederHoch();
-            return;
+                ((RapunzelsZauberinReactionsComp) loadZauberin().reactionsComp())
+                        .zauberinZaubertVergessenszauber();
+                return;
+            }
         }
     }
 
@@ -589,7 +615,8 @@ public class RapunzelReactionsComp
     private void rapunzelZiehtHaareWiederHoch() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             n.narrateAlt(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
-        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
+                && talkingComp.scUndRapunzelKoennenEinanderSehen()) {
             n.narrateAlt(altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm());
         }
 
@@ -708,19 +735,11 @@ public class RapunzelReactionsComp
             return;
         }
 
-        // Sonderfall: Rapunzel verzögert das Haare-Herunterlassen
         if (loadSC().locationComp().hasLocation(OBEN_IM_ALTEN_TURM) &&
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                         >= -FeelingIntensity.MERKLICH) {
             if (!loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
-                talkingComp.narrateOWehZauberinKommt();
-
-                rapunzelSchiebtFremdeGegenstaendeUntersBett();
-
-                loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
-                        ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
-
-                stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
+                rapunzelVerzoegertHaareHerunterlassen();
                 return;
             }
         }
@@ -733,13 +752,24 @@ public class RapunzelReactionsComp
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
+    private void rapunzelVerzoegertHaareHerunterlassen() {
+        talkingComp.narrateOWehZauberinKommt();
+
+        rapunzelSchiebtFremdeGegenstaendeUntersBett();
+
+        loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
+                ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
+
+        stateComp.narrateAndSetState(PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN);
+    }
+
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     void rapunzelSchiebtFremdeGegenstaendeUntersBett() {
         final ImmutableList<LOC_DESC> gegenstaendeFuerUntersBett =
                 world.<LOC_DESC>loadDescribableNonLivingMovableInventory(OBEN_IM_ALTEN_TURM)
                         .stream()
-                        .filter(o -> !o.locationComp()
-                                .hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM))
+                        .filter(o -> !o.locationComp().hasRecursiveLocation(
+                                BETT_OBEN_IM_ALTEN_TURM, SPIELER_CHARAKTER, RAPUNZEL))
                         .collect(toImmutableList());
         if (gegenstaendeFuerUntersBett.isEmpty()) {
             return;
@@ -819,15 +849,10 @@ public class RapunzelReactionsComp
         // FIXME Alle Reaktionen der Zauberin, wenn SC unter dem Bett ist
         //  (wird evtl. bemerkt)
 
-        // FIXME Alle Reaktionen von Rapunzel, wenn SC unter dem Bett ist
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
-            // FIXME UNTER DEM BETT (Alle Verwendungen von OBEN_IM_ALTEN_TURM suchen und
-            //  ergänzen)
-            //  "Du hörst, wie..."
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                     && talkingComp.scUndRapunzelKoennenEinanderSehen()) {
                 n.narrateAlt(altDannHaareFestbinden(getDescription(true)), secs(10));
-
             }
 
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
@@ -1029,9 +1054,11 @@ public class RapunzelReactionsComp
         }
     }
 
+    @SuppressWarnings("unchecked")
     @NonNull
-    private ILocatableGO loadZauberin() {
-        return (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
+    private <Z extends ILocatableGO & IResponder>
+    Z loadZauberin() {
+        return (Z) world.load(RAPUNZELS_ZAUBERIN);
     }
 
     void forgetAll() {
