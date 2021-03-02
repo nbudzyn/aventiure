@@ -452,8 +452,7 @@ public class RapunzelsZauberinReactionsComp
 
         // Die Zauberin ist schon weit auf dem Rückweg
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
-        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+        zauberinNichtImTurmBeginntRueckweg();
 
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
@@ -621,55 +620,63 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // IDEA Wenn der World-Tick ungewöhnlich lang war, passiert das hier
+        // Zauberin ist unten am alten Turm angekommen.
+
+        // IDEA Wenn der World-Tick ungewöhnlich lang war, passiert das Nachfolgende
         //  alles zu spät.
         //  Denkbare Lösungen:
         //  - Durch ein zentrales Konzept beheben (World-Ticks nie zu lang)
         //  - Zeit zwischen Ankunft und now von der Rapunzel-Besuchszeit abziehen
         //    und irgendwo (wo? hier in der Reactions-Comp?) speichern, wann
         //    der Besuch vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
+        onTimePassed_AufDemWegZuRapunzel_UntenVorTurmAngekommen(now, wasMovingBefore);
+    }
 
-        // Zauberin ist unten am alten Turm angekommen.
+    private void onTimePassed_AufDemWegZuRapunzel_UntenVorTurmAngekommen(final AvDateTime now,
+                                                                         final boolean wasMovingBefore) {
+        if (!wasMovingBefore
+                // Verhindern, dass die Zauberin sofort wieder umdreht. Das führt zu unsinnigen
+                // Kombinationen in der Art "Die magere Frau kommt dir hinterher. Sie kommt auf
+                // dich zu und geht an dir vorbei"
+                && !now.getTime()
+                .isBefore(SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH.rotateMinus(BESUCHSDAUER))) {
+            // Gegen Abend geht die Zauberin wieder zurück.
+            zauberinNichtImTurmBeginntRueckweg();
+            return;
+        }
+
         if (
-            // Wenn der SC nicht in der Gegend ist...
-                !loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)
-                        // ...und die Zauberin nicht gesehen hat, dass der Spieler sich
-                        // zwischen die Bäume gestellt hat.
-                        && !mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
+            // Wenn der SC vor dem Turm steht...
+                loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM)
+                        // ...oder die Zauberin gesehen hat, wie der Spieler sich
+                        // zwischen die Bäume gestellt hat
+                        || mentalModelComp.hasAssumedLocation(SPIELER_CHARAKTER,
                         VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
         ) {
-            if (loadRapunzel().stateComp()
-                    .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-                zauberinSteigtAnDenHaarenZuRapunzelHinauf();
-                return;
-            }
-
-            zauberinRuftRapunzelspruchUndRapunzelReagiert();
+            // Zauberin wartet, dass der SC weggeht.
             return;
         }
 
-        //  Ansonsten wartet die Zaubberin vor dem Turm bis gegen Abend.
-        if (now.getTime().isBefore(SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH.rotateMinus(BESUCHSDAUER))) {
-            // FIXME Wenn der Spieler weg ist und Rapunzel trotz einem Ruf
-            //  die Haare nicht heruntegelassen hat, ruft die Zauberin noch ein paar Mal.
-
-            return;
-        }
-
-        // Geht aber spätestens dann wieder zurück.
-        if (wasMovingBefore) {
-            // Verhindern, dass die Zauberin sofort wieder umdreht. Das führt zu unsinnigen
-            // Kombinationen in der Art "Die magere Frau kommt dir hinterher. Sie kommt auf
-            // dich zu und geht an dir vorbei"
-            return;
-        }
-
-        // FIXME Am Ende geht sie, wenn Rapunzel trotz Rufens die Haare nicht
+        // FIXME Am Ende geht die Zauberin, wenn Rapunzel trotz Rufens die Haare nicht
         //  heruntergelassen hat, davon aus, dass Rapunzel befreit wurde.
         //  (Oder der SC wird zuvor enttarnt.)
 
+        zauberinSteigtNachMoeglichkeitZuRapunzelHinauf();
+    }
+
+    private void zauberinNichtImTurmBeginntRueckweg() {
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+    }
+
+    private void zauberinSteigtNachMoeglichkeitZuRapunzelHinauf() {
+        if (loadRapunzel().stateComp()
+                .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
+            zauberinSteigtAnDenHaarenZuRapunzelHinauf();
+            return;
+        }
+
+        zauberinRuftRapunzelspruchUndRapunzelReagiert();
     }
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {
