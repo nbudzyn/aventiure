@@ -242,19 +242,19 @@ class CreatureFactory {
                         hours(6),
                         createDefaultFeelingsTowardsForRapunzelsZauberin(),
                         createInitialFeelingsTowardsForRapunzelsZauberin());
-        final RapunzelsZauberinTalkingComp talkingComp =
-                new RapunzelsZauberinTalkingComp(
-                        db, n, timeTaker, world, locationComp, stateComp,
-                        feelingsComp, false);
         final MovementComp movementComp =
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
                         new RapunzelsZauberinMovementNarrator(n, world),
                         locationComp,
-                        talkingComp,
                         1,
                         // Muss zum Zustand der Zauberin passen!
                         null);
+        final RapunzelsZauberinTalkingComp talkingComp =
+                new RapunzelsZauberinTalkingComp(
+                        db, n, timeTaker, world, locationComp, stateComp,
+                        feelingsComp, movementComp, false);
+        movementComp.setConversationable(talkingComp);
         return new MovingTalkingMentalModelReactionsCreature<>(RAPUNZELS_ZAUBERIN,
                 descriptionComp,
                 locationComp,
@@ -264,7 +264,7 @@ class CreatureFactory {
                 talkingComp,
                 mentalModelComp,
                 new RapunzelsZauberinReactionsComp(db.counterDao(), timeTaker, n, world,
-                        stateComp, locationComp, mentalModelComp, feelingsComp, movementComp,
+                        stateComp, locationComp, mentalModelComp, movementComp,
                         talkingComp));
     }
 

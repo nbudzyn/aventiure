@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
+import de.nb.aventiure2.data.world.syscomp.movement.IConversationable;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -38,7 +39,7 @@ import static java.util.Objects.requireNonNull;
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD>
-        implements IScBegruessable {
+        implements IScBegruessable, IConversationable {
     private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
 
@@ -169,6 +170,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         talkingTo.talkingComp().unsetTalkingTo(!esIstDerTalkerDerDasGespraechBeendet);
     }
 
+    @Override
     public boolean isInConversation() {
         return getTalkingTo() != null;
     }

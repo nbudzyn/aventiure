@@ -20,7 +20,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -78,8 +77,8 @@ public class MovementComp
     @Nullable
     private final GameObjectId initialTargetLocationId;
 
-    @Nullable
-    private final AbstractTalkingComp talkingComp;
+    private IConversationable conversationable = new NonConversationable();
+
     /**
      * Relative Geschwindigkeit. 1 = Standard-Geschwindigkeit (Geschwindigkeit des SC, der
      * sich aufkennt)
@@ -95,7 +94,6 @@ public class MovementComp
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final IMovementNarrator movementNarrator,
                         final LocationComp locationComp,
-                        @Nullable final AbstractTalkingComp talkingComp,
                         final float relativeVelocity,
                         @Nullable final GameObjectId initialTargetLocationId) {
         super(gameObjectId, db.movementDao());
@@ -103,9 +101,12 @@ public class MovementComp
         this.spatialConnectionSystem = spatialConnectionSystem;
         this.movementNarrator = movementNarrator;
         this.locationComp = locationComp;
-        this.talkingComp = talkingComp;
         this.relativeVelocity = relativeVelocity;
         this.initialTargetLocationId = initialTargetLocationId;
+    }
+
+    public void setConversationable(final IConversationable conversationable) {
+        this.conversationable = conversationable;
     }
 
     @Override
@@ -161,7 +162,7 @@ public class MovementComp
      * fortgesetzt werden soll.
      */
     private boolean stayPaused() {
-        return talkingComp != null && talkingComp.isInConversation();
+        return conversationable.isInConversation();
     }
 
     /**

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -9,17 +11,28 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.entryReEntrySt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
@@ -29,6 +42,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.IHR_ZIEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
@@ -48,6 +62,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private final LocationComp locationComp;
     private final RapunzelsZauberinStateComp stateComp;
     private final FeelingsComp feelingsComp;
+    private final MovementComp movementComp;
 
     public RapunzelsZauberinTalkingComp(final AvDatabase db,
                                         final Narrator n,
@@ -56,11 +71,13 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                         final LocationComp locationComp,
                                         final RapunzelsZauberinStateComp stateComp,
                                         final FeelingsComp feelingsComp,
+                                        final MovementComp movementComp,
                                         final boolean initialSchonBegruesstMitSC) {
         super(RAPUNZELS_ZAUBERIN, db, timeTaker, n, world, initialSchonBegruesstMitSC);
         this.locationComp = locationComp;
         this.stateComp = stateComp;
         this.feelingsComp = feelingsComp;
+        this.movementComp = movementComp;
     }
 
     @Override
@@ -83,9 +100,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                 this::frageNachZiel_ImmReEntryNSCHatteGespraechBeendet)
                 );
             case BEI_RAPUNZEL_OBEN_IM_TURM:
-                // FIXME Kann man die Zauberin oben im Turm ansprechen? Wie reagiert
-                //  sie?
-                return ImmutableList.of();
+                return ImmutableList.of(
+                        entryReEntrySt(ANSPRECHEN, this::ansprechenObenImTurm));
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Man kann die  Zauberin ansprechen, nachdem Rapunzel befreit wurde
                 return ImmutableList.of();
@@ -102,6 +118,15 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         }
 
         zauberinReagiertAufAnsprechen();
+    }
+
+    private void ansprechenObenImTurm() {
+        n.narrate(neuerSatz(PARAGRAPH,
+                "„Hallo“, rufst du auf einmal, „hier bin ich! Unter dem Bett!“")
+                .timed(secs(5)));
+        setTalkingTo(SPIELER_CHARAKTER);
+
+        zauberinZaubertVergessenszauber();
     }
 
     private void scSprichtAnBereitsBegruesst() {
@@ -245,5 +270,126 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 <= -FeelingIntensity.DEUTLICH) {
             talkerBeendetGespraech();
         }
+    }
+
+    public void zauberinZaubertVergessenszauber() {
+        narrateUnmittelbarerVergessenszauber();
+
+        // Zauberin kann den Spieler nicht mehr ausstehen
+        feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
+                ZUNEIGUNG_ABNEIGUNG, -3, FeelingIntensity.SEHR_STARK);
+
+        scUndRapunzelVergessenAlles();
+
+        // Die Zauberin ist schon weit auf dem Rückweg
+        locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
+        zauberinNichtImTurmBeginntRueckweg();
+
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
+            loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME);
+        }
+
+        narrateNachDemVergessenszauber();
+    }
+
+    private void narrateUnmittelbarerVergessenszauber() {
+        if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
+            // Rapunzel hat den SC verraten
+            n.narrate(du("hörst", "und fühlst Schrite. Dann schaut",
+                    "die magere Frau",
+                    "unters Bett – und dir direkt in die Augen. Du bist wie",
+                    "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau",
+                    "murmelt etwas…")
+                    .timed(mins(5)));
+        } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            n.narrate(neuerSatz("Jetzt geht alles ganz schnell. Die magere Frau schaut",
+                    "zum Fenster herein. Ihr Blick fällt auf dich – und mit einem Mal",
+                    "sieht sie dir direkt in die Augen. Du bist wie",
+                    "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau",
+                    "scheint etwas zu murmeln…")
+                    .timed(mins(5)));
+        } else if (locationComp.hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            n.narrate(neuerSatz(PARAGRAPH, "Jetzt schaut oben aus dem Turmfenster die "
+                    + "magere Frau heraus. "
+                    + "Kurz sucht ihr Blick umher, dann sieht sie dich direkt an. Ihre Augen "
+                    + "sind - du kannst deinen Blick gar nicht abwenden. Ihr Mund formt Worte, "
+                    + "die du nicht verstehst, und du bekommst es mit der Angst zu tun…")
+                    .timed(mins(5)));
+        } else {
+            n.narrateAlt(mins(5),
+                    neuerSatz(PARAGRAPH, "Die magere Frau sieht dich mit einem Mal "
+                            + "direkt an. Ihre Augen sind - du kannst deinen Blick "
+                            + "gar nicht abwenden. Dann scheint sie etwas zu murmeln - doch nicht "
+                            + "etwa einen Zauberspruch? -"),
+                    neuerSatz(PARAGRAPH, "Plötzlich sieht dir die Frau unmittelbar in",
+                            "die Augen. Du bist wie gebannt und hörst sie fremdartige Worte",
+                            "murmeln - will sie dich etwa verhexen?"));
+        }
+    }
+
+    private void scUndRapunzelVergessenAlles() {
+        // Spieler wird verzaubert und vergisst alles.
+        unsetTalkingTo(true);
+        loadRapunzel().talkingComp().unsetTalkingTo(true);
+        loadSC().talkingComp().unsetTalkingTo(true);
+        loadSC().mentalModelComp().unsetAssumedLocations(
+                RAPUNZEL, RAPUNZELS_ZAUBERIN);
+        loadSC().memoryComp().narretAndForget(
+                RAPUNZEL, RAPUNZELS_ZAUBERIN, RAPUNZELS_GESANG, RAPUNZELS_HAARE, RAPUNZELRUF,
+                SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT,
+                OBEN_IM_ALTEN_TURM, BETT_OBEN_IM_ALTEN_TURM,
+                RAPUNZELS_NAME,
+                RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU,
+                RAPUNZELS_FREIHEITSWUNSCH);
+        loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
+        loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
+                FeelingIntensity.NUR_LEICHT, hours(1)
+        );
+        counterDao.reset(VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET);
+        counterDao.reset(BettFactory.Counter.class);
+
+        // Auch Rapunzel wird verzaubert und vergisst den Spieler!
+        loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,
+                SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
+        loadRapunzel().talkingComp().forgetAll();
+        ((RapunzelReactionsComp) loadRapunzel().reactionsComp()).forgetAll();
+
+        // Rapunzel ist still
+        loadRapunzel().stateComp().narrateAndSetState(RapunzelState.NORMAL);
+    }
+
+    public void zauberinNichtImTurmBeginntRueckweg() {
+        stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
+        movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+    }
+
+    private void narrateNachDemVergessenszauber() {
+        final String ortsbeschreibung;
+        if (loadSC().locationComp().hasLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+            ortsbeschreibung = "sitzt im Unterholz vor dem alten Turm";
+        } else {
+            ortsbeschreibung = "stehst ganz allein vor dem alten Turm";
+        }
+
+        n.narrateAlt(altNeueSaetze(CHAPTER,
+                ImmutableList.of("Auf einmal", "Plötzlich", "Jetzt"),
+                "ist alles wie weggeblasen. Du",
+                ortsbeschreibung,
+                "und fühlst dich etwas verwirrt: Was hattest du "
+                        + "eigentlich gerade vor? Ob der Turm wohl "
+                        + "bewohnt ist? Niemand ist zu sehen")
+                .timed(secs(15)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    private <R extends
+            IHasMemoryGO &
+            IHasStateGO<RapunzelState> &
+            ITalkerGO<RapunzelTalkingComp> &
+            IResponder>
+    R loadRapunzel() {
+        return (R) world.load(RAPUNZEL);
     }
 }

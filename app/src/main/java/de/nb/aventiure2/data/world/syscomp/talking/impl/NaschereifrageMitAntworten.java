@@ -92,7 +92,6 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
 
         stateComp.narrateAndSetState(NORMAL);
 
-        scBegruessable.setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
     }
 
@@ -110,8 +109,6 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
                 0.2f, FeelingIntensity.DEUTLICH);
 
         stateComp.narrateAndSetState(NORMAL);
-
-        scBegruessable.setSchonBegruesstMitSC(true);
     }
 
     @Override

@@ -357,7 +357,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "wieder heraufholen.“", PARAGRAPH)
                 .timed(secs(15)));
 
-        setSchonBegruesstMitSC(true);
         stateComp.narrateAndSetState(HAT_FORDERUNG_GESTELLT);
     }
 
@@ -375,8 +374,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz(PARAGRAPH, "„Frosch“, sprichst du ihn an, „steht "
                         + "dein Angebot noch?“")
                         .timed(secs(5)));
-
-        setSchonBegruesstMitSC(true);
 
         n.narrate(
                 neuerSatz(PARAGRAPH,

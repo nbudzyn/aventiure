@@ -31,7 +31,9 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -489,7 +491,6 @@ public class RapunzelReactionsComp
 
             if (!alt.isEmpty()) {
                 n.narrateAlt(alt);
-                talkingComp.setSchonBegruesstMitSC(true);
                 talkingComp.setTalkingTo(SPIELER_CHARAKTER);
                 return;
             }
@@ -592,8 +593,7 @@ public class RapunzelReactionsComp
                         world.getDescription(RAPUNZEL).akkK(),
                         "sagen").timed(secs(5)));
 
-                ((RapunzelsZauberinReactionsComp) loadZauberin().reactionsComp())
-                        .zauberinZaubertVergessenszauber();
+                loadZauberin().talkingComp().zauberinZaubertVergessenszauber();
                 return;
             }
         }
@@ -1056,12 +1056,12 @@ public class RapunzelReactionsComp
 
     @SuppressWarnings("unchecked")
     @NonNull
-    private <Z extends ILocatableGO & IResponder>
+    private <Z extends ILocatableGO & IResponder & ITalkerGO<RapunzelsZauberinTalkingComp>>
     Z loadZauberin() {
         return (Z) world.load(RAPUNZELS_ZAUBERIN);
     }
 
-    void forgetAll() {
+    public void forgetAll() {
         counterDao.reset(RapunzelTalkingComp.Counter.class);
     }
 }
