@@ -112,7 +112,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObjIndirekterFragesatz.F
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "unchecked"})
 public class RapunzelTalkingComp extends AbstractTalkingComp {
-
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public
     enum Counter {
@@ -474,12 +473,21 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
 
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH) {
-            alt.addAll(altNeueSaetze(
-                    anaph.nomK(),
-                    "heißt dich",
-                    altEindruckAdvAngaben.stream()
-                            .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())),
-                    "willkommen"));
+            if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
+                alt.addAll(altNeueSaetze(
+                        anaph.nomK(),
+                        "heißt dich",
+                        altEindruckAdvAngaben.stream()
+                                .map(a -> a.getDescription(anaph.getPerson(), anaph.getNumerus())),
+                        "willkommen"));
+            } else {
+                alt.addAll(altNeueSaetze(
+                        anaph.nomK(),
+                        "begrüßt dich",
+                        altEindruckAdvAngaben.stream()
+                                .map(a -> a
+                                        .getDescription(anaph.getPerson(), anaph.getNumerus()))));
+            }
         }
 
         if (zuneigungTowardsSC >= -FeelingIntensity.MERKLICH
@@ -565,8 +573,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "„Oh, ihr seid es wieder.“",
                         SENTENCE,
                         altReaktionSaetze, PARAGRAPH));
-                alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder ",
-                        "vorbeischaut! Willkommen.“ –"));
+                if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
+                    alt.add(neuerSatz("„Ich hatte mich schon gefragt, ob ihr mal wieder ",
+                            "vorbeischaut! Willkommen.“ –"));
+                }
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.MERKLICH) {
             alt.add(neuerSatz("„Ah, hallo! – Willkommen!“",
@@ -596,11 +606,13 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 alt.add(neuerSatz("„Schön, dich wiederzusehen!“, freut",
                         anaph.nomK(),
                         "sich"));
-                alt.add(neuerSatz(
-                        "„Hast du den Falken gesehen?“, sprudelt",
-                        anaph.nomK(),
-                        "hervor. „Die armen Rotkehlchen!“ Du reagierst sehr verständnisvoll")
-                        .dann());
+                if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
+                    alt.add(neuerSatz(
+                            "„Hast du den Falken gesehen?“, sprudelt",
+                            anaph.nomK(),
+                            "hervor. „Die armen Rotkehlchen!“ Du reagierst sehr verständnisvoll")
+                            .dann());
+                }
             }
         } else if (zuneigungTowardsSC == FeelingIntensity.STARK) {
             alt.add(neuerSatz(anaph.nomK(), "strahlt dich nur an"));
@@ -613,18 +625,21 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             }
 
             if (scBereitsZuvorSchonEinmalGetroffen) {
-                alt.addAll(altNeueSaetze(
-                        "„Endlich! Ich hatte dich schon",
-                        "erwartet“, antwortet",
-                        anaph.nomK(), // autom. Phorik-Kandidat
-                        "dir",
-                        altEindruckSaetzeAnaphPersPron.stream()
-                                .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard()),
-                        PARAGRAPH));
-
-                alt.add(neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
-                        neuerSatz("„Endlich bist du wieder da! Ich habe dich schon vermisst.“")
-                );
+                if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
+                    alt.addAll(altNeueSaetze(
+                            "„Endlich! Ich hatte dich schon",
+                            "erwartet“, antwortet",
+                            anaph.nomK(), // autom. Phorik-Kandidat
+                            "dir",
+                            altEindruckSaetzeAnaphPersPron.stream()
+                                    .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard()),
+                            PARAGRAPH));
+                    alt.add(neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
+                            neuerSatz("„Endlich bist du wieder da! Ich habe dich schon vermisst.“")
+                    );
+                } else {
+                    alt.add(neuerSatz("„Da bist du endlich wieder!“"));
+                }
             }
         }
 
@@ -1336,12 +1351,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         talkerBeendetGespraech();
     }
 
-    public void perhapsNarrateZauberinIstGegangen() {
+    public void narrateZauberinIstGegangen() {
         final AltDescriptionsBuilder alt = alt();
         final int zuneigungRapunzelZuSc =
                 feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
                         SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
-
         alt.add(neuerSatz("„Sie ist weg“, hörst du", anaph().nomK(), "sagen"));
 
         if (duzen(zuneigungRapunzelZuSc)) {
@@ -1418,7 +1432,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 zuneigung <= -FeelingIntensity.DEUTLICH;
     }
 
-    public void forgetAll() {
+    void forgetAll() {
         jahreszeitenFrage.forgetAll();
         kugelherkunftsfrage.forgetAll();
         naschereifrage.forgetAll();

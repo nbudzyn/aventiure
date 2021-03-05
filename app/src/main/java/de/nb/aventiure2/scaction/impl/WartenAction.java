@@ -38,7 +38,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
 import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
 
 /**
- * Der Spielercharakter legt (wach!) eine Rast ein.
+ * Der Spielercharakter wartet (wach!) auf etwas.
  */
 public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO>
         extends AbstractWartenRastenAction {

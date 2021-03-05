@@ -17,12 +17,14 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 public abstract class AndroidTestBase {
-    // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture-components-part-1-testing-room-4d97dec0f451
+    // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture
+    // -components-part-1-testing-room-4d97dec0f451
     @Rule
     public InstantTaskExecutorRule instantTaskExecutorRule = new InstantTaskExecutorRule();
 
@@ -69,5 +71,9 @@ public abstract class AndroidTestBase {
     protected void doAction(final AbstractScAction playerAction) {
         LOGGER.d("Action: " + playerAction.getName() + " [" + timeTaker.now() + "]");
         db.runInTransaction(playerAction::doAndPassTime);
+    }
+
+    protected SpielerCharakter loadSC() {
+        return world.loadSC();
     }
 }

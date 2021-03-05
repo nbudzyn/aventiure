@@ -30,14 +30,14 @@ public class BewegenActionTest extends AndroidTestBase {
         // GIVEN
 
         // WHEN
-        world.loadSC().feelingsComp().ausgeschlafen(hours(8));
+        loadSC().feelingsComp().ausgeschlafen(hours(8));
 
         final BewegenAction<?> hellwachBewegenAction = bewegenAction();
         final AvTimeSpan zeitHellwach = getTimeElapsed(hellwachBewegenAction);
 
         resetDatabase();
 
-        world.loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
+        loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                 FeelingIntensity.STARK, hours(100)
         );
 

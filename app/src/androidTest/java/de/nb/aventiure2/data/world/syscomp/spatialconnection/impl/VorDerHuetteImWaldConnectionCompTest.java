@@ -35,7 +35,7 @@ public class VorDerHuetteImWaldConnectionCompTest extends AndroidTestBase {
     public void turmBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM);
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(VOR_DEM_ALTEN_TURM, KNOWN_FROM_DARKNESS);
+        loadSC().memoryComp().narrateAndUpgradeKnown(VOR_DEM_ALTEN_TURM, KNOWN_FROM_DARKNESS);
 
         // WHEN
         final String actionName = con.getActionName();

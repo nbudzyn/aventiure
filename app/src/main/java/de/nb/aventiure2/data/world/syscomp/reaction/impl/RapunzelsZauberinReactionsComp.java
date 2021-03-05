@@ -36,6 +36,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalking
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -48,14 +49,19 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp.getPersonalpronomenSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static java.util.stream.Collectors.toList;
@@ -70,6 +76,11 @@ public class RapunzelsZauberinReactionsComp
         // Reaktionen auf die Bewegungen des SC und anderes Game Objects
         IMovementReactions, IRufReactions, IStateChangedReactions,
         ITimePassedReactions {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
+    enum Counter {
+        ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST
+    }
 
     // Vorher ist es der Zauberin für einen Rapunzelbesuch zu früh
     private static final AvTime FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH =
@@ -334,8 +345,7 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (stateComp.hasState(AUF_DEM_RUECKWEG_VON_RAPUNZEL)) {
-            onRapunzelStateChangedAufDemRueckwegVonRapunzel(
-                    (RapunzelState) newState);
+            onRapunzelStateChangedAufDemRueckwegVonRapunzel((RapunzelState) newState);
             return;
         }
     }
@@ -380,7 +390,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        n.narrateAlt(secs(15),
+        n.narrateAlt(secs(15), ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST,
                 du("hörst",
                         anaph().akkK(),
                         "durchs Fenster hineinsteigen"),
@@ -390,6 +400,19 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
         stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM);
+
+        if (counterDao.get(ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST) == 1) {
+            final SubstantivischePhrase anaph = anaph();
+            n.narrate(neuerSatz(
+                    anaph.nomK(), "begrüßt",
+                    world.getDescription(RAPUNZEL).akkK(),
+                    ", dann ist", anaph.persPron().nomK(),
+                    "auf einmal still. „Wonach riecht es hier?“, fragt",
+                    anaph().nomK(), "mit scharfer Stimme")
+                    .timed(secs(20)));
+            ((RapunzelReactionsComp) loadRapunzel().reactionsComp())
+                    .reagiertAufFrageVonZauberinNachGeruch();
+        }
     }
 
     private void onRapunzelStateChangedAufDemRueckwegVonRapunzel(
@@ -424,7 +447,11 @@ public class RapunzelsZauberinReactionsComp
             n.narrate(neuerSatz(anaph(true).nomK(),
                     "hat dich nicht bemerkt").timed(NO_TIME));
         } else if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
-            loadRapunzel().talkingComp().perhapsNarrateZauberinIstGegangen();
+            n.narrate(neuerSatz("Endlich verabschiedet sich",
+                    getDescription(true).nomK())
+                    .timed(secs(30)).komma());
+
+            loadRapunzel().talkingComp().narrateZauberinIstGegangen();
         }
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
@@ -590,6 +617,8 @@ public class RapunzelsZauberinReactionsComp
 
     private void onTimePassed_BeiRapunzelObenImTurm(final AvDateTime now) {
         if (now.isBefore(stateComp.getStateDateTime().plus(BESUCHSDAUER))) {
+            rapunzelUndZauberinUnterhaltenSichObenImTurm();
+
             // Zauberin bleibt oben im Turm
             return;
         }
@@ -619,6 +648,47 @@ public class RapunzelsZauberinReactionsComp
         stateComp.narrateAndSetState(AUF_DEM_RUECKWEG_VON_RAPUNZEL);
     }
 
+    private void rapunzelUndZauberinUnterhaltenSichObenImTurm() {
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            final AltTimedDescriptionsBuilder alt = altTimed();
+
+            alt.add(neuerSatz(anaph().nomK(),
+                    "und",
+                    world.getDescription(RAPUNZEL).nomK(),
+                    "unterhalten sich, aber sie haben einander kaum etwas",
+                    "zu sagen").timed(mins(5)),
+                    neuerSatz(anaph().nomK(),
+                            "hat Essen und Trinken mitgebracht und du hörst den",
+                            "beiden bei der Mahlzeit zu",
+                            loadSC().feelingsComp().getHunger() == HUNGRIG ?
+                                    ". Dein Magen knurrt, aber es scheint niemand zu "
+                                            + "bemerken" :
+                                    null)
+                            .timed(mins(7)),
+                    neuerSatz(anaph().nomK(),
+                            "erzählt von ihren täglichen Verrichtungen und",
+                            world.getDescription(RAPUNZEL).nomK(),
+                            "hört artig zu").timed(NO_TIME));
+            if (counterDao.get(NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT) > 0) {
+                alt.add(du("hörst", "dem Gespräch nur mit halbem Ohr zu –",
+                        "auf einmal Stille. Was hatte",
+                        world.getDescription(RAPUNZEL).nomK(),
+                        "gerade gefragt? „Wie tragn die jungen Frauen draußen eigentlich ihr",
+                        "Haar?“",
+                        "„Warum fragst du das?“, antwortet",
+                        getDescription(true).nomK(),
+                        "schließlich langsam. „Ach, ist auch nicht so wichtig“, plappert",
+                        world.getDescription(RAPUNZEL).nomK(),
+                        "aufgedreht, „wie war das, was hattest gestern eingekocht?“ – Du",
+                        "wirst etwas nervös").timed(NO_TIME));
+            }
+
+            n.narrateAlt(altTimed());
+
+            loadSC().feelingsComp().requestMoodMax(ANGESPANNT);
+        }
+    }
+
     private void onTimePassed_AufDemRueckwegVonRapunzel(final AvDateTime now) {
         movementComp.onTimePassed(now);
 
@@ -632,7 +702,8 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onTimePassed_WartezeitNachRapunzelBesuch(final AvDateTime now) {
-        if (now.isBefore(stateComp.getStateDateTime().plus(MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN))) {
+        if (now.isBefore(
+                stateComp.getStateDateTime().plus(MIN_ZEIT_VOR_DEM_NAECHSTEN_LOSGEHEN))) {
             return;
         }
 

@@ -147,7 +147,7 @@ class CreatureFactory {
                 new FeelingsComp(RAPUNZEL, db, timeTaker, n,
                         world, null,
                         memoryComp,
-                        Mood.NEUTRAL,
+                        locationComp, Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
                         MuedigkeitsData.createFromBiorhythmusFuerMenschen(
                                 muedigkeitsBiorhythmus, timeTaker.now()),
@@ -234,7 +234,7 @@ class CreatureFactory {
                 new FeelingsComp(RAPUNZELS_ZAUBERIN, db, timeTaker, n,
                         world, null,
                         null,
-                        Mood.NEUTRAL,
+                        locationComp, Mood.NEUTRAL,
                         muedigkeitsBiorhythmus,
                         MuedigkeitsData.createFromBiorhythmusFuerMenschen(
                                 muedigkeitsBiorhythmus, timeTaker.now()),

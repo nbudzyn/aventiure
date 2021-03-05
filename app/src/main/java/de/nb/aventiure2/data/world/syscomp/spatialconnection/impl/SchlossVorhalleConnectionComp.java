@@ -126,8 +126,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     @NonNull
     private static TimedDescription<?>
-    getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
+    getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
             // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
             //  noch nicht?

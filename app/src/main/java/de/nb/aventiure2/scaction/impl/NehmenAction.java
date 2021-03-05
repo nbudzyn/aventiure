@@ -55,6 +55,7 @@ import static de.nb.aventiure2.german.description.DescriptionUmformulierer.druec
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Der Spieler(charakter) nimmt einen Gegenstand (oder in Ausnahmefällen eine
@@ -382,8 +383,7 @@ public class NehmenAction
 
     private void narrateObject() {
         final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
-                gameObject.locationComp().getLocation()
-                        .storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
+                requireNonNull(gameObject.locationComp().getMitnehmenPraedikat());
 
         if (isDefinitivDiskontinuitaet()) {
             narrateObjectDiskontinuitaet(mitnehmenPraedikat);

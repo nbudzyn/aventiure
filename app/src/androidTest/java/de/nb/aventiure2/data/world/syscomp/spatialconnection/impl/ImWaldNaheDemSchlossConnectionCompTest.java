@@ -14,6 +14,7 @@ import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 
+@SuppressWarnings("ConstantConditions")
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class ImWaldNaheDemSchlossConnectionCompTest extends AndroidTestBase {
@@ -34,7 +35,7 @@ public class ImWaldNaheDemSchlossConnectionCompTest extends AndroidTestBase {
     public void gartenBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(VOR_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE);
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(HINTER_DER_HUETTE, KNOWN_FROM_LIGHT);
+        loadSC().memoryComp().narrateAndUpgradeKnown(HINTER_DER_HUETTE, KNOWN_FROM_LIGHT);
 
         // WHEN
         final String actionName = con.getActionName();

@@ -49,6 +49,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ZwischenDenHec
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -505,6 +506,27 @@ public class World {
     @NonNull
     public ReactionSystem narrateAndDoReactions() {
         return reactionSystem;
+    }
+
+    public void resetSchonBegruesstMitSC() {
+        prepare();
+
+        for (final ITalkerGO<?> talker : loadTalkerGOs()) {
+            talker.talkingComp().setSchonBegruesstMitSC(false);
+        }
+    }
+
+    private List<ITalkerGO<?>> loadTalkerGOs() {
+        prepare();
+
+        final ImmutableList<GameObject> res =
+                all.values().stream()
+                        .filter(ITalkerGO.class::isInstance)
+                        .filter(t -> !t.is(SPIELER_CHARAKTER))
+                        .collect(toImmutableList());
+        loadGameObjects(res);
+
+        return (ImmutableList<ITalkerGO<?>>) (ImmutableList<?>) res;
     }
 
     public <R extends IReactions, G extends GameObject & IResponder>

@@ -35,7 +35,7 @@ public class SchlossVorhalleConnectionCompTest extends AndroidTestBase {
     public void gartenBekannt_inActionName() {
         // GIVEN
         final SpatialConnection con = loadCon(SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS);
-        world.loadSC().memoryComp()
+        loadSC().memoryComp()
                 .narrateAndUpgradeKnown(DRAUSSEN_VOR_DEM_SCHLOSS, KNOWN_FROM_DARKNESS);
 
         // WHEN

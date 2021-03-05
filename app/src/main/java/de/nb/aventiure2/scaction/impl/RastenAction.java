@@ -26,8 +26,11 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
@@ -51,7 +54,8 @@ public class RastenAction extends AbstractWartenRastenAction {
             final Narrator n, final World world,
             @Nullable final ILocationGO location) {
         final ImmutableList.Builder<RastenAction> res = ImmutableList.builder();
-        if (location != null && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+        if (location != null
+                && location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME, BETT_OBEN_IM_ALTEN_TURM)) {
             res.add(new RastenAction(
                     counterDao, scActionStepCountDao, timeTaker, n, world, location));
         }
@@ -72,6 +76,10 @@ public class RastenAction extends AbstractWartenRastenAction {
     @Override
     @NonNull
     public String getName() {
+        if (location.is(BETT_OBEN_IM_ALTEN_TURM)) {
+            return "Still daliegen";
+        }
+
         return "Rasten";
     }
 
@@ -87,15 +95,42 @@ public class RastenAction extends AbstractWartenRastenAction {
         if (automatischesEinschlafen()) {
             narrateAndDoSchlafen();
         } else {
-            if (isDefinitivFortsetzung() && loadRapunzel().stateComp().hasState(SINGEND)) {
-                narrateAndDoRapunzelZuhoeren();
-            } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
-                narrateAndDoDunkel();
+            if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+                narrateAndDoSchattenDerBaeume();
             } else {
-                narrateAndDoHell();
+                narrateAndDoObenImTurmUnterBett();
             }
         }
         sc.memoryComp().setLastAction(buildMemorizedAction());
+    }
+
+    private void narrateAndDoObenImTurmUnterBett() {
+        sc.feelingsComp().requestMoodMax(Mood.ANGESPANNT);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.add(du(SENTENCE, "liegst",
+                "lange Zeit ganz still")
+                        .schonLaenger()
+                        .dann(),
+                neuerSatz("der Staub kribbelt in deiner Nase")
+                        .schonLaenger(),
+                du("scheinst", "dich gut versteckt zu haben")
+                        .schonLaenger(),
+                neuerSatz("nur weiter schön still dagelegen!").schonLaenger());
+
+        n.narrateAlt(alt, mins(10), WARTEN_ODER_RASTEN_IN_FOLGE);
+    }
+
+    private void narrateAndDoSchattenDerBaeume() {
+        if (isDefinitivFortsetzung()
+                && loadRapunzel().stateComp().hasState(SINGEND)) {
+            narrateAndDoRapunzelZuhoeren();
+        } else if (location.storingPlaceComp().getLichtverhaeltnisse() == DUNKEL) {
+            narrateAndDoSchattenDerBaeumeDunkel();
+        } else {
+            narrateAndDoSchattenDerBaeumeHell();
+        }
     }
 
     @Override
@@ -103,25 +138,39 @@ public class RastenAction extends AbstractWartenRastenAction {
         final AltDescriptionsBuilder alt = alt();
 
         if (isDefinitivWiederholung()) {
-            alt.add(neuerSatz("aber dann fällt dir doch dein Kopf vornüber und du fällst in",
-                    "einen tiefen Schlaf"),
-                    neuerSatz("wie du so an einen Baumstamm gelehnt dasitzt, fallen dir",
-                            "die Augen von selber zu und du schläfst ein"),
-                    neuerSatz("dir fällts aber wie Blei auf die Augen und du schläfst ein"),
-                    neuerSatz("dir fallen die Augen zu und auf einem Lager von Moos",
-                            "schläfst du ein"));
+            if (!location.is(BETT_OBEN_IM_ALTEN_TURM)) {
+                alt.add(neuerSatz("aber dann fällt dir doch dein Kopf vornüber und du fällst in",
+                        "einen tiefen Schlaf"));
+            }
+            if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+                alt.add(neuerSatz("wie du so an einen Baumstamm gelehnt dasitzt, fallen dir",
+                        "die Augen von selber zu und du schläfst ein"),
+                        neuerSatz("dir fallen die Augen zu und auf einem Lager von Moos",
+                                "schläfst du ein"));
+            }
+            alt.add(neuerSatz("dir fällts aber wie Blei auf die Augen und du schläfst ein"),
+                    neuerSatz("dir fallen die Augen zu und du schläfst ein"));
             if (sc.feelingsComp().getHunger() == HUNGRIG) {
                 alt.add(du("schläfst", "vor Müdigkeit und Hunger ein")
                         .mitVorfeldSatzglied("vor Müdigkeit und Hunger")
                         .undWartest());
             }
         } else {
-            alt.add(du("lehnst",
-                    "dich an einen Baumstamm, da fallen dir die Augen von selber "
-                            + "zu und du schläfst ein"));
-        }
+            if (location.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {
+                alt.add(du("lehnst",
+                        "dich an einen Baumstamm, da fallen dir die Augen von selber "
+                                + "zu und du schläfst ein"));
+            }
+            if (location.is(BETT_OBEN_IM_ALTEN_TURM)) {
+                alt.add(neuerSatz("kaum liegst du im Dunkel unter dem Bett, da fallen dir",
+                        "die Augen von selber zu und du schläfst ein"));
+            }
+            alt.addAll(altNeueSaetze(sc.feelingsComp().altMuedigkeitAdjPhr().stream()
+                            .map(a -> a.getPraedikativ(P2, SG)), // müde
+                    "wie du bist schläfst du sofort ein"));
 
-        n.narrateAlt(alt, schlafdauer);
+            n.narrateAlt(alt, schlafdauer);
+        }
     }
 
     private void narrateAndDoRapunzelZuhoeren() {
@@ -144,7 +193,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
 
-    private void narrateAndDoDunkel() {
+    private void narrateAndDoSchattenDerBaeumeDunkel() {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
         n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
@@ -152,24 +201,16 @@ public class RastenAction extends AbstractWartenRastenAction {
                         + "der Dunkelheit, die Eulen schnarren, und "
                         + "und es fängt an, dir angst zu werden"),
                 neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
-                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber nichts "
+                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
+                        + "nichts "
                         + "erkennen"),
                 neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
     }
 
-    private void narrateAndDoHell() {
+    private void narrateAndDoSchattenDerBaeumeHell() {
         sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
 
-        // IDEA Hier ist sehr auffällig, dass die dann()-Logik nicht stimmt:
-        //  Ob "Dann..." sinnvoll ist, hängt wesentlich (auch) vom Folgesatz ab.
-        //  Rast -> Rast -> Rast: Kein "Dann..."
-        //  Rast -> Aufstehen: "Dann..."
-        //  Anscheinend setzt "Dann..." eine Art "Aktionsänderung" voraus.
-
-        // IDEA "Dann" nicht bei (?) oder nach (?) "statischen Verben" (du hast Glück, du hast
-        //  Hunger, du freust dich) verwenden.
-
-        // IDEA "Dann" nur verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
+        // IDEA "Dann" maximal dann verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
 

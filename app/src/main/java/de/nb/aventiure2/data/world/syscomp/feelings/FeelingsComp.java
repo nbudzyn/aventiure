@@ -24,6 +24,7 @@ import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
@@ -77,6 +78,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @Nullable
     private final MemoryComp memoryComp;
 
+    @Nullable
+    private final LocationComp locationComp;
     @NonNull
     private final Mood initialMood;
 
@@ -109,6 +112,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         final World world,
                         @Nullable final WaitingComp waitingComp,
                         @Nullable final MemoryComp memoryComp,
+                        @Nullable final LocationComp locationComp,
                         final Mood initialMood,
                         final Biorhythmus muedigkeitsBiorythmus,
                         final MuedigkeitsData initialMuedigkeitsData,
@@ -125,6 +129,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         this.world = world;
         this.waitingComp = waitingComp;
         this.memoryComp = memoryComp;
+        this.locationComp = locationComp;
         this.initialMood = initialMood;
         this.muedigkeitsBiorythmus = muedigkeitsBiorythmus;
         this.initialMuedigkeitsData = initialMuedigkeitsData;
@@ -173,10 +178,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             // Häufig wird diese Phrase wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return requirePcd().getMuedigkeitsData().altAdjektivphrase();
+            return altMuedigkeitAdjPhr();
         }
 
         return getMood().altAdjPhr();
+    }
+
+    public ImmutableList<AdjPhrOhneLeerstellen> altMuedigkeitAdjPhr() {
+        return requirePcd().getMuedigkeitsData().altAdjektivphrase();
     }
 
     private void resetMuedigkeitshinweisStepCount() {
@@ -372,11 +381,19 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                         ", dich gerade erst hingelegt zu haben"));
             } else {
                 alt.add(neuerSatz(CHAPTER,
-                        "Keine halbe Stunde später schreckst du wieder hoch"));
+                        "Keine halbe Stunde später schreckst du wieder auf"));
+                if (locationComp != null && !locationComp.isNiedrig()) {
+                    alt.add(neuerSatz(CHAPTER,
+                            "Keine halbe Stunde später schreckst du wieder hoch"));
+                }
             }
         }
 
         n.narrateAlt(alt, NO_TIME);
+
+        if (schlafdauer.longerThan(hours(5))) {
+            world.resetSchonBegruesstMitSC();
+        }
     }
 
     private void menschAusgeschlafen(final AvTimeSpan schlafdauer) {
@@ -969,28 +986,28 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p), PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
                         "dich auf einmal", p.getPraedikativ(P2, SG), PARAGRAPH)
                         .mitVorfeldSatzglied("auf einmal"))
                 .collect(toList()));
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH,
                         praedikativumPraedikatMit(p).mitAdverbialerAngabe(
                                 new AdverbialeAngabeSkopusSatz("auf einmal")),
                         PARAGRAPH))
                 .collect(toList()));
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdverbialerAngabe(
                         new AdverbialeAngabeSkopusSatz("mit einem Mal")),
                         PARAGRAPH))
@@ -1127,12 +1144,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
         res.addAll(
-                requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+                altMuedigkeitAdjPhr().stream()
                         .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)
                                 .schonLaenger())
                         .collect(toList()));
 
-        res.addAll(requirePcd().getMuedigkeitsData().altAdjektivphrase().stream()
+        res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH, "fühlst",
                         "dich", p.getPraedikativ(P2, SG), PARAGRAPH)
                         .schonLaenger()

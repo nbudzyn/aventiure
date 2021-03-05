@@ -109,7 +109,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         // Zauberin unbewegt
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
-        world.loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
+        loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         // WHEN
         final AvDateTime now = timeTaker.now();
@@ -123,7 +123,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO & IMovingGO>
     void scUnbewegt_zauberinKommt__Narration() {
         // GIVEN
-        world.loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
+        loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(ABZWEIG_IM_WALD);
@@ -145,7 +145,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO & IMovingGO>
     void scUnbewegt_zauberinGeht__Narration() {
         // GIVEN
-        world.loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
+        loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
@@ -172,7 +172,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     void zauberinWartetVorTurm_SCAuchVorTurm__ZauberinGehtBaldWieder() {
         // GIVEN
         timeTaker.setNow(new AvDateTime(1, oClock(16)));
-        world.loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM);
+        loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
         final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
         zauberin.stateComp().setState(AUF_DEM_WEG_ZU_RAPUNZEL);
@@ -194,16 +194,16 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
 
     private <Z extends IResponder & ILocatableGO> void reactToScMovement(
             final Z responder, final GameObjectId fromId, final GameObjectId toId) {
-        world.loadSC().locationComp().setLocation(fromId);
+        loadSC().locationComp().setLocation(fromId);
 
         final ILocationGO from = (ILocationGO) world.load(fromId);
         final ILocationGO to = (ILocationGO) world.load(toId);
         ((RapunzelsZauberinReactionsComp) responder.reactionsComp())
-                .onLeave(world.loadSC(), from, to);
+                .onLeave(loadSC(), from, to);
 
-        world.loadSC().locationComp().setLocation(toId);
+        loadSC().locationComp().setLocation(toId);
 
         ((RapunzelsZauberinReactionsComp) responder.reactionsComp())
-                .onEnter(world.loadSC(), from, to);
+                .onEnter(loadSC(), from, to);
     }
 }

@@ -816,38 +816,18 @@ public class RapunzelReactionsComp
         }
     }
 
+    void reagiertAufFrageVonZauberinNachGeruch() {
+        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= FeelingIntensity.NEUTRAL) {
+            n.narrate(neuerSatz("„Oh, das… müssen wieder die Fledermäuse sein!“, sagt",
+                    anaph().nomK(),
+                    "und stellt sich vor das Bett. Dir pocht das Herz")
+                    .timed(secs(20)));
+        }
+    }
+
     @Override
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        // FIXME WARTEN "Du liegst lange Zeit ganz still. Der Staub kribbelt in deiner Nase."
-
-        // FIXME "Die Zauberin und RAPUNZEL unterhalten sich, aber eigentlich haben sie
-        //  einander nichts zu sagen."
-        //  - Die ZAUBERIN erzählt von ihren täglichen Verrichtungen und RAPUNZEL hört
-        //    artig zu.
-        //  - Die Zauberin begrüßt RAPUNZEL, dann ist sie auf einmal still.
-        //    "Wonach riecht es hier?" fragt die Zauberin mit scharfer Stimme
-        //    "Oh, das... müssen wieder die Fledermäuse sein, sagt die junge Frau und stellt
-        //    sich
-        //    vor
-        //    das Bett. Dir pocht das Herz"
-        //  - Die Zauberin hat Essen und Trinken mitgebracht und du hörst den beiden bei der
-        //   Mahlzeit zu. BEI HUNGER: Dein Magen knurrt, aber es scheint niemand zu bemerken.
-        // - "Endlich verabschiedet sich die ZAUBERIN und steigt herab"
-        //  "Du kannst wieder herauskommen - hörst du es lieblich sagen"
-
-        // FIXME Alle Verwendungen von OBEN prüfen, ggf. anders für UNTER DEM BETT
-        //  Idee: Rapunzel sagt etwas wie "willst du nicht wieder rauskommen??"
-        //   Wenn der SC unter dem Bett liegt.
-        //   Danach... Rapunzel schaut...
-        //   "Was sollte jetzt das?"
-
-        // FIXME Reaktionen der Zauberin auf BEWEGUNG UNTER DAS Bett und UNTER DEM BETT HERVOR
-
-        // FIXME Reaktionen von Rapunzel bei BEWEGUNG UNTER DAS Bett und UNTER DEM BETT HERVOR
-        //  unter-Bett erhöht ggf. Abneigung
-
-        // FIXME Alle Reaktionen der Zauberin, wenn SC unter dem Bett ist
-        //  (wird evtl. bemerkt)
 
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)

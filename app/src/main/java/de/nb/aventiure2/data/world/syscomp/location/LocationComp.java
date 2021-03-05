@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -243,6 +244,19 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     public boolean hasLocation(final @Nullable GameObjectId locationId) {
         return Objects.equals(getLocationId(), locationId);
+    }
+
+    public boolean isNiedrig() {
+        return getLocation() != null && getLocation().storingPlaceComp().isNiedrig();
+    }
+
+    @Nullable
+    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat() {
+        if (getLocation() == null) {
+            return null;
+        }
+
+        return getLocation().storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
     }
 
     @Nullable

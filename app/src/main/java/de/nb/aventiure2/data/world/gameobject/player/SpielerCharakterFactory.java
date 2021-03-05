@@ -56,10 +56,14 @@ public class SpielerCharakterFactory {
                 new MemoryComp(id, db, world, createKnownMap());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
+        final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE,
+                null,
+                // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
+                false);
         final FeelingsComp feelingsComp = new FeelingsComp(id, db, timeTaker, n,
                 world, waitingComp,
                 memoryComp,
-                Mood.NEUTRAL,
+                locationComp, Mood.NEUTRAL,
                 muedigkeitsBiorhythmus,
                 MuedigkeitsData.createFromBiorhythmusFuerMenschen(
                         muedigkeitsBiorhythmus, timeTaker.now()),
@@ -67,10 +71,6 @@ public class SpielerCharakterFactory {
                 hours(6),
                 createDefaultFeelingsTowards(),
                 createInitialFeelingsTowards());
-        final LocationComp locationComp = new LocationComp(id, db, world, SCHLOSS_VORHALLE,
-                null,
-                // Ein NSC könnte den Spieler nicht so mir-nichts-dir-nichts mitnehmen.
-                false);
         final MentalModelComp mentalModelComp =
                 new MentalModelComp(id, db, world, ImmutableMap.of());
         return new SpielerCharakter(id,
