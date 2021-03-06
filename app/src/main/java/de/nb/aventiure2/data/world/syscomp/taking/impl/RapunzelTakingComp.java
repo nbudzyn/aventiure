@@ -135,7 +135,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 "in den Händen und wirft",
                 givenAnaph.persPron().akkK(),
                 "sanft",
-                "in die Höhe - dann gibt",
+                "in die Höhe – dann gibt",
                 rapunzelAnaph.persPron().nomK(),
                 "dir",
                 givenDesc.akkK(),

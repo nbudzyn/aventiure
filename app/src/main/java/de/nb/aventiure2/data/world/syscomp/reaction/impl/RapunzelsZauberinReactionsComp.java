@@ -392,10 +392,10 @@ public class RapunzelsZauberinReactionsComp
 
         n.narrateAlt(secs(15), ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST,
                 du("hörst",
-                        anaph().akkK(),
+                        anaph(false).akkK(),
                         "durchs Fenster hineinsteigen"),
                 neuerSatz("keuchend steigt",
-                        anaph().nomK(),
+                        anaph(false).nomK(),
                         "durchs Fenster hinein"));
 
         locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
@@ -408,7 +408,7 @@ public class RapunzelsZauberinReactionsComp
                     world.getDescription(RAPUNZEL).akkK(),
                     ", dann ist", anaph.persPron().nomK(),
                     "auf einmal still. „Wonach riecht es hier?“, fragt",
-                    anaph().nomK(), "mit scharfer Stimme")
+                    anaph(false).nomK(), "mit scharfer Stimme")
                     .timed(secs(20)));
             ((RapunzelReactionsComp) loadRapunzel().reactionsComp())
                     .reagiertAufFrageVonZauberinNachGeruch();
@@ -448,7 +448,7 @@ public class RapunzelsZauberinReactionsComp
                     "hat dich nicht bemerkt").timed(NO_TIME));
         } else if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz("Endlich verabschiedet sich",
-                    getDescription(true).nomK())
+                    getDescription().nomK())
                     .timed(secs(30)).komma());
 
             loadRapunzel().talkingComp().narrateZauberinIstGegangen();
@@ -652,12 +652,12 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             final AltTimedDescriptionsBuilder alt = altTimed();
 
-            alt.add(neuerSatz(anaph().nomK(),
+            alt.add(neuerSatz(anaph(false).nomK(),
                     "und",
                     world.getDescription(RAPUNZEL).nomK(),
                     "unterhalten sich, aber sie haben einander kaum etwas",
                     "zu sagen").timed(mins(5)),
-                    neuerSatz(anaph().nomK(),
+                    neuerSatz(anaph(false).nomK(),
                             "hat Essen und Trinken mitgebracht und du hörst den",
                             "beiden bei der Mahlzeit zu",
                             loadSC().feelingsComp().getHunger() == HUNGRIG ?
@@ -665,7 +665,7 @@ public class RapunzelsZauberinReactionsComp
                                             + "bemerken" :
                                     null)
                             .timed(mins(7)),
-                    neuerSatz(anaph().nomK(),
+                    neuerSatz(anaph(false).nomK(),
                             "erzählt von ihren täglichen Verrichtungen und",
                             world.getDescription(RAPUNZEL).nomK(),
                             "hört artig zu").timed(NO_TIME));
@@ -673,7 +673,7 @@ public class RapunzelsZauberinReactionsComp
                 alt.add(du("hörst", "dem Gespräch nur mit halbem Ohr zu –",
                         "auf einmal Stille. Was hatte",
                         world.getDescription(RAPUNZEL).nomK(),
-                        "gerade gefragt? „Wie tragn die jungen Frauen draußen eigentlich ihr",
+                        "gerade gefragt? „Wie tragen die jungen Frauen draußen eigentlich ihr",
                         "Haar?“",
                         "„Warum fragst du das?“, antwortet",
                         getDescription(true).nomK(),
@@ -683,7 +683,7 @@ public class RapunzelsZauberinReactionsComp
                         "wirst etwas nervös").timed(NO_TIME));
             }
 
-            n.narrateAlt(altTimed());
+            n.narrateAlt(alt);
 
             loadSC().feelingsComp().requestMoodMax(ANGESPANNT);
         }

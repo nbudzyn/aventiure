@@ -137,7 +137,7 @@ public class RastenAction extends AbstractWartenRastenAction {
     protected void narrateAndDoEinschlafen(final AvTimeSpan schlafdauer) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (isDefinitivWiederholung()) {
+        if (isDefinitivFortsetzung()) {
             if (!location.is(BETT_OBEN_IM_ALTEN_TURM)) {
                 alt.add(neuerSatz("aber dann fällt dir doch dein Kopf vornüber und du fällst in",
                         "einen tiefen Schlaf"));
@@ -168,9 +168,9 @@ public class RastenAction extends AbstractWartenRastenAction {
             alt.addAll(altNeueSaetze(sc.feelingsComp().altMuedigkeitAdjPhr().stream()
                             .map(a -> a.getPraedikativ(P2, SG)), // müde
                     "wie du bist schläfst du sofort ein"));
-
-            n.narrateAlt(alt, schlafdauer);
         }
+
+        n.narrateAlt(alt, schlafdauer);
     }
 
     private void narrateAndDoRapunzelZuhoeren() {

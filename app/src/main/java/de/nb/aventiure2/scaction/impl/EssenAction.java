@@ -188,8 +188,8 @@ public class EssenAction extends AbstractScAction {
                 .timed(secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Er schaut an sich herab – „Ihr habt mich erlöst“, sagt er, „ich "
-                        + "danke euch!“ Eine böse Hexe "
-                        + "habe ihn verwünscht. „Ich werde euch nicht vergessen!“")
+                        + "danke Euch!“ Eine böse Hexe "
+                        + "habe ihn verwünscht. „Ich werde Euch nicht vergessen!“")
                 .timed(secs(10)));
         n.narrate(neuerSatz(PARAGRAPH,
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "

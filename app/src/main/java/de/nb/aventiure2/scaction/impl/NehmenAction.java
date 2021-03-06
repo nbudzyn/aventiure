@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -437,10 +438,12 @@ public class NehmenAction
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
-                du(PARAGRAPH, nehmenPraedikat.mit(objectDesc))
+                du(PARAGRAPH, nehmenPraedikat.mit(objectDesc)
+                        .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("wieder")))
                         .timed(secs(5))
                         .undWartest(),
-                du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort))
+                du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort)
+                        .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("wieder")))
                         .timed(secs(5))
                         .undWartest()));
 

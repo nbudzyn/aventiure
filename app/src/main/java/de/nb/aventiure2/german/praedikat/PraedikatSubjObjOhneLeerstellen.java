@@ -175,12 +175,11 @@ public class PraedikatSubjObjOhneLeerstellen
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
-                // "aus einer Laune heraus"
+                        numerusSubjekt),// "aus einer Laune heraus"
+                objekt.imK(kasusOderPraepositionalkasus),
                 kf(getModalpartikeln()), // "mal eben"
                 getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                objekt.imK(kasusOderPraepositionalkasus),
                 getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "auf den Tisch"
         );

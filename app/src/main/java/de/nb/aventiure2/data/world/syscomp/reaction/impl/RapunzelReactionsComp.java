@@ -458,7 +458,7 @@ public class RapunzelReactionsComp
         final int zuneigungSCTowardsRapunzel =
                 loadSC().feelingsComp().getFeelingTowardsForActionsMitEmpathischerSchranke(
                         RAPUNZEL, ZUNEIGUNG_ABNEIGUNG);
-        if (RapunzelTalkingComp.duzen(zuneigungSCTowardsRapunzel)
+        if (talkingComp.duzen()
                 && zuneigungSCTowardsRapunzel >= FeelingIntensity.MERKLICH
                 && counterDao.get(
                 RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)

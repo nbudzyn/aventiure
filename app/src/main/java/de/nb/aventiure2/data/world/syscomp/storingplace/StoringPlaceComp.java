@@ -42,7 +42,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     /**
      * Ob die Location <i>niedrig</i> ist, so dass man z.B. hier keine Kugel hochwerfen kann
      */
-    private boolean niedrig;
+    private final boolean niedrig;
 
     /**
      * Ermittelt, ob dieses Game Object (z.B. dieser Raum oder diese Tasche) seine
@@ -93,7 +93,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         this.timeTaker = timeTaker;
         this.locationComp = locationComp;
         this.locationMode = locationMode;
-        this.niedrig = this.niedrig;
+        this.niedrig = niedrig;
         this.lichtverhaeltnisseErmittler = lichtverhaeltnisseErmittler;
         this.spatialConnectionInData = spatialConnectionInData;
         this.spatialConnectionOutData = spatialConnectionOutData;

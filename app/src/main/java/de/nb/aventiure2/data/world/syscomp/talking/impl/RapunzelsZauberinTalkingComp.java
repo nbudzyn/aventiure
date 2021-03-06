@@ -161,7 +161,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                 "„Holla, gute Frau“, sprichst du",
                                 anaph.akkK(),
                                 "an").dann(),
-                                neuerSatz("„Schön euch zu sehen“, sprichst du",
+                                neuerSatz("„Schön Euch zu sehen“, sprichst du",
                                         anaph.akkK(),
                                         "an")
                                         .dann(),
@@ -281,14 +281,14 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
 
         scUndRapunzelVergessenAlles();
 
-        // Die Zauberin ist schon weit auf dem Rückweg
+        // Die Zauberin ist schon weit auf dem Rückweg und der SC findet sich unter
+        // den Bäumen wieder
         locationComp.narrateAndSetLocation(IM_WALD_NAHE_DEM_SCHLOSS);
-        zauberinNichtImTurmBeginntRueckweg();
-
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Ohne Reactions - der Spieler bekommt ja nichts davon mit.
             loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME);
         }
+        zauberinNichtImTurmBeginntRueckweg();
 
         narrateNachDemVergessenszauber();
     }
@@ -296,7 +296,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private void narrateUnmittelbarerVergessenszauber() {
         if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
             // Rapunzel hat den SC verraten
-            n.narrate(du("hörst", "und fühlst Schrite. Dann schaut",
+            n.narrate(du("hörst", "und fühlst Schritte. Dann schaut",
                     "die magere Frau",
                     "unters Bett – und dir direkt in die Augen. Du bist wie",
                     "gebannt und kannst deinen Blick gar nicht abwenden, und die Frau",

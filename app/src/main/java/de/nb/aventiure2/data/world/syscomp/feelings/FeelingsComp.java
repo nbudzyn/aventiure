@@ -461,7 +461,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
-    public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
+    public ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
@@ -476,7 +476,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             true, altAdjPhr,
                             adverbialeAngaben);
                 },
-                (feelingTowardsType) -> altReaktionWennTargetGehenMoechteSaetze(
+                (feelingTowardsType) -> altReaktionWennSCGehenMoechteSaetze(
                         gameObjectSubjekt, feelingTowardsType));
     }
 
@@ -503,7 +503,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
+    private ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
         return altReaktionWennTargetGehenMoechteSaetze(

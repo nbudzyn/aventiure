@@ -34,10 +34,12 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.duParagraph;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
@@ -430,13 +432,21 @@ public enum RapunzelStoryNode implements IStoryNode {
         final IHasStateGO<RapunzelState> rapunzel = loadRapunzel(world);
 
         if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-            alt.add(duParagraph("hast", "noch so viele Fragen an",
-                    world.anaph(RAPUNZEL).akkK()).schonLaenger()
-                    ,
-                    duParagraph("hast",
-                            "Eindruck, die schöne junge Frau hätte dir noch viel zu",
-                            "erzählen").schonLaenger()
-            );
+            if (world.loadSC().talkingComp().isTalkingTo(RAPUNZEL)) {
+                alt.add(neuerSatz("Ein gutes Gespräch!"),
+                        du(SENTENCE, "unterhältst", "dich gern mit",
+                                world.anaph(RAPUNZEL).datK(), SENTENCE).schonLaenger(),
+                        neuerSatz("Schön, sich mit",
+                                world.anaph(RAPUNZEL).datK(),
+                                "zu unterhalten"));
+            } else {
+                alt.add(duParagraph("hast", "noch so viele Fragen an",
+                        world.anaph(RAPUNZEL).akkK()).schonLaenger(),
+                        duParagraph("hast",
+                                "den Eindruck, die schöne junge Frau hätte dir noch viel zu",
+                                "erzählen").schonLaenger()
+                );
+            }
         } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));
