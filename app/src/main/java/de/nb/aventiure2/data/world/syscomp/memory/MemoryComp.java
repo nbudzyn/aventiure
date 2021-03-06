@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -103,6 +104,10 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     public boolean isKnown(final IGameObject otherGameObject) {
         return isKnown(otherGameObject.getId());
+    }
+
+    public boolean areAllKnown(final GameObjectId... otherGameObjectIds) {
+        return Stream.of(otherGameObjectIds).allMatch(this::isKnown);
     }
 
     public boolean isKnown(final GameObjectId otherGameObjectId) {

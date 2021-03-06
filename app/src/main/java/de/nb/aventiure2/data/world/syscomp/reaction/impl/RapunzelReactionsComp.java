@@ -247,48 +247,62 @@ public class RapunzelReactionsComp
     private void onSCEnter_VorDemAltenTurm_HaareHeruntergelassen(
             @Nullable final ILocationGO from) {
         if (world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)) {
-            stateComp.narrateAndSetState(NORMAL);
-
-            final AltTimedDescriptionsBuilder alt = altTimed();
-            alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
-
-            if (counterDao.get(NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST) == 0
-                    && counterDao.get(
-                    RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)
-                    > 0) {
-                final SubstantivischePhrase anaph = anaph();
-
-                alt.add(neuerSatz("Als",
-                        anaph.persPron().nomK(), // "sie"
-                        anaph.persPron().possArt().vor(N).akkStr(), // "ihr"
-                        "Haar wieder heraufgerafft hat, ruft",
-                        anaph.nomK(), // "Rapunzel"
-                        "dir noch nach: „Aber komm nicht, wenn die Alte bei mir ist!“",
-                        "Danach sieht der Turm wieder verlassen und unbewohnt aus", PARAGRAPH)
-                        .timed(secs(20))
-                        .withCounterIdIncrementedIfTextIsNarrated(
-                                NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST));
-            }
-
-            alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
-                    + "wieder oben im Fenster", PARAGRAPH)
-                    .timed(secs(15)));
-
-            n.narrateAlt(alt);
+            onSCEnter_VonObenImAltenTurm_NachVorDemAltenTurm_HaareHeruntergelassen();
             return;
         }
 
         if (world.isOrHasRecursiveLocation(from, IM_WALD_NAHE_DEM_SCHLOSS)) {
-            loadSC().feelingsComp().requestMoodMin(NEUTRAL);
-            // FIXME Andere und alternative Beschreibungen, wenn der SC
-            //  Rapunzel schon kennengelernt hat
+            onSCEnter_VonImWaldNaheSchloss_NachVorDemAltenTurm_HaareHeruntergelassen();
+            return;
+        }
+    }
+
+    private void onSCEnter_VonImWaldNaheSchloss_NachVorDemAltenTurm_HaareHeruntergelassen() {
+        loadSC().feelingsComp().requestMoodMin(NEUTRAL);
+
+        if (loadSC().memoryComp().areAllKnown(RAPUNZEL, RAPUNZELS_HAARE, RAPUNZELS_NAME)) {
+            n.narrate(neuerSatz("Rapunzels goldene Haare hängen in Zöpfen aus dem kleinen",
+                    "Fenster oben im Turm herab")
+                    .timed(NO_TIME));
+        } else {
             n.narrate(neuerSatz("Aus dem kleinen "
                     + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab")
                     .timed(NO_TIME));
-
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
-            return;
         }
+
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
+    }
+
+    private void onSCEnter_VonObenImAltenTurm_NachVorDemAltenTurm_HaareHeruntergelassen() {
+        stateComp.narrateAndSetState(NORMAL);
+
+        final AltTimedDescriptionsBuilder alt = altTimed();
+        alt.addAll(altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm());
+
+        if (counterDao.get(NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST) == 0
+                && counterDao.get(
+                RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)
+                > 0) {
+            final SubstantivischePhrase anaph = anaph();
+
+            alt.add(neuerSatz("Als",
+                    anaph.persPron().nomK(), // "sie"
+                    anaph.persPron().possArt().vor(N).akkStr(), // "ihr"
+                    "Haar wieder heraufgerafft hat, ruft",
+                    anaph.nomK(), // "Rapunzel"
+                    "dir noch nach: „Aber komm nicht, wenn die Alte bei mir ist!“",
+                    "Danach sieht der Turm wieder verlassen und unbewohnt aus", PARAGRAPH)
+                    .timed(secs(20))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST));
+        }
+
+        alt.add(neuerSatz("Als du unten bist, verschwinden die goldenen Haare "
+                + "wieder oben im Fenster", PARAGRAPH)
+                .timed(secs(15)));
+
+        n.narrateAlt(alt);
+        return;
     }
 
     private void onSCEnter_ObenImAltenTurm(@Nullable final ILocationGO from,
