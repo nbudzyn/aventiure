@@ -30,7 +30,8 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest extends AndroidTestBase {
-    private static final int STEP_SIZE = 6;
+    private static final int STEP_SIZE = 1;
+    private static final int NUM_RANDOM_STEPS = 50;
 
     private static final Logger LOGGER = Logger.getLogger();
 
@@ -56,11 +57,20 @@ public class WalkerTest extends AndroidTestBase {
 
     @Test
     public void walkActionsWithRandomAdditions() {
+        walkActionsWithRandomAdditions(Walkthrough.FULL);
+    }
+
+    @Test
+    public void walkActions_separat_nur_rapunzel_WithRandomAdditions() {
+        walkActionsWithRandomAdditions(Walkthrough.SEP_1_NUR_RAPUNZEL);
+    }
+
+    public void walkActionsWithRandomAdditions(final Walkthrough walkthrough) {
         int maxSteps = 0;
-        while (maxSteps < Walkthrough.FULL.numSteps()) {
+        while (maxSteps < walkthrough.numSteps()) {
             LOGGER.d("--- Neuer Durchlauf: " + maxSteps + " vorgegebene Schritte ---");
 
-            doWalkthrough(Walkthrough.FULL.truncate(maxSteps));
+            doWalkthrough(walkthrough.truncate(maxSteps));
             walkRandomly();
             assertNoVerbiddenContentInNarration();
 
@@ -98,7 +108,7 @@ public class WalkerTest extends AndroidTestBase {
     }
 
     private void walkRandomly() {
-        final RandomActionChooser actionChooser = new RandomActionChooser();
+        final RandomActionChooser actionChooser = new RandomActionChooser(NUM_RANDOM_STEPS);
 
         walkActions(actionChooser);
     }

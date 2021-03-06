@@ -12,12 +12,13 @@ import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
  * Wählt Aktionen zufällig aus
  */
 public class RandomActionChooser implements IActionChooser {
-    private final static int NUM_STEPS = 10;
+    private final int numSteps;
 
     private final Random rand;
     private int count = 0;
 
-    public RandomActionChooser() {
+    public RandomActionChooser(final int numSteps) {
+        this.numSteps = numSteps;
         rand = new Random();
     }
 
@@ -26,7 +27,7 @@ public class RandomActionChooser implements IActionChooser {
     public AbstractScAction chooseAction(
             final List<? extends AbstractScAction> actionAlternatives) {
         count++;
-        if (count > NUM_STEPS) {
+        if (count > numSteps) {
             return null;
         }
 

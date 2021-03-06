@@ -397,7 +397,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "wartet er – wartet sie! – oben im Turm auf dich!"),
                     paragraph(
                             "Plötzlich steht es dir klar vor Augen: Du musst in den Turm",
-                            "steigen, und du weißt, was du zu rufen hast! –  Aber die dürre Frau, "
+                            "steigen, und du weißt, was du zu rufen hast! – Aber die dürre Frau, "
                                     + "die macht dir Angst…"));
         } else {
             // SC hat alles vergessen

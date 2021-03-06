@@ -123,6 +123,7 @@ public class Walkthrough {
                     "Dich mit der jungen Frau unterhalten",
                     "Der jungen Frau die goldene Kugel geben",
                     "Der jungen Frau die goldene Kugel geben",
+                    "Dir ein kleine Notlüge erlauben",
                     "Der jungen Frau dein Herz ausschütten",
                     "Die junge Frau nach ihrem Namen fragen",
                     "Rapunzel fragen, wie du ihr helfen kannst",

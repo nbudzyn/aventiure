@@ -216,7 +216,9 @@ public class AltDescriptionsBuilder {
         if (this.op == null) {
             this.op = op;
         } else {
-            this.op = d -> op.apply(this.op.apply(d));
+            final UnaryOperator<AbstractDescription<?>> oldOp = this.op;
+            // oldOp nicht inlinen! Das ändert wohl die Semantik zu einer Endlosschleife!
+            this.op = d -> op.apply(oldOp.apply(d));
         }
 
         return this;
