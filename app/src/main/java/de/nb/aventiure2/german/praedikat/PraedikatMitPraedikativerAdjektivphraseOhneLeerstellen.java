@@ -58,7 +58,8 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.adjektivphrase = adjektivphrase;
     }

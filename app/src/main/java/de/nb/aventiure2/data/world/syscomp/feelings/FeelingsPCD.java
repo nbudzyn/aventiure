@@ -30,8 +30,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
  * Mutable - and therefore persistent - data of the {@link FeelingsComp} component.
  */
 @Entity
-public
-class FeelingsPCD extends AbstractPersistentComponentData {
+public class FeelingsPCD extends AbstractPersistentComponentData {
     @NonNull
     private Mood mood;
 

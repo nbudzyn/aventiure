@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
@@ -214,7 +215,9 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @CheckReturnValue
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(
-                getPraedikat().getVerbzweit(satz.getSubjekt()),
+                getPraedikat().getVerbzweit(
+                        satz.getSubjekt() != null ? satz.getSubjekt() :
+                                Personalpronomen.EXPLETIVES_ES),
                 getEndsThis())
                 .joinToSingleKonstituente();
     }

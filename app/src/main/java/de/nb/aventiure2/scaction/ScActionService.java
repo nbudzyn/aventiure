@@ -3,6 +3,7 @@ package de.nb.aventiure2.scaction;
 import android.content.Context;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableList;
 
@@ -322,5 +323,10 @@ public class ScActionService {
                         n, world, location));
 
         return res.build();
+    }
+
+    @VisibleForTesting
+    public ILocationGO getSCLocation() {
+        return world.loadSC().locationComp().getLocation();
     }
 }

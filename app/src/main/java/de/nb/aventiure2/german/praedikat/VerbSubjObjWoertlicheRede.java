@@ -27,7 +27,7 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
             "blafft", "blafft", "entgegen",
             Perfektbildung.HABEN, "entgegengeblafft"),
     ENTGEGENRUFEN(RUFEN, DAT, "entgegen", Perfektbildung.HABEN);
-    
+
     /**
      * Das Verb an sich, ohne Ergänzungen, ohne Angaben
      */
@@ -75,7 +75,8 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
                               final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                               final String partikel,
                               final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung), kasusOderPraepositionalkasus);
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung),
+                kasusOderPraepositionalkasus);
     }
 
     VerbSubjObjWoertlicheRede(final Verb verb,

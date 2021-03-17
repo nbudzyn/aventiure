@@ -35,6 +35,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
+    // FIXME Kugel im.Schloss hochwerfen... Reaktion der Wache... Gefängns?!
+
     // FIXME Die zentrale Dramatische Frage für des Märchens ermitteln:
     //  Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
     //  Zwei oder mehr Charaktere, ein gewünschtes Ergebnis

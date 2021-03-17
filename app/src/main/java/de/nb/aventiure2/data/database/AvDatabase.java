@@ -64,6 +64,12 @@ import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingDao;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingPCD;
+import de.nb.aventiure2.data.world.syscomp.wetter.BewoelkungConverters;
+import de.nb.aventiure2.data.world.syscomp.wetter.BlitzUndDonnerConverters;
+import de.nb.aventiure2.data.world.syscomp.wetter.TemperaturConverters;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterDao;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterPCD;
+import de.nb.aventiure2.data.world.syscomp.wetter.WindstaerkeConverters;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
@@ -78,6 +84,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
         SCActionStepCount.class,
         NowEntity.class,
         StatePCD.class,
+        WetterPCD.class,
         WaitingPCD.class,
         MovementPCD.class,
         LocationPCD.class,
@@ -94,6 +101,10 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
         version = 1,
         exportSchema = false)
 @TypeConverters({
+        BewoelkungConverters.class,
+        BlitzUndDonnerConverters.class,
+        TemperaturConverters.class,
+        WindstaerkeConverters.class,
         NumerusGenusConverters.class,
         AvDateTimeConverters.class,
         AvTimeSpanConverters.class,
@@ -128,6 +139,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract NarrationDao narrationDao();
 
     public abstract StateDao stateDao();
+
+    public abstract WetterDao wetterDao();
 
     public abstract WaitingDao waitingDao();
 

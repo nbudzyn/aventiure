@@ -2,14 +2,9 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import java.util.Collection;
-
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
-import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
-import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -25,14 +20,20 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
-public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
+public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     // Verben ohne Partikel
+    FROESTELN("frösteln",
+            "fröstele", "fröstelst", "fröstelt", "fröstelt",
+            Perfektbildung.HABEN, "gefröstelt"),
     KLETTERN("klettern",
             "klettere", "kletterst", "klettert", "klettert",
             Perfektbildung.SEIN, "geklettert"),
     KOMMEN("kommen",
             "komme", "kommst", "kommt", "kommt",
             Perfektbildung.SEIN, "gekommen"),
+    LIEGEN("liegen",
+            "liege", "liegst", "liegt", "liegt",
+            Perfektbildung.HABEN, "gelegen"),
     KRIECHEN("kriechen",
             "krieche", "kriechst", "kriecht", "kriecht",
             Perfektbildung.SEIN, "gekrochen"),
@@ -79,7 +80,7 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     VerbSubj(final Verb verbOhnePartikel,
              final String partikel,
              final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung));
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung));
     }
 
     VerbSubj(@NonNull final Verb verb) {
@@ -87,59 +88,25 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitModalpartikeln(
-            final Collection<Modalpartikel> modalpartikeln) {
-        return toPraedikatSubj().mitModalpartikeln(modalpartikeln);
-    }
-
-    @Override
-    public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
-    }
-
-    @Override
-    public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
-    }
-
-    @Override
-    public PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        return toPraedikatSubj().mitAdverbialerAngabe(adverbialeAngabe);
-    }
-
-    @Override
-    public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
-        return true;
-    }
-
-    @Override
     public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
-        return toPraedikatSubj().getVerbzweit(person, numerus);
+        return toPraedikat().getVerbzweit(person, numerus);
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
-        return toPraedikatSubj().getVerbzweitMitSubjektImMittelfeld(subjekt);
+        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(subjekt);
     }
 
     @Override
     public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
-        return toPraedikatSubj().getVerbletzt(person, numerus);
+        return toPraedikat().getVerbletzt(person, numerus);
     }
 
     @Override
     @CheckReturnValue
     public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
         return new Konstituentenfolge(k(verb.getPartizipII()));
-    }
-
-    @Override
-    public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return true;
     }
 
     @Override
@@ -153,17 +120,12 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }
 
-    @Override
-    public boolean umfasstSatzglieder() {
-        return false;
-    }
-
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
                                                            final Numerus numerus,
                                                            final boolean nachAnschlusswort) {
-        return toPraedikatSubj().getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(person, numerus,
                 nachAnschlusswort);
     }
 
@@ -171,18 +133,8 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
     @Override
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
                                                                    final Numerus numerus) {
-        return toPraedikatSubj().getSpeziellesVorfeldAlsWeitereOption(person, numerus
+        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(person, numerus
         );
-    }
-
-    @Override
-    public boolean bildetPerfektMitSein() {
-        return verb.getPerfektbildung() == Perfektbildung.SEIN;
-    }
-
-    @Override
-    public boolean hatAkkusativobjekt() {
-        return false;
     }
 
     @Override
@@ -192,7 +144,8 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
         return verb.isPartikelverb();
     }
 
-    private PraedikatSubOhneLeerstellen toPraedikatSubj() {
+    @Override
+    public PraedikatSubOhneLeerstellen toPraedikat() {
         return new PraedikatSubOhneLeerstellen(verb);
     }
 
@@ -202,15 +155,14 @@ public enum VerbSubj implements VerbMitValenz, PraedikatOhneLeerstellen {
         return null;
     }
 
-    @Nullable
-    @Override
-    public Konstituentenfolge getErstesInterrogativwort() {
-        return null;
-    }
-
     @Override
     @NonNull
     public Verb getVerb() {
         return verb;
+    }
+
+    @Override
+    public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
+        return false;
     }
 }

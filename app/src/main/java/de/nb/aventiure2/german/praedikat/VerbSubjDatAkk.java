@@ -71,7 +71,7 @@ public enum VerbSubjDatAkk implements VerbMitValenz {
     VerbSubjDatAkk(final Verb verbOhnePartikel,
                    final String partikel,
                    final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung));
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung));
     }
 
     VerbSubjDatAkk(final Verb verb) {

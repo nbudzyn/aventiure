@@ -6,6 +6,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
 import static de.nb.aventiure2.german.base.Person.P3;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Hilfsmethoden und Konstanten zum Verb "sein".
@@ -33,6 +34,6 @@ public class SeinUtil {
     }
 
     public static String istSind(final Numerus numerus) {
-        return VERB.getPraesensOhnePartikel(P3, numerus);
+        return requireNonNull(VERB.getPraesensOhnePartikel(P3, numerus));
     }
 }

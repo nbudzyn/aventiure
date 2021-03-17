@@ -60,8 +60,8 @@ public class AvTime {
         this.secsSinceMidnight = secsSinceMidnight;
     }
 
-    Tageszeit getTageszeit() {
-        if (isBefore(oClock(6))) {
+    public Tageszeit getTageszeit() {
+        if (kurzVorSonnenaufgang() || isBefore(oClock(6))) {
             return NACHTS;
         }
 
@@ -69,7 +69,7 @@ public class AvTime {
             return MORGENS;
         }
 
-        // TODO TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
+        // FIXME TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
         //  MITTAGS (z.B. 11 - 13)
         //  VORMITTAGS -> MITTAGS: "Inzwischen steht die Sonne schon sehr hoch"
         //  "Inzwischen steht die Sonne hoch am Firmament"
@@ -85,10 +85,15 @@ public class AvTime {
 
         return NACHTS;
 
-        // IDEA MITTERNACHT?  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
+        // FIXME MITTERNACHT?  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
     }
 
-    AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
+    public boolean kurzVorSonnenaufgang() {
+        return isWithin(oClock(5, 30),
+                oClock(5, 55));
+    }
+
+    public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
         if (!other.isBefore(this)) {
             return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);
         }

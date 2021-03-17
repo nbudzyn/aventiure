@@ -22,23 +22,74 @@ import de.nb.aventiure2.german.satz.Satz;
  * @see de.nb.aventiure2.german.satz.Satz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat {
-    default PraedikatOhneLeerstellen
-    mitModalpartikeln(final Modalpartikel... modalpartikeln) {
+    default PraedikatOhneLeerstellen mitModalpartikeln(
+            final Modalpartikel... modalpartikeln) {
         return mitModalpartikeln(Arrays.asList(modalpartikeln));
     }
 
-    PraedikatOhneLeerstellen mitModalpartikeln(final Collection<Modalpartikel> modalpartikeln);
+    PraedikatOhneLeerstellen mitModalpartikeln(Collection<Modalpartikel> modalpartikeln);
 
-    default Satz alsSatzMitSubjekt(final SubstantivischePhrase subjekt) {
+    /**
+     * Gibt zurück, ob dieses Prädikat in der Regel ohne Subjekt steht
+     * ("Mich friert"), aber optional ein expletives "es" möglich ist
+     * ("Es friert mich").
+     */
+    boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+
+    boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen();
+
+    /**
+     * Gibt zurück, ob die Partizip-II-Phrase
+     * am Anfang oder mitten im Satz möglich ist (<code>true</code>) oder nur am Ende
+     * (<code>false</code>).
+     * <ul>
+     * <li>Diese Partizip-II-Phrasen sind am Anfang oder mitten im Satz  möglich: "unten angekommen
+     * [bist du erschöpft]". "gut gefüttert [ist der Fisch zufrieden]"
+     * <li>Diese Partizip-II-Phrase kann <i>nicht</i>satzwertig verwendet werden: gerufen:
+     * "Kommt alle her."
+     * </ul>
+     */
+    boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
+
+    /**
+     * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).
+     * "läuft los" enthält keine Satzgliederk, "läuft schnell los" oder
+     * "hebt die Kugel hoch" hingegen schon.
+     */
+    boolean umfasstSatzglieder();
+
+    boolean bildetPerfektMitSein();
+
+    boolean hatAkkusativobjekt();
+
+    /**
+     * Gibt zurück, ob durch das Prädikat ein Bezug auf den Nachzustand gegeben ist.
+     * Z.B. ist bei "nach Berlin gehen" ein Bezug auf den Nachzustand gegeben (Aktant ist
+     * in Berlin) - bei "gehen" jedoch nicht. Auch bei "hinausgehen" oder "weggehen" ist ein
+     * Bezug auf den Nachzustand gegeben.
+     */
+    boolean isBezugAufNachzustandDesAktantenGegeben();
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe);
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe);
+
+    PraedikatOhneLeerstellen mitAdverbialerAngabe(
+            @Nullable IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe);
+
+    @Nullable
+    Konstituentenfolge getErstesInterrogativwort();
+
+    default Satz alsSatzMitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
         return alsSatzMitSubjekt(null, subjekt);
     }
 
     default Satz alsSatzMitSubjekt(
-            final @Nullable String anschlusswort, final SubstantivischePhrase subjekt) {
+            final @Nullable String anschlusswort, @Nullable final SubstantivischePhrase subjekt) {
         return new Satz(anschlusswort, subjekt, this);
     }
-
-    boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen();
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
@@ -79,20 +130,6 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
     Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus);
-
-    /**
-     * Gibt zurück, ob die Partizip-II-Phrase
-     * (vgl. {@link #getPartizipIIPhrase(Person, Numerus)})
-     * am Anfang oder mitten im Satz möglich ist (<code>true</code>) oder nur am Ende
-     * (<code>false</code>).
-     * <ul>
-     * <li>Diese Partizip-II-Phrasen sind am Anfang oder mitten im Satz  möglich: "unten angekommen
-     * [bist du erschöpft]". "gut gefüttert [ist der Fisch zufrieden]"
-     * <li>Diese Partizip-II-Phrase kann <i>nicht</i>satzwertig verwendet werden: gerufen:
-     * "Kommt alle her."
-     * </ul>
-     */
-    boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -190,35 +227,4 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
 
     @Nullable
     Konstituentenfolge getNachfeld(Person person, Numerus numerus);
-
-    /**
-     * Gibt zurück, ob dieses Prädikat Satzglieder enthält (nicht nur Verbbestandteile).
-     * "läuft los" enthält keine Satzgliederk, "läuft schnell los" oder
-     * "hebt die Kugel hoch" hingegen schon.
-     */
-    boolean umfasstSatzglieder();
-
-    boolean bildetPerfektMitSein();
-
-    boolean hatAkkusativobjekt();
-
-    /**
-     * Gibt zurück, ob durch das Prädikat ein Bezug auf den Nachzustand gegeben ist.
-     * Z.B. ist bei "nach Berlin gehen" ein Bezug auf den Nachzustand gegeben (Aktant ist
-     * in Berlin) - bei "gehen" jedoch nicht. Auch bei "hinausgehen" oder "weggehen" ist ein
-     * Bezug auf den Nachzustand gegeben.
-     */
-    boolean isBezugAufNachzustandDesAktantenGegeben();
-
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe);
-
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe);
-
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe);
-
-    @Nullable
-    Konstituentenfolge getErstesInterrogativwort();
 }

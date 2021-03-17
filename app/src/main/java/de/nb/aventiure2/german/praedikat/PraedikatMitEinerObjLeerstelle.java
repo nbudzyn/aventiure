@@ -23,6 +23,13 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
      */
     private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
+    /**
+     * Gibt an, ob dieses Prädikat in der Regel ohne Subjekt steht
+     * ("Mich friert"), aber optional ein expletives "es" möglich ist
+     * ("Es friert mich").
+     */
+    private final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
+
     @Nullable
     private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
@@ -31,8 +38,21 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher
                     adverbialeAngabeSkopusVerbWohinWoher) {
+        this(verb, kasusOderPraepositionalkasus,
+                false,
+                adverbialeAngabeSkopusVerbWohinWoher);
+    }
+
+    PraedikatMitEinerObjLeerstelle(
+            final Verb verb,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+            final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
+            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher
+                    adverbialeAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
+        this.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich =
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
         this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
     }
 
@@ -44,6 +64,7 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
 
         return new PraedikatMitEinerObjLeerstelle(
                 verb, kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
                 adverbialeAngabe
         );
     }
@@ -52,7 +73,9 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
     public PraedikatSubjObjOhneLeerstellen mit(
             final SubstantivischePhrase substPhr) {
         return new PraedikatSubjObjOhneLeerstellen(verb,
-                kasusOderPraepositionalkasus, substPhr, ImmutableList.of(),
+                kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
+                substPhr, ImmutableList.of(),
                 null, null,
                 adverbialeAngabeSkopusVerbWohinWoher);
     }

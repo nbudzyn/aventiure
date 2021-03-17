@@ -78,7 +78,8 @@ class PraedikatReflSubjObjOhneLeerstellen
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         super(verb,
-                modalpartikeln, adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
+                modalpartikeln,
+                adverbialeAngabeSkopusSatz, adverbialeAngabeSkopusVerbAllg,
                 adverbialeAngabeSkopusVerbWohinWoher);
         this.reflKasusOderPraepositionalKasus = reflKasusOderPraepositionalKasus;
         this.objektKasusOderPraepositionalkasus = objektKasusOderPraepositionalkasus;

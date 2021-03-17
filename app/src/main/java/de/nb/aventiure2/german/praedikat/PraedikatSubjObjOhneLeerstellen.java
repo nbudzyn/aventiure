@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -42,16 +43,27 @@ public class PraedikatSubjObjOhneLeerstellen
     private final KasusOderPraepositionalkasus kasusOderPraepositionalkasus;
 
     /**
-     * Das Objekt (z.B. ein Ding, Wesen, Konzept oder deklinierbare Phrase)
+     * Das Objekt
      */
     @Komplement
     private final SubstantivischePhrase objekt;
 
-    @Valenz
     PraedikatSubjObjOhneLeerstellen(final Verb verb,
                                     final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                                     final SubstantivischePhrase objekt) {
-        this(verb, kasusOderPraepositionalkasus, objekt,
+        this(verb, kasusOderPraepositionalkasus,
+                false,
+                objekt);
+    }
+
+    @Valenz
+    PraedikatSubjObjOhneLeerstellen(final Verb verb,
+                                    final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                                    final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
+                                    final SubstantivischePhrase objekt) {
+        this(verb, kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
+                objekt,
                 ImmutableList.of(),
                 null, null,
                 null);
@@ -60,13 +72,15 @@ public class PraedikatSubjObjOhneLeerstellen
     PraedikatSubjObjOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+            final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
@@ -76,7 +90,9 @@ public class PraedikatSubjObjOhneLeerstellen
     public PraedikatSubjObjOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
         return new PraedikatSubjObjOhneLeerstellen(
-                getVerb(), kasusOderPraepositionalkasus, objekt,
+                getVerb(), kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
+                objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -93,7 +109,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
+                objekt,
                 getModalpartikeln(),
                 adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
                 getAdverbialeAngabeSkopusVerbWohinWoher()
@@ -109,7 +127,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
+                objekt,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
                 getAdverbialeAngabeSkopusVerbWohinWoher()
@@ -125,7 +145,9 @@ public class PraedikatSubjObjOhneLeerstellen
 
         return new PraedikatSubjObjOhneLeerstellen(
                 getVerb(),
-                kasusOderPraepositionalkasus, objekt,
+                kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
+                objekt,
                 getModalpartikeln(),
                 getAdverbialeAngabeSkopusSatz(),
                 getAdverbialeAngabeSkopusVerbAllg(),
@@ -136,6 +158,29 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         return true;
+    }
+
+    @Nullable
+    @Override
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
+                                                           final Numerus numerusSubjekt,
+                                                           final boolean nachAnschlusswort) {
+        @Nullable final Konstituente speziellesVorfeldFromSuper =
+                super.getSpeziellesVorfeldSehrErwuenscht(personSubjekt, numerusSubjekt,
+                        nachAnschlusswort);
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
+        }
+
+        if (inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
+            final Konstituentenfolge vorfeldCandidate = objekt.imK(kasusOderPraepositionalkasus);
+            if (vorfeldCandidate.size() == 1 && vorfeldCandidate.get(0) instanceof Konstituente) {
+                // "mich (friert)"
+                return (Konstituente) vorfeldCandidate.get(0);
+            }
+        }
+
+        return null;
     }
 
     @Override

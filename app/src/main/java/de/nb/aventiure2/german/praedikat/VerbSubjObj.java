@@ -188,7 +188,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
                 final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                 final String partikel,
                 final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung), kasusOderPraepositionalkasus);
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung),
+                kasusOderPraepositionalkasus);
     }
 
     VerbSubjObj(final Verb verb,
@@ -210,10 +211,12 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
                 kasusOderPraepositionalkasus, substPhr);
     }
 
+    @Nullable
     public String getDuForm() {
         return verb.getDuFormOhnePartikel();
     }
 
+    @Nullable
     public String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
         return verb.getPraesensOhnePartikel(person, numerus);
     }

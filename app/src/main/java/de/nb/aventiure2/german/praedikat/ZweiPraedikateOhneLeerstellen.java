@@ -201,4 +201,12 @@ public class ZweiPraedikateOhneLeerstellen
 
         return null;
     }
+
+    @Override
+    public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
+        // "Mich friert und hungert".
+        // Aber: "Es friert mich und regnet."
+        return ersterSatz.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()
+                && zweiterSatz.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+    }
 }

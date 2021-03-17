@@ -4,10 +4,24 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.satz.Satz;
+
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
 public interface Praedikativum {
+    default Satz alsEsIstSatz() {
+        return alsEsIstSatz(null);
+    }
+
+    default Satz alsEsIstSatz(@javax.annotation.Nullable final String anschlusswort) {
+        return praedikativumPraedikatMit(this)
+                .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
+                .mitAnschlusswort(anschlusswort);
+    }
+
     /**
      * Gibt die Phrase zurück, wie sie als Prädikativum für ein Subjekt in dieser
      * Person und diesem Numerus verwendet wird, - ohne den Anteil, der nach Möglichkeit

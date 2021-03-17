@@ -40,7 +40,7 @@ public class InvisibleFactory {
     }
 
     GameObject createTageszeit() {
-        return new Tageszeit(db, n, world);
+        return new Tageszeit(n, world);
     }
 
     GameObject createSchlossfest() {
@@ -55,10 +55,10 @@ public class InvisibleFactory {
     private static class Tageszeit extends GameObject implements IResponder {
         private final TageszeitReactionsComp reactionsComp;
 
-        Tageszeit(final AvDatabase db, final Narrator n, final World world) {
+        Tageszeit(final Narrator n, final World world) {
             super(TAGESZEIT);
             // Jede Komponente muss registiert werden!
-            reactionsComp = addComponent(new TageszeitReactionsComp(db, n, world));
+            reactionsComp = addComponent(new TageszeitReactionsComp(n, world));
         }
 
         @Nonnull

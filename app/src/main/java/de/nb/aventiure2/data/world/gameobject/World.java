@@ -24,6 +24,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.player.*;
+import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -127,16 +128,18 @@ public class World {
     public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_017);
 
     // INVISIBLES
-    public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_000);
+    public static final GameObjectId WETTER = new GameObjectId(40_000);
     public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
-    public static final GameObjectId RAPUNZELS_NAME = new GameObjectId(40_002);
-    public static final GameObjectId RAPUNZELS_GESANG = new GameObjectId(40_003);
-    public static final GameObjectId RAPUNZELRUF = new GameObjectId(40_004);
+    public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_010);
+    public static final GameObjectId RAPUNZELS_NAME = new GameObjectId(40_012);
+    public static final GameObjectId RAPUNZELS_GESANG = new GameObjectId(40_013);
+    public static final GameObjectId RAPUNZELRUF = new GameObjectId(40_014);
     public static final GameObjectId RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU =
-            new GameObjectId(40_005);
-    public static final GameObjectId RAPUNZELS_FREIHEITSWUNSCH = new GameObjectId(40_006);
+            new GameObjectId(40_015);
+    public static final GameObjectId RAPUNZELS_FREIHEITSWUNSCH = new GameObjectId(40_016);
     public static final GameObjectId SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT =
-            new GameObjectId(40_010);
+            new GameObjectId(40_020);
+
 
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
@@ -230,6 +233,7 @@ public class World {
         final BaumFactory baum = new BaumFactory(db, timeTaker, this);
         final CreatureFactory creature = new CreatureFactory(db, timeTaker, n, this);
         final InvisibleFactory invisible = new InvisibleFactory(db, timeTaker, n, this);
+        final WetterFactory wetter = new WetterFactory(db, timeTaker, n, this);
         final MeaningFactory meaning = new MeaningFactory(db, timeTaker, n, this,
                 spatialConnectionSystem);
         final RoomFactory room = new RoomFactory(db, timeTaker, n, this);
@@ -291,6 +295,7 @@ public class World {
                 meaning.createStoryWeb(),
 
                 invisible.createSchlossfest(),
+                wetter.create(),
                 invisible.createTageszeit(),
                 InvisibleFactory.create(RAPUNZELS_NAME),
                 InvisibleFactory.create(RAPUNZELS_GESANG),
@@ -1100,6 +1105,16 @@ public class World {
         prepare();
 
         return (SpielerCharakter) load(SPIELER_CHARAKTER);
+    }
+
+    /**
+     * Lädt (sofern nicht schon geschehen) das Wetter-Game-Object und gibt es zurück.
+     */
+    public @Nonnull
+    Wetter loadWetter() {
+        prepare();
+
+        return (Wetter) load(WETTER);
     }
 
     /**

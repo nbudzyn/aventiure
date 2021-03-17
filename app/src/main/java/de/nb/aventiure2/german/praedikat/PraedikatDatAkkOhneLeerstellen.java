@@ -33,14 +33,14 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 public class PraedikatDatAkkOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     /**
-     * Das (Objekt / Wesen / Konzept für das) Dativobjekt (z.B. "Angebote")
+     * Das Dativobjekt (z.B. "Angebote")
      */
     @NonNull
     @Komplement
     private final SubstantivischePhrase dat;
 
     /**
-     * Das (Objekt / Wesen / Konzept für das) Akkusativobjekte (z.B. der Frosch)
+     * Das Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
     @Komplement
@@ -65,7 +65,8 @@ public class PraedikatDatAkkOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.dat = dat;
         this.akk = akk;

@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.Objects;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
+import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -38,6 +40,8 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
                     PL_MFN, new Personalpronomen(P3, PL_MFN,
                             fr("sie", "ihnen")))
     );
+
+    public static final Personalpronomen EXPLETIVES_ES = get(Person.P3, NumerusGenus.N);
 
     private final Person person;
 
@@ -180,5 +184,29 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
     @Override
     public Person getPerson() {
         return person;
+    }
+
+    public static void checkExpletivesEs(final SubstantivischePhrase subjekt) {
+        checkExpletivesEs(subjekt.getPerson(), subjekt.getNumerus());
+
+        Preconditions.checkArgument(subjekt.getNumerusGenus() == NumerusGenus.N,
+                "Subjekt nicht Neurum - ungültig für Wetterverben - keine expletives "
+                        + "es: " + subjekt.getNumerusGenus());
+
+        Preconditions.checkArgument(subjekt.getBezugsobjekt() == null,
+                "Subjekt hat ein Bezugsobjekt - ungültig für Wetterverben - keine expletives "
+                        + "es: " + subjekt.getBezugsobjekt());
+    }
+
+    public static void checkExpletivesEs(final Person person, final Numerus numerus) {
+        if (person != P3) {
+            throw new IllegalStateException(
+                    "Ungültige Person für Wetterverben, keine expletives es: " + person);
+        }
+
+        if (numerus != SG) {
+            throw new IllegalStateException(
+                    "Ungültiger Numerus für Wetterverben, keine expletives es: " + numerus);
+        }
     }
 }

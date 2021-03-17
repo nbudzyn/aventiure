@@ -85,6 +85,9 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN);
 
+    // FIXME Wenn mit Rapunzel im Gespräch, kommt Zauberin früher als sonst (zumindest, sobald
+    //  Zuneigung nicht zu Einbrecher fühlt).
+
     // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
@@ -92,66 +95,6 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
     //  Himmel bezieht sich. (Oder das passiert später...)
-    //  Der Wind wird stärker
-    //  Der Wind pfeift dir ums Gesicht
-    //  In der Ferne hörst du Donnergrollen
-    //  Hat es eben geblitzt?
-    //  "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
-    //  Ein Sturm zieht auf
-    //  Hoffentlich bleibt es wenigstens trocken
-    //  (Kein Regen - keine nassen Klamotten o.Ä.)
-    //  "Die Äste biegen sich"
-    //  "das Gezweig"
-    //  "es kommt ein starker Wind"
-    //  "es weht beständig ein harter Wind"
-    //  "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
-    //  "der Wind saust"
-    //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
-    //  Der Sturm biegt die Bäume.
-    //  "darin bist du vor Wind und Wetter geschützt"
-    //  "Dich friert" "Um Mitternacht geht der Wind so kalt, dass
-    //  dir nicht warm werden will"
-    //  "du frierst am ganzen Leibe"
-    //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
-    //  "du reibst die Hände"
-    //  "du bist so erfroren"
-    //  "Sobald die Sonne wieder warm scheint, gehst du..."
-    //  "dich wärmen"
-    //  "Es ist warmes Wetter"
-    //  "der Tag ist warm, die Sonne sticht"
-    //  "warmes Wetter"
-    //  "du erwärmst dich"
-    //  "du schmachtest in der Hitze"
-    //  "Die Hitze wird drückender, je näher der Mittag kommt"
-    //  "Es wird dir ganz heiß"
-    //  "von der Hitze des Tages ermüdet"
-    //  "die Sonnenhitze brennt gar zu stark"
-    //  "du bist von der Sonnenhitze müde"
-    //  "Sturm"
-    //  "es stürmt", "du findest darin Schutz"
-    //  "der Wind rauscht draußen in den Bäumen"
-    //  "Weil aber das Wetter so schlecht geworden, und Wind und Regen stürmte,
-    //   kannst du nicht weiter und kehrst [...] ein."
-    //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
-    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
-    //  wäre schön.
-    //  Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich ab.
-    //  "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein Blättchen mehr"
-    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
-    //  "Kein Wind weht"
-    //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
-    //  Das Wetter müsste quasi eine "Tendenz" erhalten, nach der es sich langsam
-    //  entwickelt. Und man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
-    //  Außerdem sollten alle "heiß..."–Hinweise dort zentralisiert werden.
-    //  Man könnte auch verschiedene Skalen haben kalt-heiß, windstill-stürmisch...
-    //  und Zielwerte mit Zielzeiten festsetzen. Schwierigkeit: Die Texte müssten
-    //  alle Skalen gleichzeitig berücksichtigen?
-    //  Oder es gibt "Wetterwege" Zwischenstationen, und man gibt nur ein Ziel vor...
-    //  (Ähnlich wie beim movement)
-
-    // FIXME Wetter als Konzept ähnlich Tageszeiten? Aber nur dramturgisch geändert, nicht
-    //  automatisch?
-    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
 
     // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen. Überall liegt 
     //  Holz herum, kleine und große Äste.
@@ -159,11 +102,29 @@ public enum RapunzelStoryNode implements IStoryNode {
     // - Holz in armlange Stücke brechen
     // - "du sammelst Holz"
 
+    // FIXME Beinahe krank werden (draußen beim schlechtem Wetter - man kann nicht klettern -
+    //  und Kraut dagegen finden (o.Ä. vgl. Märchen! "Fieber", "krank"...) Aber Spielerlebnis
+    //  nicht unangenehm machen!!
+    // FIXME Zwerge könnten helfen, kraut zu finden.
+    // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
+    //  Welt o.ä.).
+    // FIXME Goldene Kugel nicht erwähnen wenn unter Bett (sieht man nicht)
+    // FIXME "Rapunzel schiebt die Kugel unter das Bett"- aber Spieler nicht mehr im Zimmer?!
+    //  Vielleicht beim Hinabsteigen oder nach Verzaubern?
+    // FIXME Satzanfang ohne Punkt und mit Kleinschreibung. Konzept für Satzende
+    //  fehlerhaft. Irgendwo müsste wohl stehen: Es fängt definitiv ein neuer Satz an?!
+    //  Aber Verbindungen mit "und" o.Ä. sollten so lange wir möglich offen bleiben...
+
     // FIXME Binsen, Seil flechten...
     // - "du rupfst Binsen und flichst ein weiches Seil daraus"
     // - "Binsenseil"
     // - "Sprossen"
     // - "steigst die Leiter herauf"
+
+    // FIXME Rabe mit Sinn HINTERlegen!
+    // FIXME Bug: Vergessen-Text kommt auch wenn nicht verzaubert?!
+    // FIXME Begrenzte Tragkraft?!
+    // FIXME Rastenzeit zu kurz? Zauberin kommt zu spät!
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {

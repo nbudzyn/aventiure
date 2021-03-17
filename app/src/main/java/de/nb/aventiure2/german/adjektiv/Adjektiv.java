@@ -51,7 +51,7 @@ public class Adjektiv {
     @NonNull
     @Override
     public String toString() {
-        return "Verb{" +
+        return "Adjektiv{" +
                 "prädikative Form='" + praedikativ + '\'' +
                 '}';
     }

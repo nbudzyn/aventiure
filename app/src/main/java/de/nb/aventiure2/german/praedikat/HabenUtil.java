@@ -3,11 +3,13 @@ package de.nb.aventiure2.german.praedikat;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Hilfsmethoden und Konstanten zum Verb "haben".
  */
-public class HabenUtil {
-    public static final Verb VERB =
+class HabenUtil {
+    static final Verb VERB =
             new Verb("haben",
                     "habe", "hast", "hat",
                     "habt",
@@ -17,6 +19,6 @@ public class HabenUtil {
     }
 
     private static String hatHaben(final Numerus numerus) {
-        return VERB.getPraesensOhnePartikel(Person.P3, numerus);
+        return requireNonNull(VERB.getPraesensOhnePartikel(Person.P3, numerus));
     }
 }

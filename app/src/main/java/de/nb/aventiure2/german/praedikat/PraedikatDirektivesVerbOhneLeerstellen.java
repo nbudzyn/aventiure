@@ -84,7 +84,9 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb,
+                modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.objekt = objekt;

@@ -32,7 +32,8 @@ import de.nb.aventiure2.annotations.Valenz;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ValenzAnnotationProcessor extends AbstractProcessor {
-    // See https://stablekernel.com/article/the-10-step-guide-to-annotation-processing-in-android-studio/
+    // See https://stablekernel.com/article/the-10-step-guide-to-annotation-processing-in-android
+    // -studio/
 
     private Types typeUtils;
     private Elements elementUtils;
@@ -50,9 +51,10 @@ public class ValenzAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
-        final Set<String> annotataions = new LinkedHashSet<>();
-        annotataions.add(Valenz.class.getCanonicalName());
-        return annotataions;
+        final Set<String> annotations = new LinkedHashSet<>();
+        annotations.add(Valenz.class.getCanonicalName());
+
+        return annotations;
     }
 
     @Override
@@ -108,6 +110,9 @@ public class ValenzAnnotationProcessor extends AbstractProcessor {
     private void generate(final Collection<ValenzClassToBeGenerated> classesToGenerate) {
         for (final ValenzClassToBeGenerated valenzClassToBeGenerated : classesToGenerate) {
             try {
+                messager.printMessage(Diagnostic.Kind.WARNING,
+                        "Generated: " + valenzClassToBeGenerated.toString());
+
                 valenzClassToBeGenerated.generateCode(typeUtils, elementUtils, filer);
             } catch (final IOException e) {
                 error(null, e.getMessage());

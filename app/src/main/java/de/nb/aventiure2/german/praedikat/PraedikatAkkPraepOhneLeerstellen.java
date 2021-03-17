@@ -65,7 +65,8 @@ public class PraedikatAkkPraepOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.praepositionMitKasus = praepositionMitKasus;
         this.praep = praep;

@@ -15,7 +15,8 @@ import javax.annotation.Nullable;
  */
 abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     // Zu diskontinuierlichen Adjektivphrasen vgl.
-    // https://ids-pub.bsz-bw.de/frontdoor/deliver/index/docId/3132/file/Engel_Rytel-Kuc-Diskontinuierliche_Phrasen_im_Deutschen_und_im_Polnischen-1987.pdf
+    // https://ids-pub.bsz-bw.de/frontdoor/deliver/index/docId/3132/file/Engel_Rytel-Kuc
+    // -Diskontinuierliche_Phrasen_im_Deutschen_und_im_Polnischen-1987.pdf
 
     /**
      * Etwas wie "sehr", "äußerst", "ein bisschen"
@@ -41,7 +42,7 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Nullable
-    public GraduativeAngabe getGraduativeAngabe() {
+    GraduativeAngabe getGraduativeAngabe() {
         return graduativeAngabe;
     }
 

@@ -37,7 +37,7 @@ public class AvDateTime {
                 + minutesSinceHourStart * 60);
     }
 
-    AvDateTime(final long secsSinceBeginning) {
+    public AvDateTime(final long secsSinceBeginning) {
         this.secsSinceBeginning = secsSinceBeginning;
     }
 
@@ -148,7 +148,7 @@ public class AvDateTime {
         return new AvTime((int) (secsSinceBeginning % SECS_IN_A_DAY));
     }
 
-    long getSecsSinceBeginning() {
+    public long getSecsSinceBeginning() {
         return secsSinceBeginning;
     }
 

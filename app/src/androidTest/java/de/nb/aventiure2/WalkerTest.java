@@ -126,7 +126,9 @@ public class WalkerTest extends AndroidTestBase {
             if (playerActions.isEmpty()) {
                 // For easier debugging
                 scActionService.getPlayerActions();
-                fail("No actions");
+
+                fail("No actions. SC at " + scActionService.getSCLocation()
+                        + "Text: " + n.getNarrationText());
             }
 
             try {

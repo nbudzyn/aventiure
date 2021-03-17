@@ -60,10 +60,18 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase KLIRRENDE_KAELTE_OHNE_ART =
+            np(F, null,
+                    "klirrende Kälte", "klirrenden Kälte");
     public static final Nominalphrase RETTUNG_OHNE_ART =
             np(F, null, "Rettung");
     public static final Nominalphrase WAHRHEIT =
             np(F, DEF, "Wahrheit");
+    public static final Nominalphrase WARMES_WETTER =
+            np(N, INDEF, "warmes Wetter", "warmen Wetter");
+    public static final Nominalphrase WARMES_WETTER_OHNE_ART =
+            np(N, null,
+                    "warmes Wetter", "warmem Wetter");
     public static final Nominalphrase WUT_OHNE_ART =
             np(F, null, "Wut");
 

@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -35,6 +36,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZU
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
@@ -42,6 +44,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
  * for the {@link World#SCHLOSS_VORHALLE}
  * room.
  */
+@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp {
     public SchlossVorhalleConnectionComp(
@@ -98,7 +101,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
     }
 
-    private static TimedDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private TimedDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
             return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
@@ -125,29 +128,27 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @NonNull
-    private static TimedDescription<?>
+    private TimedDescription<?>
     getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
-            // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
-            //  noch nicht?
             return du("gehst",
                     "über eine Marmortreppe hinaus in die Gärten vor dem",
                     "Schloss.", CHAPTER,
-                    // FIXME Wetter zentralisieren
-                    "Draußen scheint dir die",
-                    "Sonne ins Gesicht;",
-                    // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
-                    //  noch nicht?
-                    "der Tag ist recht heiß.",
-                    "Nahebei liegt ein großer, dunkler Wald")
+                    world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
+                            .map(AbstractDescription::toSingleKonstituente)
+                            .findFirst().orElse(null),
+                    SENTENCE,
+                    "nahebei liegt ein großer, dunkler Wald")
                     .mitVorfeldSatzglied("über eine Marmortreppe")
                     .timed(mins(1));
         }
 
         return du("gehst", "über eine Marmortreppe hinaus den "
                         + "Garten vor dem Schloss.", CHAPTER,
-                // FIXME Wie hängen Tageszeiten und Wetter zusammen?
-                "Draußen ist es dunkel.",
+                world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
+                        .map(AbstractDescription::toSingleKonstituente)
+                        .findFirst().orElse(null),
+                SENTENCE,
                 "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
                 .mitVorfeldSatzglied("über eine Marmortreppe")
                 .timed(mins(1))

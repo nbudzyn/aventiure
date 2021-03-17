@@ -6,6 +6,7 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Ein Adjektiv, das keine Ergänzungen fordert.
@@ -28,7 +29,10 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GENERVT("genervt"),
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),
+    HEISS("heiß"),
     HUNDEMUEDE("hundemüde"),
+    KALT("kalt"),
+    KUEHL("kühl"),
     MISSTRAUISCH("misstrauisch"),
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
@@ -48,6 +52,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     VERWUNDERT("verwundert"),
     ZUFRIEDEN("zufrieden"),
     WACH("wach"),
+    WARM("warm"),
     ZORNIG("zornig");
 
     /**
@@ -62,6 +67,14 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     AdjektivOhneErgaenzungen(@NonNull final Adjektiv adjektiv) {
         this.adjektiv = adjektiv;
+    }
+
+    public Satz alsEsIstSatz() {
+        return alsEsIstSatz(null);
+    }
+
+    public Satz alsEsIstSatz(final @Nullable String anschlusswort) {
+        return toAdjPhr().alsEsIstSatz(anschlusswort);
     }
 
     @Override

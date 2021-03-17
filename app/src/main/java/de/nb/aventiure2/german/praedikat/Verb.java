@@ -9,7 +9,6 @@ import java.util.Objects;
 
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.federkiel.deutsch.grammatik.wortart.flexion.VerbFlektierer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -46,14 +45,14 @@ public class Verb {
      * 1. Person Singular Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
      * ("hebe")
      */
-    @NonNull
+    @Nullable
     private final String ichFormOhnePartikel;
 
     /**
      * 2. Person Singular Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
      * ("hebst")
      */
-    @NonNull
+    @Nullable
     private final String duFormOhnePartikel;
 
     /**
@@ -74,7 +73,7 @@ public class Verb {
      * 2. Person Plural Präsens Indikativ des Verbs, ggf. ist das Präfix abgetrennt
      * ("(ihr) hebt")
      */
-    @NonNull
+    @Nullable
     private final String ihrFormOhnePartikel;
 
     /**
@@ -95,16 +94,16 @@ public class Verb {
     @NonNull
     private final String partizipII;
 
-    private final static VerbFlektierer flekt = new VerbFlektierer();
-
     /**
      * Erzeugt ein Verb, das <i>kein</i> Partikelverb ist, also ein Verb
      * <i>ohne Partikel</i>. Von dem Verb wird also (anders als z.B.
      * bei "er steht auf") bei der Formenbildung nichts abgetrennt.
      */
-    public Verb(final String infinitivUndWirSieForm, final String ichFormOhnePartikel,
-                final String duFormOhnePartikel,
-                final String erSieEsFormOhnePartikel, final String ihrFormOhnePartikel,
+    public Verb(final String infinitivUndWirSieForm,
+                @Nullable final String ichFormOhnePartikel,
+                @Nullable final String duFormOhnePartikel,
+                final String erSieEsFormOhnePartikel,
+                @Nullable final String ihrFormOhnePartikel,
                 final Perfektbildung perfektbildung,
                 final String partizipII) {
         this(infinitivUndWirSieForm,
@@ -113,9 +112,11 @@ public class Verb {
                 null, perfektbildung, partizipII);
     }
 
-    public Verb(final String infinitivUndWirSieForm, final String ichFormOhnePartikel,
-                final String duFormOhnePartikel,
-                final String erSieEsFormOhnePartikel, final String ihrFormOhnePartikel,
+    public Verb(final String infinitivUndWirSieForm,
+                @Nullable final String ichFormOhnePartikel,
+                @Nullable final String duFormOhnePartikel,
+                final String erSieEsFormOhnePartikel,
+                @Nullable final String ihrFormOhnePartikel,
                 @Nullable final String partikel,
                 final Perfektbildung perfektbildung,
                 final String partizipII) {
@@ -125,11 +126,12 @@ public class Verb {
                 partikel, perfektbildung, partizipII);
     }
 
-    public Verb(final String infinitiv, final String ichFormOhnePartikel,
-                final String duFormOhnePartikel,
+    public Verb(final String infinitiv,
+                @Nullable final String ichFormOhnePartikel,
+                @Nullable final String duFormOhnePartikel,
                 final String erSieEsFormOhnePartikel,
                 final String wirSieFormOhnePartikel,
-                final String ihrFormOhnePartikel,
+                @Nullable final String ihrFormOhnePartikel,
                 @Nullable final String partikel,
                 final Perfektbildung perfektbildung,
                 final String partizipII) {
@@ -151,26 +153,33 @@ public class Verb {
                         + "Partizip II: %s", partikel, partizipII);
     }
 
-    private Verb ohnePartikel(final Perfektbildung perfektbildung) {
+    private Verb ohnePartikel() {
         if (partikel == null) {
             return this;
         }
 
         return new Verb(stripPrefixIfAny(partikel, infinitiv),
                 ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
-                wirSieFormOhnePartikel, ihrFormOhnePartikel, perfektbildung,
+                wirSieFormOhnePartikel, ihrFormOhnePartikel, null, perfektbildung,
                 stripPrefixIfAny(partikel, partizipII));
     }
 
-    Verb mitPartikel(final String partikel, final Perfektbildung perfektbildung) {
-        if (partikel == null) {
-            return ohnePartikel(perfektbildung).mitPartikel(partikel, perfektbildung);
+    Verb mitPartikel(final String partikel) {
+        if (this.partikel != null) {
+            return ohnePartikel().mitPartikel(partikel);
         }
 
         return new Verb(partikel + infinitiv,
                 ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
                 wirSieFormOhnePartikel, ihrFormOhnePartikel, partikel, perfektbildung,
                 partikel + partizipII);
+    }
+
+    Verb mitPerfektbildung(final Perfektbildung perfektbildung) {
+        return new Verb(infinitiv,
+                ichFormOhnePartikel, duFormOhnePartikel, erSieEsFormOhnePartikel,
+                wirSieFormOhnePartikel, ihrFormOhnePartikel, partikel, perfektbildung,
+                partizipII);
     }
 
     public String getZuInfinitiv() {
@@ -194,14 +203,18 @@ public class Verb {
         return infinitiv;
     }
 
-    @NonNull
+    @Nullable
     String getPraesensMitPartikel(final Person person, final Numerus numerus) {
+        @Nullable final String praesensOhnePartikel = getPraesensOhnePartikel(person, numerus);
+        if (praesensOhnePartikel == null) {
+            return null;
+        }
         return Joiner.on("").skipNulls().join(
                 partikel,
-                getPraesensOhnePartikel(person, numerus));
+                praesensOhnePartikel);
     }
 
-    @NonNull
+    @Nullable
     String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
         switch (person) {
             case P1:
@@ -215,7 +228,7 @@ public class Verb {
         }
     }
 
-    @NonNull
+    @Nullable
     String getDuFormOhnePartikel() {
         return duFormOhnePartikel;
     }
@@ -249,7 +262,11 @@ public class Verb {
         }
         final Verb verb = (Verb) o;
         return infinitiv.equals(verb.infinitiv) &&
-                duFormOhnePartikel.equals(verb.duFormOhnePartikel) &&
+                Objects.equals(ichFormOhnePartikel, verb.ichFormOhnePartikel) &&
+                Objects.equals(duFormOhnePartikel, verb.duFormOhnePartikel) &&
+                erSieEsFormOhnePartikel.equals(verb.erSieEsFormOhnePartikel) &&
+                wirSieFormOhnePartikel.equals(verb.wirSieFormOhnePartikel) &&
+                Objects.equals(ihrFormOhnePartikel, verb.ihrFormOhnePartikel) &&
                 Objects.equals(partikel, verb.partikel) &&
                 perfektbildung == verb.perfektbildung &&
                 partizipII.equals(verb.partizipII);
@@ -257,7 +274,7 @@ public class Verb {
 
     @Override
     public int hashCode() {
-        return Objects.hash(infinitiv, duFormOhnePartikel, partikel, perfektbildung, partizipII);
+        return Objects.hash(infinitiv);
     }
 
     @NonNull

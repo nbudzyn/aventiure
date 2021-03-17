@@ -80,7 +80,8 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
             final Satz indirekterFragesatz) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;

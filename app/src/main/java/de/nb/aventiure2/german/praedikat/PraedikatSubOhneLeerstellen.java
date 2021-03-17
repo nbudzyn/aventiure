@@ -24,9 +24,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
  * Leerstellen hat.
  */
 
-public class PraedikatSubOhneLeerstellen
-        extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
-
+public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
     @Valenz
     PraedikatSubOhneLeerstellen(final Verb verb) {
         this(verb, ImmutableList.of(),
@@ -41,7 +39,8 @@ public class PraedikatSubOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
-        super(verb, modalpartikeln, adverbialeAngabeSkopusSatz,
+        super(verb, modalpartikeln,
+                adverbialeAngabeSkopusSatz,
                 adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
     }
 

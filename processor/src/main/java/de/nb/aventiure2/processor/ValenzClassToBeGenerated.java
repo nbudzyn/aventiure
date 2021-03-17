@@ -169,6 +169,24 @@ class ValenzClassToBeGenerated {
                         .build();
 
                 classBuilder.addMethod(mit);
+            } else if (leerstelle.getType().equals("de.nb.aventiure2.german.base.Praedikativum")) {
+                classBuilder.addSuperinterface(ClassName.bestGuess(
+                        "de.nb.aventiure2.german.praedikat"
+                                + ".PraedikatMitEinerPraedikativumLeerstelle"));
+
+                final ClassName leerstelleClassName = ClassName.bestGuess(leerstelle.getType());
+
+                final MethodSpec mit = MethodSpec.methodBuilder("mit")
+                        .addAnnotation(Override.class)
+                        .addModifiers(Modifier.PUBLIC)
+                        .returns(ClassName.bestGuess(qualifiedNameWithoutLeerstellen))
+                        .addParameter(leerstelleClassName, "phrase")
+                        .addCode("return mit")
+                        .addCode(capitalize(leerstelle.getName()))
+                        .addCode("(phrase);")
+                        .build();
+
+                classBuilder.addMethod(mit);
             } else if (leerstelle.getType()
                     .equals("de.nb.aventiure2.german.base.WoertlicheRede")) {
                 classBuilder.addSuperinterface(ClassName.bestGuess(
@@ -301,5 +319,17 @@ class ValenzClassToBeGenerated {
         }
 
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    @Override
+    public String toString() {
+        return "ValenzClassToBeGenerated{" +
+                "packageName='" + packageName + '\'' +
+                ", qualifiedNameWithoutLeerstellen='" + qualifiedNameWithoutLeerstellen + '\'' +
+                ", alleArgumente=" + alleArgumente +
+                ", gefuellteArgumente=" + gefuellteArgumente +
+                ", leerstellen=" + leerstellen +
+                ", sonstigeFelder=" + sonstigeFelder +
+                '}';
     }
 }

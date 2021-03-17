@@ -13,7 +13,8 @@ public interface PraedikatMitEinerLeerstelleFuerWoertlicheRede extends Praedikat
     /**
      * Füllt die Leerstelle mit dieser Woertlichen Rede.
      */
-    default PraedikatOhneLeerstellen mitWoertlicheRede(final String woertlicheRede) {
+    default PraedikatOhneLeerstellen mitWoertlicheRede(
+            final String woertlicheRede) {
         return mitWoertlicheRede(new WoertlicheRede(woertlicheRede));
     }
 

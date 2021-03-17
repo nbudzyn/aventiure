@@ -165,8 +165,11 @@ public class AltDescriptionsBuilder {
         return this;
     }
 
-    public AltDescriptionsBuilder add(final Satz satz) {
-        return add(DescriptionBuilder.satz(satz));
+    public AltDescriptionsBuilder add(final Satz... saetze) {
+        for (final Satz satz : saetze) {
+            add(DescriptionBuilder.satz(satz));
+        }
+        return this;
     }
 
     public AltDescriptionsBuilder add(final AbstractDescription<?>... altDescriptions) {

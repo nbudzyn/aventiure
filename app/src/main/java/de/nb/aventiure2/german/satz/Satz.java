@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.satz;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -12,6 +13,8 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
@@ -25,6 +28,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Ein Satz.
@@ -38,8 +42,9 @@ public class Satz {
     private final String anschlusswort;
 
     /**
-     * Das Subjekt des Satzes.
+     * Das Subjekt des Satzes. Darf in seltenen Fällen fehlen ("Mich friert.")
      */
+    @Nullable
     private final SubstantivischePhrase subjekt;
 
     /**
@@ -56,14 +61,14 @@ public class Satz {
     private final Konditionalsatz angabensatz;
 
     public static ImmutableList<Satz> altSubjObjSaetze(
-            final SubstantivischePhrase subjekt,
+            @Nullable final SubstantivischePhrase subjekt,
             final PraedikatMitEinerObjektleerstelle praedikat, final SubstantivischePhrase objekt,
             final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
         return altSubjObjSaetze(subjekt, ImmutableList.of(praedikat), objekt, adverbialeAngaben);
     }
 
     public static ImmutableList<Satz> altSubjObjSaetze(
-            final SubstantivischePhrase subjekt,
+            @Nullable final SubstantivischePhrase subjekt,
             final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
             final SubstantivischePhrase objekt) {
         return praedikate.stream().map(v -> v.mit(objekt).alsSatzMitSubjekt(subjekt))
@@ -83,21 +88,30 @@ public class Satz {
                 .collect(toImmutableList());
     }
 
-    public Satz(final SubstantivischePhrase subjekt,
+    public Satz(@Nullable final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat) {
         this(null, subjekt, praedikat);
     }
 
     public Satz(@Nullable final String anschlusswort,
-                final SubstantivischePhrase subjekt,
+                @Nullable final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat) {
         this(anschlusswort, subjekt, praedikat, null);
     }
 
     public Satz(@Nullable final String anschlusswort,
-                final SubstantivischePhrase subjekt,
+                @Nullable final SubstantivischePhrase subjekt,
                 final PraedikatOhneLeerstellen praedikat,
                 @Nullable final Konditionalsatz angabensatz) {
+        if (praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
+            if (subjekt != null) {
+                Personalpronomen.checkExpletivesEs(subjekt);
+            }
+        } else {
+            Preconditions.checkNotNull(subjekt, "Subjekt null, fehlendes Subjekt " +
+                    "für diese Prädikat nicht möglich: " + praedikat);
+        }
+
         this.anschlusswort = anschlusswort;
         this.subjekt = subjekt;
         this.praedikat = praedikat;
@@ -108,6 +122,10 @@ public class Satz {
         return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
     }
 
+    private Satz mitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
+        return new Satz(anschlusswort, subjekt, praedikat, angabensatz);
+    }
+
     /**
      * Fügt dem Subjekt etwas hinzu wie "auch", "allein", "ausgerechnet",
      * "wenigstens" etc. (sofern das Subjekt eine Fokuspartikel erlaubt, ansonsten
@@ -115,6 +133,10 @@ public class Satz {
      */
     public Satz mitSubjektFokuspartikel(
             @Nullable final String subjektFokuspartikel) {
+        if (subjekt == null) {
+            return this;
+        }
+
         return new Satz(anschlusswort, subjekt.mitFokuspartikel(subjektFokuspartikel),
                 praedikat, angabensatz);
     }
@@ -221,7 +243,7 @@ public class Satz {
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        subjekt.getPerson(), subjekt.getNumerus()
+                        getPersonFuerPraedikat(), getNumerusFuerPraedikat()
                 );
         if (speziellesVorfeld == null) {
             // Angabensätze können / sollten nur unter gewissen Voraussetzungen
@@ -231,6 +253,15 @@ public class Satz {
         }
 
         return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
+    }
+
+    private Person getPersonFuerPraedikat() {
+        if (subjekt == null) {
+            // "Mich friert"
+            return P3;
+        }
+
+        return subjekt.getPerson();
     }
 
     /**
@@ -244,9 +275,15 @@ public class Satz {
 
         res.add(getVerbzweitsatzStandard());
 
+        if (subjekt == null && praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()
+                && getSpeziellesVorfeldSehrErwuenscht() != null) {
+            // "Es friert mich".
+            res.add(mitSubjekt(Personalpronomen.EXPLETIVES_ES).getVerbzweitsatzStandard());
+        }
+
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        subjekt.getPerson(), subjekt.getNumerus()
+                        getPersonFuerPraedikat(), getNumerusFuerPraedikat()
                 );
         if (speziellesVorfeld == null) {
             res.add(getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
@@ -261,21 +298,25 @@ public class Satz {
      */
     public Konstituentenfolge getVerbzweitsatzStandard() {
         @Nullable final Konstituente speziellesVorfeld =
-                praedikat.getSpeziellesVorfeldSehrErwuenscht(
-                        subjekt.getPerson(), subjekt.getNumerus(),
-                        anschlusswort != null);
+                getSpeziellesVorfeldSehrErwuenscht();
         if (speziellesVorfeld != null) {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }
 
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                subjekt.nomK(),
-                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES,
+                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
+    }
+
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht() {
+        return praedikat.getSpeziellesVorfeldSehrErwuenscht(
+                getPersonFuerPraedikat(), getNumerusFuerPraedikat(),
+                anschlusswort != null);
     }
 
     private Konstituentenfolge getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
@@ -286,20 +327,27 @@ public class Satz {
 
     private Konstituentenfolge getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(
             final Konstituentenfolge vorfeld) {
+
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 vorfeld,
-                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt).cutFirst(vorfeld),
+                getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig().cutFirst(vorfeld),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
+    }
+
+    private Konstituentenfolge getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig() {
+        return subjekt != null ?
+                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt) :
+                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat());
     }
 
     public Konstituentenfolge getVerbzweitsatzMitVorfeld(final String vorfeld) {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 vorfeld,
-                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig(),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
@@ -311,22 +359,31 @@ public class Satz {
     Konstituentenfolge getVerbletztsatz() {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                subjekt.nomK(),
-                praedikat.getVerbletzt(subjekt.getPerson(), subjekt.getNumerus()),
+                subjekt != null ? subjekt.nomK() : null,
+                praedikat.getVerbletzt(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
     }
 
+    private Numerus getNumerusFuerPraedikat() {
+        if (subjekt == null) {
+            // "Mich friert"
+            return SG;
+        }
+
+        return subjekt.getNumerus();
+    }
+
     /**
-     * Gibt den Satz in Verbzeitform aus, jedoch ohne Subjekt, also beginnend mit
+     * Gibt den Satz in Verbzweitform aus, jedoch ohne Subjekt, also beginnend mit
      * dem Anschlusswort (z.B. "und") und dem Verb. Z.B. "und hast
      * am Abend etwas zu berichten" oder "und nimmst den Ast"
      */
     public Konstituentenfolge getSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                praedikat.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus()),
+                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
@@ -338,6 +395,7 @@ public class Satz {
                 && subjekt.getNumerus() == SG;
     }
 
+    @Nullable
     public SubstantivischePhrase getSubjekt() {
         return subjekt;
     }
@@ -349,6 +407,7 @@ public class Satz {
     // equals() und hashCode() überschreiben wir extra nicht! Alle Satz-Objekte
     // sollen als "verschieden" gelten. Ansonsten müssten wir auch in allen
     // SubstantivischePhrase- und
-    // PraedikatOhneLeerstellen-Implementierungen equals() und hashCode() überschreiben.
+    // PraedikatOhneLeerstellen-Implementierungen equals() und hashCode()
+    // überschreiben.
     // Das wäre inhaltlich richtig, aber viel Arbeit.
 }

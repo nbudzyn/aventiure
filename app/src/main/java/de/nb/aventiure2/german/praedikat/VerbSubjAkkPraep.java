@@ -70,7 +70,7 @@ public enum VerbSubjAkkPraep implements VerbMitValenz {
                      final PraepositionMitKasus praepositionMitKasus,
                      final String partikel,
                      final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung),
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung),
                 praepositionMitKasus);
     }
 

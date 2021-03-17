@@ -2,7 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -21,7 +20,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class TageszeitReactionsComp
         extends AbstractReactionsComp
         implements ITimePassedReactions {
-    public TageszeitReactionsComp(final AvDatabase db, final Narrator n,
+    public TageszeitReactionsComp(final Narrator n,
                                   final World world) {
         super(TAGESZEIT, n, world);
     }
@@ -90,7 +89,7 @@ public class TageszeitReactionsComp
                         neuerSatz("Unterdessen ist es hell geworden"),
                         neuerSatz("Die Sonne geht auf")
 
-                        // TODO So etwas ermöglichen, wenn der Spieler sich
+                        // FIXME So etwas ermöglichen, wenn der Spieler sich
                         //  DRAUSSEN aufhält
                         //  allg("Im Osten kündigt sich der neue Tag an")
                         //  "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
@@ -210,7 +209,7 @@ public class TageszeitReactionsComp
                         neuerSatz(PARAGRAPH,
                                 "Es ist Nacht geworden und man sieht nicht "
                                         + "mehr so gut")
-                        // TODO wenn der SC draußen ist:
+                        // FIXME wenn der SC draußen ist:
                         //  "Jetzt sind am Himmel die Sterne zu sehen. Es ist dunkel und in der
                         //  Ferne "
                         //  + "ruft ein Käuzchen"

@@ -52,6 +52,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @NonNull
     private final Verb verb;
 
+    /**
+     * Gibt an, ob dieses Prädikat in der Regel ohne Subjekt steht
+     * ("Mich friert"), aber optional ein expletives "es" möglich ist
+     * ("Es friert mich").
+     */
+    private final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
+
     private final ImmutableList<Modalpartikel> modalpartikeln;
 
     @Nullable
@@ -63,8 +70,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Nullable
     private final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
 
-    public AbstractAngabenfaehigesPraedikatOhneLeerstellen(final Verb verb) {
-        this(verb, ImmutableList.of(), null, null, null);
+    public AbstractAngabenfaehigesPraedikatOhneLeerstellen(
+            final Verb verb,
+            final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich) {
+        this(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, ImmutableList.of(),
+                null, null, null);
     }
 
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
@@ -74,7 +84,23 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
             @Nullable
             final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+        this(verb, false,
+                modalpartikeln, adverbialeAngabeSkopusSatz,
+                adverbialeAngabeSkopusVerbAllg,
+                adverbialeAngabeSkopusVerbWohinWoher);
+    }
+
+    AbstractAngabenfaehigesPraedikatOhneLeerstellen(
+            final Verb verb,
+            final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
+            final Iterable<Modalpartikel> modalpartikeln,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
+            @Nullable
+            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
+        this.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich =
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
         this.modalpartikeln = ImmutableList.copyOf(modalpartikeln);
         this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
         this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
@@ -101,7 +127,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public final Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                verb.getPraesensOhnePartikel(person, numerus),
+                requireNonNull(verb.getPraesensOhnePartikel(person, numerus)),
                 getMittelfeld(person, numerus),
                 verb.getPartikel(),
                 getNachfeld(person, numerus));
@@ -111,7 +137,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                verb.getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus()),
+                requireNonNull(
+                        verb.getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())),
                 // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
@@ -125,7 +152,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public final Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getMittelfeld(person, numerus),
-                verb.getPraesensMitPartikel(person, numerus),
+                requireNonNull(verb.getPraesensMitPartikel(person, numerus)),
                 getNachfeld(person, numerus));
     }
 
@@ -433,6 +460,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return joinToKonstituentenfolge(advAngabeOderInterrogativ.getDescription(
                 // Machen bei Interrogativadverbien keinen Unterschied
                 P3, SG));
+    }
+
+    @Override
+    public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
+        return inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
     }
 }
 

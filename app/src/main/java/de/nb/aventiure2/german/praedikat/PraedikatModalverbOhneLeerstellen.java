@@ -19,6 +19,8 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Ein Prädikat mit einem Modalverb, bei dem alle Leerstellen gefüllt sind
  * (z.B. <i>schlafen müssen</i>,  <i>einen Apfel essen wollen</i>).
@@ -105,7 +107,7 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
         // möchtest sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                verb.getPraesensOhnePartikel(person, numerus), // "möchtest"
+                requireNonNull(verb.getPraesensOhnePartikel(person, numerus)), // "möchtest"
                 lexikalischerKern.getInfinitiv(person, numerus)); // "dich waschen"
     }
 
@@ -117,8 +119,8 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
         // möchtest du sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                verb.getPraesensOhnePartikel(
-                        subjekt.getPerson(), subjekt.getNumerus()), // "möchtest"
+                requireNonNull(verb.getPraesensOhnePartikel(
+                        subjekt.getPerson(), subjekt.getNumerus())), // "möchtest"
                 subjekt.nomK(), // "du"
                 lexikalischerKern.getInfinitiv(
                         subjekt.getPerson(), subjekt.getNumerus())); // "dich waschen"
@@ -136,7 +138,7 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
                 lexikalischerKern.getInfinitiv(person, numerus).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
-                verb.getPraesensMitPartikel(person, numerus), // "möchtest"
+                requireNonNull(verb.getPraesensMitPartikel(person, numerus)), // "möchtest"
                 nachfeld); // : Odysseus ist zurück.
     }
 
@@ -242,5 +244,11 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     @Override
     public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
         return lexikalischerKern.getNachfeld(person, numerus);
+    }
+
+    @Override
+    public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
+        // "Mich muss frieren""
+        return lexikalischerKern.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
     }
 }

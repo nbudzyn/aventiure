@@ -17,6 +17,8 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Ein zu-haben-Prädikat, bei dem alle Leerstellen gefüllt sind
  * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben</i>,
@@ -97,7 +99,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // hast zu sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                HabenUtil.VERB.getPraesensOhnePartikel(person, numerus), // "hast"
+                requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(person, numerus)), // "hast"
                 lexikalischerKern.getZuInfinitiv(person, numerus)); // "dich zu waschen"
     }
 
@@ -109,8 +111,8 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // hast du zu sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                HabenUtil.VERB.getPraesensOhnePartikel(
-                        subjekt.getPerson(), subjekt.getNumerus()), // "hast"
+                requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(
+                        subjekt.getPerson(), subjekt.getNumerus())), // "hast"
                 subjekt.nomK(), // "du"
                 lexikalischerKern.getZuInfinitiv(
                         subjekt.getPerson(), subjekt.getNumerus())); // "dich zu waschen"
@@ -128,7 +130,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
                 lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
                         // "Spannendes zu berichten"
                         nachfeld),
-                HabenUtil.VERB.getPraesensMitPartikel(person, numerus), // "hast"
+                requireNonNull(HabenUtil.VERB.getPraesensMitPartikel(person, numerus)), // "hast"
                 nachfeld); // : Odysseus ist zurück.
     }
 
@@ -238,5 +240,11 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // müsste allerdings die Natürlichkeit der erzeugten Sprache immer im Vordergrund stehen.)
 
         return lexikalischerKern.getNachfeld(person, numerus);
+    }
+
+    @Override
+    public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
+        // "Mich hat zu frieren".
+        return lexikalischerKern.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
     }
 }

@@ -59,7 +59,7 @@ public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
     VerbSubjPraedikativeAdjektivphrase(final Verb verbOhnePartikel,
                                        final String partikel,
                                        final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel, perfektbildung));
+        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung));
     }
 
     VerbSubjPraedikativeAdjektivphrase(@NonNull final Verb verb) {

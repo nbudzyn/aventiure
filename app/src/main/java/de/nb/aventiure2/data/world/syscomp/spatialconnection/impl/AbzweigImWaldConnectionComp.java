@@ -40,6 +40,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("unchecked")
 public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
@@ -184,8 +185,8 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         // steht
         return du("gehst",
                 "weiter; als du an den Brunnen kommst,",
-                VerbSubjObj.STEHEN.getPraesensOhnePartikel(
-                        descObjects.getPerson(), descObjects.getNumerus()), // steht
+                requireNonNull(VerbSubjObj.STEHEN.getPraesensOhnePartikel(
+                        descObjects.getPerson(), descObjects.getNumerus())), // steht
                 "dir",
                 descObjects.nomK(),
                 "sofort wieder vor Augen und du wirst ganz traurig")

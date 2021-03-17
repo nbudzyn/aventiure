@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 
 /**
- * Eine Adjektivphrase die keiner Ergänzungen fordert. Beispiele:
+ * Eine Adjektivphrase die keine Ergänzungen fordert. Beispiele:
  * <ul>
  *     <li>"glücklich"
  *     <li>"sehr glücklich"
