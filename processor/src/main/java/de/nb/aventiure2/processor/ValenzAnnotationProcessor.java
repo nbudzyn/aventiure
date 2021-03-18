@@ -110,7 +110,7 @@ public class ValenzAnnotationProcessor extends AbstractProcessor {
     private void generate(final Collection<ValenzClassToBeGenerated> classesToGenerate) {
         for (final ValenzClassToBeGenerated valenzClassToBeGenerated : classesToGenerate) {
             try {
-                messager.printMessage(Diagnostic.Kind.WARNING,
+                messager.printMessage(Diagnostic.Kind.NOTE,
                         "Generated: " + valenzClassToBeGenerated.toString());
 
                 valenzClassToBeGenerated.generateCode(typeUtils, elementUtils, filer);

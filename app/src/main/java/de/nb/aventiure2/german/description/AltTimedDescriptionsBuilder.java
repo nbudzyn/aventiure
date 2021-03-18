@@ -74,6 +74,16 @@ public class AltTimedDescriptionsBuilder {
         return addAll(other.altDescriptions);
     }
 
+    public AltTimedDescriptionsBuilder addAllIfOtherwiseEmtpy(
+            final Stream<? extends TimedDescription<
+                    ? extends AbstractDescription<?>>> stream) {
+        if (isEmpty()) {
+            addAll(stream);
+        }
+
+        return this;
+    }
+
     public AltTimedDescriptionsBuilder addAll(
             final Stream<? extends TimedDescription<
                     ? extends AbstractDescription<?>>> stream) {

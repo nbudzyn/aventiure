@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
 
+import java.util.Collection;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -431,9 +433,8 @@ public class MovementComp
 
 
     public void narrateScFolgtMovingGO(
-            // FIXME mehrere Alternativen erlauben
-            final TimedDescription<?> normalDescription) {
-        movementNarrator.narrateScFolgtMovingGO(normalDescription);
+            final Collection<TimedDescription<?>> normalTimedDescriptions) {
+        movementNarrator.narrateScFolgtMovingGO(normalTimedDescriptions);
     }
 
     public void narrateAndDoScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {

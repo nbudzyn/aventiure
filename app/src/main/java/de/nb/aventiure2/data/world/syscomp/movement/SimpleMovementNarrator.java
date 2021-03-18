@@ -2,8 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
+import java.util.Collection;
 
 import javax.annotation.Nullable;
 
@@ -64,14 +63,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @Override
-    // FIXME Inlinen
-    public void narrateScFolgtMovingGO(final TimedDescription<?> normalDesc) {
-        narrateScFolgtMovingGO(ImmutableList.of(normalDesc));
-    }
-
-    private void narrateScFolgtMovingGO(
-            final ImmutableCollection<TimedDescription<?>> normalTimedDescriptions) {
-
+    public void narrateScFolgtMovingGO(
+            final Collection<TimedDescription<?>> normalTimedDescriptions) {
         final SubstantivischePhrase anaph = anaph(true);
         final AltTimedDescriptionsBuilder alt = altTimed();
 

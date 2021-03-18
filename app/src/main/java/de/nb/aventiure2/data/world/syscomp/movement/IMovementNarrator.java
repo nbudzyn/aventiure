@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.world.base.SpatialConnection;
@@ -57,10 +59,9 @@ public interface IMovementNarrator {
     /**
      * Beschreibt, wie der SC diesem {@link IMovingGO} folgt.
      *
-     * @param normalDescription Die normale Beschreibung, die eigentlich für diese
-     *                          Bewegung vorgesehen wäre
+     * @param normalTimedDescriptions Die alternativen normalen Beschreibungen, die eigentlich
+     *                                für diese
+     *                                Bewegung vorgesehen wären
      */
-    void narrateScFolgtMovingGO(
-            // FIXME mehrere Alternativen erlauben
-            TimedDescription<?> normalDescription);
+    void narrateScFolgtMovingGO(final Collection<TimedDescription<?>> normalTimedDescriptions);
 }
