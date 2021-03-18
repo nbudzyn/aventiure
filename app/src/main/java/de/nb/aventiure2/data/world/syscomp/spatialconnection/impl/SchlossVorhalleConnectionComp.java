@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -21,9 +22,9 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -72,11 +73,11 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
-        res.add(SpatialConnection.con(DRAUSSEN_VOR_DEM_SCHLOSS,
+        res.add(SpatialConnection.conAltDesc(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "auf der Treppe",
                 EAST, this::getActionNameTo_DraussenVorDemSchloss,
                 secs(90),
-                this::getDescTo_DraussenVorDemSchloss));
+                this::altDescTo_DraussenVorDemSchloss));
 
         return res.build();
     }
@@ -89,75 +90,77 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @CheckReturnValue
-    private TimedDescription<?>
-        // FIXME mehrere Alternativen als Rückgabewert erlauben
-    getDescTo_DraussenVorDemSchloss(
+    private ImmutableCollection<TimedDescription<?>>
+    altDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
-                return getDescTo_DraussenVorDemSchloss_FestBegonnen();
-
+                return ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen());
             default:
-                return getDescTo_DraussenVorDemSchlosss_KeinFest(newLocationKnown,
-                        lichtverhaeltnisse);
+                return altDescTo_DraussenVorDemSchlosss_KeinFest(
+                        newLocationKnown, lichtverhaeltnisse);
         }
     }
 
-    private TimedDescription<?>
-        // FIXME mehrere Alternativen als Rückgabewert erlauben
-    getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private ImmutableCollection<TimedDescription<?>>
+    altDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
-            return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
+            return altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
                     lichtverhaeltnisse);
         }
 
         if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
             // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
             //  noch nicht?
-            // FIXME Wetter zentralisieren?
-            return du("verlässt", "das Schloss. Draußen scheint dir die",
-                    "Sonne ins Gesicht;",
-                    // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
-                    //  noch nicht?
-                    "der Tag ist recht heiß").timed(mins(1));
+            // FIXME Wetter zentralisieren!
+            return ImmutableList.of(
+                    du("verlässt", "das Schloss. Draußen scheint dir die",
+                            "Sonne ins Gesicht;",
+                            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
+                            //  noch nicht?
+                            "der Tag ist recht heiß").timed(mins(1)));
         }
 
-        // TODO: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
+        // FIXME: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
         //  "Draußen ist es dunkel" o.Ä.
 
-        return du("verlässt", "das Schloss").timed(mins(1))
-                .undWartest()
-                .dann();
+        return ImmutableList.of(
+                du("verlässt", "das Schloss").timed(mins(1))
+                        .undWartest()
+                        .dann());
     }
 
     @NonNull
-    private TimedDescription<?>
-    getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(final Lichtverhaeltnisse lichtverhaeltnisse) {
+    private ImmutableCollection<TimedDescription<?>>
+    altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == HELL) {
-            return du("gehst",
-                    "über eine Marmortreppe hinaus in die Gärten vor dem",
-                    "Schloss.", CHAPTER,
-                    world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
-                            .map(AbstractDescription::toSingleKonstituente)
-                            // FIXME mehrere Alternativen als Rückgabewert erlauben
-                            .findFirst().orElse(null),
-                    SENTENCE,
-                    "nahebei liegt ein großer, dunkler Wald")
-                    .mitVorfeldSatzglied("über eine Marmortreppe")
-                    .timed(mins(1));
+            // FIXME altDu() o.Ä.?!
+            return world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
+                    .map(wetterDesc ->
+                            du("gehst",
+                                    "über eine Marmortreppe hinaus in die Gärten vor dem",
+                                    "Schloss.", CHAPTER,
+                                    wetterDesc.toSingleKonstituente(),
+                                    SENTENCE,
+                                    "nahebei liegt ein großer, dunkler Wald")
+                                    .mitVorfeldSatzglied("über eine Marmortreppe")
+                                    .timed(mins(1)))
+                    .collect(toImmutableSet());
         }
 
-        return du("gehst", "über eine Marmortreppe hinaus den "
-                        + "Garten vor dem Schloss.", CHAPTER,
-                world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
-                        .map(AbstractDescription::toSingleKonstituente)
-                        .findFirst().orElse(null),
-                SENTENCE,
-                "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
-                .mitVorfeldSatzglied("über eine Marmortreppe")
-                .timed(mins(1))
-                .komma();
+        // FIXME altDu() o.Ä.?!
+        return world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
+                .map(wetterDesc ->
+                        du("gehst", "über eine Marmortreppe hinaus den "
+                                        + "Garten vor dem Schloss.", CHAPTER,
+                                wetterDesc.toSingleKonstituente(),
+                                SENTENCE,
+                                "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
+                                .mitVorfeldSatzglied("über eine Marmortreppe")
+                                .timed(mins(1))
+                                .komma())
+                .collect(toImmutableSet());
     }
 
     @NonNull

@@ -2,6 +2,9 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -18,7 +21,7 @@ import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.BaumFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
@@ -28,6 +31,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
@@ -72,14 +76,14 @@ public class BaumFactory {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, locationComp,
                 ASTGABEL,
                 false, null,
-                conData("im Geäst",
+                conDataAltDesc("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),
-                        this::getDescIn),
-                conData("im Geäst",
+                        this::altDescIn),
+                conDataAltDesc("im Geäst",
                         "Zum Boden hinabklettern",
                         mins(4),
-                        this::getDescOut));
+                        this::altDescOut));
 
         return new StoringPlaceObject(id,
                 descriptionComp,
@@ -88,16 +92,16 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private TimedDescription<?> getDescIn(
+    private ImmutableCollection<TimedDescription<?>> altDescIn(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().get(HOCHKLETTERN);
         switch (count) {
             case 0:
-                return getDescInErstesMal();
+                return ImmutableList.of(getDescInErstesMal());
             case 1:
-                return getDescInZweitesMal();
+                return ImmutableList.of(getDescInZweitesMal());
             default:
-                return getDescInNtesMal(lichtverhaeltnisse);
+                return altDescInNtesMal(lichtverhaeltnisse);
         }
     }
 
@@ -132,13 +136,10 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static TimedDescription<?> getDescInNtesMal(
+    private static ImmutableCollection<TimedDescription<?>> altDescInNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        return
-                // STORY Alternativen erlauben, hier konkret:
-                //                du(PARAGRAPH, "kletterst",
-                //                        "ein weiteres Mal auf den Baum")
-                //  Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
+        return ImmutableList.of(
+                // FIXME Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
                 //  ausgedrückt wird.
                 du(PARAGRAPH, "kletterst",
                         "noch einmal auf den Baum. Neues gibt es hier oben",
@@ -146,19 +147,26 @@ public class BaumFactory {
                         .mitVorfeldSatzglied("noch einmal")
                         .timed(mins(7))
                         .withCounterIdIncrementedIfTextIsNarrated(HOCHKLETTERN)
-                        .dann();
+                        .dann(),
+                du(PARAGRAPH, "kletterst",
+                        "ein weiteres Mal auf den Baum")
+                        .mitVorfeldSatzglied("ein weiteres Mal")
+                        .timed(mins(7))
+                        .withCounterIdIncrementedIfTextIsNarrated(HOCHKLETTERN)
+                        .dann()
+        );
     }
 
-    private TimedDescription<?> getDescOut(
+    private ImmutableCollection<TimedDescription<?>> altDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final int count = db.counterDao().get(HINABKLETTERN);
         switch (count) {
             case 0:
-                return getDescOutErstesMal(lichtverhaeltnisse);
+                return ImmutableList.of(getDescOutErstesMal(lichtverhaeltnisse));
             case 1:
-                return getDescOutZweitesMal();
+                return ImmutableList.of(getDescOutZweitesMal());
             default:
-                return getDescOutNtesMal(lichtverhaeltnisse);
+                return altDescOutNtesMal(lichtverhaeltnisse);
         }
     }
 
@@ -184,27 +192,30 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static TimedDescription<?> getDescOutNtesMal(
+    private static ImmutableCollection<TimedDescription<?>> altDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
         // STORY Auch dies automatisch erzeugen:
         //  - "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??
         //  - Oder so? "Du wirst ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst
         //  du..."??
         //  - Konrete Fälle suchen und dann einbauen - oder alternativ erst einmal verwerfen.
-        return
-                // "Dann kommst du wieder unten an"
-                // Kann mit Müdigkeit kombiniert werden zu:
-                // "Unten angekommen bist du ziemlich erschöpft..."
-                du(SENTENCE, ANKOMMEN
-                        .mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusVerbAllg("wieder unten")))
-                        .timed(mins(8))
-                        .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN)
-                        .dann();
-
-        // STORY Alternative:
-        //                "Ein zurückschwingender "
-        //                                + "Ast verpasst dir beim Abstieg ein Schramme",
-        //                        .dann(),
+        return altTimed()
+                .add(
+                        // "Dann kommst du wieder unten an"
+                        // Kann mit Müdigkeit kombiniert werden zu:
+                        // "Unten angekommen bist du ziemlich erschöpft..."
+                        du(SENTENCE, ANKOMMEN
+                                .mitAdverbialerAngabe(
+                                        new AdverbialeAngabeSkopusVerbAllg(
+                                                "wieder unten")))
+                                .timed(mins(8))
+                                .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN)
+                                .dann(),
+                        neuerSatz("ein zurückschwingender Ast verpasst dir beim Abstieg",
+                                "eine Schramme")
+                                .timed(mins(8))
+                                .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN)
+                                .dann()
+                ).build();
     }
 }

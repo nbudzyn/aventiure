@@ -52,6 +52,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.builder;
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -795,12 +796,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableCollection<TimedDescription<?>>
     altStandardDescriptions(final Known newLocationKnown,
                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        return ImmutableList.of(
-                requireNonNull(
-                        spatialConnection.getSCMoveDescriptionProvider())
-                        .getSCMoveTimedDescription(newLocationKnown,
-                                lichtverhaeltnisseInNewLocation)
-                        .multiplyTimeElapsedWith(calcSpeedFactor()));
+        return requireNonNull(spatialConnection.getScMoveAltTimedDescriptionProvider())
+                .altScMoveTimedDescriptions(newLocationKnown, lichtverhaeltnisseInNewLocation)
+                .stream()
+                .map(td -> td.multiplyTimeElapsedWith(calcSpeedFactor()))
+                .collect(toImmutableList());
     }
 
     private double calcSpeedFactor() {

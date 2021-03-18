@@ -14,7 +14,6 @@ import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataNichtSC;
 import static java.util.Objects.requireNonNull;
 
@@ -65,7 +64,7 @@ public class SpatialConnection {
                                         final AvTimeSpan standardDuration,
                                         final TimedDescription<?> newLocationDescription) {
         return con(to, wo, cardinalDirection, actionNameProvider, standardDuration,
-                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                (SpatialConnectionData.ScMoveTimedDescriptionProvider)
                         (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
     }
 
@@ -160,7 +159,7 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionUnknown,
                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, cardinalDirection, actionNameSupplier, standardDuration,
-                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                (SpatialConnectionData.ScMoveTimedDescriptionProvider)
                         (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
                                 newLocationKnown == UNKNOWN ?
                                         newLocationDescriptionUnknown :
@@ -720,7 +719,7 @@ public class SpatialConnection {
                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, cardinalDirection, actionNameProvider, standardDuration,
-                (SpatialConnectionData.SCMoveTimedDescriptionProvider)
+                (SpatialConnectionData.ScMoveTimedDescriptionProvider)
                         (newLocationKnown, lichtverhaeltnisseInNewLocation) -> {
                             if (newLocationKnown == UNKNOWN
                                     && lichtverhaeltnisseInNewLocation == HELL) {
@@ -742,16 +741,17 @@ public class SpatialConnection {
                                         final String wo,
                                         final String actionName,
                                         final AvTimeSpan standardDuration,
-                                        final SpatialConnectionData.SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+                                        final SpatialConnectionData.ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return con(to, wo, null, actionName, standardDuration, scMoveTimedDescriptionProvider);
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        @Nullable final CardinalDirection cardinalDirection,
-                                        final String actionName,
-                                        final AvTimeSpan standardDuration,
-                                        final SpatialConnectionData.SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+    public static SpatialConnection con(
+            final GameObjectId to,
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final SpatialConnectionData.ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return con(to, wo, cardinalDirection, () -> actionName, standardDuration,
                 scMoveTimedDescriptionProvider);
     }
@@ -768,23 +768,38 @@ public class SpatialConnection {
                                 .timed(standardDuration));
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        @Nullable final CardinalDirection cardinalDirection,
-                                        final Supplier<String> actionNameSupplier,
-                                        final AvTimeSpan standardDuration,
-                                        final SpatialConnectionData.SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+    public static SpatialConnection con(
+            final GameObjectId to,
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final Supplier<String> actionNameSupplier,
+            final AvTimeSpan standardDuration,
+            final SpatialConnectionData.ScMoveTimedDescriptionProvider
+                    scMoveTimedDescriptionProvider) {
+        return conAltDesc(to, wo, cardinalDirection, actionNameSupplier, standardDuration,
+                scMoveTimedDescriptionProvider);
+    }
+
+    public static SpatialConnection conAltDesc(
+            final GameObjectId to,
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final Supplier<String> actionNameSupplier,
+            final AvTimeSpan standardDuration,
+            final SpatialConnectionData.ScMoveAltTimedDescriptionProvider
+                    scMoveAltTimedDescriptionProvider) {
         return con(to,
-                conData(
+                SpatialConnectionData.conDataAltDesc(
                         wo,
                         cardinalDirection,
                         requireNonNull(actionNameSupplier, "action name supplier expected to be "
                                 + "non-null. Use conNichtSC() to create a SpatialConnection "
                                 + "the SC cannot use"),
                         standardDuration,
-                        scMoveTimedDescriptionProvider
+                        scMoveAltTimedDescriptionProvider
                 ));
     }
+
 
     /**
      * Erzeugt eine SpatialConnection, die der SC niemals benutzen kann. Damit können z.B.
@@ -843,8 +858,8 @@ public class SpatialConnection {
         return data.getWo();
     }
 
-    public SpatialConnectionData.SCMoveTimedDescriptionProvider getSCMoveDescriptionProvider() {
-        return data.getSCMoveTimedDescriptionProvider();
+    public SpatialConnectionData.ScMoveAltTimedDescriptionProvider getScMoveAltTimedDescriptionProvider() {
+        return data.getScMoveAltTimedDescriptionProvider();
     }
 
     @NonNull

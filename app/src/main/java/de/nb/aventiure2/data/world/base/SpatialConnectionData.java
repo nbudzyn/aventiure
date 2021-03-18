@@ -3,6 +3,9 @@ package de.nb.aventiure2.data.world.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+
 import java.util.function.Supplier;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -38,7 +41,7 @@ public class SpatialConnectionData {
     private final Supplier<String> actionNameProvider;
 
     @Nullable
-    private final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider;
+    private final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider;
 
     /**
      * Himmelrichtung der Bewegung. Kann {@code null}, selbst wenn der SC diese Bewengung
@@ -73,7 +76,7 @@ public class SpatialConnectionData {
             final AvTimeSpan standardDuration,
             final TimedDescription<?> newLocationDescription) {
         return conData(wo, cardinalDirection, actionDescription, standardDuration,
-                (SCMoveTimedDescriptionProvider)
+                (ScMoveTimedDescriptionProvider)
                         (isnewLocationKnown, lichtverhaeltnisseInNewLocation) ->
                                 newLocationDescription);
     }
@@ -102,9 +105,18 @@ public class SpatialConnectionData {
             final String wo,
             final String actionName,
             final AvTimeSpan standardDuration,
-            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+            final ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return conData(wo, null, actionName, standardDuration,
                 scMoveTimedDescriptionProvider);
+    }
+
+    public static SpatialConnectionData conDataAltDesc(
+            final String wo,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
+        return conDataAltDesc(wo, null, actionName, standardDuration,
+                scMoveAltTimedDescriptionProvider);
     }
 
     public static SpatialConnectionData conData(
@@ -112,9 +124,19 @@ public class SpatialConnectionData {
             @Nullable final CardinalDirection cardinalDirection,
             final String actionName,
             final AvTimeSpan standardDuration,
-            final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+            final ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
         return conData(wo, cardinalDirection, () -> actionName, standardDuration,
                 scMoveTimedDescriptionProvider);
+    }
+
+    private static SpatialConnectionData conDataAltDesc(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
+        return conDataAltDesc(wo, cardinalDirection, () -> actionName, standardDuration,
+                scMoveAltTimedDescriptionProvider);
     }
 
     public static SpatialConnectionData conData(
@@ -160,12 +182,26 @@ public class SpatialConnectionData {
             @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
-            @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
-        return new SpatialConnectionData(
+            @Nullable final ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
+        return conDataAltDesc(
                 wo,
                 cardinalDirection, actionNameProvider,
                 standardDuration,
                 scMoveTimedDescriptionProvider
+        );
+    }
+
+    static SpatialConnectionData conDataAltDesc(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            @Nullable final Supplier<String> actionNameProvider,
+            final AvTimeSpan standardDuration,
+            @Nullable final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
+        return new SpatialConnectionData(
+                wo,
+                cardinalDirection, actionNameProvider,
+                standardDuration,
+                scMoveAltTimedDescriptionProvider
         );
     }
 
@@ -174,21 +210,21 @@ public class SpatialConnectionData {
             @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
-            @Nullable final SCMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
-        checkArgument((actionNameProvider != null && scMoveTimedDescriptionProvider != null)
+            @Nullable final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
+        checkArgument((actionNameProvider != null && scMoveAltTimedDescriptionProvider != null)
                         ||
-                        (actionNameProvider == null && scMoveTimedDescriptionProvider == null),
+                        (actionNameProvider == null && scMoveAltTimedDescriptionProvider == null),
                 "actionNameProvider und scMoveTimedDescriptionProvider "
                         + "müssen entweder beide null sein (für nicht-SC-Connection-Data) oder "
                         + "beide ungleich null. actionNameProvider: "
                         + "%s, scMoveTimedDescriptionProvider: %s", actionNameProvider,
-                scMoveTimedDescriptionProvider);
+                scMoveAltTimedDescriptionProvider);
 
         this.wo = wo;
         this.cardinalDirection = cardinalDirection;
         this.actionNameProvider = actionNameProvider;
         this.standardDuration = standardDuration;
-        this.scMoveTimedDescriptionProvider = scMoveTimedDescriptionProvider;
+        this.scMoveAltTimedDescriptionProvider = scMoveAltTimedDescriptionProvider;
     }
 
     /**
@@ -213,8 +249,8 @@ public class SpatialConnectionData {
     }
 
     @Nullable
-    SCMoveTimedDescriptionProvider getSCMoveTimedDescriptionProvider() {
-        return scMoveTimedDescriptionProvider;
+    ScMoveAltTimedDescriptionProvider getScMoveAltTimedDescriptionProvider() {
+        return scMoveAltTimedDescriptionProvider;
     }
 
     /**
@@ -227,10 +263,23 @@ public class SpatialConnectionData {
     }
 
     @FunctionalInterface
-    public interface SCMoveTimedDescriptionProvider {
-        TimedDescription<?>
-            // FIXME mehrere Alternativen als Rückgabewert erlauben
-        getSCMoveTimedDescription(
+    public interface ScMoveAltTimedDescriptionProvider {
+        ImmutableCollection<TimedDescription<?>> altScMoveTimedDescriptions(
+                final Known newLocationKnown,
+                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
+    }
+
+    @FunctionalInterface
+    public interface ScMoveTimedDescriptionProvider extends ScMoveAltTimedDescriptionProvider {
+        @Override
+        default ImmutableCollection<TimedDescription<?>> altScMoveTimedDescriptions(
+                final Known newLocationKnown,
+                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+            return ImmutableList.of(
+                    getScMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation));
+        }
+
+        TimedDescription<?> getScMoveTimedDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }

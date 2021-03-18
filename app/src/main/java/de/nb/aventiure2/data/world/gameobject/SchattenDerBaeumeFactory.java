@@ -147,7 +147,6 @@ class SchattenDerBaeumeFactory {
     private static AbstractDescription<? extends AbstractDescription<?>> getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (lichtverhaeltnisse == DUNKEL) {
-
             // "du stehst wieder auf"
             return du(VerbSubj.AUFSTEHEN
                     .mitAdverbialerAngabe(

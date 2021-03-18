@@ -88,7 +88,7 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * Art "Du springst damit fort" oder "Du kehrst zurück".
      * <p>
      * Diese Methode muss aufgerufen werden, <i>bevor</i> die Methode
-     * {@link SpatialConnectionData.SCMoveTimedDescriptionProvider#getSCMoveTimedDescription(Known, Lichtverhaeltnisse)}
+     * {@link SpatialConnectionData.ScMoveTimedDescriptionProvider#altScMoveTimedDescriptions(Known, Lichtverhaeltnisse)}
      * aufgerufen wird!
      */
     public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
