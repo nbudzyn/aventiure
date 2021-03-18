@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 
 import org.jetbrains.annotations.Contract;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -603,10 +604,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final TimedDescription<?> timedDescription = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
+        final Collection<TimedDescription<?>> timedDescriptions =
+                ImmutableList.of(timedDescription);
+
         @Nullable final IMovingGO wemDerSCFolgt = getWemDerSCFolgt(to);
         if (wemDerSCFolgt != null) {
-            wemDerSCFolgt.movementComp().narrateScFolgtMovingGO(
-                    ImmutableList.of(timedDescription));
+            wemDerSCFolgt.movementComp().narrateScFolgtMovingGO(timedDescriptions);
             return;
         }
 
@@ -614,29 +617,28 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             if (isDefinitivDiskontinuitaet()) {
-                alt.addAll(ImmutableList.of(timedDescription).stream()
+                alt.addAll(timedDescriptions.stream()
                         .filter(td -> td.getDescription() instanceof AbstractFlexibleDescription
-                                && ((AbstractFlexibleDescription<?>) timedDescription
-                                .getDescription())
+                                && ((AbstractFlexibleDescription<?>) td.getDescription())
                                 .hasSubjektDu()
                                 && isDefinitivDiskontinuitaet())
                         .flatMap(td ->
                                 toDiskontinuitaetDuSatzanschluss(td,
-                                        (AbstractFlexibleDescription<?>) timedDescription
-                                                .getDescription()).stream()));
+                                        (AbstractFlexibleDescription<?>) td.getDescription())
+                                        .stream()));
             }
 
-            alt.addAllIfOtherwiseEmtpy(ImmutableList.of(timedDescription).stream()
+            alt.addAllIfOtherwiseEmtpy(timedDescriptions.stream()
                     .filter(td -> td.getStartsNew() == WORD
                             && td.getDescription() instanceof AbstractFlexibleDescription));
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            alt.addAllIfOtherwiseEmtpy(ImmutableList.of(timedDescription).stream()
+            alt.addAllIfOtherwiseEmtpy(timedDescriptions.stream()
                     .flatMap(td -> toDiskontinuitaet(td).stream()));
         }
 
-        alt.addAllIfOtherwiseEmtpy(ImmutableList.of(timedDescription).stream()
+        alt.addAllIfOtherwiseEmtpy(timedDescriptions.stream()
                 .map(this::tweakForLastActionBewegen));
 
         n.narrateAlt(alt);
