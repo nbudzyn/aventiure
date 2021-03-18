@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import org.jetbrains.annotations.Contract;
@@ -600,12 +601,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
 
-        // FIXME mehrere Alternativen erlauben
-        final TimedDescription<?> timedDescription = getNormalDescription(
+        final Collection<TimedDescription<?>> timedDescriptions = altNormalDescriptions(
                 to.storingPlaceComp().getLichtverhaeltnisse());
-
-        final Collection<TimedDescription<?>> timedDescriptions =
-                ImmutableList.of(timedDescription);
 
         @Nullable final IMovingGO wemDerSCFolgt = getWemDerSCFolgt(to);
         if (wemDerSCFolgt != null) {
@@ -724,8 +721,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return timedDescription;
     }
 
-    private TimedDescription<?> getNormalDescription(final Lichtverhaeltnisse
-                                                             lichtverhaeltnisseInNewLocation) {
+    private ImmutableCollection<TimedDescription<?>> altNormalDescriptions(
+            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
         boolean alternativeDescriptionAllowed = false;
@@ -748,7 +745,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 // die standardDescription anzuzeigen!
                 // FIXME alle müssen einen Counter haben!
                 standardDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
-            return standardDescription;
+            return ImmutableList.of(standardDescription);
         }
 
         if (newLocationKnown == Known.KNOWN_FROM_LIGHT) {
@@ -757,18 +754,18 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         lichtverhaeltnisseInNewLocation == HELL &&
                         n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
-                    return du("springst",
+                    return ImmutableList.of(du("springst",
                             "damit fort").mitVorfeldSatzglied("damit")
                             .timed(standardDescription.getTimeElapsed().times(0.8))
                             .undWartest()
-                            .dann();
+                            .dann());
                 }
 
                 if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
-                    return du("trottest", "tieftraurig von dannen")
+                    return ImmutableList.of(du("trottest", "tieftraurig von dannen")
                             .mitVorfeldSatzglied("tieftraurig")
                             .timed(standardDescription.getTimeElapsed().times(2))
-                            .undWartest();
+                            .undWartest());
                 }
             } else if (numberOfWays == ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(BEWEGEN) &&
@@ -777,13 +774,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
                     n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return du("eilst", "weiter")
+                return ImmutableList.of(du("eilst", "weiter")
                         .timed(standardDescription.getTimeElapsed().times(0.8))
-                        .undWartest();
+                        .undWartest());
             }
         }
 
-        return standardDescription;
+        return ImmutableList.of(standardDescription);
     }
 
     @VisibleForTesting
