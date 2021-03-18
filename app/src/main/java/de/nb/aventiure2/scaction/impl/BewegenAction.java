@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -735,18 +736,22 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                     newLocationKnown, lichtverhaeltnisseInNewLocation);
         }
 
-        // FIXME mehrere Alternativen als Rückgabewert erlauben
-        final TimedDescription<?> standardDescription =
-                getStandardDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
+        final ImmutableCollection<TimedDescription<?>> standardDescriptions =
+                altStandardDescriptions(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
-        if (!alternativeDescriptionAllowed ||
-                oldLocation.is(spatialConnection.getTo()) ||
-                // Immer, wenn ein Counter hochgezählt werden soll, wird es sinnvoll sein,
-                // die standardDescription anzuzeigen!
-                // FIXME alle müssen einen Counter haben!
-                standardDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
-            return ImmutableList.of(standardDescription);
+        if (!alternativeDescriptionAllowed
+                || oldLocation.is(spatialConnection.getTo())
+                // Wenn bei jeder Alternative ein Counter hochgezählt werden soll,
+                // wird es sinnvoll sein, die standardDescription anzuzeigen!
+                || standardDescriptions.stream()
+                .allMatch(td -> td.getCounterIdIncrementedIfTextIsNarrated() != null)) {
+            return standardDescriptions;
         }
+
+        final AvTimeSpan someTimeElapsed = standardDescriptions.stream()
+                .map(TimedDescription::getTimeElapsed)
+                .findAny()
+                .orElse(NO_TIME);
 
         if (newLocationKnown == Known.KNOWN_FROM_LIGHT) {
             if (numberOfWays == ONLY_WAY) {
@@ -754,18 +759,20 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                         lichtverhaeltnisseInNewLocation == HELL &&
                         n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
                         sc.memoryComp().getLastAction().is(Action.Type.NEHMEN)) {
-                    return ImmutableList.of(du("springst",
-                            "damit fort").mitVorfeldSatzglied("damit")
-                            .timed(standardDescription.getTimeElapsed().times(0.8))
-                            .undWartest()
-                            .dann());
+                    return ImmutableList.of(
+                            du("springst",
+                                    "damit fort").mitVorfeldSatzglied("damit")
+                                    .timed(someTimeElapsed.times(0.8))
+                                    .undWartest()
+                                    .dann());
                 }
 
                 if (sc.feelingsComp().hasMood(Mood.UNTROESTLICH)) {
-                    return ImmutableList.of(du("trottest", "tieftraurig von dannen")
-                            .mitVorfeldSatzglied("tieftraurig")
-                            .timed(standardDescription.getTimeElapsed().times(2))
-                            .undWartest());
+                    return ImmutableList.of(
+                            du("trottest", "tieftraurig von dannen")
+                                    .mitVorfeldSatzglied("tieftraurig")
+                                    .timed(someTimeElapsed.times(2))
+                                    .undWartest());
                 }
             } else if (numberOfWays == ONE_IN_ONE_OUT
                     && sc.memoryComp().getLastAction().is(BEWEGEN) &&
@@ -774,25 +781,26 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     lichtverhaeltnisseInNewLocation ==
                             HELL &&
                     n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
-                return ImmutableList.of(du("eilst", "weiter")
-                        .timed(standardDescription.getTimeElapsed().times(0.8))
-                        .undWartest());
+                return ImmutableList.of(
+                        du("eilst", "weiter")
+                                .timed(someTimeElapsed.times(0.8))
+                                .undWartest());
             }
         }
 
-        return ImmutableList.of(standardDescription);
+        return standardDescriptions;
     }
 
     @VisibleForTesting
-    @Nullable
-    TimedDescription<?>
-        // FIXME mehrere Alternativen als Rückgabewert erlauben
-    getStandardDescription(final Known newLocationKnown,
-                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-
-        return requireNonNull(spatialConnection.getSCMoveDescriptionProvider())
-                .getSCMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)
-                .multiplyTimeElapsedWith(calcSpeedFactor());
+    ImmutableCollection<TimedDescription<?>>
+    altStandardDescriptions(final Known newLocationKnown,
+                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+        return ImmutableList.of(
+                requireNonNull(
+                        spatialConnection.getSCMoveDescriptionProvider())
+                        .getSCMoveTimedDescription(newLocationKnown,
+                                lichtverhaeltnisseInNewLocation)
+                        .multiplyTimeElapsedWith(calcSpeedFactor()));
     }
 
     private double calcSpeedFactor() {

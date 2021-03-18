@@ -7,6 +7,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 
+import java.util.Comparator;
+
 import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -18,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.TimedDescription;
 
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
@@ -33,7 +36,7 @@ public class BewegenActionTest extends AndroidTestBase {
         loadSC().feelingsComp().ausgeschlafen(hours(8));
 
         final BewegenAction<?> hellwachBewegenAction = bewegenAction();
-        final AvTimeSpan zeitHellwach = getTimeElapsed(hellwachBewegenAction);
+        final AvTimeSpan zeitHellwach = getMaxTimeElapsed(hellwachBewegenAction);
 
         resetDatabase();
 
@@ -42,7 +45,7 @@ public class BewegenActionTest extends AndroidTestBase {
         );
 
         final BewegenAction<?> muedeBewegenAction = bewegenAction();
-        final AvTimeSpan zeitMuede = getTimeElapsed(muedeBewegenAction);
+        final AvTimeSpan zeitMuede = getMaxTimeElapsed(muedeBewegenAction);
 
         // THEN
         assertThat(zeitMuede.longerThan(zeitHellwach)).isTrue();
@@ -62,9 +65,11 @@ public class BewegenActionTest extends AndroidTestBase {
         );
     }
 
-    private static AvTimeSpan getTimeElapsed(final BewegenAction<?> bewegenAction) {
-        return bewegenAction.getStandardDescription(
-                Known.UNKNOWN, Lichtverhaeltnisse.HELL
-        ).getTimeElapsed();
+    private static AvTimeSpan getMaxTimeElapsed(final BewegenAction<?> bewegenAction) {
+        return bewegenAction.altStandardDescriptions(Known.UNKNOWN, Lichtverhaeltnisse.HELL)
+                .stream()
+                .map(TimedDescription::getTimeElapsed)
+                .max(Comparator.comparing(AvTimeSpan::getSecs))
+                .orElseGet(() -> { throw new RuntimeException("No descriptions");});
     }
 }
