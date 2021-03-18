@@ -14,6 +14,10 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
         super();
     }
 
+    protected AbstractFlexibleDescription(final DescriptionParams params) {
+        super(params);
+    }
+
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {

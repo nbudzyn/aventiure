@@ -89,7 +89,9 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     }
 
     @CheckReturnValue
-    private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
+    private TimedDescription<?>
+        // FIXME mehrere Alternativen als Rückgabewert erlauben
+    getDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
             case BEGONNEN:
@@ -101,7 +103,9 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
     }
 
-    private TimedDescription<?> getDescTo_DraussenVorDemSchlosss_KeinFest(
+    private TimedDescription<?>
+        // FIXME mehrere Alternativen als Rückgabewert erlauben
+    getDescTo_DraussenVorDemSchlosss_KeinFest(
             final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (known == UNKNOWN) {
             return getDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
@@ -136,6 +140,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     "Schloss.", CHAPTER,
                     world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
                             .map(AbstractDescription::toSingleKonstituente)
+                            // FIXME mehrere Alternativen als Rückgabewert erlauben
                             .findFirst().orElse(null),
                     SENTENCE,
                     "nahebei liegt ein großer, dunkler Wald")

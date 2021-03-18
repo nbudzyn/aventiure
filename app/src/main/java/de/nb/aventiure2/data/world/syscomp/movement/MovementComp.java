@@ -430,7 +430,9 @@ public class MovementComp
     }
 
 
-    public void narrateScFolgtMovingGO(final TimedDescription<?> normalDescription) {
+    public void narrateScFolgtMovingGO(
+            // FIXME mehrere Alternativen erlauben
+            final TimedDescription<?> normalDescription) {
         movementNarrator.narrateScFolgtMovingGO(normalDescription);
     }
 

@@ -105,6 +105,14 @@ public class AltTimedDescriptionsBuilder {
 
     @SafeVarargs
     public final AltTimedDescriptionsBuilder add(
+            final AvTimeSpan timeElapsed,
+            final AbstractDescription<? extends AbstractDescription<?>>... alt) {
+        addAll(toTimed(timeElapsed, alt));
+        return this;
+    }
+
+    @SafeVarargs
+    public final AltTimedDescriptionsBuilder add(
             final TimedDescription<? extends AbstractDescription<?>>... altTimed) {
         altDescriptions.add(altTimed);
         return this;

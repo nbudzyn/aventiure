@@ -5,9 +5,9 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -25,6 +25,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static java.util.Arrays.asList;
 
 /**
  * A description of something and the time it takes.
@@ -51,7 +52,7 @@ public class TimedDescription<
     public static <D extends AbstractDescription<?>>
     ImmutableSet<TimedDescription<D>> toTimed(final AvTimeSpan timeElapsed,
                                               final D... descriptions) {
-        return toTimed(Arrays.asList(descriptions), timeElapsed);
+        return toTimed(asList(descriptions), timeElapsed);
     }
 
     @CheckReturnValue
@@ -122,6 +123,26 @@ public class TimedDescription<
     public ImmutableList<TimedDescription<TextDescription>> altMitPraefix(
             final Konstituente praefixKonstituente) {
         return withAltDescriptions(getDescription().altMitPraefix(praefixKonstituente));
+    }
+
+    @NonNull
+    @CheckReturnValue
+    public static ImmutableList<TimedDescription<?>> withAltDescriptions(
+            final Collection<TimedDescription<?>> timedDescriptions,
+            final Function<AbstractDescription<?>, Collection<? extends AbstractDescription<?>>> altFunction) {
+        return timedDescriptions.stream()
+                .flatMap(d -> d.withAltDescriptions(
+                        altFunction.apply(d.getDescription())).stream())
+                .collect(toImmutableList());
+    }
+
+    @SafeVarargs
+    @NonNull
+    @CheckReturnValue
+    public final <OTHER extends AbstractDescription<?>>
+    ImmutableList<TimedDescription<OTHER>> withAltDescriptions(
+            final OTHER... altDescriptions) {
+        return withAltDescriptions(asList(altDescriptions));
     }
 
     @NonNull

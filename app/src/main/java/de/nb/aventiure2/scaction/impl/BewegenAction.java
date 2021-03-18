@@ -39,6 +39,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
@@ -598,6 +599,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...
 
+        // FIXME mehrere Alternativen erlauben
         final TimedDescription<?> timedDescription = getNormalDescription(
                 to.storingPlaceComp().getLichtverhaeltnisse());
 
@@ -607,14 +609,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             return;
         }
 
-        if (timedDescription.getDescription() instanceof AbstractFlexibleDescription &&
-                ((AbstractFlexibleDescription<?>) timedDescription.getDescription()).hasSubjektDu()
-                &&
-                n.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                isDefinitivDiskontinuitaet()) {
+        if (timedDescription.getDescription() instanceof AbstractFlexibleDescription
+                && ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
+                .hasSubjektDu()
+                && n.allowsAdditionalDuSatzreihengliedOhneSubjekt()
+                && isDefinitivDiskontinuitaet()) {
             final AbstractFlexibleDescription<?> fDescription =
                     (AbstractFlexibleDescription<?>) timedDescription.getDescription();
-            narrateDiskontinuitaetDuSatzanschluss(timedDescription, fDescription);
+            n.narrateAlt(toDiskontinuitaetDuSatzanschluss(timedDescription, fDescription));
             return;
         }
 
@@ -626,11 +628,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (isDefinitivDiskontinuitaet()) {
-            narrateDiskontinuitaet(timedDescription);
+            n.narrateAlt(toDiskontinuitaet(timedDescription));
             return;
         }
 
-        narrateLastActionBewegen(timedDescription);
+        n.narrate(tweakForLastActionBewegen(timedDescription));
     }
 
     @Nullable
@@ -645,8 +647,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return hatDenSCGeradeInDieRichtungVerlassen;
     }
 
-    private void narrateDiskontinuitaetDuSatzanschluss(final TimedDescription<?> description,
-                                                       final AbstractFlexibleDescription<?> fDesc) {
+    private static ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
+    toDiskontinuitaetDuSatzanschluss(
+            // FIXME mehrere Alternativen erlauben
+            final TimedDescription<?> description,
+            final AbstractFlexibleDescription<?> fDesc) {
         final TextDescription descriptionSatzanschlussOhneSubjekt =
                 fDesc.toTextDescriptionSatzanschlussOhneSubjekt();
 
@@ -654,10 +659,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und ")
                 .timed(description.getTimeElapsed()));
         alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
-        n.narrateAlt(alt);
+        return alt.build();
     }
 
-    private void narrateDiskontinuitaet(final TimedDescription<?> timedDescription) {
+    private ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
+    toDiskontinuitaet(final TimedDescription<?> timedDescription) {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         if (numberOfWays == ONLY_WAY
@@ -678,10 +684,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     SENTENCE)));
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
         }
-        n.narrateAlt(alt);
+        return alt.build();
     }
 
-    private void narrateLastActionBewegen(final TimedDescription<?> timedDescription) {
+    private TimedDescription<?>
+    tweakForLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
             if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()
                     && !timedDescription.isSchonLaenger()) {
@@ -692,23 +699,20 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 if (satzEvtlMitDann.getTextOhneKontext().startsWith("Dann")) {
                     satzEvtlMitDann.dann(false);
                 }
-                n.narrate(timedDescription.withDescription(satzEvtlMitDann));
-                return;
+                return timedDescription.withDescription(satzEvtlMitDann);
             }
 
-            n.narrate(timedDescription);
-            return;
+            return timedDescription;
         }
 
         if (n.dann()) {
-            n.narrate(timedDescription.withDescription(
+            return timedDescription.withDescription(
                     timedDescription.getDescription()
                             .toTextDescriptionMitKonjunktionaladverbWennNoetig(
-                                    "danach").beginntZumindest(PARAGRAPH)));
-            return;
+                                    "danach").beginntZumindest(PARAGRAPH));
         }
 
-        n.narrate(timedDescription);
+        return timedDescription;
     }
 
     private TimedDescription<?> getNormalDescription(final Lichtverhaeltnisse
@@ -725,6 +729,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                     newLocationKnown, lichtverhaeltnisseInNewLocation);
         }
 
+        // FIXME mehrere Alternativen als Rückgabewert erlauben
         final TimedDescription<?> standardDescription =
                 getStandardDescription(newLocationKnown, lichtverhaeltnisseInNewLocation);
 
@@ -732,6 +737,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 oldLocation.is(spatialConnection.getTo()) ||
                 // Immer, wenn ein Counter hochgezählt werden soll, wird es sinnvoll sein,
                 // die standardDescription anzuzeigen!
+                // FIXME alle müssen einen Counter haben!
                 standardDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
             return standardDescription;
         }
@@ -773,8 +779,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @VisibleForTesting
     @Nullable
-    TimedDescription<?> getStandardDescription(final Known newLocationKnown,
-                                               final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+    TimedDescription<?>
+        // FIXME mehrere Alternativen als Rückgabewert erlauben
+    getStandardDescription(final Known newLocationKnown,
+                           final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
 
         return requireNonNull(spatialConnection.getSCMoveDescriptionProvider())
                 .getSCMoveTimedDescription(newLocationKnown, lichtverhaeltnisseInNewLocation)

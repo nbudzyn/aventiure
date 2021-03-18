@@ -228,7 +228,9 @@ public class SpatialConnectionData {
 
     @FunctionalInterface
     public interface SCMoveTimedDescriptionProvider {
-        TimedDescription<?> getSCMoveTimedDescription(
+        TimedDescription<?>
+            // FIXME mehrere Alternativen als Rückgabewert erlauben
+        getSCMoveTimedDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }

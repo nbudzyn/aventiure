@@ -80,6 +80,19 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         this.endsThis = endsThis;
     }
 
+    private StructuredDescription(final DescriptionParams params,
+                                  final StructuralElement startsNew,
+                                  final Satz satz,
+                                  final StructuralElement endsThis) {
+        super(params);
+        // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
+        // Bei Bedarf kann man das in den Params noch überschreiben.
+        phorikKandidat = guessPhorikKandidat(startsNew, satz, endsThis);
+        this.startsNew = startsNew;
+        this.satz = satz;
+        this.endsThis = endsThis;
+    }
+
     private static PhorikKandidat guessPhorikKandidat(
             final StructuralElement startsNew, final Satz satz,
             final StructuralElement endsThis) {
@@ -113,6 +126,21 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     public StructuredDescription mitAdverbialerAngabe(
             @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
         return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
+    }
+
+
+    /**
+     * Fügt dem Subjekt des Satzes etwas hinzu wie "auch", "allein", "ausgerechnet",
+     * "wenigstens" etc. (sofern das Subjekt eine Fokuspartikel erlaubt, ansonsten
+     * wird sie verworfen)
+     */
+    public StructuredDescription mitSubjektFokuspartikel(
+            @Nullable final String subjektFokuspartikel) {
+        return withSatz(satz.mitSubjektFokuspartikel(subjektFokuspartikel));
+    }
+
+    public StructuredDescription withSatz(final Satz other) {
+        return copy(other);
     }
 
     @Override
@@ -159,7 +187,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @CheckReturnValue
     private StructuredDescription copy(final Satz satz) {
-        return new StructuredDescription(getStartsNew(), satz, getEndsThis());
+        return new StructuredDescription(copyParams(), getStartsNew(), satz, getEndsThis());
     }
 
     @Override

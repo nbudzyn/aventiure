@@ -60,5 +60,7 @@ public interface IMovementNarrator {
      * @param normalDescription Die normale Beschreibung, die eigentlich für diese
      *                          Bewegung vorgesehen wäre
      */
-    void narrateScFolgtMovingGO(TimedDescription<?> normalDescription);
+    void narrateScFolgtMovingGO(
+            // FIXME mehrere Alternativen erlauben
+            TimedDescription<?> normalDescription);
 }

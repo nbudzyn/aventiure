@@ -2,9 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.movement;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -17,6 +21,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -28,8 +33,10 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.TimedDescription.withAltDescriptions;
 
 /**
  * Grundlegende Implementierung, um dem Spieler die Bewegung
@@ -57,9 +64,22 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     @Override
+    // FIXME Inlinen
     public void narrateScFolgtMovingGO(final TimedDescription<?> normalDesc) {
+        narrateScFolgtMovingGO(ImmutableList.of(normalDesc));
+    }
+
+    private void narrateScFolgtMovingGO(
+            final ImmutableCollection<TimedDescription<?>> normalTimedDescriptions) {
+
         final SubstantivischePhrase anaph = anaph(true);
-        final AltDescriptionsBuilder alt = alt();
+        final AltTimedDescriptionsBuilder alt = altTimed();
+
+        final AvTimeSpan someTimeElapsed =
+                normalTimedDescriptions.stream()
+                        .map(TimedDescription::getTimeElapsed)
+                        .findAny()
+                        .orElse(NO_TIME);
 
         // Wir verwenden hier bewusst kein du(FOLGEN.mit(anaph)). Das Problem ist:
         // Wir wollen keine Ergebnisse wie "Der Frau gefolgt nimmst du den Pfad...".
@@ -68,9 +88,10 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         // den folgenden Text ("nimmst du den Pfad" o.Ä.) noch nicht erreicht ist.
         // Letztlich beschreiben "Der Frau folgen" und "Du nimmst den Pfad..."
         // ja dasselbe.
-        // Möglich wäre etwas wie "Der Frau gefolgt bis da schnell auf dem Hügel" o.Ä. -
-        // aber wir können hier ja nicht die normalDesc inhaltlich ändern.
-        alt.add(du("folgst", anaph.datK()).schonLaenger()
+        // Möglich wäre wohl etwas wie "Der Frau gefolgt bis du schnell auf dem Hügel" o.Ä. -
+        // aber wir können hier ja nicht die normalTimedDescriptions inhaltlich ändern.
+        alt.add(someTimeElapsed, // Counter nicht übernehmen!
+                du("folgst", anaph.datK()).schonLaenger()
                         .undWartest(),
                 du("folgst", anaph.datK(), "nach").schonLaenger()
                 ,
@@ -88,38 +109,40 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                         .mitVorfeldSatzglied("da")
         );
 
-        alt.addAll(normalDesc.getDescription().altMitPraefix(joinToKonstituentenfolge(
-                SENTENCE,
-                "Schnell", anaph.datK(), "hinterher!",
-                SENTENCE)));
-        alt.addAll(normalDesc.getDescription().altMitPraefix(joinToKonstituentenfolge(
-                SENTENCE,
-                "Schnell", anaph.datK(), "gefolgt!",
-                SENTENCE)));
+        alt.addAll(withAltDescriptions( // Counter übernehmen!
+                normalTimedDescriptions,
+                d -> d.altMitPraefix(joinToKonstituentenfolge(
+                        SENTENCE,
+                        "Schnell", anaph.datK(), "hinterher!",
+                        SENTENCE))));
+        alt.addAll(withAltDescriptions( // Counter übernehmen!
+                normalTimedDescriptions,
+                d -> d.altMitPraefix(joinToKonstituentenfolge(
+                        SENTENCE,
+                        "Schnell", anaph.datK(), "gefolgt!",
+                        SENTENCE))));
 
-        if (normalDesc.getDescription() instanceof AbstractFlexibleDescription<?>) {
-            final AbstractFlexibleDescription<?> fDesc =
-                    (AbstractFlexibleDescription<?>) normalDesc.getDescription();
-            if (fDesc.hasSubjektDu()) {
-                alt.add(
-                        fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " hinterher")
+        alt.addAll(normalTimedDescriptions.stream()
+                .filter(d -> d.getDescription() instanceof AbstractFlexibleDescription<?>)
+                .map(d -> (TimedDescription<? extends AbstractFlexibleDescription<?>>) d)
+                .filter(d -> d.getDescription().hasSubjektDu())
+                .flatMap(d -> d.withAltDescriptions(
+                        d.getDescription()
+                                .toTextDescriptionMitVorfeld(anaph.datStr() + " hinterher")
                                 .beginntZumindest(SENTENCE),
-                        fDesc.toTextDescriptionMitVorfeld(anaph.datStr() + " folgend")
-                                .beginntZumindest(SENTENCE)
-                );
+                        d.getDescription().
+                                toTextDescriptionMitVorfeld(anaph.datStr() + " folgend")
+                                .beginntZumindest(SENTENCE)).stream()));
 
-                if (normalDesc.getDescription() instanceof StructuredDescription) {
-                    final StructuredDescription sDesc =
-                            (StructuredDescription) normalDesc.getDescription();
-                    alt.add(
-                            // "auch du..."
-                            sDesc.getSatz().mitSubjektFokuspartikel("auch")
-                    );
-                }
-            }
-        }
+        alt.addAll(normalTimedDescriptions.stream()
+                .filter(d -> d.getDescription() instanceof StructuredDescription)
+                .map(d -> (TimedDescription<? extends StructuredDescription>) d)
+                .filter(d -> d.getDescription().hasSubjektDu())
+                .map(d ->  // "auch du..."
+                        d.withDescription(
+                                d.getDescription().mitSubjektFokuspartikel("auch"))));
 
-        n.narrateAlt(alt, normalDesc.getTimeElapsed());
+        n.narrateAlt(alt);
     }
 
     @Override

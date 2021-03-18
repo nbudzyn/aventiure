@@ -221,6 +221,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @Nullable
     public abstract PhorikKandidat getPhorikKandidat();
 
+    DescriptionParams copyParams() {
+        return params.copy();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
