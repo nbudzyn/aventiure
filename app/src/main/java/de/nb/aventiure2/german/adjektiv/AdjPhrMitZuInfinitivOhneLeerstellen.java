@@ -79,6 +79,7 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
                                                           final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
+                getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt), // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "glücklich"
                 getPraedikativAnteilKandidatFuerNachfeld(personSubjekt, numerusSubjekt)
