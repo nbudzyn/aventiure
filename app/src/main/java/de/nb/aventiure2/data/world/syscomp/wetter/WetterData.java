@@ -153,7 +153,8 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-    // FIXME Überall nach Sonne, Mond, hell, dunkel, wolk etc. suchen
+    // FIXME Überall nach Sonne, Mond, hell, dunkel, heiß, warm, hitze, wärme, wolk, kühl,
+    //  schatt, wölk, etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
 

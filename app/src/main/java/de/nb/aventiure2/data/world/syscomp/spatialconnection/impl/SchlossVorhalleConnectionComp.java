@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
@@ -110,20 +111,15 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     lichtverhaeltnisse);
         }
 
-        if (known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL) {
-            // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
-            //  noch nicht?
-            // FIXME Wetter zentralisieren!
-            return ImmutableList.of(
-                    du("verlässt", "das Schloss. Draußen scheint dir die",
-                            "Sonne ins Gesicht;",
-                            // TODO Vielleicht ist es nur tagsüber / mittags heiß und morgens
-                            //  noch nicht?
-                            "der Tag ist recht heiß").timed(mins(1)));
+        if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL)
+                || lichtverhaeltnisse == DUNKEL) {
+            return world.loadWetter().wetterComp().altSCKommtNachDraussenInsWetter().stream()
+                    .map(wetterDesc ->
+                            du("verlässt", "das Schloss",
+                                    SENTENCE,
+                                    wetterDesc.toSingleKonstituente()).timed(mins(1)))
+                    .collect(toImmutableSet());
         }
-
-        // FIXME: Wenn man aus dem hellen (Schloss) ins Dunkle kommt:
-        //  "Draußen ist es dunkel" o.Ä.
 
         return ImmutableList.of(
                 du("verlässt", "das Schloss").timed(mins(1))
@@ -140,7 +136,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     .map(wetterDesc ->
                             du("gehst",
                                     "über eine Marmortreppe hinaus in die Gärten vor dem",
-                                    "Schloss.", CHAPTER,
+                                    "Schloss", CHAPTER,
                                     wetterDesc.toSingleKonstituente(),
                                     SENTENCE,
                                     "nahebei liegt ein großer, dunkler Wald")
