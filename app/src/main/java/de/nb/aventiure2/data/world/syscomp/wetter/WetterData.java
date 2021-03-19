@@ -13,12 +13,9 @@ import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
-import static de.nb.aventiure2.german.base.Numerus.PL;
-import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -80,34 +77,17 @@ class WetterData {
                             // FIXME Windstärke und Blitz / Donner berücksichtigen
                             altBewoelkungGestirnSaetze,
                             ";",
-                            temperatur.altPraedikativa().stream()
-                                    .map(a -> a.alsEsIstSatz()
-                                            .mitAdvAngabe(
-                                                    new AdvAngabeSkopusVerbAllg("noch")))));
+                            temperatur.altIstNochSaetze()));
                     if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
                         // FIXME Windstärke und Blitz / Donner berücksichtigen
-                        alt.addAll(altNeueSaetze("Es ist",
-                                EIN_SCHOENER_ABEND.nomK(),
-                                "und",
-                                // FIXME allgemeine Adverbien ("noch") bei
-                                //  Adjektiven erlauben (nicht nur Graduative Angaben)?
-                                //  Oder zusätzlich?
-                                //  Vgl. "Er kühlt das Essen sorgsam" -
-                                //  "das sorgsam gekühlte Essen"
-                                //  "das noch sehr kalte Essen",
-                                //  "das in Deutschland sehr häufige Vorgehen"
-                                //  Man könnte davon ausgehen, dass
-                                //  Adjektivphrasen Adverbialphrasen tragen können -
-                                //  zusätzlich zur Gradangabe.
-                                //  Aber auch Prädikativsätze mit Nominalphrasen
-                                //  können Adverbien tragen:
-                                //  "Es ist heute schönes Wetter."
-                                //  "Peter ist heute ein Esel"
-                                //  "Es ist heute draußen morgens kalt und
-                                //  nachmittags eher warm."
-                                "noch",
-                                temperatur.altPraedikativa().stream()
-                                        .map(a -> a.getPraedikativ(P3, PL))));
+                        // "Es ist ein schöner Abend und noch ziemlich warm"
+                        alt.addAll(
+                                temperatur.altAdjektivphrasen().stream()
+                                        .map(tempAdjPhr -> new ZweiPraedikativa<>(
+                                                EIN_SCHOENER_ABEND,
+                                                tempAdjPhr.mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz("noch")))
+                                                .alsEsIstSatz()));
                     }
                 }
             }
@@ -290,4 +270,7 @@ class WetterData {
     Windstaerke getWindstaerke() {
         return windstaerke;
     }
+
+    // FIXME Silbentrennung macht Fehler - Silbentrennung auf seltener einstellen?
+    //  Oder anders korrigieren?
 }

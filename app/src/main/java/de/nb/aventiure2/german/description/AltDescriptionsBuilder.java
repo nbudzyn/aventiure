@@ -168,6 +168,14 @@ public class AltDescriptionsBuilder {
     }
 
     public AltDescriptionsBuilder add(final Satz... saetze) {
+        // FIXME Sätze werden nicht korrekt mit Punkt abgeschlossen, und der
+        //  neue Satz nicht großgeschrieben. Fehler im Konzept. Natürlich
+        //  sollen die Descriptions nachträglich noch änderbar bleiben, die
+        //  Sätze sollen also erst möglichst spät "fixiert" werden.
+        //  - Dprichst du sie an gsnz offenbar... ohne Punkt
+        //  - Du gibsz ihr die goldene kugel aber... ohne punkt
+        //  - Der gehört der zauberin magisch, wenn du micj fragst ohnecPunkt
+
         for (final Satz satz : saetze) {
             add(DescriptionBuilder.satz(satz));
         }

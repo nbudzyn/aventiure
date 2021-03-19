@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.adjektiv;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -26,6 +27,15 @@ public class ZweiAdjPhrOhneLeerstellen
             @Nullable final GraduativeAngabe graduativeAngabe) {
         return new ZweiAdjPhrOhneLeerstellen(
                 getErst().mitGraduativerAngabe(graduativeAngabe),
+                getZweit()
+        );
+    }
+
+    @Override
+    public AdjPhrOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        return new ZweiAdjPhrOhneLeerstellen(
+                getErst().mitAdvAngabe(advAngabe),
                 getZweit()
         );
     }

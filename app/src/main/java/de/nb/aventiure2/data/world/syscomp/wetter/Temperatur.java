@@ -132,12 +132,76 @@ public enum Temperatur implements Betweenable<Temperatur> {
     }
 
     /**
+     * Gibt alternative Sätze zurück in der Art
+     * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
+     */
+    @NonNull
+    ImmutableCollection<Satz> altIstNochSaetze() {
+        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+
+        // "Es ist (noch (sehr kalt))."
+        res.addAll(altPraedikativa().stream()
+                .filter(AdjPhrOhneLeerstellen.class::isInstance)
+                .map(a -> praedikativumPraedikatMit(
+                        ((AdjPhrOhneLeerstellen) a)
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz("noch")))
+                        .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES))
+                .collect(toImmutableList()));
+
+        // "Es ist noch schönes Wetter."
+        res.addAll(altPraedikativa().stream()
+                .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
+                .map(a -> a.alsEsIstSatz()
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
+                .collect(toImmutableList()));
+
+        return res.build();
+    }
+
+    /**
      * Gibt alternative Prädikative zurück für eine Beschreibung in der Art
      * "Es ist (sehr kalt / ziemlich warm / warmes Wetter)" oder "Heute ist es ..." oder
      * "Draußen ist es ...".
+     * <p>
+     * Das Eregebnis von {@link #altAdjektivphrasen()} ist bereits enthalten
      */
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
     ImmutableList<Praedikativum> altPraedikativa() {
+        final ImmutableList.Builder<Praedikativum> res = ImmutableList.builder();
+
+        res.addAll(altAdjektivphrasen());
+
+        switch (this) {
+            case KLIRREND_KALT:
+                // Fall-through
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                // Fall-through
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                // Fall-through
+            case KUEHL:
+                break;
+            case WARM:
+                res.add(WARMES_WETTER_OHNE_ART);
+                break;
+            case RECHT_HEISS:
+                // Fall-through
+            case SEHR_HEISS:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + this);
+        }
+
+        return res.build();
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
+     * "Es ist (sehr kalt / ziemlich warm)" oder "Heute ist es ..." oder
+     * "Draußen ist es ...".
+     */
+    @NonNull
+    ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasen() {
         switch (this) {
             case KLIRREND_KALT:
                 return ImmutableList.of(KALT.mitGraduativerAngabe("klirrend"));
@@ -150,8 +214,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("etwas"),
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"));
             case WARM:
-                return ImmutableList.of(AdjektivOhneErgaenzungen.WARM,
-                        WARMES_WETTER_OHNE_ART);
+                return ImmutableList.of(AdjektivOhneErgaenzungen.WARM);
             case RECHT_HEISS:
                 return ImmutableList.of(
                         AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("recht"),

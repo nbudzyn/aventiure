@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -33,14 +34,15 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     AdjPhrMitZuInfinitivOhneLeerstellen(
             final Adjektiv adjektiv,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        this(null, adjektiv, lexikalischerKern);
+        this(null, null, adjektiv, lexikalischerKern);
     }
 
     private AdjPhrMitZuInfinitivOhneLeerstellen(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final GraduativeAngabe graduativeAngabe,
             final Adjektiv adjektiv,
             final PraedikatOhneLeerstellen lexikalischerKern) {
-        super(graduativeAngabe, adjektiv);
+        super(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
         this.lexikalischerKern = lexikalischerKern;
     }
 
@@ -52,7 +54,21 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
         }
 
         return new AdjPhrMitZuInfinitivOhneLeerstellen(
-                graduativeAngabe,
+                getAdvAngabeSkopusSatz(), graduativeAngabe,
+                getAdjektiv(),
+                lexikalischerKern
+        );
+    }
+
+    @Override
+    public AdjPhrMitZuInfinitivOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
+            return this;
+        }
+
+        return new AdjPhrMitZuInfinitivOhneLeerstellen(
+                advAngabe, getGraduativeAngabe(),
                 getAdjektiv(),
                 lexikalischerKern
         );
@@ -60,12 +76,12 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
-                                                          final Numerus numerus) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
+                                                          final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "glücklich"
-                getPraedikativAnteilKandidatFuerNachfeld(person, numerus)
+                getPraedikativAnteilKandidatFuerNachfeld(personSubjekt, numerusSubjekt)
                 // ", sich erheben zu dürfen[, ]"
         );
     }

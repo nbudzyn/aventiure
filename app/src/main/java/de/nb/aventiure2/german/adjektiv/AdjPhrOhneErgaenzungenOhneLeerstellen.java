@@ -4,6 +4,7 @@ package de.nb.aventiure2.german.adjektiv;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -19,13 +20,14 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
     @Valenz
     AdjPhrOhneErgaenzungenOhneLeerstellen(
             final Adjektiv adjektiv) {
-        this(null, adjektiv);
+        this(null, null, adjektiv);
     }
 
     private AdjPhrOhneErgaenzungenOhneLeerstellen(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final GraduativeAngabe graduativeAngabe,
             final Adjektiv adjektiv) {
-        super(graduativeAngabe, adjektiv);
+        super(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
     }
 
     @Override
@@ -36,15 +38,29 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
         }
 
         return new AdjPhrOhneErgaenzungenOhneLeerstellen(
-                graduativeAngabe,
+                getAdvAngabeSkopusSatz(), graduativeAngabe,
                 getAdjektiv()
         );
     }
 
     @Override
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
-                                                          final Numerus numerus) {
+    public AdjPhrOhneErgaenzungenOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
+            return this;
+        }
+
+        return new AdjPhrOhneErgaenzungenOhneLeerstellen(
+                advAngabe, getGraduativeAngabe(),
+                getAdjektiv()
+        );
+    }
+    
+    @Override
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
+                                                          final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
+                getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt), // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 getAdjektiv().getPraedikativ() // "zufrieden"
         );
@@ -59,6 +75,11 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
 
     @Override
     public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
-        return false;
+        if (getAdvAngabeSkopusSatz() == null) {
+            return false;
+        }
+
+        return getAdvAngabeSkopusSatz()
+                .enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
     }
 }

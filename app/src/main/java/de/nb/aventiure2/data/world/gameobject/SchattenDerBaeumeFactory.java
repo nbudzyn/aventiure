@@ -149,8 +149,7 @@ class SchattenDerBaeumeFactory {
         if (lichtverhaeltnisse == DUNKEL) {
             // "du stehst wieder auf"
             return du(VerbSubj.AUFSTEHEN
-                    .mitAdvAngabe(
-                            new AdvAngabeSkopusVerbAllg("wieder")))
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")))
                     .undWartest()
                     .dann();
         }

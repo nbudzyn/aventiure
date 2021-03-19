@@ -70,12 +70,10 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                 alt.addAll(time.getTageszeit().altGestirn().stream()
                         .map(gestirn ->
                                 // "Der Mond ist gerade von einer dunklen Wolke bedeckt")
-                                praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEDECKT)
-                                        .mitAdvAngabe(
-                                                new AdvAngabeSkopusSatz("gerade"))
-                                        .mitAdvAngabe(
-                                                new AdvAngabeSkopusVerbAllg(
-                                                        "von einer dunklen Wolke"))
+                                praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEDECKT
+                                        .mitAdvAngabe(new AdvAngabeSkopusSatz(
+                                                "von einer dunklen Wolke")))
+                                        .mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))
                                         .alsSatzMitSubjekt(gestirn))
                         .collect(toImmutableList()));
                 break;

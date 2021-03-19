@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.adjektiv;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -88,6 +89,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     public AdjPhrOhneErgaenzungenOhneLeerstellen mitGraduativerAngabe(
             final GraduativeAngabe graduativeAngabe) {
         return toAdjPhr().mitGraduativerAngabe(graduativeAngabe);
+    }
+
+    @Override
+    public AdjPhrOhneErgaenzungenOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        return toAdjPhr().mitAdvAngabe(advAngabe);
     }
 
     @Override

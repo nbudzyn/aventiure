@@ -38,13 +38,18 @@ public class AdvAngabeSkopusSatz
      */
     @Override
     public boolean imMittelfeldErlaubt() {
-        return !getAdjektivphrase().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
+        return !enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
         // zu-Infinitivphrasen sowie Angaben- und Ergänzungssätze (z.B. indirekte Fragen)
         //  dürfen nicht im Mittelfeld stehen.
         // Vgl. *"Sie schaut dich, glücklich dich zu sehen, an."
         // (Möglich wären "Sie schaut dich an, glücklich, dich zu
         // sehen." - im Nachfeld - und "Glücklich, dich zu sehen, schaut sie dich
         // an." - im Vorfeld.)
+    }
+
+    @Override
+    public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
+        return getAdjektivphrase().enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
     }
 
     public AdvAngabeSkopusVerbAllg toSkopusVerbAllg() {

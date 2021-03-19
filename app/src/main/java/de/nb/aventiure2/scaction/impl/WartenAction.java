@@ -144,11 +144,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                             kohaerenzrelation,
                             du(WARTEN
                                     .mit(anaph)
-                                    .mitAdvAngabe(
-                                            new AdvAngabeSkopusSatz("weiter")
-                                    )
+                                    .mitAdvAngabe(new AdvAngabeSkopusSatz("weiter"))
                             ).schonLaenger()
-
                                     .dann()),
                     secs(5), WARTEN_ODER_RASTEN_IN_FOLGE);
         }

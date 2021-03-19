@@ -48,6 +48,11 @@ public enum InterrogativadverbSkopusSatz
     }
 
     @Override
+    public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
+        return false;
+    }
+
+    @Override
     public String getString() {
         return string;
     }

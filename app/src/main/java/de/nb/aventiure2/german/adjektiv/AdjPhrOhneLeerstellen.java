@@ -6,6 +6,7 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -48,6 +49,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
 
     AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable GraduativeAngabe graduativeAngabe);
 
+    AdjPhrOhneLeerstellen mitAdvAngabe(@Nullable IAdvAngabeOderInterrogativSkopusSatz advAngabe);
+
     /**
      * Gibt die prädikative Form zurück: "hoch", "glücklich, dich zu sehen",
      * "glücklich, sich erheben zu dürfen"
@@ -61,7 +64,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * Gibt die prädikative oder adverbiale Form zurück: "hoch", "glücklich, dich zu sehen",
      * "glücklich, sich erheben zu dürfen"
      */
-    Konstituentenfolge getPraedikativOderAdverbial(final Person person, final Numerus numerus);
+    Konstituentenfolge getPraedikativOderAdverbial(
+            final Person personSubjekt, final Numerus numerusSubjekt);
 
     default AdvAngabeSkopusSatz alsAdvAngabeSkopusSatz() {
         return new AdvAngabeSkopusSatz(this);

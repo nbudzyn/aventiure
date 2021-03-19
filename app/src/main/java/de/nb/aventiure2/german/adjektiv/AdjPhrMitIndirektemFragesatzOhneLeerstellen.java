@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
@@ -59,17 +60,18 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     AdjPhrMitIndirektemFragesatzOhneLeerstellen(
             final Adjektiv adjektiv,
             final Satz indirekterFragesatz) {
-        this(null, adjektiv, indirekterFragesatz);
+        this(null, null, adjektiv, indirekterFragesatz);
     }
 
     /**
      * Z.B. "sehr gespannt, ob du etwas zu berichten hast"
      */
     private AdjPhrMitIndirektemFragesatzOhneLeerstellen(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final GraduativeAngabe graduativeAngabe,
             final Adjektiv adjektiv,
             final Satz indirekterFragesatz) {
-        super(graduativeAngabe, adjektiv);
+        super(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
         this.indirekterFragesatz = indirekterFragesatz;
     }
 
@@ -81,7 +83,21 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
         }
 
         return new AdjPhrMitIndirektemFragesatzOhneLeerstellen(
-                graduativeAngabe,
+                getAdvAngabeSkopusSatz(), graduativeAngabe,
+                getAdjektiv(),
+                indirekterFragesatz
+        );
+    }
+
+    @Override
+    public AdjPhrMitIndirektemFragesatzOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
+            return this;
+        }
+
+        return new AdjPhrMitIndirektemFragesatzOhneLeerstellen(
+                advAngabe, getGraduativeAngabe(),
                 getAdjektiv(),
                 indirekterFragesatz
         );
@@ -89,12 +105,13 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
-                                                          final Numerus numerus) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
+                                                          final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
+                getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt), // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "gespannt"
-                getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
+                getPraedikativAnteilKandidatFuerNachfeld(personSubjekt, numerusSubjekt));
         // ", ob du etwas zu berichten hast[, ]"
     }
 

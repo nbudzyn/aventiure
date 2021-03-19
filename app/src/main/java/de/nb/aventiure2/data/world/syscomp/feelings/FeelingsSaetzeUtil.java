@@ -87,8 +87,7 @@ public class FeelingsSaetzeUtil {
                                         advAng ->
                                                 praedikativumPraedikatMit(adjPhr)
                                                         .mitAdvAngabe(
-                                                                new AdvAngabeSkopusSatz(
-                                                                        advAng))
+                                                                new AdvAngabeSkopusSatz(advAng))
                                                         .alsSatzMitSubjekt(subjekt)
                                 )
                 ).collect(toImmutableList()));

@@ -138,12 +138,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .map(v ->
                             // "Sie freut sich, dich zu sehen"
                             SICH_FREUEN_ZU
-                                    .mitLexikalischemKern(
-                                            v.mit(targetDesc)
-                                    )
-                                    .mitAdvAngabe(
-                                            new AdvAngabeSkopusVerbAllg("sehr")
-                                    )
+                                    .mitLexikalischemKern(v.mit(targetDesc))
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("sehr"))
                                     .alsSatzMitSubjekt(gameObjectSubjekt))
                     .collect(ImmutableList.toImmutableList()));
         } else if (feelingIntensity >= FeelingIntensity.SEHR_STARK) {
