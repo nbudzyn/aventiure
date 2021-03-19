@@ -88,7 +88,24 @@ class WetterData {
                         // FIXME Windstärke und Blitz / Donner berücksichtigen
                         alt.addAll(altNeueSaetze("Es ist",
                                 EIN_SCHOENER_ABEND.nomK(),
-                                "und noch",
+                                "und",
+                                // FIXME allgemeine Adverbien ("noch") bei
+                                //  Adjektiven erlauben (nicht nur Graduative Angaben)?
+                                //  Oder zusätzlich?
+                                //  Vgl. "Er kühlt das Essen sorgsam" -
+                                //  "das sorgsam gekühlte Essen"
+                                //  "das noch sehr kalte Essen",
+                                //  "das in Deutschland sehr häufige Vorgehen"
+                                //  Man könnte davon ausgehen, dass
+                                //  Adjektivphrasen Adverbialphrasen tragen können -
+                                //  zusätzlich zur Gradangabe.
+                                //  Aber auch Prädikativsätze mit Nominalphrasen
+                                //  können Adverbien tragen:
+                                //  "Es ist heute schönes Wetter."
+                                //  "Peter ist heute ein Esel"
+                                //  "Es ist heute draußen morgens kalt und
+                                //  nachmittags eher warm."
+                                "noch",
                                 temperatur.altPraedikativa().stream()
                                         .map(a -> a.getPraedikativ(P3, PL))));
                     }
