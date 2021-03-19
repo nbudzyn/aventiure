@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
 
@@ -43,8 +43,8 @@ public enum StoringPlaceType {
     IM_GEAEST("im Geäst", "ins Geäst"),
     ASTGABEL("in einer Astgabel",
             "in eine Astgabel",
-            HEBEN.mitAdverbialerAngabe(
-                    new AdverbialeAngabeSkopusVerbWohinWoher(
+            HEBEN.mitAdvAngabe(
+                    new AdvAngabeSkopusVerbWohinWoher(
                             AUS.mit(Nominalphrase.ASTGABEL))),
             IM_GEAEST),
     WALD("im Wald", "in den Wald"),
@@ -112,10 +112,10 @@ public enum StoringPlaceType {
         return wo;
     }
 
-    public AdverbialeAngabeSkopusVerbWohinWoher getWohinAdvAngabe(
+    public AdvAngabeSkopusVerbWohinWoher getWohinAdvAngabe(
             final boolean forBelebtUndEherGross) {
         // "Du setzt den Frosch auf den Tisch"
-        return new AdverbialeAngabeSkopusVerbWohinWoher(getWohin(forBelebtUndEherGross));
+        return new AdvAngabeSkopusVerbWohinWoher(getWohin(forBelebtUndEherGross));
     }
 
     public String getWohin(final boolean forBelebtUndEherGross) {

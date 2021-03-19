@@ -27,9 +27,9 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -204,8 +204,8 @@ public class NehmenAction
     private PraedikatMitEinerObjektleerstelle getPraedikatFuerName() {
         if (targetLocation.is(HAENDE_DES_SPIELER_CHARAKTERS)) {
             return NEHMEN
-                    .mitAdverbialerAngabe(
-                            new AdverbialeAngabeSkopusVerbWohinWoher(
+                    .mitAdvAngabe(
+                            new AdvAngabeSkopusVerbWohinWoher(
                                     PraepositionMitKasus.IN_AKK
                                             .mit(targetLocation.descriptionComp()
                                                     .getDescription(true, true))
@@ -407,9 +407,9 @@ public class NehmenAction
                         mitnehmenPraedikat.mit(objectDesc);
 
                 n.narrateAlt(
-                        sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
+                        sc.feelingsComp().altAdvAngabenSkopusSatz().stream()
                                 .map(a -> du(PARAGRAPH,
-                                        praedikatMitObjekt.mitAdverbialerAngabe(a))
+                                        praedikatMitObjekt.mitAdvAngabe(a))
                                         .timed(secs(5))
                                         .undWartest(
                                                 praedikatMitObjekt
@@ -439,11 +439,11 @@ public class NehmenAction
 
         alt.addAll(drueckeAusTimed(DISKONTINUITAET,
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDesc)
-                        .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("wieder")))
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")))
                         .timed(secs(5))
                         .undWartest(),
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDescShort)
-                        .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("wieder")))
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")))
                         .timed(secs(5))
                         .undWartest()));
 
@@ -451,8 +451,8 @@ public class NehmenAction
             alt.add(satzanschluss(", nur um",
                     nehmenPraedikat
                             .mit(world.getDescription(gameObject, true).persPron())
-                            .mitAdverbialerAngabe(
-                                    new AdverbialeAngabeSkopusSatz("gleich erneut"))
+                            .mitAdvAngabe(
+                                    new AdvAngabeSkopusSatz("gleich erneut"))
                             .getZuInfinitiv(P2, SG))
                     .timed(secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"

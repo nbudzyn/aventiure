@@ -14,11 +14,15 @@ import de.nb.aventiure2.german.satz.Satz;
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ANGESPANNT("angespannt"),
     AUFGEDREHT("aufgedreht"),
+    BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
     BENOMMEN("benommen"),
     BETRUEBT("betrübt"),
     BEWEGT("bewegt"),
+    BEWOELKT("bewölkt"),
+    DUNKEL("dunkel"),
     ENTTAEUSCHT("enttäuscht"),
+    ERHELLT("erhellt"),
     ERLEICHTERT("erleichtert"),
     ERSTAUNT("erstaunt"),
     ERSCHOEPFT("erschöpft"),
@@ -53,6 +57,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ZUFRIEDEN("zufrieden"),
     WACH("wach"),
     WARM("warm"),
+    WOLKENVERHANGEN("wolkenverhangen"),
     ZORNIG("zornig");
 
     /**
@@ -69,10 +74,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
         this.adjektiv = adjektiv;
     }
 
+    @Override
     public Satz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
 
+    @Override
     public Satz alsEsIstSatz(final @Nullable String anschlusswort) {
         return toAdjPhr().alsEsIstSatz(anschlusswort);
     }

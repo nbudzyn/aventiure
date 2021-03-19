@@ -12,17 +12,17 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * "Satzadverbien / Satzadverbialien" gehören auf jeden Fall <i>nicht</i> hierher. (Das wären
  * Adverbien / adverbialen Angaben k, bei denen folgende Paraphrase eines Satzes s, der k enthält,
  * möglich ist (Test): Es ist k der Fall, dass s', wobei s' aus s entsteht durch Weglassen von k.)
- * Dazu siehe {@link AdverbialeAngabeSkopusSatz}
+ * Dazu siehe {@link AdvAngabeSkopusSatz}
  */
-public class AdverbialeAngabeSkopusVerbAllg
-        extends AbstractAdverbialeAngabe
+public class AdvAngabeSkopusVerbAllg
+        extends AbstractAdvAngabe
         implements IAdvAngabeOderInterrogativVerbAllg {
 
     /**
      * Erzeugt eine adverbiale Angabe wie "aus lauter Wut".
      */
     @SuppressWarnings("GrazieInspection")
-    public AdverbialeAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
+    public AdvAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
         this(praepositionalphrase.getDescription().joinToString()
                 // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder
                 // Angaben-Nebensatz
@@ -35,7 +35,7 @@ public class AdverbialeAngabeSkopusVerbAllg
      * Erzeugt eine Adverbiale Angabe aus dieser Adjektivphrase. (Z.B. "glücklich" oder
      * "mich wundernd")
      */
-    public AdverbialeAngabeSkopusVerbAllg(final AdjPhrOhneLeerstellen adjektivphrase) {
+    public AdvAngabeSkopusVerbAllg(final AdjPhrOhneLeerstellen adjektivphrase) {
         super(adjektivphrase);
     }
 
@@ -44,7 +44,7 @@ public class AdverbialeAngabeSkopusVerbAllg
      * keine zu-Infinitive, keine Angabensätze (z.B. zum Adjektiv) und keine Ergönzungssätze
      * (z.B. zum Adjektiv) enthalten.
      */
-    public AdverbialeAngabeSkopusVerbAllg(final String text) {
+    public AdvAngabeSkopusVerbAllg(final String text) {
         super(text);
     }
 

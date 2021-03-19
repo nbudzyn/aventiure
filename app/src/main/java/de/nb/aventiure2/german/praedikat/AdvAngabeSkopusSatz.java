@@ -13,19 +13,19 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
  * möglich ist (Test): Es ist k der Fall, dass s', wobei s' aus s entsteht durch Weglassen von k.
  * ("vielleicht", "gestern", ...)
  */
-public class AdverbialeAngabeSkopusSatz
-        extends AbstractAdverbialeAngabe
+public class AdvAngabeSkopusSatz
+        extends AbstractAdvAngabe
         implements IAdvAngabeOderInterrogativSkopusSatz {
     /**
      * Erzeugt eine adverbiale Bestimmung mit dem Skopus Satz; der Text darf
      * keine zu-Infinitive, keine Angabensätze (z.B. zum Adjektiv) und keine Ergönzungssätze
      * (z.B. zum Adjektiv) enthalten.
      */
-    public AdverbialeAngabeSkopusSatz(final String text) {
+    public AdvAngabeSkopusSatz(final String text) {
         super(text);
     }
 
-    public AdverbialeAngabeSkopusSatz(final AdjPhrOhneLeerstellen adjektivphrase) {
+    public AdvAngabeSkopusSatz(final AdjPhrOhneLeerstellen adjektivphrase) {
         super(adjektivphrase);
     }
 
@@ -47,7 +47,7 @@ public class AdverbialeAngabeSkopusSatz
         // an." - im Vorfeld.)
     }
 
-    public AdverbialeAngabeSkopusVerbAllg toSkopusVerbAllg() {
-        return new AdverbialeAngabeSkopusVerbAllg(getAdjektivphrase());
+    public AdvAngabeSkopusVerbAllg toSkopusVerbAllg() {
+        return new AdvAngabeSkopusVerbAllg(getAdjektivphrase());
     }
 }

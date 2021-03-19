@@ -18,21 +18,21 @@ public interface VerbOhneLeerstellen
     }
 
     @Override
-    default PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        return toPraedikat().mitAdverbialerAngabe(adverbialeAngabe);
+    default PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        return toPraedikat().mitAdvAngabe(advAngabe);
     }
 
     @Override
-    default PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        return toPraedikat().mitAdverbialerAngabe(adverbialeAngabe);
+    default PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        return toPraedikat().mitAdvAngabe(advAngabe);
     }
 
     @Override
-    default PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        return toPraedikat().mitAdverbialerAngabe(adverbialeAngabe);
+    default PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        return toPraedikat().mitAdvAngabe(advAngabe);
     }
 
     PraedikatOhneLeerstellen toPraedikat();

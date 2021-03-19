@@ -27,6 +27,8 @@ public class Nominalphrase
 
     // Allgemeine Nominalphrasen, die sich nicht auf ein
     // AvObject oder eine AbstractEntity beziehen.
+    public static final Nominalphrase ABENDSONNE =
+            np(F, DEF, "Abendsonne");
     public static final Nominalphrase ANGEBOTE =
             np(PL_MFN, INDEF, "Angebote", "Angeboten");
     public static final Nominalphrase ASTGABEL =
@@ -36,6 +38,9 @@ public class Nominalphrase
                     "deinem Herzen");
     public static final Nominalphrase DINGE =
             np(PL_MFN, DEF, "Dinge", "Dingen");
+    public static final Nominalphrase DUESTERE_WOLKEN =
+            np(PL_MFN, INDEF,
+                    "düstere Wolken", "düsteren Wolken");
     public static final Nominalphrase EIN_GESPRAECH =
             np(N, INDEF, "Gespräch");
     public static final Nominalphrase EIN_GROBER_ABRISS =
@@ -48,8 +53,13 @@ public class Nominalphrase
             np(F, null, "Freude");
     public static final Nominalphrase FUSS =
             np(M, DEF, "Fuß");
+    public static final Nominalphrase GANZER_HIMMEL =
+            np(M, DEF, "ganze Himmel",
+                    "ganzen Himmel", "ganzen Himmel");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
+    public static final Nominalphrase HIMMEL =
+            np(M, DEF, "Himmel");
     public static final Nominalphrase HOEHE =
             np(F, DEF, "Höhe");
     public static final Nominalphrase IHRE_HAARE =
@@ -60,15 +70,30 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase MITTAGSSONNE =
+            np(F, DEF, "Mittagssonne");
     public static final Nominalphrase KLIRRENDE_KAELTE_OHNE_ART =
             np(F, null,
                     "klirrende Kälte", "klirrenden Kälte");
+    public static final Nominalphrase MOND =
+            np(M, DEF, "Mond");
+    public static final Nominalphrase MORGENSONNE =
+            np(F, DEF, "Morgensonne");
+    public static final Nominalphrase NACHT =
+            np(F, DEF, "Nacht");
     public static final Nominalphrase RETTUNG_OHNE_ART =
             np(F, null, "Rettung");
+    public static final Nominalphrase EIN_SCHOENER_ABEND =
+            np(M, INDEF, "schöner Abend",
+                    "schönen Abend", "schönen Abend");
+    public static final Nominalphrase SONNE =
+            np(F, DEF, "Sonne");
+    public static final Nominalphrase TAG =
+            np(M, DEF, "Tag");
+    public static final Nominalphrase VOLLMOND =
+            np(M, DEF, "Vollmond");
     public static final Nominalphrase WAHRHEIT =
             np(F, DEF, "Wahrheit");
-    public static final Nominalphrase WARMES_WETTER =
-            np(N, INDEF, "warmes Wetter", "warmen Wetter");
     public static final Nominalphrase WARMES_WETTER_OHNE_ART =
             np(N, null,
                     "warmes Wetter", "warmem Wetter");

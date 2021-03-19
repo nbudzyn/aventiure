@@ -17,7 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -149,8 +149,8 @@ class SchattenDerBaeumeFactory {
         if (lichtverhaeltnisse == DUNKEL) {
             // "du stehst wieder auf"
             return du(VerbSubj.AUFSTEHEN
-                    .mitAdverbialerAngabe(
-                            new AdverbialeAngabeSkopusVerbAllg("wieder")))
+                    .mitAdvAngabe(
+                            new AdvAngabeSkopusVerbAllg("wieder")))
                     .undWartest()
                     .dann();
         }

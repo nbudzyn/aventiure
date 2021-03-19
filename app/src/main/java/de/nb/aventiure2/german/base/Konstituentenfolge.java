@@ -195,8 +195,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                                 .collect(Collectors.toSet());
             } else if (part instanceof Satz) {
                 // Alternativen!
-                alternativePartKonstituentenfolgen =
-                        ((Satz) part).altVerzweitsaetze();
+                alternativePartKonstituentenfolgen = ((Satz) part).altVerzweitsaetze();
             } else if (part instanceof Konstituentenfolge) {
                 alternativePartKonstituentenfolgen =
                         Collections.singletonList(
@@ -207,7 +206,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                                 part == WORD ? null :
                                         new Konstituentenfolge(
                                                 (IKonstituenteOrStructuralElement) part));
-            } else if (part == null || "" .equals(part)) {
+            } else if (part == null || "".equals(part)) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
             } else {
                 alternativePartKonstituentenfolgen =

@@ -75,13 +75,12 @@ public class PraedikatSubjObjOhneLeerstellen
             final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, modalpartikeln,
-                adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
     }
@@ -94,16 +93,16 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -113,15 +112,15 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 getModalpartikeln(),
-                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -131,15 +130,15 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -149,9 +148,9 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                adverbialeAngabe
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                advAngabe
         );
     }
 
@@ -219,13 +218,13 @@ public class PraedikatSubjObjOhneLeerstellen
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),// "aus einer Laune heraus"
                 objekt.imK(kasusOderPraepositionalkasus),
                 kf(getModalpartikeln()), // "mal eben"
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "auf den Tisch"
         );
     }
@@ -263,9 +262,9 @@ public class PraedikatSubjObjOhneLeerstellen
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
-                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)
         );
     }
@@ -280,12 +279,12 @@ public class PraedikatSubjObjOhneLeerstellen
     @Override
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
         if (res != null) {
             return res;
         }
@@ -294,6 +293,6 @@ public class PraedikatSubjObjOhneLeerstellen
             return objekt.imK(kasusOderPraepositionalkasus);
         }
 
-        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
 }

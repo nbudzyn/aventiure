@@ -75,14 +75,13 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final Satz indirekterFragesatz) {
         super(verb, modalpartikeln,
-                adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
         this.indirekterFragesatz = indirekterFragesatz;
@@ -95,17 +94,17 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz
         );
     }
 
     @Override
-    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -113,15 +112,15 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
-                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz);
     }
 
     @Override
-    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -129,16 +128,16 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz
         );
     }
 
     @Override
-    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -146,9 +145,9 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                adverbialeAngabe,
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                advAngabe,
                 indirekterFragesatz
         );
     }
@@ -182,13 +181,13 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 objekt.imK(kasusOderPraepositionalkasus), // "die Hexe"
-                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()),  // "mal eben"
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // ("mitten ins Gesicht" - sofern überhaupt möglich)
         );
     }
@@ -225,9 +224,9 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
-                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt),
                 // "[,] ob du etwas zu berichten hast[, ]"
                 // "[,] was du zu berichten hast[, ]"
@@ -248,16 +247,16 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
         }
 
         @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
         if (res != null) {
             return res;
         }
 
-        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
 }

@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
 import de.nb.aventiure2.data.world.syscomp.talking.IScBegruessable;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -69,8 +69,8 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
         return ImmutableList.of(
                 st(ERKLAEREN.mitAkk(Indefinitpronomen.ALLES)
                                 .mitDat(getDescription())
-                                .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusVerbAllg(
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusVerbAllg(
                                                 GENAU.mitGraduativerAngabe("ganz"))),
                         this::allesGanzGenauErklaeren),
                 st(GEBEN.mitAkk(EIN_GROBER_ABRISS), this::einenGrobenAbrissGeben));

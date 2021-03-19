@@ -9,7 +9,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.stream.Collectors.toSet;
@@ -29,16 +29,16 @@ public interface FeelingsDescriber {
      *
      * @return Möglicherweise eine leere Liste!
      */
-    default ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
+    default ImmutableList<AdvAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
-        return ImmutableList.<AdverbialeAngabeSkopusVerbAllg>builder()
+        return ImmutableList.<AdvAngabeSkopusVerbAllg>builder()
                 .addAll(AdjPhrOhneLeerstellen.toAdvAngabenSkopusVerbAllg(gameObjectSubjekt,
                         altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
                                 targetDesc, feelingIntensity,
                                 targetKnown)))
-                .addAll(altEindruckBeiBegegnungZusAdverbialeAngaben(feelingIntensity).stream()
-                        .map(AdverbialeAngabeSkopusVerbAllg::new)
+                .addAll(altEindruckBeiBegegnungZusAdvAngaben(feelingIntensity).stream()
+                        .map(AdvAngabeSkopusVerbAllg::new)
                         .collect(toSet()))
                 .build();
     }
@@ -108,7 +108,7 @@ public interface FeelingsDescriber {
      */
     @NonNull
     ImmutableList<String>
-    altEindruckBeiBegegnungZusAdverbialeAngaben(int feelingIntensity);
+    altEindruckBeiBegegnungZusAdvAngaben(int feelingIntensity);
 
     /**
      * Gibt eventuell alternative Adjektivphrasen zurück, die den

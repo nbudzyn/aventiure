@@ -13,10 +13,10 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * Eine adverbiale Angabe (z.B. "aus Langeweile" oder "fröhlich",
  * "den ganzen Tag", "auf dem Tisch").
  */
-public abstract class AbstractAdverbialeAngabe {
+public abstract class AbstractAdvAngabe {
     private final AdjPhrOhneLeerstellen adjektivphrase;
 
-    AbstractAdverbialeAngabe(final Praepositionalphrase praepositionalphrase) {
+    AbstractAdvAngabe(final Praepositionalphrase praepositionalphrase) {
         // TODO Wenn es sich um eine Präpositionalphrase handelt wie
         //  "mit Peters Hilfe", dann könnte diese Phrase möglicherweise einen
         //  Phorik-Kandidaten enthalten (Peter).
@@ -27,7 +27,7 @@ public abstract class AbstractAdverbialeAngabe {
         this(praepositionalphrase.getDescription().joinToString());
     }
 
-    AbstractAdverbialeAngabe(final String text) {
+    AbstractAdvAngabe(final String text) {
         // TODO Wenn es sich um eine Präpositionalphrase handelt wie
         //  "mit Peters Hilfe", dann könnte diese Phrase möglicherweise einen
         //  Phorik-Kandidaten enthalten (Peter).
@@ -41,7 +41,7 @@ public abstract class AbstractAdverbialeAngabe {
         this(new Adjektiv(text).toAdjPhr());
     }
 
-    AbstractAdverbialeAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {
+    AbstractAdvAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {
         this.adjektivphrase = adjektivphrase;
     }
 

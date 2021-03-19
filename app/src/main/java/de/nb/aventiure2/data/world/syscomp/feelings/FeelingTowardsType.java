@@ -6,8 +6,8 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static java.util.stream.Collectors.toList;
@@ -48,7 +48,7 @@ public enum FeelingTowardsType {
                         targetDesc, feelingIntensity,
                         targetKnown);
 
-        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+        final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                 altEindruckBeiBegegnungAdvAngaben(
                         gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown);
 
@@ -56,7 +56,7 @@ public enum FeelingTowardsType {
         res.addAll(FeelingsSaetzeUtil.
                 toReaktionSaetze(gameObjectSubjekt, targetDesc,
                         true, altEindruckAdjPhr,
-                        adverbialeAngaben));
+                        advAngaben));
 
         res.addAll(feelingsDescriber.altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown
@@ -93,7 +93,7 @@ public enum FeelingTowardsType {
         res.addAll(saetze);
 
         res.addAll(saetze.stream()
-                .map(s -> s.mitAdverbialerAngabe(new AdverbialeAngabeSkopusSatz("auf einmal")))
+                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("auf einmal")))
                 .collect(toList()));
 
         return res.build();
@@ -120,7 +120,7 @@ public enum FeelingTowardsType {
      *
      * @return Möglicherweise eine leere Liste!
      */
-    public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
+    public ImmutableList<AdvAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt, final SubstantivischePhrase targetDesc,
             final int feelingIntensity, final boolean targetKnown) {
         return feelingsDescriber.altEindruckBeiBegegnungAdvAngaben(gameObjectSubjekt,

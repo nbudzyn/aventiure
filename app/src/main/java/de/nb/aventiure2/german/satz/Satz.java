@@ -17,9 +17,9 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -63,8 +63,8 @@ public class Satz {
     public static ImmutableList<Satz> altSubjObjSaetze(
             @Nullable final SubstantivischePhrase subjekt,
             final PraedikatMitEinerObjektleerstelle praedikat, final SubstantivischePhrase objekt,
-            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        return altSubjObjSaetze(subjekt, ImmutableList.of(praedikat), objekt, adverbialeAngaben);
+            final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
+        return altSubjObjSaetze(subjekt, ImmutableList.of(praedikat), objekt, advAngaben);
     }
 
     public static ImmutableList<Satz> altSubjObjSaetze(
@@ -79,11 +79,11 @@ public class Satz {
             final SubstantivischePhrase subjekt,
             final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
             final SubstantivischePhrase objekt,
-            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
-        return adverbialeAngaben.stream()
+            final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
+        return advAngaben.stream()
                 .flatMap(aa -> praedikate.stream()
                         .map(v -> v.mit(objekt)
-                                .mitAdverbialerAngabe(aa)
+                                .mitAdvAngabe(aa)
                                 .alsSatzMitSubjekt(subjekt)))
                 .collect(toImmutableList());
     }
@@ -151,20 +151,20 @@ public class Satz {
                 angabensatz);
     }
 
-    public Satz mitAdverbialerAngabe(@Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+    public Satz mitAdvAngabe(@Nullable final AdvAngabeSkopusSatz advAngabe) {
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz);
     }
 
-    public Satz mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+    public Satz mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbAllg advAngabe) {
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz);
     }
 
-    public Satz mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return new Satz(anschlusswort, subjekt, praedikat.mitAdverbialerAngabe(adverbialeAngabe),
+    public Satz mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+        return new Satz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz);
     }
 

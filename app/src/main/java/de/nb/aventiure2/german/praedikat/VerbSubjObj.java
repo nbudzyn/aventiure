@@ -22,6 +22,8 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.STRAHLEN;
  */
 public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
+    BEDECKEN("bedecken", AKK, "bedecke", "bedeckst", "bedeckt",
+            "bedeckt", Perfektbildung.HABEN, "bedeckt"),
     BEENDEN("beenden", AKK, "beende", "beendest", "beendet",
             "beendet", Perfektbildung.HABEN, "beendet"),
     BEGRUESSEN("begrüßen", AKK, "begrüße", "begrüßt", "begrüßt",
@@ -78,6 +80,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "gesehen"),
     SCHAUEN("schauen", IN_AKK, "schaue", "schaust", "schaut", "schaut",
             Perfektbildung.HABEN, "geschaut"),
+    SCHEINEN("scheinen", DAT,
+            "scheine", "scheinst", "scheint", "scheint",
+            Perfektbildung.HABEN, "geschienen"),
     SCHIEBEN("schieben", AKK,
             "schiebe", "schiebst", "schiebt", "schiebt",
             Perfektbildung.HABEN, "geschoben"),
@@ -198,10 +203,10 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
+    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
         return new PraedikatMitEinerObjLeerstelle(
-                verb, kasusOderPraepositionalkasus, adverbialeAngabe
+                verb, kasusOderPraepositionalkasus, advAngabe
         );
     }
 

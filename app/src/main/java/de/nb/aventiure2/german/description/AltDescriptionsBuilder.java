@@ -79,7 +79,7 @@ public class AltDescriptionsBuilder {
     }
 
     /**
-     * Fügt diese Teile zu alternativen {@link AbstractDescription}s
+     * Fügt diese Teile zu alternativen {@link AltDescriptionsBuilder}n
      * zusammen. Gibt es für mehrere Teile mehrere Alternativen, so werden
      * alle Kombinationen erzeugt.
      *
@@ -140,7 +140,9 @@ public class AltDescriptionsBuilder {
 
     public AltDescriptionsBuilder addAll(final Iterable<?> others) {
         for (final Object other : others) {
-            if (other instanceof AbstractDescription<?>) {
+            if (other instanceof AltDescriptionsBuilder) {
+                addAll((AltDescriptionsBuilder) other);
+            } else if (other instanceof AbstractDescription<?>) {
                 add((AbstractDescription<?>) other);
             } else if (other instanceof Satz) {
                 add((Satz) other);

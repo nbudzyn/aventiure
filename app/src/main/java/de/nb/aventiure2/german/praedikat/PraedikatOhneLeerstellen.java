@@ -70,14 +70,14 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      */
     boolean isBezugAufNachzustandDesAktantenGegeben();
 
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe);
+    PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable IAdvAngabeOderInterrogativSkopusSatz advAngabe);
 
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe);
+    PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable IAdvAngabeOderInterrogativVerbAllg advAngabe);
 
-    PraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe);
+    PraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable IAdvAngabeOderInterrogativWohinWoher advAngabe);
 
     @Nullable
     Konstituentenfolge getErstesInterrogativwort();

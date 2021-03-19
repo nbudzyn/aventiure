@@ -17,7 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -205,8 +205,8 @@ public class BaumFactory {
                         // Kann mit Müdigkeit kombiniert werden zu:
                         // "Unten angekommen bist du ziemlich erschöpft..."
                         du(SENTENCE, ANKOMMEN
-                                .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusVerbAllg(
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusVerbAllg(
                                                 "wieder unten")))
                                 .timed(mins(8))
                                 .withCounterIdIncrementedIfTextIsNarrated(HINABKLETTERN)

@@ -31,41 +31,41 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
     private final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
 
     @Nullable
-    private final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
+    private final AdvAngabeSkopusVerbWohinWoher advAngabeSkopusVerbWohinWoher;
 
     PraedikatMitEinerObjLeerstelle(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher
-                    adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final AdvAngabeSkopusVerbWohinWoher
+                    advAngabeSkopusVerbWohinWoher) {
         this(verb, kasusOderPraepositionalkasus,
                 false,
-                adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusVerbWohinWoher);
     }
 
     PraedikatMitEinerObjLeerstelle(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
             final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher
-                    adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final AdvAngabeSkopusVerbWohinWoher
+                    advAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich =
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
-        this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
+        this.advAngabeSkopusVerbWohinWoher = advAngabeSkopusVerbWohinWoher;
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
         return new PraedikatMitEinerObjLeerstelle(
                 verb, kasusOderPraepositionalkasus,
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
-                adverbialeAngabe
+                advAngabe
         );
     }
 
@@ -77,6 +77,6 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
                 substPhr, ImmutableList.of(),
                 null, null,
-                adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusVerbWohinWoher);
     }
 }

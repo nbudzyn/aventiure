@@ -24,8 +24,8 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AbstractAdverbialeAngabe;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AbstractAdvAngabe;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -127,7 +127,7 @@ public class AblegenAction
                 SENTENCE,
                 getPraedikat()
                         .mit(world.getDescription(gameObject, true))
-                        .mitAdverbialerAngabe(getWohinDetail())
+                        .mitAdvAngabe(getWohinDetail())
                         .getInfinitiv(P2, SG))
                 .joinToString();
     }
@@ -148,7 +148,7 @@ public class AblegenAction
     }
 
     @Nullable
-    private AdverbialeAngabeSkopusVerbWohinWoher getWohinDetail() {
+    private AdvAngabeSkopusVerbWohinWoher getWohinDetail() {
         return detailLocationNecessaryInDescription ?
                 null :
                 location.storingPlaceComp().getLocationMode()
@@ -285,7 +285,7 @@ public class AblegenAction
     }
 
     private void narrateObject() {
-        @Nullable final AbstractAdverbialeAngabe wohinDetail = getWohinDetail();
+        @Nullable final AbstractAdvAngabe wohinDetail = getWohinDetail();
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =
@@ -306,7 +306,7 @@ public class AblegenAction
                         sc.memoryComp().getLastAction().hasObject(gameObject)) {
                     n.narrate(du(StructuralElement.WORD,
                             LEGEN.mit(gameObjektPersPron)
-                                    .mitAdverbialerAngabe(
+                                    .mitAdvAngabe(
                                             location.storingPlaceComp().getLocationMode()
                                                     .getWohinAdvAngabe(false)))
                             .timed(secs(3))

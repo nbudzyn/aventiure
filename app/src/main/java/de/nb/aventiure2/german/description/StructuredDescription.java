@@ -17,9 +17,9 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -111,21 +111,21 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @CheckReturnValue
-    public StructuredDescription mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusSatz adverbialeAngabe) {
-        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
+    public StructuredDescription mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusSatz advAngabe) {
+        return copy(getSatz().mitAdvAngabe(advAngabe));
     }
 
     @CheckReturnValue
-    public StructuredDescription mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
-        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
+    public StructuredDescription mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbAllg advAngabe) {
+        return copy(getSatz().mitAdvAngabe(advAngabe));
     }
 
     @CheckReturnValue
-    public StructuredDescription mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return copy(getSatz().mitAdverbialerAngabe(adverbialeAngabe));
+    public StructuredDescription mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+        return copy(getSatz().mitAdvAngabe(advAngabe));
     }
 
 
@@ -139,7 +139,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         return withSatz(satz.mitSubjektFokuspartikel(subjektFokuspartikel));
     }
 
-    public StructuredDescription withSatz(final Satz other) {
+    private StructuredDescription withSatz(final Satz other) {
         return copy(other);
     }
 

@@ -61,27 +61,27 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public PraedikatModalverbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
+    public PraedikatModalverbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         // Der Einfachheit halber tun wir so, als würde sich das "leider"
         // bei "leider singen können" auf das Singen beziehen.
         // Das ist eine Vereinfachung. Jedenfalls ist ein doppeltes "leider" unmöglich.
         return new PraedikatModalverbOhneLeerstellen(
-                verb, lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                verb, lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public PraedikatModalverbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
+    public PraedikatModalverbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new PraedikatModalverbOhneLeerstellen(
-                verb, lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                verb, lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public PraedikatModalverbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
+    public PraedikatModalverbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new PraedikatModalverbOhneLeerstellen(
-                verb, lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                verb, lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Nullable

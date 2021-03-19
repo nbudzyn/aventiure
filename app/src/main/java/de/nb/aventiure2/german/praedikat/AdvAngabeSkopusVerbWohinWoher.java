@@ -10,18 +10,18 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
  * Hierzu rechnen wir auch entsprechende "Adverbialobjekte" wie
  * "Du stellst die Vase AUF DEN TISCH."
  */
-public class AdverbialeAngabeSkopusVerbWohinWoher
-        extends AbstractAdverbialeAngabe
+public class AdvAngabeSkopusVerbWohinWoher
+        extends AbstractAdvAngabe
         implements IAdvAngabeOderInterrogativWohinWoher {
-    public AdverbialeAngabeSkopusVerbWohinWoher(final String text) {
+    public AdvAngabeSkopusVerbWohinWoher(final String text) {
         super(text);
     }
 
-    public AdverbialeAngabeSkopusVerbWohinWoher(final AdjPhrOhneLeerstellen adjektivphrase) {
+    public AdvAngabeSkopusVerbWohinWoher(final AdjPhrOhneLeerstellen adjektivphrase) {
         super(adjektivphrase);
     }
 
-    public AdverbialeAngabeSkopusVerbWohinWoher(final Praepositionalphrase praepositionalphrase) {
+    public AdvAngabeSkopusVerbWohinWoher(final Praepositionalphrase praepositionalphrase) {
         super(praepositionalphrase);
     }
 }

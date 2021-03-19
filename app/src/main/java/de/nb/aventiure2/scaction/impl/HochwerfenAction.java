@@ -24,8 +24,8 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 import de.nb.aventiure2.german.string.GermanStringUtil;
@@ -157,16 +157,16 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdverbialeAngabenSkopusSatz().stream()
+        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdvAngabenSkopusSatz().stream()
                 .map(a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellen(
                         WERFEN.mit(anaph)
-                                .mitAdverbialerAngabe(a)
-                                .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusVerbWohinWoher(
+                                .mitAdvAngabe(a)
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusVerbWohinWoher(
                                                 IN_AKK.mit(HOEHE))),
                         AUFFANGEN.mit(anaph.persPron())
-                                .mitAdverbialerAngabe(
-                                        new AdverbialeAngabeSkopusSatz(
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusSatz(
                                                 "wieder"))
                 ))
                         .timed(secs(3))

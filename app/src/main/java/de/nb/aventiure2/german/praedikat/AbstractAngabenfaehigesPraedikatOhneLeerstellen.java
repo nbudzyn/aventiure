@@ -62,13 +62,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private final ImmutableList<Modalpartikel> modalpartikeln;
 
     @Nullable
-    private final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz;
+    private final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz;
 
     @Nullable
-    private final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg;
+    private final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg;
 
     @Nullable
-    private final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher;
+    private final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher;
 
     public AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
@@ -80,31 +80,29 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         this(verb, false,
-                modalpartikeln, adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg,
-                adverbialeAngabeSkopusVerbWohinWoher);
+                modalpartikeln, advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg,
+                advAngabeSkopusVerbWohinWoher);
     }
 
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
             final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
         this.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich =
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
         this.modalpartikeln = ImmutableList.copyOf(modalpartikeln);
-        this.adverbialeAngabeSkopusSatz = adverbialeAngabeSkopusSatz;
-        this.adverbialeAngabeSkopusVerbAllg = adverbialeAngabeSkopusVerbAllg;
-        this.adverbialeAngabeSkopusVerbWohinWoher = adverbialeAngabeSkopusVerbWohinWoher;
+        this.advAngabeSkopusSatz = advAngabeSkopusSatz;
+        this.advAngabeSkopusVerbAllg = advAngabeSkopusVerbAllg;
+        this.advAngabeSkopusVerbWohinWoher = advAngabeSkopusVerbWohinWoher;
     }
 
     @Override
@@ -194,8 +192,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
                                                            final Numerus numerusSubjekt,
                                                            final boolean nachAnschlusswort) {
-        if (adverbialeAngabeSkopusSatz != null) {
-            return adverbialeAngabeSkopusSatz
+        if (advAngabeSkopusSatz != null) {
+            return advAngabeSkopusSatz
                     .getDescription(personSubjekt, numerusSubjekt)
                     .withVorkommaNoetig(false);
         }
@@ -208,13 +206,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
                                                                    final Numerus numerusSubjekt) {
         @Nullable final Konstituente
-                adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
+                advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt);
-        if (adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
+        if (advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
             // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
             return joinToKonstituentenfolge(
-                    adverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
+                    advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
                             .withVorkommaNoetig(false));
         }
 
@@ -338,105 +336,105 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
-    private Konstituente getAdverbialeAngabeSkopusSatzDescription(
+    private Konstituente getAdvAngabeSkopusSatzDescription(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return adverbialeAngabeSkopusSatz != null ?
-                adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+        return advAngabeSkopusSatz != null ?
+                advAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
                 null;
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(
+    Konstituente getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        if (adverbialeAngabeSkopusSatz == null) {
+        if (advAngabeSkopusSatz == null) {
             return null;
         }
 
-        if (!adverbialeAngabeSkopusSatz.imMittelfeldErlaubt()) {
+        if (!advAngabeSkopusSatz.imMittelfeldErlaubt()) {
             return null;
         }
 
-        return getAdverbialeAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+    Konstituente getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        if (adverbialeAngabeSkopusSatz == null) {
+        if (advAngabeSkopusSatz == null) {
             return null;
         }
 
-        if (adverbialeAngabeSkopusSatz.imMittelfeldErlaubt()) {
+        if (advAngabeSkopusSatz.imMittelfeldErlaubt()) {
             return null;
         }
 
-        return getAdverbialeAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+    Konstituente getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        if (adverbialeAngabeSkopusVerbAllg == null) {
+        if (advAngabeSkopusVerbAllg == null) {
             return null;
         }
 
-        if (!adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+        if (!advAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return null;
         }
 
-        return getAdverbialeAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+    Konstituente getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        if (adverbialeAngabeSkopusVerbAllg == null) {
+        if (advAngabeSkopusVerbAllg == null) {
             return null;
         }
 
-        if (adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
+        if (advAngabeSkopusVerbAllg.imMittelfeldErlaubt()) {
             return null;
         }
 
-        return getAdverbialeAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
     }
 
 
     @Nullable
-    private Konstituente getAdverbialeAngabeSkopusVerbTextDescription(
+    private Konstituente getAdvAngabeSkopusVerbTextDescription(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return adverbialeAngabeSkopusVerbAllg != null ?
-                adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt) : null;
+        return advAngabeSkopusVerbAllg != null ?
+                advAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt) : null;
     }
 
     @Nullable
-    Konstituente getAdverbialeAngabeSkopusVerbWohinWoherDescription(
+    Konstituente getAdvAngabeSkopusVerbWohinWoherDescription(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return adverbialeAngabeSkopusVerbWohinWoher != null ?
-                adverbialeAngabeSkopusVerbWohinWoher.getDescription(personSubjekt, numerusSubjekt) :
+        return advAngabeSkopusVerbWohinWoher != null ?
+                advAngabeSkopusVerbWohinWoher.getDescription(personSubjekt, numerusSubjekt) :
                 null;
     }
 
     @Nullable
-    IAdvAngabeOderInterrogativSkopusSatz getAdverbialeAngabeSkopusSatz() {
-        return adverbialeAngabeSkopusSatz;
+    IAdvAngabeOderInterrogativSkopusSatz getAdvAngabeSkopusSatz() {
+        return advAngabeSkopusSatz;
     }
 
     @Nullable
-    IAdvAngabeOderInterrogativVerbAllg getAdverbialeAngabeSkopusVerbAllg() {
-        return adverbialeAngabeSkopusVerbAllg;
+    IAdvAngabeOderInterrogativVerbAllg getAdvAngabeSkopusVerbAllg() {
+        return advAngabeSkopusVerbAllg;
     }
 
     @Nullable
-    public IAdvAngabeOderInterrogativWohinWoher getAdverbialeAngabeSkopusVerbWohinWoher() {
-        return adverbialeAngabeSkopusVerbWohinWoher;
+    IAdvAngabeOderInterrogativWohinWoher getAdvAngabeSkopusVerbWohinWoher() {
+        return advAngabeSkopusVerbWohinWoher;
     }
 
     @Override
     public boolean umfasstSatzglieder() {
-        return adverbialeAngabeSkopusSatz != null ||
-                adverbialeAngabeSkopusVerbAllg != null ||
-                adverbialeAngabeSkopusVerbWohinWoher != null;
+        return advAngabeSkopusSatz != null ||
+                advAngabeSkopusVerbAllg != null ||
+                advAngabeSkopusVerbWohinWoher != null;
     }
 
     @Override
@@ -445,7 +443,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
         return verb.isPartikelverb() ||
                 // Auch bei "nach Berlin gehen" ist ein Bezug auf den Nachzustand des
                 // Aktanten gegeben.
-                adverbialeAngabeSkopusVerbWohinWoher != null;
+                advAngabeSkopusVerbWohinWoher != null;
 
         // Sonst ("gehen", "endlich gehen") eher nicht.
     }

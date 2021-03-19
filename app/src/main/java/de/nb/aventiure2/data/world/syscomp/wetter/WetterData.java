@@ -1,33 +1,46 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableCollection;
+
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
+import static de.nb.aventiure2.german.base.Numerus.PL;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 @Immutable
 class WetterData {
-    final Temperatur tageshoechsttemperatur;
+    private final Temperatur tageshoechsttemperatur;
 
-    final Temperatur tagestiefsttemperatur;
+    private final Temperatur tagestiefsttemperatur;
 
-    final Windstaerke windstaerke;
+    private final Windstaerke windstaerke;
 
-    final Bewoelkung bewoelkung;
+    private final Bewoelkung bewoelkung;
 
-    final BlitzUndDonner blitzUndDonner;
+    private final BlitzUndDonner blitzUndDonner;
 
-    WetterData(final Temperatur tageshoechsttemperatur,
-               final Temperatur tagestiefsttemperatur,
-               final Windstaerke windstaerke,
-               final Bewoelkung bewoelkung,
-               final BlitzUndDonner blitzUndDonner) {
+    @SuppressWarnings("WeakerAccess")
+    public WetterData(final Temperatur tageshoechsttemperatur,
+                      final Temperatur tagestiefsttemperatur,
+                      final Windstaerke windstaerke,
+                      final Bewoelkung bewoelkung,
+                      final BlitzUndDonner blitzUndDonner) {
         this.tageshoechsttemperatur = tageshoechsttemperatur;
         this.tagestiefsttemperatur = tagestiefsttemperatur;
         this.windstaerke = windstaerke;
@@ -40,50 +53,46 @@ class WetterData {
 
         final AltDescriptionsBuilder alt = alt();
 
+        final ImmutableCollection<Satz> altBewoelkungGestirnSaetze =
+                bewoelkung.altScKommtNachDraussenSaetze(time);
+        alt.addAll(altBewoelkungGestirnSaetze);
+
         if (time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
             alt.addAll(temperatur.altScKommtNachDraussenSaetze());
-
-            if (time.getTageszeit() == Tageszeit.MORGENS) {
-                alt.addAll(altNeueSaetze(
-                        // FIXME Nur wenn die Sonne scheint
-                        "Die Morgensonne scheint auf dich herab",
-                        temperatur.altScKommtNachDraussenSaetze()));
-                // FIXME "Als der Tag anbrach, noch ehe die Sonne aufgegangen war"
-                // FIXME Uhrzeit berücksichtigen!
-                // FIXME Andere Tageshöchsttemperaturen berücksichtigen
-                // FIXME Windstärke berücksichtigen
-                // FIXME Andere Bewölkungen berücksichtigen
-                // FIXME Blitz und Donner berücksichtigen
-            } else if (time.getTageszeit() == Tageszeit.TAGSUEBER) {
+            // FIXME Wenn ein Wetteraspekt deutlich überwiegt, dann
+            //  die anderen nicht nennen - oder nur nachrangig.
+            if (time.getTageszeit() == Tageszeit.TAGSUEBER) {
                 // FIXME Als Dauerbeschreibunge:
-                //  - "der Tag ist warm, die Sonne sticht"
                 // - "die Sonnenhitze brennt stark"
                 // - "die Sonne scheint sehr warm"
-                // - "Die Sonne scheint hell"
-
-                alt.add(neuerSatz(
-                        "Draußen scheint dir die Sonne ins Gesicht;",
-                        // FIXME Vielleicht ist es nur tagsüber / mittags heiß und morgens
-                        //  noch nicht?
-                        "der Tag ist recht heiß"));
+                alt.addAll(altNeueSaetze(
+                        altBewoelkungGestirnSaetze,
+                        ";",
+                        temperatur.altDerTagIstSaetze()));
+                // FIXME "der Tag ist warm, die Sonne sticht"
                 // FIXME "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
-                // FIXME Uhrzeit berücksichtigen!
-                // FIXME Andere Tageshöchsttemperaturen berücksichtigen
                 // FIXME Windstärke berücksichtigen
-                // FIXME Andere Bewölkungen berücksichtigen
                 // FIXME Blitz und Donner berücksichtigen
-            } else {
-                alt.add(neuerSatz("Es ist ein schöner Abend und noch recht heiß"));
-                if (temperatur == Temperatur.RECHT_HEISS) {
-                    alt.add(neuerSatz(
-                            "Draußen scheint noch die Sonne;",
-                            "es ist noch recht heiß"));
+            } else if (time.getTageszeit() == Tageszeit.ABENDS) {
+                if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)
+                        && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                    alt.addAll(altNeueSaetze(
+                            // FIXME Windstärke und Blitz / Donner berücksichtigen
+                            altBewoelkungGestirnSaetze,
+                            ";",
+                            temperatur.altPraedikativa().stream()
+                                    .map(a -> a.alsEsIstSatz()
+                                            .mitAdvAngabe(
+                                                    new AdvAngabeSkopusVerbAllg("noch")))));
+                    if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                        // FIXME Windstärke und Blitz / Donner berücksichtigen
+                        alt.addAll(altNeueSaetze("Es ist",
+                                EIN_SCHOENER_ABEND.nomK(),
+                                "und noch",
+                                temperatur.altPraedikativa().stream()
+                                        .map(a -> a.getPraedikativ(P3, PL))));
+                    }
                 }
-                // FIXME Uhrzeit berücksichtigen!
-                // FIXME Andere Tageshöchsttemperaturen berücksichtigen
-                // FIXME Windstärke berücksichtigen
-                // FIXME Andere Bewölkungen berücksichtigen
-                // FIXME Blitz und Donner berücksichtigen
             }
         } else {
             alt.addAll(Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit());
@@ -92,18 +101,24 @@ class WetterData {
                     ";",
                     temperatur.altScKommtNachDraussenSaetze()));
 
-            // FIXME "Draußen ist es dunkel und ziemlich kühl"
+            // "draußen ist es dunkel und ziemlich kühl"
+            alt.addAll(
+                    temperatur.altPraedikativa().stream()
+                            .map(tempAdjPhr -> new ZweiPraedikativa<>(
+                                    AdjektivOhneErgaenzungen.DUNKEL, tempAdjPhr)
+                                    .alsEsIstSatz()
+                                    .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+
+            // FIXME "Sobald die Sonne untergegangen ist, "
+            //  (Uhrzeit berücksichtigen: time.kurzNachSonnenuntergang())
 
             if (time.kurzVorSonnenaufgang()) {
                 alt.add(neuerSatz("die Sonne geht bald auf"));
+                alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
+                // FIXME "Als der Tag anbricht, noch ehe die Sonne aufgegangen ist"
             }
 
-            // FIXME "Sobald die Sonne untergegangen ist, "
-            // "Die Sonne ist noch nicht wieder hervorgekommen"
-            // FIXME Uhrzeit berücksichtigen!
-            // FIXME Andere Tageshöchsttemperaturen berücksichtigen
             // FIXME Windstärke berücksichtigen
-            // FIXME Andere Bewölkungen berücksichtigen
             // FIXME Blitz und Donner berücksichtigen
         }
         return alt;
@@ -114,6 +129,8 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
+    // FIXME Überall nach Sonne, Mond, hell, dunkel, wolk etc. suchen
+    //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
     // FIXME Sonne:
     // "mit Sonnenaufgang (machts du dich auch den Weg...)"
@@ -171,6 +188,10 @@ class WetterData {
     // "Als die Sonne aufgeht, ..."
     // "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
 
+    // FIXME "Der Himmel ist blau, die Luft mild"
+    //  "Der Himmel ist blau und eine frische
+    //   Luft weht dir entgegen"
+
     // FIXME Nacht:
     // "Bei einbrechender Nacht"
     // "Der Mond scheint über..."
@@ -227,4 +248,29 @@ class WetterData {
 
     // FIXME Nur dramturgisch geändert, nicht automatisch?
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
+
+
+    Bewoelkung getBewoelkung() {
+        return bewoelkung;
+    }
+
+    @NonNull
+    BlitzUndDonner getBlitzUndDonner() {
+        return blitzUndDonner;
+    }
+
+    @NonNull
+    Temperatur getTageshoechsttemperatur() {
+        return tageshoechsttemperatur;
+    }
+
+    @NonNull
+    Temperatur getTagestiefsttemperatur() {
+        return tagestiefsttemperatur;
+    }
+
+    @NonNull
+    Windstaerke getWindstaerke() {
+        return windstaerke;
+    }
 }

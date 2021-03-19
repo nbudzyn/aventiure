@@ -31,8 +31,8 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
 import de.nb.aventiure2.german.satz.Satz;
@@ -176,7 +176,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "Die junge Frau fragen, wie du ihr helfen kannst"
                                 FRAGEN_OB_W.mitIndirekterFragesatz(
                                         KOENNEN.mitLexikalischemKern(
-                                                HELFEN.mit(anaph()).mitAdverbialerAngabe(
+                                                HELFEN.mit(anaph()).mitAdvAngabe(
                                                         InterrogativadverbVerbAllg.WIE))
                                                 .alsSatzMitSubjekt(getPersonalpronomenSC())),
                                 this::fragenWieSCHelfenKann),
@@ -302,11 +302,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         return BITTEN
                 .mitLexikalischerKern(HINUNTERLASSEN
                         .mit(IHRE_HAARE)
-                        .mitAdverbialerAngabe(
+                        .mitAdvAngabe(
                                 // "wieder hinunterlassen": Das "wieder" gehört
                                 // quasi zu "hinunter", beides zusammen ("wieder hinunter")
                                 // bildet praktisch die adverbiale "Wohin?"-Bestimmung.
-                                new AdverbialeAngabeSkopusVerbWohinWoher("wieder")));
+                                new AdvAngabeSkopusVerbWohinWoher("wieder")));
     }
 
     private boolean herzAusschuettenMoeglich() {
@@ -465,7 +465,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         true);
 
         // Könnte ebenfalls leer sein
-        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAdvAngaben =
+        final ImmutableList<AdvAngabeSkopusVerbAllg> altEindruckAdvAngaben =
                 feelingsComp.altEindruckAufScBeiBegegnungAdvAngaben(anaph);
 
         final int zuneigungTowardsSC =

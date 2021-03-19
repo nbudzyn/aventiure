@@ -41,28 +41,28 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
+    public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                ersterSatz.mitAdvAngabe(advAngabe),
                 zweiterSatz
         );
     }
 
     @Override
-    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
+    public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                ersterSatz.mitAdvAngabe(advAngabe),
                 zweiterSatz
         );
     }
 
     @Override
-    public ZweiPraedikateOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
+    public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdverbialerAngabe(adverbialeAngabe),
+                ersterSatz.mitAdvAngabe(advAngabe),
                 zweiterSatz
         );
     }

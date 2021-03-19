@@ -32,6 +32,9 @@ public class TageszeitReactionsComp
             return;
         }
 
+        // FIXME WetterData berücksichtigen (verschieben?), insbesondere
+        //  Bewölkung
+
         // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?

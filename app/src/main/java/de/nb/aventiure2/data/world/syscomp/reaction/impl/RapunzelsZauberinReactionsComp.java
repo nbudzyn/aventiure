@@ -37,7 +37,7 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
@@ -179,7 +179,7 @@ public class RapunzelsZauberinReactionsComp
         );
         alt.addAll(altZusehenSaetze(anaph, getPersonalpronomenSC(),
                 ImmutableList.of("ärgerlich", "verdrossen").stream()
-                        .map(AdverbialeAngabeSkopusVerbAllg::new)
+                        .map(AdvAngabeSkopusVerbAllg::new)
                         .collect(toList()))
         );
 

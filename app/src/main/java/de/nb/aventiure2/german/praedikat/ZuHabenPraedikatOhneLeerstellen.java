@@ -52,28 +52,28 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
+    public ZuHabenPraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         // Bei einem Prädikat wie "Leider noch etwas zu berichten haben"
         // kann man nicht differenzieren zwischen *"leider berichten" und *"leider zu haben".
         // Deshalb speichern wir die Angaben im lexikalischen Kern und erlauben keine
         // zusätzlichen Angaben für "zu haben".
         return new ZuHabenPraedikatOhneLeerstellen(
-                lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
+    public ZuHabenPraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new ZuHabenPraedikatOhneLeerstellen(
-                lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public ZuHabenPraedikatOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
+    public ZuHabenPraedikatOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new ZuHabenPraedikatOhneLeerstellen(
-                lexikalischerKern.mitAdverbialerAngabe(adverbialeAngabe));
+                lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
     @Nullable

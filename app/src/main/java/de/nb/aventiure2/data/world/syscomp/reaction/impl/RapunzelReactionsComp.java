@@ -40,9 +40,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -545,8 +545,8 @@ public class RapunzelReactionsComp
                 feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
                         // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
                         // ...aber noch nicht mit dieser Ergänzung:
-                        .map(s -> s.mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusSatz("oben im dunklen Zimmer")))
+                        .map(s -> s.mitAdvAngabe(
+                                new AdvAngabeSkopusSatz("oben im dunklen Zimmer")))
                         .collect(toList())).schonLaenger()
                 .timed(secs(15)));
 
@@ -791,11 +791,11 @@ public class RapunzelReactionsComp
 
         n.narrate(neuerSatz(SCHIEBEN
                 .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
-                .mitAdverbialerAngabe(
-                        new AdverbialeAngabeSkopusVerbWohinWoher(UNTER.mit(
+                .mitAdvAngabe(
+                        new AdvAngabeSkopusVerbWohinWoher(UNTER.mit(
                                 world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
-                .mitAdverbialerAngabe(
-                        new AdverbialeAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
+                .mitAdvAngabe(
+                        new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
                 .alsSatzMitSubjekt(anaph()))
                 .timed(secs(5)));
 

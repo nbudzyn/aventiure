@@ -101,13 +101,12 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
             final SubstantivischePhrase dat,
             final Praedikativum praedikativum,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher) {
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, true, modalpartikeln,
-                adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.dat = dat;
         this.praedikativum = praedikativum;
     }
@@ -122,16 +121,16 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         return new DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen(
                 getVerb(), dat, praedikativum,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -139,15 +138,15 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(),
                 dat, praedikativum,
                 getModalpartikeln(),
-                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -155,15 +154,15 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(),
                 dat, praedikativum,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
-                getAdverbialeAngabeSkopusVerbWohinWoher()
+                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
     @Override
-    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -172,9 +171,9 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(),
                 dat, praedikativum,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                adverbialeAngabe
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                advAngabe
         );
     }
 
@@ -229,12 +228,12 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 dat.datK(), // Peter
                 kf(getModalpartikeln()), // "halt"
-                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "plötzlich"
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt,
+                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt,
                         numerusSubjekt),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
@@ -270,10 +269,10 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
                         personSubjekt, numerusSubjekt), // "dich zu sehen"
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                         personSubjekt,
                         numerusSubjekt),
-                getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
                         numerusSubjekt)
         );
     }
@@ -292,17 +291,17 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         }
 
         @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
         if (res != null) {
             return res;
         }

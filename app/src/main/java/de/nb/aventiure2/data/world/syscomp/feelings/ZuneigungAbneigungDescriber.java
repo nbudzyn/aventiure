@@ -16,7 +16,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
@@ -84,7 +84,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             praedikativumPraedikatMit(
                                     AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
                                             .mitModAdverbOderAdjektiv("ganz"))
-                                    .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg(
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                             VOR.mit(WUT_OHNE_ART)))
                                     .alsSatzMitSubjekt(gameObjectSubjekt)
                                     .mitAngabensatz(
@@ -141,8 +141,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                                     .mitLexikalischemKern(
                                             v.mit(targetDesc)
                                     )
-                                    .mitAdverbialerAngabe(
-                                            new AdverbialeAngabeSkopusVerbAllg("sehr")
+                                    .mitAdvAngabe(
+                                            new AdvAngabeSkopusVerbAllg("sehr")
                                     )
                                     .alsSatzMitSubjekt(gameObjectSubjekt))
                     .collect(ImmutableList.toImmutableList()));
@@ -152,7 +152,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .map(v ->
                             praedikativumPraedikatMit(
                                     AUSSER_DAT.mit(gameObjectSubjekt.reflPron()))
-                                    .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg(
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                             VOR.mit(FREUDE_OHNE_ART)))
                                     .alsSatzMitSubjekt(gameObjectSubjekt)
                                     .mitAngabensatz(
@@ -315,7 +315,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
     @NonNull
     @Override
-    public ImmutableList<String> altEindruckBeiBegegnungZusAdverbialeAngaben(
+    public ImmutableList<String> altEindruckBeiBegegnungZusAdvAngaben(
             final int feelingIntensity) {
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
             return ImmutableList.of("mit bösen und giftigen Blicken");

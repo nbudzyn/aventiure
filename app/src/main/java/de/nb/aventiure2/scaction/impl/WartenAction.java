@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
@@ -144,8 +144,8 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                             kohaerenzrelation,
                             du(WARTEN
                                     .mit(anaph)
-                                    .mitAdverbialerAngabe(
-                                            new AdverbialeAngabeSkopusSatz("weiter")
+                                    .mitAdvAngabe(
+                                            new AdvAngabeSkopusSatz("weiter")
                                     )
                             ).schonLaenger()
 

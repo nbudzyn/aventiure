@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
@@ -108,13 +108,13 @@ public class DescriptionUmformulierer {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusVerbAllg("noch einmal")));
+                        new AdvAngabeSkopusVerbAllg("noch einmal")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusVerbAllg("erneut")));
+                        new AdvAngabeSkopusVerbAllg("erneut")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusVerbAllg("sogleich wieder")).schonLaenger()
+                        new AdvAngabeSkopusVerbAllg("sogleich wieder")).schonLaenger()
                 );
 
                 final Konstituente duNimmstDieKugelBesserDoch =
@@ -191,23 +191,23 @@ public class DescriptionUmformulierer {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("noch einmal")));
+                        new AdvAngabeSkopusSatz("noch einmal")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("erneut")));
+                        new AdvAngabeSkopusSatz("erneut")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("von neuem")));
+                        new AdvAngabeSkopusSatz("von neuem")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("ein weiteres Mal")));
+                        new AdvAngabeSkopusSatz("ein weiteres Mal")));
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("nochmals")).schonLaenger()
+                        new AdvAngabeSkopusSatz("nochmals")).schonLaenger()
                 );
 
                 alt.add(mitAdvAngabe(sDesc,
-                        new AdverbialeAngabeSkopusSatz("wieder")).schonLaenger()
+                        new AdvAngabeSkopusSatz("wieder")).schonLaenger()
                 );
             }
         }
@@ -274,7 +274,7 @@ public class DescriptionUmformulierer {
             if (desc instanceof StructuredDescription) {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
-                alt.add(mitAdvAngabe(sDesc, new AdverbialeAngabeSkopusSatz("immer noch"))
+                alt.add(mitAdvAngabe(sDesc, new AdvAngabeSkopusSatz("immer noch"))
                         .schonLaenger()
                 );
             }
@@ -331,10 +331,10 @@ public class DescriptionUmformulierer {
 
     private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDescription desc,
-            final AdverbialeAngabeSkopusSatz advAngabe) {
+            final AdvAngabeSkopusSatz advAngabe) {
         return DescriptionBuilder.satz(
                 max(desc.getStartsNew(), PARAGRAPH),
-                desc.getSatz().mitAdverbialerAngabe(
+                desc.getSatz().mitAdvAngabe(
                         // "Erneut gibst du der Frau die Kugel"
                         // "Du gibst erneut der Frau die Kugel"
                         advAngabe),
@@ -347,10 +347,10 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     private static AbstractDescription<?> mitAdvAngabe(
             final StructuredDescription desc,
-            final AdverbialeAngabeSkopusVerbAllg advAngabe) {
+            final AdvAngabeSkopusVerbAllg advAngabe) {
         return DescriptionBuilder.satz(
                 max(desc.getStartsNew(), PARAGRAPH),
-                desc.getSatz().mitAdverbialerAngabe(
+                desc.getSatz().mitAdvAngabe(
                         // "gibst der Frau die Kugel noch einmal"
                         advAngabe),
                 desc.getEndsThis())

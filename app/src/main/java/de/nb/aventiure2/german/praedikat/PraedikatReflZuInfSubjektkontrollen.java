@@ -68,14 +68,13 @@ public class PraedikatReflZuInfSubjektkontrollen
             final Verb verb,
             final Kasus kasus,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln,
-                adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.lexikalischerKern = lexikalischerKern;
     }
@@ -87,17 +86,17 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
     }
 
     @Override
-    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatReflZuInfSubjektkontrollen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -105,15 +104,15 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 getModalpartikeln(),
-                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
     }
 
     @Override
-    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatReflZuInfSubjektkontrollen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -121,16 +120,16 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
     }
 
     @Override
-    public PraedikatReflZuInfSubjektkontrollen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatReflZuInfSubjektkontrollen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -138,9 +137,9 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                adverbialeAngabe,
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                advAngabe,
                 lexikalischerKern
         );
     }
@@ -170,27 +169,27 @@ public class PraedikatReflZuInfSubjektkontrollen
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz =
-                getAdverbialeAngabeSkopusSatz();
-        @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg =
-                getAdverbialeAngabeSkopusVerbAllg();
+        @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
+                getAdvAngabeSkopusSatz();
+        @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
+                getAdvAngabeSkopusVerbAllg();
 
         return Konstituentenfolge.joinToKonstituentenfolge(
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt).imK(kasus), // "dich"
-                adverbialeAngabeSkopusSatz != null &&
-                        adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        adverbialeAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                advAngabeSkopusSatz != null &&
+                        advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        advAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
                         // "aus einer Laune heraus"
                         null, // (ins Nachfeld verschieben)
                 kf(getModalpartikeln()), // "mal eben"
-                adverbialeAngabeSkopusVerbAllg != null &&
-                        adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt,
+                advAngabeSkopusVerbAllg != null &&
+                        advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        advAngabeSkopusVerbAllg.getDescription(personSubjekt,
                                 numerusSubjekt) :  // "erneut"
                         null, // (ins Nachfeld verschieben)
-                adverbialeAngabeSkopusVerbAllg != null &&
-                        !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt()
-                        // Die adverbialeAngabeSkopusSatz schieben wir immer ins Nachfeld,
+                advAngabeSkopusVerbAllg != null &&
+                        !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
+                        // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
                         // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
                         ?
                         // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
@@ -200,7 +199,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                                         personSubjekt, numerusSubjekt
                                 )) // ", Rapunzel zu sehen[, ]"
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt,
+                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt,
                         numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
@@ -238,13 +237,13 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Nullable
     public Konstituentenfolge getNachfeld(final Person personSubjekt,
                                           final Numerus numerusSubjekt) {
-        @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz =
-                getAdverbialeAngabeSkopusSatz();
-        @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg =
-                getAdverbialeAngabeSkopusVerbAllg();
+        @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
+                getAdvAngabeSkopusSatz();
+        @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
+                getAdvAngabeSkopusVerbAllg();
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                adverbialeAngabeSkopusVerbAllg == null
-                        || adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                advAngabeSkopusVerbAllg == null
+                        || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt Subjektkontrolle vor.
@@ -252,14 +251,14 @@ public class PraedikatReflZuInfSubjektkontrollen
                                 )) // "(Du freust dich), Rapunzel zu sehen[,] "
                         // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
                         : null,
-                adverbialeAngabeSkopusVerbAllg != null
-                        && !adverbialeAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        adverbialeAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt)
+                advAngabeSkopusVerbAllg != null
+                        && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                        advAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt)
                         // "glücklich, dich zu sehen"
                         : null,
-                adverbialeAngabeSkopusSatz != null
-                        && !adverbialeAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        adverbialeAngabeSkopusSatz
+                advAngabeSkopusSatz != null
+                        && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                        advAngabeSkopusSatz
                                 .getDescription(personSubjekt, numerusSubjekt)
                         : null);
     }
@@ -276,12 +275,12 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
         if (res != null) {
             return res;
         }
@@ -291,6 +290,6 @@ public class PraedikatReflZuInfSubjektkontrollen
             return res;
         }
 
-        return interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
 }

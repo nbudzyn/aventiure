@@ -13,8 +13,8 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
@@ -184,11 +184,11 @@ public class MuedigkeitsData {
         }
     }
 
-    ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngabenSkopusSatz() {
+    ImmutableList<AdvAngabeSkopusSatz> altAdvAngabenSkopusSatz() {
         if (muedigkeit == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
-                    new AdverbialeAngabeSkopusSatz("hellwach"),
-                    new AdverbialeAngabeSkopusSatz("mit voller Konzentration"));
+                    new AdvAngabeSkopusSatz("hellwach"),
+                    new AdvAngabeSkopusSatz("mit voller Konzentration"));
         }
 
         return altAdjektivphrase().stream()
@@ -196,15 +196,15 @@ public class MuedigkeitsData {
                         // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
                         // Subjekt geeignet.
                         Personalpronomen.get(P2, M, SPIELER_CHARAKTER)))
-                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusSatz)
+                .map(AdjPhrOhneLeerstellen::alsAdvAngabeSkopusSatz)
                 .collect(toImmutableList());
     }
 
-    ImmutableList<AdverbialeAngabeSkopusVerbAllg> altAdverbialeAngabenSkopusVerbAllg() {
+    ImmutableList<AdvAngabeSkopusVerbAllg> altAdvAngabenSkopusVerbAllg() {
         if (muedigkeit == FeelingIntensity.NEUTRAL) {
             return ImmutableList.of(
-                    new AdverbialeAngabeSkopusVerbAllg("hellwach"),
-                    new AdverbialeAngabeSkopusVerbAllg("mit voller Konzentration"));
+                    new AdvAngabeSkopusVerbAllg("hellwach"),
+                    new AdvAngabeSkopusVerbAllg("mit voller Konzentration"));
         }
 
         return altAdjektivphrase().stream()
@@ -212,7 +212,7 @@ public class MuedigkeitsData {
                         // Was dafür nicht geeignet ist, ist wohl auch für kein anderes
                         // Subjekt geeignet.
                         Personalpronomen.get(P2, M, SPIELER_CHARAKTER)))
-                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
+                .map(AdjPhrOhneLeerstellen::alsAdvAngabeSkopusVerbAllg)
                 .collect(toImmutableList());
     }
 

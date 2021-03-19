@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -95,7 +95,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
 
         if (n.isAnaphorischerBezugMoeglich(RAPUNZELS_HAARE)) {
             return du(WORD, HINABSTEIGEN
-                    .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("daran")))
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("daran")))
                     .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
                     .timed(mins(1))
                     .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
@@ -104,7 +104,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         return du(WORD, HINABKLETTERN
-                .mitAdverbialerAngabe(new AdverbialeAngabeSkopusVerbAllg("an den Haaren")))
+                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("an den Haaren")))
                 .phorikKandidat(PL_MFN, RAPUNZELS_HAARE)
                 .timed(mins(1))
                 .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)

@@ -32,8 +32,8 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -147,26 +147,26 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 initialFeelingsTowards);
     }
 
-    public ImmutableList<AdverbialeAngabeSkopusSatz> altAdverbialeAngabenSkopusSatz() {
+    public ImmutableList<AdvAngabeSkopusSatz> altAdvAngabenSkopusSatz() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return requirePcd().getMuedigkeitsData().altAdverbialeAngabenSkopusSatz();
+            return requirePcd().getMuedigkeitsData().altAdvAngabenSkopusSatz();
         }
 
-        return getMood().altAdverbialeAngabenSkopusSatz();
+        return getMood().altAdvAngabenSkopusSatz();
     }
 
-    private ImmutableList<AdverbialeAngabeSkopusVerbAllg> altAdverbialeAngabenSkopusVerbAllg() {
+    private ImmutableList<AdvAngabeSkopusVerbAllg> altAdvAngabenSkopusVerbAllg() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
             // Häufig wird die adverbiale Angabe wohl verwendet werden - daher setzen
             // wir den Counter neu.
             resetMuedigkeitshinweisStepCount();
-            return requirePcd().getMuedigkeitsData().altAdverbialeAngabenSkopusVerbAllg();
+            return requirePcd().getMuedigkeitsData().altAdvAngabenSkopusVerbAllg();
         }
 
-        return getMood().altAdverbialeAngabenSkopusVerbAllg();
+        return getMood().altAdvAngabenSkopusVerbAllg();
     }
 
     /**
@@ -442,13 +442,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 1,
                 () -> {
                     final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
-                    final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
-                            altAdverbialeAngabenSkopusVerbAllg();
+                    final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
+                            altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
                             gameObjectSubjekt, getPersonalpronomenSC(),
                             true, altAdjPhr,
-                            adverbialeAngaben);
+                            advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
                         gameObjectSubjekt, feelingTowardsType));
@@ -468,13 +468,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 3,
                 () -> {
                     final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
-                    final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
-                            altAdverbialeAngabenSkopusVerbAllg();
+                    final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
+                            altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
                             gameObjectSubjekt, getPersonalpronomenSC(),
                             true, altAdjPhr,
-                            adverbialeAngaben);
+                            advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionWennSCGehenMoechteSaetze(
                         gameObjectSubjekt, feelingTowardsType));
@@ -531,7 +531,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 () -> FeelingsSaetzeUtil.altAnsehenSaetze(
                         gameObjectSubjekt,
                         getPersonalpronomenSC(),
-                        altAdverbialeAngabenSkopusVerbAllg()),
+                        altAdvAngabenSkopusVerbAllg()),
                 (feelingTowardsType) -> FeelingsSaetzeUtil.altAnsehenSaetze(gameObjectSubjekt,
                         getPersonalpronomenSC(),
                         feelingTowardsType.altEindruckBeiBegegnungAdvAngaben(
@@ -583,12 +583,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *
      * @return Möglicherweise eine leere Liste!
      */
-    public ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckAufScBeiBegegnungAdvAngaben(
+    public ImmutableList<AdvAngabeSkopusVerbAllg> altEindruckAufScBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
                 1,
-                this::altAdverbialeAngabenSkopusVerbAllg,
+                this::altAdvAngabenSkopusVerbAllg,
                 (feelingTowardsType) -> altEindruckBeiBegegnungAdvAngaben(
                         gameObjectSubjekt, SPIELER_CHARAKTER,
                         getPersonalpronomenSC(),
@@ -717,7 +717,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *
      * @return Möglicherweise eine leere Liste!
      */
-    private ImmutableList<AdverbialeAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
+    private ImmutableList<AdvAngabeSkopusVerbAllg> altEindruckBeiBegegnungAdvAngaben(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc, final FeelingTowardsType type) {
@@ -1002,14 +1002,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         res.addAll(altMuedigkeitAdjPhr().stream()
                 .map(p -> du(PARAGRAPH,
-                        praedikativumPraedikatMit(p).mitAdverbialerAngabe(
-                                new AdverbialeAngabeSkopusSatz("auf einmal")),
+                        praedikativumPraedikatMit(p).mitAdvAngabe(
+                                new AdvAngabeSkopusSatz("auf einmal")),
                         PARAGRAPH))
                 .collect(toList()));
 
         res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdverbialerAngabe(
-                        new AdverbialeAngabeSkopusSatz("mit einem Mal")),
+                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdvAngabe(
+                        new AdvAngabeSkopusSatz("mit einem Mal")),
                         PARAGRAPH))
                 .collect(toList()));
 

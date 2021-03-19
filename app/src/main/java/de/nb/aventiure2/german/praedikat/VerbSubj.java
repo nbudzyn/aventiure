@@ -37,6 +37,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     KRIECHEN("kriechen",
             "krieche", "kriechst", "kriecht", "kriecht",
             Perfektbildung.SEIN, "gekrochen"),
+    SCHEINEN("scheinen",
+            "scheine", "scheinst", "scheint", "scheint",
+            Perfektbildung.HABEN, "geschienen"),
     STRAHLEN("strahlen",
             "strahle", "strahlst", "strahlt", "strahlt",
             Perfektbildung.HABEN, "gestrahlt"),
@@ -50,6 +53,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
+    HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN);

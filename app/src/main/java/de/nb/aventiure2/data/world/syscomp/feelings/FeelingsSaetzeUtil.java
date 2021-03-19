@@ -8,8 +8,8 @@ import java.util.Collection;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
 import de.nb.aventiure2.german.satz.Satz;
@@ -51,13 +51,13 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase feelingTargetDesc,
             final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
-        final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben =
+        final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                 AdjPhrOhneLeerstellen
                         .toAdvAngabenSkopusVerbAllg(subjekt, eindruckAdjPhr);
 
         return toReaktionSaetze(subjekt, feelingTargetDesc,
                 subjektUndFeelingTargetKoennenEinanderSehen, eindruckAdjPhr,
-                adverbialeAngaben);
+                advAngaben);
     }
 
     /**
@@ -69,12 +69,12 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase feelingTargetDesc,
             final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr,
-            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> eindruckAdverbialeAngaben) {
+            final ImmutableList<AdvAngabeSkopusVerbAllg> eindruckAdvAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
         if (subjektUndFeelingTargetKoennenEinanderSehen) {
             res.addAll(altAnsehenSaetze(
-                    subjekt, feelingTargetDesc, eindruckAdverbialeAngaben));
+                    subjekt, feelingTargetDesc, eindruckAdvAngaben));
         }
 
         res.addAll(altEindrueckSaetze(subjekt, subjektUndFeelingTargetKoennenEinanderSehen,
@@ -86,8 +86,8 @@ public class FeelingsSaetzeUtil {
                                 .map(
                                         advAng ->
                                                 praedikativumPraedikatMit(adjPhr)
-                                                        .mitAdverbialerAngabe(
-                                                                new AdverbialeAngabeSkopusSatz(
+                                                        .mitAdvAngabe(
+                                                                new AdvAngabeSkopusSatz(
                                                                         advAng))
                                                         .alsSatzMitSubjekt(subjekt)
                                 )
@@ -113,24 +113,24 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase angesehenDesc,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
         return altAnsehenSaetze(subjekt, angesehenDesc,
-                adjektivPhrase.alsAdverbialeAngabeSkopusVerbAllg());
+                adjektivPhrase.alsAdvAngabeSkopusVerbAllg());
     }
 
     public static ImmutableList<Satz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
-            final AdverbialeAngabeSkopusVerbAllg adverbialeAngabe) {
+            final AdvAngabeSkopusVerbAllg advAngabe) {
 
         return altAnsehenSaetze(subjekt, angesehenDesc,
-                ImmutableList.of(adverbialeAngabe));
+                ImmutableList.of(advAngabe));
     }
 
     public static ImmutableList<Satz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
-            final ImmutableList<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+            final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben) {
         return Satz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
-                adverbialeAngaben);
+                advAngaben);
     }
 
     public static ImmutableList<Satz> altNachsehenHinterhersehenSaetze(
@@ -143,9 +143,9 @@ public class FeelingsSaetzeUtil {
     public static ImmutableList<Satz> altZusehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase objekt,
-            final Collection<AdverbialeAngabeSkopusVerbAllg> adverbialeAngaben) {
+            final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
         return Satz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
-                adverbialeAngaben);
+                advAngaben);
     }
 
     @NonNull

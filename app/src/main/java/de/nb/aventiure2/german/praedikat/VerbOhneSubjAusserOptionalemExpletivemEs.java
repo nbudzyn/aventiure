@@ -64,9 +64,9 @@ public enum VerbOhneSubjAusserOptionalemExpletivemEs
         this.kasus = kasus;
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdverbialerAngabe(
-            @Nullable final AdverbialeAngabeSkopusVerbWohinWoher adverbialeAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(verb, kasus, true, adverbialeAngabe);
+    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+        return new PraedikatMitEinerObjLeerstelle(verb, kasus, true, advAngabe);
     }
 
     @Override

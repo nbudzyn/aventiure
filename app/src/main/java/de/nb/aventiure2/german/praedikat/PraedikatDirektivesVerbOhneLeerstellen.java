@@ -79,15 +79,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final Kasus kasus,
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabeSkopusSatz,
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabeSkopusVerbAllg,
-            @Nullable
-            final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabeSkopusVerbWohinWoher,
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb,
                 modalpartikeln,
-                adverbialeAngabeSkopusSatz,
-                adverbialeAngabeSkopusVerbAllg, adverbialeAngabeSkopusVerbWohinWoher);
+                advAngabeSkopusSatz,
+                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.objekt = objekt;
         this.lexikalischerKern = lexikalischerKern;
@@ -99,17 +98,17 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         return new PraedikatDirektivesVerbOhneLeerstellen(
                 getVerb(), kasus, objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
     }
 
     @Override
-    public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativSkopusSatz adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatDirektivesVerbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -118,15 +117,15 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kasus,
                 objekt,
                 getModalpartikeln(),
-                adverbialeAngabe, getAdverbialeAngabeSkopusVerbAllg(),
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
     }
 
     @Override
-    public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativVerbAllg adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatDirektivesVerbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -135,16 +134,16 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kasus,
                 objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(), adverbialeAngabe,
-                getAdverbialeAngabeSkopusVerbWohinWoher(),
+                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
     }
 
     @Override
-    public PraedikatDirektivesVerbOhneLeerstellen mitAdverbialerAngabe(
-            @Nullable final IAdvAngabeOderInterrogativWohinWoher adverbialeAngabe) {
-        if (adverbialeAngabe == null) {
+    public PraedikatDirektivesVerbOhneLeerstellen mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
+        if (advAngabe == null) {
             return this;
         }
 
@@ -153,9 +152,9 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kasus,
                 objekt,
                 getModalpartikeln(),
-                getAdverbialeAngabeSkopusSatz(),
-                getAdverbialeAngabeSkopusVerbAllg(),
-                adverbialeAngabe,
+                getAdvAngabeSkopusSatz(),
+                getAdvAngabeSkopusVerbAllg(),
+                advAngabe,
                 lexikalischerKern
         );
     }
@@ -201,14 +200,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return joinToKonstituentenfolge(
-                getAdverbialeAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
-                getAdverbialeAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 objekt.imK(kasus), // "die junge Frau"
-                getAdverbialeAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // (kann es wohl gar nicht geben)
         );
 
@@ -259,10 +258,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                                 // Es liegt "Objektkontrolle" vor.
                                 objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
                         // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
-                        getAdverbialeAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                        getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                 personSubjekt, numerusSubjekt),
                         // , glücklich, dich zu sehen
-                        getAdverbialeAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                        getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                 personSubjekt, numerusSubjekt)
                 );
     }
@@ -276,12 +275,12 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdverbialeAngabeSkopusSatz());
+        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
         if (res != null) {
             return res;
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbAllg());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
         if (res != null) {
             return res;
         }
@@ -290,7 +289,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             return objekt.imK(kasus);
         }
 
-        res = interroAdverbToKF(getAdverbialeAngabeSkopusVerbWohinWoher());
+        res = interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
         if (res != null) {
             return res;
         }

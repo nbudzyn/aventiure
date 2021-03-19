@@ -11,8 +11,8 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdverbialeAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
@@ -24,12 +24,12 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
-    static ImmutableList<AdverbialeAngabeSkopusVerbAllg> toAdvAngabenSkopusVerbAllg(
+    static ImmutableList<AdvAngabeSkopusVerbAllg> toAdvAngabenSkopusVerbAllg(
             final SubstantivischePhrase subjekt,
             final Collection<AdjPhrOhneLeerstellen> adjektivPhrasen) {
         return adjektivPhrasen.stream()
                 .filter(ap -> ap.isGeeignetAlsAdvAngabe(subjekt))
-                .map(AdjPhrOhneLeerstellen::alsAdverbialeAngabeSkopusVerbAllg)
+                .map(AdjPhrOhneLeerstellen::alsAdvAngabeSkopusVerbAllg)
                 .collect(toImmutableList());
     }
 
@@ -63,12 +63,12 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      */
     Konstituentenfolge getPraedikativOderAdverbial(final Person person, final Numerus numerus);
 
-    default AdverbialeAngabeSkopusSatz alsAdverbialeAngabeSkopusSatz() {
-        return new AdverbialeAngabeSkopusSatz(this);
+    default AdvAngabeSkopusSatz alsAdvAngabeSkopusSatz() {
+        return new AdvAngabeSkopusSatz(this);
     }
 
-    default AdverbialeAngabeSkopusVerbAllg alsAdverbialeAngabeSkopusVerbAllg() {
-        return new AdverbialeAngabeSkopusVerbAllg(this);
+    default AdvAngabeSkopusVerbAllg alsAdvAngabeSkopusVerbAllg() {
+        return new AdvAngabeSkopusVerbAllg(this);
     }
 
     /**
