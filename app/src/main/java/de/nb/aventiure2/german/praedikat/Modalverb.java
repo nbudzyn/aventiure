@@ -9,17 +9,46 @@ import static com.google.common.base.Preconditions.checkArgument;
  * (z.B. <i>etw. tun können</i>).
  */
 public enum Modalverb implements VerbMitValenz {
+    DUERFEN("dürfen",
+            "darf", "darfst", "darf", "dürft",
+            Perfektbildung.HABEN,
+            // Er hat nicht schlafen dürfen.
+            // ?Er hat nicht schlafen gedurft.
+            "dürfen"),
     // "Rapunzel kann die Haare herunterlassen"
     KOENNEN("können",
             "kann", "kannst", "kann", "könnt",
             Perfektbildung.HABEN,
             // Er hat nicht schlafen können.
             // *Er hat nicht schlafen gekonnt.
-            "können");
-    // Weitere Modalverben sind dürfen, mögen, müsen, sollen, wollen.
+            "können"),
+    MOEGEN("mögen",
+            "mag", "magst", "mag", "mögt",
+            Perfektbildung.HABEN,
+            // Er hat nicht schlafen mögen.
+            // *Er hat nicht schlafen gemocht.
+            "mögen"),
+    MUESSEN("müssen",
+            "muss", "musst", "muss", "müsst",
+            Perfektbildung.HABEN,
+            // Er hat nicht schlafen müssen.
+            // *Er hat nicht schlafen gemusst.
+            "müssen"),
+    SOLLEN("sollen",
+            "soll", "sollst", "soll", "sollt",
+            Perfektbildung.HABEN,
+            // Er hat nicht schlafen sollen.
+            // ?Er hat nicht schlafen gesollt.
+            "sollen"),
+    WOLLEN("wollen",
+            "will", "willst", "will", "wollt",
+            Perfektbildung.HABEN,
+            // Er hat nicht schlafen wollen.
+            // ?Er hat nicht schlafen gewollt.
+            "wollen");
 
     // (Für brauchen / nicht brauchen, möchten, lassen, werden gibt es spezielle Regeln.
-    // Ob das Modalverben sind...)
+    // Ob das Modalverben sind, ist eher Ansichtssache.)
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

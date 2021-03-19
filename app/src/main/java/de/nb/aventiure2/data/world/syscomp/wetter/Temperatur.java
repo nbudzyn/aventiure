@@ -165,7 +165,6 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * <p>
      * Das Eregebnis von {@link #altAdjektivphrasen()} ist bereits enthalten
      */
-    @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
     ImmutableList<Praedikativum> altPraedikativa() {
         final ImmutableList.Builder<Praedikativum> res = ImmutableList.builder();

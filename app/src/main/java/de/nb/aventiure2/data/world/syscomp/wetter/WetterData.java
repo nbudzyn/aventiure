@@ -16,9 +16,11 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 
 @Immutable
 class WetterData {
@@ -50,24 +52,19 @@ class WetterData {
 
         final AltDescriptionsBuilder alt = alt();
 
-        final ImmutableCollection<Satz> altBewoelkungGestirnSaetze =
+        final ImmutableCollection<Satz> altBewoelkungGestirnSaetzeMitDraussen =
                 bewoelkung.altScKommtNachDraussenSaetze(time);
-        alt.addAll(altBewoelkungGestirnSaetze);
+        alt.addAll(altBewoelkungGestirnSaetzeMitDraussen);
 
         if (time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
             alt.addAll(temperatur.altScKommtNachDraussenSaetze());
             // FIXME Wenn ein Wetteraspekt deutlich überwiegt, dann
             //  die anderen nicht nennen - oder nur nachrangig.
             if (time.getTageszeit() == Tageszeit.TAGSUEBER) {
-                // FIXME Als Dauerbeschreibunge:
-                // - "die Sonnenhitze brennt stark"
-                // - "die Sonne scheint sehr warm"
                 alt.addAll(altNeueSaetze(
-                        altBewoelkungGestirnSaetze,
+                        altBewoelkungGestirnSaetzeMitDraussen,
                         ";",
                         temperatur.altDerTagIstSaetze()));
-                // FIXME "der Tag ist warm, die Sonne sticht"
-                // FIXME "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
                 // FIXME Windstärke berücksichtigen
                 // FIXME Blitz und Donner berücksichtigen
             } else if (time.getTageszeit() == Tageszeit.ABENDS) {
@@ -75,7 +72,7 @@ class WetterData {
                         && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
                     alt.addAll(altNeueSaetze(
                             // FIXME Windstärke und Blitz / Donner berücksichtigen
-                            altBewoelkungGestirnSaetze,
+                            altBewoelkungGestirnSaetzeMitDraussen,
                             ";",
                             temperatur.altIstNochSaetze()));
                     if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
@@ -88,6 +85,12 @@ class WetterData {
                                                 tempAdjPhr.mitAdvAngabe(
                                                         new AdvAngabeSkopusSatz("noch")))
                                                 .alsEsIstSatz()));
+                        // "Es ist ein schöner Abend, die Sonne scheint"
+                        alt.addAll(altNeueSaetze(
+                                praedikativumPraedikatMit(EIN_SCHOENER_ABEND)
+                                        .alsSatzMitSubjekt(EXPLETIVES_ES),
+                                ",",
+                                bewoelkung.altStatischeBeschreibungSaetze(time)));
                     }
                 }
             }
@@ -106,13 +109,9 @@ class WetterData {
                                     .alsEsIstSatz()
                                     .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
-            // FIXME "Sobald die Sonne untergegangen ist, "
-            //  (Uhrzeit berücksichtigen: time.kurzNachSonnenuntergang())
-
             if (time.kurzVorSonnenaufgang()) {
                 alt.add(neuerSatz("die Sonne geht bald auf"));
                 alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
-                // FIXME "Als der Tag anbricht, noch ehe die Sonne aufgegangen ist"
             }
 
             // FIXME Windstärke berücksichtigen
@@ -129,6 +128,21 @@ class WetterData {
     // FIXME Überall nach Sonne, Mond, hell, dunkel, wolk etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
+
+    // FIXME Als Dauerbeschreibunge:
+    // - "die Sonnenhitze brennt stark"
+    // - "die Sonne scheint sehr warm"
+    //  - "der Tag ist warm, die Sonne sticht" (Achtung: "der Tag" nur eingeschränkt
+    //  benutzbar!)
+
+    // FIXME Verknüpfungen bei Änderungen:
+    //  "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
+    //  "Sobald die Sonne untergegangen ist, " (Uhrzeit berücksichtigen:
+    //  time.kurzNachSonnenuntergang())
+    //  "Als der Tag anbricht, noch ehe die Sonne aufgegangen ist"
+
+    // FIXME: Durchgehen, Grundformen bilden und ggf. in Bewoelkung einfügen
+
     // FIXME Sonne:
     // "mit Sonnenaufgang (machts du dich auch den Weg...)"
     // "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
@@ -143,17 +157,12 @@ class WetterData {
     // brennt, so..."
     // "Die Sonne geht auf, und ..."
     // "Du ... noch immer, als es schon hoher Tag ist"
-    // "Es ist ein schöner Abend, die Sonne scheint
-    // zwischen den Stämmen der Bäume hell ins dunkle Grün des
-    // Waldes"
-    // "Noch halb stand die Sonne über (dem Berg) und halb war sie unter."
+    // "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
     // "Nun ist die Sonne unter:"
-    // "die Sonne geht bald auf"
-    // "Als nun die Sonne durchs
-    // Fensterlein schien und..."
+    // "Als nun die Sonne durchs Fensterlein scheint und..."
     // "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
     // warm und verdrießlich zumut:"
-    // "Als nun die Sonne über dir steht stand, "
+    // "Als / wie nun die Sonne über dir steht, "
     // "Du hältst Mittag"
     // "Wie nun die Sonne kommt und du aufwachst..."
     // "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
@@ -193,7 +202,10 @@ class WetterData {
     // "Bei einbrechender Nacht"
     // "Der Mond scheint über..."
 
-    // FIXME
+    // FIXME Allgemeine Temperatur:
+    //  "Dich friert"
+
+    // FIXME Wind / Sturm
     //  "ein kühles Lüftchen streicht durch das Laub"
     //  Der Wind wird stärker
     //  Der Wind pfeift dir ums Gesicht
@@ -212,7 +224,7 @@ class WetterData {
     //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
     //  Der Sturm biegt die Bäume.
     //  "darin bist du vor Wind und Wetter geschützt"
-    //  "Dich friert" "Um Mitternacht geht der Wind so kalt, dass
+    //  "Um Mitternacht geht der Wind so kalt, dass
     //  dir nicht warm werden will"
     //  "du frierst am ganzen Leibe"
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
@@ -239,13 +251,15 @@ class WetterData {
     //  "Es geht kein Wind, und bewegt sich kein Blättchen"
     //  "Kein Wind weht"
     //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
+
+    // FIXME
     //  Man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
     //  Außerdem sollten alle "heiß..."–Hinweise dort zentralisiert werden.
     //  Schwierigkeit: Die Texte müssten alle Skalen gleichzeitig berücksichtigen?
 
-    // FIXME Nur dramturgisch geändert, nicht automatisch?
+    // FIXME Plan-Wetter ur dramaturgisch geändert, nicht automatisch? Oder
+    //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
-
 
     Bewoelkung getBewoelkung() {
         return bewoelkung;

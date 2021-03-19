@@ -93,6 +93,11 @@ public class AvTime {
                 oClock(5, 55));
     }
 
+    public boolean kurzVorSonnenuntergang() {
+        return isWithin(oClock(18, 10),
+                oClock(18, 29));
+    }
+
     public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
         if (!other.isBefore(this)) {
             return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);

@@ -25,6 +25,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     FROESTELN("frösteln",
             "fröstele", "fröstelst", "fröstelt", "fröstelt",
             Perfektbildung.HABEN, "gefröstelt"),
+    GEHEN("gehen",
+            "gehe", "gehst", "geht", "geht",
+            Perfektbildung.SEIN, "gegangen"),
     KLETTERN("klettern",
             "klettere", "kletterst", "klettert", "klettert",
             Perfektbildung.SEIN, "geklettert"),
@@ -56,7 +59,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
-    HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN);
+    HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
+    UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

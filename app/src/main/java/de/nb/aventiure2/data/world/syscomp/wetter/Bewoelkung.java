@@ -23,9 +23,11 @@ import static de.nb.aventiure2.german.base.Nominalphrase.HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.NACHT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.praedikat.Modalverb.WOLLEN;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERABSCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEDECKEN;
 import static java.util.stream.Collectors.toList;
 
@@ -111,6 +113,18 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                                                     new AdvAngabeSkopusVerbAllg("noch"))
                                             .alsSatzMitSubjekt(gestirn))
                             .collect(toImmutableList()));
+                    if (time.kurzVorSonnenuntergang()) {
+                        alt.addAll(time.getTageszeit().altGestirn().stream()
+                                .map(gestirn ->
+                                        // "Die Sonne will eben untergehen"
+                                        WOLLEN.mitLexikalischemKern(
+                                                UNTERGEHEN
+                                                        .mitAdvAngabe(
+                                                                new AdvAngabeSkopusSatz("eben")
+                                                        )
+                                        ).alsSatzMitSubjekt(gestirn))
+                                .collect(toImmutableList()));
+                    }
                 }
 
                 if (time.getTageszeit() == Tageszeit.NACHTS
