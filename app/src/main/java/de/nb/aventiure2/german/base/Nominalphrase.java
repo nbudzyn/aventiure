@@ -70,6 +70,8 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase LEIB =
+            np(M, DEF, "Leib", "Leibe");
     public static final Nominalphrase MITTAGSSONNE =
             np(F, DEF, "Mittagssonne");
     public static final Nominalphrase KLIRRENDE_KAELTE_OHNE_ART =

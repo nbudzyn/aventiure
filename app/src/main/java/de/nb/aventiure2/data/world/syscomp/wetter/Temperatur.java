@@ -15,17 +15,19 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLIRRENDE_KAELTE_OHNE_ART;
+import static de.nb.aventiure2.german.base.Nominalphrase.LEIB;
 import static de.nb.aventiure2.german.base.Nominalphrase.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.WARMES_WETTER_OHNE_ART;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
@@ -63,52 +65,91 @@ public enum Temperatur implements Betweenable<Temperatur> {
     ImmutableCollection<Satz> altScKommtNachDraussenSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
+        alt.addAll(altStatischeBeschreibungSaetze().stream()
+                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
+                .collect(toList()));
+
+        switch (this) {
+            case KLIRREND_KALT:
+                break;
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                break;
+            case KUEHL:
+                alt.add(VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
+                        .mit(Personalpronomen.get(P2, M))
+                        .alsSatzMitSubjekt(null)
+                        .mitAdvAngabe(
+                                new AdvAngabeSkopusVerbAllg("ein wenig")));
+                break;
+            case WARM:
+                break;
+            case RECHT_HEISS:
+                break;
+            case SEHR_HEISS:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + this);
+        }
+
+        return alt.build();
+    }
+
+    @CheckReturnValue
+    ImmutableCollection<Satz> altStatischeBeschreibungSaetze() {
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
         alt.addAll(altPraedikativa().stream()
                 .map(Praedikativum::alsEsIstSatz)
-                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
                 .collect(toList()));
         switch (this) {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg("in der Luft"))
-                        .alsSatzMitSubjekt(KLIRRENDE_KAELTE_OHNE_ART)
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")));
+                                .alsSatzMitSubjekt(KLIRRENDE_KAELTE_OHNE_ART),
+                        // "du frierst am ganzen Leibe"
+                        VerbSubj.FRIEREN
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(LEIB)))
+                                .alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
                 break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                alt.add(Witterungsverb.FRIEREN
-                        .alsSatz()
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")));
+                alt.add(
+                        // "es friert"
+                        Witterungsverb.FRIEREN.alsSatz(),
+                        // "du frierst"
+                        VerbSubj.FRIEREN.alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
                 break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
                 alt.add(DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen
-                        .dativPraedikativumWerdenMitDat(Personalpronomen.get(P2, M)) // "wird dir"
-                        .mit(KALT)
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))
-                        .alsSatz());
+                                .dativPraedikativumWerdenMitDat(Personalpronomen.get(P2, M)) //
+                                // "wird dir"
+                                .mit(KALT)
+                                .alsSatz(),
+                        // "dich friert"
+                        VerbOhneSubjAusserOptionalemExpletivemEs.FRIEREN
+                                .mit(Personalpronomen.get(P2, M))
+                                .alsSatzMitSubjekt(null));
                 break;
             case KUEHL:
                 alt.add(VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                                .mit(Personalpronomen.get(P3, M))
-                                .alsSatzMitSubjekt(null)
-                                .mitAdvAngabe(
-                                        new AdvAngabeSkopusVerbAllg("draußen")),
+                                .mit(Personalpronomen.get(P2, M))
+                                .alsSatzMitSubjekt(null),
                         VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                                .mit(Personalpronomen.get(P3, M))
+                                .mit(Personalpronomen.get(P2, M))
                                 .alsSatzMitSubjekt(null)
-                                .mitAdvAngabe(
-                                        new AdvAngabeSkopusVerbAllg("ein wenig")));
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ein wenig")));
                 alt.add(FROESTELN.mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg("ein wenig"))
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))
                         .alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
                 break;
             case WARM:
                 break;
             case RECHT_HEISS:
-                // FIXME "heute" macht eigentlich nur bei einem Maximalwert
-                // (über Tag heiß) oder vielleicht Minimalwert (nachts kalt?!) Sinn - und
-                //  eigentlich auch nur einmal am Tag?!
-                // "heute ist es (recht heiß)";
+                // FIXME "heute" macht nur bei einem Maximalwert
+                //  (über Tag heiß) oder vielleicht Minimalwert (nachts kalt?!) Sinn - und
+                //   eigentlich auch nur einmal am Tag?!
+                //  "heute ist es (recht heiß)";
                 break;
             case SEHR_HEISS:
             default:

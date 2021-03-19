@@ -22,6 +22,9 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
  */
 public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     // Verben ohne Partikel
+    FRIEREN("frieren",
+            "friere", "frierst", "friert", "friert",
+            Perfektbildung.HABEN, "gefroren"),
     FROESTELN("frösteln",
             "fröstele", "fröstelst", "fröstelt", "fröstelt",
             Perfektbildung.HABEN, "gefröstelt"),

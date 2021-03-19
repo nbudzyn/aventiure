@@ -54,12 +54,17 @@ class WetterData {
 
         final ImmutableCollection<Satz> altBewoelkungGestirnSaetzeMitDraussen =
                 bewoelkung.altScKommtNachDraussenSaetze(time);
-        alt.addAll(altBewoelkungGestirnSaetzeMitDraussen);
+        if (temperatur.isBetweenIncluding(Temperatur.KUEHL, Temperatur.WARM)) {
+            // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
+            // erwähnen.
+            alt.addAll(altBewoelkungGestirnSaetzeMitDraussen);
+        }
 
         if (time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
-            alt.addAll(temperatur.altScKommtNachDraussenSaetze());
-            // FIXME Wenn ein Wetteraspekt deutlich überwiegt, dann
-            //  die anderen nicht nennen - oder nur nachrangig.
+            if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                // Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
+                alt.addAll(temperatur.altScKommtNachDraussenSaetze());
+            }
             if (time.getTageszeit() == Tageszeit.TAGSUEBER) {
                 alt.addAll(altNeueSaetze(
                         altBewoelkungGestirnSaetzeMitDraussen,
@@ -75,6 +80,7 @@ class WetterData {
                             altBewoelkungGestirnSaetzeMitDraussen,
                             ";",
                             temperatur.altIstNochSaetze()));
+
                     if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
                         // FIXME Windstärke und Blitz / Donner berücksichtigen
                         // "Es ist ein schöner Abend und noch ziemlich warm"
@@ -85,31 +91,53 @@ class WetterData {
                                                 tempAdjPhr.mitAdvAngabe(
                                                         new AdvAngabeSkopusSatz("noch")))
                                                 .alsEsIstSatz()));
-                        // "Es ist ein schöner Abend, die Sonne scheint"
-                        alt.addAll(altNeueSaetze(
-                                praedikativumPraedikatMit(EIN_SCHOENER_ABEND)
-                                        .alsSatzMitSubjekt(EXPLETIVES_ES),
-                                ",",
-                                bewoelkung.altStatischeBeschreibungSaetze(time)));
+                        if (temperatur == Temperatur.WARM) {
+                            // "Es ist ein schöner Abend, die Sonne scheint"
+                            alt.addAll(altNeueSaetze(
+                                    praedikativumPraedikatMit(EIN_SCHOENER_ABEND)
+                                            .alsSatzMitSubjekt(EXPLETIVES_ES),
+                                    ",",
+                                    bewoelkung.altStatischeBeschreibungSaetze(time)));
+                        }
                     }
                 }
             }
         } else {
-            alt.addAll(Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit());
+            if (temperatur == Temperatur.KUEHL
+                    && bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0) {
+                // Eine normale Nacht-Temperatur und leichte Bewölkung braucht man nicht unbedingt
+                // zu erwähnen.
+                alt.addAll(Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit());
+            }
+
+            if (bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0) {
+                // Eine leichte Bewölkung braucht man nicht
+                // unbedingt zu erwähnen.
+                alt.addAll(altNeueSaetze(
+                        Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit(),
+                        ";",
+                        temperatur.altStatischeBeschreibungSaetze()));
+
+                // "draußen ist es dunkel und ziemlich kühl"
+                alt.addAll(
+                        temperatur.altPraedikativa().stream()
+                                .map(tempAdjPhr -> new ZweiPraedikativa<>(
+                                        AdjektivOhneErgaenzungen.DUNKEL, tempAdjPhr)
+                                        .alsEsIstSatz()
+                                        .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+            }
+
+            // "Draußen ist es kühl und der Himmel ist bewälkt"
             alt.addAll(altNeueSaetze(
-                    Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit(),
-                    ";",
-                    temperatur.altScKommtNachDraussenSaetze()));
+                    temperatur.altScKommtNachDraussenSaetze(),
+                    "und",
+                    bewoelkung.altStatischeBeschreibungSaetze(time)));
 
-            // "draußen ist es dunkel und ziemlich kühl"
-            alt.addAll(
-                    temperatur.altPraedikativa().stream()
-                            .map(tempAdjPhr -> new ZweiPraedikativa<>(
-                                    AdjektivOhneErgaenzungen.DUNKEL, tempAdjPhr)
-                                    .alsEsIstSatz()
-                                    .mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
-
-            if (time.kurzVorSonnenaufgang()) {
+            if (time.kurzVorSonnenaufgang()
+                    && temperatur.isBetweenIncluding(Temperatur.KUEHL, Temperatur.WARM)
+                    && bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0) {
+                // Eine normale Temperatur und leichte Bewölkung braucht man nicht
+                // unbedingt zu erwähnen.
                 alt.add(neuerSatz("die Sonne geht bald auf"));
                 alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
             }
@@ -129,11 +157,17 @@ class WetterData {
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
 
-    // FIXME Als Dauerbeschreibunge:
+    // FIXME Als Dauerbeschreibungen (Kombination von Temperatur und Bewölkung!):
+    //  Hier irgendwo erzeugen, ggf. auch mit "draußen" verknüpfen!
+    // - "die Sonne brennt heiß"
     // - "die Sonnenhitze brennt stark"
     // - "die Sonne scheint sehr warm"
     //  - "der Tag ist warm, die Sonne sticht" (Achtung: "der Tag" nur eingeschränkt
-    //  benutzbar!)
+    //  benutzbar! Dieselben Regeln wie für "heute"?)
+    // - "zu Mittag brennt die Sonne heiß"
+    // - "Der Himmel ist blau, die Luft mild"
+
+    // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
 
     // FIXME Verknüpfungen bei Änderungen:
     //  "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
@@ -141,69 +175,58 @@ class WetterData {
     //  time.kurzNachSonnenuntergang())
     //  "Als der Tag anbricht, noch ehe die Sonne aufgegangen ist"
 
-    // FIXME: Durchgehen, Grundformen bilden und ggf. in Bewoelkung einfügen
-
     // FIXME Sonne:
-    // "mit Sonnenaufgang (machts du dich auch den Weg...)"
-    // "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
-    // "und als du erwachst und wieder zu dir selber kommst, bist
-    //  du auf einer schönen Wiese, wo die Sonne scheint"
-    // "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
-    // "du liegst in der Sonne ausgestreckt"
-    // "Als aber die Sonne bald untergehen will, "
-    // "Bei Sonnenaufgang kommt schon..."
-    // "Bei Sonnenuntergang kommst du zu..."
-    // "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
-    // brennt, so..."
-    // "Die Sonne geht auf, und ..."
-    // "Du ... noch immer, als es schon hoher Tag ist"
-    // "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
-    // "Nun ist die Sonne unter:"
-    // "Als nun die Sonne durchs Fensterlein scheint und..."
-    // "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
-    // warm und verdrießlich zumut:"
-    // "Als / wie nun die Sonne über dir steht, "
-    // "Du hältst Mittag"
-    // "Wie nun die Sonne kommt und du aufwachst..."
-    // "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
-    // "Als die Sonne untergeht..."
-    // "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
-    // sitzt "in der Sonne"
-    // "du bist von der Sonnenhitze müde"
-    // liegst "mitten im heißen Sonnenschein"
-    // "(Schwerter) blitzen in der Sonne"
-    // du legst dich "in die Sonne"
-    // "Die Sonne hat die Erde aufgetaut"
-    // "Die Abendsonne scheint über (die
-    // glänzenden Steine), sie schimmerten und leuchteten so prächtig
-    //in allen Farben, daß..."
-    // "aber was tust du die Augen auf, als du aus (der Finsternis)
-    // heraus in das Tageslicht kommst, und den grünen Wald,
-    //Blumen und Vögel und die Morgensonne am Himmel erblickst"
-    // "Als nun die Sonne mitten über dem Walde steht..."
-    // ", bis die Sonne sinkt und die Nacht einbricht."
-    // "Als du aber am Morgen bei hellem Sonnenschein aufwachst, "
-    // "die Sonne ist hinter (den Bergen) verschwunden"
-    // "mittendurch rauscht ein klarer Bach, auf dem die Sonne glitzert"
-    // "es bricht eben der erste Sonnenstrahl hervor"
-    // "gegen Abend, als die Sonne (hinter die Berge) gesunken ist"
-    // "Du erwachst vor Sonnenuntergang"
-    // "Die Sonne will eben untergehen, als du erwachst"
-    // "Du  (blieb unter der Linde sitzen), bis die Sonne
-    // untergeht"
-    // "Als die Sonne aufgeht, ..."
-    // "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
-
-    // FIXME "Der Himmel ist blau, die Luft mild"
-    //  "Der Himmel ist blau und eine frische
-    //   Luft weht dir entgegen"
+    //  "mit Sonnenaufgang (machts du dich auch den Weg...)"
+    //  "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
+    //  "und als du erwachst und wieder zu dir selber kommst, bist
+    //   du auf einer schönen Wiese, wo die Sonne scheint"
+    //  "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
+    //  "du liegst in der Sonne ausgestreckt"
+    //  "Als aber die Sonne bald untergehen will, "
+    //  "Bei Sonnenaufgang kommt schon..."
+    //  "Bei Sonnenuntergang kommst du zu..."
+    //  "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
+    //  brennt, so..."
+    //  "Die Sonne geht auf, und ..."
+    //  "Du ... noch immer, als es schon hoher Tag ist"
+    //  "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
+    //  "Nun ist die Sonne unter:"
+    //  "Als nun die Sonne durchs Fensterlein scheint und..."
+    //  "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
+    //  warm und verdrießlich zumut:"
+    //  "Als / wie nun die Sonne über dir steht, "
+    //  "Wie nun die Sonne kommt und du aufwachst..."
+    //  "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
+    //  "Als die Sonne untergeht..."
+    //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
+    //  sitzt "in der Sonne"
+    //  "du bist von der Sonnenhitze müde"
+    //  liegst "mitten im heißen Sonnenschein"
+    //  "(Schwerter) blitzen in der Sonne"
+    //  du legst dich "in die Sonne"
+    //  "Die Sonne hat die Erde aufgetaut"
+    //  "Die Abendsonne scheint über (die
+    //  glänzenden Steine), sie schimmerten und leuchteten so prächtig
+    //  in allen Farben, daß..."
+    //  "aber was tust du die Augen auf, als du aus (der Finsternis)
+    //   heraus in das Tageslicht kommst, und den grünen Wald,
+    //   Blumen und Vögel und die Morgensonne am Himmel erblickst"
+    //  "Als nun die Sonne mitten über dem Walde steht..."
+    //  ", bis die Sonne sinkt und die Nacht einbricht."
+    //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, "
+    //  "die Sonne ist hinter (den Bergen) verschwunden"
+    //  "mittendurch rauscht ein klarer Bach, auf dem die Sonne glitzert"
+    //  "es bricht eben der erste Sonnenstrahl hervor"
+    //  "gegen Abend, als die Sonne (hinter die Berge) gesunken ist"
+    //  "Du erwachst vor Sonnenuntergang"
+    //  "Die Sonne will eben untergehen, als du erwachst"
+    //  "Du (bleibst unter der Linde sitzen), bis die Sonne untergeht"
+    //  "Als die Sonne aufgeht, ..."
+    //  "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
 
     // FIXME Nacht:
     // "Bei einbrechender Nacht"
     // "Der Mond scheint über..."
-
-    // FIXME Allgemeine Temperatur:
-    //  "Dich friert"
 
     // FIXME Wind / Sturm
     //  "ein kühles Lüftchen streicht durch das Laub"
@@ -224,20 +247,8 @@ class WetterData {
     //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
     //  Der Sturm biegt die Bäume.
     //  "darin bist du vor Wind und Wetter geschützt"
-    //  "Um Mitternacht geht der Wind so kalt, dass
-    //  dir nicht warm werden will"
-    //  "du frierst am ganzen Leibe"
-    //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
-    //  "du reibst die Hände"
-    //  "du bist so erfroren"
-    //  "Sobald die Sonne wieder warm scheint, gehst du..."
-    //  "dich wärmen"
-    //  "Es ist warmes Wetter"
-    //  "der Tag ist warm, die Sonne sticht"
-    //  "du erwärmst dich"
+    //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
     //  "Die Hitze wird drückender, je näher der Mittag kommt" (KEIN WIND)
-    //  "von der Hitze des Tages ermüdet"
-    //  "du bist von der Sonnenhitze müde"
     //  "Sturm"
     //  "es stürmt", "du findest darin Schutz"
     //  "der Wind rauscht draußen in den Bäumen"
@@ -250,6 +261,18 @@ class WetterData {
     //  "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein Blättchen mehr"
     //  "Es geht kein Wind, und bewegt sich kein Blättchen"
     //  "Kein Wind weht"
+
+    // FIXME Aufwärmen
+    //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
+    //  "du reibst die Hände"
+    //  "du bist so erfroren"
+    //  "dich wärmen"
+    //  "du erwärmst dich"
+
+    // FIXME
+    //  "Sobald die Sonne wieder warm scheint, gehst du..."
+
+    // FIXME
     //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
 
     // FIXME
@@ -259,7 +282,10 @@ class WetterData {
 
     // FIXME Plan-Wetter ur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
+
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
+    //  "von der Hitze des Tages ermüdet"
+    //  "du bist von der Sonnenhitze müde"
 
     Bewoelkung getBewoelkung() {
         return bewoelkung;
