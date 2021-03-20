@@ -6,6 +6,8 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.google.common.collect.ImmutableSet;
+
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -47,7 +49,13 @@ class WetterPCD extends AbstractPersistentComponentData {
         this.plan = plan;
     }
 
-    AltDescriptionsBuilder altSCKommtNachDraussenInsWetter(final AvTime time) {
-        return wetter.altSCKommtNachDraussenInsWetter(time);
+    @NonNull
+    AltDescriptionsBuilder altScKommtNachDraussenInsWetter(final AvTime time) {
+        return wetter.altScKommtNachDraussenInsWetter(time);
+    }
+
+    @NonNull
+    ImmutableSet<String> altWetterplauderrede(final AvTime time) {
+        return wetter.altWetterplauderrede(time);
     }
 }

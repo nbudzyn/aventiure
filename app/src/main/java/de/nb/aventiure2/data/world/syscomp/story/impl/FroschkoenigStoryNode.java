@@ -385,6 +385,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
         final AltDescriptionsBuilder alt = alt();
 
+        // FIXME Abhängig machen vom Wetter!
         alt.add(paragraph("Heut ist ein heißer Tag!"));
         alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
 

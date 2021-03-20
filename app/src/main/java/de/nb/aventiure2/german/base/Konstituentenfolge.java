@@ -647,7 +647,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
     }
 
     @CheckReturnValue
-    public Konstituentenfolge withVorkommaNoetig() {
+    Konstituentenfolge withVorkommaNoetig() {
         if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
             // Mit der Konstituentenfolge beginnt ein neuer Satz. Kein Vorkomma nötig.
             return this;

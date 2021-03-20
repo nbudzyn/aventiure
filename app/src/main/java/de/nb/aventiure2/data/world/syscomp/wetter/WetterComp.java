@@ -44,9 +44,14 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altSCKommtNachDraussenInsWetter() {
-        return requirePcd().altSCKommtNachDraussenInsWetter(timeTaker.now().getTime())
+    public ImmutableSet<AbstractDescription<?>> altScKommtNachDraussenInsWetter() {
+        return requirePcd().altScKommtNachDraussenInsWetter(timeTaker.now().getTime())
                 .build();
+    }
+
+    @NonNull
+    public ImmutableSet<String> altWetterplauderrede() {
+        return requirePcd().altWetterplauderrede(timeTaker.now().getTime());
     }
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {

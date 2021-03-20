@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -47,7 +48,7 @@ class WetterData {
         this.blitzUndDonner = blitzUndDonner;
     }
 
-    AltDescriptionsBuilder altSCKommtNachDraussenInsWetter(final AvTime time) {
+    AltDescriptionsBuilder altScKommtNachDraussenInsWetter(final AvTime time) {
         final Temperatur temperatur = getTemperatur(time);
 
         final AltDescriptionsBuilder alt = alt();
@@ -148,13 +149,34 @@ class WetterData {
         return alt;
     }
 
+    @NonNull
+    ImmutableSet<String> altWetterplauderrede(final AvTime time) {
+        final Temperatur temperatur = getTemperatur(time);
+        final Bewoelkung bewoelkung = getBewoelkung();
+
+        if (temperatur == Temperatur.KLIRREND_KALT
+                || temperatur == Temperatur.SEHR_HEISS
+                || bewoelkung == Bewoelkung.BEDECKT) {
+            return ImmutableSet.of("Was ein Wetter!", "Was für ein Wetter!", "Welch ein Wetter!");
+        }
+
+        if (bewoelkung == Bewoelkung.BEWOELKT) {
+            return ImmutableSet.of("Das Wetter war ja auch schon mal besser.");
+        }
+
+        // FIXME Windstärke berücksichtigen
+        // FIXME Blitz und Donner berücksichtigen
+
+        return ImmutableSet.of("Schönes Wetter heut!", "Schönes Wetter heut.");
+    }
+
     private Temperatur getTemperatur(final AvTime time) {
         return TagestemperaturverlaufUtil
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-    // FIXME Überall nach Sonne, Mond, hell, dunkel, heiß, warm, hitze, wärme, wolk, kühl,
-    //  schatt, wölk, etc. suchen
+    // FIXME Überall nach heiß, Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
+    //  schatt, wölk, Wetter etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
 

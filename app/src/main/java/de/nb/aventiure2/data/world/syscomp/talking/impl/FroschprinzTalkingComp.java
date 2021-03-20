@@ -619,11 +619,14 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz("„Und jetzt, Frosch?“ –",
                         "„Du weißt, was du versprochen hast“, gibt er zurück", PARAGRAPH));
         if (!immediateReEntry) {
-            alt.add(du("sprichst",
-                    getDescription(true).akkK(),
-                    // FIXME Überall nach "Wetter", "heiß"... suchen und zentralisieren
-                    "an: „Wie läuft's, Frosch? Schönes Wetter heut.“",
-                    "„Vergiss dein Versprechen nicht“, sagt er nur", PARAGRAPH));
+            alt.addAll(world.loadWetter().wetterComp().altWetterplauderrede().stream()
+                    .map(wetterplauderrede ->
+                            du("sprichst",
+                                    getDescription(true).akkK(),
+                                    "an: „Wie läuft's, Frosch?",
+                                    wetterplauderrede,
+                                    "“",
+                                    "„Vergiss dein Versprechen nicht“, sagt er nur", PARAGRAPH)));
         }
 
         n.narrateAlt(alt, secs(15));

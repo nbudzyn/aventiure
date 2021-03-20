@@ -1,8 +1,10 @@
 package de.nb.aventiure2.data.world.base;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.function.Supplier;
 
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AbstractDescription;
 
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -23,8 +25,8 @@ public enum Lichtverhaeltnisse {
         this.wohin = wohin;
     }
 
-    public static AltDescriptionsBuilder altSCKommtNachDraussenInDunkelheit() {
-        return alt().add(neuerSatz("Draußen ist es dunkel"));
+    public static ImmutableSet<AbstractDescription<?>> altSCKommtNachDraussenInDunkelheit() {
+        return alt().add(neuerSatz("Draußen ist es dunkel")).build();
     }
 
 
