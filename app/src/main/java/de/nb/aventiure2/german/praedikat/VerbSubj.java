@@ -63,6 +63,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
+    HERUNTERSCHEINEN(SCHEINEN, "herunter", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),

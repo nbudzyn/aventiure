@@ -32,6 +32,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeue
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.BRENNEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.HERUNTERSCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
 import static java.util.stream.Collectors.toList;
 
@@ -212,7 +213,7 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Überall nach heiß, Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
+    // FIXME Überall nach Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
     //  schatt, wölk, Wetter etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
@@ -234,8 +235,10 @@ class WetterData {
         if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
             if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
                 alt.add(SCHEINEN.alsSatzMitSubjekt(SONNE)
-                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                                WARM.mitGraduativerAngabe("sehr"))));
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                        WARM.mitGraduativerAngabe("sehr"))),
+                        HERUNTERSCHEINEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)));
             }
 
             if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
@@ -393,8 +396,6 @@ class WetterData {
 
     // FIXME
     //  Man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
-    //  Außerdem sollten alle "heiß..."–Hinweise dort zentralisiert werden.
-    //  Schwierigkeit: Die Texte müssten alle Skalen gleichzeitig berücksichtigen?
 
     // FIXME Plan-Wetter ur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
