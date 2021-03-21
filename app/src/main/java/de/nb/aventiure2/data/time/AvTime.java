@@ -69,10 +69,10 @@ public class AvTime {
             return MORGENS;
         }
 
-        // FIXME TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
-        //  MITTAGS (z.B. 11 - 13)
-        //  VORMITTAGS -> MITTAGS: "Inzwischen steht die Sonne schon sehr hoch"
-        //  "Inzwischen steht die Sonne hoch am Firmament"
+        // IDEA TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
+        //  MITTAGS (z.B. 11 - 13)? "Inzwischen steht die Sonne schon sehr hoch"
+        //  "Inzwischen steht die Sonne hoch am Firmament
+        //  Dabei aber Bewölkung berücksichtigen! Also dies eher nach WetterComp?
         //  Mittags -> "Die Sonne rutscht..."
 
         if (isBefore(oClock(17))) {
@@ -92,7 +92,7 @@ public class AvTime {
         return isWithin(oClock(5, 30),
                 oClock(5, 55));
     }
-    
+
     public boolean gegenMittag() {
         return isWithin(oClock(11, 30),
                 oClock(13, 15));
