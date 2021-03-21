@@ -3,8 +3,10 @@ package de.nb.aventiure2.data.world.syscomp.wetter;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.time.AvTime;
@@ -15,14 +17,23 @@ import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STARK;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
+import static de.nb.aventiure2.german.base.Nominalphrase.SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.SONNENHITZE;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.BRENNEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
+import static java.util.stream.Collectors.toList;
 
 @Immutable
 class WetterData {
@@ -53,6 +64,10 @@ class WetterData {
         final Temperatur temperatur = getTemperatur(time);
 
         final AltDescriptionsBuilder alt = alt();
+
+        alt.addAll(altStatischeBeschreibungSaetzeSonnenhitzeWennSinnvoll(time, true).stream()
+                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
+                .collect(toList()));
 
         final ImmutableCollection<Satz> altBewoelkungGestirnSaetzeMitDraussen =
                 bewoelkung.altScKommtNachDraussenSaetze(time);
@@ -170,6 +185,11 @@ class WetterData {
 
         if (temperatur.saetzeUeberHeuteOderDenTagSinnvoll(time)
                 && time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
+            alt.addAll(altStatischeBeschreibungSaetzeSonnenhitzeWennSinnvoll(
+                    time, false).stream()
+                    .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("heute")))
+                    .collect(toList()));
+
             if (// Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
                     bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0
                             // Und nachts kann man die Bewölkung ebenfalls ignorieren
@@ -190,6 +210,50 @@ class WetterData {
         }
 
         return alt.schonLaenger().build();
+    }
+
+    // FIXME Überall nach heiß, Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
+    //  schatt, wölk, Wetter etc. suchen
+    //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
+
+    /**
+     * Gibt alternative Sätze zurück über die Sonnenhitze - wenn sinnvoll, sonst eine leere
+     * {@link java.util.Collection}.
+     */
+    @CheckReturnValue
+    private ImmutableCollection<Satz> altStatischeBeschreibungSaetzeSonnenhitzeWennSinnvoll(
+            final AvTime time, final boolean auchMitBezugAufKonkreteTageszeit) {
+        final Temperatur temperatur = getTemperatur(time);
+        final Bewoelkung bewoelkung = getBewoelkung();
+
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        // FIXME Windstärke berücksichtigen
+        // FIXME Blitz und Donner berücksichtigen
+
+        if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+            if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
+                alt.add(SCHEINEN.alsSatzMitSubjekt(SONNE)
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                WARM.mitGraduativerAngabe("sehr"))));
+            }
+
+            if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
+                alt.add(BRENNEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)),
+                        BRENNEN.alsSatzMitSubjekt(SONNENHITZE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(STARK))
+                );
+
+                if (auchMitBezugAufKonkreteTageszeit && time.gegenMittag()) {
+                    alt.add(BRENNEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("zu Mittag"))
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)));
+                }
+            }
+        }
+
+        return alt.build();
     }
 
     @NonNull
@@ -218,20 +282,8 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-    // FIXME Überall nach heiß, Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
-    //  schatt, wölk, Wetter etc. suchen
-    //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
-
-
-    // FIXME Als Dauerbeschreibungen (Kombination von Temperatur und Bewölkung!):
-    //  Hier irgendwo erzeugen, ggf. auch mit "draußen" verknüpfen!
-    // - "die Sonne brennt heiß"
-    // - "die Sonnenhitze brennt stark"
-    // - "die Sonne scheint sehr warm"
-    // - "zu Mittag brennt die Sonne heiß"
-    // - "Der Himmel ist blau, die Luft mild"
-
     // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
+    //  - "Der Himmel ist blau, die Luft mild"
 
     // FIXME Verknüpfungen bei Änderungen:
     //  "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."

@@ -42,6 +42,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
     SKEPTISCH("skeptisch"),
+    STARK("stark"),
     TRAURIG("traurig"),
     TODMUEDE("todmüde"),
     TROTZIG("trotzig"),

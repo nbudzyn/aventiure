@@ -93,6 +93,8 @@ public class Nominalphrase
                     "schönen Abend", "schönen Abend");
     public static final Nominalphrase SONNE =
             np(F, DEF, "Sonne");
+    public static final Nominalphrase SONNENHITZE =
+            np(F, DEF, "Sonnenhitze");
     public static final Nominalphrase TAG =
             np(M, DEF, "Tag");
     public static final Nominalphrase VOLLMOND =
