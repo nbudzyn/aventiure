@@ -26,7 +26,9 @@ public enum Lichtverhaeltnisse {
     }
 
     public static ImmutableSet<AbstractDescription<?>> altSCKommtNachDraussenInDunkelheit() {
-        return alt().add(neuerSatz("Draußen ist es dunkel")).build();
+        return alt().add(neuerSatz("Draußen ist es dunkel"))
+                .schonLaenger()
+                .build();
     }
 
 

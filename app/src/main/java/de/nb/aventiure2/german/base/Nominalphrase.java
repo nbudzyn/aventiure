@@ -58,6 +58,9 @@ public class Nominalphrase
                     "ganzen Himmel", "ganzen Himmel");
     public static final Nominalphrase GESPRAECH =
             np(N, DEF, "Gespräch");
+    public static final Nominalphrase EIN_HEISSER_TAG =
+            np(M, INDEF, "heißer Tag",
+                    "heißen Tag", "heißen Tag");
     public static final Nominalphrase HIMMEL =
             np(M, DEF, "Himmel");
     public static final Nominalphrase HOEHE =

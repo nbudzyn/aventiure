@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -61,18 +62,25 @@ class WetterData {
             alt.addAll(altBewoelkungGestirnSaetzeMitDraussen);
         }
 
+        alt.addAll(altDescUeberHeuteOderDenTagWennSinnvoll(time));
+
         if (time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
-            if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
-                // Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
+            if (// Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
+                    bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0
+                            // Und nachts kann man die Bewölkung ebenfalls ignorieren
+                            || time.getTageszeit() == Tageszeit.TAGSUEBER) {
                 alt.addAll(temperatur.altScKommtNachDraussenSaetze());
             }
-            if (time.getTageszeit() == Tageszeit.TAGSUEBER) {
+
+            if (time.getTageszeit() == Tageszeit.TAGSUEBER &&
+                    temperatur.saetzeUeberHeuteOderDenTagSinnvoll(time)) {
                 alt.addAll(altNeueSaetze(
-                        altBewoelkungGestirnSaetzeMitDraussen,
+                        bewoelkung.altScKommtNachDraussenSaetze(time),
                         ";",
-                        temperatur.altDerTagIstSaetze()));
+                        temperatur.altSaetzeUeberHeuteOderDenTag()));
                 // FIXME Windstärke berücksichtigen
                 // FIXME Blitz und Donner berücksichtigen
+
             } else if (time.getTageszeit() == Tageszeit.ABENDS) {
                 if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)
                         && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
@@ -146,7 +154,42 @@ class WetterData {
             // FIXME Windstärke berücksichtigen
             // FIXME Blitz und Donner berücksichtigen
         }
-        return alt;
+        return alt.schonLaenger();
+    }
+
+    /**
+     * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag" o.Ä.
+     * beziehen - soweit sinnvoll, sonst eine leere Collection.
+     */
+    @NonNull
+    ImmutableCollection<AbstractDescription<?>>
+    altDescUeberHeuteOderDenTagWennSinnvoll(final AvTime time) {
+        final AltDescriptionsBuilder alt = alt();
+
+        final Temperatur temperatur = getTemperatur(time);
+
+        if (temperatur.saetzeUeberHeuteOderDenTagSinnvoll(time)
+                && time.getTageszeit().getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
+            if (// Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
+                    bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0
+                            // Und nachts kann man die Bewölkung ebenfalls ignorieren
+                            || time.getTageszeit() == Tageszeit.TAGSUEBER) {
+                alt.addAll(altNeueSaetze(temperatur.altSaetzeUeberHeuteOderDenTag()));
+                // FIXME Windstärke berücksichtigen
+                // FIXME Blitz und Donner berücksichtigen
+            }
+            if (time.getTageszeit() == Tageszeit.TAGSUEBER
+                    && temperatur.compareTo(Temperatur.RECHT_HEISS) >= 0) {
+                // FIXME  "der Tag ist warm, die Sonne sticht"
+                alt.addAll(altNeueSaetze(
+                        temperatur.altSaetzeUeberHeuteOderDenTag(),
+                        ", die Sonne sticht"));
+                // FIXME Windstärke berücksichtigen
+                // FIXME Blitz und Donner berücksichtigen
+            }
+        }
+
+        return alt.schonLaenger().build();
     }
 
     @NonNull
@@ -170,7 +213,7 @@ class WetterData {
         return ImmutableSet.of("Schönes Wetter heut!", "Schönes Wetter heut.");
     }
 
-    private Temperatur getTemperatur(final AvTime time) {
+    Temperatur getTemperatur(final AvTime time) {
         return TagestemperaturverlaufUtil
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
@@ -185,8 +228,6 @@ class WetterData {
     // - "die Sonne brennt heiß"
     // - "die Sonnenhitze brennt stark"
     // - "die Sonne scheint sehr warm"
-    //  - "der Tag ist warm, die Sonne sticht" (Achtung: "der Tag" nur eingeschränkt
-    //  benutzbar! Dieselben Regeln wie für "heute"?)
     // - "zu Mittag brennt die Sonne heiß"
     // - "Der Himmel ist blau, die Luft mild"
 

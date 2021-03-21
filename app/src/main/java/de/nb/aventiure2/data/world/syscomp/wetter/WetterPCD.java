@@ -6,19 +6,20 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 /**
  * Veränderliche (und daher persistente) Daten der {@link WetterComp}-Komponente.
  */
 @Entity
-public
-class WetterPCD extends AbstractPersistentComponentData {
+public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Das aktuelle Wetter
      */
@@ -54,8 +55,23 @@ class WetterPCD extends AbstractPersistentComponentData {
         return wetter.altScKommtNachDraussenInsWetter(time);
     }
 
+    /**
+     * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag" o.Ä.
+     * beziehen - soweit sinnvoll, sonst eine leere Collection.
+     */
+    @NonNull
+    ImmutableCollection<AbstractDescription<?>>
+    altDescUeberHeuteOderDenTagWennSinnvoll(final AvTime time) {
+        return wetter.altDescUeberHeuteOderDenTagWennSinnvoll(time);
+    }
+
     @NonNull
     ImmutableSet<String> altWetterplauderrede(final AvTime time) {
         return wetter.altWetterplauderrede(time);
+    }
+
+    @NonNull
+    Temperatur getTemperatur(final AvTime time) {
+        return wetter.getTemperatur(time);
     }
 }

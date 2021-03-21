@@ -20,6 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
+import de.nb.aventiure2.data.world.syscomp.wetter.Temperatur;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
@@ -30,6 +31,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
@@ -210,7 +212,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
-                alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+                alt.addAll(altHintZumBrunnenGehen(world));
             }
         }
 
@@ -233,7 +235,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                     alt.addAll(altNachtsSchlafen(world));
                 } else {
-                    alt.addAll(altHeissHeutKuehlerOrtWaereSchoen());
+                    alt.addAll(altHintZumBrunnenGehen(world));
                 }
             }
         } else {
@@ -382,15 +384,27 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     @CheckReturnValue
-    private static ImmutableCollection<AbstractDescription<?>> altHeissHeutKuehlerOrtWaereSchoen() {
+    private static ImmutableCollection<AbstractDescription<?>> altHintZumBrunnenGehen(
+            final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        // FIXME Nur bei heißem Wetter! Sonst anderer Hinweis, zum Brunnen zu gehen!
-        alt.add(paragraph("Heut ist ein heißer Tag!"));
-        alt.add(paragraph("Es ist ziemlich heiß heute – ein kühler Ort wäre schön"));
+        if (world.loadWetter().wetterComp().getTemperatur().compareTo(Temperatur.RECHT_HEISS)
+                >= 0) {
+            final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
+                    world.loadWetter().wetterComp().altDescUeberHeuteOderDenTagWennSinnvoll();
+            alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
+            alt.addAll(altParagraphs(altHeuteHeisserTagSaetze, "– ein kühler Ort wäre schön"));
+        }
+
+        if (world.loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
+            alt.addIfOtherwiseEmpty(paragraph("Dir kommt ein Gedanke:",
+                    "Am Brunnen mit der goldenen Kugel zu spielen – das wäre aufregend!"));
+        } else {
+            alt.addIfOtherwiseEmpty(paragraph("Es gibt sicher noch viel zu erleben"));
+        }
 
         // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
-        //  Heiß vielleicht irhendwo am wasser...
+        //  Heiß vielleicht irgendwo am wasser...
 
         return alt.build();
     }

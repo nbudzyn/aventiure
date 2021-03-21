@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -21,6 +22,7 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
+import static de.nb.aventiure2.german.base.Nominalphrase.EIN_HEISSER_TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLIRRENDE_KAELTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.LEIB;
 import static de.nb.aventiure2.german.base.Nominalphrase.TAG;
@@ -61,6 +63,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return values[resOrdinal];
     }
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     ImmutableCollection<Satz> altScKommtNachDraussenSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
@@ -96,6 +99,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     ImmutableCollection<Satz> altStatischeBeschreibungSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
@@ -146,10 +150,6 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case WARM:
                 break;
             case RECHT_HEISS:
-                // FIXME "heute" macht nur bei einem Maximalwert
-                //  (über Tag heiß) oder vielleicht Minimalwert (nachts kalt?!) Sinn - und
-                //   eigentlich auch nur einmal am Tag?!
-                //  "heute ist es (recht heiß)";
                 break;
             case SEHR_HEISS:
             default:
@@ -159,13 +159,42 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
+    /**
+     * Gibt zurück, ob bei dieser Temperatur zu dieser Uhrzeit Sätze über "heute" oder "den Tag"
+     * sinnvoll sind.
+     */
+    public boolean saetzeUeberHeuteOderDenTagSinnvoll(final AvTime time) {
+        return
+                // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
+                TagestemperaturverlaufUtil.saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(time)
+                        // Zu sagen "der Tag so warm oder kalt wie jeder andere auch" wäre
+                        // unnatürlich
+                        && !isBetweenIncluding(
+                        Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT, Temperatur.WARM);
+    }
 
     /**
-     * Gibt alternative Sätze zurück in der Art
-     * "Der Tag ist (sehr kalt / ziemlich warm)".
+     * Gibt alternative Sätze zurück, die sich auf "heute", "den Tag" o.Ä.
+     * beziehen.
      */
     @NonNull
-    ImmutableCollection<Satz> altDerTagIstSaetze() {
+    public ImmutableCollection<Satz> altSaetzeUeberHeuteOderDenTag() {
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        // "Heute ist es heiß / schönes Wetter."
+        alt.addAll(altPraedikativa()
+                .stream()
+                .map(a -> a.alsEsIstSatz()
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("heute")))
+                .collect(toImmutableList()));
+
+        alt.addAll(altDerTagIstSaetze());
+
+        return alt.build();
+    }
+
+    @NonNull
+    private ImmutableCollection<Satz> altDerTagIstSaetze() {
         return altPraedikativa().stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
@@ -178,10 +207,10 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @NonNull
     ImmutableCollection<Satz> altIstNochSaetze() {
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        res.addAll(altPraedikativa().stream()
+        alt.addAll(altPraedikativa().stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -190,13 +219,13 @@ public enum Temperatur implements Betweenable<Temperatur> {
                 .collect(toImmutableList()));
 
         // "Es ist noch schönes Wetter."
-        res.addAll(altPraedikativa().stream()
+        alt.addAll(altPraedikativa().stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
                 .collect(toImmutableList()));
 
-        return res.build();
+        return alt.build();
     }
 
     /**
@@ -206,33 +235,35 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * <p>
      * Das Eregebnis von {@link #altAdjektivphrasen()} ist bereits enthalten
      */
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
     ImmutableList<Praedikativum> altPraedikativa() {
-        final ImmutableList.Builder<Praedikativum> res = ImmutableList.builder();
+        final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
-        res.addAll(altAdjektivphrasen());
+        alt.addAll(altAdjektivphrasen());
 
         switch (this) {
             case KLIRREND_KALT:
-                // Fall-through
+                break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                // Fall-through
+                break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                // Fall-through
+                break;
             case KUEHL:
                 break;
             case WARM:
-                res.add(WARMES_WETTER_OHNE_ART);
+                alt.add(WARMES_WETTER_OHNE_ART);
                 break;
             case RECHT_HEISS:
-                // Fall-through
+                alt.add(EIN_HEISSER_TAG);
+                break;
             case SEHR_HEISS:
                 break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + this);
         }
 
-        return res.build();
+        return alt.build();
     }
 
     /**

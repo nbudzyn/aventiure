@@ -38,6 +38,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     BEWOELKT,
     BEDECKT;
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     ImmutableCollection<Satz> altScKommtNachDraussenSaetze(final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();

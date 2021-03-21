@@ -64,7 +64,6 @@ public class AltDescriptionsBuilder {
         return altNeueSaetze(asList(saetze));
     }
 
-
     @Nonnull
     @CheckReturnValue
     public static AltDescriptionsBuilder altNeueSaetze(final Collection<Satz> saetze) {
@@ -250,8 +249,7 @@ public class AltDescriptionsBuilder {
             return alt.build();
         }
 
-        final ImmutableSet.Builder<AbstractDescription<?>> res =
-                builder();
+        final ImmutableSet.Builder<AbstractDescription<?>> res = builder();
 
         for (final AbstractDescription<?> desc : alt.build()) {
             res.add(op.apply(desc));

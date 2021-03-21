@@ -22,7 +22,7 @@ public class Wetter extends GameObject implements IWetterGO, IResponder {
            final World world) {
         super(WETTER);
         // Jede Komponente muss registiert werden!
-        wetterComp = addComponent(new WetterComp(db, world, timeTaker, n));
+        wetterComp = addComponent(new WetterComp(db, timeTaker, n));
         reactionsComp = addComponent(new WetterReactionsComp(n, world, wetterComp));
     }
 
