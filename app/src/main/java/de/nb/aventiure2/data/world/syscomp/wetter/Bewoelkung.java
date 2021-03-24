@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 
@@ -17,12 +18,14 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.german.base.Nominalphrase.DUESTERE_WOLKEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.GANZER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.NACHT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.praedikat.Modalverb.WOLLEN;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERABSCHEINEN;
@@ -163,10 +166,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
                 break;
 
-            // FIXME "im Mondschein" / "im Sonnenschein"
-            // FIXME "beim Mondschimmer"
-            // FIXME "der Hügel liegt in einsamem Mondschein."
-
             case LEICHT_BEWOELKT:
                 alt.addAll(time.getTageszeit().altGestirn().stream()
                         .map( // "die Sonne scheint"
@@ -202,5 +201,94 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         }
 
         return alt.build();
+    }
+
+    // FIXME "im Mondschein" / "im Sonnenschein" (tageszeit.altGestirnschein()!)
+    // FIXME "beim Mondschimmer"
+    // FIXME "der Hügel liegt in einsamem Mondschein."
+
+    boolean isUnauffaellig(final Tageszeit tageszeit) {
+        if (tageszeit == NACHTS) {
+            return compareTo(BEWOELKT) <= 0;
+        }
+
+        return compareTo(LEICHT_BEWOELKT) <= 0;
+    }
+
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(final AvTime time) {
+        return altWohinHinaus(time.getTageszeit());
+    }
+
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+            final Tageszeit tageszeit) {
+        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableList.builder();
+
+        switch (this) {
+            case WOLKENLOS:
+                // fall-through
+            case LEICHT_BEWOELKT:
+                alt.addAll(tageszeit.altGestirnschein().stream()
+                        // "in den Abendsonnenschein"
+                        .map(schein -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(schein)))
+                        .collect(toList()));
+                if (tageszeit == Tageszeit.MORGENS) {
+                    alt.add(new AdvAngabeSkopusVerbWohinWoher("in den hellen Morgen"));
+                } else if (tageszeit == Tageszeit.TAGSUEBER) {
+                    alt.add(new AdvAngabeSkopusVerbWohinWoher("in den hellen Tag"));
+                }
+                break;
+            case BEWOELKT:
+                alt.addAll(altWohinHinausBewoelkt(tageszeit));
+                break;
+            case BEDECKT:
+                alt.addAll(altWohinHinausBedeckt(tageszeit));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Bewoelkung: " + this);
+        }
+
+        return alt.build();
+    }
+
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausBewoelkt(
+            final Tageszeit tageszeit) {
+        switch (tageszeit) {
+            case MORGENS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den trüben Morgen"));
+            case TAGSUEBER:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den trüben Tag"));
+            case ABENDS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den trüben Abend"));
+            case NACHTS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die dunkle Nacht"));
+            default:
+                throw new IllegalStateException("Unexpected Tageszeit: " + this);
+        }
+    }
+
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausBedeckt(
+            final Tageszeit tageszeit) {
+        switch (tageszeit) {
+            case MORGENS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den düsteren Morgen"));
+            case TAGSUEBER:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den düsteren Tag"));
+            case ABENDS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in den düsteren Abend"),
+                        new AdvAngabeSkopusVerbWohinWoher("in die dunkle Nacht"));
+            case NACHTS:
+                return ImmutableSet.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die dunkle Nacht"),
+                        new AdvAngabeSkopusVerbWohinWoher("in die stockdunkle Nacht"));
+            default:
+                throw new IllegalStateException("Unexpected Tageszeit: " + this);
+        }
     }
 }

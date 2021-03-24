@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.function.Supplier;
 
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -33,10 +34,10 @@ public enum Lichtverhaeltnisse {
 
 
     /**
-     * Gibt eine Beschreibung zurück, wohin der SC sich bewegt, wenn er sich in diese
+     * Gibt eine adverbiale Angabe zurück, wohin der SC sich bewegt, wenn er sich in diese
      * Lichtverhältnisse bewegt, also etwas wie "in die Dunkelheit".
      */
-    public String getWohin() {
-        return wohin;
+    public AdvAngabeSkopusVerbWohinWoher getWohin() {
+        return new AdvAngabeSkopusVerbWohinWoher(wohin);
     }
 }

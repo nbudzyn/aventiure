@@ -4,16 +4,19 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
@@ -21,6 +24,8 @@ import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_HEISSER_TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLIRRENDE_KAELTE_OHNE_ART;
@@ -293,6 +298,99 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case SEHR_HEISS:
                 return ImmutableList.of(
                         AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("sehr"));
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + this);
+        }
+    }
+
+    boolean isUnauffaellig(final Tageszeit tageszeit) {
+        if (tageszeit == NACHTS) {
+            return this == KUEHL;
+        }
+
+        return isBetweenIncluding(KUEHL, WARM);
+    }
+
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(final AvTime time) {
+        switch (this) {
+            case KLIRREND_KALT:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die Eiseskälte"));
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die frostige Kälte"));
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                return altWohinHinausKnappUeberGefrierpunkt(time);
+            case KUEHL:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("ins Kühle"));
+            case WARM:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die Wärme"),
+                        new AdvAngabeSkopusVerbWohinWoher("in die warme Luft"));
+            case RECHT_HEISS:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die aufgeheizte Luft"));
+            case SEHR_HEISS:
+                return altWohinHinausSehrHeiss(time);
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + this);
+        }
+    }
+
+    public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausKnappUeberGefrierpunkt(
+            final AvTime time) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+                ImmutableSet.builder();
+
+        alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Kälte"));
+        if (time.getTageszeit() == NACHTS) {
+            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die nächtliche Kälte"));
+        }
+
+        return alt.build();
+    }
+
+    public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSehrHeiss(
+            final AvTime time) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+                ImmutableSet.builder();
+
+        alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Hitze"));
+        if (time.gegenMittag()) {
+            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Mittagshitze"));
+        } else if (time.getTageszeit() == ABENDS) {
+            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Abendhitze"));
+        }
+
+        return alt.build();
+    }
+
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausDunkelheit() {
+        switch (this) {
+            case KLIRREND_KALT:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die eiskalte Dunkelheit"),
+                        new AdvAngabeSkopusVerbWohinWoher(
+                                "in die klirrend kalte Dunkelheit"));
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die frostige Dunkelheit"));
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die kalte Dunkelheit"));
+            case KUEHL:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die kühle Dunkelheit"));
+            case WARM:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die warme Dunkelheit"));
+            case RECHT_HEISS:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die aufgeheizte Dunkelheit"));
+            case SEHR_HEISS:
+                return ImmutableList.of(
+                        new AdvAngabeSkopusVerbWohinWoher("in die dunkle Hitze"));
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + this);
         }

@@ -11,7 +11,8 @@ import static java.util.stream.Collectors.toSet;
 class GermanStopwords {
     private static final SortedSet<String> STOPWORD_SET =
             new TreeSet<>(Stream.of(
-                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw/stopwords-filter-de.txt
+                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw
+                    // /stopwords-filter-de.txt
                     "aber", "als", "am", "an", "auch", "auf", "aus", "bei", "bin", "bis",
                     "bist", "da",
                     "dadurch", "daher", "darum", "das", "daß", "dass", "dein", "deine",
@@ -37,7 +38,8 @@ class GermanStopwords {
                     "weshalb", "wie", "wieder", "wieso", "wir", "wird", "wirst", "wo",
                     "woher", "wohin",
                     "zu", "zum", "zur", "über",
-                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw/stopwords-filter-de.txt:
+                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw
+                    // /stopwords-filter-de.txt:
                     "aber", "alle", "allem", "allen", "aller", "alles",
                     "als", "also", "am", "an", "ander",
                     "andere", "anderem", "anderen", "anderer", "anderes", "anderm", "andern",
@@ -67,7 +69,8 @@ class GermanStopwords {
                     "wenn", "werde", "werden", "wie", "wieder", "will", "wir", "wird", "wirst",
                     "wo", "wollen", "wollte", "würde", "würden", "zu", "zum", "zur", "zwar",
                     "zwischen",
-                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw/language-resource-stopwords.txt
+                    // Aus https://github.com/stopwords-iso/stopwords-de/blob/master/raw/language
+                    // -resource-stopwords.txt
                     "a", "ab", "aber", "aber", "ach", "acht", "achte", "achten", "achter", "achtes",
                     "ag", "alle", "allein", "allem", "allen", "aller", "allerdings", "alles",
                     "allgemeinen", "als", "als", "also", "am", "an", "andere", "anderen", "andern",
@@ -136,7 +139,8 @@ class GermanStopwords {
                     "wenige", "weniger", "weniges", "wenigstens", "wenn", "wenn", "wer", "werde",
                     "werden", "werdet", "wessen", "wie", "wie", "wieder", "will", "willst", "wir",
                     "wird", "wirklich", "wirst", "wo", "wohl", "wollen", "wollt", "wollte",
-                    "wollten", "worden", "wurde", "würde", "wurden", "würden", "x", "y", "z", "z.b",
+                    "wollten", "worden", "wurde", "würde", "wurden", "würden",
+                    "altWohinHinausKnappUeberGefrierpunkt", "y", "z", "z.b",
                     "zehn", "zehnte", "zehnten", "zehnter", "zehntes", "zeit", "zu", "zuerst",
                     "zugleich", "zum", "zum", "zunächst", "zur", "zurück", "zusammen", "zwanzig",
                     "zwar", "zwar", "zwei", "zweite", "zweiten", "zweiter", "zweites", "zwischen",

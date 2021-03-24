@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -20,7 +23,9 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -33,7 +38,11 @@ import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReac
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -142,25 +151,27 @@ public class SchlosswacheReactionsComp
 
         final SpielerCharakter sc = loadSC();
 
-        n.narrateAlt(secs(10),
-                neuerSatz("Die Wache spricht dich sofort an und macht dir unmissverständlich "
-                        + "klar, dass du hier "
-                        + "vor dem großen Fest nicht erwünscht bist. Du bist "
-                        + "leicht zu "
-                        + "überzeugen und trittst wieder "
-                        + schlossVerlassenWohinDescription(
-                        raumAusDemDerSCDasSchlossBetretenHat)
-                        // "in den Sonnenschein"
-                        + " hinaus", PARAGRAPH),
-                neuerSatz(PARAGRAPH,
-                        "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
-                                + "„Als ob hier ein jeder "
-                                + "nach Belieben hereinspazieren könnt. Das würde dem König so "
-                                + "passen. Und "
-                                + "seinem Kerkermeister auch.“ "
-                                + "Du bleibst besser draußen", PARAGRAPH)
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.addAll(altNeueSaetze("Die Wache spricht dich sofort an und macht dir",
+                "unmissverständlich klar, dass du hier vor dem großen Fest nicht",
+                "erwünscht bist. Du bist leicht zu überzeugen und trittst wieder",
+                altSchlossVerlassenWohinAdvAngaben(raumAusDemDerSCDasSchlossBetretenHat)
+                        .stream()
+                        .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
+                "hinaus", PARAGRAPH));
+
+        alt.add(neuerSatz(PARAGRAPH,
+                "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
+                        + "„Als ob hier ein jeder "
+                        + "nach Belieben hereinspazieren könnt. Das würde dem König so "
+                        + "passen. Und "
+                        + "seinem Kerkermeister auch.“ "
+                        + "Du bleibst besser draußen", PARAGRAPH)
                 // IDEA Eine Nacht im Kerker! (Ist auch ein Übernachten!)
         );
+
+        n.narrateAlt(alt, secs(10));
 
         sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
 
@@ -168,28 +179,32 @@ public class SchlosswacheReactionsComp
                 new Action(Action.Type.BEWEGEN, raumAusDemDerSCDasSchlossBetretenHat));
     }
 
-    private String schlossVerlassenWohinDescription(
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
             final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
-        return schlossVerlassenWohinDescription(
+        return altSchlossVerlassenWohinAdvAngaben(
                 ((ILocationGO) world.load(SCHLOSS_VORHALLE)),
                 raumAusDemDerSCDasSchlossBetretenHat);
     }
 
-    private static String schlossVerlassenWohinDescription(
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
             final ILocationGO schlossRoom,
             final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
                 LocationSystem.getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
                 LocationSystem.getLichtverhaeltnisse(wohinRoom);
+
         if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
                 // auch hell ist...
                 == lichtverhaeltnisseDraussen) {
-            return "in den Sonnenschein";
+            return world.loadWetter().wetterComp().altWohinHinaus(lichtverhaeltnisseDraussen);
         }
 
+        // FIXME In diesem Fall vielleicht ebenfalls
+        //  world.loadWetter().wetterComp().altWohinHinaus() nutzen?
+
         // Draußen ist es (anders als im Schloss) dunkel
-        return lichtverhaeltnisseDraussen.getWohin();
+        return ImmutableSet.of(lichtverhaeltnisseDraussen.getWohin());
     }
 
     /**

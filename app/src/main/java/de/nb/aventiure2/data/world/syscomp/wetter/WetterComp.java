@@ -10,7 +10,9 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 
@@ -40,8 +42,12 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altScKommtNachDraussenInsWetter() {
-        return requirePcd().altScKommtNachDraussenInsWetter(timeTaker.now().getTime()).build();
+    public ImmutableSet<AbstractDescription<?>> altScKommtNachDraussenInsWetter(
+            final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        return requirePcd()
+                .altScKommtNachDraussenInsWetter(
+                        timeTaker.now().getTime(), lichtverhaeltnisseDraussen)
+                .build();
     }
 
     /**
@@ -57,6 +63,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @NonNull
     public ImmutableSet<String> altWetterplauderrede() {
         return requirePcd().altWetterplauderrede(timeTaker.now().getTime());
+    }
+
+
+    /**
+     * Gibt alternative Beschreibungen zurück in der Art "in den Sonnenschein" o.Ä., die mit
+     * "hinaus" verknüpft werden können.
+     */
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+            final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        return requirePcd().altWohinHinaus(timeTaker.now().getTime(), lichtverhaeltnisseDraussen);
     }
 
     /**

@@ -427,7 +427,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
                                 .akkStr(),
                         // IDEA Man könnte programmieren: Wenn der Text hiernach
-                        //  mehr als x Wörter hat, dann gerät das Bezugsobjekt
+                        //  mehr als altWohinHinausKnappUeberGefrierpunkt Wörter hat, dann gerät
+                        //  das Bezugsobjekt
                         //  Wieder in Vergessenheit - analog zum bereits implementieren
                         //  Vorgehen. Z.B. Auch summieren über mehrere Strings ins Folge...
                         "wiederbringst.“ Du denkst",

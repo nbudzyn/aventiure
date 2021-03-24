@@ -12,8 +12,10 @@ import com.google.common.collect.ImmutableSet;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 /**
  * Veränderliche (und daher persistente) Daten der {@link WetterComp}-Komponente.
@@ -51,8 +53,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     @NonNull
-    AltDescriptionsBuilder altScKommtNachDraussenInsWetter(final AvTime time) {
-        return wetter.altScKommtNachDraussenInsWetter(time);
+    AltDescriptionsBuilder altScKommtNachDraussenInsWetter(
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        return wetter.altScKommtNachDraussenInsWetter(time, lichtverhaeltnisseDraussen);
     }
 
     /**
@@ -63,6 +66,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
     ImmutableCollection<AbstractDescription<?>>
     altDescUeberHeuteOderDenTagWennSinnvoll(final AvTime time) {
         return wetter.altDescUeberHeuteOderDenTagWennSinnvoll(time);
+    }
+
+    ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen);
     }
 
     @NonNull

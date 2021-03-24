@@ -105,15 +105,16 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     private ImmutableCollection<TimedDescription<?>>
     altDescTo_DraussenVorDemSchlosss_KeinFest(
-            final Known known, final Lichtverhaeltnisse lichtverhaeltnisse) {
+            final Known known, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         if (known == UNKNOWN) {
             return altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
-                    lichtverhaeltnisse);
+                    lichtverhaeltnisseDraussen);
         }
 
-        if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisse == HELL)
-                || lichtverhaeltnisse == DUNKEL) {
-            return world.loadWetter().wetterComp().altScKommtNachDraussenInsWetter().stream()
+        if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
+                || lichtverhaeltnisseDraussen == DUNKEL) {
+            return world.loadWetter().wetterComp()
+                    .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen).stream()
                     .map(wetterDesc ->
                             du("verlässt", "das Schloss",
                                     SENTENCE,
@@ -129,10 +130,12 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     @NonNull
     private ImmutableCollection<TimedDescription<?>>
-    altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (lichtverhaeltnisse == HELL) {
+    altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
+            final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        if (lichtverhaeltnisseDraussen == HELL) {
             // FIXME altDu() o.Ä.?!
-            return world.loadWetter().wetterComp().altScKommtNachDraussenInsWetter().stream()
+            return world.loadWetter().wetterComp()
+                    .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen).stream()
                     .map(wetterDesc ->
                             du("gehst",
                                     "über eine Marmortreppe hinaus in die Gärten vor dem",
@@ -146,7 +149,9 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         }
 
         // FIXME altDu() o.Ä.?!
-        return world.loadWetter().wetterComp().altScKommtNachDraussenInsWetter().stream()
+        return world.loadWetter().wetterComp()
+                .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen)
+                .stream()
                 .map(wetterDesc ->
                         du("gehst", "über eine Marmortreppe hinaus den "
                                         + "Garten vor dem Schloss.", CHAPTER,

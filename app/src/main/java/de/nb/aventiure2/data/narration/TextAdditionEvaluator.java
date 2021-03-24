@@ -27,7 +27,7 @@ class TextAdditionEvaluator {
 
     static {
         final String[] dummy = new String[1000];
-        Arrays.fill(dummy, "x");
+        Arrays.fill(dummy, "altWohinHinausKnappUeberGefrierpunkt");
 
         MAX_NUMBER_ADDED_WORDS_STEMMED_WORDS =
                 new StemmedWords(ImmutableList.copyOf(asList(dummy)));
