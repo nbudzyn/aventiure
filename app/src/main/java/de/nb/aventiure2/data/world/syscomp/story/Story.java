@@ -46,7 +46,7 @@ public enum Story {
 
     FROSCHKOENIG(FroschkoenigStoryNode.class,
             (db, timeTaker, n, world) -> {
-                return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate(db, n, world);
+                return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate();
             }),
 
     RAPUNZEL(RapunzelStoryNode.class, RapunzelStoryNode::checkAndAdvanceIfAppropriate);

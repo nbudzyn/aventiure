@@ -148,10 +148,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return hinter;
     }
 
-    public static boolean checkAndAdvanceIfAppropriate(
-            final AvDatabase db,
-            final Narrator n,
-            final World world) {
+    public static boolean checkAndAdvanceIfAppropriate() {
         // Diese Story kann von Anfang an durchgespielt werden.
         return false;
     }
@@ -270,6 +267,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
+    @SuppressWarnings("unchecked")
     public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {

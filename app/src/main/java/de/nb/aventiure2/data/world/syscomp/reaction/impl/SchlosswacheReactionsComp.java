@@ -1,7 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nullable;
 
@@ -189,22 +188,9 @@ public class SchlosswacheReactionsComp
     private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
             final ILocationGO schlossRoom,
             final ILocationGO wohinRoom) {
-        final Lichtverhaeltnisse lichtverhaeltnisseImSchloss =
-                LocationSystem.getLichtverhaeltnisse(schlossRoom);
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
                 LocationSystem.getLichtverhaeltnisse(wohinRoom);
-
-        if (lichtverhaeltnisseImSchloss  // Im Schloss ist es immer hell, wenn es also draußen
-                // auch hell ist...
-                == lichtverhaeltnisseDraussen) {
-            return world.loadWetter().wetterComp().altWohinHinaus(lichtverhaeltnisseDraussen);
-        }
-
-        // FIXME In diesem Fall vielleicht ebenfalls
-        //  world.loadWetter().wetterComp().altWohinHinaus() nutzen?
-
-        // Draußen ist es (anders als im Schloss) dunkel
-        return ImmutableSet.of(lichtverhaeltnisseDraussen.getWohin());
+        return world.loadWetter().wetterComp().altWohinHinaus(lichtverhaeltnisseDraussen);
     }
 
     /**
