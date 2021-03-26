@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
@@ -74,6 +75,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         return requirePcd().altWohinHinaus(timeTaker.now().getTime(), lichtverhaeltnisseDraussen);
+    }
+
+    public ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht() {
+        return requirePcd().altBeiTageslichtImLicht(timeTaker.now().getTime());
     }
 
     public ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt() {

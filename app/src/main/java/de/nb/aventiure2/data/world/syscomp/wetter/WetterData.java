@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -436,6 +437,9 @@ class WetterData {
         return alt.build();
     }
 
+    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time) {
+        return getBewoelkung().altBeiTageslichtImLicht(time.getTageszeit());
+    }
 
     ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final AvTime time) {
         return getBewoelkung().altLichtInDemEtwasLiegt(time.getTageszeit());

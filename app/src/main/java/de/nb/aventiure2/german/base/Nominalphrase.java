@@ -150,6 +150,8 @@ public class Nominalphrase
             np(M, DEF, "Tag");
     public static final Nominalphrase TAGESLICHT =
             np(N, DEF, "Tageslicht");
+    public static final Nominalphrase TAGESLICHT_OHNE_ART =
+            np(N, null, "Tageslicht");
     public static final Nominalphrase TRUEBES_DAEMMERLICHT =
             np(N, DEF, "trübe Dämmerlicht",
                     "trüben Dämmerlicht");

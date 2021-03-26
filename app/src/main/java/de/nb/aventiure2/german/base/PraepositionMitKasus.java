@@ -25,6 +25,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
 
     AUSSER_DAT("außer", DAT), // "außerm" generieren wir nicht, kein rechtes Schriftdeutsch
 
+    BEI_DAT("bei", DAT, "beim"),
+
     IN_DAT("in", DAT, "im"),
     IN_AKK("in", AKK),
 

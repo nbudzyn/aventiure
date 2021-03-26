@@ -24,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -42,6 +43,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -81,7 +83,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         WEST, "Den Wald verlassen und in den Schlossgarten gehen",
                         mins(10),
                         this::altDescTo_DraussenVorDemSchloss),
-                con(VOR_DEM_ALTEN_TURM,
+                conAltDesc(VOR_DEM_ALTEN_TURM,
                         "auf dem schmalen Pfad den Hügel hinauf",
                         NORTH, this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
@@ -179,35 +181,37 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return "Den schmalen Pfad aufwärtsgehen";
     }
 
-    private TimedDescription<?> getDescTo_VorDemAltenTurm(
+    private ImmutableCollection<TimedDescription<?>> getDescTo_VorDemAltenTurm(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == HELL) {
-            return du("nimmst",
+            return ImmutableList.of(du("nimmst",
                     "den schmalen Pfad, der sich lange durch",
                     "den Wald aufwärts windet. Ein Hase kreuzt den Weg",
                     (alleinAufDemPfadZumTurm() ? ", aber keine Menschenseele begegnet dir" : null),
                     ". Ganz am Ende – auf der Hügelkuppe – kommst du an einen alten Turm",
                     PARAGRAPH)
-                    .timed(mins(25));
+                    .timed(mins(25)));
         }
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisse == DUNKEL) {
-            return neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
+            return ImmutableList.of(neuerSatz("Trotz der Dunkelheit nimmst du den schmalen Pfad, "
                     + "der sich lange durch "
                     + "den nächtlichen Wald aufwärts windet. "
                     + "Du erschrickst, als eine Nachteule laut „uhu“ schreit, "
                     + "auch, als es laut neben dir im Unterholz raschelt. "
                     + "Endlich endet der Pfad an einen alten Turm", PARAGRAPH)
-                    .timed(mins(40));
+                    .timed(mins(40)));
         }
         if (newLocationKnown == KNOWN_FROM_DARKNESS
                 && lichtverhaeltnisse == HELL) {
-            return neuerSatz("Der schmale Pfad den Hügel hinauf ist bei Tageslicht "
-                    + "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm")
-                    .timed(mins(25));
+            return altNeueSaetze("Der schmale Pfad den Hügel hinauf ist",
+                    world.loadWetter().wetterComp().altBeiTageslichtImLicht().stream()
+                            .map(Praepositionalphrase::getDescription),
+                    "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm")
+                    .timed(mins(25)).build();
         }
-        return du("gehst",
+        return ImmutableList.of(du("gehst",
                 "wieder den langen, schmalen Pfad den Hügel hinauf bis zum Turm")
-                .timed(mins(25));
+                .timed(mins(25)));
     }
 
     @SuppressWarnings("unchecked")

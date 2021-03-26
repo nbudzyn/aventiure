@@ -2,9 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Streams;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
 
@@ -25,17 +29,21 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -108,7 +116,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 .undWartest()
                 ),
 
-                con(IM_WALD_BEIM_BRUNNEN, "auf dem breiten Weg tiefer in den Wald",
+                conAltDesc(IM_WALD_BEIM_BRUNNEN, "auf dem breiten Weg tiefer in den Wald",
                         EAST, this::getActionNameTo_ImWaldBeimBrunnen, mins(3),
                         this::getDescTo_ImWaldBeimBrunnen));
     }
@@ -125,13 +133,14 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 .timed(mins(5));
     }
 
-    private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
-                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
+    private ImmutableCollection<TimedDescription<?>> getDescTo_ImWaldBeimBrunnen(
+            final Known newLocationKnown,
+            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == HELL) {
-            return getDescTo_ImWaldBeimBrunnenUnkownHell();
+            return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenUnkownHell());
         }
         if (newLocationKnown == UNKNOWN && lichtverhaeltnisseInNewLocation == DUNKEL) {
-            return getDescTo_ImWaldBeimBrunnenUnknownDunkel();
+            return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenUnknownDunkel());
         }
         if (newLocationKnown == KNOWN_FROM_DARKNESS && lichtverhaeltnisseInNewLocation == HELL) {
             return getDescTo_ImWaldBeimBrunnenDarknessHell();
@@ -141,10 +150,10 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ))
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
-            return getDescTo_ImWaldBeimBrunnenOtherWirdTraurig();
+            return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirdTraurig());
         }
 
-        return getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig();
+        return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig());
     }
 
     @NonNull
@@ -157,12 +166,19 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 + "hier, und der Weg scheint zu Ende zu sein").timed(mins(10));
     }
 
-    private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenDarknessHell() {
-        return du("kehrst",
-                "zurück zum Brunnen – unter einer Linde, wie "
-                        + "du bei Licht erkennen kannst. Hinter dem "
-                        + "Brunnen beginnt der wilde Wald").timed(mins(4))
-                .komma();
+    private ImmutableCollection<TimedDescription<?>>
+    getDescTo_ImWaldBeimBrunnenDarknessHell() {
+        return Streams.concat(
+                Stream.of(k("bei Licht")),
+                world.loadWetter().wetterComp().altLichtInDemEtwasLiegt().stream()
+                        .map(licht -> IN_DAT.mit(licht).getDescription())
+        ).map(beiLicht -> du("kehrst",
+                "zurück zum Brunnen – unter einer Linde, wie du",
+                beiLicht,
+                "erkennen kannst. Hinter dem",
+                "Brunnen beginnt der wilde Wald").timed(mins(4))
+                .komma())
+                .collect(toImmutableSet());
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig() {

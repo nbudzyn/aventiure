@@ -12,6 +12,7 @@ import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
@@ -47,7 +48,9 @@ import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_LICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.ZWIELICHT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.praedikat.Modalverb.WOLLEN;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERABSCHEINEN;
@@ -55,6 +58,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEDECKEN;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 public enum Bewoelkung implements Betweenable<Bewoelkung> {
     // Reihenfolge ist relevant, nicht ändern!
@@ -335,6 +339,15 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return res.build().stream()
                 .map(AdvAngabeSkopusVerbWohinWoher::new)
                 .collect(toImmutableSet());
+    }
+
+    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit) {
+        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
+        alt.add(BEI_DAT.mit(TAGESLICHT));
+        alt.addAll(altLichtInDemEtwasLiegt(tageszeit).stream()
+                .map(IN_DAT::mit)
+                .collect(toSet()));
+        return alt.build();
     }
 
     ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final Tageszeit tageszeit) {
