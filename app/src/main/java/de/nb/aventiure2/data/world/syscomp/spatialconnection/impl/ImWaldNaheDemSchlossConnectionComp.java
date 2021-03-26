@@ -101,7 +101,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                 .undWartest()
                 ));
     }
-    
+
     private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()
@@ -135,7 +135,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                         du("erreichst", "bald",
                                 licht.nomK(), // "das helle Tageslicht"
                                 "in",
-                                licht.relPron(), // "dem"
+                                licht.relPron().datK(), // "dem"
                                 "der Schlossgarten liegt").schonLaenger()
                                 .mitVorfeldSatzglied("bald")
                                 .timed(mins(10))
