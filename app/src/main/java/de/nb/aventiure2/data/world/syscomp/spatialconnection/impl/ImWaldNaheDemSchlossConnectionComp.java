@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterComp;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
@@ -122,14 +123,20 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 world.loadWetter().wetterComp().altLichtInDemEtwasLiegt();
 
         if (timeTaker.now().getTageszeit() == NACHTS) {
-            alt.add(du(SENTENCE, "gehst",
-                    "noch eine Weile vorsichtig durch den dunklen "
-                            + "Wald, dann öffnet sich der Weg wieder und du stehst im "
-                            + "Schlossgarten "
-                            + "unter dem Sternenhimmel")
-                    .mitVorfeldSatzglied("noch eine Weile")
-                    .schonLaenger()
-                    .timed(mins(15)));
+            alt.addAll(
+                    WetterComp.
+                            altUnterOffenemHimmel().stream()
+                            .map(p ->
+                                    du(SENTENCE, "gehst",
+                                            "noch eine Weile vorsichtig durch",
+                                            "den dunklen",
+                                            "Wald, dann öffnet sich der Weg wieder und du stehst",
+                                            "im Schlossgarten",
+                                            p.getDescription() // "unter dem Sternenhimmel"
+                                    )
+                                            .mitVorfeldSatzglied("noch eine Weile")
+                                            .schonLaenger()
+                                            .timed(mins(15))));
         }
 
         alt.addAll(altLicht.stream()

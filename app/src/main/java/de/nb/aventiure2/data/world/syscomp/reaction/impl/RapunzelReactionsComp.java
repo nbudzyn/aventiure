@@ -77,7 +77,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -791,7 +791,7 @@ public class RapunzelReactionsComp
         n.narrate(neuerSatz(SCHIEBEN
                 .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
                 .mitAdvAngabe(
-                        new AdvAngabeSkopusVerbWohinWoher(UNTER.mit(
+                        new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(
                                 world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
                 .mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))

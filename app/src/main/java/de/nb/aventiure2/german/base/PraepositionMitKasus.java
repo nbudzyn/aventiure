@@ -38,7 +38,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     MIT_DAT("mit", DAT),
 
     NACH("nach", DAT),
-    UNTER("unter", AKK),
+    UNTER_DAT("unter", DAT),
+    UNTER_AKK("unter", AKK),
 
     /**
      * "vom Tisch"

@@ -146,6 +146,8 @@ public class Nominalphrase
             np(F, DEF, "Sonnenhitze");
     public static final Nominalphrase SONNENSCHEIN =
             np(M, DEF, "Sonnenschein");
+    public static final Nominalphrase STERNENHIMMEL =
+            np(M, DEF, "Sternenhimmel");
     public static final Nominalphrase STERNENLICHT =
             np(N, DEF, "Sternenlicht");
     public static final Nominalphrase TAG =

@@ -271,7 +271,7 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Überall nach schatt, wölk, Wetter, Himmel etc. suchen
+    // FIXME Überall nach Wetter, Himmel etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
     /**
@@ -486,9 +486,7 @@ class WetterData {
     //  "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
     //  "Als die Sonne untergeht..."
     //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
-    //  sitzt "in der Sonne"
     //  "du bist von der Sonnenhitze müde"
-    //  liegst "mitten im heißen Sonnenschein"
     //  "(Schwerter) blitzen in der Sonne"
     //  du legst dich "in die Sonne"
     //  "Die Sonne hat die Erde aufgetaut"
@@ -575,7 +573,6 @@ class WetterData {
 
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
     //  "von der Hitze des Tages ermüdet"
-
     //  "du bist von der Sonnenhitze müde"
 
     Bewoelkung getBewoelkung() {
