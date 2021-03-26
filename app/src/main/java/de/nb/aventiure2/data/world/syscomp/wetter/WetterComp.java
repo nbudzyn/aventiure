@@ -77,6 +77,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return requirePcd().altWohinHinaus(timeTaker.now().getTime(), lichtverhaeltnisseDraussen);
     }
 
+    public ImmutableSet<Praepositionalphrase> altBeiLichtImLicht() {
+        return requirePcd().altBeiLichtImLicht(timeTaker.now().getTime());
+    }
+
     public ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht() {
         return requirePcd().altBeiTageslichtImLicht(timeTaker.now().getTime());
     }

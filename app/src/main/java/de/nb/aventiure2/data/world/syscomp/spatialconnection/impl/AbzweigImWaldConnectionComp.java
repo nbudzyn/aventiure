@@ -5,10 +5,8 @@ import androidx.annotation.NonNull;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Streams;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
 
@@ -25,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
@@ -42,8 +41,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -168,16 +165,14 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
 
     private ImmutableCollection<TimedDescription<?>>
     getDescTo_ImWaldBeimBrunnenDarknessHell() {
-        return Streams.concat(
-                Stream.of(k("bei Licht")),
-                world.loadWetter().wetterComp().altLichtInDemEtwasLiegt().stream()
-                        .map(licht -> IN_DAT.mit(licht).getDescription())
-        ).map(beiLicht -> du("kehrst",
-                "zurück zum Brunnen – unter einer Linde, wie du",
-                beiLicht,
-                "erkennen kannst. Hinter dem",
-                "Brunnen beginnt der wilde Wald").timed(mins(4))
-                .komma())
+        return world.loadWetter().wetterComp().altBeiLichtImLicht().stream()
+                .map(Praepositionalphrase::getDescription
+                ).map(beiLicht -> du("kehrst",
+                        "zurück zum Brunnen – unter einer Linde, wie du",
+                        beiLicht,
+                        "erkennen kannst. Hinter dem",
+                        "Brunnen beginnt der wilde Wald").timed(mins(4))
+                        .komma())
                 .collect(toImmutableSet());
     }
 

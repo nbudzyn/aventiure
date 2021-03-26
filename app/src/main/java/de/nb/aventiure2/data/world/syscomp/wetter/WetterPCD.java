@@ -75,6 +75,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen);
     }
 
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time) {
+        return wetter.altBeiLichtImLicht(time);
+    }
+
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time) {
         return wetter.altBeiTageslichtImLicht(time);
     }

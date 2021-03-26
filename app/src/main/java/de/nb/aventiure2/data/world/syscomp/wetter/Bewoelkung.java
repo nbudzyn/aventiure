@@ -34,6 +34,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.GETRUEBTES_TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.HALBDUNKEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.HELLES_TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.HIMMEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.LICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.MONDLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.MORGENLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.NACHT;
@@ -43,6 +44,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.SANFTES_TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.SCHUMMERLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.STERNENLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TAGESLICHT;
+import static de.nb.aventiure2.german.base.Nominalphrase.TAGESLICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_LICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.ZWIELICHT;
@@ -341,9 +343,18 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                 .collect(toImmutableSet());
     }
 
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit) {
+        return altImLicht(tageszeit, BEI_DAT.mit(LICHT_OHNE_ART));
+    }
+
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit) {
+        return altImLicht(tageszeit, BEI_DAT.mit(TAGESLICHT_OHNE_ART));
+    }
+
+    private ImmutableSet<Praepositionalphrase> altImLicht(
+            final Tageszeit tageszeit, final Praepositionalphrase alternative) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
-        alt.add(BEI_DAT.mit(TAGESLICHT));
+        alt.add(alternative);
         alt.addAll(altLichtInDemEtwasLiegt(tageszeit).stream()
                 .map(IN_DAT::mit)
                 .collect(toSet()));

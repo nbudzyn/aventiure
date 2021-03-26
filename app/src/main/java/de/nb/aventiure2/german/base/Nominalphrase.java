@@ -99,6 +99,8 @@ public class Nominalphrase
             np(N, null, "ihr Ziel", "ihrem Ziel");
     public static final Nominalphrase LEIB =
             np(M, DEF, "Leib", "Leibe");
+    public static final Nominalphrase LICHT_OHNE_ART =
+            np(N, null, "Licht");
     public static final Nominalphrase MITTAGSSONNE =
             np(F, DEF, "Mittagssonne");
     public static final Nominalphrase MORGENDLICHER_SONNENSCHEIN =

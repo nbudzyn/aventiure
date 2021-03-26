@@ -437,6 +437,10 @@ class WetterData {
         return alt.build();
     }
 
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time) {
+        return getBewoelkung().altBeiLichtImLicht(time.getTageszeit());
+    }
+
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time) {
         return getBewoelkung().altBeiTageslichtImLicht(time.getTageszeit());
     }
