@@ -271,8 +271,7 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Überall nach licht, hell, dunkel, warm, wärme, wolk, kühl,
-    //  schatt, wölk, Wetter, Himmel etc. suchen
+    // FIXME Überall nach schatt, wölk, Wetter, Himmel etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
     /**

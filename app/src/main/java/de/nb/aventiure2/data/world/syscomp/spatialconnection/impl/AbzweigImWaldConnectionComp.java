@@ -23,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.wetter.Temperatur;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -154,13 +155,15 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     @NonNull
-    private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
-        return du("gehst", "den breiteren Weg weiter in "
-                + "den Wald hinein. Wohl ist dir dabei nicht.\n"
-                + "In der Ferne heult ein Wolf – oder hast du "
-                + "dir das eingebildet?\nDann kommst du an einen "
-                + "Baum, unter dem ist ein Brunnen. Kühl ist es "
-                + "hier, und der Weg scheint zu Ende zu sein").timed(mins(10));
+    private TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
+        return du("gehst", "den breiteren Weg weiter in",
+                "den Wald hinein. Wohl ist dir dabei nicht",
+                PARAGRAPH,
+                "In der Ferne heult ein Wolf – oder hast du",
+                "dir das eingebildet?", PARAGRAPH, "Dann kommst du an einen",
+                "Baum, unter dem ist ein Brunnen.",
+                kuehlOderWaermer() ? "Kühl" : "Kalt",
+                "ist es hier, und der Weg scheint zu Ende zu sein").timed(mins(10));
     }
 
     private ImmutableCollection<TimedDescription<?>>
@@ -204,17 +207,23 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 .timed(mins(3));
     }
 
-    private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
-        return neuerSatz("Der breitere Weg führt zu einer alten "
-                + "Linde, unter der ist ein Brunnen. "
-                + "Hinter dem Brunnen endet der Weg und der "
-                + "wilde Wald beginnt.\n"
-                + "Du setzt "
-                + "dich an den Brunnenrand – "
-                + "hier ist es "
-                + "angenehm kühl", PARAGRAPH)
+    private TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
+        return neuerSatz("Der breitere Weg führt zu einer alten",
+                "Linde, unter der ist ein Brunnen.",
+                "Hinter dem Brunnen endet der Weg und der",
+                "wilde Wald beginnt", PARAGRAPH,
+                "Du setzt dich an den Brunnenrand",
+                kuehlOderWaermer() ?
+                        "– hier ist es angenehm kühl" :
+                        ". Auch hier ist es kalt",
+                PARAGRAPH)
                 .timed(mins(5))
                 .dann();
+    }
+
+    private boolean kuehlOderWaermer() {
+        return world.loadWetter().wetterComp().getTemperatur()
+                .compareTo(Temperatur.KUEHL) >= 0;
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
