@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
@@ -71,6 +72,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen);
+    }
+
+    ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final AvTime time) {
+        return wetter.altLichtInDemEtwasLiegt(time);
     }
 
     @NonNull

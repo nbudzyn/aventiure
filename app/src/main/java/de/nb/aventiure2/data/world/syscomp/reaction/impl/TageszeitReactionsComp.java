@@ -35,7 +35,8 @@ public class TageszeitReactionsComp
         // FIXME WetterData berücksichtigen (verschieben?), insbesondere
         //  Bewölkung
 
-        // FIXME Über den Tag verteilen: die Sonne steht schon hoch.. weit nach Mittag....
+        // FIXME Über den Tag verteilen: die Sonne (WetterComp!) steht schon hoch.. weit nach
+        //  Mittag....
         //  Generell nicht nur an den "Tageszeitengrenzen" Texte erzeugen, sondern abhängig von
         //  der Uhrzeit?
         //  - Hinweise, dass die Nacht allmählich naht.
@@ -60,6 +61,8 @@ public class TageszeitReactionsComp
             // sicher ohnehin erzählt, was passiert ist.
             return;
         }
+
+        // FIXME Tageszeitenübergänge generell nur schreiben, wenn der SC wieder draußen ist?!
 
         switch (lastTageszeit) {
             case NACHTS:
@@ -100,6 +103,7 @@ public class TageszeitReactionsComp
                 return;
             case TAGSUEBER:
                 n.narrateAlt(AvTimeSpan.NO_TIME,
+                        // FIXME Wenn draußen, dann je nach Wetter!
                         neuerSatz("Inzwischen ist es hellichter Tag"),
                         neuerSatz("Der andere Tag hat begonnen"),
                         neuerSatz("Zwischenzeitlich ist die Sonne aufgegangen")

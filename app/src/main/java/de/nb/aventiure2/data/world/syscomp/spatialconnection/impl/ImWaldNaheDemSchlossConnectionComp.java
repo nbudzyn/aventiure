@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -22,15 +23,18 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
@@ -38,6 +42,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -71,11 +76,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     @Override
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
-                con(DRAUSSEN_VOR_DEM_SCHLOSS,
+                conAltDesc(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
                         WEST, "Den Wald verlassen und in den Schlossgarten gehen",
                         mins(10),
-                        this::getDescTo_DraussenVorDemSchloss),
+                        this::altDescTo_DraussenVorDemSchloss),
                 con(VOR_DEM_ALTEN_TURM,
                         "auf dem schmalen Pfad den Hügel hinauf",
                         NORTH, this::getActionNameTo_VorDemAltenTurm,
@@ -96,63 +101,60 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                 .undWartest()
                 ));
     }
-
-
-    private TimedDescription<?> getDescTo_DraussenVorDemSchloss(
+    
+    private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()
                 == BEGONNEN) {
-            return getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10));
+            return ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10)));
         }
 
-        return getDescTo_DraussenVorDemSchloss_KeinFest(lichtverhaeltnisse);
+        return altDescTo_DraussenVorDemSchloss_KeinFest();
     }
 
     @NonNull
-    private TimedDescription<?>
-    getDescTo_DraussenVorDemSchloss_KeinFest(
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (timeTaker.now().getTageszeit() == TAGSUEBER) {
-            return du("erreichst", "bald das helle "
-                    + "Tageslicht, in dem der Schlossgarten "
-                    + "liegt").schonLaenger()
-                    .mitVorfeldSatzglied("bald")
-                    .timed(mins(10))
-                    .undWartest()
-                    .komma();
+    private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_KeinFest() {
+        final AltTimedDescriptionsBuilder alt = altTimed();
+
+        final ImmutableCollection<Nominalphrase> altLicht =
+                world.loadWetter().wetterComp().altLichtInDemEtwasLiegt();
+
+        if (timeTaker.now().getTageszeit() == NACHTS) {
+            alt.add(du(SENTENCE, "gehst",
+                    "noch eine Weile vorsichtig durch den dunklen "
+                            + "Wald, dann öffnet sich der Weg wieder und du stehst im "
+                            + "Schlossgarten "
+                            + "unter dem Sternenhimmel")
+                    .mitVorfeldSatzglied("noch eine Weile")
+                    .schonLaenger()
+                    .timed(mins(15)));
         }
 
-        if (lichtverhaeltnisse == HELL) {
-            return du("erreichst", "bald den Schlossgarten").schonLaenger()
-                    .mitVorfeldSatzglied("bald")
-                    .timed(mins(10))
-                    .undWartest()
-                    .komma();
-        }
+        alt.addAll(altLicht.stream()
+                .map(licht ->
+                        du("erreichst", "bald",
+                                licht.nomK(), // "das helle Tageslicht"
+                                "in",
+                                licht.relPron(), // "dem"
+                                "der Schlossgarten liegt").schonLaenger()
+                                .mitVorfeldSatzglied("bald")
+                                .timed(mins(10))
+                                .undWartest()
+                                .komma()));
 
-        return du(SENTENCE, "gehst",
-                "noch eine Weile vorsichtig durch den dunklen "
-                        + "Wald, dann öffnet sich der Weg wieder und du stehst im Schlossgarten "
-                        + "unter dem Sternenhimmel")
-                .mitVorfeldSatzglied("noch eine Weile")
+        alt.add(du("erreichst", "bald den Schlossgarten")
                 .schonLaenger()
-                .timed(mins(15));
-        // TODO Lichtverhältnisse auch bei den anderen Aktionen berücksichtigen,
-        //  insbesondere nach derselben Logik (z.B. "im Schloss ist es immer hell",
-        //  "eine Fackel bringt auch nachts Licht" etc.)
-        // IDEA Wenn man schläft, "verpasst" man Reactions, die man dann später
-        //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
-        //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
-        //  Einschlafen. Vielleicht beim Aufwachen dasselbe Konzept wie beim Bewegen
-        //  verwenden! (Setzt voraus, dass der SC Änderungen während des Schlafens
-        //  weder erzählt bekommt noch sie in den assumedLocations registriert werden.)
+                .mitVorfeldSatzglied("bald")
+                .timed(mins(10))
+                .undWartest()
+                .komma());
+
+        return alt.build();
     }
 
     @NonNull
     private TimedDescription<?>
-    getDescTo_DraussenVorDemSchloss_FestBegonnen(
-            final AvTimeSpan timeSpan) {
+    getDescTo_DraussenVorDemSchloss_FestBegonnen(final AvTimeSpan timeSpan) {
         if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
             world.loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
             return du("bist", "von dem Lärm überrascht, der dir "

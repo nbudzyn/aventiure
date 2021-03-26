@@ -53,7 +53,6 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
@@ -893,8 +892,7 @@ public class RapunzelReactionsComp
         }
 
         // Ansonsten singt Rapunzel innerhalb gewisser Zeiten immer mal wieder
-        return now.getTageszeit().getLichtverhaeltnisseDraussen() == HELL &&
-                !isZeitFuerMittagsruhe(now) &&
+        return now.getTageszeit() != NACHTS && !isZeitFuerMittagsruhe(now) &&
                 immerMalWieder(now);
     }
 

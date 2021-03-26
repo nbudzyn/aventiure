@@ -249,6 +249,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  - Für andere Statusänderungen scheint es nicht zu funktionieren? Wenn
     //    man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten
     //    nicht mehr!
+    // IDEA Wenn man schläft, "verpasst" man Reactions, die man dann später
+    //  (beim Aufwachen) merkt ("Der Frosch ist verschwunden".) Man speichert
+    //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
+    //  Einschlafen. Vielleicht beim Aufwachen dasselbe Konzept wie beim Bewegen
+    //  verwenden! (Setzt voraus, dass der SC Änderungen während des Schlafens
+    //  weder erzählt bekommt noch sie in den assumedLocations registriert werden.)
     //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der
     //  äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied
     //  (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen -

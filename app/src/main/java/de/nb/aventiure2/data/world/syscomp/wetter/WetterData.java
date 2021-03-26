@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -206,7 +207,8 @@ class WetterData {
             }
 
             alt.addAll(altNeueSaetze(
-                    Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit(),
+                    Lichtverhaeltnisse.altSCKommtNachDraussenInDunkelheit().stream()
+                            .map(AbstractDescription::toSingleKonstituente),
                     ";",
                     temperatur.altStatischeBeschreibungSaetze()));
 
@@ -268,8 +270,8 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Überall nach Sonne, Mond, hell, dunkel, warm, wärme, wolk, kühl,
-    //  schatt, wölk, Wetter etc. suchen
+    // FIXME Überall nach licht, hell, dunkel, warm, wärme, wolk, kühl,
+    //  schatt, wölk, Wetter, Himmel etc. suchen
     //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
 
     /**
@@ -423,10 +425,6 @@ class WetterData {
             if (time.kurzNachSonnenuntergang()) {
                 alt.add(new AdvAngabeSkopusVerbWohinWoher("in die einbrechende Nacht"));
             }
-
-            if (lichtverhaeltnisseDraussen == Lichtverhaeltnisse.DUNKEL) {
-                alt.add(lichtverhaeltnisseDraussen.getWohin());
-            }
         }
 
         if (lichtverhaeltnisseDraussen == Lichtverhaeltnisse.DUNKEL) {
@@ -438,6 +436,10 @@ class WetterData {
         return alt.build();
     }
 
+
+    ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final AvTime time) {
+        return getBewoelkung().altLichtInDemEtwasLiegt(time.getTageszeit());
+    }
 
     Temperatur getTemperatur(final AvTime time) {
         return TagestemperaturverlaufUtil
@@ -501,6 +503,7 @@ class WetterData {
     //  "Du (bleibst unter der Linde sitzen), bis die Sonne untergeht"
     //  "Als die Sonne aufgeht, ..."
     //  "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
+    //  "der Mond lässt sein Licht über alle Felder leuchten"
 
     // FIXME Nacht:
     // "Bei einbrechender Nacht"

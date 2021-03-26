@@ -745,6 +745,18 @@ public class SpatialConnection {
         return con(to, wo, null, actionName, standardDuration, scMoveTimedDescriptionProvider);
     }
 
+    public static SpatialConnection conAltDesc(
+            final GameObjectId to,
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final String actionName,
+            final AvTimeSpan standardDuration,
+            final SpatialConnectionData.ScMoveAltTimedDescriptionProvider
+                    scMoveAltTimedDescriptionProvider) {
+        return conAltDesc(to, wo, cardinalDirection, () -> actionName, standardDuration,
+                scMoveAltTimedDescriptionProvider);
+    }
+
     public static SpatialConnection con(
             final GameObjectId to,
             final String wo,

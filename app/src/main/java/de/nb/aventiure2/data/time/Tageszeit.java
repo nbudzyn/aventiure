@@ -23,7 +23,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.NACHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.SONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.TAG;
-import static de.nb.aventiure2.german.base.Nominalphrase.TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.VOLLMOND;
 
 public enum Tageszeit {
@@ -37,15 +36,14 @@ public enum Tageszeit {
     MORGENS(MORGEN,
             HELL,
             ImmutableList.of(MORGENSONNE),
-            ImmutableList.of(ERSTE_SONNENSTRAHLEN, MORGENDLICHER_SONNENSCHEIN, SONNENSCHEIN,
-                    TAGESLICHT),
+            ImmutableList.of(ERSTE_SONNENSTRAHLEN, MORGENDLICHER_SONNENSCHEIN, SONNENSCHEIN),
             ImmutableList.of("Morgen", "guten Morgen", "schönen guten Morgen",
                     "einen schönen guten Morgen"),
             ImmutableList.of("schönen Tag noch", "einen schönten Tag noch")),
     TAGSUEBER(TAG,
             HELL,
             ImmutableList.of(SONNE, MITTAGSSONNE),
-            ImmutableList.of(SONNENSCHEIN, TAGESLICHT),
+            ImmutableList.of(SONNENSCHEIN),
             ImmutableList.of("guten Tag", "schönen guten Tag", "einen schönen guten Tag"),
             ImmutableList.of("schönen Tag noch", "einen schönten Tag noch")),
     ABENDS(ABEND,
