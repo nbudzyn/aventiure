@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -30,8 +31,8 @@ public class RapunzeDescriptionComp extends MultiDescriptionComp {
                 np(F, DEF, "junge Frau",
                         "jungen Frau", RAPUNZEL));
         rapunzelDescriptionTriple = new DescriptionTriple(
-                np(F, null, "Rapunzel", RAPUNZEL),
-                np(F, null, "Rapunzel", RAPUNZEL));
+                np(NomenFlexionsspalte.RAPUNZEL, RAPUNZEL),
+                np(NomenFlexionsspalte.RAPUNZEL, RAPUNZEL));
     }
 
     @Override

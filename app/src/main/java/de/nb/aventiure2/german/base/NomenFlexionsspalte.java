@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.regex.Pattern;
@@ -28,19 +29,30 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     ABENDLICHT(N, DEF, "Abendlicht"),
     ABENDSONNE(F, DEF, "Abendsonne"),
     ABENDSONNENSCHEIN(M, DEF, "Abendsonnenschein"),
-    ANGEBOTE(PL_MFN, INDEF, "Angebote", "Angeboten"),
+    ANGEBOTE_OHNE_ART(PL_MFN, INDEF, "Angebote", "Angeboten"),
     ASTGABEL(F, DEF, "Astgabel"),
+    BAUM(M, DEF, "Baum"),
+    BETT(N, DEF, "Bett"),
+    BETTGESTELL(N, DEF, "Bettgestell"),
     DINGE(PL_MFN, DEF, "Dinge", "Dingen"),
+    DAEMMERLICHT(N, DEF, "Dämmerlicht"),
     DUESTERNIS(F, DEF, "Düsternis"),
     DUNKEL(N, DEF, "Dunkel"),
     DUNKELHEIT(F, DEF, "Dunkelheit"),
+    EIN_BETT(N, INDEF, "Bett"),
+    EIN_BETTGESTELL(N, INDEF, "Bettgestell"),
     EIN_GESPRAECH(N, INDEF, "Gespräch"),
+    EINE_TASCHE(F, INDEF, "Tasche"),
+    FRAU(F, DEF, "Frau"),
     FREUDE_OHNE_ART(F, null, "Freude"),
+    FROSCH(M, DEF, "Frosch"),
     FUSS(M, DEF, "Fuß"),
     GESPRAECH(N, DEF, "Gespräch"),
+    HAENDE(PL_MFN, DEF, "Hände", "Händen"),
     HALBDUNKEL(N, DEF, "Halbdunkel"),
     HIMMEL(M, DEF, "Himmel"),
     HOEHE(F, DEF, "Höhe"),
+    KUGEL(F, DEF, "Kugel"),
     LEIB(M, DEF, "Leib", "Leibe"),
     LICHT_OHNE_ART(N, null, "Licht"),
     MITTAGSSONNE(F, DEF, "Mittagssonne"),
@@ -52,17 +64,24 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     MORGENSONNE(F, DEF, "Morgensonne"),
     NACHT(F, DEF, "Nacht"),
     NACHTHIMMEL(M, DEF, "Nachthimmel"),
+    RAPUNZEL(F, null, "Rapunzel"),
     RETTUNG_OHNE_ART(F, null, "Rettung"),
+    SCHATTEN(M, DEF, "Schatten"),
+    SCHLOSSWACHE(F, DEF, "Schlosswache"),
     SCHUMMERLICHT(N, DEF, "Schummerlicht"),
     SONNE(F, DEF, "Sonne"),
     SONNENHITZE(F, DEF, "Sonnenhitze"),
     SONNENSCHEIN(M, DEF, "Sonnenschein"),
     TAG(M, DEF, "Tag"),
+    STERNENHIMMEL(M, DEF, "Sternenhimmel"),
+    STERNENLICHT(N, DEF, "Sternenlicht"),
     TAGESLICHT(N, DEF, "Tageslicht"),
     TAGESLICHT_OHNE_ART(N, null, "Tageslicht"),
+    TISCH(M, DEF, "Tisch"),
     VOLLMOND(M, DEF, "Vollmond"),
     WAHRHEIT(F, DEF, "Wahrheit"),
     WUT_OHNE_ART(F, null, "Wut"),
+    ZAUBERIN(F, DEF, "Zauberin"),
     ZWIELICHT(N, DEF, "Zwielicht");
 
     private final NumerusGenus numerusGenus;
@@ -201,6 +220,15 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return P3;
     }
 
+    @Nullable
+    public Artikel.Typ getArtikelTyp() {
+        return artikelTyp;
+    }
+
+    public Flexionsreihe getFlexionsreiheArtikellos() {
+        return flexionsreiheArtikellos;
+    }
+
     @Override
     @Nullable
     public IBezugsobjekt getBezugsobjekt() {
@@ -212,7 +240,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return numerusGenus;
     }
 
+    // FIXME mit(AdjPhr)
+
+    @NonNull
     private Nominalphrase toNominalphrase() {
-        return np(numerusGenus, artikelTyp, flexionsreiheArtikellos);
+        return np(this);
     }
 }

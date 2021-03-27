@@ -2,10 +2,12 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -29,10 +31,10 @@ public class RapunzelsZauberinDescriptionComp extends MultiDescriptionComp {
                                 + "reichender Nase", RAPUNZELS_ZAUBERIN),
                 np(F, DEF, "magere Frau",
                         "mageren Frau", RAPUNZELS_ZAUBERIN),
-                np(F, DEF, "Frau", RAPUNZELS_ZAUBERIN));
+                np(NomenFlexionsspalte.FRAU, RAPUNZELS_ZAUBERIN));
         zauberinDescriptionTriple = new DescriptionTriple(
                 np(F, INDEF, "magere Zauberin", RAPUNZELS_ZAUBERIN),
-                np(F, DEF, "Zauberin", RAPUNZELS_ZAUBERIN));
+                np(ZAUBERIN, RAPUNZELS_ZAUBERIN));
     }
 
     @Override

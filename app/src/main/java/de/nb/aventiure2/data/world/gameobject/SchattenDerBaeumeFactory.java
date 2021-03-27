@@ -28,6 +28,7 @@ import static de.nb.aventiure2.data.world.gameobject.SchattenDerBaeumeFactory.Co
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHATTEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -61,7 +62,7 @@ class SchattenDerBaeumeFactory {
                 new SimpleDescriptionComp(id,
                         np(M, DEF, "Schatten der Bäume", id),
                         np(M, DEF, "Schatten der Bäume", id),
-                        np(M, DEF, "Schatten", id));
+                        np(SCHATTEN, id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

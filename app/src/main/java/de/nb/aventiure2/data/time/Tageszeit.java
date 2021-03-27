@@ -23,6 +23,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHTHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.VOLLMOND;
 import static de.nb.aventiure2.german.base.Nominalphrase.BLAUER_HIMMEL;
@@ -30,7 +31,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLARER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.MORGENDLICHER_SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.ROETLICHER_ABENDHIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.STRAHLEND_BLAUER_HIMMEL;
 
 public enum Tageszeit {

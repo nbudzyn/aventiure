@@ -27,6 +27,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAUM;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -67,7 +68,7 @@ public class BaumFactory {
                         np(M, DEF, "einzelne Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens", id),
-                        np(M, DEF, "Baum", id));
+                        np(BAUM, id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world, locationId,

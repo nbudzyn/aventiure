@@ -38,8 +38,6 @@ public class Nominalphrase
     public static final Nominalphrase BLAUER_HIMMEL =
             np(M, DEF, "blaue Himmel", "blauen Himmel",
                     "blauen Himmel");
-    public static final Nominalphrase DAEMMERLICHT =
-            np(N, DEF, "Dämmerlicht");
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
@@ -107,10 +105,6 @@ public class Nominalphrase
     public static final Nominalphrase STRAHLEND_BLAUER_HIMMEL =
             np(M, DEF, "strahlend blaue Himmel",
                     "strahlend blauen Himmel", "strahlend blauen Himmel");
-    public static final Nominalphrase STERNENHIMMEL =
-            np(M, DEF, "Sternenhimmel");
-    public static final Nominalphrase STERNENLICHT =
-            np(N, DEF, "Sternenlicht");
     public static final Nominalphrase TRUEBES_DAEMMERLICHT =
             np(N, DEF, "trübe Dämmerlicht",
                     "trüben Dämmerlicht");
@@ -186,11 +180,24 @@ public class Nominalphrase
                 fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
     }
 
+    public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(nomenFlexionsspalte, null);
+    }
+
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final Flexionsreihe flexionsreiheArtikellos) {
         return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
     }
+
+    public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(nomenFlexionsspalte.getNumerusGenus(),
+                nomenFlexionsspalte.getArtikelTyp(),
+                nomenFlexionsspalte.getFlexionsreiheArtikellos(),
+                bezugsobjekt);
+    }
+
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,

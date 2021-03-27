@@ -53,6 +53,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -65,10 +66,10 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -307,14 +308,13 @@ public class World {
                 InvisibleFactory.create(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                         // Weil nicht klar, welche Tasche -> kein Bezugsobjekt
-                        np(F, INDEF, "Tasche"),
+                        NomenFlexionsspalte.EINE_TASCHE,
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,
                         true, Lichtverhaeltnisse.DAUERHAFT_DUNKEL),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
-                        np(PL_MFN, DEF, "Hände", "Händen",
-                                HAENDE_DES_SPIELER_CHARAKTERS),
+                        np(NomenFlexionsspalte.HAENDE, HAENDE_DES_SPIELER_CHARAKTERS),
                         SPIELER_CHARAKTER, null,
                         false,
                         false, HAENDE),
@@ -324,7 +324,7 @@ public class World {
                         np(F, DEF,
                                 "goldene Kugel",
                                 "goldenen Kugel", GOLDENE_KUGEL),
-                        np(F, DEF, "Kugel", GOLDENE_KUGEL),
+                        np(KUGEL, GOLDENE_KUGEL),
                         SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                         true),
                 // IDEA Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
@@ -347,8 +347,7 @@ public class World {
                                 "langen Brettertisch",
                                 "langen Brettertisch",
                                 SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
-                        np(M, DEF, "Tisch",
-                                SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
+                        np(NomenFlexionsspalte.TISCH, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
                         // Der Tisch wird erst spontan hinzugefügt, wenn
                         // sich der Benutzer an einen Platz setzt.
                         // Ansonsten bekommen wir vorher Aktionen wie

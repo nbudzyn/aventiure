@@ -62,6 +62,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
@@ -101,7 +102,7 @@ class CreatureFactory {
                                 "Schlosswache mit ihrer "
                                         + "langen Hellebarde",
                                 SCHLOSSWACHE),
-                        np(F, DEF, "Schlosswache", SCHLOSSWACHE));
+                        np(NomenFlexionsspalte.SCHLOSSWACHE, SCHLOSSWACHE));
         final LocationComp locationComp =
                 new LocationComp(SCHLOSSWACHE, db, world, SCHLOSS_VORHALLE,
                         DRAUSSEN_VOR_DEM_SCHLOSS,
