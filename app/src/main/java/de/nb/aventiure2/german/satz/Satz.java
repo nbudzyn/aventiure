@@ -29,6 +29,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Ein Satz.
@@ -71,8 +72,7 @@ public class Satz {
             @Nullable final SubstantivischePhrase subjekt,
             final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
             final SubstantivischePhrase objekt) {
-        return praedikate.stream().map(v -> v.mit(objekt).alsSatzMitSubjekt(subjekt))
-                .collect(toImmutableList());
+        return mapToList(praedikate, v -> v.mit(objekt).alsSatzMitSubjekt(subjekt));
     }
 
     public static ImmutableList<Satz> altSubjObjSaetze(

@@ -38,7 +38,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 public enum Temperatur implements Betweenable<Temperatur> {
     // Reihenfolge ist relevant, nicht ändern!
@@ -73,9 +73,8 @@ public enum Temperatur implements Betweenable<Temperatur> {
     ImmutableCollection<Satz> altScKommtNachDraussenSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(altStatischeBeschreibungSaetze().stream()
-                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
-                .collect(toList()));
+        alt.addAll(mapToList(altStatischeBeschreibungSaetze(),
+                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         switch (this) {
             case KLIRREND_KALT:
@@ -109,9 +108,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
     ImmutableCollection<Satz> altStatischeBeschreibungSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(altPraedikativa().stream()
-                .map(Praedikativum::alsEsIstSatz)
-                .collect(toList()));
+        alt.addAll(mapToList(altPraedikativa(), Praedikativum::alsEsIstSatz));
         switch (this) {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
@@ -187,11 +184,9 @@ public enum Temperatur implements Betweenable<Temperatur> {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Heute ist es heiß / schönes Wetter."
-        alt.addAll(altPraedikativa()
-                .stream()
-                .map(a -> a.alsEsIstSatz()
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("heute")))
-                .collect(toImmutableList()));
+        alt.addAll(
+                mapToList(altPraedikativa(), a -> a.alsEsIstSatz()
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
 
         alt.addAll(altDerTagIstSaetze());
 

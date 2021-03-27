@@ -64,7 +64,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.mapToList;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -178,9 +178,8 @@ public class RapunzelsZauberinReactionsComp
         alt.addAll(altNachsehenHinterhersehenSaetze(anaph, getPersonalpronomenSC())
         );
         alt.addAll(altZusehenSaetze(anaph, getPersonalpronomenSC(),
-                ImmutableList.of("ärgerlich", "verdrossen").stream()
-                        .map(AdvAngabeSkopusVerbAllg::new)
-                        .collect(toList()))
+                mapToList(
+                        ImmutableList.of("ärgerlich", "verdrossen"), AdvAngabeSkopusVerbAllg::new))
         );
 
         n.narrateAlt(alt.schonLaenger(), NO_TIME);

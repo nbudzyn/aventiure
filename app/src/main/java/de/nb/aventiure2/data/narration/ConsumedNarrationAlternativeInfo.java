@@ -10,7 +10,7 @@ import java.util.Objects;
 
 import de.nb.aventiure2.german.description.TextDescription;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Angabe, dass zu einem <i>Satz von Alternativen</i>
@@ -54,9 +54,7 @@ public class ConsumedNarrationAlternativeInfo {
 
     static int calcAlternativesStringHash(
             final Collection<? extends TextDescription> alternatives) {
-        return alternatives.stream()
-                .map(TextDescription::getTextOhneKontext)
-                .collect(toImmutableList()).hashCode();
+        return mapToList(alternatives, TextDescription::getTextOhneKontext).hashCode();
     }
 
     @Override

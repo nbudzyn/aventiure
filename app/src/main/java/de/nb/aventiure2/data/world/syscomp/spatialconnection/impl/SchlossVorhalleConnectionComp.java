@@ -24,7 +24,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.description.TimedDescription;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -40,6 +39,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BE
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -113,13 +113,13 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
-            return world.loadWetter().wetterComp()
-                    .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen).stream()
-                    .map(wetterDesc ->
+            return mapToSet(
+                    world.loadWetter().wetterComp()
+                            .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen),
+                    wetterDesc ->
                             du("verlässt", "das Schloss",
                                     SENTENCE,
-                                    wetterDesc.toSingleKonstituente()).timed(mins(1)))
-                    .collect(toImmutableSet());
+                                    wetterDesc.toSingleKonstituente()).timed(mins(1)));
         }
 
         return ImmutableList.of(
@@ -134,34 +134,29 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         if (lichtverhaeltnisseDraussen == HELL) {
             // FIXME altDu() o.Ä.?!
-            return world.loadWetter().wetterComp()
-                    .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen).stream()
-                    .map(wetterDesc ->
-                            du("gehst",
-                                    "über eine Marmortreppe hinaus in die Gärten vor dem",
-                                    "Schloss", CHAPTER,
-                                    wetterDesc.toSingleKonstituente(),
-                                    SENTENCE,
-                                    "nahebei liegt ein großer, dunkler Wald")
-                                    .mitVorfeldSatzglied("über eine Marmortreppe")
-                                    .timed(mins(1)))
-                    .collect(toImmutableSet());
+            return mapToSet(world.loadWetter().wetterComp()
+                    .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen), wetterDesc ->
+                    du("gehst",
+                            "über eine Marmortreppe hinaus in die Gärten vor dem",
+                            "Schloss", CHAPTER,
+                            wetterDesc.toSingleKonstituente(),
+                            SENTENCE,
+                            "nahebei liegt ein großer, dunkler Wald")
+                            .mitVorfeldSatzglied("über eine Marmortreppe")
+                            .timed(mins(1)));
         }
 
         // FIXME altDu() o.Ä.?!
-        return world.loadWetter().wetterComp()
-                .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen)
-                .stream()
-                .map(wetterDesc ->
-                        du("gehst", "über eine Marmortreppe hinaus den "
-                                        + "Garten vor dem Schloss.", CHAPTER,
-                                wetterDesc.toSingleKonstituente(),
-                                SENTENCE,
-                                "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
-                                .mitVorfeldSatzglied("über eine Marmortreppe")
-                                .timed(mins(1))
-                                .komma())
-                .collect(toImmutableSet());
+        return mapToSet(world.loadWetter().wetterComp()
+                .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen), wetterDesc ->
+                du("gehst", "über eine Marmortreppe hinaus den "
+                                + "Garten vor dem Schloss.", CHAPTER,
+                        wetterDesc.toSingleKonstituente(),
+                        SENTENCE,
+                        "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
+                        .mitVorfeldSatzglied("über eine Marmortreppe")
+                        .timed(mins(1))
+                        .komma());
     }
 
     @NonNull

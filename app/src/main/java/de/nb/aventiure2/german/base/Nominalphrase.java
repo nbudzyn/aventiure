@@ -29,6 +29,8 @@ public class Nominalphrase
     // AvObject oder eine AbstractEntity beziehen.
     public static final Nominalphrase ABEND =
             np(M, DEF, "Abend");
+    public static final Nominalphrase ABENDHIMMEL =
+            np(M, DEF, "Abendhimmel");
     public static final Nominalphrase ABENDLICHT =
             np(N, DEF, "Abendlicht");
     public static final Nominalphrase ABENDSONNE =
@@ -39,6 +41,9 @@ public class Nominalphrase
             np(PL_MFN, INDEF, "Angebote", "Angeboten");
     public static final Nominalphrase ASTGABEL =
             np(F, DEF, "Astgabel");
+    public static final Nominalphrase BLAUER_HIMMEL =
+            np(M, DEF, "blaue Himmel", "blauen Himmel",
+                    "blauen Himmel");
     public static final Nominalphrase DAEMMERLICHT =
             np(N, DEF, "Dämmerlicht");
     public static final Nominalphrase DEIN_HERZ =
@@ -82,6 +87,9 @@ public class Nominalphrase
                     "heißen Tag", "heißen Tag");
     public static final Nominalphrase HALBDUNKEL =
             np(N, DEF, "Halbdunkel");
+    public static final Nominalphrase HEISSER_SONNENSCHEIN =
+            np(M, DEF, "heiße Sonnenschein",
+                    "heißen Sonnenschein", "heißen Sonnenschein");
     public static final Nominalphrase HELLES_TAGESLICHT =
             np(N, DEF, "helle Tageslicht",
                     "hellen Tageslicht", "helle Tageslicht");
@@ -97,6 +105,9 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase KLARER_HIMMEL =
+            np(M, DEF, "klare Himmel", "klaren Himmel",
+                    "klaren Himmel");
     public static final Nominalphrase LEIB =
             np(M, DEF, "Leib", "Leibe");
     public static final Nominalphrase LICHT_OHNE_ART =
@@ -124,11 +135,16 @@ public class Nominalphrase
             np(F, DEF, "Morgensonne");
     public static final Nominalphrase NACHT =
             np(F, DEF, "Nacht");
+    public static final Nominalphrase NACHTHIMMEL =
+            np(M, DEF, "Nachthimmel");
     public static final Nominalphrase RETTUNG_OHNE_ART =
             np(F, null, "Rettung");
     public static final Nominalphrase EIN_SCHOENER_ABEND =
             np(M, INDEF, "schöner Abend",
                     "schönen Abend", "schönen Abend");
+    public static final Nominalphrase ROETLICHER_ABENDHIMMEL =
+            np(M, DEF, "rötliche Abendhimmel", "rötlichen Abendhimmel",
+                    "rötlichen Abendhimmel");
     public static final Nominalphrase SANFTES_MONDLICHT =
             np(N, DEF, "sanfte Mondlicht",
                     "sanften Mondlicht");
@@ -140,12 +156,17 @@ public class Nominalphrase
                     "sanften Tageslicht");
     public static final Nominalphrase SCHUMMERLICHT =
             np(N, DEF, "Schummerlicht");
+    public static final Nominalphrase SENGENDE_SONNE =
+            np(F, DEF, "sengende Sonne", "sengenden Sonne");
     public static final Nominalphrase SONNE =
             np(F, DEF, "Sonne");
     public static final Nominalphrase SONNENHITZE =
             np(F, DEF, "Sonnenhitze");
     public static final Nominalphrase SONNENSCHEIN =
             np(M, DEF, "Sonnenschein");
+    public static final Nominalphrase STRAHLEND_BLAUER_HIMMEL =
+            np(M, DEF, "strahlend blaue Himmel",
+                    "strahlend blauen Himmel", "strahlend blauen Himmel");
     public static final Nominalphrase STERNENHIMMEL =
             np(M, DEF, "Sternenhimmel");
     public static final Nominalphrase STERNENLICHT =

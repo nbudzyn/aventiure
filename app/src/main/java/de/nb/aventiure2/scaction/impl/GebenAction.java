@@ -38,6 +38,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.HINHALTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.REICHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZEIGEN;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Benutzer gibt einem Living Being einen Gegenstand, den er bei sich trägt.
@@ -128,8 +129,7 @@ public class GebenAction<
                         getGebenPraedikatAlt() : getAnbietenPraedikatAlt();
 
         final ImmutableList<StructuredDescription> descAlt =
-                praedikatAlt.stream().map(GebenAction::toAnbietenGebenDuDescription)
-                        .collect(ImmutableList.toImmutableList());
+                mapToList(praedikatAlt, GebenAction::toAnbietenGebenDuDescription);
 
         n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt),
                 secs(20));

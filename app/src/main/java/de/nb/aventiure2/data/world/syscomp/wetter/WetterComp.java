@@ -17,8 +17,6 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Nominalphrase.STERNENHIMMEL;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
 
 /**
  * Wetter
@@ -69,7 +67,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return requirePcd().altWetterplauderrede(timeTaker.now().getTime());
     }
 
-
     /**
      * Gibt alternative Beschreibungen zurück in der Art "in den Sonnenschein" o.Ä., die mit
      * "hinaus" verknüpft werden können.
@@ -77,6 +74,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         return requirePcd().altWohinHinaus(timeTaker.now().getTime(), lichtverhaeltnisseDraussen);
+    }
+
+    public ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel() {
+        return requirePcd().altUnterOffenemHimmel(timeTaker.now().getTime());
     }
 
     public ImmutableSet<Praepositionalphrase> altBeiLichtImLicht() {
@@ -101,15 +102,5 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-    }
-
-    public static ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel() {
-        // FIXME Ergänzen je Bewölkung, Temperatur und Tageszeit.
-        //  Alternativen: "im Sonnenschein"?
-        //  "in der Sonne"
-        //  "mitten im heißen Sonnenschein"
-        //  Vielleicht verwenden lassen in der WetterComp, wenn es schon ähnliche
-        //  Dinge gibt.
-        return ImmutableSet.of(UNTER_DAT.mit(STERNENHIMMEL));
     }
 }

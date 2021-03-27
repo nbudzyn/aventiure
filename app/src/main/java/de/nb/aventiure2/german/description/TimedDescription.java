@@ -23,8 +23,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -69,10 +69,8 @@ public class TimedDescription<
     ImmutableSet<TimedDescription<D>> toTimed(
             final Collection<D> descriptions, final AvTimeSpan timeElapsed,
             @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
-        return descriptions.stream()
-                .map(d -> new TimedDescription<>(
-                        d, timeElapsed, counterIdIncrementedIfTextIsNarrated))
-                .collect(toImmutableSet());
+        return mapToSet(descriptions, d -> new TimedDescription<>(
+                d, timeElapsed, counterIdIncrementedIfTextIsNarrated));
     }
 
     @CheckReturnValue
@@ -80,9 +78,7 @@ public class TimedDescription<
     public static <D extends AbstractDescription<?>>
     ImmutableList<D> toUntimed(
             final Collection<? extends TimedDescription<D>> timedDescriptions) {
-        return timedDescriptions.stream()
-                .map(TimedDescription::getDescription)
-                .collect(toImmutableList());
+        return mapToList(timedDescriptions, TimedDescription::getDescription);
     }
 
     public TimedDescription(final D description,
@@ -149,9 +145,7 @@ public class TimedDescription<
     @CheckReturnValue
     private <OTHER extends AbstractDescription<?>> ImmutableList<TimedDescription<OTHER>> withAltDescriptions(
             final Collection<OTHER> altDescriptions) {
-        return altDescriptions.stream()
-                .map(this::withDescription)
-                .collect(toImmutableList());
+        return mapToList(altDescriptions, this::withDescription);
     }
 
     @NonNull

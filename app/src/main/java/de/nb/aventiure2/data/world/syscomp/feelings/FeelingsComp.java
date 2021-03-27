@@ -58,8 +58,8 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -992,32 +992,26 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p), PARAGRAPH))
-                .collect(toList()));
+        res.addAll(mapToList(altMuedigkeitAdjPhr(),
+                p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p), PARAGRAPH)));
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH))
-                .collect(toList()));
+        res.addAll(mapToList(altMuedigkeitAdjPhr(),
+                p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)));
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, "fühlst",
-                        "dich auf einmal", p.getPraedikativ(P2, SG), PARAGRAPH)
-                        .mitVorfeldSatzglied("auf einmal"))
-                .collect(toList()));
+        res.addAll(mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH, "fühlst",
+                "dich auf einmal", p.getPraedikativ(P2, SG), PARAGRAPH)
+                .mitVorfeldSatzglied("auf einmal")));
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH,
+        res.addAll(
+                mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH,
                         praedikativumPraedikatMit(p).mitAdvAngabe(
                                 new AdvAngabeSkopusSatz("auf einmal")),
-                        PARAGRAPH))
-                .collect(toList()));
+                        PARAGRAPH)));
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdvAngabe(
+        res.addAll(mapToList(altMuedigkeitAdjPhr(),
+                p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdvAngabe(
                         new AdvAngabeSkopusSatz("mit einem Mal")),
-                        PARAGRAPH))
-                .collect(toList()));
+                        PARAGRAPH)));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
             // NUR_LEICHT: "leicht erschöpft"
@@ -1150,17 +1144,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
         res.addAll(
-                altMuedigkeitAdjPhr().stream()
-                        .map(p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)
-                                .schonLaenger())
-                        .collect(toList()));
+                mapToList(altMuedigkeitAdjPhr(),
+                        p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)
+                                .schonLaenger()));
 
-        res.addAll(altMuedigkeitAdjPhr().stream()
-                .map(p -> du(PARAGRAPH, "fühlst",
-                        "dich", p.getPraedikativ(P2, SG), PARAGRAPH)
-                        .schonLaenger()
-                )
-                .collect(toList()));
+        res.addAll(mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH, "fühlst",
+                "dich", p.getPraedikativ(P2, SG), PARAGRAPH)
+                .schonLaenger()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {
             // NUR_LEICHT: "leicht erschöpft"

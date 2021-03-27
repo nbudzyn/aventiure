@@ -23,8 +23,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
-import de.nb.aventiure2.data.world.syscomp.wetter.WetterComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -119,13 +117,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_KeinFest() {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        final ImmutableCollection<Nominalphrase> altLicht =
-                world.loadWetter().wetterComp().altLichtInDemEtwasLiegt();
-
         if (timeTaker.now().getTageszeit() == NACHTS) {
             alt.addAll(
-                    WetterComp.
-                            altUnterOffenemHimmel().stream()
+                    world.loadWetter().wetterComp().altUnterOffenemHimmel().stream()
                             .map(p ->
                                     du(SENTENCE, "gehst",
                                             "noch eine Weile vorsichtig durch",
@@ -139,7 +133,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                             .timed(mins(15))));
         }
 
-        alt.addAll(altLicht.stream()
+        alt.addAll(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt().stream()
                 .map(licht ->
                         du("erreichst", "bald",
                                 licht.nomK(), // "das helle Tageslicht"

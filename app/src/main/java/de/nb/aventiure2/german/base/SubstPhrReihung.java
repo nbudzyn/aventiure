@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
@@ -17,6 +16,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.PL;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -107,9 +107,8 @@ public class SubstPhrReihung extends SubstantivischePhrase {
                 ImmutableList.<Konstituentenfolge>builder()
                         .add(elemente.get(0).artikellosDatK())
                         .addAll(
-                                elemente.subList(1, elemente.size()).stream()
-                                        .map(SubstantivischePhrase::datK)
-                                        .collect(Collectors.toList())
+                                mapToList(elemente.subList(1, elemente.size()),
+                                        SubstantivischePhrase::datK)
                         )
                         .build());
     }

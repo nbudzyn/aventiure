@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static java.util.stream.Collectors.toSet;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt das Gefühl eines Feeling Beings
@@ -37,9 +37,8 @@ public interface FeelingsDescriber {
                         altEindruckBeiBegegnungAdjPhr(gameObjectSubjekt,
                                 targetDesc, feelingIntensity,
                                 targetKnown)))
-                .addAll(altEindruckBeiBegegnungZusAdvAngaben(feelingIntensity).stream()
-                        .map(AdvAngabeSkopusVerbAllg::new)
-                        .collect(toSet()))
+                .addAll(mapToSet(altEindruckBeiBegegnungZusAdvAngaben(feelingIntensity),
+                        AdvAngabeSkopusVerbAllg::new))
                 .build();
     }
 

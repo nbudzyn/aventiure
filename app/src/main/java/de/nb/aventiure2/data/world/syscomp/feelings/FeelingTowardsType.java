@@ -10,7 +10,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -92,9 +92,7 @@ public enum FeelingTowardsType {
 
         res.addAll(saetze);
 
-        res.addAll(saetze.stream()
-                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("auf einmal")))
-                .collect(toList()));
+        res.addAll(mapToList(saetze, s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("auf einmal"))));
 
         return res.build();
     }

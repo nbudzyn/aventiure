@@ -12,8 +12,19 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 public class Praepositionalphrase implements Praedikativum {
     /**
      * Ein Adverb oder Adjektiv, dass die Phrase modifiziert:
-     * "schräg über der Tür"
+     * "schräg über der Tür".
+     * <p>
+     * Hierzu zählen wir auch vorangestellte "Lokalkombinatoren"
+     * wie "rings (um den Teich)", "mitten (in der Stadt)" und
+     * "quer (zur Straße)". Vgl. zu denen
+     * {@link http://sprachwissenschaft.fau.de/personen/daten/breindl/breindl_2006_quer-durch-die
+     * -wortarten-rings-um-die-phrasensyntax-mitten-in-die-semantik.pdf}
      */
+    // Es gibt auch noch nachgestellte Lokalkombinatoren wie "am Haus (entlang)" und
+    // "an der Straße (längs)". Die sind derzeit nicht abgedeckt.
+    // Auch zu denen vgl. http://sprachwissenschaft.fau
+    // .de/personen/daten/breindl/breindl_2006_quer-durch-die-wortarten-rings-um-die
+    // -phrasensyntax-mitten-in-die-semantik.pdf .
     @Nullable
     private final String modAdverbOderAdjektiv;
 

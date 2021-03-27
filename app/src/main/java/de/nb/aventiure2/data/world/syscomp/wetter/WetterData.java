@@ -16,7 +16,6 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -31,9 +30,13 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STARK;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
+import static de.nb.aventiure2.german.base.Nominalphrase.HEISSER_SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.Nominalphrase.SENGENDE_SONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.SONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.SONNENHITZE;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -41,7 +44,7 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
 import static de.nb.aventiure2.german.praedikat.VerbSubj.BRENNEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERUNTERSCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 @Immutable
 class WetterData {
@@ -229,9 +232,8 @@ class WetterData {
     private List<Satz> altSonnenhitzeSaetzeWennSinnvollMitAdvAngabe(final AvTime time,
                                                                     final boolean b,
                                                                     final String advAngabeText) {
-        return altStatischeBeschreibungSaetzeSonnenhitzeWennSinnvoll(time, b).stream()
-                .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz(advAngabeText)))
-                .collect(toList());
+        return mapToList(altStatischeBeschreibungSaetzeSonnenhitzeWennSinnvoll(time, b),
+                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz(advAngabeText)));
     }
 
     /**
@@ -370,12 +372,12 @@ class WetterData {
 
         if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
             if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in den heißen Sonnenschein"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(HEISSER_SONNENSCHEIN)));
             }
 
             if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
                 alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Sonnenhitze"));
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die sengende Sonne"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(SENGENDE_SONNE)));
 
                 if (time.gegenMittag()) {
                     alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Mittagshitze"));
@@ -402,8 +404,7 @@ class WetterData {
 
             if (temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.add(new AdvAngabeSkopusVerbWohinWoher(
-                        PraepositionMitKasus.IN_AKK.mit(
-                                time.getTageszeit().getNominalphrase())));
+                        IN_AKK.mit(time.getTageszeit().getNominalphrase())));
             }
         }
 
@@ -431,6 +432,30 @@ class WetterData {
             alt.addAll(temperatur.altWohinHinausDunkelheit());
         } else {
             alt.addAll(temperatur.altWohinHinaus(time));
+        }
+
+        return alt.build();
+    }
+
+    ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
+        final Temperatur temperatur = getTemperatur(time);
+
+        final ImmutableSet.Builder<Praepositionalphrase> alt =
+                ImmutableSet.builder();
+
+        // FIXME Windstärke berücksichtigen?
+        // FIXME Blitz und Donner berücksichtigen?
+
+        alt.addAll(getBewoelkung().altUnterOffenemHimmel(time.getTageszeit()));
+
+        if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
+            if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
+                alt.add(IN_DAT.mit(HEISSER_SONNENSCHEIN).mitModAdverbOderAdjektiv("mitten"));
+            }
+
+            if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
+                alt.add(IN_DAT.mit(SENGENDE_SONNE));
+            }
         }
 
         return alt.build();

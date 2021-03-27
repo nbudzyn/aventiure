@@ -12,7 +12,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
@@ -28,6 +27,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser
 import de.nb.aventiure2.score.ScoreService;
 
 import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 public class MainViewModel extends AndroidViewModel {
     private static final Logger LOGGER = Logger.getLogger();
@@ -64,12 +64,10 @@ public class MainViewModel extends AndroidViewModel {
     }
 
     @WorkerThread
-    private List<GuiAction> buildGuiActions() {
+    private ImmutableList<GuiAction> buildGuiActions() {
         final List<AbstractScAction> playerActions = scActionService.getPlayerActions();
 
-        return playerActions.stream()
-                .map(this::toGuiAction)
-                .collect(Collectors.toList());
+        return mapToList(playerActions, this::toGuiAction);
 
     }
 

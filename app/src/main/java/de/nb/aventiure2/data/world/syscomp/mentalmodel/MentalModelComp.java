@@ -19,7 +19,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Componente für eine {@link de.nb.aventiure2.data.world.base.GameObject}:
@@ -145,7 +145,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
             final Collection<? extends ILocatableGO> locatables,
             @Nullable final ILocationGO location) {
         setAssumedLocations(
-                locatables.stream().map(ILocatableGO::getId).collect(toList()),
+                mapToList(locatables, ILocatableGO::getId),
                 location);
     }
 

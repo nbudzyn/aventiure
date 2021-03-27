@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 public class AStarPathfinder {
     private final World world;
@@ -113,9 +114,9 @@ public class AStarPathfinder {
         }
 
         return
-                ((ISpatiallyConnectedGO) from).spatialConnectionComp().getConnections().stream()
-                        .map(AStarPathfinder::toSpatialStandardStep)
-                        .collect(ImmutableList.toImmutableList());
+                mapToList(
+                        ((ISpatiallyConnectedGO) from).spatialConnectionComp().getConnections(),
+                        AStarPathfinder::toSpatialStandardStep);
     }
 
     private static SpatialStandardStep toSpatialStandardStep(

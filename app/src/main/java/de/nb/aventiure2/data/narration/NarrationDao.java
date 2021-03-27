@@ -23,9 +23,10 @@ import de.nb.aventiure2.german.stemming.StemmedWords;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.narration.DescriptionCombiner.combine;
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -77,15 +78,13 @@ public abstract class NarrationDao {
         for (final AbstractDescription<?> first : firstAlternatives) {
             for (final TimedDescription<?> second : secondAlternatives) {
                 combinations.addAll(
-                        DescriptionCombiner.combine(
+                        mapToList(combine(
                                 first,
                                 second.getDescription(),
-                                initialNarration).stream()
-                                .map(na -> na
-                                        .timed(second.getTimeElapsed())
-                                        .withCounterIdIncrementedIfTextIsNarrated(
-                                                second.getCounterIdIncrementedIfTextIsNarrated()))
-                                .collect(toImmutableList())
+                                initialNarration), na -> na
+                                .timed(second.getTimeElapsed())
+                                .withCounterIdIncrementedIfTextIsNarrated(
+                                        second.getCounterIdIncrementedIfTextIsNarrated()))
                 );
             }
         }
@@ -298,9 +297,8 @@ public abstract class NarrationDao {
 
     private static ConsumedAlternatives toConsumedAlternatives(
             final List<ConsumedNarrationAlternativeInfo> infos) {
-        return new ConsumedAlternatives(infos.stream()
-                .map(ConsumedNarrationAlternativeInfo::getConsumedAlternativeStringHash)
-                .collect(toImmutableSet()));
+        return new ConsumedAlternatives(mapToSet(infos,
+                ConsumedNarrationAlternativeInfo::getConsumedAlternativeStringHash));
     }
 
     @Query("SELECT * from ConsumedNarrationAlternativeInfo where :alternativesStringHash = "

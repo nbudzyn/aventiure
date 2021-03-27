@@ -33,7 +33,6 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.collect.ImmutableList.of;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -55,6 +54,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
 import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -157,8 +157,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        narrateAndDoHochwerfenAuffangen(sc.feelingsComp().altAdvAngabenSkopusSatz().stream()
-                .map(a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellen(
+        narrateAndDoHochwerfenAuffangen(mapToList(sc.feelingsComp().altAdvAngabenSkopusSatz(),
+                a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellen(
                         WERFEN.mit(anaph)
                                 .mitAdvAngabe(a)
                                 .mitAdvAngabe(
@@ -170,8 +170,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                                                 "wieder"))
                 ))
                         .timed(secs(3))
-                        .dann())
-                .collect(toImmutableList()));
+                        .dann()));
     }
 
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> void

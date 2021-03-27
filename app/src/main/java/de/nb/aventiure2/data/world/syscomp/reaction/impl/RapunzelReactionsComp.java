@@ -87,7 +87,7 @@ import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.al
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SCHIEBEN;
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -541,12 +541,9 @@ public class RapunzelReactionsComp
         alt.addAll(altSaetze(altReaktionSaetze).schonLaenger().timed(secs(5)));
 
         alt.addAll(altSaetze(
-                feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph).stream()
-                        // Diese Sätze sind bereits in altZuneigungAbneigungSaetze enthalten...
-                        // ...aber noch nicht mit dieser Ergänzung:
-                        .map(s -> s.mitAdvAngabe(
-                                new AdvAngabeSkopusSatz("oben im dunklen Zimmer")))
-                        .collect(toList())).schonLaenger()
+                mapToList(feelingsComp.altSCBeiBegegnungAnsehenSaetze(anaph),
+                        s -> s.mitAdvAngabe(
+                                new AdvAngabeSkopusSatz("oben im dunklen Zimmer")))).schonLaenger()
                 .timed(secs(15)));
 
         alt.add(du(SENTENCE, "hast", anaph.akkK(),

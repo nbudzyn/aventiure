@@ -24,12 +24,10 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.wetter.Temperatur;
-import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
@@ -46,6 +44,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Objects.requireNonNull;
 
 @SuppressWarnings("unchecked")
@@ -168,15 +167,13 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
 
     private ImmutableCollection<TimedDescription<?>>
     getDescTo_ImWaldBeimBrunnenDarknessHell() {
-        return world.loadWetter().wetterComp().altBeiLichtImLicht().stream()
-                .map(Praepositionalphrase::getDescription
-                ).map(beiLicht -> du("kehrst",
+        return mapToSet(world.loadWetter().wetterComp().altBeiLichtImLicht(),
+                beiLicht -> du("kehrst",
                         "zurück zum Brunnen – unter einer Linde, wie du",
-                        beiLicht,
+                        beiLicht.getDescription(),
                         "erkennen kannst. Hinter dem",
                         "Brunnen beginnt der wilde Wald").timed(mins(4))
-                        .komma())
-                .collect(toImmutableSet());
+                        .komma());
     }
 
     private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenOtherWirNichtTraurig() {

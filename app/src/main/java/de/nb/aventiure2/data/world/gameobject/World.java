@@ -68,7 +68,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * The world contains and manages all game objects.
@@ -888,9 +888,7 @@ public class World {
         }
 
         return new SubstPhrReihung(
-                objects.stream()
-                        .map(o -> getDescription(o, false))
-                        .collect(toList()));
+                mapToList(objects, o -> getDescription(o, false)));
     }
 
     /**
@@ -1131,9 +1129,7 @@ public class World {
      */
     @Nonnull
     public ImmutableList<GameObject> load(final Collection<GameObjectId> ids) {
-        return ids.stream()
-                .map(this::load)
-                .collect(toImmutableList());
+        return mapToList(ids, this::load);
     }
 
     /**

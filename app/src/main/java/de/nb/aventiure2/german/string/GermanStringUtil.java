@@ -2,9 +2,6 @@ package de.nb.aventiure2.german.string;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
-import java.util.Collection;
 import java.util.Locale;
 
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -25,7 +22,7 @@ public class GermanStringUtil {
         int i = 0;
         while (i < string.length()) {
             final String currentZeichen = string.substring(i, i + 1);
-            if ("– „\".:!?" .contains(currentZeichen)) {
+            if ("– „\".:!?".contains(currentZeichen)) {
                 // Diese Zeichen einfach überspringen - DANACH soll
                 // großgeschrieben werden
                 i++;
@@ -52,12 +49,6 @@ public class GermanStringUtil {
         }
 
         return str.substring(0, 1).toLowerCase(Locale.GERMAN) + str.substring(1);
-    }
-
-    public static ImmutableList<String> capitalize(final Collection<String> strings) {
-        return strings.stream()
-                .map(GermanStringUtil::capitalize)
-                .collect(ImmutableList.toImmutableList());
     }
 
     public static String capitalize(final String str) {
@@ -107,7 +98,7 @@ public class GermanStringUtil {
         final String additionTrimmed = addition.trim();
 
         final String lastRelevantCharBase = baseTrimmed.substring(baseTrimmed.length() - 1);
-        if ("….!?:\"“" .contains(lastRelevantCharBase)) {
+        if ("….!?:\"“".contains(lastRelevantCharBase)) {
             if (baseTrimmed.endsWith("…“") || baseTrimmed.endsWith(".“")
                     || baseTrimmed.endsWith("!“") || baseTrimmed.endsWith("?“")
                     || baseTrimmed.endsWith("…\"") || baseTrimmed.endsWith(".\"")
@@ -160,12 +151,12 @@ public class GermanStringUtil {
 
         final String lastRelevantCharBase =
                 base.substring(base.length() - 1);
-        if ("….!?:\"„“–\n" .contains(lastRelevantCharBase)) {
+        if ("….!?:\"„“–\n".contains(lastRelevantCharBase)) {
             return false;
         }
 
         final String firstCharAddition = addition.trim().substring(0, 1);
-        return !".!?" .contains(firstCharAddition);
+        return !".!?".contains(firstCharAddition);
     }
 
     public static String breakToString(final String base,

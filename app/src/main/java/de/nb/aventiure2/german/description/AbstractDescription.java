@@ -20,9 +20,9 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Abstract superclass for a description.
@@ -58,9 +58,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     @NonNull
     @CheckReturnValue
     ImmutableList<TextDescription> altMitPraefix(final Konstituente praefixKonstituente) {
-        return altTextDescriptions().stream()
-                .map(d -> d.mitPraefix(praefixKonstituente))
-                .collect(toImmutableList());
+        return mapToList(altTextDescriptions(), d -> d.mitPraefix(praefixKonstituente));
     }
 
     /**

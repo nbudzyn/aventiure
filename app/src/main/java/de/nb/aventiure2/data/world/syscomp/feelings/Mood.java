@@ -9,9 +9,9 @@ import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static java.util.stream.Collectors.toList;
@@ -108,9 +108,7 @@ public enum Mood {
     }
 
     public ImmutableList<AdvAngabeSkopusVerbAllg> altAdvAngabenSkopusVerbAllg() {
-        return altAdvAngaben.stream()
-                .map(AdvAngabeSkopusSatz::toSkopusVerbAllg)
-                .collect(toImmutableList());
+        return mapToList(altAdvAngaben, AdvAngabeSkopusSatz::toSkopusVerbAllg);
     }
 
     public ImmutableList<AdvAngabeSkopusSatz> altAdvAngabenSkopusSatz() {

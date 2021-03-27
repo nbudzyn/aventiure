@@ -45,6 +45,7 @@ import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByK
 import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
 import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -198,9 +199,7 @@ public class Narrator {
                 chooseBestAlternativesWithSameElapsedTimeAndCounterId(alternatives);
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
-                bestAlternatives.stream()
-                        .map(TimedDescription::getDescription)
-                        .collect(ImmutableList.toImmutableList()));
+                mapToList(bestAlternatives, TimedDescription::getDescription));
 
         passTimeAndIncCounter(bestAlternatives.iterator().next());
     }
@@ -452,9 +451,7 @@ public class Narrator {
         // Idee: Wenn alle temp-Alternativen zum selben Ergebnis führen, können alle
         // Alternativen möglich bleiben. Wenn nicht - dann jetzt für eine entscheiden!
         final Set<R> alt =
-                temporaryNarration.getDescriptionAlternatives().stream()
-                        .map(descriptionFunction)
-                        .collect(Collectors.toSet());
+                mapToSet(temporaryNarration.getDescriptionAlternatives(), descriptionFunction);
 
         if (alt.size() != 1) {
             doTemporaryNarration();

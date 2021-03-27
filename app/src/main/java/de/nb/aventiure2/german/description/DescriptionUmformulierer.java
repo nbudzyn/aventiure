@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import javax.annotation.CheckReturnValue;
 
@@ -22,6 +21,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.max;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
 
 /**
@@ -287,14 +287,12 @@ public class DescriptionUmformulierer {
             final String praefixVerb,
             final String praefixRemainder,
             final AbstractDescription<?> desc) {
-        return desc.altTextDescriptions().stream()
-                .map(d -> du(
-                        max(d.getStartsNew(), SENTENCE),
-                        praefixVerb,
-                        praefixRemainder,
-                        SENTENCE,
-                        d.toSingleKonstituente()).schonLaenger())
-                .collect(Collectors.toSet());
+        return mapToSet(desc.altTextDescriptions(), d -> du(
+                max(d.getStartsNew(), SENTENCE),
+                praefixVerb,
+                praefixRemainder,
+                SENTENCE,
+                d.toSingleKonstituente()).schonLaenger());
     }
 
     @CheckReturnValue
