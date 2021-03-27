@@ -33,7 +33,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immR
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
-import static de.nb.aventiure2.german.base.Nominalphrase.ANGEBOTE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;

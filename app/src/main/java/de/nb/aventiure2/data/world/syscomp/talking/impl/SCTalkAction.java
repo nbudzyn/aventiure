@@ -2,7 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.praedikat.AbstractAngabenfaehigesPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -10,6 +9,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
 
 /**
  * Ein Redebeitrag, den der Spieler(-Charakter) an das {@link ITalkerGO} richten kann
@@ -65,7 +65,7 @@ public class SCTalkAction {
             VerbSubjObj.REDEN;
 
     private final static AbstractAngabenfaehigesPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
-            VerbSubjObj.BEENDEN.mit(Nominalphrase.GESPRAECH);
+            VerbSubjObj.BEENDEN.mit(GESPRAECH);
 
     /**
      * Condition to check whether a <code>CreatureConversationStep</code> is possible / allowed.

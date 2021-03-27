@@ -29,11 +29,11 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STARK;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
 import static de.nb.aventiure2.german.base.Nominalphrase.HEISSER_SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.SENGENDE_SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.SONNENHITZE;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
@@ -600,6 +600,8 @@ class WetterData {
     //  "von der Hitze des Tages ermüdet"
     //  "du bist von der Sonnenhitze müde"
 
+    @SuppressWarnings("WeakerAccess")
+    @NonNull
     Bewoelkung getBewoelkung() {
         return bewoelkung;
     }

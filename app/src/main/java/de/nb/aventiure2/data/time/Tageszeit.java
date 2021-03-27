@@ -11,27 +11,27 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.german.base.Nominalphrase.ABENDHIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.ABENDSONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.ABENDSONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGENSONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHTHIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.VOLLMOND;
 import static de.nb.aventiure2.german.base.Nominalphrase.BLAUER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLARER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.MITTAGSSONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.MOND;
-import static de.nb.aventiure2.german.base.Nominalphrase.MONDSCHEIN;
-import static de.nb.aventiure2.german.base.Nominalphrase.MORGEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.MORGENDLICHER_SONNENSCHEIN;
-import static de.nb.aventiure2.german.base.Nominalphrase.MORGENSONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.NACHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.NACHTHIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.ROETLICHER_ABENDHIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.STRAHLEND_BLAUER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.TAG;
-import static de.nb.aventiure2.german.base.Nominalphrase.VOLLMOND;
 
 public enum Tageszeit {
     NACHTS(NACHT,

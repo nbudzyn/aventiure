@@ -21,8 +21,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_N
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelKugelherkunftsfrageMitAntworten.Counter.FRAGE_BEANTWORTET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WAHRHEIT;
 import static de.nb.aventiure2.german.base.Nominalphrase.EINE_KLEINE_NOTLUEGE;
-import static de.nb.aventiure2.german.base.Nominalphrase.WAHRHEIT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;

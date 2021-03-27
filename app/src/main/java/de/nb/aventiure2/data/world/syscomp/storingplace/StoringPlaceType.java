@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 
 import androidx.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
@@ -45,7 +45,7 @@ public enum StoringPlaceType {
             "in eine Astgabel",
             HEBEN.mitAdvAngabe(
                     new AdvAngabeSkopusVerbWohinWoher(
-                            AUS.mit(Nominalphrase.ASTGABEL))),
+                            AUS.mit(NomenFlexionsspalte.ASTGABEL))),
             IM_GEAEST),
     WALD("im Wald", "in den Wald"),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",

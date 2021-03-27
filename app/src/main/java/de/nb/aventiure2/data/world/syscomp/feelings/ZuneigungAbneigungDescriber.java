@@ -29,8 +29,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ENTTAEUS
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHTERT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERSCHUECHTERT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ZORNIG;
-import static de.nb.aventiure2.german.base.Nominalphrase.FREUDE_OHNE_ART;
-import static de.nb.aventiure2.german.base.Nominalphrase.WUT_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WUT_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;

@@ -53,7 +53,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -65,6 +64,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -918,7 +918,7 @@ public class World {
             return getDescription(object, shortIfKnown);
         }
 
-        return Nominalphrase.DINGE;
+        return DINGE;
     }
 
     /**

@@ -72,7 +72,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
-import static de.nb.aventiure2.german.base.Nominalphrase.FUSS;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FUSS;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
