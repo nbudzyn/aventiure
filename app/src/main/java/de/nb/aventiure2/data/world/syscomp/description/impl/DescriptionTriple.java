@@ -4,41 +4,41 @@ import androidx.annotation.NonNull;
 
 import java.util.Objects;
 
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 public class DescriptionTriple {
     @NonNull
-    private final Nominalphrase descriptionAtFirstSight;
+    private final EinzelneSubstantivischePhrase descriptionAtFirstSight;
     @NonNull
-    private final Nominalphrase normalDescriptionWhenKnown;
+    private final EinzelneSubstantivischePhrase normalDescriptionWhenKnown;
     @NonNull
-    private final Nominalphrase shortDescriptionWhenKnown;
+    private final EinzelneSubstantivischePhrase shortDescriptionWhenKnown;
 
-    public DescriptionTriple(@NonNull final Nominalphrase descriptionAtFirstSight,
-                             @NonNull final Nominalphrase descriptionWhenKnown) {
+    DescriptionTriple(@NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                      @NonNull final EinzelneSubstantivischePhrase descriptionWhenKnown) {
         this(descriptionAtFirstSight, descriptionWhenKnown, descriptionWhenKnown);
     }
 
-    public DescriptionTriple(@NonNull final Nominalphrase descriptionAtFirstSight,
-                             @NonNull final Nominalphrase normalDescriptionWhenKnown,
-                             @NonNull final Nominalphrase shortDescriptionWhenKnown) {
+    DescriptionTriple(@NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                      @NonNull final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                      @NonNull final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
         this.descriptionAtFirstSight = descriptionAtFirstSight;
         this.normalDescriptionWhenKnown = normalDescriptionWhenKnown;
         this.shortDescriptionWhenKnown = shortDescriptionWhenKnown;
     }
 
     @NonNull
-    public Nominalphrase getDescriptionAtFirstSight() {
+    EinzelneSubstantivischePhrase getDescriptionAtFirstSight() {
         return descriptionAtFirstSight;
     }
 
     @NonNull
-    public Nominalphrase getNormalDescriptionWhenKnown() {
+    EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown() {
         return normalDescriptionWhenKnown;
     }
 
     @NonNull
-    public Nominalphrase getShortDescriptionWhenKnown() {
+    EinzelneSubstantivischePhrase getShortDescriptionWhenKnown() {
         return shortDescriptionWhenKnown;
     }
 

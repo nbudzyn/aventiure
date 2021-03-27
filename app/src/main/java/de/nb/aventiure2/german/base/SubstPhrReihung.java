@@ -13,7 +13,6 @@ import javax.annotation.CheckReturnValue;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Numerus.PL;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -186,12 +185,7 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     public IBezugsobjekt getBezugsobjekt() {
         return null;
     }
-
-    @Override
-    public Numerus getNumerus() {
-        return PL;
-    }
-
+    
     @Override
     public NumerusGenus getNumerusGenus() {
         return PL_MFN;

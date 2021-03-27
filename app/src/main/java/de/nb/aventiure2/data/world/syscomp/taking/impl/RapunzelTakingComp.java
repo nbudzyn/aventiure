@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.taking.AbstractTakingComp;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
@@ -65,8 +65,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
     void narrateTakerAndDo_Sonstiges_Abgelehnt(final GIVEN given) {
         final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
 
-        final Nominalphrase givenDesc = world.getDescription(given);
-        final Nominalphrase givenDescAtFirstSight =
+        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
+        final EinzelneSubstantivischePhrase givenDescAtFirstSight =
                 // "eine goldene Kugel"
                 given.descriptionComp().getDescriptionAtFirstSight();
 
@@ -122,8 +122,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
         final SubstantivischePhrase givenAnaph = world.anaph(given);
 
-        final Nominalphrase givenDesc = world.getDescription(given);
-        final Nominalphrase givenDescShort = world.getDescription(given, true);
+        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
+        final EinzelneSubstantivischePhrase givenDescShort = world.getDescription(given, true);
 
         upgradeZuneigungAbneigung(0.3f, FeelingIntensity.DEUTLICH);
 

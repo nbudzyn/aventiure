@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -139,7 +139,7 @@ public class GebenAction<
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = world.anaph(taker);
-        final Nominalphrase givenDesc = world.getDescription(given, false);
+        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given, false);
 
         alt.add(
                 // "Du hältst IHR DIE GOLDENE KUGEL hin"
@@ -168,7 +168,7 @@ public class GebenAction<
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = world.anaph(taker);
-        final Nominalphrase givenDesc = world.getDescription(given, false);
+        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given, false);
 
         alt.add(
                 // "Du gibst IHR DIE GOLDENE KUGEL"

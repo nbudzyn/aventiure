@@ -24,7 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -177,7 +177,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
@@ -258,7 +258,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
@@ -349,7 +349,7 @@ public class FroschprinzReactionsComp
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        final Nominalphrase froschprinzDesc = getDescription(true);
+        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(true);
         n.narrate(neuerSatz(froschprinzDesc.nomK(),
                 "schaut dich vorwurfsvoll und etwas hochnäsig an")
                 .timed(secs(5)));
@@ -376,7 +376,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final Nominalphrase froschprinzDesc = getDescription(true);
+        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(true);
         n.narrateAlt(secs(5),
                 neuerSatz(froschprinzDesc.nomK(), "quakt erbost"),
                 neuerSatz("Entrüstet quakt", froschprinzDesc.nomK())

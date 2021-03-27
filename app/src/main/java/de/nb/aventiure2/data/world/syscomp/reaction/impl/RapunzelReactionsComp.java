@@ -34,7 +34,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -366,7 +366,7 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber() {
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         // "zu ihr"
         // "sie"
@@ -409,7 +409,7 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
         world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
                 "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem",

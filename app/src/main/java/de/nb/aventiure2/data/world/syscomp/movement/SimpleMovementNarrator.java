@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -140,8 +140,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @Override
     public void narrateScTrifftStehendesMovingGO(final ILocationGO locationMovingGO) {
-        final Nominalphrase desc = getDescription();
-        final Nominalphrase descShort = getDescription(true);
+        final EinzelneSubstantivischePhrase desc = getDescription();
+        final EinzelneSubstantivischePhrase descShort = getDescription(true);
 
         final String wo = locationMovingGO.storingPlaceComp().getLocationMode().getWo(eherGross);
 
@@ -195,7 +195,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @Override
     public void narrateScUeberholtMovingGO(@Nullable final SpatialConnection conn) {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final String woDabei = conn != null ? conn.getWo() : "dabei";
 
         n.narrateAlt(NO_TIME,
@@ -214,7 +214,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     private void narrateScTrifftMovingGOImDazwischen_scHatKeinenVorigenOrt() {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         n.narrateAlt(NO_TIME,
                 neuerSatz(PARAGRAPH, "Dir begegnet", desc.nomK(), PARAGRAPH),
@@ -223,7 +223,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
     @Override
     public void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich() {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
@@ -282,7 +282,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     private void narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei() {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
@@ -397,7 +397,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     private void narrateMovingGOKommtSCNach(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
@@ -450,7 +450,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     }
 
     private void narrateMovingGOKommtScEntgegen_esVerstehtSichVonSelbstVonWo() {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -466,7 +466,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final ILocationGO to,
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();
@@ -506,7 +506,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
     private void narrateKommtGegangen(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
 
         final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
@@ -564,7 +564,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      * Die Phrase kann unterschiedlich sein, je nachdem,
      * ob der Spieler das Game Object schon kennt oder nicht.
      */
-    protected final Nominalphrase getDescription() {
+    protected final EinzelneSubstantivischePhrase getDescription() {
         return getDescription(false);
     }
 
@@ -577,7 +577,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected final Nominalphrase getDescription(final boolean shortIfKnown) {
+    protected final EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(gameObjectId, shortIfKnown);
     }
 

@@ -22,9 +22,9 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.InterrogativadverbVerbAllg;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -1098,7 +1098,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void haareHerunterlassenBitte_EntryReEntry() {
-        final Nominalphrase desc = getDescription(true);
+        final EinzelneSubstantivischePhrase desc = getDescription(true);
         if (duzen()) {
             n.narrateAlt(secs(10),
                     neuerSatz("„Weißt du“, wendest du dich an",
@@ -1246,7 +1246,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 return;
             }
 
-            final Nominalphrase rapunzelDesc = getDescription(true);
+            final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(true);
 
             final AltDescriptionsBuilder alt = alt();
 
@@ -1290,7 +1290,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void rapunzelGibtSCNochZeitZumVerstecken() {
-        final Nominalphrase rapunzelDesc = getDescription(true);
+        final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(true);
 
         final ImmutableList<Satz> altReaktionSaetze
                 = feelingsComp.altReaktionWennSCGehenMoechteSaetze(rapunzelDesc);
@@ -1391,7 +1391,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private static ImmutableSet<AbstractDescription<?>> altAberDochHaareFestbinden(
-            final Nominalphrase rapunzelDesc) {
+            final EinzelneSubstantivischePhrase rapunzelDesc) {
         return alt()
                 .add(satzanschluss(
                         "Aber",

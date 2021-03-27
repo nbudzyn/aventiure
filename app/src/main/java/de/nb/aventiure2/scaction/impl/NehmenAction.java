@@ -22,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -244,7 +244,7 @@ public class NehmenAction
             return;
         }
 
-        final Nominalphrase froschDesc = world.getDescription(gameObject, true);
+        final EinzelneSubstantivischePhrase froschDesc = world.getDescription(gameObject, true);
 
         n.narrateAlt(secs(10),
                 du(PARAGRAPH,
@@ -342,7 +342,8 @@ public class NehmenAction
                 return;
             }
 
-            final Nominalphrase froschDesc = world.getDescription(gameObject, false);
+            final EinzelneSubstantivischePhrase froschDesc =
+                    world.getDescription(gameObject, false);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
@@ -392,7 +393,7 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-            final Nominalphrase objectDesc = world.getDescription(gameObject, true);
+            final EinzelneSubstantivischePhrase objectDesc = world.getDescription(gameObject, true);
             n.narrate(neuerSatz("Dann nimmst du", objectDesc.akkK())
                     .timed(secs(5))
                     .undWartest());
@@ -402,7 +403,8 @@ public class NehmenAction
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     sc.feelingsComp().isEmotional()) {
-                final Nominalphrase objectDesc = world.getDescription(gameObject, true);
+                final EinzelneSubstantivischePhrase
+                        objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
                         mitnehmenPraedikat.mit(objectDesc);
 
@@ -432,8 +434,9 @@ public class NehmenAction
 
     private void narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        final Nominalphrase objectDesc = world.getDescription(gameObject);
-        final Nominalphrase objectDescShort = world.getDescription(gameObject, true);
+        final EinzelneSubstantivischePhrase objectDesc = world.getDescription(gameObject);
+        final EinzelneSubstantivischePhrase objectDescShort =
+                world.getDescription(gameObject, true);
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 

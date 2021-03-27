@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
@@ -636,7 +636,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschAufTischDraengelt() {
-        final Nominalphrase desc = getDescription(true);
+        final EinzelneSubstantivischePhrase desc = getDescription(true);
         n.narrateAlt(
                 du("hast", "gerade Luft geholt, da schneidet dir",
                         desc.nomK(),

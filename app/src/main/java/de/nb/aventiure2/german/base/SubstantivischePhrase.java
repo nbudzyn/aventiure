@@ -149,7 +149,9 @@ public interface SubstantivischePhrase
      */
     Relativpronomen relPron();
 
-    Numerus getNumerus();
+    default Numerus getNumerus() {
+        return getNumerusGenus().getNumerus();
+    }
 
     NumerusGenus getNumerusGenus();
 

@@ -21,19 +21,19 @@ public class DeklinierbarePhraseUtil {
     /**
      * "einer" als "unbestimmtes Zahladjektiv","substantiviert" (Duden 446), Singular maskulinum
      */
-    private static final Nominalphrase EINER;
+    private static final EinzelneSubstantivischePhrase EINER;
     // IDEA: "Einer" darf nicht im Vorfeld stehen (außer als Subjekt oder
     //  mit Fokuspartikel). Vielleicht eigene Klasse dafür schaffen?
 
     /**
      * "eine" als "unbestimmtes Zahladjektiv", "substantiviert" (Duden 446), Singular femininum
      */
-    private static final Nominalphrase EINE;
+    private static final EinzelneSubstantivischePhrase EINE;
 
     /**
      * "eines" als "unbestimmtes Zahladjektiv", "substantiviert" (Duden 446), Singular neutrum
      */
-    private static final Nominalphrase EINES;
+    private static final EinzelneSubstantivischePhrase EINES;
 
 //    /**
 //     * "die einen" (vs. "die anderen") als "unbestimmtes Zahladjektiv",

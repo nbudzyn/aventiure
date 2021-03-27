@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 /**
  * Einfache Implementierung von {@link AbstractDescriptionComp}: Das Game Object
@@ -12,31 +12,31 @@ public class SimpleDescriptionComp extends AbstractDescriptionComp {
     private final DescriptionTriple descriptionTriple;
 
     public SimpleDescriptionComp(final GameObjectId id,
-                                 final Nominalphrase descriptionAtFirstSight,
-                                 final Nominalphrase normalDescriptionWhenKnown,
-                                 final Nominalphrase shortDescriptionWhenKnown) {
+                                 final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                                 final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                                 final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
         this(id, new DescriptionTriple(
                 descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown));
     }
 
-    public SimpleDescriptionComp(final GameObjectId id,
-                                 final DescriptionTriple descriptionTriple) {
+    private SimpleDescriptionComp(final GameObjectId id,
+                                  final DescriptionTriple descriptionTriple) {
         super(id);
         this.descriptionTriple = descriptionTriple;
     }
 
     @Override
-    public Nominalphrase getDescriptionAtFirstSight() {
+    public EinzelneSubstantivischePhrase getDescriptionAtFirstSight() {
         return descriptionTriple.getDescriptionAtFirstSight();
     }
 
     @Override
-    public Nominalphrase getNormalDescriptionWhenKnown() {
+    public EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown() {
         return descriptionTriple.getNormalDescriptionWhenKnown();
     }
 
     @Override
-    public Nominalphrase getShortDescriptionWhenKnown() {
+    public EinzelneSubstantivischePhrase getShortDescriptionWhenKnown() {
         return descriptionTriple.getShortDescriptionWhenKnown();
     }
 }

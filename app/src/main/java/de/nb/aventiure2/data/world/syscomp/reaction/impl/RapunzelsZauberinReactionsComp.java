@@ -33,7 +33,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
@@ -64,7 +64,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.mapToList;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -369,7 +369,7 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription(true);
+            final EinzelneSubstantivischePhrase desc = getDescription(true);
             n.narrate(
                     du("siehst",
                             desc.akkK(), "an den Haarflechten hinaufsteigen")
@@ -590,7 +590,7 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final Nominalphrase desc = getDescription(true);
+            final EinzelneSubstantivischePhrase desc = getDescription(true);
             n.narrate(
                     neuerSatz(PARAGRAPH, "Als",
                             desc.nomK(),

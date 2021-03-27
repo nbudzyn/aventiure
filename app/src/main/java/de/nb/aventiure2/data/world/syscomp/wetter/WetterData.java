@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -469,7 +469,7 @@ class WetterData {
         return getBewoelkung().altBeiTageslichtImLicht(time.getTageszeit());
     }
 
-    ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final AvTime time) {
+    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(final AvTime time) {
         return getBewoelkung().altLichtInDemEtwasLiegt(time.getTageszeit());
     }
 

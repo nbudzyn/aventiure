@@ -21,7 +21,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -187,7 +187,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
         if (object.is(GOLDENE_KUGEL)) {
-            final Nominalphrase objectDesc = world.getDescription(object);
+            final EinzelneSubstantivischePhrase objectDesc = world.getDescription(object);
 
             narrateAndDoHochwerfenAuffangen(
                     du(PARAGRAPH, "wirfst",
@@ -242,7 +242,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
-        final Nominalphrase objectDesc = world.getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDesc = world.getDescription(object, false);
 
         n.narrate(
                 du(PARAGRAPH, "wirfst",

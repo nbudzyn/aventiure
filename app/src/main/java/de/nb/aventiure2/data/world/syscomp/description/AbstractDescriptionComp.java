@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object
@@ -17,10 +17,10 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
         super(gameObjectId);
     }
 
-    public abstract Nominalphrase getDescriptionAtFirstSight();
+    public abstract EinzelneSubstantivischePhrase getDescriptionAtFirstSight();
 
-    public Nominalphrase getDescription(final boolean known,
-                                        final boolean shortIfKnown) {
+    public EinzelneSubstantivischePhrase getDescription(final boolean known,
+                                                        final boolean shortIfKnown) {
         if (known) {
             return getDescriptionWhenKnown(shortIfKnown);
         }
@@ -28,15 +28,15 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
         return getDescriptionAtFirstSight();
     }
 
-    private Nominalphrase getDescriptionWhenKnown(final boolean shortIfKnown) {
+    private EinzelneSubstantivischePhrase getDescriptionWhenKnown(final boolean shortIfKnown) {
         return shortIfKnown ?
                 getShortDescriptionWhenKnown() :
                 getNormalDescriptionWhenKnown();
     }
 
-    public abstract Nominalphrase getNormalDescriptionWhenKnown();
+    public abstract EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown();
 
-    public abstract Nominalphrase getShortDescriptionWhenKnown();
+    public abstract EinzelneSubstantivischePhrase getShortDescriptionWhenKnown();
 
 
     @NonNull

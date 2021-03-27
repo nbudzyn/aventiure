@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -88,7 +88,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter.altBeiTageslichtImLicht(time);
     }
 
-    ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final AvTime time) {
+    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(final AvTime time) {
         return wetter.altLichtInDemEtwasLiegt(time);
     }
 

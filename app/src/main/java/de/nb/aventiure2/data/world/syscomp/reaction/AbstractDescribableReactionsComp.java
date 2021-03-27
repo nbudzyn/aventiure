@@ -5,7 +5,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -61,7 +61,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      * Die Phrase kann unterschiedlich sein, je nachdem,
      * ob der Spieler das Game Object schon kennt oder nicht.
      */
-    protected Nominalphrase getDescription() {
+    protected EinzelneSubstantivischePhrase getDescription() {
         return getDescription(false);
     }
 
@@ -74,7 +74,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected Nominalphrase getDescription(final boolean shortIfKnown) {
+    protected EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(getGameObjectId(), shortIfKnown);
     }
 }

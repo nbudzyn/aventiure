@@ -15,7 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionCom
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 /**
  * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
@@ -38,9 +38,9 @@ class GeneralObjectFactory {
     }
 
     GameObject create(final GameObjectId id,
-                      final Nominalphrase descriptionAtFirstSight,
-                      final Nominalphrase normalDescriptionWhenKnown,
-                      final Nominalphrase shortDescriptionWhenKnown,
+                      final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                      final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                      final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable) {
@@ -53,7 +53,7 @@ class GeneralObjectFactory {
     }
 
     GameObject create(final GameObjectId id,
-                      final Nominalphrase descriptionAtFirstSightAndWhenKnown,
+                      final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
@@ -66,7 +66,7 @@ class GeneralObjectFactory {
     }
 
     public GameObject create(final GameObjectId id,
-                             final Nominalphrase descriptionAtFirstSightAndWhenKnown,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
                              @Nullable final GameObjectId initialLocationId,
                              @Nullable final GameObjectId initialLastLocationId,
                              final boolean movable,
@@ -83,9 +83,9 @@ class GeneralObjectFactory {
     }
 
     GameObject create(final GameObjectId id,
-                      final Nominalphrase descriptionAtFirstSight,
-                      final Nominalphrase normalDescriptionWhenKnown,
-                      final Nominalphrase shortDescriptionWhenKnown,
+                      final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                      final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                      final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
@@ -98,9 +98,9 @@ class GeneralObjectFactory {
     }
 
     private GameObject create(final GameObjectId id,
-                              final Nominalphrase descriptionAtFirstSight,
-                              final Nominalphrase normalDescriptionWhenKnown,
-                              final Nominalphrase shortDescriptionWhenKnown,
+                              final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                              final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                              final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
                               @Nullable final GameObjectId initialLocationId,
                               @Nullable final GameObjectId initialLastLocationId,
                               final boolean movable,

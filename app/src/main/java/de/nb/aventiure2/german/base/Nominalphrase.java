@@ -25,8 +25,7 @@ public class Nominalphrase
 
     private final Flexionsreihe flexionsreiheArtikellos;
 
-    // Allgemeine Nominalphrasen, die sich nicht auf ein
-    // AvObject oder eine AbstractEntity beziehen.
+    // Allgemeine Nominalphrasen ohne Bezugsobjekt
     public static final Nominalphrase ABEND =
             np(M, DEF, "Abend");
     public static final Nominalphrase ABENDHIMMEL =
@@ -395,7 +394,7 @@ public class Nominalphrase
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(final @Nullable Object o) {
         if (this == o) {
             return true;
         }

@@ -24,7 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.movement.IConversationable;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -278,7 +278,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * Die Phrase kann unterschiedlich sein, je nachdem,
      * ob der Spieler das Game Object schon kennt oder nicht.
      */
-    protected final Nominalphrase getDescription() {
+    protected final EinzelneSubstantivischePhrase getDescription() {
         return getDescription(false);
     }
 
@@ -291,7 +291,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected final Nominalphrase getDescription(final boolean shortIfKnown) {
+    protected final EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(getGameObjectId(), shortIfKnown);
     }
 

@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 public abstract class MultiDescriptionComp extends AbstractDescriptionComp {
     MultiDescriptionComp(final GameObjectId gameObjectId) {
@@ -10,17 +10,17 @@ public abstract class MultiDescriptionComp extends AbstractDescriptionComp {
     }
 
     @Override
-    public Nominalphrase getDescriptionAtFirstSight() {
+    public EinzelneSubstantivischePhrase getDescriptionAtFirstSight() {
         return chooseDescriptionTriple().getDescriptionAtFirstSight();
     }
 
     @Override
-    public Nominalphrase getNormalDescriptionWhenKnown() {
+    public EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown() {
         return chooseDescriptionTriple().getNormalDescriptionWhenKnown();
     }
 
     @Override
-    public Nominalphrase getShortDescriptionWhenKnown() {
+    public EinzelneSubstantivischePhrase getShortDescriptionWhenKnown() {
         return chooseDescriptionTriple().getShortDescriptionWhenKnown();
     }
 

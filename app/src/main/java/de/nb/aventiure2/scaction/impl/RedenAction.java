@@ -20,7 +20,7 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.Praedikat;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -135,7 +135,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
-            final Nominalphrase creatureDesc =
+            final EinzelneSubstantivischePhrase creatureDesc =
                     worldervice.getPOVDescription(SPIELER_CHARAKTER, talker, true);
 
 

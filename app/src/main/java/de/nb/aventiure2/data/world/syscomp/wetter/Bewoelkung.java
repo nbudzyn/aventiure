@@ -9,7 +9,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
@@ -363,8 +363,9 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegt(final Tageszeit tageszeit) {
-        final ImmutableList.Builder<Nominalphrase> alt = ImmutableList.builder();
+    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
+            final Tageszeit tageszeit) {
+        final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt = ImmutableList.builder();
 
         switch (this) {
             case WOLKENLOS:
@@ -405,7 +406,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    static ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegtBewoelkt(
+    static ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegtBewoelkt(
             final Tageszeit tageszeit) {
         switch (tageszeit) {
             case MORGENS:
@@ -421,7 +422,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         }
     }
 
-    static ImmutableCollection<Nominalphrase> altLichtInDemEtwasLiegtBedeckt(
+    static ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegtBedeckt(
             final Tageszeit tageszeit) {
         switch (tageszeit) {
             case MORGENS:

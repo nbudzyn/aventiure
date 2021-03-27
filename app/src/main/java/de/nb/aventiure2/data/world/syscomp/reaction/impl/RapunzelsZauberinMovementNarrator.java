@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.movement.SimpleMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
@@ -36,7 +36,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             final ILocationGO to,
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
-        final Nominalphrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
         final AltDescriptionsBuilder alt = alt();

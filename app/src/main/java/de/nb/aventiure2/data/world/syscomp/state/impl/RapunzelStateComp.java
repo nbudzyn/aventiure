@@ -8,7 +8,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.UNAEUFFAELLIG;
@@ -34,7 +34,7 @@ public class RapunzelStateComp extends AbstractStateComp<RapunzelState> {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    private Nominalphrase getDescription(final boolean shortIfKnown) {
+    private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(getGameObjectId(), shortIfKnown);
     }
 }

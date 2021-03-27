@@ -64,11 +64,6 @@ public abstract class EinzelneSubstantivischePhraseMitOptFokuspartikel implement
     }
 
     @Override
-    public Numerus getNumerus() {
-        return getNumerusGenus().getNumerus();
-    }
-
-    @Override
     public NumerusGenus getNumerusGenus() {
         return numerusGenus;
     }

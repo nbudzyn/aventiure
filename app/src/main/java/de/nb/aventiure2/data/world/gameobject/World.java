@@ -51,6 +51,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConne
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -1004,7 +1005,7 @@ public class World {
      * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
      * ob der Spieler das Game Object schon kennt oder nicht.
      */
-    public Nominalphrase getDescription(final GameObjectId gameObjectId) {
+    public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId) {
         return getDescription((IDescribableGO) load(gameObjectId));
     }
 
@@ -1013,7 +1014,7 @@ public class World {
      * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
      * der Spieler das Game Object schon kennt oder nicht.
      */
-    public Nominalphrase getDescription(final IDescribableGO gameObject) {
+    public EinzelneSubstantivischePhrase getDescription(final IDescribableGO gameObject) {
         return getDescription(gameObject, false);
     }
 
@@ -1026,8 +1027,8 @@ public class World {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    public Nominalphrase getDescription(final GameObjectId gameObjectId,
-                                        final boolean shortIfKnown) {
+    public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId,
+                                                        final boolean shortIfKnown) {
         return getDescription((IDescribableGO) load(gameObjectId), shortIfKnown);
     }
 
@@ -1040,8 +1041,8 @@ public class World {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    public Nominalphrase getDescription(final IDescribableGO gameObject,
-                                        final boolean shortIfKnown) {
+    public EinzelneSubstantivischePhrase getDescription(final IDescribableGO gameObject,
+                                                        final boolean shortIfKnown) {
         return getPOVDescription(loadSC(), gameObject, shortIfKnown);
     }
 
@@ -1050,9 +1051,9 @@ public class World {
      * aus Sicht das Beobachters mit der <code>observerId</code> beschreibt, ggf. kurz.
      */
     public @NonNull
-    Nominalphrase getPOVDescription(final GameObjectId observerId,
-                                    final IDescribableGO describable,
-                                    final boolean shortIfKnown) {
+    EinzelneSubstantivischePhrase getPOVDescription(final GameObjectId observerId,
+                                                    final IDescribableGO describable,
+                                                    final boolean shortIfKnown) {
         return getPOVDescription(load(observerId), describable, shortIfKnown);
     }
 
@@ -1061,9 +1062,9 @@ public class World {
      * aus Sicht des <code>observer</code>s beschreibt, ggf. kurz-
      */
     @NonNull
-    private static Nominalphrase getPOVDescription(final IGameObject observer,
-                                                   final IDescribableGO describable,
-                                                   final boolean shortIfKnown) {
+    private static EinzelneSubstantivischePhrase getPOVDescription(final IGameObject observer,
+                                                                   final IDescribableGO describable,
+                                                                   final boolean shortIfKnown) {
         if (observer instanceof IHasMemoryGO) {
             return getPOVDescription((IHasMemoryGO) observer, describable,
                     shortIfKnown);
@@ -1072,9 +1073,9 @@ public class World {
         return describable.descriptionComp().getNormalDescriptionWhenKnown();
     }
 
-    private static Nominalphrase getPOVDescription(final IHasMemoryGO observer,
-                                                   final IDescribableGO describable,
-                                                   final boolean shortIfKnown) {
+    private static EinzelneSubstantivischePhrase getPOVDescription(final IHasMemoryGO observer,
+                                                                   final IDescribableGO describable,
+                                                                   final boolean shortIfKnown) {
         return describable.descriptionComp().getDescription(
                 observer.memoryComp().isKnown(describable), shortIfKnown);
     }
