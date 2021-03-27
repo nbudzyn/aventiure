@@ -21,6 +21,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     BETRUEBT("betrübt"),
     BEWEGT("bewegt"),
     BEWOELKT("bewölkt"),
+    BLAU("blau"),
     DUNKEL("dunkel"),
     ENTTAEUSCHT("enttäuscht"),
     ERHELLT("erhellt"),

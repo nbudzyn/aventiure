@@ -41,6 +41,15 @@ public class Nominalphrase
             np(PL_MFN, INDEF, "Angebote", "Angeboten");
     public static final Nominalphrase ASTGABEL =
             np(F, DEF, "Astgabel");
+    public static final Nominalphrase BEDECKTER_HIMMEL =
+            np(M, DEF, "bedeckter Himmel", "bedeckten Himmel",
+                    "bedeckten Himmel");
+    public static final Nominalphrase BEWOELKTER_HIMMEL =
+            np(M, DEF, "bewölkte Himmel", "bewölkten Himmel",
+                    "bewölkten Himmel");
+    public static final Nominalphrase BEZOGENER_HIMMEL =
+            np(M, DEF, "bezogener Himmel", "bezogenen Himmel",
+                    "bezogenen Himmel");
     public static final Nominalphrase BLAUER_HIMMEL =
             np(M, DEF, "blaue Himmel", "blauen Himmel",
                     "blauen Himmel");
@@ -190,6 +199,10 @@ public class Nominalphrase
     public static final Nominalphrase WARMES_WETTER_OHNE_ART =
             np(N, null,
                     "warmes Wetter", "warmem Wetter");
+    public static final Nominalphrase WOLKENVERHANGENER_HIMMEL =
+            np(M, DEF, "wolkenverhangene Himmel",
+                    "wolkenverhangenen Himmel",
+                    "wolkenverhangenen Himmel");
     public static final Nominalphrase WUT_OHNE_ART =
             np(F, null, "Wut");
     public static final Nominalphrase ZWIELICHT =

@@ -146,10 +146,12 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         // aus den "Umweltverhältnissen", konkret: Aus der Tageszeit
         return timeTaker.now().getTageszeit().getLichtverhaeltnisseDraussen();
 
-        // FIXME Möglicherweise sollen Wetterphänomene (Regen) und der "tageszeitliche Himmel"
+        // FIXME Wetterphänomene (Regen) und der "tageszeitliche Himmel"
         //  ("du siehst ein schönes Abendrot") nur dann erzählt werden, wenn der SC
         //  "draußen" ist oder "einen Blick auf den Himmel hat". Auch diese Fragen ließen
-        //  sich wohl analog rekursiv beantworten.
+        //  sich wohl analog rekursiv beantworten. Denkbar wäre ein Kategorisierung wie
+        //  unter offenem Himmel, draußen geschützt (Wald), untergestellt,
+        //  drinnen mit Ausblick, drinnen ohne Ausblick
     }
 
     @Nullable

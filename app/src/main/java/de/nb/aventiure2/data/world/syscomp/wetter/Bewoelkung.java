@@ -20,6 +20,9 @@ import de.nb.aventiure2.german.satz.Satz;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.Nominalphrase.ABENDLICHT;
+import static de.nb.aventiure2.german.base.Nominalphrase.BEDECKTER_HIMMEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.BEWOELKTER_HIMMEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.BEZOGENER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.DUESTERE_WOLKEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.DUESTERNIS;
@@ -43,6 +46,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TAGESLICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_LICHT;
+import static de.nb.aventiure2.german.base.Nominalphrase.WOLKENVERHANGENER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.ZWIELICHT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -121,6 +125,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
         switch (this) {
             case WOLKENLOS:
+                alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BLAU)
+                        .alsSatzMitSubjekt(HIMMEL));
                 alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                         // "die Sonne scheint auf dich herab"
                         HERABSCHEINEN
@@ -329,7 +335,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    @SuppressWarnings("DuplicateBranchesInSwitch")
     ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
@@ -344,8 +349,12 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                 alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
                 break;
             case BEWOELKT:
+                alt.add(UNTER_DAT.mit(BEWOELKTER_HIMMEL));
                 break;
             case BEDECKT:
+                alt.add(UNTER_DAT.mit(BEDECKTER_HIMMEL),
+                        UNTER_DAT.mit(BEZOGENER_HIMMEL),
+                        UNTER_DAT.mit(WOLKENVERHANGENER_HIMMEL));
                 break;
             default:
                 throw new IllegalStateException("Unexpected Bewoelkung: " + this);
