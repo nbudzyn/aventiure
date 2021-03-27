@@ -67,12 +67,6 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     private final NumerusGenus numerusGenus;
 
-    /**
-     * Eine Person, ein Gegenstand, ein Konzept o.Ä., auf das sich dieses Nomen bezieht.
-     */
-    @Nullable
-    private final IBezugsobjekt bezugsobjekt;
-
     @Nullable
     private final Artikel.Typ artikelTyp;
 
@@ -84,16 +78,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         @Nullable final Artikel.Typ artikelTyp,
                         final String nominalNominativDativUndAkkusativ) {
-        this(numerusGenus, artikelTyp, nominalNominativDativUndAkkusativ,
-                (IBezugsobjekt) null);
-    }
-
-    NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
-                        final String nominalNominativDativUndAkkusativ,
-                        @Nullable final IBezugsobjekt bezugsobjekt) {
         this(numerusGenus, artikelTyp,
-                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ, bezugsobjekt);
+                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
     }
 
     /**
@@ -103,18 +89,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
                         @Nullable final Artikel.Typ artikelTyp,
                         final String nominalNominativUndAkkusativ,
                         final String nominalDativ) {
-        this(numerusGenus, artikelTyp, nominalNominativUndAkkusativ, nominalDativ,
-                (IBezugsobjekt) null);
-    }
-
-    NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
-                        final String nominalNominativUndAkkusativ,
-                        final String nominalDativ,
-                        @Nullable final IBezugsobjekt bezugsobjekt) {
         this(numerusGenus, artikelTyp,
-                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
-                bezugsobjekt);
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ);
     }
 
     /**
@@ -125,20 +101,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
                         final String nominalNominativ,
                         final String nominalDativ,
                         final String nominalAkkusativ) {
-        this(numerusGenus, artikelTyp, nominalNominativ, nominalDativ, nominalAkkusativ,
-                null);
-    }
-
-    NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
-                        final String nominalNominativ,
-                        final String nominalDativ,
-                        final String nominalAkkusativ,
-                        @Nullable final IBezugsobjekt bezugsobjekt) {
         this(numerusGenus, artikelTyp,
                 fr(checkNoWhitespace(nominalNominativ),
                         checkNoWhitespace(nominalDativ),
-                        checkNoWhitespace(nominalAkkusativ)), bezugsobjekt);
+                        checkNoWhitespace(nominalAkkusativ)));
     }
 
     private static String checkNoWhitespace(final String kasusform) {
@@ -150,15 +116,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         @Nullable final Artikel.Typ artikelTyp,
                         final Flexionsreihe flexionsreiheArtikellos) {
-        this(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
-    }
-
-    NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
-                        final Flexionsreihe flexionsreiheArtikellos,
-                        @Nullable final IBezugsobjekt bezugsobjekt) {
         this.numerusGenus = numerusGenus;
-        this.bezugsobjekt = bezugsobjekt;
         this.artikelTyp = artikelTyp;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
@@ -246,7 +204,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     @Override
     @Nullable
     public IBezugsobjekt getBezugsobjekt() {
-        return bezugsobjekt;
+        return null;
     }
 
     @Override
@@ -255,6 +213,6 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     private Nominalphrase toNominalphrase() {
-        return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, bezugsobjekt);
+        return np(numerusGenus, artikelTyp, flexionsreiheArtikellos);
     }
 }
