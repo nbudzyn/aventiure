@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
  * Eine Reihung (Aufzählung) von {@link SubstantivischePhrase}-Objekten, z.B.
  * "Peter, Paul und ich".
  */
-public class SubstPhrReihung extends SubstantivischePhrase {
+public class SubstPhrReihung implements SubstantivischePhrase {
     private final ImmutableList<SubstantivischePhrase> elemente;
 
     SubstPhrReihung(final SubstantivischePhrase first,
@@ -99,7 +99,7 @@ public class SubstPhrReihung extends SubstantivischePhrase {
      * ("(zum) Haus") - als Konstituente
      */
     @Override
-    Konstituentenfolge artikellosDatK() {
+    public Konstituentenfolge artikellosDatK() {
         // "[er bleibt zum] Essen und dem Besäufnis"
         // "[er bleibt zum] Essen und der Besprechung
 
@@ -173,12 +173,6 @@ public class SubstPhrReihung extends SubstantivischePhrase {
     @Override
     public Relativpronomen relPron() {
         return Relativpronomen.get(getPerson(), getNumerusGenus(), getBezugsobjekt());
-    }
-
-    @Nullable
-    @Override
-    public NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
-        return null;
     }
 
     @Nullable

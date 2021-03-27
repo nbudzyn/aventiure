@@ -8,37 +8,37 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
  * "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel") oder eine
  * Reihung ("du und der Frosch").
  */
-public abstract class SubstantivischePhrase
-        implements DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
+public interface SubstantivischePhrase
+        extends DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
     @Override
-    public abstract SubstantivischePhrase ohneFokuspartikel();
+    SubstantivischePhrase ohneFokuspartikel();
 
     /**
      * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
      * "wenigstens" etc. (sofern die Phrase eine Fokuspartikel erlaubt, ansonsten
      * wird die Partikel verworfen)
      */
-    public abstract SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
+    SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
         // Ein Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
         // *"Petra ist Professor. Er ..."
         return new Konstituentenfolge(k(nomStr()));
     }
 
-
     @Override
     @Nullable
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
+    default Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
+                                                                        final Numerus numerus) {
         return null;
     }
 
@@ -47,21 +47,31 @@ public abstract class SubstantivischePhrase
      * dazu geeigneten Präposition verschmolzen werden darf ("dem Haus" -> "zum Haus")
      * oder nicht ("einem Haus", "dem Haus zugewandte Straßenlaternen")
      */
-    public abstract boolean erlaubtVerschmelzungVonPraepositionMitArtikel();
+    boolean erlaubtVerschmelzungVonPraepositionMitArtikel();
 
     /**
      * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
      * ("(zum) Haus") - als Konstituentenfolge
      */
-    abstract Konstituentenfolge artikellosDatK();
+    Konstituentenfolge artikellosDatK();
+
+    @Nullable
+    @Override
+    default NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
+        if (getPerson() != P3) {
+            return null;
+        }
+
+        return getNumerusGenus();
+    }
 
     /**
      * Gibt die substantivische Phrase im Dativ, aber ohne Artikel, zurück
      * ("(zum) Haus") - als String
      */
-    public abstract String artikellosDatStr();
+    String artikellosDatStr();
 
-    final String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+    default String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
             return imStr((Kasus) kasusOderPraepositionalkasus);
         }
@@ -95,53 +105,53 @@ public abstract class SubstantivischePhrase
     }
 
     @Override
-    public String imStr(final Kasus kasus) {
+    default String imStr(final Kasus kasus) {
         return DeklinierbarePhrase.super.imStr(kasus);
     }
 
-    public Konstituentenfolge nomK() {
+    default Konstituentenfolge nomK() {
         return imK(NOM);
     }
 
-    public Konstituentenfolge datK() {
+    default Konstituentenfolge datK() {
         return imK(DAT);
     }
 
-    public Konstituentenfolge akkK() {
+    default Konstituentenfolge akkK() {
         return imK(AKK);
     }
 
     @Override
-    public final Konstituentenfolge imK(final Kasus kasus) {
+    default Konstituentenfolge imK(final Kasus kasus) {
         return imK((KasusOderPraepositionalkasus) kasus);
     }
 
-    public abstract Konstituentenfolge imK(
+    Konstituentenfolge imK(
             KasusOderPraepositionalkasus kasusOderPraepositionalkasus);
 
     /**
      * Gibt ein Personalpronomen für diese Phrase zurück.
      */
-    public abstract Personalpronomen persPron();
+    Personalpronomen persPron();
 
     /**
      * Gibt ein {@link Reflexivpronomen} für diese Phrase zurück.
      */
-    public abstract Reflexivpronomen reflPron();
+    Reflexivpronomen reflPron();
 
     /**
      * Gibt einen Possessivartikel für diese Phrase zurück.
      */
-    public abstract Possessivartikel possArt();
+    Possessivartikel possArt();
 
     /**
      * Gibt ein Relativpronomen für diese Phrase zurück.
      */
-    public abstract Relativpronomen relPron();
+    Relativpronomen relPron();
 
-    public abstract Numerus getNumerus();
+    Numerus getNumerus();
 
-    public abstract NumerusGenus getNumerusGenus();
+    NumerusGenus getNumerusGenus();
 
-    public abstract Person getPerson();
+    Person getPerson();
 }

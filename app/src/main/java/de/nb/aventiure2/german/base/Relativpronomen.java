@@ -16,7 +16,7 @@ import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 import static java.util.Objects.requireNonNull;
 
-public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
+public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne {
     public enum Typ {
         // "das Kind, das"
         REGEL,

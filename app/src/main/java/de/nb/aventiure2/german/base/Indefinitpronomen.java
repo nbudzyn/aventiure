@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.Person.P3;
  */
 @ParametersAreNonnullByDefault
 public class Indefinitpronomen
-        extends SubstantivischesPronomenMitVollerFlexionsreihe
+        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
         implements IErlaubtAttribute {
     public static final Indefinitpronomen ALLES =
             ip(N, Relativpronomen.Typ.WERWAS, fr("alles", "allem"));

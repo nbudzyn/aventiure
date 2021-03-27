@@ -114,7 +114,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     public Konstituente getDescription(final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
-        if (substPhrOderReflPron instanceof EinzelneSubstantivischePhrase) {
+        if (substPhrOderReflPron instanceof EinzelneSubstantivischePhraseMitOptFokuspartikel) {
             return getDescription((SubstantivischePhrase) substPhrOderReflPron);
         }
 

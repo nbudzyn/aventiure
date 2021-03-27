@@ -6,20 +6,22 @@ import java.util.Objects;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 
-public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
-        extends EinzelneSubstantivischePhrase {
+public abstract class SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
+        extends EinzelneSubstantivischePhraseMitOptFokuspartikel {
     private final Flexionsreihe flexionsreihe;
 
-    SubstantivischesPronomenMitVollerFlexionsreihe(final NumerusGenus numerusGenus,
-                                                   final Flexionsreihe flexionsreihe,
-                                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+    SubstantivischesPronomenMitVollerFlexionsreiheEinzelne(final NumerusGenus numerusGenus,
+                                                           final Flexionsreihe flexionsreihe,
+                                                           @Nullable
+                                                           final IBezugsobjekt bezugsobjekt) {
         this(null, numerusGenus, flexionsreihe, bezugsobjekt);
     }
 
-    SubstantivischesPronomenMitVollerFlexionsreihe(final @Nullable String fokuspartikel,
-                                                   final NumerusGenus numerusGenus,
-                                                   final Flexionsreihe flexionsreihe,
-                                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+    SubstantivischesPronomenMitVollerFlexionsreiheEinzelne(final @Nullable String fokuspartikel,
+                                                           final NumerusGenus numerusGenus,
+                                                           final Flexionsreihe flexionsreihe,
+                                                           @Nullable
+                                                           final IBezugsobjekt bezugsobjekt) {
         super(fokuspartikel, numerusGenus, bezugsobjekt);
         this.flexionsreihe = flexionsreihe;
     }
@@ -29,7 +31,7 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
      * "wenigstens" etc.
      */
     @Override
-    public abstract SubstantivischesPronomenMitVollerFlexionsreihe mitFokuspartikel(
+    public abstract SubstantivischesPronomenMitVollerFlexionsreiheEinzelne mitFokuspartikel(
             @Nullable final String fokuspartikel);
 
     @Override
@@ -82,8 +84,8 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreihe
         if (!super.equals(o)) {
             return false;
         }
-        final SubstantivischesPronomenMitVollerFlexionsreihe that =
-                (SubstantivischesPronomenMitVollerFlexionsreihe) o;
+        final SubstantivischesPronomenMitVollerFlexionsreiheEinzelne that =
+                (SubstantivischesPronomenMitVollerFlexionsreiheEinzelne) o;
         return flexionsreihe.equals(that.flexionsreihe);
     }
 

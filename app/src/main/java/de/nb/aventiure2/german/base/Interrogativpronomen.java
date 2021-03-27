@@ -8,7 +8,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 public class Interrogativpronomen
-        extends SubstantivischesPronomenMitVollerFlexionsreihe
+        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
         implements IInterrogativwort {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public static final Interrogativpronomen WER =

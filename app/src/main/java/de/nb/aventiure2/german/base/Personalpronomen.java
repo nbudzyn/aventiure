@@ -21,7 +21,7 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static java.util.Objects.requireNonNull;
 
-public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreihe {
+public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne {
     private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL = ImmutableMap.of(
             P1,
             alleGenera(P1,
