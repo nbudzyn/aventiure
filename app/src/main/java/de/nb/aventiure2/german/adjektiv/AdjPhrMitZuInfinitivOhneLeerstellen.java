@@ -14,13 +14,10 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 
 /**
  * Eine Adjektivphrase mit zu-Infinitiv, in der alle Leerstellen besetzt sind. Beispiel:
@@ -97,16 +94,9 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
         // FIXME Test-driven implementieren: Bei Nominativ besser lockerer Nachtrag!
 
-        // "glücklich sein, dich zu sehen"
-        final PraedikativumPraedikatOhneLeerstellen praedikativumPraedikat =
-                praedikativumPraedikatMit(this);
-
-        // "die"
-        final Relativpronomen relativpronomen = Relativpronomen
-                .get(personBezugselement, numerusGenusBezugselement, bezugsobjektBezugselement);
-
         // "die glücklich ist, dich zu sehen"
-        return praedikativumPraedikat.alsSatzMitSubjekt(relativpronomen);
+        return alsPraedikativumRelativsatz(personBezugselement, numerusGenusBezugselement,
+                bezugsobjektBezugselement);
     }
 
     @Nullable

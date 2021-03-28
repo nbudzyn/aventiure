@@ -14,12 +14,15 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
@@ -29,6 +32,23 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
+    default Satz alsPraedikativumRelativsatz(final Person personBezugselement,
+                                             final NumerusGenus numerusGenusBezugselement,
+                                             @Nullable final
+                                             IBezugsobjekt bezugsobjektBezugselement) {
+
+        // "gespannt sein, was wer zu berichten hat"
+        final PraedikativumPraedikatOhneLeerstellen praedikativumPraedikat =
+                praedikativumPraedikatMit(this);
+
+        // "die"
+        final Relativpronomen relativpronomen = Relativpronomen
+                .get(personBezugselement, numerusGenusBezugselement, bezugsobjektBezugselement);
+
+        // "die gespannt ist, was wer zu berichten hat"
+        return praedikativumPraedikat.alsSatzMitSubjekt(relativpronomen);
+    }
+
     static ImmutableList<AdvAngabeSkopusVerbAllg> toAdvAngabenSkopusVerbAllg(
             final SubstantivischePhrase subjekt,
             final Collection<AdjPhrOhneLeerstellen> adjektivPhrasen) {

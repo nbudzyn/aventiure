@@ -111,7 +111,6 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
                                                       final Kasus kasus,
                                                       final boolean artikelwortTraegtKasusendung) {
-        // FIXME Test-driven implementieren
         return null;
     }
 
@@ -121,14 +120,17 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
-        // FIXME Test-driven implementieren
-        return null;
+        // FIXME Test-driven implementieren: Bei Nominativ besser lockerer Nachtrag!
+
+        // "die gespannt ist, was wer zu berichten hat"
+        return alsPraedikativumRelativsatz(personBezugselement, numerusGenusBezugselement,
+                bezugsobjektBezugselement);
     }
 
     @Nullable
     @Override
     public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
-        // FIXME Test-driven implementieren
+        // FIXME Test-driven implementieren - im Fall von Nominativ
         return null;
     }
 
