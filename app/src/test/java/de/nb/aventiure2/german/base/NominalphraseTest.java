@@ -247,5 +247,7 @@ public class NominalphraseTest {
     //  "Adverbiale Angabe")
 
     // FIXME Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
-    //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das"
+    //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" sowie
+    //  "Glück, Rapunzel zu sehen, tust du dies und das" (neue "adverbiale Angabe" / neues
+    //  Vorfeld)
 }
