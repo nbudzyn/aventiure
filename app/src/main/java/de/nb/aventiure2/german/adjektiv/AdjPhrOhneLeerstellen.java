@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -77,7 +78,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * Bei attributiver Verwendung wird die Adjektivphrase in drei Bestandteile zerlegt:
      * <ol>
      * <li>ein Adjektivattribut
-     * <li>ein Relativsatz, siehe {@link #getAttributivAnteilRelativsatz()}
+     * <li>ein Relativsatz, siehe
+     * {@link #getAttributivAnteilRelativsatz(Person, NumerusGenus, IBezugsobjekt)}
      * <li>ein lockerer Nachtrag, siehe {@link #getAttributivAnteilLockererNachtrag()}
      * </ol>
      */
@@ -110,7 +112,9 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * @see #getAttributivAnteilLockererNachtrag()
      */
     @Nullable
-    Satz getAttributivAnteilRelativsatz();
+    Satz getAttributivAnteilRelativsatz(Person personBezugselement,
+                                        NumerusGenus numerusGenusBezugselement,
+                                        @Nullable IBezugsobjekt bezugsobjektBezugselement);
 
     /**
      * Gibt den Anteil dieser Adjektivphrase zurück, der bei attibutiver Verwendung
@@ -128,7 +132,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * </ul>
      *
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
-     * @see #getAttributivAnteilRelativsatz()
+     * @see #getAttributivAnteilRelativsatz(Person, NumerusGenus, IBezugsobjekt)
      */
     @Nullable
     AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag();

@@ -246,6 +246,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
@@ -264,5 +265,12 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         }
 
         return lexikalischerKern.getErstesInterrogativwort();
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        return lexikalischerKern.getRelativpronomen();
     }
 }

@@ -219,4 +219,11 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        return null;
+    }
 }

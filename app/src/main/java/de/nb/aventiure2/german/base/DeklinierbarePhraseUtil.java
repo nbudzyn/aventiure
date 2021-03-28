@@ -21,7 +21,7 @@ public class DeklinierbarePhraseUtil {
     /**
      * "einer" als "unbestimmtes Zahladjektiv","substantiviert" (Duden 446), Singular maskulinum
      */
-    private static final EinzelneSubstantivischePhrase EINER;
+    public static final EinzelneSubstantivischePhrase EINER;
     // IDEA: "Einer" darf nicht im Vorfeld stehen (außer als Subjekt oder
     //  mit Fokuspartikel). Vielleicht eigene Klasse dafür schaffen?
 

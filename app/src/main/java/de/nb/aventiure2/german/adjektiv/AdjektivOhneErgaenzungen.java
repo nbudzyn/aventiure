@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
@@ -122,8 +123,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     @Nullable
     @Override
-    public Satz getAttributivAnteilRelativsatz() {
-        return toAdjPhr().getAttributivAnteilRelativsatz();
+    public Satz getAttributivAnteilRelativsatz(
+            final Person personBezugselement,
+            final NumerusGenus numerusGenusBezugselement,
+            @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
+        return toAdjPhr().getAttributivAnteilRelativsatz(personBezugselement,
+                numerusGenusBezugselement, bezugsobjektBezugselement);
     }
 
     @Nullable

@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.Satz;
@@ -307,6 +308,33 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         }
 
         if (praedikativum instanceof Interrogativpronomen) {
+            return praedikativum.getPraedikativ(
+                    // "Sie ist interessiert, wie euch ist",
+                    P3, SG);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (dat instanceof Relativpronomen) {
+            return dat.datK();
+        }
+
+        // Es gibt noch Fälle (hier und in praktisch allen anderen Implementierung von
+        // getRelativpronomen(), in denen das Relativpronomen im Relativsatz
+        // weder Subjekt noch Objekt (oder Präpositionalobjekt) ist, sondern
+        // adverbiale Angabe ("Letzten Freitag, DEN ich lange gearbeitet habe, hatte
+        // ich einen Gedanken") oder adverbiale Angabe, gemeinsam mit einer Präposition
+        // ("Letzten Freitag, (an DEM) ich lange gearbeitet habe, hatte
+        // ich einen Gedanken").
+        // Das könnte man ähnlich lösen wie bei getErstesInterrogativwort(), also
+        // über etwas wie interroAdverbToKF().
+
+        if (praedikativum instanceof Relativpronomen) {
             return praedikativum.getPraedikativ(
                     // "Sie ist interessiert, wie euch ist",
                     P3, SG);

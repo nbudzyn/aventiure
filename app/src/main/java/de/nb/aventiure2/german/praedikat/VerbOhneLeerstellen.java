@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -64,7 +65,15 @@ public interface VerbOhneLeerstellen
 
     @Override
     @Nullable
+    @CheckReturnValue
     default Konstituentenfolge getErstesInterrogativwort() {
+        return null;
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    default Konstituentenfolge getRelativpronomen() {
         return null;
     }
 }

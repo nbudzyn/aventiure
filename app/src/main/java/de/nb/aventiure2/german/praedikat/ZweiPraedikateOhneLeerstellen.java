@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import java.util.Collection;
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -180,14 +181,15 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         // Das hier ist etwas tricky.
         // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
         // Interrogativwort angegeben sein.
-        final Konstituentenfolge erstesInterrogativwortErsterSatz =
+        @Nullable final Konstituentenfolge erstesInterrogativwortErsterSatz =
                 ersterSatz.getErstesInterrogativwort();
-        final Konstituentenfolge erstesInterrogativwortZweiterSatz =
+        @Nullable final Konstituentenfolge erstesInterrogativwortZweiterSatz =
                 zweiterSatz.getErstesInterrogativwort();
 
         if (Objects.equals(
@@ -198,6 +200,29 @@ public class ZweiPraedikateOhneLeerstellen
         // Verhindern müssen wir so etwas wie *"Sie ist gespannt, was du aufhebst und die Kugel
         // mitnimmmst." - In dem Fall wäre nur eine indirekte ob-Frage gültig:
         // "Sie ist gespannt, ob du was aufhebst und die Kugel mitnimmst."
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        // Das hier ist etwas tricky.
+        // Denkbar wäre so etwas wie "Sie sieht das Buch, das sie aufhebt und mitnimmmt."
+        // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
+        // Relativpronomen ("das") angegeben sein.
+        @Nullable final Konstituentenfolge relativpronomenErsterSatz =
+                ersterSatz.getRelativpronomen();
+        @Nullable final Konstituentenfolge relativpronomenZweiterSatz =
+                zweiterSatz.getRelativpronomen();
+
+        if (Objects.equals(relativpronomenErsterSatz, relativpronomenZweiterSatz)) {
+            // Beide gleich, vielleicht auch beide null
+            return relativpronomenErsterSatz;
+        }
+
+        // Verboten ist etwas wie  *"Sie sieht das Buch, das sie aufhebt und die Kugel mitnimmt."
 
         return null;
     }

@@ -216,6 +216,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
@@ -229,5 +230,12 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
         }
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        return null;
     }
 }

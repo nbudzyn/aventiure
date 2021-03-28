@@ -157,6 +157,7 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
@@ -170,5 +171,12 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
         }
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        return null;
     }
 }

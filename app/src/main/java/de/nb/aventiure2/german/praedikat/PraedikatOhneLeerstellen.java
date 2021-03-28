@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.praedikat;
 import java.util.Arrays;
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -80,7 +81,12 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
             @Nullable IAdvAngabeOderInterrogativWohinWoher advAngabe);
 
     @Nullable
+    @CheckReturnValue
     Konstituentenfolge getErstesInterrogativwort();
+
+    @Nullable
+    @CheckReturnValue
+    Konstituentenfolge getRelativpronomen();
 
     default Satz alsSatzMitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
         return alsSatzMitSubjekt(null, subjekt);

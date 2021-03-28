@@ -18,6 +18,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
@@ -243,6 +244,22 @@ public class PraedikativumPraedikatOhneLeerstellen
                     // "Sie ist interessiert, wer Peter ist",
                     // "Sie ist interessiert, wer du bist",
                     // "Sie ist interessiert, wer wir sind"
+                    P2, SG);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (praedikativum instanceof Relativpronomen) {
+            return praedikativum.getPraedikativ(
+                    // Person und Numerus spielen beim Relativpronomen keine Rolle:
+                    // "Sie ist eine die, die Professor ist",
+                    // "Er ist derselbe, der du bist",
+                    // "Sie ist diesbelbe, die wir sind"
                     P2, SG);
         }
 

@@ -10,12 +10,14 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
@@ -188,7 +190,6 @@ public class Satz {
      * <li>wessen Heldentaten wer zu berichten hat
      * <li>was zu erzählen du beginnen wirst
      * <li>was du zu erzählen beginnen wirst
-     * <li>was du zu erzählen beginnen wirst
      * <li>wie er helfen kann
      * <li>wer wie geholfen hat
      * </ul>
@@ -235,6 +236,56 @@ public class Satz {
                 getVerbletztsatz() // "du etwas zu berichten hast"
         );
     }
+
+    /**
+     * Gibt einen Relativsatz zurück: Etwas wie
+     * <ul>
+     * <li>das du zu berichten hast
+     * <li>der etwas zu berichten hat
+     * <li>der was zu berichten hat
+     * <li>mit dem sie sich treffen wird
+     * <li>dessen Heldentaten wer zu berichten hat
+     * <li>das zu erzählen du beginnen wirst
+     * <li>das du zu erzählen beginnen wirst
+     * <li>der wie geholfen hat
+     * </ul>
+     */
+    public Konstituentenfolge getRelativsatz() {
+        // Zurzeit unterstützen wir nur die reinen Relativpronomen für die normalen Kasus
+        // wie "der" oder "das".
+        // Später sollten auch unterstützt werden:
+        // - Relativpronomen mit Präposition ("mit dem")
+        // - "substantivische Relativphrasen" wie "dessen Heldentaten"
+        // - "Infinitiv-Relativphrasen" wie "die Geschichte, die zu erzählen du vergessen hast"
+        // - "Relativsätze mit Interrogativadverbialien": "der Ort, wo"
+        if (subjekt instanceof Relativpronomen) {
+            // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
+            return getRelativsatzMitRelativpronomenSubjekt();
+        }
+
+        @Nullable final Konstituentenfolge relativpronomenImPraedikat =
+                praedikat.getRelativpronomen();
+
+        if (relativpronomenImPraedikat == null) {
+            throw new IllegalStateException("Kein (eindeutiges) Relativpronomen im Prädikat "
+                    + "gefunden: " + praedikat.getVerbzweit(DeklinierbarePhraseUtil.EINER));
+        }
+
+        // "das du zu berichten hast", "dem er was gegeben hat", "der kommt"
+        return joinToKonstituentenfolge(
+                anschlusswort, // "und"
+                relativpronomenImPraedikat, // "das" / "dem"
+                getVerbletztsatz().cutFirst(
+                        relativpronomenImPraedikat
+                ) // "du zu berichten hast", "er was gegeben hat", "kommt"
+        );
+    }
+
+    private Konstituentenfolge getRelativsatzMitRelativpronomenSubjekt() {
+        // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
+        return getVerbletztsatz();
+    }
+
 
     /**
      * Gibt den Satz als Verbzweitsatz aus, bei dem nach Möglichkeit ein "spezielles"

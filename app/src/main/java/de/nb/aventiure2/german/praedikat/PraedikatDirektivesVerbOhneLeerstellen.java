@@ -23,6 +23,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -273,6 +274,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
@@ -295,5 +297,16 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         }
 
         return lexikalischerKern.getErstesInterrogativwort();
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (objekt instanceof Relativpronomen) {
+            return objekt.imK(kasus);
+        }
+
+        return lexikalischerKern.getRelativpronomen();
     }
 }

@@ -32,6 +32,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
+@SuppressWarnings("ALL")
 public class AdjektivOhneErgaenzungenTest {
     @Test
     public void test_nurAdjektiattribute_Def_Nom_Sg() {
@@ -203,13 +204,10 @@ public class AdjektivOhneErgaenzungenTest {
                 "du diskutierst mit Rapunzel, die glücklich ist, dich zu sehen");
         assertThat(actual.kommaStehtAus()).isTrue();
         assertThat(actual.woertlicheRedeNochOffen()).isFalse();
-        assertThat(actual.getPhorikKandidat()).isSameInstanceAs(World.RAPUNZEL);
+        assertThat(actual.getPhorikKandidat().getBezugsobjekt()).isSameInstanceAs(World.RAPUNZEL);
     }
 
-    //  FIXME "Du sprichst mit der Frau, die gespannt ist, was du zu berichten hast"
-
     // FIXME "die Frau, gespannt, ob du etwas zu berichten hast[,]"
-    // FIXME "Du hilfst der Frau des Herzogs, die mit dem Tag zufrieden ist"
     // FIXME "die junge Frau des Herzogs, gespannt, ob du etwas zu berichten hast[,]"
     // FIXME "(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
 

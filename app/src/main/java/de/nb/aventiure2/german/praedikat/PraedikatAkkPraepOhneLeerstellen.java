@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -254,6 +255,22 @@ public class PraedikatAkkPraepOhneLeerstellen
         }
 
         if (praep instanceof Interrogativpronomen) {
+            return praep.imK(praepositionMitKasus);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (akk instanceof Relativpronomen) {
+            return akk.akkK();
+        }
+
+        if (praep instanceof Interrogativpronomen) {
+            // "mit dem"
             return praep.imK(praepositionMitKasus);
         }
 

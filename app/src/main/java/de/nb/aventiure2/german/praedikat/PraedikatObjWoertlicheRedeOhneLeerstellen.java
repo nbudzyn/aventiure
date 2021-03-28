@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
@@ -282,6 +283,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         if (objekt instanceof Interrogativpronomen) {
             return objekt.imK(kasusOderPraepositionalkasus);
@@ -299,5 +301,16 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
         }
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (objekt instanceof Relativpronomen) {
+            return objekt.imK(kasusOderPraepositionalkasus);
+        }
+
+        return null;
     }
 }

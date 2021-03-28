@@ -459,7 +459,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 // Machen bei Interrogativadverbien keinen Unterschied
                 P3, SG));
     }
-
+    
     @Override
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         return inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;

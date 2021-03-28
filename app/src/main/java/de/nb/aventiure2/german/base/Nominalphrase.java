@@ -9,6 +9,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
@@ -17,6 +18,7 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -311,23 +313,7 @@ public class Nominalphrase
     @Override
     @CheckReturnValue
     public Konstituentenfolge artikellosDatK() {
-        return joinToKonstituentenfolge(
-                // Eine Konstituentenfolge mit nur einer Konstituente
-                joinToKonstituentenfolge(
-                        getFokuspartikel(),
-                        adjPhr != null ?
-                                adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), DAT,
-                                        true // "zur" oder "zum" haben eine Kasusendung!
-                                ) :
-                                null, // "jungen"
-                        flexionsreiheArtikellos.dat(),
-                        adjPhr != null ? adjPhr.getAttributivAnteilLockererNachtrag() : null
-                        // ", gespannt, ob du etwas zu berichten hast[,]"
-                ).joinToSingleKonstituente()
-                        // Das Ganze soll eine Konstituente sein, die als Bezugsobejekt
-                        // verstanden werden kann
-                        .withBezugsobjektUndKannVerstandenWerdenAls(
-                                getBezugsobjekt(), getNumerusGenus()));
+        return imK(DAT, false);
     }
 
     @Override
@@ -369,18 +355,35 @@ public class Nominalphrase
 
     @Override
     public Konstituentenfolge imK(final Kasus kasus) {
+        return imK(kasus, true);
+    }
+
+    private Konstituentenfolge imK(final Kasus kasus, final boolean mitArtikel) {
         @Nullable final Artikel artikel = getArtikel();
+
+        final boolean artikelwortTraegtKasusendung =
+                !mitArtikel || Artikel.traegtKasusendung(artikel, kasus);
+        // wenn kein Artikel erzeugt werden soll, steht etwas wie "zum" oder
+        // "zur" davor, dass eine Kasusendung trägt
+
+        @Nullable final Satz attributivAnteilRelativsatz = adjPhr != null ?
+                adjPhr.getAttributivAnteilRelativsatz(getPerson(), getNumerusGenus(),
+                        getBezugsobjekt()) : null;
 
         return joinToKonstituentenfolge(
                 // Eine Konstituentenfolge mit nur einer Konstituente
                 joinToKonstituentenfolge(
                         getFokuspartikel(), // "sogar"
-                        artikel != null ? artikel.imStr(kasus) : null, // "die"
+                        mitArtikel && artikel != null ? artikel.imStr(kasus) : null, // "die"
                         adjPhr != null ?
                                 adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), kasus,
-                                        Artikel.traegtKasusendung(artikel, kasus)) :
+                                        artikelwortTraegtKasusendung) :
                                 null, // "junge"
                         flexionsreiheArtikellos.im(kasus), // "Frau"
+                        attributivAnteilRelativsatz != null ?
+                                schliesseInKommaEin(attributivAnteilRelativsatz.getRelativsatz())
+                                // , die sich fragt, ob du wohl kommst [,]
+                                : null,
                         adjPhr != null ? adjPhr.getAttributivAnteilLockererNachtrag() : null
                         // ", gespannt, ob du etwas zu berichten hast[,]"
                 ).joinToSingleKonstituente()

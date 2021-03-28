@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Collection;
 
+import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -86,8 +87,16 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         return lexikalischerKern.getErstesInterrogativwort();
+    }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        return lexikalischerKern.getRelativpronomen();
     }
 
     @Override

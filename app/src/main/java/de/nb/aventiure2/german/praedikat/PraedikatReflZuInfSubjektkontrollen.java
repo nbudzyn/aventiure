@@ -273,6 +273,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Nullable
     @Override
+    @CheckReturnValue
     public Konstituentenfolge getErstesInterrogativwort() {
         @Nullable
         Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
@@ -292,4 +293,17 @@ public class PraedikatReflZuInfSubjektkontrollen
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
+
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        @Nullable final Konstituentenfolge res = lexikalischerKern.getRelativpronomen();
+        if (res != null) {
+            return res;
+        }
+
+        return null;
+    }
+
 }
