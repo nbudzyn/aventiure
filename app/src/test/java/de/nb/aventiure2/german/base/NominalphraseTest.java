@@ -242,6 +242,9 @@ public class NominalphraseTest {
 
     // FIXME Bestehende Nominalphrasen durch Kombinationen aus BLAU und HIMMEL (z.B.) ersetzen
 
+    // FIXME Im Kontext Wetter z.B. die Farbe des Himmel (BLAU) zurückgeben und dann daraus
+    //  prädikative und attribute Sätze erzeugen
+
     // FIXME Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
     //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ..." (Umformulierung als
     //  "Adverbiale Angabe")
