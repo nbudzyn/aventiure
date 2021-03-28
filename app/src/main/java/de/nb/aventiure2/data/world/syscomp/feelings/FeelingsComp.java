@@ -28,7 +28,6 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -47,7 +46,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -452,7 +450,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, getPersonalpronomenSC(),
+                            gameObjectSubjekt, duSc(),
                             true, altAdjPhr,
                             advAngaben);
                 },
@@ -478,7 +476,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                             altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
-                            gameObjectSubjekt, getPersonalpronomenSC(),
+                            gameObjectSubjekt, duSc(),
                             true, altAdjPhr,
                             advAngaben);
                 },
@@ -498,7 +496,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return altReaktionBeiBegegnungSaetze(
                 gameObjectSubjekt,
                 SPIELER_CHARAKTER,
-                getPersonalpronomenSC(),
+                duSc(),
                 type);
     }
 
@@ -515,7 +513,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return altReaktionWennTargetGehenMoechteSaetze(
                 gameObjectSubjekt,
                 SPIELER_CHARAKTER,
-                getPersonalpronomenSC(),
+                duSc(),
                 type);
     }
 
@@ -536,12 +534,12 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 1,
                 () -> FeelingsSaetzeUtil.altAnsehenSaetze(
                         gameObjectSubjekt,
-                        getPersonalpronomenSC(),
+                        duSc(),
                         altAdvAngabenSkopusVerbAllg()),
                 (feelingTowardsType) -> FeelingsSaetzeUtil.altAnsehenSaetze(gameObjectSubjekt,
-                        getPersonalpronomenSC(),
+                        duSc(),
                         feelingTowardsType.altEindruckBeiBegegnungAdvAngaben(
-                                gameObjectSubjekt, getPersonalpronomenSC(),
+                                gameObjectSubjekt, duSc(),
                                 getFeelingTowards(SPIELER_CHARAKTER, feelingTowardsType),
                                 isTargetKnown(SPIELER_CHARAKTER)))
         );
@@ -574,7 +572,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 (feelingTowardsType) -> altEindruckBeiBegegnungSaetze(
                         gameObjectSubjekt,
                         SPIELER_CHARAKTER,
-                        scKannGameObjectSubjektSehen, getPersonalpronomenSC(),
+                        scKannGameObjectSubjektSehen, duSc(),
                         feelingTowardsType));
     }
 
@@ -597,17 +595,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 this::altAdvAngabenSkopusVerbAllg,
                 (feelingTowardsType) -> altEindruckBeiBegegnungAdvAngaben(
                         gameObjectSubjekt, SPIELER_CHARAKTER,
-                        getPersonalpronomenSC(),
+                        duSc(),
                         feelingTowardsType));
-    }
-
-    public static Personalpronomen getPersonalpronomenSC() {
-        return Personalpronomen.get(P2,
-                // Wir tun hier so, als wäre der SC männlich, aber das
-                // ist egal - die Methode garantiert, dass niemals etwas
-                // wie "du, der du..." oder
-                // "du, die du..." generiert wird.
-                M, SPIELER_CHARAKTER);
     }
 
     /**

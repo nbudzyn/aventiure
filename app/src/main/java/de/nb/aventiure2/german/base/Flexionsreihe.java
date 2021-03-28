@@ -7,7 +7,7 @@ import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 
-class Flexionsreihe {
+public class Flexionsreihe {
     /**
      * Erzeugt eine Flexionsriehe - Nominativ, Dativ und Akkusativ müssen
      * angegeben sein.
@@ -47,6 +47,19 @@ class Flexionsreihe {
         return string.equals(nominativ) ||
                 string.equals(dativ) ||
                 string.equals(akkusativ);
+    }
+
+    public String im(final Kasus kasus) {
+        switch (kasus) {
+            case NOM:
+                return nom();
+            case DAT:
+                return dat();
+            case AKK:
+                return akk();
+            default:
+                throw new IllegalStateException("Unexpected value: " + kasus);
+        }
     }
 
     public String nom() {

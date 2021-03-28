@@ -33,7 +33,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immR
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.base.Indefinitpronomen.ALLES;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -91,23 +91,23 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             case HAT_NACH_BELOHNUNG_GEFRAGT:
                 return ImmutableList.of(
                         st(() -> !objectsInDenBrunnenGefallen.isEmpty(),
-                                MACHEN.mitAkk(ANGEBOTE),
+                                MACHEN.mitAkk(ANGEBOTE_OHNE_ART),
                                 this::froschHatNachBelohnungGefragt_AngeboteMachen),
                         exitSt(this::froschHatNachBelohnungGefragt_Exit),
                         immReEntryStSCHatteGespraechBeendet(
                                 () -> !objectsInDenBrunnenGefallen.isEmpty(),
-                                MACHEN.mitAkk(ANGEBOTE),
+                                MACHEN.mitAkk(ANGEBOTE_OHNE_ART),
                                 this::froschHatNachBelohnungGefragt_ImmReEntry),
                         immReEntryStNSCHatteGespraechBeendet(
                                 () -> !objectsInDenBrunnenGefallen.isEmpty(),
-                                MACHEN.mitAkk(ANGEBOTE),
+                                MACHEN.mitAkk(ANGEBOTE_OHNE_ART),
                                 this::froschHatNachBelohnungGefragt_ImmReEntry),
                         immReEntryStSCHatteGespraechBeendet(objectsInDenBrunnenGefallen::isEmpty,
                                 this::ansprechen_froschReagiertNicht),
                         immReEntryStNSCHatteGespraechBeendet(objectsInDenBrunnenGefallen::isEmpty,
                                 this::ansprechen_froschReagiertNicht),
                         entryReEntrySt(() -> !objectsInDenBrunnenGefallen.isEmpty(),
-                                MACHEN.mitAkk(ANGEBOTE),
+                                MACHEN.mitAkk(ANGEBOTE_OHNE_ART),
                                 this::froschHatNachBelohnungGefragt_ReEntry),
                         entryReEntrySt(objectsInDenBrunnenGefallen::isEmpty,
                                 this::ansprechen_froschReagiertNicht)

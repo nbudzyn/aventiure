@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
@@ -102,7 +101,7 @@ public class RufenAction extends AbstractScAction {
                     secs(30));
         } else {
             n.narrate(DescriptionBuilder.satz(WORD, ruftyp.getName()
-                    .alsSatzMitSubjekt(FeelingsComp.getPersonalpronomenSC())
+                    .alsSatzMitSubjekt(duSc())
                     .mitAnschlusswort("und"))
                     .timed(secs(30)));
         }

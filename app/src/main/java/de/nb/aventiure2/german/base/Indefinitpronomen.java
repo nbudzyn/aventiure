@@ -11,7 +11,7 @@ import java.util.function.BinaryOperator;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import de.nb.aventiure2.german.leseratte.FederkielUtil;
+import de.nb.aventiure2.german.federkiel.FederkielUtil;
 import de.nb.federkiel.deutsch.grammatik.kategorie.VorgabeFuerNachfolgendesAdjektiv;
 import de.nb.federkiel.deutsch.grammatik.wortart.flexion.IndefinitpronomenFlektierer;
 import de.nb.federkiel.deutsch.grammatik.wortart.flexion.SubstantivPronomenUtil;

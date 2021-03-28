@@ -70,6 +70,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -1185,5 +1186,16 @@ public class World {
 
     SpatialConnectionSystem getSpatialConnectionSystem() {
         return spatialConnectionSystem;
+    }
+
+    /**
+     * Gibt ein Personalpronomen für die zweite Person zurück, dass den Spielercharakter meint.
+     * <p>
+     * Wir behaupten hier implizit, der SC wäre männlich. Es ist die Verantwortung des Aufrufers,
+     * keine Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
+     * weibliche Adressaten ("du, die du") ausschließen.
+     */
+    public static Personalpronomen duSc() {
+        return Personalpronomen.get(P2, M, SPIELER_CHARAKTER);
     }
 }

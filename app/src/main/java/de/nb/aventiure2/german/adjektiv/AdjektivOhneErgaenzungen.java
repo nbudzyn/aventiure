@@ -2,10 +2,13 @@ package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -13,21 +16,25 @@ import de.nb.aventiure2.german.satz.Satz;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
+    ANDERS("anders", "ander"),
     ANGESPANNT("angespannt"),
     AUFGEDREHT("aufgedreht"),
     BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
     BENOMMEN("benommen"),
+    BESONDERS("besonders", "besonder"),
     BETRUEBT("betrübt"),
     BEWEGT("bewegt"),
     BEWOELKT("bewölkt"),
     BLAU("blau"),
-    DUNKEL("dunkel"),
+    DUNKEL("dunkel", "dunkl"),
+    EITEL_NICHT_FLEKTIERBAR(Adjektiv.nichtFlektierbar("eitel")),
     ENTTAEUSCHT("enttäuscht"),
     ERHELLT("erhellt"),
     ERLEICHTERT("erleichtert"),
     ERSTAUNT("erstaunt"),
     ERSCHOEPFT("erschöpft"),
+    FINSTER("finster", "finstr"),
     FREUDESTRAHLEND("freudestrahlend"),
     FROEHLICH("fröhlich"),
     GEKNICKT("geknickt"),
@@ -36,6 +43,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GESPANNT("gespannt"),
     GLUECKLICH("glücklich"),
     HEISS("heiß"),
+    HOCH("hoch", "hoh"), // Steigerung höher, höchst!
     HUNDEMUEDE("hundemüde"),
     KALT("kalt"),
     KUEHL("kühl"),
@@ -69,11 +77,15 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     @NonNull
     private final Adjektiv adjektiv;
 
-    AdjektivOhneErgaenzungen(@NonNull final String praedikativ) {
+    AdjektivOhneErgaenzungen(final String praedikativ) {
         this(new Adjektiv(praedikativ));
     }
 
-    AdjektivOhneErgaenzungen(@NonNull final Adjektiv adjektiv) {
+    AdjektivOhneErgaenzungen(final String praedikativ, final String stamm) {
+        this(new Adjektiv(praedikativ, stamm));
+    }
+
+    AdjektivOhneErgaenzungen(final Adjektiv adjektiv) {
         this.adjektiv = adjektiv;
     }
 
@@ -99,6 +111,27 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
         return toAdjPhr().mitAdvAngabe(advAngabe);
     }
 
+    @Nullable
+    @Override
+    public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
+                                                      final Kasus kasus,
+                                                      final boolean artikelwortTraegtKasusendung) {
+        return toAdjPhr().getAttributivAnteilAdjektivattribut(numerusGenus, kasus,
+                artikelwortTraegtKasusendung);
+    }
+
+    @Nullable
+    @Override
+    public Satz getAttributivAnteilRelativsatz() {
+        return toAdjPhr().getAttributivAnteilRelativsatz();
+    }
+
+    @Nullable
+    @Override
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
+        return toAdjPhr().getAttributivAnteilLockererNachtrag();
+    }
+
     @Override
     public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
                                                           final Numerus numerus) {
@@ -119,5 +152,11 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     private AdjPhrOhneErgaenzungenOhneLeerstellen toAdjPhr() {
         return new AdjPhrOhneErgaenzungenOhneLeerstellen(adjektiv);
+    }
+
+    @NonNull
+    @VisibleForTesting
+    Adjektiv getAdjektiv() {
+        return adjektiv;
     }
 }

@@ -7,7 +7,7 @@ import javax.annotation.CheckReturnValue;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
-import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
@@ -30,9 +30,13 @@ public interface SubstantivischePhrase
     @Override
     @CheckReturnValue
     default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        // Ein Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
+        // Einen Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
         // *"Petra ist Professor. Er ..."
-        return new Konstituentenfolge(k(nomStr()));
+        // Also Bezug entfernen!
+        return joinToKonstituentenfolge(
+                nomK().joinToSingleKonstituente()
+                        .withBezugsobjektUndKannVerstandenWerdenAls(
+                                null, null));
     }
 
     @Override

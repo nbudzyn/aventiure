@@ -26,14 +26,13 @@ import de.nb.aventiure2.german.satz.Satz;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LEIB;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.EIN_HEISSER_TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.KLIRRENDE_KAELTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.WARMES_WETTER_OHNE_ART;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
@@ -85,7 +84,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
                 break;
             case KUEHL:
                 alt.add(VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                        .mit(Personalpronomen.get(P2, M))
+                        .mit(duSc())
                         .alsSatzMitSubjekt(null)
                         .mitAdvAngabe(
                                 new AdvAngabeSkopusVerbAllg("ein wenig")));
@@ -117,37 +116,37 @@ public enum Temperatur implements Betweenable<Temperatur> {
                         // "du frierst am ganzen Leibe"
                         VerbSubj.FRIEREN
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(LEIB)))
-                                .alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
+                                .alsSatzMitSubjekt(duSc()));
                 break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
                 alt.add(
                         // "es friert"
                         Witterungsverb.FRIEREN.alsSatz(),
                         // "du frierst"
-                        VerbSubj.FRIEREN.alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
+                        VerbSubj.FRIEREN.alsSatzMitSubjekt(duSc()));
                 break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
                 alt.add(DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen
-                                .dativPraedikativumWerdenMitDat(Personalpronomen.get(P2, M)) //
+                                .dativPraedikativumWerdenMitDat(duSc()) //
                                 // "wird dir"
                                 .mit(KALT)
                                 .alsSatz(),
                         // "dich friert"
                         VerbOhneSubjAusserOptionalemExpletivemEs.FRIEREN
-                                .mit(Personalpronomen.get(P2, M))
+                                .mit(duSc())
                                 .alsSatzMitSubjekt(null));
                 break;
             case KUEHL:
                 alt.add(VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                                .mit(Personalpronomen.get(P2, M))
+                                .mit(duSc())
                                 .alsSatzMitSubjekt(null),
                         VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                                .mit(Personalpronomen.get(P2, M))
+                                .mit(duSc())
                                 .alsSatzMitSubjekt(null)
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ein wenig")));
                 alt.add(FROESTELN.mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg("ein wenig"))
-                        .alsSatzMitSubjekt(Personalpronomen.get(P2, M)));
+                        .alsSatzMitSubjekt(duSc()));
                 break;
             case WARM:
                 break;

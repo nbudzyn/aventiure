@@ -46,7 +46,6 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp.getPersonalpronomenSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
@@ -175,9 +174,9 @@ public class RapunzelsZauberinReactionsComp
         final SubstantivischePhrase anaph = anaph();
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
-        alt.addAll(altNachsehenHinterhersehenSaetze(anaph, getPersonalpronomenSC())
+        alt.addAll(altNachsehenHinterhersehenSaetze(anaph, duSc())
         );
-        alt.addAll(altZusehenSaetze(anaph, getPersonalpronomenSC(),
+        alt.addAll(altZusehenSaetze(anaph, duSc(),
                 mapToList(
                         ImmutableList.of("ärgerlich", "verdrossen"), AdvAngabeSkopusVerbAllg::new))
         );

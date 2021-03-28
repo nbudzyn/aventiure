@@ -1,4 +1,4 @@
-package de.nb.aventiure2.german.leseratte;
+package de.nb.aventiure2.german.federkiel;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -82,8 +82,7 @@ public class FederkielUtil {
         }
     }
 
-
-    private static de.nb.federkiel.deutsch.grammatik.kategorie.Kasus
+    public static de.nb.federkiel.deutsch.grammatik.kategorie.Kasus
     toFederkielKasus(final Kasus kasus) {
         switch (kasus) {
             case NOM:

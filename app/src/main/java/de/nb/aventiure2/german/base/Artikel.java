@@ -17,6 +17,17 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 public class Artikel implements DeklinierbarePhrase {
+    static boolean traegtKasusendung(@Nullable final Artikel artikel, final Kasus kasus) {
+        if (artikel == null) {
+            return false;
+        }
+
+        // "ein" ist der einzige Artikel ohne Kasusendung.
+        // (Aber auch andere Artikelwörter haben keine Kasusendung, etwa "kein", "mein" oder
+        // "viel".)
+        return !artikel.imStr(kasus).equals("ein");
+    }
+
     public enum Typ {
         /**
          * "ein( Haus)" , "(Häuser)"

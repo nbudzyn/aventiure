@@ -41,7 +41,6 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp.getPersonalpronomenSC;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altAnsehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altEindrueckSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
@@ -178,7 +177,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                         KOENNEN.mitLexikalischemKern(
                                                 HELFEN.mit(anaph()).mitAdvAngabe(
                                                         InterrogativadverbVerbAllg.WIE))
-                                                .alsSatzMitSubjekt(getPersonalpronomenSC())),
+                                                .alsSatzMitSubjekt(duSc())),
                                 this::fragenWieSCHelfenKann),
                         st(this::rapunzelsFreiheitswunschBekanntUndRapunzelUndScKoennenEinanderSehen,
                                 ZUSAGEN.mitAkk(RETTUNG_OHNE_ART),
@@ -1042,12 +1041,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if ((rettungZugesagtCount <= 2 && zuneigungZuSC >= -FeelingIntensity.NUR_LEICHT)
                     || zuneigungZuSC >= FeelingIntensity.STARK) {
-                alt.addAll(altAnsehenSaetze(anaph(), getPersonalpronomenSC(), FREUDESTRAHLEND));
+                alt.addAll(altAnsehenSaetze(anaph(), duSc(), FREUDESTRAHLEND));
             }
 
             if ((rettungZugesagtCount == 3 && zuneigungZuSC >= FeelingIntensity.NEUTRAL)
                     || zuneigungZuSC >= FeelingIntensity.STARK) {
-                alt.addAll(altAnsehenSaetze(anaph(), getPersonalpronomenSC(),
+                alt.addAll(altAnsehenSaetze(anaph(), duSc(),
                         BEGEISTERT)
                 );
             }

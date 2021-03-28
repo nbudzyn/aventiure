@@ -133,7 +133,6 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         if (lichtverhaeltnisseDraussen == HELL) {
-            // FIXME altDu() o.Ä.?!
             return mapToSet(world.loadWetter().wetterComp()
                     .altScKommtNachDraussenInsWetter(lichtverhaeltnisseDraussen), wetterDesc ->
                     du("gehst",

@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUESTERNIS;
@@ -48,9 +49,6 @@ import static de.nb.aventiure2.german.base.Nominalphrase.SANFTES_TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_LICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.WOLKENVERHANGENER_HIMMEL;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.Personalpronomen.get;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
@@ -133,7 +131,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                                 .mitAdvAngabe(
                                         new AdvAngabeSkopusVerbWohinWoher(
                                                 AUF_AKK
-                                                        .mit(get(P2, M))))
+                                                        .mit(duSc())))
                                 .alsSatzMitSubjekt(gestirn)));
                 if (time.getTageszeit() == Tageszeit.ABENDS) {
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
@@ -189,7 +187,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                 if (time.getTageszeit() == TAGSUEBER) {
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             VerbSubjObj.SCHEINEN
-                                    .mit(get(P2, M))
+                                    .mit(duSc())
                                     .mitAdvAngabe(
                                             new AdvAngabeSkopusVerbWohinWoher(
                                                     "ins Gesicht"))

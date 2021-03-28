@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 
 import java.util.regex.Pattern;
 
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
@@ -240,7 +242,9 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return numerusGenus;
     }
 
-    // FIXME mit(AdjPhr)
+    public Nominalphrase mit(final AdjPhrOhneLeerstellen adjPhr) {
+        return np(adjPhr, this);
+    }
 
     @NonNull
     private Nominalphrase toNominalphrase() {

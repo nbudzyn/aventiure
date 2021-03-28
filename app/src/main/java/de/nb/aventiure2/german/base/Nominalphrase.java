@@ -1,13 +1,22 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import javax.annotation.CheckReturnValue;
+
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Kasus.NOM;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -23,6 +32,9 @@ public class Nominalphrase
     @Nullable
     private final Artikel.Typ artikelTyp;
 
+    @Nullable
+    private final AdjPhrOhneLeerstellen adjPhr;
+
     private final Flexionsreihe flexionsreiheArtikellos;
 
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
@@ -36,8 +48,7 @@ public class Nominalphrase
             np(M, DEF, "bezogener Himmel", "bezogenen Himmel",
                     "bezogenen Himmel");
     public static final Nominalphrase BLAUER_HIMMEL =
-            np(M, DEF, "blaue Himmel", "blauen Himmel",
-                    "blauen Himmel");
+            np(AdjektivOhneErgaenzungen.BLAU, NomenFlexionsspalte.HIMMEL);
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
@@ -122,6 +133,7 @@ public class Nominalphrase
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativDativUndAkkusativ) {
@@ -129,6 +141,7 @@ public class Nominalphrase
                 (IBezugsobjekt) null);
     }
 
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativDativUndAkkusativ,
@@ -148,6 +161,7 @@ public class Nominalphrase
                 (IBezugsobjekt) null);
     }
 
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativUndAkkusativ,
@@ -161,6 +175,7 @@ public class Nominalphrase
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativ,
@@ -170,6 +185,7 @@ public class Nominalphrase
                 null);
     }
 
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final String nominalNominativ,
@@ -180,46 +196,81 @@ public class Nominalphrase
                 fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
     }
 
+    @NonNull
     public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte) {
         return np(nomenFlexionsspalte, null);
     }
 
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final Flexionsreihe flexionsreiheArtikellos) {
         return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
     }
 
+    @NonNull
+    public static Nominalphrase np(@Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                   final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(adjPhr, nomenFlexionsspalte, null);
+    }
+
+    @NonNull
     public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
-        return np(nomenFlexionsspalte.getNumerusGenus(),
+        return np(null, nomenFlexionsspalte, bezugsobjekt);
+    }
+
+    @NonNull
+    public static Nominalphrase np(@Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                   final NomenFlexionsspalte nomenFlexionsspalte,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        // Beispiel für eine voll ausgebaute Nominalphrase:
+        // "sogar ein neues Buch dieses Autors mit vielen Bildern, das uns erstaunt"
+        // Die Elemente sind Artikel, Adjektivattribut, Kern (Nomen), Genitivattribut,
+        // Präpositionalattribut und Attributsatz (Eisenberg, Der Satz, S. 387ff)
+
+        // Komplexe Nominalphrasen in Kombination mit komplexen Adjektivphrasen:
+        // "sogar ein Kritiker von Anfang an wirklich begeisterndes und Eingeweihte überraschende
+        // Buch dieses Autors
+        // mit vielen Bildern, das uns erstaunt",
+        // "die junge Frau des Herzogs, die dich überrascht, gespannt, ob du etwas zu berichten
+        // hast,"
+        // "die Frau des Herzogs, zufrieden, dich zu sehen, und gespannt, ob du etwas zu
+        // berichten hast,"
+
+        return new Nominalphrase(
+                nomenFlexionsspalte.getNumerusGenus(),
                 nomenFlexionsspalte.getArtikelTyp(),
+                adjPhr,
                 nomenFlexionsspalte.getFlexionsreiheArtikellos(),
                 bezugsobjekt);
     }
-
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,
                                    final Flexionsreihe flexionsreiheArtikellos,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
-        return new Nominalphrase(numerusGenus, artikelTyp, flexionsreiheArtikellos, bezugsobjekt);
+        return new Nominalphrase(numerusGenus, artikelTyp, null, flexionsreiheArtikellos,
+                bezugsobjekt);
     }
 
-    public Nominalphrase(final NumerusGenus numerusGenus,
-                         @Nullable final Artikel.Typ artikelTyp,
-                         final Flexionsreihe flexionsreiheArtikellos,
-                         @Nullable final IBezugsobjekt bezugsobjekt) {
-        this(null, numerusGenus, artikelTyp, flexionsreiheArtikellos, bezugsobjekt);
+    private Nominalphrase(final NumerusGenus numerusGenus,
+                          @Nullable final Artikel.Typ artikelTyp,
+                          @Nullable final AdjPhrOhneLeerstellen adjPhr,
+                          final Flexionsreihe flexionsreiheArtikellos,
+                          @Nullable final IBezugsobjekt bezugsobjekt) {
+        this(null, numerusGenus, artikelTyp, adjPhr, flexionsreiheArtikellos, bezugsobjekt);
     }
 
     private Nominalphrase(final @Nullable String fokuspartikel,
                           final NumerusGenus numerusGenus,
                           @Nullable final Artikel.Typ artikelTyp,
+                          @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
                           @Nullable final IBezugsobjekt bezugsobjekt) {
         super(fokuspartikel, numerusGenus, bezugsobjekt);
         this.artikelTyp = artikelTyp;
+        this.adjPhr = adjPhr;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
 
@@ -234,6 +285,7 @@ public class Nominalphrase
         }
 
         return new Nominalphrase(fokuspartikel, getNumerusGenus(), artikelTyp,
+                adjPhr,
                 flexionsreiheArtikellos, getBezugsobjekt());
     }
 
@@ -247,40 +299,123 @@ public class Nominalphrase
     }
 
     @Override
-    public String nomStr() {
+    public Konstituentenfolge nomK() {
+        return imK(NOM);
+    }
+
+    @Override
+    public Konstituentenfolge datK() {
+        return imK(DAT);
+    }
+
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge artikellosDatK() {
+        return joinToKonstituentenfolge(
+                // Eine Konstituentenfolge mit nur einer Konstituente
+                joinToKonstituentenfolge(
+                        getFokuspartikel(),
+                        adjPhr != null ?
+                                adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), DAT,
+                                        true // "zur" oder "zum" haben eine Kasusendung!
+                                ) :
+                                null, // "jungen"
+                        flexionsreiheArtikellos.dat(),
+                        adjPhr != null ? adjPhr.getAttributivAnteilLockererNachtrag() : null
+                        // ", gespannt, ob du etwas zu berichten hast[,]"
+                ).joinToSingleKonstituente()
+                        // Das Ganze soll eine Konstituente sein, die als Bezugsobejekt
+                        // verstanden werden kann
+                        .withBezugsobjektUndKannVerstandenWerdenAls(
+                                getBezugsobjekt(), getNumerusGenus()));
+    }
+
+    @Override
+    public Konstituentenfolge akkK() {
+        return imK(AKK);
+    }
+
+    @Override
+    public Konstituentenfolge imK(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        if (kasusOderPraepositionalkasus instanceof Kasus) {
+            return imK((Kasus) kasusOderPraepositionalkasus);
+        }
+
+        if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
+            // FIXME Präpositionalkasus mit "es" sind problematisch, da "es"
+            //  nicht phrasenbildend ist.
+            //  - "in es" etc. wird vertreten durch "hinein", "auf es" durch "darauf" etc.
+            //  - Man bräuchte wohl eine neue Klasse adverbialer Angaben
+            //   wie DARAUF, DARUNTER, HINEIN etc., und jede
+            //   Präposition MIT AKKUSATIV müsste zwingend
+            //   eines dieser Adverbien referenzieren, das als
+            //   Ersatz verwendet wird.
+            //  - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
+            //  ("Du willst es hineinlegen" statt *"Du willst es in es legen"?!)
+            //  - Das scheint aber nicht bei belebten Dingen möglich zu sein:
+            //  ?"Das ist unser Kind. Wir haben viel Geld hineingesteckt"
+            //  ?"Das ist unser Kind. Wir haben einen Nachtisch dafür gekauft."
+
+            final PraepositionMitKasus praepositionMitKasus =
+                    (PraepositionMitKasus) kasusOderPraepositionalkasus;
+
+            return joinToKonstituentenfolge(
+                    praepositionMitKasus.getDescription(this));
+        }
+
+        throw new IllegalArgumentException("Unexpected Kasus or Präpositionalkasus: " +
+                kasusOderPraepositionalkasus);
+    }
+
+    @Override
+    public Konstituentenfolge imK(final Kasus kasus) {
         @Nullable final Artikel artikel = getArtikel();
 
-        return joinToString(
-                getFokuspartikel(),
-                artikel != null ? artikel.nomStr() : null,
-                flexionsreiheArtikellos.nom());
+        return joinToKonstituentenfolge(
+                // Eine Konstituentenfolge mit nur einer Konstituente
+                joinToKonstituentenfolge(
+                        getFokuspartikel(), // "sogar"
+                        artikel != null ? artikel.imStr(kasus) : null, // "die"
+                        adjPhr != null ?
+                                adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), kasus,
+                                        Artikel.traegtKasusendung(artikel, kasus)) :
+                                null, // "junge"
+                        flexionsreiheArtikellos.im(kasus), // "Frau"
+                        adjPhr != null ? adjPhr.getAttributivAnteilLockererNachtrag() : null
+                        // ", gespannt, ob du etwas zu berichten hast[,]"
+                ).joinToSingleKonstituente()
+                        // Das Ganze soll eine Konstituente sein, die als Bezugsobejekt
+                        // verstanden werden kann
+                        .withBezugsobjektUndKannVerstandenWerdenAls(
+                                getBezugsobjekt(), getNumerusGenus()));
+    }
+
+    @Override
+    public String nomStr() {
+        // FIXME Verwendungen suchen und bei
+        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
+        return nomK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String datStr() {
-        @Nullable final Artikel artikel = getArtikel();
-
-        return joinToString(
-                getFokuspartikel(),
-                artikel != null ? artikel.datStr() : null,
-                flexionsreiheArtikellos.dat());
+        // FIXME Verwendungen suchen und bei
+        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
+        return datK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String artikellosDatStr() {
-        return joinToString(
-                getFokuspartikel(),
-                flexionsreiheArtikellos.dat());
+        // FIXME Verwendungen suchen und bei
+        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
+        return artikellosDatK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String akkStr() {
-        @Nullable final Artikel artikel = getArtikel();
-
-        return joinToString(
-                getFokuspartikel(),
-                artikel != null ? artikel.akkStr() : null,
-                flexionsreiheArtikellos.akk());
+        // FIXME Verwendungen suchen und bei
+        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
+        return akkK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Nullable

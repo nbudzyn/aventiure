@@ -8,8 +8,10 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -101,6 +103,28 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
                 getAdjektiv(),
                 indirekterFragesatz
         );
+    }
+
+    @Nullable
+    @Override
+    public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus, final Kasus kasus,
+                                                      final boolean artikelwortTraegtKasusendung) {
+        // FIXME Test-driven implementieren
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Satz getAttributivAnteilRelativsatz() {
+        // FIXME Test-driven implementieren
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
+        // FIXME Test-driven implementieren
+        return null;
     }
 
     @Override

@@ -3,10 +3,13 @@ package de.nb.aventiure2.german.adjektiv;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Zwei Adjektivphrasen ohne Leerstellen, die mit <i>und</i>
@@ -38,6 +41,28 @@ public class ZweiAdjPhrOhneLeerstellen
                 getErst().mitAdvAngabe(advAngabe),
                 getZweit()
         );
+    }
+
+    @Nullable
+    @Override
+    public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus, final Kasus kasus,
+                                                      final boolean artikelwortTraegtKasusendung) {
+        // FIXME Test-driven implementieren
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public Satz getAttributivAnteilRelativsatz() {
+        // FIXME Test-driven implementieren
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
+        // FIXME Test-driven implementieren
+        return null;
     }
 
     @Override

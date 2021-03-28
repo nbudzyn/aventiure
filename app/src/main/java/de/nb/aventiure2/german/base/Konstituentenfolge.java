@@ -318,6 +318,17 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
     }
 
     private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
+        // In findPhorikKandidatAndSicherheit() bevorzugen wir Bezugsobjekte leicht gegenüber
+        // anderen Nominalphrasen. Deshalb behandeln wir hier den Sonderfall, dass die
+        // Konstituentenfolge nur genau eine Konstituente enthält
+        if (size() == 1) {
+            final IKonstituenteOrStructuralElement konst = get(0);
+            if (konst instanceof Konstituente) {
+                return ((Konstituente) konst)
+                        .koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus);
+            }
+        }
+
         final Pair<Integer, Boolean> phorikKandidatAndSicherheit =
                 findPhorikKandidatAndSicherheit(numerusGenus);
 
@@ -341,6 +352,18 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                 .orElse(null);
     }
 
+    /**
+     * Ermittelt einen denkbaren Phorik-Kandidaten mit diesem Numerus und Genus (wenn er
+     * sich ist) und eine Angabe, wie sicher ein solcher Kandidat für diese Numerus und Genua
+     * erscheint.
+     * <p>
+     * Bezugsobjekte werden dabei gegenüber anderen Nominalphrasen ganz leicht
+     * bevorzugt: Gab es noch kein Bezugsobjekt mit diesem Numerus und Genus,
+     * "stellt die Methode erst einmal auf Durchzug". Erst nach dem ersten Bezugsobekt
+     * wird geprüft, wie eindeutig es ist. Deshalb möchte man vermutlich in ganz eindeutigen
+     * Fällen (Konstituentenfolge mit nur einem Element) erst diese eindeutigen Fälle abhandeln,
+     * bevor man diese Methode verwendet.
+     */
     private Pair<Integer, Boolean> findPhorikKandidatAndSicherheit(
             final NumerusGenus numerusGenus) {
         Integer indexVorigerAbweichenderKandidat = null;
@@ -364,29 +387,28 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
 
                     indexKandidat = i;
                 } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)
-                        && indexKandidat != null) {
-
+                        // Die folgende Zeile bewirkt, dass
+                        // "koennteAlsBezugsobjektVerstandenWerdenFuer()"
+                        // erst dann berücksichtigt wird, nachdem das erste Bezugsobjekt
+                        // gefunden wurde. Damit werden Dinge möglich wie
+                        // "Die SONNE (kein Bezugsobjekt, nicht gemerkt) steht hoch.
+                        // Rapunzel (Bezugsobjekt) kommt daher. Sie (eindeutig Rapunzel!) lächelt
+                        // dich an."
+                        // Bezugsobjekte werden also leicht bevorzugt gegenüber anderen
+                        // Nominalphrasen.
+                        // Bisher habe ich damit keine schlechten Erfahrungen gemacht.
+                        && indexKandidat != null
+                ) {
                     //  Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst
-                    //  ihn
-                    //  in die Luft."
+                    //  ihn in die Luft."
                     indexVorigerAbweichenderKandidat = indexKandidat;
                     indexKandidat = i;
                 }
 
-                if (indexVorigerAbweichenderKandidat != null
-                        && i - indexVorigerAbweichenderKandidat > GEDAECHTNISWEITE_PHORIK) {
-                    indexVorigerAbweichenderKandidat = null;
-                }
+                indexVorigerAbweichenderKandidat =
+                        vergissWennZuLangeHer(indexVorigerAbweichenderKandidat, i);
 
-                if (indexKandidat != null
-                        && i - indexKandidat > GEDAECHTNISWEITE_PHORIK) {
-                    // Irgendwann wird der Abstand zu groß. Dinge vermeiden wie "Du stellst
-                    // die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
-                    // schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder
-                    // in die Hand."
-
-                    indexKandidat = null;
-                }
+                indexKandidat = vergissWennZuLangeHer(indexKandidat, i);
             } else if (konst instanceof StructuralElement) {
                 if (konst == CHAPTER) {
                     indexVorigerAbweichenderKandidat = null;
@@ -419,7 +441,34 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
         return new Pair<>(indexKandidat, true);
     }
 
+    @Nullable
+    private static Integer vergissWennZuLangeHer(@Nullable final Integer gemerkterIndex,
+                                                 final int aktuellerIndex) {
+        if (gemerkterIndex != null
+                && aktuellerIndex - gemerkterIndex > GEDAECHTNISWEITE_PHORIK) {
+            // Irgendwann wird der Abstand zu groß. Dinge vermeiden wie "Du stellst
+            // die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
+            // schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder
+            // in die Hand."
+
+            return null;
+        }
+
+        return gemerkterIndex;
+    }
+
     private PhorikKandidat findPhorikKandidat() {
+        // In findPhorikKandidatAndSicherheit() bevorzugen wir Bezugsobjekte leicht gegenüber
+        // anderen Nominalphrasen. Deshalb behandeln wir hier den Sonderfall, dass die
+        // Konstituentenfolge nur genau eine Konstituente enthält
+        if (size() == 1) {
+            final IKonstituenteOrStructuralElement konst = get(0);
+            if (konst instanceof Konstituente) {
+                return ((Konstituente) konst).getPhorikKandidat();
+            }
+        }
+
+
         final Integer indexKandidatM = interpretPair(
                 findPhorikKandidatAndSicherheit(M));
         final Integer indexKandidatF = interpretPair(

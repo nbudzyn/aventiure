@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
@@ -128,6 +130,23 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
                 bezugsobjekt
         );
+    }
+
+    /**
+     * Erzeugt eine neue Kopie der Konstituente mit diesem Bezugsobjekt (oder keinem, wenn
+     * nicht angegeben) und dieser Angabe, als was die Komponente verstanden werden könnte.
+     *
+     * @param kannAlsBezugsobjektVerstandenWerdenFuer Muss gesetzt sein, wenn
+     *                                                <code>bezugsobjekt</code> gesetzt ist.
+     */
+    @CheckReturnValue
+    Konstituente withBezugsobjektUndKannVerstandenWerdenAls(
+            @Nullable final IBezugsobjekt bezugsobjekt,
+            @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer) {
+        return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,
+                startsNew, woertlicheRedeNochOffen, kommaStehtAus,
+                endsThis,
+                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }
 
     /**
@@ -366,6 +385,12 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     boolean koennteAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
         return kannAlsBezugsobjektVerstandenWerdenFuer == numerusGenus;
+    }
+
+    @Nullable
+    @VisibleForTesting
+    public NumerusGenus getKannAlsBezugsobjektVerstandenWerdenFuer() {
+        return kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 
     public StructuralElement getStartsNew() {

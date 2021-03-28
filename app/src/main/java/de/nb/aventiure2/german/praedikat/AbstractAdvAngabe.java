@@ -38,7 +38,7 @@ public abstract class AbstractAdvAngabe {
 
         // TODO Vielleicht sollte "AdjPhrOhneLeerstellen adjektivphrase" durch
         //  etwas Ähnliches wie das Interface Praedikativum ersetzt werden.
-        this(new Adjektiv(text).toAdjPhr());
+        this(Adjektiv.nichtFlektierbar(text).toAdjPhr());
     }
 
     AbstractAdvAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {

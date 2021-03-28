@@ -8,7 +8,6 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
@@ -17,8 +16,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -163,12 +160,7 @@ public class DescriptionBuilder {
                                            final PraedikatOhneLeerstellen praedikat,
                                            final StructuralElement endsThis) {
         return satz(startsNew,
-                praedikat.alsSatzMitSubjekt(Personalpronomen.get(P2,
-                        // Wir behaupten hier, der Adressat wäre männlich.
-                        // Es ist die Verantwortung des Aufrufers, keine
-                        // Sätze mit Konstruktionen wie "Du, der du" zu erzeugen, die
-                        // weibliche Adressaten ("du, die du") ausschließen.
-                        M, SPIELER_CHARAKTER)),
+                praedikat.alsSatzMitSubjekt(duSc()),
                 endsThis);
     }
 
