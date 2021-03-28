@@ -239,4 +239,13 @@ public class NominalphraseTest {
     // - "Die Frau, zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]..."
     // - "die junge Frau, gespannt, ob du etwas zu berichten hast[,]"
     // - "Du hilfst der jungen Frau, die gespannt ist, ob du etwas zu berichten hast[,]"
+
+    // FIXME Bestehende Nominalphrasen durch Kombinationen aus BLAU und HIMMEL (z.B.) ersetzen
+
+    // FIXME Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
+    //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ..." (Umformulierung als
+    //  "Adverbiale Angabe")
+
+    // FIXME Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
+    //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das"
 }
