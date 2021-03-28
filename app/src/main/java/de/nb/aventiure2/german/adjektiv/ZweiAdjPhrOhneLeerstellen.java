@@ -58,6 +58,7 @@ public class ZweiAdjPhrOhneLeerstellen
     public Satz getAttributivAnteilRelativsatz(
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
+            final Kasus kasusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
         // FIXME Test-driven implementieren
         return null;
@@ -65,7 +66,8 @@ public class ZweiAdjPhrOhneLeerstellen
 
     @Nullable
     @Override
-    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(
+            final Kasus kasusBezugselement) {
         // FIXME Test-driven implementieren
         return null;
     }

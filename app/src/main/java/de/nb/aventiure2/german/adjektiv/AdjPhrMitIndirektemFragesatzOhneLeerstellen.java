@@ -119,8 +119,12 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     public Satz getAttributivAnteilRelativsatz(
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
+            final Kasus kasusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
-        // FIXME Test-driven implementieren: Bei Nominativ besser lockerer Nachtrag!
+        if (kasusBezugselement == Kasus.NOM) {
+            // besser als lockerer Nachtrag: "Rapunzel, gespannt, was du zu berichten hast, ..."
+            return null;
+        }
 
         // "die gespannt ist, was wer zu berichten hat"
         return alsPraedikativumRelativsatz(personBezugselement, numerusGenusBezugselement,
@@ -129,10 +133,19 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
 
     @Nullable
     @Override
-    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
-        // FIXME Test-driven implementieren - im Fall von Nominativ
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(
+            final Kasus kasusBezugselement) {
+        if (kasusBezugselement == Kasus.NOM) {
+            return this;
+        }
+
+        // Nebensatz - ansonsten kann es zu Missverständnissen oder falscher
+        // Bedeutung kommen: "Du hilfst Rapunzel, gespannt, was du zu berichten hast"
+        // hat nicht die intendierte Bedeutung!
+
         return null;
     }
+
 
     @Override
     @CheckReturnValue

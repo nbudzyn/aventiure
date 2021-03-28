@@ -80,13 +80,15 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
     public Satz getAttributivAnteilRelativsatz(
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
+            final Kasus kasusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
         return null;
     }
 
     @Nullable
     @Override
-    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(
+            final Kasus kasusBezugselement) {
         return null;
     }
 

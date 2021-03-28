@@ -99,8 +99,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <ol>
      * <li>ein Adjektivattribut
      * <li>ein Relativsatz, siehe
-     * {@link #getAttributivAnteilRelativsatz(Person, NumerusGenus, IBezugsobjekt)}
-     * <li>ein lockerer Nachtrag, siehe {@link #getAttributivAnteilLockererNachtrag()}
+     * {@link #getAttributivAnteilRelativsatz(Person, NumerusGenus, Kasus, IBezugsobjekt)}
+     * <li>ein lockerer Nachtrag, siehe {@link #getAttributivAnteilLockererNachtrag(Kasus)}
      * </ol>
      */
     @Nullable
@@ -121,7 +121,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * berichten hast[,]"
      * </ul>
      * <p>
-     * In der Regel werden Lockere Nachträge (vgl. {@link #getAttributivAnteilLockererNachtrag()})
+     * In der Regel werden Lockere Nachträge (vgl.
+     * {@link #getAttributivAnteilLockererNachtrag(Kasus)})
      * bevorzugt. Sie können aber missverständlich (oder sogar falsch) sein, wenn die
      * Nominalphrase nicht im Nominativ steht: Vgl. den Unterschied zwischen
      * "Du hilfst der Frau des Herzogs, mit dem Tag zufrieden" (du bist mit den Tag zufrieden) und
@@ -129,11 +130,12 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * zufrieden).
      *
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
-     * @see #getAttributivAnteilLockererNachtrag()
+     * @see #getAttributivAnteilLockererNachtrag(Kasus)
      */
     @Nullable
     Satz getAttributivAnteilRelativsatz(Person personBezugselement,
                                         NumerusGenus numerusGenusBezugselement,
+                                        Kasus kasusBezugselement,
                                         @Nullable IBezugsobjekt bezugsobjektBezugselement);
 
     /**
@@ -151,11 +153,12 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <li>"(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
      * </ul>
      *
+     * @param kasusBezugselement
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
-     * @see #getAttributivAnteilRelativsatz(Person, NumerusGenus, IBezugsobjekt)
+     * @see #getAttributivAnteilRelativsatz(Person, NumerusGenus, Kasus, IBezugsobjekt)
      */
     @Nullable
-    AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag();
+    AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(Kasus kasusBezugselement);
 
 
     /**

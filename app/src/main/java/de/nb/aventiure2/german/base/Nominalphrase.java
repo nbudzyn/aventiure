@@ -368,7 +368,10 @@ public class Nominalphrase
 
         @Nullable final Satz attributivAnteilRelativsatz = adjPhr != null ?
                 adjPhr.getAttributivAnteilRelativsatz(getPerson(), getNumerusGenus(),
-                        getBezugsobjekt()) : null;
+                        kasus, getBezugsobjekt()) : null;
+
+        @Nullable final AdjPhrOhneLeerstellen attributivAnteilLockererNachtrag = adjPhr != null ?
+                adjPhr.getAttributivAnteilLockererNachtrag(kasus) : null;
 
         return joinToKonstituentenfolge(
                 // Eine Konstituentenfolge mit nur einer Konstituente
@@ -384,7 +387,12 @@ public class Nominalphrase
                                 schliesseInKommaEin(attributivAnteilRelativsatz.getRelativsatz())
                                 // , die sich fragt, ob du wohl kommst [,]
                                 : null,
-                        adjPhr != null ? adjPhr.getAttributivAnteilLockererNachtrag() : null
+                        attributivAnteilLockererNachtrag != null ?
+                                schliesseInKommaEin(attributivAnteilLockererNachtrag
+                                        .getPraedikativ(getPerson(), getNumerus()))
+                                // (Hier nichts aus dem Prädikativum ins Nachfeld auslagern,
+                                // führt zu falscher Bedeutung)
+                                : null
                         // ", gespannt, ob du etwas zu berichten hast[,]"
                 ).joinToSingleKonstituente()
                         // Das Ganze soll eine Konstituente sein, die als Bezugsobejekt

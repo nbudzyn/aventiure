@@ -91,8 +91,12 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     public Satz getAttributivAnteilRelativsatz(
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
+            final Kasus kasusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
-        // FIXME Test-driven implementieren: Bei Nominativ besser lockerer Nachtrag!
+        if (kasusBezugselement == Kasus.NOM) {
+            // besser als lockerer Nachtrag: "Rapunzel, glücklich, dich zu sehen, ..."
+            return null;
+        }
 
         // "die glücklich ist, dich zu sehen"
         return alsPraedikativumRelativsatz(personBezugselement, numerusGenusBezugselement,
@@ -101,8 +105,16 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
 
     @Nullable
     @Override
-    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
-        // FIXME Test-driven implementieren - im Fall von Nominativ
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(
+            final Kasus kasusBezugselement) {
+        if (kasusBezugselement == Kasus.NOM) {
+            return this;
+        }
+
+        // Nebensatz - ansonsten kann es zu Missverständnissen oder falscher
+        // Bedeutung kommen: "Du hilfst Rapunzel, glücklich dich zu sehen"
+        // hat nicht die intendierte Bedeutung!
+
         return null;
     }
 

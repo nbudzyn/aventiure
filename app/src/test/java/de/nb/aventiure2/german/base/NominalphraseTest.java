@@ -1,12 +1,9 @@
-package de.nb.aventiure2.german.adjektiv;
+package de.nb.aventiure2.german.base;
 
 import org.junit.Test;
 
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -29,11 +26,12 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
-@SuppressWarnings("ALL")
-public class AdjektivOhneErgaenzungenTest {
+@SuppressWarnings("ConstantConditions")
+public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Def_Nom_Sg() {
         // GIVEN
@@ -179,7 +177,7 @@ public class AdjektivOhneErgaenzungenTest {
     }
 
     @Test
-    public void test_nurRelativsatz() {
+    public void test_nichtNom_nurRelativsatz() {
         // GIVEN
         // "Rapunzel, glücklich, dich zu sehen[,]"
         final Nominalphrase np = np(
@@ -207,11 +205,38 @@ public class AdjektivOhneErgaenzungenTest {
         assertThat(actual.getPhorikKandidat().getBezugsobjekt()).isSameInstanceAs(World.RAPUNZEL);
     }
 
-    // FIXME "die Frau, gespannt, ob du etwas zu berichten hast[,]"
-    // FIXME "die junge Frau des Herzogs, gespannt, ob du etwas zu berichten hast[,]"
-    // FIXME "(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
+    @Test
+    public void test_Nom_nurLockererNachtrag() {
+        // GIVEN
+        // "Rapunzel, glücklich, dich zu sehen[,]"
+        final Nominalphrase np = np(
+                // Adjektivphrase: "glücklich, dich zu sehen"
+                AdjektivMitZuInfinitiv.GLUECKLICH.mitLexikalischerKern(SEHEN.mit(duSc())),
+                // Nomen: "Rapunzel"
+                NomenFlexionsspalte.RAPUNZEL,
+                // Bezugsobjekt: Rapunzel
+                World.RAPUNZEL);
 
-    // FIXME "rosa und grüne Elefanten"
-    // FIXME "(die )junge (Frau des Herzogs, die dich überrascht hat, gespannt, ob du
-    //  etwas zu berichten hast[,]"
+        // WHEN
+        // "Rapunzel, glücklich, dich zu sehen, schaut dich an"
+        final Satz satz = ANSCHAUEN.mit(duSc()).alsSatzMitSubjekt(np);
+
+        final Konstituentenfolge konstituentenfolge = satz.getVerbzweitsatzStandard();
+        final Konstituente actual = konstituentenfolge.joinToSingleKonstituente();
+
+        // THEN
+        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vordoppelpunktNoetig()).isFalse();
+        assertThat(actual.getText()).isEqualTo(
+                "Rapunzel, glücklich, dich zu sehen, schaut dich an");
+        assertThat(actual.kommaStehtAus()).isFalse();
+        assertThat(actual.woertlicheRedeNochOffen()).isFalse();
+        assertThat(actual.getPhorikKandidat().getBezugsobjekt()).isSameInstanceAs(World.RAPUNZEL);
+    }
+
+    // FIXME Jetzt noch ZweiAdjPhrOhneLeerstellen testen:
+    // - "rosa und grüne Elefanten"
+    // - "Die Frau, zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]..."
+    // - "die junge Frau, gespannt, ob du etwas zu berichten hast[,]"
+    // - "Du hilfst der jungen Frau, die gespannt ist, ob du etwas zu berichten hast[,]"
 }

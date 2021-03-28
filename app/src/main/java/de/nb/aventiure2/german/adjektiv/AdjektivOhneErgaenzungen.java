@@ -126,15 +126,17 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     public Satz getAttributivAnteilRelativsatz(
             final Person personBezugselement,
             final NumerusGenus numerusGenusBezugselement,
+            final Kasus kasusBezugselement,
             @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
         return toAdjPhr().getAttributivAnteilRelativsatz(personBezugselement,
-                numerusGenusBezugselement, bezugsobjektBezugselement);
+                numerusGenusBezugselement, kasusBezugselement, bezugsobjektBezugselement);
     }
 
     @Nullable
     @Override
-    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag() {
-        return toAdjPhr().getAttributivAnteilLockererNachtrag();
+    public AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(
+            final Kasus kasusBezugselement) {
+        return toAdjPhr().getAttributivAnteilLockererNachtrag(kasusBezugselement);
     }
 
     @Override
