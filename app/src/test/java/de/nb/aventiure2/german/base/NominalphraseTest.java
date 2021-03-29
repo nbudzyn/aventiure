@@ -243,7 +243,7 @@ public class NominalphraseTest {
     //  Fröhlich gibt Peter dem Mann das Buch". Vgl. auch: "Das Buch gibt Peter fröhlich dem Mann" -
     //  also auf jeden Fall vor dem Dativ-Objekt.
 
-    // FIXME Jetzt noch ZweiAdjPhrOhneLeerstellen testen:
+    // FIXME Jetzt noch ZweiAdjPhrOhneLeerstellen implementieren und testen:
     // - "rosa und grüne Elefanten"
     // - "Die Frau, zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]..."
     // - "die junge Frau, gespannt, ob du etwas zu berichten hast[,]"
