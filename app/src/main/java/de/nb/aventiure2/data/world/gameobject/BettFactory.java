@@ -24,7 +24,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.EIN_BETT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT_EIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -57,7 +57,7 @@ public class BettFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(EIN_BETT, id),
+                        np(BETT_EIN, id),
                         np(BETT, id),
                         np(BETT, id));
 

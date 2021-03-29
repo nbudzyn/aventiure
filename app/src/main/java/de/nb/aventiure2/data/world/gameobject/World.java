@@ -309,7 +309,7 @@ public class World {
                 InvisibleFactory.create(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                         // Weil nicht klar, welche Tasche -> kein Bezugsobjekt
-                        NomenFlexionsspalte.EINE_TASCHE,
+                        NomenFlexionsspalte.TASCHE_EINE,
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,

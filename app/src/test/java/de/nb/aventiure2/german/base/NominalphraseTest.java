@@ -18,8 +18,8 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.EIN_GESPRAECH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH_EIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -71,7 +71,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Indef_Nom_Sg() {
         // GIVEN
-        final Nominalphrase np = EIN_GESPRAECH.mit(FROEHLICH);
+        final Nominalphrase np = GESPRAECH_EIN.mit(FROEHLICH);
 
         // WHEN
         final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
@@ -89,7 +89,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Indef_Dat_Sg() {
         // GIVEN
-        final Nominalphrase np = EIN_GESPRAECH.mit(FROEHLICH);
+        final Nominalphrase np = GESPRAECH_EIN.mit(FROEHLICH);
 
         // WHEN
         final Konstituente actual = np.imK(DAT).joinToSingleKonstituente();
@@ -234,13 +234,20 @@ public class NominalphraseTest {
         assertThat(actual.getPhorikKandidat().getBezugsobjekt()).isSameInstanceAs(World.RAPUNZEL);
     }
 
+    // FIXME Bestehende Nominalphrasen durch Kombinationen aus BLAU und HIMMEL (z.B.) ersetzen
+
+    // FIXME Idee: Neue Stelle für eine "prädikative" Angabe wie "Peter geht fröhlich durch
+    //  den Wald". Zur Stellung vergleiche: "Heute schlägt Peter /fröhlich/ heftig auf das Holz
+    //  ein",
+    //  also vor der Verb-Allgemein-Adverbialen Angabe - am liebsten jedoch im Vorfeld:
+    //  Fröhlich gibt Peter dem Mann das Buch". Vgl. auch: "Das Buch gibt Peter fröhlich dem Mann" -
+    //  also auf jeden Fall vor dem Dativ-Objekt.
+
     // FIXME Jetzt noch ZweiAdjPhrOhneLeerstellen testen:
     // - "rosa und grüne Elefanten"
     // - "Die Frau, zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]..."
     // - "die junge Frau, gespannt, ob du etwas zu berichten hast[,]"
     // - "Du hilfst der jungen Frau, die gespannt ist, ob du etwas zu berichten hast[,]"
-
-    // FIXME Bestehende Nominalphrasen durch Kombinationen aus BLAU und HIMMEL (z.B.) ersetzen
 
     // FIXME Im Kontext Wetter z.B. die Farbe des Himmel (BLAU) zurückgeben und dann daraus
     //  prädikative und attribute Sätze erzeugen

@@ -53,7 +53,7 @@ class BettgestellFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(NomenFlexionsspalte.EIN_BETTGESTELL, id),
+                        np(NomenFlexionsspalte.BETTGESTELL_EIN, id),
                         np(BETTGESTELL, id),
                         np(BETTGESTELL, id));
 

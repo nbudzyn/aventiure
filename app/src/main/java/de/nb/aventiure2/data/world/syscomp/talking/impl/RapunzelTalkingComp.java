@@ -73,8 +73,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENERVT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISCH;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.EIN_GESPRAECH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH_EIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG_OHNE_ART;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
@@ -163,7 +163,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of();
             case NORMAL:
                 return ImmutableList.of(
-                        entryReEntrySt(VerbSubjAkkPraep.BEGINNEN.mitAkk(EIN_GESPRAECH),
+                        entryReEntrySt(VerbSubjAkkPraep.BEGINNEN.mitAkk(GESPRAECH_EIN),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
                         entryReEntrySt(this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
