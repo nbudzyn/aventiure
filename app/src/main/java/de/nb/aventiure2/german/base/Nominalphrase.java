@@ -8,18 +8,15 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -40,46 +37,11 @@ public class Nominalphrase
     private final Flexionsreihe flexionsreiheArtikellos;
 
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
-    public static final Nominalphrase BEDECKTER_HIMMEL =
-            np(M, DEF, "bedeckter Himmel", "bedeckten Himmel",
-                    "bedeckten Himmel");
-    public static final Nominalphrase BEWOELKTER_HIMMEL =
-            np(M, DEF, "bewölkte Himmel", "bewölkten Himmel",
-                    "bewölkten Himmel");
-    public static final Nominalphrase BEZOGENER_HIMMEL =
-            np(M, DEF, "bezogener Himmel", "bezogenen Himmel",
-                    "bezogenen Himmel");
-    public static final Nominalphrase BLAUER_HIMMEL =
-            np(AdjektivOhneErgaenzungen.BLAU, NomenFlexionsspalte.HIMMEL);
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
-    public static final Nominalphrase DUESTERE_WOLKEN =
-            np(PL_MFN, INDEF,
-                    "düstere Wolken", "düsteren Wolken");
-    public static final Nominalphrase EIN_GROBER_ABRISS =
-            np(N, INDEF, "grober Abriss",
-                    "groben Abriss", "groben Abriss");
-    public static final Nominalphrase EINE_KLEINE_NOTLUEGE =
-            np(N, INDEF, "kleine Notlüge",
-                    "kleinen Notlüge");
     public static final Nominalphrase ERSTE_SONNENSTRAHLEN =
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
-    public static final Nominalphrase GANZER_HIMMEL =
-            np(M, DEF, "ganze Himmel",
-                    "ganzen Himmel", "ganzen Himmel");
-    public static final Nominalphrase GETRUEBTES_TAGESLICHT =
-            np(N, DEF, "getrübte Tageslicht",
-                    "getrübten Tageslicht");
-    public static final Nominalphrase EIN_HEISSER_TAG =
-            np(M, INDEF, "heißer Tag",
-                    "heißen Tag", "heißen Tag");
-    public static final Nominalphrase HEISSER_SONNENSCHEIN =
-            np(M, DEF, "heiße Sonnenschein",
-                    "heißen Sonnenschein", "heißen Sonnenschein");
-    public static final Nominalphrase HELLES_TAGESLICHT =
-            np(N, DEF, "helle Tageslicht",
-                    "hellen Tageslicht", "helle Tageslicht");
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");
@@ -88,49 +50,6 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
-    public static final Nominalphrase KLARER_HIMMEL =
-            np(M, DEF, "klare Himmel", "klaren Himmel",
-                    "klaren Himmel");
-    public static final Nominalphrase MORGENDLICHER_SONNENSCHEIN =
-            np(M, DEF, "morgendliche Sonnenschein",
-                    "morgendlichen Sonnenschein",
-                    "morgendlichen Sonnenschein");
-    public static final Nominalphrase KLIRRENDE_KAELTE_OHNE_ART =
-            np(F, null,
-                    "klirrende Kälte", "klirrenden Kälte");
-    public static final Nominalphrase EIN_SCHOENER_ABEND =
-            np(M, INDEF, "schöner Abend",
-                    "schönen Abend", "schönen Abend");
-    public static final Nominalphrase ROETLICHER_ABENDHIMMEL =
-            np(M, DEF, "rötliche Abendhimmel", "rötlichen Abendhimmel",
-                    "rötlichen Abendhimmel");
-    public static final Nominalphrase SANFTES_MONDLICHT =
-            np(N, DEF, "sanfte Mondlicht",
-                    "sanften Mondlicht");
-    public static final Nominalphrase SANFTES_MORGENLICHT =
-            np(N, DEF, "sanfte Morgenlicht",
-                    "sanften Morgenlicht");
-    public static final Nominalphrase SANFTES_TAGESLICHT =
-            np(N, DEF, "sanfte Tageslicht",
-                    "sanften Tageslicht");
-    public static final Nominalphrase SENGENDE_SONNE =
-            np(F, DEF, "sengende Sonne", "sengenden Sonne");
-    public static final Nominalphrase STRAHLEND_BLAUER_HIMMEL =
-            np(M, DEF, "strahlend blaue Himmel",
-                    "strahlend blauen Himmel", "strahlend blauen Himmel");
-    public static final Nominalphrase TRUEBES_DAEMMERLICHT =
-            np(N, DEF, "trübe Dämmerlicht",
-                    "trüben Dämmerlicht");
-    public static final Nominalphrase TRUEBES_LICHT =
-            np(N, DEF, "trübe Licht",
-                    "trüben Licht");
-    public static final Nominalphrase WARMES_WETTER_OHNE_ART =
-            np(N, null,
-                    "warmes Wetter", "warmem Wetter");
-    public static final Nominalphrase WOLKENVERHANGENER_HIMMEL =
-            np(M, DEF, "wolkenverhangene Himmel",
-                    "wolkenverhangenen Himmel",
-                    "wolkenverhangenen Himmel");
 
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.

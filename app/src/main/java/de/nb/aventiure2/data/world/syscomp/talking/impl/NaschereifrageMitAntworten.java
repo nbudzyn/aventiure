@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
 import de.nb.aventiure2.data.world.syscomp.talking.IScBegruessable;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
@@ -24,7 +25,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMitAntworten.Counter.FRAGE_BEANTWORTET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
-import static de.nb.aventiure2.german.base.Nominalphrase.EIN_GROBER_ABRISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GROB;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS_EIN;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -73,7 +75,7 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
                                         new AdvAngabeSkopusVerbAllg(
                                                 GENAU.mitGraduativerAngabe("ganz"))),
                         this::allesGanzGenauErklaeren),
-                st(GEBEN.mitAkk(EIN_GROBER_ABRISS), this::einenGrobenAbrissGeben));
+                st(GEBEN.mitAkk(Nominalphrase.np(GROB, ABRISS_EIN)), this::einenGrobenAbrissGeben));
     }
 
     private void allesGanzGenauErklaeren() {

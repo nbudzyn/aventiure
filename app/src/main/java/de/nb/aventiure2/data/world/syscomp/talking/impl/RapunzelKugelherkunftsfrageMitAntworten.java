@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
 import de.nb.aventiure2.data.world.syscomp.talking.IScBegruessable;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -21,8 +22,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_N
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelKugelherkunftsfrageMitAntworten.Counter.FRAGE_BEANTWORTET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NOTLUEGE_EINE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WAHRHEIT;
-import static de.nb.aventiure2.german.base.Nominalphrase.EINE_KLEINE_NOTLUEGE;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -65,7 +67,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
     public Iterable<SCTalkAction> getAntwortActions() {
 
         return ImmutableList.of(
-                st(SICH_ERLAUBEN.mit(EINE_KLEINE_NOTLUEGE),
+                st(SICH_ERLAUBEN.mit(Nominalphrase.np(KLEIN, NOTLUEGE_EINE)),
                         this::notluege),
                 st(ANGEBEN,
                         this::aufschneiden),

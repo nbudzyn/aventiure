@@ -8,6 +8,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -20,6 +21,14 @@ import de.nb.aventiure2.german.satz.Satz;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEZOGEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GANZ;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GETRUEBT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SANFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TRUEB;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WOLKENVERHANGEN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUESTERNIS;
@@ -27,6 +36,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HALBDUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGENLICHT;
@@ -35,20 +45,9 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHUMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKEN_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZWIELICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.BEDECKTER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.BEWOELKTER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.BEZOGENER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.DUESTERE_WOLKEN;
-import static de.nb.aventiure2.german.base.Nominalphrase.GANZER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.GETRUEBTES_TAGESLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.HELLES_TAGESLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.SANFTES_MONDLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.SANFTES_MORGENLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.SANFTES_TAGESLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_DAEMMERLICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.TRUEBES_LICHT;
-import static de.nb.aventiure2.german.base.Nominalphrase.WOLKENVERHANGENER_HIMMEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
@@ -62,6 +61,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEDECKEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
+@SuppressWarnings("DuplicateBranchesInSwitch")
 public enum Bewoelkung implements Betweenable<Bewoelkung> {
     // Reihenfolge ist relevant, nicht ändern!
     WOLKENLOS,
@@ -202,7 +202,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             case BEDECKT:
                 alt.add(
                         // "Düstere Wolken bedecken den ganzen Himmel"
-                        BEDECKEN.mit(GANZER_HIMMEL).alsSatzMitSubjekt(DUESTERE_WOLKEN));
+                        BEDECKEN.mit(np(GANZ, HIMMEL))
+                                .alsSatzMitSubjekt(np(DUESTER, WOLKEN_OHNE_ART)));
                 alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.WOLKENVERHANGEN)
                         .alsSatzMitSubjekt(HIMMEL));
                 break;
@@ -337,22 +338,56 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToList(altLichtInDemEtwasLiegt(tageszeit), IN_DAT::mit));
+        alt.addAll(mapToSet(altOffenerHimmel(tageszeit), UNTER_DAT::mit));
+        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit), IN_DAT::mit));
+
+        if (this == LEICHT_BEWOELKT) {
+            alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt alternative substantivische Phrasen zurück, die den (offenen) Himmel
+     * beschreiben - <i>Ergebnis kann leer sein</i>.
+     */
+    ImmutableSet<EinzelneSubstantivischePhrase> altOffenerHimmel(
+            final Tageszeit tageszeit) {
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+
+        alt.addAll(mapToSet(altAdjPhrHimmel(tageszeit), HIMMEL::mit));
+
+        if (this == WOLKENLOS) {
+            alt.addAll(tageszeit.altWolkenloserHimmel());
+        }
+
+        return alt.build();
+    }
+
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück, die den (offenen) Himmel
+     * beschreiben - <i>Ergebnis kann leer sein</i>.
+     */
+    ImmutableSet<AdjPhrOhneLeerstellen> altAdjPhrHimmel(
+            final Tageszeit tageszeit) {
+        final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
 
         switch (this) {
             case WOLKENLOS:
-                alt.addAll(mapToList(tageszeit.altWolkenloserHimmel(), UNTER_DAT::mit));
+                // kann leer sein
+                alt.addAll(tageszeit.altAltAdjPhrWolkenloserHimmel());
                 break;
             case LEICHT_BEWOELKT:
-                alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
+                // bleibt leer
                 break;
             case BEWOELKT:
-                alt.add(UNTER_DAT.mit(BEWOELKTER_HIMMEL));
+                alt.add(AdjektivOhneErgaenzungen.BEWOELKT);
                 break;
             case BEDECKT:
-                alt.add(UNTER_DAT.mit(BEDECKTER_HIMMEL),
-                        UNTER_DAT.mit(BEZOGENER_HIMMEL),
-                        UNTER_DAT.mit(WOLKENVERHANGENER_HIMMEL));
+                alt.add(AdjektivOhneErgaenzungen.BEDECKT,
+                        BEZOGEN, WOLKENVERHANGEN);
                 break;
             default:
                 throw new IllegalStateException("Unexpected Bewoelkung: " + this);
@@ -368,7 +403,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         switch (this) {
             case WOLKENLOS:
                 if (tageszeit == TAGSUEBER) {
-                    alt.add(HELLES_TAGESLICHT);
+                    alt.add(np(HELL, TAGESLICHT));
                 } else if (tageszeit == NACHTS) {
                     alt.add(STERNENLICHT);
                 }
@@ -408,13 +443,13 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             final Tageszeit tageszeit) {
         switch (tageszeit) {
             case MORGENS:
-                return ImmutableSet.of(SANFTES_MORGENLICHT);
+                return ImmutableSet.of(np(SANFT, MORGENLICHT));
             case TAGSUEBER:
-                return ImmutableSet.of(SANFTES_TAGESLICHT, GETRUEBTES_TAGESLICHT);
+                return ImmutableSet.of(np(SANFT, TAGESLICHT), np(GETRUEBT, TAGESLICHT));
             case ABENDS:
                 return ImmutableSet.of(SCHUMMERLICHT, DAEMMERLICHT);
             case NACHTS:
-                return ImmutableSet.of(SANFTES_MONDLICHT);
+                return ImmutableSet.of(np(SANFT, MONDLICHT));
             default:
                 throw new IllegalStateException("Unexpected Tageszeit: " + tageszeit);
         }
@@ -424,9 +459,9 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             final Tageszeit tageszeit) {
         switch (tageszeit) {
             case MORGENS:
-                return ImmutableSet.of(TRUEBES_DAEMMERLICHT);
+                return ImmutableSet.of(np(TRUEB, DAEMMERLICHT));
             case TAGSUEBER:
-                return ImmutableSet.of(TRUEBES_LICHT);
+                return ImmutableSet.of(np(TRUEB, LICHT));
             case ABENDS:
                 return ImmutableSet.of(ZWIELICHT, HALBDUNKEL);
             case NACHTS:

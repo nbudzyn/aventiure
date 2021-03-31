@@ -5,9 +5,11 @@ import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MAGER;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN_EINE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -29,11 +31,10 @@ public class RapunzelsZauberinDescriptionComp extends MultiDescriptionComp {
                                 + "reichender Nase",
                         "mageren Frau mit krummer, bis zum Kinn "
                                 + "reichender Nase", RAPUNZELS_ZAUBERIN),
-                np(F, DEF, "magere Frau",
-                        "mageren Frau", RAPUNZELS_ZAUBERIN),
+                np(MAGER, FRAU, RAPUNZELS_ZAUBERIN),
                 np(NomenFlexionsspalte.FRAU, RAPUNZELS_ZAUBERIN));
         zauberinDescriptionTriple = new DescriptionTriple(
-                np(F, INDEF, "magere Zauberin", RAPUNZELS_ZAUBERIN),
+                np(MAGER, ZAUBERIN_EINE, RAPUNZELS_ZAUBERIN),
                 np(ZAUBERIN, RAPUNZELS_ZAUBERIN));
     }
 

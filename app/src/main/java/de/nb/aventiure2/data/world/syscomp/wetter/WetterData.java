@@ -27,13 +27,16 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STARK;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND_EIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
-import static de.nb.aventiure2.german.base.Nominalphrase.EIN_SCHOENER_ABEND;
-import static de.nb.aventiure2.german.base.Nominalphrase.HEISSER_SONNENSCHEIN;
-import static de.nb.aventiure2.german.base.Nominalphrase.SENGENDE_SONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
@@ -142,14 +145,14 @@ class WetterData {
                 alt.addAll(
                         temperatur.altAdjektivphrasen().stream()
                                 .map(tempAdjPhr -> new ZweiPraedikativa<>(
-                                        EIN_SCHOENER_ABEND,
+                                        np(SCHOEN, ABEND_EIN),
                                         tempAdjPhr.mitAdvAngabe(
                                                 new AdvAngabeSkopusSatz("noch")))
                                         .alsEsIstSatz()));
                 if (temperatur == Temperatur.WARM) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(altNeueSaetze(
-                            praedikativumPraedikatMit(EIN_SCHOENER_ABEND)
+                            praedikativumPraedikatMit(np(SCHOEN, ABEND_EIN))
                                     .alsSatzMitSubjekt(EXPLETIVES_ES),
                             ",",
                             bewoelkung.altStatischeBeschreibungSaetze(time)));
@@ -363,29 +366,8 @@ class WetterData {
 
     private Iterable<AdvAngabeSkopusVerbWohinWoher> altInSonnenhitzeHinausWennSinnvoll(
             final AvTime time) {
-        final Temperatur temperatur = getTemperatur(time);
-
-        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableList.builder();
-
-        // FIXME Windstärke berücksichtigen
-        // FIXME Blitz und Donner berücksichtigen
-
-        if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
-            if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
-                alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(HEISSER_SONNENSCHEIN)));
-            }
-
-            if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Sonnenhitze"));
-                alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(SENGENDE_SONNE)));
-
-                if (time.gegenMittag()) {
-                    alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Mittagshitze"));
-                }
-            }
-        }
-
-        return alt.build();
+        return mapToSet(altSonnenhitzeWennSinnvoll(time),
+                sonnenhitze -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(sonnenhitze)));
     }
 
     private Iterable<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSpeziellNichtNachts(
@@ -438,28 +420,52 @@ class WetterData {
     }
 
     ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
-        final Temperatur temperatur = getTemperatur(time);
-
-        final ImmutableSet.Builder<Praepositionalphrase> alt =
-                ImmutableSet.builder();
+        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
         alt.addAll(getBewoelkung().altUnterOffenemHimmel(time.getTageszeit()));
 
+        final ImmutableList<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
+                altSonnenhitzeWennSinnvoll(time);
+
+        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll, IN_DAT::mit));
+        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
+                substPhrOderReflexivpronomen ->
+                        IN_DAT.mit(substPhrOderReflexivpronomen)
+                                .mitModAdverbOderAdjektiv("mitten")));
+
+        return alt.build();
+    }
+
+    private ImmutableList<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll(
+            final AvTime time) {
+        final Temperatur temperatur = getTemperatur(time);
+
+        final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt = ImmutableList.builder();
+
+        // FIXME Windstärke berücksichtigen
+        // FIXME Blitz und Donner berücksichtigen
+
         if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
             if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
-                alt.add(IN_DAT.mit(HEISSER_SONNENSCHEIN).mitModAdverbOderAdjektiv("mitten"));
+                alt.add(np(HEISS, SONNENSCHEIN));
             }
 
             if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
-                alt.add(IN_DAT.mit(SENGENDE_SONNE));
+                alt.add(SONNENHITZE);
+                alt.add(np(SENGEND, SONNE));
+
+                if (time.gegenMittag()) {
+                    alt.add(MITTAGSSONNE);
+                }
             }
         }
 
         return alt.build();
     }
+
 
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time) {
         return getBewoelkung().altBeiLichtImLicht(time.getTageszeit());

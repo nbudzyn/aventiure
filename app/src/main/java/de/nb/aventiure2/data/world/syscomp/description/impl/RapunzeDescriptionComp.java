@@ -5,8 +5,10 @@ import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -28,8 +30,7 @@ public class RapunzeDescriptionComp extends MultiDescriptionComp {
                         "wunderschönen jungen Frau", RAPUNZEL),
                 np(F, DEF, "schöne junge Frau",
                         "schönen jungen Frau", RAPUNZEL),
-                np(F, DEF, "junge Frau",
-                        "jungen Frau", RAPUNZEL));
+                np(JUNG, FRAU, RAPUNZEL));
         rapunzelDescriptionTriple = new DescriptionTriple(
                 np(NomenFlexionsspalte.RAPUNZEL, RAPUNZEL),
                 np(NomenFlexionsspalte.RAPUNZEL, RAPUNZEL));

@@ -63,8 +63,10 @@ import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -343,11 +345,7 @@ public class World {
                                 "langen, aus Brettern gezimmertem Tisch",
                                 "langen, aus Brettern gezimmerten Tisch",
                                 SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
-                        np(M, DEF,
-                                "lange Brettertisch",
-                                "langen Brettertisch",
-                                "langen Brettertisch",
-                                SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
+                        np(LANG, BRETTERTISCH, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
                         np(NomenFlexionsspalte.TISCH, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
                         // Der Tisch wird erst spontan hinzugefügt, wenn
                         // sich der Benutzer an einen Platz setzt.

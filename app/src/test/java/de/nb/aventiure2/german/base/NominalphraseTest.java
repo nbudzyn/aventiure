@@ -30,7 +30,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
-@SuppressWarnings("ConstantConditions")
 public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Def_Nom_Sg() {
@@ -234,7 +233,20 @@ public class NominalphraseTest {
         assertThat(actual.getPhorikKandidat().getBezugsobjekt()).isSameInstanceAs(World.RAPUNZEL);
     }
 
-    // FIXME Bestehende Nominalphrasen durch Kombinationen aus BLAU und HIMMEL (z.B.) ersetzen
+    // FIXME Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
+    //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ..." (Umformulierung als
+    //  "depiktives Prädikativ", vgl. Duden 1205.) - Problem an der Sache:
+    //  Funktioniert nicht bei allen Adjektivphrasen sinnvoll:
+    //  "Die grüne Eidechse läuft über den Boden" - ?"Grün läuft die Eidechse über den Boden"
+    //  Aber vielleicht bei praktisch allen mit w-Fragesatz oder anderweitig komplexen,
+    //  für die das überhaupt nur relevant wäre? Letztlich müsste das
+    //  Prädikat dem Satz mitteilen, dass "Glücklich, Rapunzel zu sehen" ins
+    //  Vorfeld gerückt werden sollen (getSpeziellesVorfeldSehrErwuenscht(),
+    //  getSpeziellesVorfeldAlsWeitereOption()).
+    //  Der attributivAnteilLockererNachtrag muss eine eigene Konstituente sein,
+    //  damit sie von getSpeziellesVorfeld...() auch zurückgegeben werden kann.
+    //  Sätze mit "sein / werden" und Adjektivphrase können anscheinend kein so ein
+    //  "depiktives Prädikativ" tragen? ?"Glücklich bist du hilfsbereit"
 
     // FIXME Idee: Neue Stelle für eine "prädikative" Angabe wie "Peter geht fröhlich durch
     //  den Wald". Zur Stellung vergleiche: "Heute schlägt Peter /fröhlich/ heftig auf das Holz
@@ -242,6 +254,10 @@ public class NominalphraseTest {
     //  also vor der Verb-Allgemein-Adverbialen Angabe - am liebsten jedoch im Vorfeld:
     //  Fröhlich gibt Peter dem Mann das Buch". Vgl. auch: "Das Buch gibt Peter fröhlich dem Mann" -
     //  also auf jeden Fall vor dem Dativ-Objekt.
+    //  Geht aber nicht immer: ?"Fröhlich ist Peter dumm" (aber: "Fröhlich ist Peter ein Esel" -
+    //  andere Bedeutung?)
+    //  Vielleicht braucht reicht es, diese Stelle durch die Adjektivphrase automatisch
+    //  zu besetzen!
 
     // FIXME Jetzt noch ZweiAdjPhrOhneLeerstellen implementieren und testen:
     // - "rosa und grüne Elefanten"
@@ -251,10 +267,6 @@ public class NominalphraseTest {
 
     // FIXME Im Kontext Wetter z.B. die Farbe des Himmel (BLAU) zurückgeben und dann daraus
     //  prädikative und attribute Sätze erzeugen
-
-    // FIXME Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
-    //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ..." (Umformulierung als
-    //  "Adverbiale Angabe")
 
     // FIXME Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
     //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" sowie

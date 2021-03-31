@@ -65,6 +65,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     LANG("lang"),
     MAGER("mager"),
     MISSTRAUISCH("misstrauisch"),
+    MORGENDLICH("morgendlich"),
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
     ROETLICH("rötlich"),

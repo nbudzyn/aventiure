@@ -2,18 +2,26 @@ package de.nb.aventiure2.data.time;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BLAU;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLAR;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MORGENDLICH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ROETLICH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDSCHEIN;
@@ -26,18 +34,16 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.VOLLMOND;
-import static de.nb.aventiure2.german.base.Nominalphrase.BLAUER_HIMMEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
-import static de.nb.aventiure2.german.base.Nominalphrase.KLARER_HIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.MORGENDLICHER_SONNENSCHEIN;
-import static de.nb.aventiure2.german.base.Nominalphrase.ROETLICHER_ABENDHIMMEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.STRAHLEND_BLAUER_HIMMEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 public enum Tageszeit {
     NACHTS(NACHT,
             DUNKEL,
             ImmutableList.of(MOND, VOLLMOND),
             ImmutableList.of(MONDSCHEIN),
+            ImmutableList.of(),
             ImmutableList.of(STERNENHIMMEL, NACHTHIMMEL),
             ImmutableList.of(), // "Gute Nacht" etc. sind nur Verabschiedungen!
             ImmutableList.of() // "Gute Nacht" etc. sagt man eher abends
@@ -46,9 +52,11 @@ public enum Tageszeit {
     MORGENS(MORGEN,
             HELL,
             ImmutableList.of(MORGENSONNE),
-            ImmutableList.of(ERSTE_SONNENSTRAHLEN, MORGENDLICHER_SONNENSCHEIN, SONNENSCHEIN,
-                    MORGENSONNE),
-            ImmutableList.of(KLARER_HIMMEL),
+            ImmutableList.of(ERSTE_SONNENSTRAHLEN,
+                    np(MORGENDLICH, SONNENSCHEIN),
+                    SONNENSCHEIN, MORGENSONNE),
+            ImmutableList.of(KLAR),
+            ImmutableList.of(),
             ImmutableList.of("Morgen", "guten Morgen", "schönen guten Morgen",
                     "einen schönen guten Morgen"),
             ImmutableList.of("schönen Tag noch", "einen schönten Tag noch")),
@@ -59,7 +67,8 @@ public enum Tageszeit {
             ImmutableList.of(SONNENSCHEIN,
                     // "du legst dich in die Sonne"
                     SONNE, MITTAGSSONNE),
-            ImmutableList.of(BLAUER_HIMMEL, STRAHLEND_BLAUER_HIMMEL),
+            ImmutableList.of(BLAU, BLAU.mitAdvAngabe(new AdvAngabeSkopusSatz("strahlend"))),
+            ImmutableList.of(),
             ImmutableList.of("guten Tag", "schönen guten Tag", "einen schönen guten Tag"),
             ImmutableList.of("schönen Tag noch", "einen schönten Tag noch")),
 
@@ -67,7 +76,8 @@ public enum Tageszeit {
             HELL,
             ImmutableList.of(ABENDSONNE),
             ImmutableList.of(ABENDSONNENSCHEIN, ABENDSONNE),
-            ImmutableList.of(ROETLICHER_ABENDHIMMEL, ABENDHIMMEL),
+            ImmutableList.of(),
+            ImmutableList.of(np(ROETLICH, ABENDHIMMEL), ABENDHIMMEL),
             ImmutableList.of("guten Abend", "schönen guten Abend"),
             ImmutableList.of("gute Nacht"));
 
@@ -87,10 +97,19 @@ public enum Tageszeit {
     private final ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein;
 
     /**
-     * Alternativen für einen wolkenlosen Himmel: "der blaue Himmel",
-     * "der Sternenhimmel" etc.
+     * Alternative Adjektivphrasen, die einen wolkenlosen Himmel zu dieser
+     * Tageszeit beschreiben (z.B. "blau") - <i>kann leer sein</i>.
      */
-    private final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmel;
+    private final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWolkenloserHimmel;
+
+    /**
+     * Weitere Alternativen für einen wolkenlosen Himmel über
+     * {@link #altAdjPhrWolkenloserHimmel} hinaus:  "der Sternenhimmel" etc.
+     * <p>
+     * Kann leer sein, aber nicht in Kombination mit {@link #altAdjPhrWolkenloserHimmel}.
+     */
+    private final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen;
+
     /**
      * Ggf. alternative tageszeitspezifische Begrüßungen, jeweils beginnend mit Kleinbuchstaben und
      * ohne Satzschlusszeichen
@@ -107,14 +126,16 @@ public enum Tageszeit {
               final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirn,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein,
-              final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmel,
+              final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWolkenloserHimmel,
+              final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen,
               final Collection<String> begruessungen,
               final Collection<String> verabschiedungen) {
         this.einzelneSubstantivischePhrase = einzelneSubstantivischePhrase;
         this.lichtverhaeltnisseDraussen = lichtverhaeltnisseDraussen;
         this.altGestirn = altGestirn;
         this.altGestirnschein = altGestirnschein;
-        this.altWolkenloserHimmel = altWolkenloserHimmel;
+        this.altAdjPhrWolkenloserHimmel = altAdjPhrWolkenloserHimmel;
+        this.altWolkenloserHimmelErgaenzungen = altWolkenloserHimmelErgaenzungen;
         this.begruessungen = ImmutableList.copyOf(begruessungen);
         this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
     }
@@ -128,8 +149,23 @@ public enum Tageszeit {
         return altGestirnschein;
     }
 
+    /**
+     * Gibt alternative substantivische Phrasen zurück, die einen wolkenlosen Himmel zu dieser
+     * Tageszeit beschreiben. Ergebnis ist nie leer.
+     */
     public ImmutableCollection<EinzelneSubstantivischePhrase> altWolkenloserHimmel() {
-        return altWolkenloserHimmel;
+        return ImmutableSet.<EinzelneSubstantivischePhrase>builder()
+                .addAll(mapToSet(altAdjPhrWolkenloserHimmel, HIMMEL::mit))
+                .addAll(altWolkenloserHimmelErgaenzungen)
+                .build();
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück, die einen wolkenlosen Himmel zu dieser
+     * Tageszeit beschreiben - <i>Ergebnis kann leer sein</i>.
+     */
+    public ImmutableCollection<AdjPhrOhneLeerstellen> altAltAdjPhrWolkenloserHimmel() {
+        return altAdjPhrWolkenloserHimmel;
     }
 
     public Lichtverhaeltnisse getLichtverhaeltnisseDraussen() {
@@ -154,8 +190,5 @@ public enum Tageszeit {
 
     public EinzelneSubstantivischePhrase getNominalphrase() {
         return einzelneSubstantivischePhrase;
-    }
-
-    private static class STRAHLEND_BLAUER_HIMMEL {
     }
 }

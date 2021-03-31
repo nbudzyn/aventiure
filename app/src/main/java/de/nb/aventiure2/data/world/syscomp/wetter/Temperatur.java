@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -27,12 +28,14 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLIRREND;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LEIB;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
-import static de.nb.aventiure2.german.base.Nominalphrase.EIN_HEISSER_TAG;
-import static de.nb.aventiure2.german.base.Nominalphrase.KLIRRENDE_KAELTE_OHNE_ART;
-import static de.nb.aventiure2.german.base.Nominalphrase.WARMES_WETTER_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG_EIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
@@ -112,7 +115,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg("in der Luft"))
-                                .alsSatzMitSubjekt(KLIRRENDE_KAELTE_OHNE_ART),
+                                .alsSatzMitSubjekt(Nominalphrase.np(KLIRREND, KAELTE_OHNE_ART)),
                         // "du frierst am ganzen Leibe"
                         VerbSubj.FRIEREN
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(LEIB)))
@@ -251,10 +254,10 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case KUEHL:
                 break;
             case WARM:
-                alt.add(WARMES_WETTER_OHNE_ART);
+                alt.add(Nominalphrase.np(AdjektivOhneErgaenzungen.WARM, WETTER_OHNE_ART));
                 break;
             case RECHT_HEISS:
-                alt.add(EIN_HEISSER_TAG);
+                alt.add(Nominalphrase.np(HEISS, TAG_EIN));
                 break;
             case SEHR_HEISS:
                 break;
