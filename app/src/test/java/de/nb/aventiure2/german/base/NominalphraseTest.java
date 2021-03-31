@@ -265,9 +265,6 @@ public class NominalphraseTest {
     // - "die junge Frau, gespannt, ob du etwas zu berichten hast[,]"
     // - "Du hilfst der jungen Frau, die gespannt ist, ob du etwas zu berichten hast[,]"
 
-    // FIXME Im Kontext Wetter z.B. die Farbe des Himmel (BLAU) zurückgeben und dann daraus
-    //  prädikative und attribute Sätze erzeugen
-
     // FIXME Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
     //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" sowie
     //  "Glück, Rapunzel zu sehen, tust du dies und das" (neue "adverbiale Angabe" / neues
