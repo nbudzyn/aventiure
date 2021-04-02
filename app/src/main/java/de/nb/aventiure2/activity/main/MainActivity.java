@@ -44,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
     //  - Märchen deiner Kindheit?
     //  - Rollenspiel
     //  - Nostalgie
+    //  - "Rätsel"?
+    //  - "Puzzle"?
+    //  - "interaktives Märchenbuch"?
+    //  - "Erlebe dein eigenes Märchen"!
+    //  - interaktives Leseabenteuer
 
     private static final Logger LOGGER = Logger.getLogger();
 

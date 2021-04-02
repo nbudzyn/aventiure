@@ -326,6 +326,8 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                             "die Augen. Du bist wie gebannt und hörst sie fremdartige Worte",
                             "murmeln - will sie dich etwa verhexen?"));
         }
+
+        // FIXME Nach jedem Vergessenszauber sollte ein Absatz stehen.
     }
 
     private void scUndRapunzelVergessenAlles() {

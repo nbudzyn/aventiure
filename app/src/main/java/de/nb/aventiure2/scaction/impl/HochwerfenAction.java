@@ -285,7 +285,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
             n.narrate(du("wirfst",
                     world.getDescription(object).akkK(),
-                    "noch einmal in die Höhe… doch oh nein,",
+                    "noch einmal in die Höhe… doch o nein,",
                     world.getDescription(object, true).nomK(),
                     "fällt dir nicht in die Hände, sondern schlägt vorbei",
                     "auf den Brunnenrand und rollt geradezu ins Wasser hinein.",

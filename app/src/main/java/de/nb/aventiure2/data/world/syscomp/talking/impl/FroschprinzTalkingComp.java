@@ -615,8 +615,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
                 getDescription().nomK(),
-                "schon zuvor: „Wir sehen uns noch!“", PARAGRAPH).schonLaenger()
-                ,
+                "schon zuvor: „Wir sehen uns noch!“"
+                // FIXME „Wir sehen uns noch!“ ergbibt eigentlich keinen Sinn
+                //  (vor allem nicht, wenn der SC den Frosch gerade irgendwo hingetragen und
+                //  abgesetzt hat).
+                , PARAGRAPH).schonLaenger(),
                 neuerSatz("„Und jetzt, Frosch?“ –",
                         "„Du weißt, was du versprochen hast“, gibt er zurück", PARAGRAPH));
         if (!immediateReEntry) {

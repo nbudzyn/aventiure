@@ -208,7 +208,7 @@ public class AblegenAction
 
         alt.add(du(PARAGRAPH, "wühlst",
                 "in deiner Tasche. Da quakt es erbost, auf einmal",
-                "springt der Fosch heraus und direkt",
+                "springt der Frosch heraus und direkt",
                 location.storingPlaceComp().getLocationMode().getWohin(false))
                 .timed(secs(7)));
 

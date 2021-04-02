@@ -26,6 +26,8 @@ public interface IStoryNode {
     //  passiert? Was passiert ihr nachher?
     //  Erst nur sehr grob, verfeinern / konsistent machen später.
 
+    // TODO Wie kann man dem Spieler das Gefühl geben von "es hätte auch anders ausgehen können"?
+
     // IDEA Mein Herz hängt an der Erzählung durch die Maschine. Das sollte in jedem Schritt
     //  des Spiels enforcet werden. Es sollte also in jedem Schritt die Erzählung meaningful
     //   weitergehen. Der Benutzer sollte immer etwas tun können, was eine

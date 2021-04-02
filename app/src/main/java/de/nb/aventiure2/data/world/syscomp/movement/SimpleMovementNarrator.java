@@ -513,6 +513,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         n.narrateAlt(NO_TIME,
                 neuerSatz(PARAGRAPH,
                         wo, // "auf dem Weg "
+                        // FIXME Hier oder (auch) an anderer Stelle wird "Kommt die alte Frau"
+                        //  generiert. Sollte höchstens "Da kommt die alte Frau" sein.
                         "kommt",
                         desc.nomK(), PARAGRAPH),
                 neuerSatz(PARAGRAPH,

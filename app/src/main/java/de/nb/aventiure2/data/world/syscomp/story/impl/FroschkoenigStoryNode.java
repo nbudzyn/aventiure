@@ -37,8 +37,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
-    // FIXME Kugel im.Schloss hochwerfen... Reaktion der Wache... Gefängns?!
-
     // FIXME Die zentrale Dramatische Frage für des Märchens ermitteln:
     //  Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
     //  Zwei oder mehr Charaktere, ein gewünschtes Ergebnis
@@ -63,7 +61,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             FroschkoenigStoryNode::narrateAndDoHintAction_MitKugelZumBrunnenGegangen,
             KUGEL_GENOMMEN
     ),
-    ETWAS_IM_BRUNNEN_VERLOREN(6, IM_WALD_BEIM_BRUNNEN,
+    ETWAS_IM_BRUNNEN_VERLOREN(
+            6, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_EtwasImBrunnenVerloren,
             KUGEL_GENOMMEN // IDEA Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
     ),
@@ -72,7 +71,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             ,
             ETWAS_IM_BRUNNEN_VERLOREN
     ),
-    ZUM_SCHLOSSFEST_GEGANGEN(30, // TODO Diese Zahl ermitteln!
+    ZUM_SCHLOSSFEST_GEGANGEN(15,
             DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_ZumSchlossfestGegangen,
             KUGEL_GENOMMEN, // Ansonsten kann der Spieler nicht wissen, dass es ein Schlossfest

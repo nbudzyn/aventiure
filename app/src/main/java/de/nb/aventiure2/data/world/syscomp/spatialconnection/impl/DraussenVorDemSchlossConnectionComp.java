@@ -79,14 +79,14 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         mins(10),
                         du("folgst",
                                 "einem Weg in den Wald.",
-                                "Nach ein paar Schritten führt rechter Hand ein schmaler Pfad",
+                                "Nach ein paar Schritten führt linker, Hand ein schmaler Pfad",
                                 "einen Hügel hinauf"),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
                                 + "offenbar nicht und du folgst dem erstbesten "
                                 + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
-                                + "führt rechter Hand ein schmaler, dunkler Pfad einen Hügel "
+                                + "führt linker, Hand ein schmaler, dunkler Pfad einen Hügel "
                                 + "hinauf")
                                 .timed(mins(12)),
                         du("läufst",

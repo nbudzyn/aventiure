@@ -154,7 +154,16 @@ public class SchlosswacheReactionsComp
 
         alt.addAll(altNeueSaetze("Die Wache spricht dich sofort an und macht dir",
                 "unmissverständlich klar, dass du hier vor dem großen Fest nicht",
-                "erwünscht bist. Du bist leicht zu überzeugen und trittst wieder",
+                "erwünscht bist.",
+                // FIXME Hier aufteilen? (Spieler nicht gängeln)
+                // - SC könnte drinnen bleiben.
+                // - Oder SC probiert es drei mal (steigende Bedrohung durch die Wache)
+                //   und wird beim dritten mal ins Verlies / Kerker gesperrt.
+                //   (Vgl. Märchen mit Fischer, dessen Tochter ... Stroh zu
+                //   Gold spinnen können soll?)
+                //   Man kann dort nicht viel tun - aber bringt die Nacht durch. Am nächsten Tag
+                //   ist ohnehin das Schlossfest.
+                "Du bist leicht zu überzeugen und trittst wieder",
                 altSchlossVerlassenWohinAdvAngaben(raumAusDemDerSCDasSchlossBetretenHat)
                         .stream()
                         .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
@@ -167,7 +176,6 @@ public class SchlosswacheReactionsComp
                         + "passen. Und "
                         + "seinem Kerkermeister auch.“ "
                         + "Du bleibst besser draußen", PARAGRAPH)
-                // IDEA Eine Nacht im Kerker! (Ist auch ein Übernachten!)
         );
 
         n.narrateAlt(alt, secs(10));

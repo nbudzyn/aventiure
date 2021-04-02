@@ -197,9 +197,9 @@ public class RastenAction extends AbstractWartenRastenAction {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
         n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
-                neuerSatz("Die Bäume rauschen in "
-                        + "der Dunkelheit, die Eulen schnarren, und "
-                        + "und es fängt an, dir angst zu werden"),
+                neuerSatz("Die Bäume rauschen in",
+                        "der Dunkelheit, die Eulen schnarren,",
+                        "und es fängt an, dir angst zu werden"),
                 neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
                         + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
                         + "nichts "

@@ -172,6 +172,10 @@ public class GebenAction<
 
         alt.add(
                 // "Du gibst IHR DIE GOLDENE KUGEL"
+                // FIXME Satzwechsel wird nicht richtig erzeugt:
+                //  "...fragt sie dich du gibst ihr..."
+                //  Satzwechsel muss erzeugt werden, ohne eventuelle Anschlüsse mit "und" o.Ä.
+                //  zu verhindern... (als möglichst spät)?
                 GEBEN
                         .mitDat(takerAnaph)
                         .mit(givenDesc),

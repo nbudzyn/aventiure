@@ -1077,7 +1077,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 alt.add(neuerSatz("„Jaja“, sagt", anaph().nomK(),
                         ", „wie oft ich das schon gehört habe…“"),
                         neuerSatz("„Das wird ja doch nichts“, gibt",
-                                anaph().nomK(), ", zurück"));
+                                anaph().nomK(), " zurück"));
             }
 
             alt.addIfOtherwiseEmpty(neuerSatz(anaph().nomK(), "wendet den Blick ab"));
