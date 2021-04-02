@@ -19,7 +19,10 @@ import de.nb.aventiure2.german.satz.Satz;
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ANDERS("anders", "ander"),
     ANGESPANNT("angespannt"),
+    AUFGEBRACHT("aufgebracht"),
     AUFGEDREHT("aufgedreht"),
+    // "schlecht aufgelegt", ...
+    AUFGELEGT("aufgelegt"),
     BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
     BENOMMEN("benommen"),
@@ -71,6 +74,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ROETLICH("rötlich"),
     SANFT("sanft"),
     SENGEND("sengend"),
+    SCHLECHT("schlecht"),
     SCHOEN("schön"),
     SKEPTISCH("skeptisch"),
     STARK("stark"),
@@ -85,7 +89,6 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     VERAERGERT("verärgert"),
     VERDROSSEN("verdrossen"),
     VERSCHUECHTERT("verschüchtert"),
-    VERSTIMMT("verstimmt"),
     VERUNSICHERT("verunsichert"),
     VERWIRRT("verwirrt"),
     VERWUNDERT("verwundert"),

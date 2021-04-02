@@ -58,6 +58,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEGRUESSEN;
  * Component for {@link World#RAPUNZELS_ZAUBERIN}: Der Spieler
  * kann versuchen, mit Rapunzels Zauberin ein Gespräch zu führen.
  */
+@SuppressWarnings("DuplicateBranchesInSwitch")
 public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private final LocationComp locationComp;
     private final RapunzelsZauberinStateComp stateComp;

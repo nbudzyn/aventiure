@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
@@ -24,9 +25,11 @@ import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity.NEUTRAL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGELEGT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BETRUEBT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ENTTAEUSCHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHTERT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHLECHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERSCHUECHTERT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ZORNIG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
@@ -213,8 +216,12 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
         final VerbSubjObj sehenVerb = targetKnown ? VerbSubjObj.WIEDERSEHEN : SEHEN;
 
-        if (feelingIntensity <= -FeelingIntensity.STARK) {
+        if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
             return ImmutableList.of();
+        }
+
+        if (feelingIntensity == -FeelingIntensity.STARK) {
+            return ImmutableList.of(AdjektivOhneErgaenzungen.AUFGEBRACHT);
         }
 
         if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
@@ -223,7 +230,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
         if (feelingIntensity == -FeelingIntensity.MERKLICH) {
             return ImmutableList.of(
-                    AdjektivOhneErgaenzungen.VERSTIMMT,
+                    AUFGELEGT.mitAdvAngabe(new AdvAngabeSkopusSatz(SCHLECHT)),
                     AdjektivOhneErgaenzungen.MISSTRAUISCH);
         }
 

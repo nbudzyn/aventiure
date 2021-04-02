@@ -164,7 +164,10 @@ public class MovementComp
      * fortgesetzt werden soll.
      */
     private boolean stayPaused() {
-        return conversationable.isInConversation();
+        return
+                // Vielleicht ist das hier auch gar nicht nötig. Dann das Movable läuft nicht
+                // davon, so lange das Gespräch nicht beendet wurde.
+                conversationable.isInConversation();
     }
 
     /**
@@ -187,7 +190,9 @@ public class MovementComp
             pauseIfSameOuterMostLocationWithSC();
         }
 
-        if (!hasCurrentStep() || requirePcd().getPauseForSCAction() == PAUSED) {
+        if (!hasCurrentStep()
+                || requirePcd().getPauseForSCAction() == PAUSED
+                || conversationable.isInConversation()) {
             return;
         }
 

@@ -657,7 +657,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private static ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
     toDiskontinuitaetDuSatzanschluss(
-            // FIXME mehrere Alternativen erlauben
             final TimedDescription<?> description,
             final AbstractFlexibleDescription<?> fDesc) {
         final TextDescription descriptionSatzanschlussOhneSubjekt =
