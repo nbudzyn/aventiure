@@ -11,6 +11,8 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -21,6 +23,7 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
@@ -50,6 +53,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.al
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
@@ -74,11 +78,13 @@ public class RapunzelsZauberinReactionsComp
         implements
         // Reaktionen auf die Bewegungen des SC und anderes Game Objects
         IMovementReactions, IRufReactions, IStateChangedReactions,
+        IKnownChangedReactions,
         ITimePassedReactions {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public
     enum Counter {
-        ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST
+        ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST,
+        ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT
     }
 
     // Vorher ist es der Zauberin für einen Rapunzelbesuch zu früh
@@ -454,6 +460,38 @@ public class RapunzelsZauberinReactionsComp
 
         locationComp.narrateAndSetLocation(VOR_DEM_ALTEN_TURM);
         movementComp.startMovement(timeTaker.now(), ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN);
+    }
+
+    @Override
+    public void onKnownChanged(final IHasMemoryGO knower, final GameObjectId knowee,
+                               final Known oldKnown, final Known newKnown) {
+        if ( // Spieler hat gerade von Rapunzel gelern, dass die Zauberin, die sie
+            // gefangen hält, die magere Frau ist.
+                knower.is(SPIELER_CHARAKTER)
+                        && knowee
+                        .equals(RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU)
+                        && newKnown.isKnown()
+                        && loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
+                        && !locationComp
+                        .hasRecursiveLocation(OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM)
+                        && liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())
+                        && stateComp
+                        .hasState(VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH, AUF_DEM_WEG_ZU_RAPUNZEL,
+                                AUF_DEM_RUECKWEG_VON_RAPUNZEL, WARTEZEIT_NACH_RAPUNZEL_BESUCH)
+                        && counterDao.get(
+                        ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT) == 0) {
+            // Wenn man von Teufel spricht, so kommt er!
+            counterDao.inc(ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT);
+
+            locationComp.narrateAndSetLocation(
+                    // Die Zauberin kommt auf einmal den Weg zum Turm herauf
+                    IM_WALD_NAHE_DEM_SCHLOSS,
+                    () -> stateComp.narrateAndSetState(AUF_DEM_WEG_ZU_RAPUNZEL));
+
+            movementComp.startMovement(timeTaker.now(),
+                    VOR_DEM_ALTEN_TURM, true);
+            return;
+        }
     }
 
     @Override

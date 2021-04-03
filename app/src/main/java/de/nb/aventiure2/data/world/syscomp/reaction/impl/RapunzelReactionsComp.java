@@ -98,6 +98,7 @@ public class RapunzelReactionsComp
         implements IMovementReactions, IRufReactions,
         IStateChangedReactions, ITimePassedReactions, ISCActionDoneListenerComponent {
     @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
     enum Counter {
         NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST,
         BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN,

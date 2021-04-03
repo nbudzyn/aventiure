@@ -33,7 +33,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.VOLLMOND;
 import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -41,7 +40,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 public enum Tageszeit {
     NACHTS(NACHT,
             DUNKEL,
-            ImmutableList.of(MOND, VOLLMOND),
+            ImmutableList.of(MOND),
             ImmutableList.of(MONDSCHEIN),
             ImmutableList.of(),
             ImmutableList.of(STERNENHIMMEL, NACHTHIMMEL),

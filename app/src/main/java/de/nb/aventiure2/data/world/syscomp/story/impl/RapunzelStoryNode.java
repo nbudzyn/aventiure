@@ -75,6 +75,8 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
             TURM_GEFUNDEN),
+    // Ab hier muss bei allen Tipps auch der Sonderfall berücksichtigt
+    //  werden, dass der SC alles vergessen hat
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN),
@@ -88,10 +90,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
             RAPUNZEL_RETTUNG_VERSPROCHEN);
 
-    // FIXME TURM VERLASSEN UM RAPUNZEL ZU RETTEN
-
-    // FIXME Wenn mit Rapunzel im Gespräch, kommt Zauberin früher als sonst (zumindest, sobald
-    //  Zuneigung nicht zu Einbrecher fühlt).
+    // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
+    // dass der SC alles vergessen hat
 
     // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
@@ -121,13 +121,12 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Aber Verbindungen mit "und" o.Ä. sollten so lange wir möglich offen bleiben...
 
     // FIXME Binsen, Seil flechten...
-    // - "du rupfst Binsen und flichst ein weiches Seil daraus"
-    // - "Binsenseil"
-    // - "Sprossen"
-    // - "steigst die Leiter herauf"
+    //  - "du rupfst Binsen und flichst ein weiches Seil daraus"
+    //  - "Binsenseil"
+    //  - "Sprossen"
+    //  - "steigst die Leiter herauf"
 
     // FIXME Rabe mit Sinn HINTERlegen!
-    // FIXME Bug: Vergessen-Text kommt auch wenn nicht verzaubert?!
     // FIXME Begrenzte Tragkraft?!
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -366,28 +365,40 @@ public enum RapunzelStoryNode implements IStoryNode {
                                     + "die macht dir Angst…"));
         } else {
             // SC hat alles vergessen
-            if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-                alt.add(paragraph(
-                        "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, "
-                                + "etwas Wichtiges vergessen zu haben, aber es will dir partout "
-                                + "nicht einfallen"),
-                        paragraph("Du musst kurz innehalten. Dein Herz zieht dich zum alten Turm "
-                                + "auf der Hügelkuppe. Und du kannst nicht sagen, warum!"),
-                        paragraph("Die Leute sagen ja: Wenn man etwas vergessen hat, soll man noch "
-                                + "einmal an dieselbe Stelle zurückgehen"));
-            }
-
-            alt.add(paragraph(
-                    "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
-                            + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
-                            + "du plötzlich nicht weiter. Es ist wie verhext"),
-                    paragraph(
-                            "Du hast die ganze Zeit das Gefühl, etwas Wichtiges vergessen zu "
-                                    + "haben! Aber was bloß?"));
-            alt.addAll(altTurmWohnenHineinHeraus(world));
+            alt.addAll(altHintsAllesVergessenNichtObenImTurm(world));
         }
 
         n.narrateAlt(alt, NO_TIME);
+    }
+
+    private static ImmutableSet<AbstractDescription<?>> altHintsAllesVergessenNichtObenImTurm(
+            final World world) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (!world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
+            alt.add(paragraph(
+                    "Hin und wieder musst du an den alten Turm denken. Du hast das Gefühl, "
+                            + "etwas Wichtiges vergessen zu haben, aber es will dir partout "
+                            + "nicht einfallen"),
+                    paragraph("Du musst kurz innehalten. Dein Herz zieht dich zum alten Turm "
+                            + "auf der Hügelkuppe. Und du kannst nicht sagen, warum!"),
+                    paragraph("Die Leute sagen ja: Wenn man etwas vergessen hat, soll man noch "
+                            + "einmal an dieselbe Stelle zurückgehen"));
+        }
+
+        alt.add(paragraph(
+                "Manchmal hast du das Gefühl: Du hast noch eine wichtige Rolle "
+                        + "zu spielen. Aber wenn du genauer darüber nachdenkst, weißt "
+                        + "du plötzlich nicht weiter. Es ist wie verhext"),
+                paragraph(
+                        "Du hast die ganze Zeit das Gefühl, etwas Wichtiges vergessen zu "
+                                + "haben! Aber was bloß?"),
+                paragraph("Ist es nicht immer ein Glück, wenn einem das Leben",
+                        "eine zweite Chance schenkt? Und wie kommst du",
+                        "eigentlich gerade darauf?"));
+        alt.addAll(altTurmWohnenHineinHeraus(world));
+
+        return alt.build();
     }
 
 
@@ -412,6 +423,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                                 "erzählen").schonLaenger()
                 );
             }
+        } else if (!world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
+            // SC hat alles vergessen
+            alt.addAll(altHintsAllesVergessenNichtObenImTurm(world));
         } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));

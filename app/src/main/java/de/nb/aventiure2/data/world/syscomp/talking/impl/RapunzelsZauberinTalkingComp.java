@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
@@ -353,6 +354,9 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         loadSC().feelingsComp().resetFeelingsTowards(SPIELER_CHARAKTER);
         loadRapunzel().talkingComp().forgetAll();
         ((RapunzelReactionsComp) loadRapunzel().reactionsComp()).forgetAll();
+
+        counterDao.reset(RapunzelsZauberinReactionsComp.Counter
+                .ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST);
 
         // SC ist etwas müde
         loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(

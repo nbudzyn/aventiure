@@ -217,7 +217,15 @@ public class Walkthrough {
                     "Rapunzel Rettung zusagen",
                     "Das Gespräch mit Rapunzel fortsetzen",
                     "Rapunzel nach der mageren Frau fragen",
-                    "Dich mit Rapunzel unterhalten",
+                    // Kaum, dass man von ihr spricht,
+                    // steht die Zauberin auf einmal unten vor dem Turm
+                    // und ruft nach Rapunzel!
+                    "Unter das Bett kriechen",
+                    "Still daliegen",
+                    "Still daliegen",
+                    "Still daliegen",
+                    "Unter dem Bett hervorkriechen",
+                    "Ein Gespräch mit Rapunzel beginnen",
                     "Rapunzel bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen"
             );

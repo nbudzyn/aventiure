@@ -81,26 +81,30 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             case WOLKENLOS:
                 break;
 
-            // FIXME MACHT NUR SINN, WENN ES EINE ÄNDERUNG GEGENÜBER
-            //  DEM LETZTEN INFORMATIONSSTAND IST "Der Mond ist aufgegangen"
-            //  "Der Mond ist schon aufgestiegen"
+            // FIXME  "Der Mond ist aufgegangen", "Der Mond ist schon aufgestiegen"
+            //  (MACHT NUR SINN, WENN ES EINE ÄNDERUNG GEGENÜBER
+            //  DEM LETZTEN INFORMATIONSSTAND IST)
 
             // FIXME "Der Mond ist indessen über dem Berg
             //  aufgestiegen, und es ist so hell, daß man eine Stecknadel finden könnte."
 
             // FIXME "Als der Mond kommt"
 
+            //  FIXME "bis der Mond aufgeht"
+            //   "bis der Mond aufgestiegen ist"
+            //   "der Weiher liegt so ruhig wie zuvor, und nur der Mond glänzt darauf."
+
             //  FIXME Mondphasen?! Immer Vollmond? Nicht erwähnen? Oder Zeitreisen?
             //   "Und als der volle Mond aufgestiegen ist,"
             //   "Sobald der Vollmond sich zeigt"
             //   "Der Mond ist indessen rund und groß über dem Berg
-            //  aufgestiegen, und es ist so hell, daß man eine Stecknadel hätte
-            //  finden können."
-
-            //  FIXME "bis der Mond aufgeht"
+            //   aufgestiegen, und es ist so hell, daß man eine Stecknadel hätte
+            //   finden können."
             //   "bis der Vollmond aufgestiegen ist"
             //   "der Weiher liegt so ruhig wie zuvor, und nur das Gesicht des
             //    Vollmondes glänzt darauf."
+            //    gestirn, gestirnschein etc.  VOLLMOND
+
             case LEICHT_BEWOELKT:
                 break;
             case BEWOELKT:
