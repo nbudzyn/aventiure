@@ -114,8 +114,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
     //  Welt o.ä.).
     // FIXME Goldene Kugel nicht erwähnen wenn unter Bett (sieht man nicht)
-    // FIXME "Rapunzel schiebt die Kugel unter das Bett"- aber Spieler nicht mehr im Zimmer?!
-    //  Vielleicht beim Hinabsteigen oder nach Verzaubern?
     // FIXME Satzanfang ohne Punkt und mit Kleinschreibung. Konzept für Satzende
     //  fehlerhaft. Irgendwo müsste wohl stehen: Es fängt definitiv ein neuer Satz an?!
     //  Aber Verbindungen mit "und" o.Ä. sollten so lange wir möglich offen bleiben...

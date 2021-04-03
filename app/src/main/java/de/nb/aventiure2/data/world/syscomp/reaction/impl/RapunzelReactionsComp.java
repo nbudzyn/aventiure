@@ -699,50 +699,7 @@ public class RapunzelReactionsComp
         }
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
-                    >= -FeelingIntensity.NUR_LEICHT) {
-                rapunzelSchiebtFremdeGegenstaendeUntersBett();
-            }
-
-            if (stateComp.hasState(SINGEND)) {
-                if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    n.narrate(
-                            neuerSatz("Sofort hört der Gesang auf – und gleich darauf "
-                                    + "fallen aus dem kleinen "
-                                    + "Fenster oben im Turm lange, goldene Haarzöpfe "
-                                    + "herab, sicher zwanzig Ellen tief bis auf den Boden")
-                                    .timed(secs(30))
-                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-                } else {
-                    n.narrate(
-                            neuerSatz("Der Gesang hört auf, und wieder fallen "
-                                    + "die wunderschönen goldenen Haare aus dem Fenster "
-                                    + "bis ganz auf den Boden")
-                                    .timed(secs(30))
-                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-                }
-
-                world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
-            } else {
-                if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                    n.narrate(
-                            neuerSatz("Wieder fallen die langen, golden "
-                                    + "glänzenden Zöpfe aus dem "
-                                    + "Fenster bis zum Boden herab")
-                                    .timed(secs(30))
-                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-                } else {
-                    n.narrate(
-                            neuerSatz("Gleich darauf fallen aus dem kleinen "
-                                    + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                    + "sicher zwanzig Ellen tief bis auf den Boden")
-                                    .timed(secs(30))
-                                    .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-                }
-            }
-
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
-            stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
+            onRapunzelrufKeinSonderfallScRecVorDemTurm();
             return;
         }
 
@@ -760,6 +717,53 @@ public class RapunzelReactionsComp
             rapunzelSchiebtFremdeGegenstaendeUntersBett();
         }
 
+        stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
+    }
+
+    private void onRapunzelrufKeinSonderfallScRecVorDemTurm() {
+        if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
+                >= -FeelingIntensity.NUR_LEICHT) {
+            rapunzelSchiebtFremdeGegenstaendeUntersBett();
+        }
+
+        if (stateComp.hasState(SINGEND)) {
+            if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                n.narrate(
+                        neuerSatz("Sofort hört der Gesang auf – und gleich darauf "
+                                + "fallen aus dem kleinen "
+                                + "Fenster oben im Turm lange, goldene Haarzöpfe "
+                                + "herab, sicher zwanzig Ellen tief bis auf den Boden")
+                                .timed(secs(30))
+                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+            } else {
+                n.narrate(
+                        neuerSatz("Der Gesang hört auf, und wieder fallen "
+                                + "die wunderschönen goldenen Haare aus dem Fenster "
+                                + "bis ganz auf den Boden")
+                                .timed(secs(30))
+                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+            }
+
+            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+        } else {
+            if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                n.narrate(
+                        neuerSatz("Wieder fallen die langen, golden "
+                                + "glänzenden Zöpfe aus dem "
+                                + "Fenster bis zum Boden herab")
+                                .timed(secs(30))
+                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+            } else {
+                n.narrate(
+                        neuerSatz("Gleich darauf fallen aus dem kleinen "
+                                + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
+                                + "sicher zwanzig Ellen tief bis auf den Boden")
+                                .timed(secs(30))
+                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+            }
+        }
+
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
@@ -786,15 +790,17 @@ public class RapunzelReactionsComp
             return;
         }
 
-        n.narrate(neuerSatz(SCHIEBEN
-                .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
-                .mitAdvAngabe(
-                        new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(
-                                world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
-                .mitAdvAngabe(
-                        new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
-                .alsSatzMitSubjekt(anaph()))
-                .timed(secs(5)));
+        if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            n.narrate(neuerSatz(SCHIEBEN
+                    .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
+                    .mitAdvAngabe(
+                            new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(
+                                    world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
+                    .mitAdvAngabe(
+                            new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
+                    .alsSatzMitSubjekt(anaph()))
+                    .timed(secs(5)));
+        }
 
         for (final LOC_DESC object : gegenstaendeFuerUntersBett) {
             object.locationComp().narrateAndSetLocation(BETT_OBEN_IM_ALTEN_TURM);
