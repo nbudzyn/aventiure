@@ -195,11 +195,6 @@ public class BaumFactory {
     @CheckReturnValue
     private static ImmutableCollection<TimedDescription<?>> altDescOutNtesMal(
             final Lichtverhaeltnisse lichtverhaeltnisse) {
-        // STORY Auch dies automatisch erzeugen:
-        //  - "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??
-        //  - Oder so? "Du wirst ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst
-        //  du..."??
-        //  - Konrete Fälle suchen und dann einbauen - oder alternativ erst einmal verwerfen.
         return altTimed()
                 .add(
                         // "Dann kommst du wieder unten an"

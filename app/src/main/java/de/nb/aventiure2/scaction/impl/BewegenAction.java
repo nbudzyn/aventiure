@@ -554,7 +554,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         if (newLocation.is(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            // IDEA Im Dunkeln kann man keine Früchte sehen? Oder doch?!
             return true;
         }
 

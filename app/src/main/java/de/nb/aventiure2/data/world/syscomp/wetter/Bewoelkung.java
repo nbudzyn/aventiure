@@ -164,10 +164,10 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             SCHEINEN
                                     .mitAdvAngabe(
-                                            // FIXME Hier kann es zu
-                                            //  widersprüchen zwischen
+                                            // FIXME Kann es hier zu
+                                            //  Widersprüchen zwischen
                                             //  nachts "dunkel" und Mond "hell"
-                                            //  kommen.
+                                            //  kommen? Möglichst vermeiden...
                                             new AdvAngabeSkopusVerbAllg("hell"))
                                     .alsSatzMitSubjekt(gestirn)));
                 }

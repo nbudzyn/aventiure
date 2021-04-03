@@ -144,7 +144,7 @@ public abstract class NarrationDao {
     //  - {RAPUNZEL.ana.nom) Nimmt möglichst eine Anapher
     //  - {RAPUNZEL.nom): Wählt automatisch richtig (kontextabhängig!)
     //  - .phorik(..) automatisch oder heuristisch setzen?!
-    //  - Beachten: Meist weiß man "RAPUNZEL" gar nicht...
+    //  - Beachten: Meist weiß man "RAPUNZEL" gar nicht..., sondern es ist variabel!
 
     void narrateAndConsume(
             final ImmutableList<? extends TextDescription> alternativesChosenFrom,

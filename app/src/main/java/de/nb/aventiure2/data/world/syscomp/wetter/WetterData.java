@@ -264,7 +264,7 @@ class WetterData {
             }
             if (time.getTageszeit() == Tageszeit.TAGSUEBER
                     && temperatur.compareTo(Temperatur.RECHT_HEISS) >= 0) {
-                // FIXME  "der Tag ist warm, die Sonne sticht"
+                // "der Tag ist warm, die Sonne sticht"
                 alt.addAll(altNeueSaetze(
                         temperatur.altSaetzeUeberHeuteOderDenTag(),
                         ", die Sonne sticht"));

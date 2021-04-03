@@ -85,6 +85,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN);
 
+    // FIXME TURM VERLASSEN UM RAPUNZEL ZU RETTEN
+
     // FIXME Wenn mit Rapunzel im Gespräch, kommt Zauberin früher als sonst (zumindest, sobald
     //  Zuneigung nicht zu Einbrecher fühlt).
 
@@ -124,7 +126,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Rabe mit Sinn HINTERlegen!
     // FIXME Bug: Vergessen-Text kommt auch wenn nicht verzaubert?!
     // FIXME Begrenzte Tragkraft?!
-    // FIXME Rastenzeit zu kurz? Zauberin kommt zu spät!
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
@@ -231,7 +232,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         }
     }
 
-    // IDEA Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
+    // IDEA Weitere Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
     //  Vordergrund steht
     private static void narrateAndDoHintAction_TurmGefunden(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {

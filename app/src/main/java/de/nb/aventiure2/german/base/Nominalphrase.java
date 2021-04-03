@@ -317,7 +317,7 @@ public class Nominalphrase
                         // verstanden werden kann
                         .withBezugsobjektUndKannVerstandenWerdenAls(
                                 getBezugsobjekt(), getNumerusGenus()));
-        
+
         // TODO Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
         //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ...".
         //  Dasselbe auch bei normalen Nominalphrasen: "Rapunzel, glücklich, dich zu sehen,
@@ -348,12 +348,17 @@ public class Nominalphrase
         //  Geht aber anscheinend nicht bei Prädikativum-Prädikaten: ?"Fröhlich ist Peter dumm"
         //  (aber: "Fröhlich ist Peter ein Esel" - andere Bedeutung?)
 
-        // TODO Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
-        //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" (oder
+        // TODO Idee: Automatische Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde .
+        //  Rapunzel tut dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" (oder
         //  "Vom Wandern müde tut Rapunzel dies und das") "Glücklich, Rapunzel zu sehen, tust du 
-        //  dies
-        //  und das" (neue "adverbiale Angabe" - eigentlich wohl "depiktives Prädikativ" / neues
+        //  dies  und das" (neue "adverbiale Angabe" - eigentlich wohl "depiktives Prädikativ" /
+        //  neues
         //  Vorfeld)
+        //  Analog: "Du bist ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst du..."??
+        //     ("depiktives Prädikativ"?, vgl. Nominalphrase!)
+        //  - Oder so? "Du wirst ganz zerknirscht. Du gehst ...." ->  "Ganz zerknirscht gehst
+        //  du..."??
+        //  - Konrete Fälle suchen und dann einbauen - oder alternativ erst einmal verwerfen.
     }
 
     @Nullable

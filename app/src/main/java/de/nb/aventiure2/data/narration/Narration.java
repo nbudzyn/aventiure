@@ -183,6 +183,7 @@ public class Narration {
         //  Das letzte Ereignis gedauert hat oder wie lang das aktuelle Ereignis
         //  dauert? Wenn das aktuelle Ereignis 0sek dauert, geschieht es offenbar
         //  gleichzeitig?! Also etwas schreiben wie "zugleich"?!
+        //  Ggf. schonLaenger() berücksichtigen.
         return dann;
     }
 

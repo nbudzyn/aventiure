@@ -989,6 +989,8 @@ public class World {
         // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
         //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
         //  Dann am besten Alternativen zurückgeben!
+        //  Man könnte Anaphern wie "die Frau" für alle Dinge "im Raum" erzeugen und
+        //  dann darauf achten, dass es nicht zu Verwechslungen kommen kann.
 
         @Nullable final Personalpronomen anaphPersPron = n.getAnaphPersPronWennMgl(describableGO);
         if (anaphPersPron != null) {

@@ -70,7 +70,8 @@ public class AvTime {
         }
 
         // IDEA TAGSÜBER ersetzen durch: VORMITTAGS, MITTAGS, NACHMITTAGS
-        //  MITTAGS (z.B. 11 - 13)? "Inzwischen steht die Sonne schon sehr hoch"
+        //  MITTAGS (z.B. 11 - 13)? Oder detaillierte Uhrzeiten verwenden?
+        //  "Inzwischen steht die Sonne schon sehr hoch"
         //  "Inzwischen steht die Sonne hoch am Firmament
         //  Dabei aber Bewölkung berücksichtigen! Also dies eher nach WetterComp?
         //  Mittags -> "Die Sonne rutscht..."
