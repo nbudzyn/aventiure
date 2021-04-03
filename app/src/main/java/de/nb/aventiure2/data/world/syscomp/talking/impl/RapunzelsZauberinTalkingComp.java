@@ -346,17 +346,20 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU,
                 RAPUNZELS_FREIHEITSWUNSCH);
         loadSC().feelingsComp().resetFeelingsTowards(RAPUNZEL);
-        loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
-                FeelingIntensity.NUR_LEICHT, hours(1)
-        );
         counterDao.reset(VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET);
         counterDao.reset(BettFactory.Counter.class);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
         loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,
                 SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
+        loadSC().feelingsComp().resetFeelingsTowards(SPIELER_CHARAKTER);
         loadRapunzel().talkingComp().forgetAll();
         ((RapunzelReactionsComp) loadRapunzel().reactionsComp()).forgetAll();
+
+        // SC ist etwas müde
+        loadSC().feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
+                FeelingIntensity.NUR_LEICHT, hours(1)
+        );
 
         // Rapunzel ist still
         loadRapunzel().stateComp().narrateAndSetState(RapunzelState.NORMAL);
