@@ -33,6 +33,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -76,14 +77,16 @@ public enum RapunzelStoryNode implements IStoryNode {
             TURM_GEFUNDEN),
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
-            TURM_GEFUNDEN
-    ),
+            TURM_GEFUNDEN),
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET),
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
-            ZU_RAPUNZEL_HINAUFGESTIEGEN);
+            ZU_RAPUNZEL_HINAUFGESTIEGEN),
+    TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN(10, OBEN_IM_ALTEN_TURM,
+            RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
+            RAPUNZEL_RETTUNG_VERSPROCHEN);
 
     // FIXME TURM VERLASSEN UM RAPUNZEL ZU RETTEN
 
@@ -422,29 +425,44 @@ public enum RapunzelStoryNode implements IStoryNode {
         } else {
             alt.addAll(altParagraphs("Die junge Frau oben im Turm",
                     ImmutableList.of("geht", "will"),
-                    "dir nicht mehr aus dem Kopf").schonLaenger()
-            );
+                    "dir nicht mehr aus dem Kopf").schonLaenger());
             alt.addAll(altParagraphs("Die schöne junge Frau oben im Turm will dir nicht",
                     ImmutableList.of("mehr", ""),
-                    "aus dem Kopf gehen").schonLaenger()
-            );
+                    "aus dem Kopf gehen").schonLaenger());
             alt.add(paragraph("Deine Gedanken kreisen immer wieder um",
-                    world.getDescription(RAPUNZEL).akkK()).schonLaenger()
-            );
-            alt.add(duParagraph("fühlst", "dich etwas einsam").schonLaenger()
-            );
+                    world.getDescription(RAPUNZEL).akkK()).schonLaenger());
+            alt.add(duParagraph("fühlst", "dich etwas einsam").schonLaenger());
             alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
                     ImmutableList.of("netten", ""),
                     "jungen Frau oben im Turm vorbeischauen?"));
             alt.add(duParagraph("musst",
                     "an die junge Frau oben im Turm denken. Freut die sich wohl,",
-                    "wenn du noch einmal bei ihr vorbeischaust?").schonLaenger()
-            );
+                    "wenn du noch einmal bei ihr vorbeischaust?").schonLaenger());
         }
 
         n.narrateAlt(alt, NO_TIME);
     }
 
+    private static void narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien(
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (loadZauberin(world).locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
+            alt.add(paragraph(
+                    "Hoffentlich ist die alte Schachtel bald weg, dass du endlich los",
+                    "kommst!")
+                            .phorikKandidat(F, RAPUNZELS_ZAUBERIN),
+                    paragraph("Nun heißt es wohl geduldig sein"));
+        } else {
+            alt.add(paragraph(
+                    "Zeit, dich auf den Weg zu machen!"),
+                    paragraph("So nett es hier oben ist – du solltest allmählich gehen!"),
+                    paragraph("Oh, eigentlich hättest du schon längst los gewollt! Wie",
+                            "leicht man sich doch verplaudert!"));
+        }
+
+        n.narrateAlt(alt, NO_TIME);
+    }
 
     @CheckReturnValue
     private static ImmutableSet<AbstractDescription<?>> altTurmWohnenHineinHeraus(

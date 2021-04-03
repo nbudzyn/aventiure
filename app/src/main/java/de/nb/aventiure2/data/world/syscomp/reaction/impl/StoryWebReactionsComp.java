@@ -59,9 +59,22 @@ public class StoryWebReactionsComp
     @Override
     public void onLeave(final ILocatableGO locatable, final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            onSCLeave(from, to);
+            return;
+        }
+
         if (world.isOrHasRecursiveLocation(FROSCHPRINZ, locatable)) {
             onFroschprinzRecLeave(to);
             return;
+        }
+    }
+
+    private void onSCLeave(final ILocationGO from, @Nullable final ILocationGO to) {
+        if (loadSC().memoryComp().isKnown(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT)
+                && world.isOrHasRecursiveLocation(from, OBEN_IM_ALTEN_TURM)
+                && !world.isOrHasRecursiveLocation(to, OBEN_IM_ALTEN_TURM)) {
+            reachStoryNode(RapunzelStoryNode.TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN);
         }
     }
 
