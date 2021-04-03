@@ -119,7 +119,8 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     public Praedikativum getAttributivAnteilRelativsatz(
             final Kasus kasusBezugselement) {
         if (kasusBezugselement == Kasus.NOM) {
-            // besser als lockerer Nachtrag: "Rapunzel, gespannt, was du zu berichten hast, ..."
+            // besser kein Relativsatz, sondern lockerer Nachtrag: "Rapunzel, gespannt, was du zu
+            // berichten hast, ..."
             return null;
         }
 

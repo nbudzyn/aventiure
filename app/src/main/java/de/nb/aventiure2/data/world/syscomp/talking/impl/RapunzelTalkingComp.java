@@ -371,7 +371,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         if (duzen() &&
                 zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
             alt.add(duParagraph("willst",
-                    "gerade anfangen, zu sprechen, da fragt Rapunzel:",
+                    "gerade anfangen, zu sprechen, da fragt",
+                    anaph().nomK(),
+                    ":",
                     "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
                     "langatmig von Hasen und Raben").schonLaenger()
                     .timed(mins(2)));
