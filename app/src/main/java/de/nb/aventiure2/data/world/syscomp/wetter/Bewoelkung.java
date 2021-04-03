@@ -85,13 +85,17 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             //  DEM LETZTEN INFORMATIONSSTAND IST "Der Mond ist aufgegangen"
             //  "Der Mond ist schon aufgestiegen"
 
-            // FIXME "Der Mond ist indessen rund und groß über dem Berg
+            // FIXME "Der Mond ist indessen über dem Berg
+            //  aufgestiegen, und es ist so hell, daß man eine Stecknadel finden könnte."
+
+            // FIXME "Als der Mond kommt"
+
+            //  FIXME Mondphasen?! Immer Vollmond? Nicht erwähnen? Oder Zeitreisen?
+            //   "Und als der volle Mond aufgestiegen ist,"
+            //   "Sobald der Vollmond sich zeigt"
+            //   "Der Mond ist indessen rund und groß über dem Berg
             //  aufgestiegen, und es ist so hell, daß man eine Stecknadel hätte
             //  finden können."
-
-            //  FIXME "Und als der volle Mond aufgestiegen ist,"
-            //   "Als der Mond kommt"
-            //   "Sobald der Vollmond sich zeigt"
 
             //  FIXME "bis der Mond aufgeht"
             //   "bis der Vollmond aufgestiegen ist"
@@ -154,6 +158,9 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
                 if (time.getTageszeit() == Tageszeit.NACHTS
                         || time.getTageszeit() == TAGSUEBER) {
+                    // FIXME Mond etc. nicht nennen, wenn der Himmel nicht zu sehen ist
+                    //  (z.B. im Wald)
+
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             SCHEINEN
                                     .mitAdvAngabe(
@@ -163,12 +170,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             SCHEINEN
-                                    .mitAdvAngabe(
-                                            // FIXME Kann es hier zu
-                                            //  Widersprüchen zwischen
-                                            //  nachts "dunkel" und Mond "hell"
-                                            //  kommen? Möglichst vermeiden...
-                                            new AdvAngabeSkopusVerbAllg("hell"))
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("hell"))
                                     .alsSatzMitSubjekt(gestirn)));
                 }
 
@@ -213,10 +215,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
         return alt.build();
     }
-
-    // FIXME "im Mondschein" / "im Sonnenschein" (tageszeit.altGestirnschein()!)
-    // FIXME "beim Mondschimmer"
-    // FIXME "der Hügel liegt in einsamem Mondschein."
 
     boolean isUnauffaellig(final Tageszeit tageszeit) {
         if (tageszeit == NACHTS) {
@@ -333,6 +331,9 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit), IN_DAT::mit));
         return alt.build();
     }
+
+    // FIXME "beim Mondschimmer"
+    // FIXME "der Hügel liegt in einsamem Mondschein."
 
     ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
             final Tageszeit tageszeit) {

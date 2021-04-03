@@ -397,7 +397,8 @@ public enum Temperatur implements Betweenable<Temperatur> {
     //  du("schmachtest", "in der Hitze"), "dir ist heiß"
     //  Konzept am Hunger orientieren? Als "Erinnerung"?
     //  Vor allem auch bedenken, dass es ja über den Tag immer wärmer (und auch wieder
-    //  kälter) wird. Die Änderungen müssen also beschrieben werden.
+    //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
+    //  eigentliche "Tagestemperatur" nicht ändern.
     //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
     //  Temperatur-Wert speichern?
 }

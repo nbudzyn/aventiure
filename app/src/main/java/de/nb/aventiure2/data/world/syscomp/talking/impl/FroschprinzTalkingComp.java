@@ -613,13 +613,13 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void ansprechen_froschErinnertAnVersprechen(final boolean immediateReEntry) {
         final AltDescriptionsBuilder alt = alt();
 
+        final EinzelneSubstantivischePhrase desc = getDescription();
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
-                getDescription().nomK(),
-                "schon zuvor: „Wir sehen uns noch!“"
-                // FIXME „Wir sehen uns noch!“ ergbibt eigentlich keinen Sinn
-                //  (vor allem nicht, wenn der SC den Frosch gerade irgendwo hingetragen und
-                //  abgesetzt hat).
-                , PARAGRAPH).schonLaenger(),
+                desc.nomK(),
+                "schon zuvor: „Wir haben eine Verabredung!“ –",
+                desc.persPron().nomK(),
+                "sieht dich gestreng an",
+                PARAGRAPH).schonLaenger(),
                 neuerSatz("„Und jetzt, Frosch?“ –",
                         "„Du weißt, was du versprochen hast“, gibt er zurück", PARAGRAPH));
         if (!immediateReEntry) {

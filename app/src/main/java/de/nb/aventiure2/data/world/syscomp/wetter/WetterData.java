@@ -276,9 +276,6 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Überall nach Wetter, Himmel etc. suchen
-    //  und 1. Widersprüche verhindern 2. Wetter hier zentralisieren.
-
     /**
      * Gibt alternative Sätze zurück über die Sonnenhitze - wenn sinnvoll, sonst eine leere
      * {@link java.util.Collection}.

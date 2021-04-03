@@ -190,7 +190,7 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
         checkExpletivesEs(subjekt.getPerson(), subjekt.getNumerus());
 
         Preconditions.checkArgument(subjekt.getNumerusGenus() == NumerusGenus.N,
-                "Subjekt nicht Neurum - ungültig für Wetterverben - keine expletives "
+                "Subjekt nicht Neutrum - ungültig für Wetterverben - keine expletives "
                         + "es: " + subjekt.getNumerusGenus());
 
         Preconditions.checkArgument(subjekt.getBezugsobjekt() == null,

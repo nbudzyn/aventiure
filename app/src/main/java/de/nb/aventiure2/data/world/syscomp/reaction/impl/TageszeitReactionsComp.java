@@ -133,6 +133,7 @@ public class TageszeitReactionsComp
                 return;
             case ABENDS:
                 n.narrateAlt(AvTimeSpan.NO_TIME,
+                        // FIXME Nach WetterComp zentralisieren, Bewölkung etc. berücksichtigen
                         neuerSatz("Währenddessen ist der Tag vergangen und die Sonne steht "
                                 + "schon tief am Himmel"),
                         neuerSatz("Inzwischen ist beinahe der ganze Tag vergangen"),
