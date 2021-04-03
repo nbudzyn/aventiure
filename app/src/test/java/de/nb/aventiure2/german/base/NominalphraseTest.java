@@ -32,6 +32,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH_EIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RAPUNZEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ROTWEINE_INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -196,7 +197,7 @@ public class NominalphraseTest {
                 // Adjektivphrase: "glücklich, dich zu sehen"
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(duSc())),
                 // Nomen: "Rapunzel"
-                NomenFlexionsspalte.RAPUNZEL,
+                RAPUNZEL,
                 // Bezugsobjekt: Rapunzel
                 World.RAPUNZEL);
 
@@ -225,7 +226,7 @@ public class NominalphraseTest {
                 // Adjektivphrase: "glücklich, dich zu sehen"
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(duSc())),
                 // Nomen: "Rapunzel"
-                NomenFlexionsspalte.RAPUNZEL,
+                RAPUNZEL,
                 // Bezugsobjekt: Rapunzel
                 World.RAPUNZEL);
 
@@ -362,7 +363,6 @@ public class NominalphraseTest {
         assertThat(actual.getPhorikKandidat()).isNull();
     }
 
-
     @Test
     public void test_Reihung_nurRelativsaetze() {
         // GIVEN
@@ -391,35 +391,4 @@ public class NominalphraseTest {
         assertThat(actual.getKannAlsBezugsobjektVerstandenWerdenFuer()).isSameInstanceAs(F);
         assertThat(actual.getPhorikKandidat()).isNull();
     }
-
-    // FIXME Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
-    //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ..." (vermutlich ist das eine
-    //  Umformulierung als "depiktives Prädikativ", vgl. Duden 1205.) - Problem an der Sache:
-    //  Funktioniert nicht bei allen Adjektivphrasen sinnvoll:
-    //  "Die grüne Eidechse läuft über den Boden" - ?"Grün läuft die Eidechse über den Boden"
-    //  Aber vielleicht bei praktisch allen mit w-Fragesatz oder anderweitig komplexen,
-    //  für die das überhaupt nur relevant wäre? Letztlich müsste das
-    //  Prädikat dem Satz mitteilen, dass "Glücklich, Rapunzel zu sehen" ins
-    //  Vorfeld gerückt werden sollte (getSpeziellesVorfeldSehrErwuenscht(),
-    //  getSpeziellesVorfeldAlsWeitereOption()).
-    //  Der attributivAnteilLockererNachtrag muss eine eigene Konstituente sein,
-    //  damit sie von getSpeziellesVorfeld...() auch zurückgegeben werden kann.
-    //  Sätze mit "sein / werden" und Adjektivphrase können anscheinend kein so ein
-    //  "depiktives Prädikativ" tragen? ?"Glücklich bist du hilfsbereit"
-
-    // FIXME Idee: Neue Stelle für eine "prädikative Angabe" ("depiktives Prädikativ", vgl.
-    //  Duden 1205? )  wie "Peter geht fröhlich durch
-    //  den Wald". Zur Stellung vergleiche: "Heute schlägt Peter /fröhlich/ heftig auf das Holz
-    //  ein",
-    //  also vor der Verb-Allgemein-Adverbialen Angabe - am liebsten jedoch im Vorfeld:
-    //  Fröhlich gibt Peter dem Mann das Buch". Vgl. auch: "Das Buch gibt Peter fröhlich dem Mann" -
-    //  also auf jeden Fall vor dem Dativ-Objekt.
-    //  Geht aber anscheinend nicht bei Prädikativum-Prädikaten: ?"Fröhlich ist Peter dumm"
-    //  (aber: "Fröhlich ist Peter ein Esel" - andere Bedeutung?)
-
-    // FIXME Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
-    //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" (oder
-    //  "Vom Wandern müde tut Rapunzel dies und das") "Glücklich, Rapunzel zu sehen, tust du dies
-    //  und das" (neue "adverbiale Angabe" - eigentlich wohl "depiktives Prädikativ" / neues
-    //  Vorfeld)
 }

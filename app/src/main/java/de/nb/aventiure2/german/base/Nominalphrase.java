@@ -317,6 +317,43 @@ public class Nominalphrase
                         // verstanden werden kann
                         .withBezugsobjektUndKannVerstandenWerdenAls(
                                 getBezugsobjekt(), getNumerusGenus()));
+        
+        // TODO Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
+        //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ...".
+        //  Dasselbe auch bei normalen Nominalphrasen: "Rapunzel, glücklich, dich zu sehen,
+        //  tut dies und das" ist vielleicht nicht so schön, wie "Glücklich, dich zu sehen,
+        //  tut Rapunzel dies und das".
+        //  (Vermutlich ist "glücklich, dich zu sehen" eine Umformulierung als "depiktives
+        //  Prädikativ", vgl. Duden 1205.) - Problem an der Sache:
+        //  Funktioniert nicht bei allen Adjektivphrasen sinnvoll:
+        //  "Die grüne Eidechse läuft über den Boden" - ?"Grün läuft die Eidechse über den Boden"
+        //  Aber vielleicht bei praktisch allen mit w-Fragesatz oder anderweitig komplexen,
+        //  für die das überhaupt nur relevant wäre? Letztlich müsste das
+        //  Prädikat dem Satz mitteilen, dass "Glücklich, Rapunzel zu sehen" ins
+        //  Vorfeld gerückt werden sollte (getSpeziellesVorfeldSehrErwuenscht(),
+        //  getSpeziellesVorfeldAlsWeitereOption()).
+        //  Der attributivAnteilLockererNachtrag muss eine eigene Konstituente sein,
+        //  damit sie von getSpeziellesVorfeld...() auch zurückgegeben werden kann.
+        //  Sätze mit "sein / werden" und Adjektivphrase können anscheinend kein so ein
+        //  "depiktives Prädikativ" tragen? ?"Glücklich bist du hilfsbereit"
+
+        // TODO Idee: Neue Stelle für eine "prädikative Angabe" ("depiktives Prädikativ", vgl.
+        //  Duden 1205? )  wie "Peter geht fröhlich durch
+        //  den Wald". Zur Stellung vergleiche: "Heute schlägt Peter /fröhlich/ heftig auf das Holz
+        //  ein",
+        //  also vor der Verb-Allgemein-Adverbialen Angabe - am liebsten jedoch im Vorfeld:
+        //  Fröhlich gibt Peter dem Mann das Buch". Vgl. auch: "Das Buch gibt Peter fröhlich dem 
+        //  Mann" -
+        //  also auf jeden Fall vor dem Dativ-Objekt.
+        //  Geht aber anscheinend nicht bei Prädikativum-Prädikaten: ?"Fröhlich ist Peter dumm"
+        //  (aber: "Fröhlich ist Peter ein Esel" - andere Bedeutung?)
+
+        // TODO Idee: Zusammenfassungen in der Art "Rapunzel ist vom Wandern müde . Rapunzel tut
+        //  dies und das" zu "Rapunzel, vom Wandern müde, tut dies und das" (oder
+        //  "Vom Wandern müde tut Rapunzel dies und das") "Glücklich, Rapunzel zu sehen, tust du 
+        //  dies
+        //  und das" (neue "adverbiale Angabe" - eigentlich wohl "depiktives Prädikativ" / neues
+        //  Vorfeld)
     }
 
     @Nullable
