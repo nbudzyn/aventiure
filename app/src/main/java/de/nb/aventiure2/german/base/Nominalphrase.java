@@ -386,29 +386,21 @@ public class Nominalphrase
 
     @Override
     public String nomStr() {
-        // FIXME Verwendungen suchen und bei
-        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
         return nomK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String datStr() {
-        // FIXME Verwendungen suchen und bei
-        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
         return datK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String artikellosDatStr() {
-        // FIXME Verwendungen suchen und bei
-        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
         return artikellosDatK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
     public String akkStr() {
-        // FIXME Verwendungen suchen und bei
-        //  denkbaren Problemen mit Nachkomma nomK() verwenden.
         return akkK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
