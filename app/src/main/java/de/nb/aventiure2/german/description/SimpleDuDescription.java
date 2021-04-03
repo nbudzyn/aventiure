@@ -206,6 +206,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         return remainder != null ? remainder.getPhorikKandidat() : null;
     }
 
+    @Override
+    public boolean vorangestelltenSatzanschlussMitUndVermeiden() {
+        return false;
+    }
+
     @SuppressWarnings("ConstantConditions")
     @Override
     public boolean equals(final Object o) {
@@ -228,5 +233,4 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public int hashCode() {
         return Objects.hash(super.hashCode(), verb, remainder);
     }
-
 }

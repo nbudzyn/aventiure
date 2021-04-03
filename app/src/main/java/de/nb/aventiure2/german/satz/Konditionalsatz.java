@@ -13,9 +13,9 @@ public class Konditionalsatz {
     private final String kondition;
 
     @Nonnull
-    private final Satz satz;
+    private final EinzelnerSatz satz;
 
-    public Konditionalsatz(@Nonnull final String kondition, @Nonnull final Satz satz) {
+    public Konditionalsatz(@Nonnull final String kondition, @Nonnull final EinzelnerSatz satz) {
         this.kondition = kondition;
         this.satz = satz;
     }

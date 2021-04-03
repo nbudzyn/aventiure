@@ -139,7 +139,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public boolean umfasstSatzglieder() {
-        return ersterSatz.umfasstSatzglieder() || zweiterSatz.umfasstSatzglieder();
+        return ersterSatz.umfasstSatzglieder() && zweiterSatz.umfasstSatzglieder();
     }
 
     @Override
@@ -149,7 +149,7 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Override
     public boolean hatAkkusativobjekt() {
-        return ersterSatz.hatAkkusativobjekt() || zweiterSatz.hatAkkusativobjekt();
+        return ersterSatz.hatAkkusativobjekt() && zweiterSatz.hatAkkusativobjekt();
     }
 
     @Override

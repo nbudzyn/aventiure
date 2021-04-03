@@ -5,13 +5,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.base.Praedikativum;
 
 import static de.nb.aventiure2.german.base.Person.P3;
 
@@ -77,11 +76,8 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
 
     @Nullable
     @Override
-    public Satz getAttributivAnteilRelativsatz(
-            final Person personBezugselement,
-            final NumerusGenus numerusGenusBezugselement,
-            final Kasus kasusBezugselement,
-            @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
+    public Praedikativum getAttributivAnteilRelativsatz(
+            final Kasus kasusBezugselement) {
         return null;
     }
 

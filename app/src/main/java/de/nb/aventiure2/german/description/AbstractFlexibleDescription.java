@@ -14,7 +14,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
         super();
     }
 
-    protected AbstractFlexibleDescription(final DescriptionParams params) {
+    AbstractFlexibleDescription(final DescriptionParams params) {
         super(params);
     }
 
@@ -52,4 +52,14 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();
 
     public abstract boolean hasSubjektDu();
+
+    /**
+     * Ob vermieden werden soll, dass ein Satz mit "und" vorangestellt
+     * werden soll.
+     * <p>
+     * Relevant, wenn ein weiterer Satz vorangestellt werden soll und man
+     * "... und ... und..." vermeiden und statt dessen dann lieber "..., ... und... "
+     * schreiben möchte
+     */
+    public abstract boolean vorangestelltenSatzanschlussMitUndVermeiden();
 }

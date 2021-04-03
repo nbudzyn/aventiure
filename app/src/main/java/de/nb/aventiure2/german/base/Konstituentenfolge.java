@@ -20,6 +20,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.string.NoLetterException;
 
@@ -193,7 +194,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                         ((Collection<?>) part).stream()
                                 .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
-            } else if (part instanceof Satz) {
+            } else if (part instanceof EinzelnerSatz) {
                 // Alternativen!
                 alternativePartKonstituentenfolgen = ((Satz) part).altVerzweitsaetze();
             } else if (part instanceof Konstituentenfolge) {
@@ -684,7 +685,8 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
 
     private Konstituentenfolge withKommaStehtAus() {
         if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
-            // Am Ende der Konstituentenfolge endet der Satz. Kein Komma nötig.
+            // WORD kann nicht enthalten sein, am Ende der Konstituentenfolge endet also der Satz.
+            // Kein Komma nötig.
             return this;
         }
 
@@ -697,8 +699,9 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
 
     @CheckReturnValue
     Konstituentenfolge withVorkommaNoetig() {
-        if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
-            // Mit der Konstituentenfolge beginnt ein neuer Satz. Kein Vorkomma nötig.
+        if (konstituenten.get(0) instanceof StructuralElement) {
+            // WORD kann nicht enthalten sein, mit der Konstituentenfolge beginnt also ein neuer
+            // Satz. Kein Komma nötig.
             return this;
         }
 

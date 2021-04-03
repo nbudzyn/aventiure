@@ -8,12 +8,12 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
@@ -116,19 +116,15 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
 
     @Nullable
     @Override
-    public Satz getAttributivAnteilRelativsatz(
-            final Person personBezugselement,
-            final NumerusGenus numerusGenusBezugselement,
-            final Kasus kasusBezugselement,
-            @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
+    public Praedikativum getAttributivAnteilRelativsatz(
+            final Kasus kasusBezugselement) {
         if (kasusBezugselement == Kasus.NOM) {
             // besser als lockerer Nachtrag: "Rapunzel, gespannt, was du zu berichten hast, ..."
             return null;
         }
 
-        // "die gespannt ist, was wer zu berichten hat"
-        return alsPraedikativumRelativsatz(personBezugselement, numerusGenusBezugselement,
-                bezugsobjektBezugselement);
+        // "(die )gespannt( ist), was wer zu berichten hat"
+        return this;
     }
 
     @Nullable

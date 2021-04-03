@@ -8,6 +8,7 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -285,9 +286,7 @@ public class Nominalphrase
         // wenn kein Artikel erzeugt werden soll, steht etwas wie "zum" oder
         // "zur" davor, dass eine Kasusendung trägt
 
-        @Nullable final Satz attributivAnteilRelativsatz = adjPhr != null ?
-                adjPhr.getAttributivAnteilRelativsatz(getPerson(), getNumerusGenus(),
-                        kasus, getBezugsobjekt()) : null;
+        @Nullable final Satz attributivAnteilRelativsatz = getAttributivAnteilRelativsatz(kasus);
 
         @Nullable final AdjPhrOhneLeerstellen attributivAnteilLockererNachtrag = adjPhr != null ?
                 adjPhr.getAttributivAnteilLockererNachtrag(kasus) : null;
@@ -318,6 +317,29 @@ public class Nominalphrase
                         // verstanden werden kann
                         .withBezugsobjektUndKannVerstandenWerdenAls(
                                 getBezugsobjekt(), getNumerusGenus()));
+    }
+
+    @Nullable
+    private Satz getAttributivAnteilRelativsatz(final Kasus kasus) {
+        @Nullable Satz attributivAnteilRelativsatz = null;
+        if (adjPhr != null) {
+            @Nullable final Praedikativum praedikativumFuerRelativsatz =
+                    adjPhr.getAttributivAnteilRelativsatz(
+                            kasus);
+
+            if (praedikativumFuerRelativsatz != null) {
+                // "die"
+                final Relativpronomen relativpronomen = Relativpronomen
+                        .get(getPerson(), getNumerusGenus(), getBezugsobjekt());
+
+                // "die gespannt ist, was wer zu berichten hat"
+                attributivAnteilRelativsatz =
+                        PraedikativumPraedikatOhneLeerstellen
+                                .praedikativumPraedikatMit(praedikativumFuerRelativsatz)
+                                .alsSatzMitSubjekt(relativpronomen);
+            }
+        }
+        return attributivAnteilRelativsatz;
     }
 
     @Override

@@ -12,6 +12,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -36,7 +37,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphra
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
 /**
- * Statische Methode, die {@link de.nb.aventiure2.german.satz.Satz}-Objekte zu
+ * Statische Methode, die {@link EinzelnerSatz}-Objekte zu
  * Gefühlen erzeugen.
  */
 public class FeelingsSaetzeUtil {
@@ -128,14 +129,14 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben) {
-        return Satz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
+        return EinzelnerSatz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
                 advAngaben);
     }
 
     public static ImmutableList<Satz> altNachsehenHinterhersehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase objekt) {
-        return Satz
+        return EinzelnerSatz
                 .altSubjObjSaetze(subjekt, nachsehenHinterhersehenVerben(), objekt);
     }
 
@@ -143,7 +144,7 @@ public class FeelingsSaetzeUtil {
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase objekt,
             final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
-        return Satz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
+        return EinzelnerSatz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
                 advAngaben);
     }
 

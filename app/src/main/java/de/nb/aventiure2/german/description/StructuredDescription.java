@@ -21,13 +21,14 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
- * A description based on a structured data structure: A {@link de.nb.aventiure2.german.satz.Satz}.
+ * A description based on a structured data structure: A {@link EinzelnerSatz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
  */
 public class StructuredDescription extends AbstractFlexibleDescription<StructuredDescription> {
@@ -244,7 +245,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(
                 getPraedikat().getVerbzweit(
-                        satz.getSubjekt() != null ? satz.getSubjekt() :
+                        satz.getErstesSubjekt() != null ? satz.getErstesSubjekt() :
                                 Personalpronomen.EXPLETIVES_ES),
                 getEndsThis())
                 .joinToSingleKonstituente();
@@ -296,5 +297,10 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return phorikKandidat;
+    }
+
+    @Override
+    public boolean vorangestelltenSatzanschlussMitUndVermeiden() {
+        return satz.isSatzreihungMitUnd();
     }
 }

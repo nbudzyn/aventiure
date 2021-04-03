@@ -14,13 +14,13 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 /**
  * Ein Prädikat im Sinne eines Verbs mit allen Ergänzungen und Angaben, jedoch ohne Subjekt, bei
  * dem alle Leerstellen besetzt sind ("mit dem Frosch reden").
  *
- * @see de.nb.aventiure2.german.satz.Satz
+ * @see EinzelnerSatz
  */
 public interface PraedikatOhneLeerstellen extends Praedikat {
     default PraedikatOhneLeerstellen mitModalpartikeln(
@@ -88,13 +88,13 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     @CheckReturnValue
     Konstituentenfolge getRelativpronomen();
 
-    default Satz alsSatzMitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
+    default EinzelnerSatz alsSatzMitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
         return alsSatzMitSubjekt(null, subjekt);
     }
 
-    default Satz alsSatzMitSubjekt(
+    default EinzelnerSatz alsSatzMitSubjekt(
             final @Nullable String anschlusswort, @Nullable final SubstantivischePhrase subjekt) {
-        return new Satz(anschlusswort, subjekt, this);
+        return new EinzelnerSatz(anschlusswort, subjekt, this);
     }
 
     /**

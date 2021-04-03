@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -73,7 +74,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
         if (feelingIntensity <= NEUTRAL) {
             //"Sie mustert dich misstrauisch"
-            res.addAll(Satz.altSubjObjSaetze(gameObjectSubjekt, MUSTERN, targetDesc,
+            res.addAll(EinzelnerSatz.altSubjObjSaetze(gameObjectSubjekt, MUSTERN, targetDesc,
                     altEindruckBeiBegegnungAdvAngaben(gameObjectSubjekt, targetDesc,
                             feelingIntensity, targetKnown)));
         }
@@ -181,8 +182,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
-                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
-                    ));
+                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas"),
+                            true));
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.ERSTAUNT,
@@ -246,8 +247,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
-                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
-                    )
+                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas"),
+                            true)
             );
         }
 
@@ -294,8 +295,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     gluecklichDichZuSehen,
                     gespanntWasZuBerichten,
                     new ZweiAdjPhrOhneLeerstellen(
-                            gluecklichDichZuSehen, gespanntWasZuBerichten
-                    )
+                            gluecklichDichZuSehen, gespanntWasZuBerichten,
+                            true)
             );
         }
 

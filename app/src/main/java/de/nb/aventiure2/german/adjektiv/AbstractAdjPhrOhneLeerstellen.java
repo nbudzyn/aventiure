@@ -69,7 +69,7 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Nullable
-    public Konstituente getAdvAngabeSkopusSatzDescription(
+    Konstituente getAdvAngabeSkopusSatzDescription(
             final Person personSubjekt, final Numerus numerusSubjekt) {
         if (advAngabeSkopusSatz == null) {
             return null;
@@ -92,5 +92,10 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     @NonNull
     Adjektiv getAdjektiv() {
         return adjektiv;
+    }
+
+    @Override
+    public boolean hasVorangestellteAngaben() {
+        return graduativeAngabe != null || advAngabeSkopusSatz != null;
     }
 }

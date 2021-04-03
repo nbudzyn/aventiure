@@ -99,7 +99,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <ol>
      * <li>ein Adjektivattribut
      * <li>ein Relativsatz, siehe
-     * {@link #getAttributivAnteilRelativsatz(Person, NumerusGenus, Kasus, IBezugsobjekt)}
+     * {@link #getAttributivAnteilRelativsatz(Kasus)}
      * <li>ein lockerer Nachtrag, siehe {@link #getAttributivAnteilLockererNachtrag(Kasus)}
      * </ol>
      */
@@ -109,14 +109,14 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
 
     /**
      * Gibt den Anteil dieser Adjektivphrase zurück, der bei attributiver Verwendung
-     * dem Nomen <i>als Relativsatz nachgestellt wird</i> - oder {@code null}, wenn bei
-     * attributivem Gebrauch kein Relativsatz nachgestellt werden muss. (Vgl. Duden 2006 Absatz
-     * 468).
+     * dem Nomen <i>als Relativsatz mit Prädikativum nachgestellt wird</i> - oder
+     * {@code null}, wenn bei attributivem Gebrauch kein solcher Relativsatz nachgestellt werden
+     * muss. (Vgl. Duden 2006 Absatz 468).
      * <p>
      * Beispiele:
      * <ul>
      * <li>{@code null} bei "der blaue Himmel" - das ist der Regelfall
-     * <li>"(Du hilfst der Frau des Herzogs), die mit dem Tag zufrieden ist[,]"
+     * <li>"[Du hilfst der Frau des Herzogs, die ]mit dem Tag zufrieden [ist,]"
      * <li>{@code null} bei "die junge Frau des Herzogs, gespannt, ob du etwas zu
      * berichten hast[,]"
      * </ul>
@@ -125,18 +125,16 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * {@link #getAttributivAnteilLockererNachtrag(Kasus)})
      * bevorzugt. Sie können aber missverständlich (oder sogar falsch) sein, wenn die
      * Nominalphrase nicht im Nominativ steht: Vgl. den Unterschied zwischen
-     * "Du hilfst der Frau des Herzogs, mit dem Tag zufrieden" (du bist mit den Tag zufrieden) und
-     * "Du hilfst der Frau des Herzogs, die mit dem Tag zufrieden ist" (sie sit mit dem Tag
+     * "Du hilfst der Frau des Herzogs, mit dem Tag zufrieden" (<i>du</i bist mit den Tag
+     * zufrieden) und
+     * "Du hilfst der Frau des Herzogs, die mit dem Tag zufrieden ist" (<i>sie</i>ist mit dem Tag
      * zufrieden).
      *
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
      * @see #getAttributivAnteilLockererNachtrag(Kasus)
      */
     @Nullable
-    Satz getAttributivAnteilRelativsatz(Person personBezugselement,
-                                        NumerusGenus numerusGenusBezugselement,
-                                        Kasus kasusBezugselement,
-                                        @Nullable IBezugsobjekt bezugsobjektBezugselement);
+    Praedikativum getAttributivAnteilRelativsatz(Kasus kasusBezugselement);
 
     /**
      * Gibt den Anteil dieser Adjektivphrase zurück, der bei attibutiver Verwendung
@@ -155,7 +153,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      *
      * @param kasusBezugselement
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
-     * @see #getAttributivAnteilRelativsatz(Person, NumerusGenus, Kasus, IBezugsobjekt)
+     * @see #getAttributivAnteilRelativsatz(Kasus)
      */
     @Nullable
     AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(Kasus kasusBezugselement);
@@ -192,4 +190,6 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * Solche Adjektivphrasen können / sollen nicht im Mittelfeld auftreten.
      */
     boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz();
+
+    boolean hasVorangestellteAngaben();
 }

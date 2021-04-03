@@ -82,7 +82,8 @@ class DescriptionCombiner {
                                 ",",
                                 first.toTextDescriptionSatzanschlussOhneSubjekt()
                                         .toSingleKonstituente(),
-                                "und"))
+                                second.vorangestelltenSatzanschlussMitUndVermeiden() ?
+                                        "," : "und"))
                         .undWartest(false));
     }
 

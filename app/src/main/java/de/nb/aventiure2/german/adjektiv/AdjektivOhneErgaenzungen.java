@@ -5,13 +5,13 @@ import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 /**
  * Ein Adjektiv, das keine Ergänzungen fordert.
@@ -53,9 +53,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GLUECKLICH("glücklich"),
     GOLDEN("golden"),
     GROB("grob"),
+    GROSS("groß"),
+    GRUEN("grün"),
     HAESSLICH("hässlich"),
     HEISS("heiß"),
     HELL("hell"),
+    HERB("herb"),
     HOCH("hoch", "hoh"), // Steigerung höher, höchst!
     HUNDEMUEDE("hundemüde"),
     JUNG("jung"),
@@ -66,11 +69,13 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     KRUMM("krumm"),
     KUEHL("kühl"),
     LANG("lang"),
+    LEICHT("leicht"),
     MAGER("mager"),
     MISSTRAUISCH("misstrauisch"),
     MORGENDLICH("morgendlich"),
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
+    ROSA(Adjektiv.nichtFlektierbar("rosa")),
     ROETLICH("rötlich"),
     SANFT("sanft"),
     SENGEND("sengend"),
@@ -118,12 +123,12 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Satz alsEsIstSatz() {
+    public EinzelnerSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
 
     @Override
-    public Satz alsEsIstSatz(final @Nullable String anschlusswort) {
+    public EinzelnerSatz alsEsIstSatz(final @Nullable String anschlusswort) {
         return toAdjPhr().alsEsIstSatz(anschlusswort);
     }
 
@@ -150,13 +155,10 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     @Nullable
     @Override
-    public Satz getAttributivAnteilRelativsatz(
-            final Person personBezugselement,
-            final NumerusGenus numerusGenusBezugselement,
-            final Kasus kasusBezugselement,
-            @Nullable final IBezugsobjekt bezugsobjektBezugselement) {
-        return toAdjPhr().getAttributivAnteilRelativsatz(personBezugselement,
-                numerusGenusBezugselement, kasusBezugselement, bezugsobjektBezugselement);
+    public Praedikativum getAttributivAnteilRelativsatz(
+            final Kasus kasusBezugselement) {
+        return toAdjPhr().getAttributivAnteilRelativsatz(
+                kasusBezugselement);
     }
 
     @Nullable
@@ -192,5 +194,10 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     @VisibleForTesting
     Adjektiv getAdjektiv() {
         return adjektiv;
+    }
+
+    @Override
+    public boolean hasVorangestellteAngaben() {
+        return false;
     }
 }

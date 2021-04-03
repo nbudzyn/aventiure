@@ -663,7 +663,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 fDesc.toTextDescriptionSatzanschlussOhneSubjekt();
 
         final AltTimedDescriptionsBuilder alt = altTimed();
-        alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber und ")
+        alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber " +
+                (fDesc.vorangestelltenSatzanschlussMitUndVermeiden() ? ", " : "und "))
                 .timed(description.getTimeElapsed()));
         alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
         return alt.build();
