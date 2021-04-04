@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
+import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 
 /**
@@ -18,7 +19,11 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
  * (z.B. "auf dem Boden" oder "auf einem Tisch").
  */
 public class StoringPlaceComp extends AbstractStatelessComponent {
+    public static Supplier<Boolean> LEUCHTET_IMMER = () -> true;
+    public static Supplier<Boolean> LEUCHTET_NIE = () -> false;
+
     private final TimeTaker timeTaker;
+    private final World world;
     /**
      * Viele {@link ILocationGO}s können sich selbst wieder an einem Platz
      * befinden (z.B. ein Bett, in das man sich legen kann, steht selbst wieder
@@ -45,56 +50,78 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     private final boolean niedrig;
 
     /**
-     * Ermittelt, ob dieses Game Object (z.B. dieser Raum oder diese Tasche) seine
-     * Lichtverhältnisse eigenständig festlegt. Beispielsweise ist ein Raum viellicht
-     * immer beleuchtet und eine Tasche vielleicht immer dunkel (oder dunkel, wenn
-     * sie geschlossen ist und ansonsten lässt sich die Lichtverhältnisse von ihrer
-     * Umgebung ermitteln).
+     * Die "Lichtdurchlässigkeit" dieses Ablageplatzes:
+     * <ul>
+     * <li>Entweder man kann hineinsehen und Licht scheint hinein (wenn außen Licht
+     * ist, ggf. das Tageslicht) und hinaus (falls beleuchtet, vgl.
+     * {@link #leuchtetErmittler}.
+     * <li>Oder man kann nicht hineinsehen, Licht scheint nicht hinein und es scheint auch
+     * kein Licht heraus.
+     * </ul>
      * <p>
-     * Ist hier <code>null</code> angegeben (oder gibt der {@link Supplier}
-     * null zurück), so werden die Lichtverhältnisse
-     * davon bestimmt, wo sich dieses Game Object befindet - oder ggf. von der "Umwelt" /
-     * Tageszeit.
+     * {@code true} bei typischen draußen-Räumen, die von der Sonne beleuchtet werden, und bei
+     * Innenräumen mit Fenstern nach draußen. {@code false} z.B. unter dem Bett oder bei
+     * Gegenständen, die an sich geschlossen sind.
      */
-    @Nullable
-    private final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseErmittler;
+    // FIXME Goldene Kugel nicht erwähnen wenn unter Bett (sieht man nicht)
+    //  - Dann kann man sie auch nicht nehmen oder anderweitig mit
+    //    ihr interagieren!
+    private final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus;
+
+    /**
+     * Ermittelt, ob dieses Game Object (z.B. dieser Raum oder diese Tasche) leuchtet.
+     * Beispielsweise "leuchtet" ein Raum vielleicht immmer (d.h. er ist viellicht
+     * immer beleuchtet) und eine Tasche leuchtet nie, und eine Fackel leuchtet, bis sie
+     * abgebrannt ist.
+     */
+    private final Supplier<Boolean> leuchtetErmittler;
 
     /**
      * Erzeugt eine Komponente, die nicht selbst über ihre Lichtverhältnisse bestimmt.
      */
     public StoringPlaceComp(final GameObjectId id,
                             final TimeTaker timeTaker,
+                            final World world,
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
-                            final boolean niedrig) {
-        this(id, timeTaker, locationComp, locationMode, niedrig, null);
+                            final boolean niedrig,
+                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus) {
+        this(id, timeTaker, world, locationComp, locationMode, niedrig,
+                manKannHineinsehenUndLichtScheintHineinUndHinaus, LEUCHTET_NIE);
     }
 
     public StoringPlaceComp(final GameObjectId id,
                             final TimeTaker timeTaker,
+                            final World world,
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
                             final boolean niedrig,
-                            final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseErmittler) {
-        this(id, timeTaker, locationComp, locationMode, niedrig, lichtverhaeltnisseErmittler,
+                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                            final Supplier<Boolean> leuchtetErmittler) {
+        this(id, timeTaker, world, locationComp, locationMode, niedrig,
+                manKannHineinsehenUndLichtScheintHineinUndHinaus, leuchtetErmittler,
                 null, null);
     }
 
     public StoringPlaceComp(final GameObjectId id,
                             final TimeTaker timeTaker,
+                            final World world,
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
                             final boolean niedrig,
-                            @Nullable
-                            final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseErmittler,
+                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                            final Supplier<Boolean> leuchtetErmittler,
                             @Nullable final SpatialConnectionData spatialConnectionInData,
                             @Nullable final SpatialConnectionData spatialConnectionOutData) {
         super(id);
         this.timeTaker = timeTaker;
+        this.world = world;
         this.locationComp = locationComp;
         this.locationMode = locationMode;
         this.niedrig = niedrig;
-        this.lichtverhaeltnisseErmittler = lichtverhaeltnisseErmittler;
+        this.manKannHineinsehenUndLichtScheintHineinUndHinaus =
+                manKannHineinsehenUndLichtScheintHineinUndHinaus;
+        this.leuchtetErmittler = leuchtetErmittler;
         this.spatialConnectionInData = spatialConnectionInData;
         this.spatialConnectionOutData = spatialConnectionOutData;
     }
@@ -112,46 +139,82 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      * auf diesem Tisch, in der Tasche o.Ä.)
      */
     public Lichtverhaeltnisse getLichtverhaeltnisse() {
-        // IDEA Der SC oder ein anderes Game Object, das sich  "IN" DIESER LOCATION BEFINDET,
-        //  könnte eine
-        //  Lichtquelle (Fackel) dabei haben.
-        //  Hier ist zu bedenken, dass Fackeln zwar von einem Tisch strahlen - aber nicht aus
-        //  einer Kiste! Es wäre eine rekursive Prüfung über alle "enthaltenen" Objekte
-        //  nötig, ob sie "ihre Lichtverhältnisse selbst bestimmen" / "leuchten" - aber nur
-        //  soweit die Objekte "undurchsichtig" sind. Man bräuchte dazu also eine Art
-        //  "Undurchsichtigkeitsermittler"?! Letztlich wäre wohl das Konzept:
-        //  Es ist überall dunkel - es sei denn es leuchtet weiter innen oder weiter außen
-        //  und die Schwelle dorthin ist durchsichtig.
-        //  Problem auch: Die "enthaltenen" Objekte kann diese Komponente nicht festellen, das
-        //  muss ein System tun (locationSystem?). Die Komponente könnte allerdings das
-        //  location-System kennen...
-
-        if (lichtverhaeltnisseErmittler != null) {
-            @Nullable final Lichtverhaeltnisse automonFestgelegteLichtverhaeltnisse =
-                    lichtverhaeltnisseErmittler.get();
-            if (automonFestgelegteLichtverhaeltnisse != null) {
-                return automonFestgelegteLichtverhaeltnisse;
-            }
+        if (leuchtet()) {
+            return Lichtverhaeltnisse.HELL;
         }
 
-        @Nullable final StoringPlaceComp outerStoringPlaceComp = getOuterStoringPlaceComp();
+        final StoringPlaceComp outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte =
+                getOuterMostStoringPlaceCompAusDerNochLichtScheinenKoennte();
 
-        if (outerStoringPlaceComp != null) {
-            // Die Komponente ist "durchsichtig" und übernimmt die Lichtverhältnisse aus
-            // ihrer Container-Komponente.
-            return outerStoringPlaceComp.getLichtverhaeltnisse();
+        if (!getGameObjectId().equals(
+                outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte.getGameObjectId())
+                && outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte.leuchtet()) {
+            // Die äußerste StoringComp, aus der noch Licht scheinen kann,
+            // leuchtet.
+            return Lichtverhaeltnisse.HELL;
         }
 
-        // Es gibt keine Container-Komponente. Die Komponente übernimmt die Lichtverhältnisse -
-        // aus den "Umweltverhältnissen", konkret: Aus der Tageszeit
-        return timeTaker.now().getTageszeit().getLichtverhaeltnisseDraussen();
+        if ( // Die outermost Location, aus der noch Licht in diese
+            // StoringPlaceComp hineinscheint, ist draußen...
+                outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte
+                        .manKannHineinsehenUndLichtScheintHineinUndHinaus
+                        //...und draußen ist es hell
+                        && timeTaker.now().getTageszeit()
+                        .getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
+            return Lichtverhaeltnisse.HELL;
+        }
+
+        // Der SC oder ein anderes Game Object, das sich  "IN" DIESER LOCATION BEFINDET,
+        // könnte eine Lichtquelle (Fackel) dabei haben.
+        if (world.inventoryErleuchtetLocation(
+                outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte.getGameObjectId())) {
+            return Lichtverhaeltnisse.HELL;
+        }
+
+        return Lichtverhaeltnisse.DUNKEL;
 
         // FIXME Wetterphänomene (Regen) und der "tageszeitliche Himmel"
         //  ("du siehst ein schönes Abendrot") nur dann erzählt werden, wenn der SC
         //  "draußen" ist oder "einen Blick auf den Himmel hat". Auch diese Fragen ließen
-        //  sich wohl analog rekursiv beantworten. Denkbar wäre ein Kategorisierung wie
-        //  unter offenem Himmel, draußen geschützt (Wald), untergestellt,
-        //  drinnen mit Ausblick, drinnen ohne Ausblick
+        //  sich analog beantworten.
+        //  Grundsätzlich ist "draußen" wohl nichts anderes als
+        //  outerStoringPlaceComp == null
+        //  und manKannHineinsehenUndLichtScheintHineinUndHinaus == true.
+        //  (Siehe oben.)
+        //  Denkbar wäre allerdings eine (ergänzende?) Kategorisierung wie
+        //  unter offenem Himmel, draußen geschützt (z.B. Wald), untergestellt,
+        //  drinnen mit Ausblick, drinnen ohne Ausblick.
+        //  Man könnte vielleicht manKannHineinsehenUndLichtScheintHineinUndHinaus
+        //  entsprechend ergänzen.
+    }
+
+    public boolean manKannHineinsehenUndLichtScheintHineinUndHinaus() {
+        return manKannHineinsehenUndLichtScheintHineinUndHinaus;
+    }
+
+    public Boolean leuchtet() {
+        return leuchtetErmittler.get();
+    }
+
+    /**
+     * Ermittelt die äußerste {@code StoringPlaceComp}, aus der noch Licht in diese
+     *
+     * @code StoringPlaceComp} hineinscheinen könnte.
+     */
+    private StoringPlaceComp getOuterMostStoringPlaceCompAusDerNochLichtScheinenKoennte() {
+        StoringPlaceComp res = this;
+
+        while (res.manKannHineinsehenUndLichtScheintHineinUndHinaus) {
+            @Nullable final StoringPlaceComp outer = res.getOuterStoringPlaceComp();
+
+            if (outer == null) {
+                return res; // ==>
+            }
+
+            res = outer;
+        }
+
+        return res;
     }
 
     @Nullable

@@ -22,7 +22,6 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
@@ -60,6 +59,8 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_IMMER;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
@@ -249,48 +250,49 @@ public class World {
         all.putAll(
                 spieler.create(SPIELER_CHARAKTER),
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
-                        false, Lichtverhaeltnisse.DAUERHAFT_HELL,
+                        false, false,
+                        LEUCHTET_IMMER,
                         new SchlossVorhalleConnectionComp(db, timeTaker, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new ZwischenDenHeckenVorDemSchlossExternConnectionComp(db, timeTaker, n,
                                 this)),
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DEM_ALTEN_TURM,
                         StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new VorDemTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(OBEN_IM_ALTEN_TURM,
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new AbzweigImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DER_HUETTE_IM_WALD,
                         StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         new VorDerHuetteImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         connection.createHuetteImWald()),
                 room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         connection.createHinterDerHuette()),
                 room.createImWaldBeimBrunnen(),
                 room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         connection.createNoConnections(UNTEN_IM_BRUNNEN)),
                 room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         StoringPlaceType.MATSCHIGER_WALDBODEN,
-                        false, null,
+                        false, true, LEUCHTET_NIE,
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
                 creature.createFroschprinz(),
@@ -315,12 +317,13 @@ public class World {
                         SPIELER_CHARAKTER, null,
                         false, // Man kann nicht "eine Tasche hinlegen" o.Ä.
                         EINE_TASCHE,
-                        true, Lichtverhaeltnisse.DAUERHAFT_DUNKEL),
+                        true, false,
+                        LEUCHTET_NIE),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
                         np(NomenFlexionsspalte.HAENDE, HAENDE_DES_SPIELER_CHARAKTERS),
                         SPIELER_CHARAKTER, null,
                         false,
-                        false, HAENDE),
+                        false, HAENDE, true),
                 object.create(GOLDENE_KUGEL,
                         np(F, INDEF, "goldene Kugel",
                                 "goldenen Kugel", GOLDENE_KUGEL),
@@ -521,30 +524,20 @@ public class World {
     }
 
     private List<ITalkerGO<?>> loadTalkerGOs() {
-        prepare();
-
         final ImmutableList<GameObject> res =
-                all.values().stream()
-                        .filter(ITalkerGO.class::isInstance)
+                find(ITalkerGO.class).stream()
                         .filter(t -> !t.is(SPIELER_CHARAKTER))
                         .collect(toImmutableList());
-        loadGameObjects(res);
-
-        return (ImmutableList<ITalkerGO<?>>) (ImmutableList<?>) res;
+        return loadGameObjects(res);
     }
 
     public <R extends IReactions, G extends GameObject & IResponder>
     List<G> loadResponders(final Class<R> reactionsInterface) {
-        prepare();
-
         final ImmutableList<GameObject> res =
-                all.values().stream()
-                        .filter(IResponder.class::isInstance)
+                find(IResponder.class).stream()
                         .filter(resp -> IResponder.reactsTo(resp, reactionsInterface))
                         .collect(toImmutableList());
-        loadGameObjects(res);
-
-        return (ImmutableList<G>) (ImmutableList<?>) res;
+        return loadGameObjects(res);
     }
 
 
@@ -774,6 +767,34 @@ public class World {
         return res.build();
     }
 
+
+    /**
+     * (Speichert ggf. alle Änderungen und) ermittelt, ob sich an diese Location
+     * (auch rekursiv) ein Objekt befindet, dass die Location erleuchtet.
+     * <p>
+     * Ob die Location selbst leuchtet (oder auch das Tageslicht) wird nicht berücksichtigt.
+     */
+    public boolean inventoryErleuchtetLocation(final GameObjectId locationId) {
+        // Bisher können nur Locations leuchten. Wenn später auch andere
+        // Objekte leuchten sollen, muss man hier und in der StoringPlaceComp
+        // Dinge anpassen: Dann sind oft sowohl Location interessant (wegen der
+        // Rekursion) als auch andere Dinge, wenn sie leuchten könnten.
+        for (final ILocationGO directlyContained : loadLocationInventory(locationId)) {
+            if (directlyContained.storingPlaceComp()
+                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                if (directlyContained.storingPlaceComp().leuchtet()) {
+                    return true;
+                }
+
+                if (inventoryErleuchtetLocation(directlyContained.getId())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO,
             MOV extends ILocatableGO & IDescribableGO & IMovingGO>
     ImmutableList<MOV> filterMovingGO(final List<DESC_OBJ> gameObjects) {
@@ -790,7 +811,6 @@ public class World {
      */
     @Nullable
     public IMovingGO loadWerDenSCGeradeVerlassenHat(final GameObjectId toId) {
-        prepare();
         saveAll(false);
 
         @Nullable final GameObjectId id = movementSystem.findWerDenSCGeradeVerlassenHat(toId);
@@ -803,6 +823,23 @@ public class World {
 
     /**
      * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects
+     * an dieser <code>locationId</code> (<i>nicht</i> rekursiv)
+     * und gibt sie zurück - nur {@link ILocationGO}s.
+     */
+    private ImmutableList<ILocationGO> loadLocationInventory(final GameObjectId locationId) {
+        saveAll(false);
+
+        final ImmutableList<GameObject> res =
+                locationSystem.findByLocation(locationId)
+                        .stream()
+                        .map(this::get)
+                        .filter(ILocationGO.class::isInstance)
+                        .collect(toImmutableList());
+        return loadGameObjects(res);
+    }
+
+    /**
+     * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects
      * an dieser
      * <code>locationId</code> (<i>nicht</i> rekursiv, also <i>nicht</i> die Kugel
      * auf einem Tisch in einem Raum, sondern nur den Tisch)
@@ -811,20 +848,17 @@ public class World {
      */
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableInventory(final GameObjectId locationId) {
-        prepare();
         saveAll(false);
 
         final ImmutableList<GameObject> res =
-                locationSystem.findByLocation(locationId)
-                        .stream()
+                locationSystem.findByLocation(locationId).stream()
                         .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
                         .map(this::get)
                         .filter(IDescribableGO.class::isInstance)
                         .collect(toImmutableList());
-        loadGameObjects(res);
-
-        return (ImmutableList<LOC_DESC>) (ImmutableList<?>) res;
+        return loadGameObjects(res);
     }
+
 
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO>
     ImmutableList<DESC_OBJ> filterNonLivingBeing(final List<DESC_OBJ> gameObjects) {
@@ -848,30 +882,26 @@ public class World {
      */
     public <LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO>
     ImmutableList<LIV> loadDescribableLocatableLivingBeings() {
-        prepare();
-        saveAll(false);
-
         final ImmutableList<GameObject> res =
-                findAlive()
-                        .stream()
+                ((Collection<? extends GameObject>) find(ILivingBeingGO.class)).stream()
                         .filter(liv -> !liv.is(SPIELER_CHARAKTER))
                         .filter(ILocatableGO.class::isInstance)
                         .filter(IDescribableGO.class::isInstance)
                         .collect(toImmutableList());
-        loadGameObjects(res);
-
-        return (ImmutableList<LIV>) (ImmutableList<?>) res;
+        return loadGameObjects(res);
     }
 
     /**
-     * Gibt alle Living Beings zurück - <i>aber lädt sie noch nicht</i>!
+     * Gibt alle Game Objects mit dieser Klasse oder diesem Interface zurück -
+     * <i>aber lädt sie noch nicht</i>!
      */
-    private <G extends GameObject & ILivingBeingGO>
-    Collection<G> findAlive() {
-        return (ImmutableList<G>) (ImmutableList<?>)
-                all.values().stream()
-                        .filter(ILivingBeingGO.class::isInstance)
-                        .collect(toImmutableList());
+    private <GO_IN extends IGameObject, GO_OUT extends GameObject & IGameObject>
+    Collection<GO_OUT> find(final Class<GO_IN> goClass) {
+        saveAll(false);
+
+        return (ImmutableList<GO_OUT>) all.values().stream()
+                .filter(goClass::isInstance)
+                .collect(toImmutableList());
     }
 
     public SubstantivischePhrase getDescriptionSingleOrReihung(
@@ -1117,12 +1147,16 @@ public class World {
     }
 
     /**
-     * Lädt (sofern nicht schon geschehen) diese Game Objects und gibt es zurück.
+     * Lädt (sofern nicht schon geschehen) diese Game Objects und gibt sie
+     * gecastet zurück.
      */
-    private static void loadGameObjects(final Collection<? extends GameObject> gameObjects) {
+    private static <GO extends IGameObject>
+    ImmutableList<GO> loadGameObjects(final Collection<? extends GameObject> gameObjects) {
         for (final GameObject gameObject : gameObjects) {
             gameObject.load();
         }
+
+        return (ImmutableList<GO>) ImmutableList.copyOf(gameObjects);
     }
 
     /**

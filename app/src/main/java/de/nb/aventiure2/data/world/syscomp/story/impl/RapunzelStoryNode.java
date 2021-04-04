@@ -113,7 +113,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Zwerge könnten helfen, kraut zu finden.
     // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
     //  Welt o.ä.).
-    // FIXME Goldene Kugel nicht erwähnen wenn unter Bett (sieht man nicht)
+
     // FIXME Satzanfang ohne Punkt und mit Kleinschreibung. Konzept für Satzende
     //  fehlerhaft. Irgendwo müsste wohl stehen: Es fängt definitiv ein neuer Satz an?!
     //  Aber Verbindungen mit "und" o.Ä. sollten so lange wir möglich offen bleiben...

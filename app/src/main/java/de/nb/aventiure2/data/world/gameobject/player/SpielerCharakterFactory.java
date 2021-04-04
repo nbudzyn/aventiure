@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 
 /**
@@ -76,8 +77,8 @@ public class SpielerCharakterFactory {
         return new SpielerCharakter(id,
                 locationComp,
                 mentalModelComp,
-                new StoringPlaceComp(id, timeTaker, locationComp, EINE_TASCHE,
-                        false, null),
+                new StoringPlaceComp(id, timeTaker, world, locationComp, EINE_TASCHE,
+                        true, false, LEUCHTET_NIE),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

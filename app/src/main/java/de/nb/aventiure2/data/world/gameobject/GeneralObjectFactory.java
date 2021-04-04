@@ -10,12 +10,13 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 
 /**
  * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
@@ -37,13 +38,13 @@ class GeneralObjectFactory {
         return new GameObject(id);
     }
 
-    GameObject create(final GameObjectId id,
-                      final EinzelneSubstantivischePhrase descriptionAtFirstSight,
-                      final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
-                      final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
-                      @Nullable final GameObjectId initialLocationId,
-                      @Nullable final GameObjectId initialLastLocationId,
-                      final boolean movable) {
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable) {
         return new SimpleObject(id,
                 new SimpleDescriptionComp(id, descriptionAtFirstSight,
                         normalDescriptionWhenKnown,
@@ -58,11 +59,13 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
                       final boolean niedrig,
-                      final StoringPlaceType locationMode) {
+                      final StoringPlaceType locationMode,
+                      final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, niedrig, null);
+                movable, locationMode, niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                LEUCHTET_NIE);
     }
 
     public GameObject create(final GameObjectId id,
@@ -72,14 +75,15 @@ class GeneralObjectFactory {
                              final boolean movable,
                              final StoringPlaceType locationMode,
                              final boolean niedrig,
-                             @Nullable
-                             final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
+                             final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                             final Supplier<Boolean> leuchgetErmittler) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, niedrig, lichtverhaeltnisseSupplier);
+                movable, locationMode, niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                leuchgetErmittler);
     }
 
     GameObject create(final GameObjectId id,
@@ -94,7 +98,7 @@ class GeneralObjectFactory {
         return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown,
                 initialLocationId, initialLastLocationId, movable, locationMode,
-                niedrig, null);
+                niedrig, true, LEUCHTET_NIE);
     }
 
     private GameObject create(final GameObjectId id,
@@ -106,8 +110,8 @@ class GeneralObjectFactory {
                               final boolean movable,
                               final StoringPlaceType locationMode,
                               final boolean niedrig,
-                              @Nullable
-                              final Supplier<Lichtverhaeltnisse> lichtverhaeltnisseSupplier) {
+                              final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                              final Supplier<Boolean> leuchtetErmittler) {
         final LocationComp locationComp =
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
                         movable);
@@ -116,7 +120,8 @@ class GeneralObjectFactory {
                         normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 locationComp,
-                new StoringPlaceComp(id, timeTaker, locationComp, locationMode,
-                        niedrig, lichtverhaeltnisseSupplier));
+                new StoringPlaceComp(id, timeTaker, world, locationComp, locationMode,
+                        niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                        leuchtetErmittler));
     }
 }
