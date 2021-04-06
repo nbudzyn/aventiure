@@ -97,7 +97,7 @@ public class AblegenAction
                 true));
 
         for (final ILocationGO innerLocation :
-                world.loadDescribableNonLivingLocationRecursiveInventory(location)) {
+                world.loadDescribableNonLivingLocationVisiblyRecursiveInventory(location)) {
             // Z.B. "Auf dem Tisch absetzen"
             res.add(new AblegenAction<>(scActionStepCountDao, timeTaker,
                     n, world, gameObject, innerLocation,

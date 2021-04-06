@@ -373,7 +373,7 @@ public class SchlosswacheReactionsComp
      */
     @SuppressWarnings("SwitchStatementWithTooFewBranches")
     private void onRelocationFromSC(final ILocationGO to) {
-        if (!locationComp.hasSameOuterMostLocationAs(to)) {
+        if (!locationComp.hasSameVisibleOuterMostLocationAs(to)) {
             // The Schlosswache does not notice.
             return;
         }

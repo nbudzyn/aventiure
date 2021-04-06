@@ -252,7 +252,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         // Lebende Dinge, sind hier ausgeschlossen, sie müssen sich ggf. in einer
         // ReactionsComp selbst beschreiben.
-        upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(loadTo());
+        upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel(loadTo());
 
         if (scWirdMitEssenKonfrontiert()) {
             sc.feelingsComp().narrateAndDoSCMitEssenKonfrontiert();
@@ -266,7 +266,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 this::narrateNonLivingMovableObjectsOrMissingObjectsAndUpgradeKnownAndSetLastAction);
     }
 
-    private void upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
+    private void upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel(
             @NonNull final ILocationGO location) {
         final ImmutableList<LOC_DESC> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
@@ -276,8 +276,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         for (final IGameObject directlyContainedNonLivingNonMovable :
                 directlyContainedNonLivingNonMovables) {
-            if (directlyContainedNonLivingNonMovable instanceof ILocationGO) {
-                upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
+            if (directlyContainedNonLivingNonMovable instanceof ILocationGO
+                    && ((ILocationGO) directlyContainedNonLivingNonMovable).storingPlaceComp()
+                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel(
                         (ILocationGO) directlyContainedNonLivingNonMovable);
             }
         }
@@ -287,17 +289,33 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
-        if (!world.isOrHasRecursiveLocation(spatialConnection.getTo(), oldLocation)) {
-            // Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
-            // beschreiben, was sonst noch auf dem Tisch steht!
+        final GameObjectId toId = spatialConnection.getTo();
+        final GameObject to = world.load(toId);
 
+        final boolean toIsEqualOrInsideOldLocation =
+                world.isOrHasRecursiveLocation(to, oldLocation);
+
+        final boolean inSublocationInDieManNichtHineinsehenKonnte =
+                toIsEqualOrInsideOldLocation
+                        && !oldLocation.is(to)
+                        && (
+                        !(to instanceof ILocationGO)
+                                || !((ILocationGO) to).storingPlaceComp()
+                                .manKannHineinsehenUndLichtScheintHineinUndHinaus());
+        if (// Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
+            // beschreiben, was sonst noch auf dem Tisch steht!
+                !toIsEqualOrInsideOldLocation
+                        // Ausnahme: Man kriecht unter das Bett, unter das man bisher nicht hat
+                        //  sehen können:
+                        || inSublocationInDieManNichtHineinsehenKonnte
+        ) {
             narrateNonLivingMovableObjectsAndUpgradeKnownMentalModel(
                     // Wenn man z.B. von einem Tisch heruntersteigt oder
                     // einmal um einen Turm herumgeht, dann noch noch einmal
                     // beschreiben, was sich auf dem Tisch oder vor dem Turm
                     // befindet
-                    oldLocation);
-            narrateAndDoMissingObjects(spatialConnection.getTo());
+                    inSublocationInDieManNichtHineinsehenKonnte ? null : oldLocation);
+            narrateAndDoMissingObjects(toId);
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
@@ -309,7 +327,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         int numMovableObjectsInLocation = 0;
         @Nullable IDescribableGO lastObjectInLocation = null;
         for (final Pair<ILocationGO, ? extends List<? extends LOC_DESC>> locationAndDescribables :
-                buildRecursiveLocationsAndDescribables(loadTo())) {
+                buildVisibleRecursiveLocationsAndDescribables(loadTo())) {
             requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
             if (excludedLocation == null ||
@@ -363,15 +381,15 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     private ImmutableList<LOC_DESC> getMissingObjects(final GameObjectId locationId) {
         final ImmutableList<LOC_DESC> expectedDescribableInventory =
-                loadAssumedDescribableRecursiveInventory(sc, locationId);
+                loadAssumedDescribableVisiblyRecursiveInventory(sc, locationId);
 
-        final ImmutableList<LOC_DESC> actualDescribableInventory =
-                world.loadDescribableRecursiveInventory(locationId);
+        final ImmutableList<LOC_DESC> actualVisibleDescribableInventory =
+                world.loadDescribableVisiblyRecursiveInventory(locationId);
 
         final ImmutableList.Builder<LOC_DESC> missing = ImmutableList.builder();
 
         for (final LOC_DESC expected : expectedDescribableInventory) {
-            if (!actualDescribableInventory.contains(expected)
+            if (!actualVisibleDescribableInventory.contains(expected)
                     // Der Frosch oder die Schlosswache ist auch missing, wenn
                     //  der SC sie erwartet hätte, aber nicht bemerkt.
                     || (
@@ -386,14 +404,16 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // Man muss zusätzlich noch alle Gegenstände prüfen, die
         // sich im actual inventory befinden und nicht erwartet waren!
         // (Dies ist eher zur Sicherheit, vgl.
-        // upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel())
-        for (final IDescribableGO actual : actualDescribableInventory) {
+        // upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel())
+        for (final IDescribableGO actual : actualVisibleDescribableInventory) {
             // Den Frosch oder die Schlosswache bemerkt der SC vielleicht gar nicht.
             if ((!(actual instanceof ILivingBeingGO)
                     || scBemerkt((IDescribableGO & ILivingBeingGO) actual))
                     && !expectedDescribableInventory.contains(actual)) {
                 // Actual ("der Käfig") war nicht erwartet!
-                if (actual instanceof ILocationGO) {
+                if (actual instanceof ILocationGO
+                        && ((ILocationGO) actual).storingPlaceComp()
+                        .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
                     // Aber wenn schon "der Käfig" da ist, dann wäre vielleicht
                     // auch "der Vogel" erwartet, den der SC zuletzt im Käfig
                     // gesehen hat!
@@ -479,7 +499,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 // hätten wir zumindest bei den nicht-movablen Locations das Problem,
                 // dass man z.B. die schwere Vase bei Dunkelheit nicht sieht, aber
                 // trotzdem die Kugel, die drauf liegt?!
-                upgradeNonLivingNonMovableRecursiveInventoryKnownMentalModel(
+                upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel(
                         (ILocationGO) gameObject);
             }
         }
@@ -507,7 +527,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         return capitalize(buildAufzaehlung(descriptionsPerLocation));
     }
 
-    private ImmutableList<Pair<ILocationGO, ? extends List<LOC_DESC>>> buildRecursiveLocationsAndDescribables(
+    private ImmutableList<Pair<ILocationGO, ? extends List<LOC_DESC>>> buildVisibleRecursiveLocationsAndDescribables(
             @NonNull final ILocationGO location) {
         final ImmutableList.Builder<Pair<ILocationGO, ? extends List<LOC_DESC>>> res = builder();
 
@@ -519,9 +539,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     location, movableObjectsInLocation));
         }
 
-        for (final ILocationGO directContainedLocations :
+        for (final ILocationGO directContainedLocation :
                 world.loadDescribableNonLivingLocationInventory(location)) {
-            res.addAll(buildRecursiveLocationsAndDescribables(directContainedLocations));
+            if (directContainedLocation.storingPlaceComp()
+                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                res.addAll(buildVisibleRecursiveLocationsAndDescribables(directContainedLocation));
+            }
         }
 
         return res.build();

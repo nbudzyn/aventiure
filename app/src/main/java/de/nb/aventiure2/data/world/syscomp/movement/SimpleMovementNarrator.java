@@ -292,9 +292,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 "kommt dir entgegen und geht an dir vorbei"));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
-                "kommt dir entgegen und geht an dir vorbei"));
-        alt.add(neuerSatz(PARAGRAPH,
-                anaph.nomK(),
                 "kommt auf dich zu und geht an dir vorbei", PARAGRAPH));
         alt.add(neuerSatz(PARAGRAPH,
                 anaph.nomK(),
@@ -371,6 +368,8 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 !world.hasSameOuterMostLocationAsSC(
                         loadSC().locationComp().getLastLocation()
                 )
+            // FIXME Prüfen: Fälle, wenn SC unter dem Bett hervorkriecht oder unters Bett
+            //  kriecht
         ) {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();

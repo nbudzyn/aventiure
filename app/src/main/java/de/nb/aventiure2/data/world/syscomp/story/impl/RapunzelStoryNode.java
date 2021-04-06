@@ -273,15 +273,15 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
-        if (world.hasSameOuterMostLocationAsSC(RAPUNZELS_ZAUBERIN)) {
-            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(n);
+        if (world.hasSameVisibleOuterMostLocationAsSC(RAPUNZELS_ZAUBERIN)) {
+            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberSichtbarinImRaum(n);
         } else {
-            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(
+            narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtSichtbarImRaum(
                     timeTaker, n, world);
         }
     }
 
-    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinImRaum(
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberSichtbarinImRaum(
             final Narrator n) {
         n.narrateAlt(NO_TIME,
                 paragraph("was will die Frau bloß?"),
@@ -292,7 +292,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                         + "und nicht erzählen mag, wohin sie eigentlich möchte?"));
     }
 
-    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum(
+    private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtSichtbarImRaum(
             final TimeTaker timeTaker, final Narrator n, final World world) {
         if (timeTaker.now().getTageszeit() == NACHTS) {
             narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Nachts(

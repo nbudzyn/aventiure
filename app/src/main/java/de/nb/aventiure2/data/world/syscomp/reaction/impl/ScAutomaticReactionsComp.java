@@ -75,16 +75,16 @@ public class ScAutomaticReactionsComp
         }
 
 
-        if (locationComp.hasSameOuterMostLocationAs(from)) {
+        if (locationComp.hasSameVisibleOuterMostLocationAs(from)) {
             onLeaveScOuterMostLocation(locatable, from, to);
         }
     }
 
     private void onLeaveScOuterMostLocation(
             final ILocatableGO locatable, final ILocationGO from, @Nullable final ILocationGO to) {
-        if (locationComp.hasSameOuterMostLocationAs(from) &&
-                !locationComp.hasSameOuterMostLocationAs(to)) {
-            // Der SC erlebt, wie das Locatable seinen aktuellen Raum
+        if (locationComp.hasSameVisibleOuterMostLocationAs(from) &&
+                !locationComp.hasSameVisibleOuterMostLocationAs(to)) {
+            // Der SC erlebt, wie das Locatable seinen Raum / aktuellen sichtbaren Bereich
             // verlässt. Der SC "vergisst" die Location.
             mentalModelComp.unsetAssumedLocation(locatable);
         }
@@ -95,8 +95,8 @@ public class ScAutomaticReactionsComp
         if (!LocationSystem.haveSameOuterMostLocation(from, to)) {
             // Der SC verlässt den Raum.
 
-            final ImmutableList<MOV> movingBeingsMovingDescribableInventory =
-                    world.loadMovingBeingsMovingDescribableInventory(from.getId());
+            final ImmutableList<MOV> movingBeings =
+                    world.loadMovingBeingsMovingDescribableVisiblyRecursiveInventory(from.getId());
 
             // Dann aus dem mental
             // Model alle MovingBeings entfernen, die sich in Bewegung befinden.
@@ -104,7 +104,7 @@ public class ScAutomaticReactionsComp
             // ergibt keinen Sinn, sich später zu wundern, dass sich nicht mehr
             // an diesem Ort sind.
 
-            mentalModelComp.unsetAssumedLocations(movingBeingsMovingDescribableInventory);
+            mentalModelComp.unsetAssumedLocations(movingBeings);
         }
     }
 
@@ -123,7 +123,7 @@ public class ScAutomaticReactionsComp
             return;
         }
 
-        if (locationComp.hasSameOuterMostLocationAs(to)) {
+        if (locationComp.hasSameVisibleOuterMostLocationAs(to)) {
             onEnterScOuterMostLocation(locatable, to);
         }
     }
@@ -178,7 +178,7 @@ public class ScAutomaticReactionsComp
     @Override
     public void onEssen(final IGameObject gameObject) {
         if (feelingsComp.getHunger() == HUNGRIG
-                && world.hasSameOuterMostLocationAsSC(gameObject)) {
+                && world.hasSameVisibleOuterMostLocationAsSC(gameObject)) {
             waitingComp.stopWaiting();
         }
     }

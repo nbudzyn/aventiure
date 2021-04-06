@@ -44,6 +44,11 @@ public enum Story {
     //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
     //  (kein Auswürfeln), aber simulierte Welt
 
+    // FIXME Trophäen in Hütte sammeln? Goldene Kugel, sträne Rapunzel... Tischlein-Devk-Dich,
+    //  Bettbecke,...
+    //  Prinz schenkt Spieler etwas hübsches (Umhang?!), SC erhält dafür von Rapunzel ein
+    //  Kompliment oder Rapunzel ist gleich zugeneigter...
+
     FROSCHKOENIG(FroschkoenigStoryNode.class,
             (db, timeTaker, n, world) -> {
                 return FroschkoenigStoryNode.checkAndAdvanceIfAppropriate();

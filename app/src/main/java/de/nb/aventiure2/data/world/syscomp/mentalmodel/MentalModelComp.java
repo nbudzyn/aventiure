@@ -52,12 +52,13 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * Gibt alle {@link ILocatableGO}s zurück, die sich
      * <i>gemäß mentalem Modell dieses
      * {@link de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO}s</i>
-     * an dieser Location befinden, auch rekursiv
-     * (ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
+     * an dieser Location befinden, auch rekursiv, soweit man in Dinge
+     * hineinsehen kann.
+     * (Rekursion ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
      * davon ausgeht, dass hier ein Tisch steht, dann wird auch die Kugel zurückgeben, von der
      * er ausgeht, dass sie auf dem Tisch liegt).
      */
-    public ImmutableList<ILocatableGO> getAssumedRecursiveInventory(
+    public ImmutableList<ILocatableGO> getAssumedVisiblyRecursiveInventory(
             final GameObjectId locationId) {
         final ImmutableList.Builder<ILocatableGO> res = ImmutableList.builder();
 
@@ -65,8 +66,10 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         res.addAll(directlyAssumedList);
 
         for (final ILocatableGO directlyAssumed : directlyAssumedList) {
-            if (directlyAssumed instanceof ILocationGO) {
-                res.addAll(getAssumedRecursiveInventory(directlyAssumed.getId()));
+            if (directlyAssumed instanceof ILocationGO
+                    && ((ILocationGO) directlyAssumed).storingPlaceComp()
+                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                res.addAll(getAssumedVisiblyRecursiveInventory(directlyAssumed.getId()));
             }
         }
 

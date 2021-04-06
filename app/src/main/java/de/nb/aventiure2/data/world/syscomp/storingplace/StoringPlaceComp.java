@@ -63,9 +63,6 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
      * Innenräumen mit Fenstern nach draußen. {@code false} z.B. unter dem Bett oder bei
      * Gegenständen, die an sich geschlossen sind.
      */
-    // FIXME Goldene Kugel nicht erwähnen wenn unter Bett (sieht man nicht)
-    //  - Dann kann man sie auch nicht nehmen oder anderweitig mit
-    //    ihr interagieren!
     private final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus;
 
     /**

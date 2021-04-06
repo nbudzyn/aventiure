@@ -1016,8 +1016,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     public boolean scUndRapunzelKoennenEinanderSehen() {
-        return world.hasSameOuterMostLocationAsSC(RAPUNZEL)
-                && !loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM);
+        return world.hasSameVisibleOuterMostLocationAsSC(RAPUNZEL);
     }
 
     private void rapunzelRettungZusagen() {
@@ -1340,6 +1339,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         );
 
         talkerBeendetGespraech();
+
+        // FIXME Wenn Zauberin kommt: Sollte man noch etwas anderes tun können
+        //  als unters bett kriechen? Was? ("Auf die... warten"??)
     }
 
     public void narrateZauberinIstGegangen() {

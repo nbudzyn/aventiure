@@ -187,12 +187,23 @@ public class MovementComp
                 !locationComp.hasLocation(getCurrentStepToId()) &&
                 requirePcd().getPauseForSCAction() == UNPAUSED) {
             setupNextStepIfNecessaryAndPossible(now);
-            pauseIfSameOuterMostLocationWithSC();
+            pauseIfSameVisibleOuterMostLocationWithSC();
         }
 
         if (!hasCurrentStep()
                 || requirePcd().getPauseForSCAction() == PAUSED
                 || conversationable.isInConversation()) {
+            // FIXME No actions. SC at 30005Text: [...]
+            //  Was willst du hier eigentlich? Du gehst zurück in Richtung Schloss. Eine
+            //  magere Frau mit krummer, bis zum Kinn reichender Nase kommt daher.
+            //  Du gehst wieder den langen, schmalen Pfad den Hügel hinauf bis zum Turm.
+            //  Die magere Frau kommt dir hinterher.
+            //  Du fühlst dich allmählich etwas hungrig.
+            //  Der Tag neigt sich und langsam beginnt der Abend. „Gott zum Gruße“, sprichst du die
+            //   magere Frau an sie blickt dich schlecht aufgelegt an.
+            //  Sie kommt dir entgegen und geht an dir vorbei
+            //  - Vielleicht ein Problem der MovementComp oder der
+            //   BewegenAction oder der TalkingComp.... :-(
             return;
         }
 
@@ -237,9 +248,12 @@ public class MovementComp
 
         locationComp.setLocation(getCurrentStepToId());
 
-        if (world.loadSC().locationComp().hasRecursiveLocation(getCurrentStepToId())) {
+        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(getCurrentStepToId())) {
             narrateAndDoEnters();
         }
+        // FIXME Prüfen: Ein Moving Being neu in den Raum gekommen ist, während der SC z.B.
+        //  gerade unter einem Bett liegt, müsste der SC beim Herauskriechen eine Info
+        //  bekommen - in der Art ... steht im Raum (sonst nicht üblich bei Movables!)
 
         locationComp.narrateAndDoEnterReactions(
                 getCurrentStepFromId(), getCurrentStepToId()
@@ -250,7 +264,7 @@ public class MovementComp
             return false;
         }
 
-        if (pauseIfSameOuterMostLocationWithSC()) {
+        if (pauseIfSameVisibleOuterMostLocationWithSC()) {
             return false;
         }
 
@@ -271,8 +285,8 @@ public class MovementComp
      * vorbeilaufen. Der SC soll die Möglichkeit erhalten, zumindest einmalig mit dem
      * IMovingGO zu interagieren.
      */
-    private boolean pauseIfSameOuterMostLocationWithSC() {
-        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)
+    private boolean pauseIfSameVisibleOuterMostLocationWithSC() {
+        if (locationComp.hasSameVisibleOuterMostLocationAs(SPIELER_CHARAKTER)
             // IDEA Wenn der SC schläft, dann hingegen das Game Object einfach
             //  vorbeilaufen lassen (in diesem Fall sollte es ja aber auch keine
             //  Narration geben...)
@@ -405,9 +419,12 @@ public class MovementComp
     private void narrateAndDoMovementLeaves() {
         requirePcd().setPauseForSCAction(UNPAUSED);
 
-        if (world.loadSC().locationComp().hasRecursiveLocation(getCurrentStepFromId())) {
+        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(getCurrentStepFromId())) {
             narrateAndDoLeaves();
         }
+        // FIXME Prüfen: Wenn das Moving Being der Raum verlässt, während der SC z.B.
+        //  gerade unter einem Bett liegt, müsste der SC beim Herauskriechen eine Info
+        //  bekommen - in der Art ... ist nicht mehr da (sonst nicht üblich bei Movables!)
 
         locationComp.narrateAndDoLeaveReactions(getCurrentStepToId());
         locationComp.unsetLocation();

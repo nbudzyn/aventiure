@@ -545,18 +545,19 @@ public class World {
      * (Lädt und) gibt alle {@link ILocatableGO}s mit Beschreibung zurück, die sich
      * <i>gemäß mentalem Modell dieses
      * {@link de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO}s</i>
-     * an dieser Location befinden, auch rekursiv
-     * (ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
+     * an dieser Location befinden, auch rekursiv, soweit man
+     * man in Dinge hineinsehen kann.
+     * (Rekursion ebenfalls gemäß dem mentalen Modell: wenn das {@code IHasMentalModelGO}
      * davon ausgeht, dass hier ein Tisch steht, dann wird auch die Kugel zurückgeben, von der
      * er ausgeht, dass sie auf dem Tisch liegt).
      */
     public static <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadAssumedDescribableRecursiveInventory(
+    ImmutableList<LOC_DESC> loadAssumedDescribableVisiblyRecursiveInventory(
             final IHasMentalModelGO hasMentalModelGO,
             final GameObjectId locationId) {
         return (ImmutableList<LOC_DESC>) (ImmutableList<?>)
                 hasMentalModelGO.mentalModelComp()
-                        .getAssumedRecursiveInventory(locationId)
+                        .getAssumedVisiblyRecursiveInventory(locationId)
                         .stream()
                         .filter(locatable -> !locatable.is(SPIELER_CHARAKTER))
                         .filter(IDescribableGO.class::isInstance)
@@ -565,14 +566,14 @@ public class World {
 
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects an dieser
-     * <code>location</code> (auch rekursiv enthaltene, z.B. Kugel auf Tisch in Raum)
-     * und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben.
+     * <code>location</code> - auch rekursiv enthaltene, z.B. Kugel auf dem Tisch im Raum, -
+     * soweit sie sichtbar sind (nicht z.B. eine Kugel unter dem Bett im Raum)
+     * und gibt sie zurück - nur Gegenstände, die eine Beschreibung haben.
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
+    ImmutableList<LOC_DESC> loadDescribableNonLivingVisiblyRecursiveInventory(
             final ILocationGO location) {
-        return AliveSystem.filterNoLivingBeing(loadDescribableRecursiveInventory(location));
+        return AliveSystem.filterNoLivingBeing(loadDescribableVisiblyRecursiveInventory(location));
     }
 
     /**
@@ -583,9 +584,9 @@ public class World {
      * nur Gegenstände, die eine Beschreibung haben.
      */
     public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
-    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
+    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationVisiblyRecursiveInventory(
             final ILocationGO inventoryHolder) {
-        return loadDescribableNonLivingLocationRecursiveInventory(inventoryHolder.getId());
+        return loadDescribableNonLivingLocationVisiblyRecursiveInventory(inventoryHolder.getId());
     }
 
     /**
@@ -596,10 +597,10 @@ public class World {
      * nur Gegenstände, die eine Beschreibung haben.
      */
     private <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
-    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationRecursiveInventory(
+    ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationVisiblyRecursiveInventory(
             final GameObjectId inventoryHolderId) {
         return filterLocation(
-                loadDescribableNonLivingRecursiveInventory(inventoryHolderId));
+                loadDescribableNonLivingVisiblyRecursiveInventory(inventoryHolderId));
     }
 
     /**
@@ -646,10 +647,10 @@ public class World {
      * nur solche, die eine Beschreibung haben.
      */
     public <MOV extends IMovingGO & ILocatableGO & IDescribableGO>
-    ImmutableList<MOV> loadMovingBeingsMovingDescribableInventory(
+    ImmutableList<MOV> loadMovingBeingsMovingDescribableVisiblyRecursiveInventory(
             final GameObjectId locationId) {
         return MovementSystem.filterMoving(
-                filterMovingGO(loadDescribableRecursiveInventory(locationId)));
+                filterMovingGO(loadDescribableVisiblyRecursiveInventory(locationId)));
     }
 
     /**
@@ -697,6 +698,19 @@ public class World {
 
     /**
      * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects von dieser
+     * <i>locationId</i> zurück - auch rekursiv, z.B. Kugel auf einem Tisch in einem Raum,
+     * soweit sie sichtbar sind (also z.B. keine Kugel unter dem Bett im Raum) -
+     * und gibt sie zurück - nur Gegenstände, die eine Beschreibung haben.
+     */
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableNonLivingVisiblyRecursiveInventory(
+            final GameObjectId locationId) {
+        return AliveSystem
+                .filterNoLivingBeing(loadDescribableVisiblyRecursiveInventory(locationId));
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) die nicht-lebenden Game Objects von dieser
      * <i>locationId</i> zurück (auch rekursiv, z.B. Kugel auf einem Tisch in einem Raum)
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
@@ -704,7 +718,8 @@ public class World {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final GameObjectId locationId) {
-        return AliveSystem.filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
+        return AliveSystem
+                .filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
 
     /**
@@ -734,9 +749,20 @@ public class World {
 
     /**
      * Lädt (soweit noch nicht geschehen) alle Game Objects an dieser
-     * <code>location</code>s (auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum)
-     * und gibt sie zurück -
-     * nur Gegenstände, die eine Beschreibung haben.
+     * <code>location</code>s - auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum,
+     * sofern sich sichtbar sind (also z.B. keine Kugel unter dem Bett im Raum) -
+     * und gibt sie zurück - nur Gegenstände, die eine Beschreibung haben.
+     */
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableVisiblyRecursiveInventory(
+            final ILocationGO location) {
+        return loadDescribableVisiblyRecursiveInventory(location.getId());
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) alle Game Objects an dieser
+     * <code>location</code>s - auch rekursiv enthaltene, z.B. Kugel auf einem Tisch in einem Raum -
+     * und gibt sie zurück - nur Gegenstände, die eine Beschreibung haben.
      */
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(
@@ -744,15 +770,43 @@ public class World {
         return loadDescribableRecursiveInventory(location.getId());
     }
 
-
     /**
      * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
-     * <code>locationId</code> (auch rekursiv, z.B. Kugel auf Tisch in Raum)
+     * <code>locationId</code> - auch rekursiv, z.B. Kugel auf Tisch in Raum, sofern
+     * sie sichtbar sind (nicht die Kugel unter dem Bett im Raum) -
      * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
      * nicht den Spieler-Charakter.
      */
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
-    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(final GameObjectId locationId) {
+    ImmutableList<LOC_DESC> loadDescribableVisiblyRecursiveInventory(
+            final GameObjectId locationId) {
+        final ImmutableList.Builder<LOC_DESC> res = ImmutableList.builder();
+
+        final ImmutableList<LOC_DESC> directlyContainedList =
+                loadDescribableInventory(locationId);
+        res.addAll(directlyContainedList);
+
+        for (final LOC_DESC directlyContained : directlyContainedList) {
+            if (directlyContained instanceof ILocationGO
+                    && ((ILocationGO) directlyContained).storingPlaceComp()
+                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                res.addAll(
+                        loadDescribableVisiblyRecursiveInventory((ILocationGO) directlyContained));
+            }
+        }
+
+        return res.build();
+    }
+
+    /**
+     * Lädt (soweit noch nicht geschehen) die Game Objects an dieser
+     * <code>locationId</code> - auch rekursiv, z.B. Kugel auf Tisch in Raum -
+     * und gibt sie zurück - nur Game Objects, die eine Beschreibung haben,
+     * nicht den Spieler-Charakter.
+     */
+    private <LOC_DESC extends ILocatableGO & IDescribableGO>
+    ImmutableList<LOC_DESC> loadDescribableRecursiveInventory(
+            final GameObjectId locationId) {
         final ImmutableList.Builder<LOC_DESC> res = ImmutableList.builder();
 
         final ImmutableList<LOC_DESC> directlyContainedList = loadDescribableInventory(locationId);
@@ -760,13 +814,13 @@ public class World {
 
         for (final LOC_DESC directlyContained : directlyContainedList) {
             if (directlyContained instanceof ILocationGO) {
-                res.addAll(loadDescribableRecursiveInventory((ILocationGO) directlyContained));
+                res.addAll(
+                        loadDescribableRecursiveInventory((ILocationGO) directlyContained));
             }
         }
 
         return res.build();
     }
-
 
     /**
      * (Speichert ggf. alle Änderungen und) ermittelt, ob sich an diese Location
@@ -1118,6 +1172,15 @@ public class World {
         return hasSameOuterMostLocationAsSC(load(gameObjectId));
     }
 
+    public final boolean hasSameVisibleOuterMostLocationAsSC(
+            @Nullable final GameObjectId gameObjectId) {
+        if (gameObjectId == null) {
+            return false;
+        }
+
+        return hasSameVisibleOuterMostLocationAsSC(load(gameObjectId));
+    }
+
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final IGameObject gameObject) {
         if (gameObject == null) {
             return false;
@@ -1125,6 +1188,16 @@ public class World {
 
         return loadSC().locationComp().hasSameOuterMostLocationAs(gameObject);
     }
+
+    public final boolean hasSameVisibleOuterMostLocationAsSC(
+            @Nullable final IGameObject gameObject) {
+        if (gameObject == null) {
+            return false;
+        }
+
+        return loadSC().locationComp().hasSameVisibleOuterMostLocationAs(gameObject);
+    }
+
 
     /**
      * Lädt (sofern nicht schon geschehen) den Spieler-Charakter und gibt ihn zurück.

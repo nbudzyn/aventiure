@@ -331,6 +331,9 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void scUndRapunzelVergessenAlles() {
+        // FIXME Wach werden... nach Verzauberung: Muskelkater? (Andeuten, dass man wohl selbst
+        //  heruntergeklettert ist und nicht gebeamt wurde?)
+
         // Spieler wird verzaubert und vergisst alles.
         unsetTalkingTo(true);
         loadRapunzel().talkingComp().unsetTalkingTo(true);
@@ -349,6 +352,12 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
         counterDao.reset(BettFactory.Counter.class);
 
         // Auch Rapunzel wird verzaubert und vergisst den Spieler!
+        // FIXME Oder nur der SC vergisst!
+        //  Dann Reagieren auf unerwatzete fragen nach verzauberung (ich hab dir docj schon gesagt,
+        //  dass ich rapunzel heiße...) Alle "einmaligen" Fragen durchgehen (Zähler / Lernbare
+        //  Dinge) und Sätze für das zweite / dritte Mal einbauen.
+        //  ("schaut dich befremdet / besorgt an...")
+
         loadRapunzel().memoryComp().narretAndForget(SPIELER_CHARAKTER, GOLDENE_KUGEL,
                 SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT);
         loadSC().feelingsComp().resetFeelingsTowards(SPIELER_CHARAKTER);

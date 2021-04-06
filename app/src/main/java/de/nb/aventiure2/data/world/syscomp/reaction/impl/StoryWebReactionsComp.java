@@ -145,7 +145,7 @@ public class StoryWebReactionsComp
 
     private void onSCEnter(final ILocationGO to) {
         final ILocatableGO rapunzelsZauberin = (ILocatableGO) world.load(RAPUNZELS_ZAUBERIN);
-        if (rapunzelsZauberin.locationComp().hasSameOuterMostLocationAs(to)) {
+        if (rapunzelsZauberin.locationComp().hasSameVisibleOuterMostLocationAs(to)) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
         }
 
@@ -193,7 +193,7 @@ public class StoryWebReactionsComp
             return;
         }
 
-        if (world.hasSameOuterMostLocationAsSC(to)) {
+        if (world.hasSameVisibleOuterMostLocationAsSC(to)) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
         }
     }

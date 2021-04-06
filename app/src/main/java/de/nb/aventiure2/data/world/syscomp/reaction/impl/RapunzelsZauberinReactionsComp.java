@@ -160,7 +160,7 @@ public class RapunzelsZauberinReactionsComp
             onSCLeave_AbzweigImWald_To_ImWaldNaheDemSchloss();
         } else if (scFrom.is(VOR_DEM_ALTEN_TURM)
                 && scTo != null && scTo.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)
-                && locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
+                && locationComp.hasSameVisibleOuterMostLocationAs(SPIELER_CHARAKTER)) {
             narrateZauberinSiehtSCNach();
         }
 
@@ -257,7 +257,7 @@ public class RapunzelsZauberinReactionsComp
     private void onSCEnter(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
         // Wenn die Zauberin sieht, wie sich der Spieler in den Schatten der
         // Bäume setzt, weiß sie, dass er dort ist.
-        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER) &&
+        if (locationComp.hasSameVisibleOuterMostLocationAs(SPIELER_CHARAKTER) &&
                 scFrom != null &&
                 scFrom.is(VOR_DEM_ALTEN_TURM) &&
                 scTo.is(VOR_DEM_ALTEN_TURM_SCHATTEN_DER_BAEUME)) {

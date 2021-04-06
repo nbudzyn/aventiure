@@ -112,4 +112,10 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
     //  - Denkbar wäre, .dann() optional mit einem Akteur zu qualifizieren:
     //    .dann(RAPUNZELS_ZAUBERIN). Ein "Dann" würde nur dann
     //    erzeugt, wenn der Folgesatz denselben Akteur hat.
+    //  Anderer Fall: "Der ... ist einen Moment unaufmerksam. Da springst du hervor..."
+    //   "Da" einfügen, wenn...
+    //   - verschiedene Akteure (Bezugsobjekte?)
+    //   - Neu begonnene Aktion 1 (nicht schon länger)
+    //   - neu begonnene Aktion 2 (nicht schon länger)
+    //   - weitere Kriterien?
 }

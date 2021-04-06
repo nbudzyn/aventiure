@@ -56,7 +56,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
                 counterDao.get(RastenAction.Counter.RASTEN) >= 2 &&
                 erwartet.is(RAPUNZELS_ZAUBERIN) &&
                 world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN) &&
-                !erwartet.locationComp().hasSameOuterMostLocationAs(location)) {
+                !erwartet.locationComp().hasSameVisibleOuterMostLocationAs(location)) {
             res.add(new WartenAction<>(counterDao, scActionStepCountDao, timeTaker, n, world,
                     erwartet));
         }

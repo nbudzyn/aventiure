@@ -539,8 +539,8 @@ class WetterData {
     //  "der Mond lässt sein Licht über alle Felder leuchten"
 
     // FIXME Nacht:
-    // "Bei einbrechender Nacht"
-    // "Der Mond scheint über..."
+    //  "Bei einbrechender Nacht"
+    //  "Der Mond scheint über..."
 
     // FIXME Wind / Sturm
     //  "ein kühles Lüftchen streicht durch das Laub"

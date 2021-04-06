@@ -117,27 +117,34 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         setTalkingTo((ITalkerGO<?>) world.load(talkingToId));
     }
 
-    public void setTalkingTo(@Nullable final ITalkerGO<?> otherTalker) {
-        @Nullable final GameObjectId talkingToId = otherTalker != null ? otherTalker.getId() : null;
+    public void setTalkingTo(@Nullable final ITalkerGO<?> newOtherTalker) {
+        @Nullable final GameObjectId newTalkingToId =
+                newOtherTalker != null ? newOtherTalker.getId() : null;
 
-        if (getGameObjectId().equals(talkingToId)) {
+        if (getGameObjectId().equals(newTalkingToId)) {
             throw new IllegalStateException("A game object cannot talk to itself.");
         }
 
-        if (Objects.equals(getTalkingToId(), talkingToId)) {
+        @Nullable final GameObjectId oldTalkingToId = getTalkingToId();
+        if (Objects.equals(oldTalkingToId, newTalkingToId)) {
             return;
         }
 
-        requirePcd().setTalkingToId(talkingToId);
+        if (oldTalkingToId != null) {
+            ((ITalkerGO<?>) world.load(oldTalkingToId)).talkingComp()
+                    .unsetTalkingTo(false);
+        }
 
-        if (otherTalker != null &&
-                otherTalker.is(SPIELER_CHARAKTER) &&
+        requirePcd().setTalkingToId(newTalkingToId);
+
+        if (newOtherTalker != null &&
+                newOtherTalker.is(SPIELER_CHARAKTER) &&
                 !getGameObjectId().equals(SPIELER_CHARAKTER)) {
             setSchonBegruesstMitSC(true);
         }
 
-        if (otherTalker != null) {
-            otherTalker.talkingComp().setTalkingTo(getGameObjectId());
+        if (newOtherTalker != null) {
+            newOtherTalker.talkingComp().setTalkingTo(getGameObjectId());
         }
     }
 

@@ -128,6 +128,22 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return hasSameOuterMostLocationAs(world.load(otherId));
     }
 
+
+    /**
+     * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
+     * (z.B. denselben Raum - soweit sichtbar). Wenn <code>otherId</code> <code>null</code> ist,
+     * gibt
+     * * diese Methode immer <code>null</code> zurück.
+     */
+    public boolean hasSameVisibleOuterMostLocationAs(@Nullable final GameObjectId otherId) {
+        if (otherId == null) {
+            return false;
+        }
+
+        return hasSameVisibleOuterMostLocationAs(world.load(otherId));
+    }
+
+
     /**
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
      * (z.B. denselben Raum). Wenn <code>other</code> <code>null</code> ist, gibt
@@ -148,6 +164,35 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         }
 
         return otherOuterMostLocation.equals(getOuterMostLocation());
+    }
+
+
+    /**
+     * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
+     * (z.B. denselben Raum - soweit man sehen kann). Wenn <code>other</code> <code>null</code>
+     * ist, gibt diese Methode immer <code>null</code> zurück.
+     */
+    // FIXME Alle Aufrufe prüfen, ob vielleicht eher eine Variante mit VisiblyRecursive
+    //  sinnvoller wäre.
+    //  Ggf. to instanceof ILocationGO) ergänzen um
+    //                                || !((ILocationGO) to).storingPlaceComp()
+    //                                .manKannHineinsehenUndLichtScheintHineinUndHinaus()
+    public boolean hasSameVisibleOuterMostLocationAs(@Nullable final IGameObject other) {
+        ILocationGO otherOuterMostLocation = null;
+        if (other instanceof ILocationGO) {
+            otherOuterMostLocation = (ILocationGO) other;
+        }
+
+        if (other instanceof ILocatableGO) {
+            otherOuterMostLocation =
+                    ((ILocatableGO) other).locationComp().getVisibleOuterMostLocation();
+        }
+
+        if (otherOuterMostLocation == null) {
+            return false;
+        }
+
+        return otherOuterMostLocation.equals(getVisibleOuterMostLocation());
     }
 
     /**
@@ -176,6 +221,27 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         final GameObject location = world.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
+            return false;
+        }
+
+        return hasRecursiveLocation((ILocationGO) location);
+    }
+
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object
+     * sich (ggf. rekusiv - soweit man sehen kann) an dieser Location befindet.
+     */
+    public boolean hasVisiblyRecursiveLocation(@Nullable final GameObjectId locationId) {
+        if (locationId == null) {
+            return false;
+        }
+
+        final GameObject location = world.load(locationId);
+
+        if (!(location instanceof ILocationGO)
+                || !((ILocationGO) location).storingPlaceComp()
+                .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
             return false;
         }
 
@@ -211,6 +277,17 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     ILocationGO getOuterMostLocation() {
         @Nullable final ILocationGO res = getLocation();
         if (res instanceof ILocatableGO) {
+            return ((ILocatableGO) res).locationComp().getOuterMostLocation();
+        }
+
+        return res;
+    }
+
+    @Nullable
+    private ILocationGO getVisibleOuterMostLocation() {
+        @Nullable final ILocationGO res = getLocation();
+        if (res instanceof ILocatableGO
+                && res.storingPlaceComp().manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
             return ((ILocatableGO) res).locationComp().getOuterMostLocation();
         }
 

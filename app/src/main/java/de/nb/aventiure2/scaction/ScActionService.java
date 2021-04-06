@@ -72,11 +72,12 @@ public class ScActionService {
                 world.loadDescribableLivingRecursiveInventory(SPIELER_CHARAKTER);
         final ImmutableList<DESC_OBJ> scInventoryObjects =
                 world.loadDescribableNonLivingRecursiveInventory(SPIELER_CHARAKTER);
-        final ImmutableList<DESC_OBJ> wasSCInDenHaendenHat =
-                world.loadDescribableRecursiveInventory(HAENDE_DES_SPIELER_CHARAKTERS);
+        final ImmutableList<DESC_OBJ> wasSCVisiblyInDenHaendenHat =
+                world.loadDescribableVisiblyRecursiveInventory(HAENDE_DES_SPIELER_CHARAKTERS);
 
-        final ImmutableList<DESC_OBJ> objectsInLocation =
-                location != null ? world.loadDescribableNonLivingRecursiveInventory(location) :
+        final ImmutableList<DESC_OBJ> visibleObjectsInLocation =
+                location != null ?
+                        world.loadDescribableNonLivingVisiblyRecursiveInventory(location) :
                         ImmutableList.of();
         final ImmutableList<LIV> livingBeings =
                 world.loadDescribableLocatableLivingBeings();
@@ -85,25 +86,37 @@ public class ScActionService {
 
         if (location != null) {
             res.addAll(buildLivingBeingsActions(spielerCharakter,
-                    wasSCInDenHaendenHat, livingBeings,
+                    wasSCVisiblyInDenHaendenHat, livingBeings,
                     scInventoryLivingBeings, scInventoryObjects,
                     location));
         }
         res.addAll(buildPlayerOnlyAction(
-                spielerCharakter, wasSCInDenHaendenHat, location));
+                spielerCharakter, wasSCVisiblyInDenHaendenHat, location));
         if (location != null) {
             res.addAll(buildObjectInLocationActions(
                     spielerCharakter,
-                    wasSCInDenHaendenHat, location, objectsInLocation,
+                    wasSCVisiblyInDenHaendenHat, location, visibleObjectsInLocation,
                     scInventoryLivingBeings, scInventoryObjects));
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
+            if (((ITalkerGO<?>) world.load(RAPUNZEL)).talkingComp()
+                    .isTalkingTo(SPIELER_CHARAKTER)) {
+                throw new IllegalStateException("Spieler nicht in Conversation, aber "
+                        + "Rapunzel ist talking to Spieler");
+            }
+
+            if (((ITalkerGO<?>) world.load(RAPUNZELS_ZAUBERIN)).talkingComp()
+                    .isTalkingTo(SPIELER_CHARAKTER)) {
+                throw new IllegalStateException("Spieler nicht in Conversation, aber "
+                        + "Zauberin ist talking to Spieler");
+            }
+
             res.addAll(buildInventoryActions(db.scActionStepCountDao(), timeTaker,
-                    wasSCInDenHaendenHat, location,
+                    wasSCVisiblyInDenHaendenHat, location,
                     scInventoryLivingBeings));
             res.addAll(buildInventoryActions(db.scActionStepCountDao(), timeTaker,
-                    wasSCInDenHaendenHat, location,
+                    wasSCVisiblyInDenHaendenHat, location,
                     scInventoryObjects));
 
             if (location != null) {
@@ -120,7 +133,7 @@ public class ScActionService {
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildLivingBeingsActions(
             final SpielerCharakter spielerCharakter,
-            final List<DESC_OBJ> wasSCInDenHaendenHat,
+            final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat,
             final List<LIV> creatures,
             final List<LIV> scInventoryLivingBeings,
             final ImmutableList<DESC_OBJ> scInventoryObjects,
@@ -134,10 +147,10 @@ public class ScActionService {
             }
 
             if (scCanGiveSomthingTo(creature)) {
-                if (!wasSCInDenHaendenHat.isEmpty()) {
+                if (!wasSCVisiblyInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
                             db.scActionStepCountDao(), timeTaker, n, world, (TAKER) creature,
-                            wasSCInDenHaendenHat));
+                            wasSCVisiblyInDenHaendenHat));
                 } else {
                     res.addAll(GebenAction
                             .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
@@ -150,7 +163,7 @@ public class ScActionService {
                 }
             }
 
-            if (wasSCInDenHaendenHat.isEmpty() &&
+            if (wasSCVisiblyInDenHaendenHat.isEmpty() &&
                     !spielerCharakter.talkingComp().isInConversation()) {
                 if (creature.locationComp().isMovable()) {
                     res.addAll(
@@ -171,7 +184,7 @@ public class ScActionService {
 
     private ImmutableList<AbstractScAction> buildPlayerOnlyAction(
             final SpielerCharakter spielerCharakter,
-            final List<? extends ILocatableGO> wasSCInDenHaendenHat,
+            final List<? extends ILocatableGO> wasSCVisiblyInDenHaendenHat,
             final @Nullable ILocationGO location) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
@@ -180,7 +193,7 @@ public class ScActionService {
                     HeulenAction.buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                             spielerCharakter));
 
-            if (wasSCInDenHaendenHat.isEmpty()) {
+            if (wasSCVisiblyInDenHaendenHat.isEmpty()) {
                 res.addAll(RastenAction
                         .buildActions(db.counterDao(), db.scActionStepCountDao(),
                                 timeTaker, n, world, location));
@@ -199,7 +212,7 @@ public class ScActionService {
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildObjectInLocationActions(
             final SpielerCharakter spielerCharakter,
-            final List<DESC_OBJ> wasSCInDenHaendenHat,
+            final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat,
             final ILocationGO location,
             final List<? extends DESC_OBJ> objectsInLocation,
             final List<LIV> scInventoryLivingBeings,
@@ -215,10 +228,10 @@ public class ScActionService {
             }
 
             if (scCanGiveSomthingTo(object)) {
-                if (!wasSCInDenHaendenHat.isEmpty()) {
+                if (!wasSCVisiblyInDenHaendenHat.isEmpty()) {
                     res.addAll(GebenAction.buildActions(
                             db.scActionStepCountDao(), timeTaker, n, world, (TAKER) object,
-                            wasSCInDenHaendenHat));
+                            wasSCVisiblyInDenHaendenHat));
                 } else {
                     res.addAll(GebenAction
                             .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
@@ -232,14 +245,14 @@ public class ScActionService {
             }
 
             if (!spielerCharakter.talkingComp().isInConversation()) {
-                if (wasSCInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
+                if (wasSCVisiblyInDenHaendenHat.isEmpty() && object.locationComp().isMovable()) {
                     res.addAll(NehmenAction.buildObjectActions(db, timeTaker, n, world, object));
                 }
             }
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            if (wasSCInDenHaendenHat.isEmpty()) {
+            if (wasSCVisiblyInDenHaendenHat.isEmpty()) {
                 res.addAll(EssenAction
                         .buildActions(db.scActionStepCountDao(), timeTaker, db.counterDao(),
                                 n, world, location));
@@ -273,14 +286,14 @@ public class ScActionService {
     ImmutableList<AbstractScAction> buildInventoryActions(
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker,
-            final List<? extends ILocatableGO> wasSCInDenHaendenHat,
+            final List<? extends ILocatableGO> wasSCVisiblyInDenHaendenHat,
             final @Nullable ILocationGO location,
             final List<DESC_OBJ> inventory) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final DESC_OBJ inventoryObject : inventory) {
             if (location != null) {
-                if (scHatHoechstensInDenHaenden(wasSCInDenHaendenHat, inventoryObject) &&
+                if (scHatHoechstensInDenHaenden(wasSCVisiblyInDenHaendenHat, inventoryObject) &&
                         inventoryObject.locationComp().isMovable()) {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
@@ -301,16 +314,17 @@ public class ScActionService {
      * den Händen hat - sonst <code>false</code>.
      */
     private static boolean scHatHoechstensInDenHaenden(
-            final List<? extends ILocatableGO> wasSCInDenHaendenHat, final IGameObject gameObject) {
-        if (wasSCInDenHaendenHat.isEmpty()) {
+            final List<? extends ILocatableGO> wasSCVisiblyInDenHaendenHat,
+            final IGameObject gameObject) {
+        if (wasSCVisiblyInDenHaendenHat.isEmpty()) {
             return true;
         }
 
-        if (wasSCInDenHaendenHat.size() > 1) {
+        if (wasSCVisiblyInDenHaendenHat.size() > 1) {
             return false;
         }
 
-        return wasSCInDenHaendenHat.iterator().next().equals(gameObject);
+        return wasSCVisiblyInDenHaendenHat.iterator().next().equals(gameObject);
     }
 
     private ImmutableList<AbstractScAction> buildLocationActions(final ILocationGO location) {

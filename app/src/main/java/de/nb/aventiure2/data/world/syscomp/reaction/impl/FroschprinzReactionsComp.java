@@ -532,7 +532,7 @@ public class FroschprinzReactionsComp
 
     @VisibleForTesting
     void froschprinzLaueftZumSchlossfestLos() {
-        if (locationComp.hasSameOuterMostLocationAs(SPIELER_CHARAKTER)) {
+        if (locationComp.hasSameVisibleOuterMostLocationAs(SPIELER_CHARAKTER)) {
             n.narrate(
                     neuerSatz(PARAGRAPH, "Plitsch platsch, plitsch platsch",
                             "hüpft der Frosch davon", PARAGRAPH)
