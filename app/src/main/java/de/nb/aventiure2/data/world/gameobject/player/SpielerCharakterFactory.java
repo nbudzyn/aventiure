@@ -110,7 +110,6 @@ public class SpielerCharakterFactory {
                 .put(HAENDE_DES_SPIELER_CHARAKTERS, KNOWN_FROM_LIGHT)
                 .put(EINE_TASCHE_DES_SPIELER_CHARAKTERS, KNOWN_FROM_LIGHT)
                 .put(GOLDENE_KUGEL, KNOWN_FROM_LIGHT)
-                .put(TAGESZEIT, KNOWN_FROM_LIGHT)
                 .build();
     }
 }

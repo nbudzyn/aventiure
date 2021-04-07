@@ -135,7 +135,6 @@ public class World {
 
     // INVISIBLES
     public static final GameObjectId WETTER = new GameObjectId(40_000);
-    public static final GameObjectId TAGESZEIT = new GameObjectId(40_001);
     public static final GameObjectId SCHLOSSFEST = new GameObjectId(40_010);
     public static final GameObjectId RAPUNZELS_NAME = new GameObjectId(40_012);
     public static final GameObjectId RAPUNZELS_GESANG = new GameObjectId(40_013);
@@ -303,7 +302,6 @@ public class World {
 
                 invisible.createSchlossfest(),
                 wetter.create(),
-                invisible.createTageszeit(),
                 InvisibleFactory.create(RAPUNZELS_NAME),
                 InvisibleFactory.create(RAPUNZELS_GESANG),
                 InvisibleFactory.create(RAPUNZELRUF),

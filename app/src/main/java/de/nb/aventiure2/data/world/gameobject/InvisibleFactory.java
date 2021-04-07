@@ -11,7 +11,6 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlossfestReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.impl.TageszeitReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
@@ -39,10 +38,6 @@ public class InvisibleFactory {
         this.world = world;
     }
 
-    GameObject createTageszeit() {
-        return new Tageszeit(n, world);
-    }
-
     GameObject createSchlossfest() {
         return new Schlossfest(db, timeTaker, n, world);
     }
@@ -50,22 +45,6 @@ public class InvisibleFactory {
     @NonNull
     public static GameObject create(final GameObjectId id) {
         return new GameObject(id);
-    }
-
-    private static class Tageszeit extends GameObject implements IResponder {
-        private final TageszeitReactionsComp reactionsComp;
-
-        Tageszeit(final Narrator n, final World world) {
-            super(TAGESZEIT);
-            // Jede Komponente muss registiert werden!
-            reactionsComp = addComponent(new TageszeitReactionsComp(n, world));
-        }
-
-        @Nonnull
-        @Override
-        public TageszeitReactionsComp reactionsComp() {
-            return reactionsComp;
-        }
     }
 
     private static class Schlossfest extends GameObject
