@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -68,9 +69,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * zuallermeist leer.
      */
     @NonNull
-    ImmutableCollection<AbstractDescription<?>> altTimePassed(final AvDateTime startTime,
-                                                              final AvDateTime endTime) {
-        return wetter.altTimePassed(startTime, endTime);
+    ImmutableCollection<AbstractDescription<?>> altTimePassed(
+            final AvDateTime startTime,
+            final AvDateTime endTime,
+            final DrinnenDraussen drinnenDraussen) {
+        return wetter.altTimePassed(startTime, endTime, drinnenDraussen);
     }
 
     /**

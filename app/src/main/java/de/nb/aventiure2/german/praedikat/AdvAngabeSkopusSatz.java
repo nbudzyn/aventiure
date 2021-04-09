@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
  * Eine adverbiale Angabe, die sich eher auf den gesamten Satz bezieht, z.B.
@@ -27,6 +28,10 @@ public class AdvAngabeSkopusSatz
 
     public AdvAngabeSkopusSatz(final AdjPhrOhneLeerstellen adjektivphrase) {
         super(adjektivphrase);
+    }
+
+    public AdvAngabeSkopusSatz(final Praepositionalphrase praepositionalphrase) {
+        super(praepositionalphrase);
     }
 
     /**

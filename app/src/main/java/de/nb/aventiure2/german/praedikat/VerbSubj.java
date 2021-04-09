@@ -13,7 +13,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
 
@@ -22,6 +21,12 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
  */
 public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     // Verben ohne Partikel
+    BEGINNEN("beginnen",
+            "beginne", "beginnst", "beginnt", "beginnt",
+            Perfektbildung.HABEN, "begonnen"),
+    BRECHEN("brechen",
+            "breche", "brichst", "bricht", "brecht",
+            Perfektbildung.HABEN, "gebrochen"),
     BRENNEN("brennen",
             "brenne", "brennst", "brennt", "brennt",
             Perfektbildung.HABEN, "gebrannt"),
@@ -49,6 +54,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     SCHEINEN("scheinen",
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
+    STEHEN("stehen",
+            "stehe", "stehst", "steht", "steht",
+            Perfektbildung.HABEN, "gestanden"),
     STRAHLEN("strahlen",
             "strahle", "strahlst", "strahlt", "strahlt",
             Perfektbildung.HABEN, "gestrahlt"),
@@ -57,11 +65,14 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             Perfektbildung.HABEN, "gewacht"),
 
     // Partikelverben
+    ANBRECHEN(BRECHEN, "an", Perfektbildung.SEIN),
     ANGEBEN(GEBEN, "an", Perfektbildung.HABEN),
     ANKOMMEN(KOMMEN, "an", Perfektbildung.SEIN),
+    AUFGEHEN(GEHEN, "auf", Perfektbildung.SEIN),
     AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
+    EMPORSTEIGEN(STEIGEN_AUF, "empor", Perfektbildung.SEIN),
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
     HERUNTERSCHEINEN(SCHEINEN, "herunter", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),

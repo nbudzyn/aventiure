@@ -28,6 +28,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     ABEND(M, DEF, "Abend"),
     ABEND_EIN(M, INDEF, "Abend"),
+    ABENDDAEMMERUNG(F, DEF, "Abenddämmerung"),
     ABENDHIMMEL(M, DEF, "Abendhimmel"),
     ABENDLICHT(N, DEF, "Abendlicht"),
     ABENDSONNE(F, DEF, "Abendsonne"),
@@ -50,6 +51,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     DUNKEL(N, DEF, "Dunkel"),
     DUNKELHEIT(F, DEF, "Dunkelheit"),
     ELEFANTEN_INDEF(PL_MFN, INDEF, "Elefanten"),
+    FIRMAMENT(N, DEF, "Firmament"),
     FRAU(F, DEF, "Frau"),
     FREUDE_OHNE_ART(F, null, "Freude"),
     FROSCH(M, DEF, "Frosch"),
@@ -86,6 +88,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NAME(M, DEF, "Name", "Namen", "Namen"),
     NASE(F, DEF, "Nase"),
     NOTLUEGE_EINE(F, INDEF, "Notlüge"),
+    OSTEN(M, DEF, "Osten"),
     PLATZ(M, DEF, "Platz"),
     RAPUNZEL(F, null, "Rapunzel"),
     RETTUNG_OHNE_ART(F, null, "Rettung"),

@@ -15,9 +15,12 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -26,28 +29,35 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GANZ;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GETRUEBT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SANFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TIEF;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TRUEB;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WOLKENVERHANGEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDDAEMMERUNG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUESTERNIS;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FIRMAMENT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HALBDUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGENLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHUMMERLICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKEN_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZWIELICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
@@ -55,6 +65,9 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
 import static de.nb.aventiure2.german.praedikat.Modalverb.WOLLEN;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.AUFGEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.BEGINNEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.EMPORSTEIGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERABSCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
@@ -68,6 +81,65 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     LEICHT_BEWOELKT,
     BEWOELKT,
     BEDECKT;
+
+    /**
+     * Erzeugt ALternativen wie "Die Sonne geht auf" - ggf. auch eine leere Collection.
+     */
+    @CheckReturnValue
+    ImmutableCollection<Satz> altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar(
+            final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        if (neueTageszeit == MORGENS) {
+            if (compareTo(Bewoelkung.BEWOELKT) <= 0) {
+                alt.add(AUFGEHEN.alsSatzMitSubjekt(SONNE));
+            }
+        } else if (neueTageszeit == TAGSUEBER
+                && compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0
+                && unterOffenemHimmel) {
+            alt.add(EMPORSTEIGEN
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(FIRMAMENT)))
+                    .alsSatzMitSubjekt(SONNE)
+                    .mitAdvAngabe(new AdvAngabeSkopusSatz(LANGSAM)));
+        } else if (neueTageszeit == ABENDS && unterOffenemHimmel) {
+            if (compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                alt.add(// "inzwischen steht die Sonne schon tief"
+                        VerbSubj.STEHEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusVerbAllg(
+                                                TIEF.mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz(
+                                                                "schon"))
+                                        ))
+                                .mitAdvAngabe(
+                                        new AdvAngabeSkopusSatz("inzwischen")));
+            }
+
+            if (compareTo(Bewoelkung.BEWOELKT) <= 0) {
+                // "die Abenddämmerung beginnt"
+                alt.add(BEGINNEN.alsSatzMitSubjekt(ABENDDAEMMERUNG));
+            }
+        } else if (neueTageszeit == NACHTS) {
+            switch (this) {
+                case WOLKENLOS:
+                    // fall-through
+                case LEICHT_BEWOELKT:
+                    // fall-through
+                    if (unterOffenemHimmel) {
+                        alt.add(AUFGEHEN.alsSatzMitSubjekt(MOND));
+                    }
+                case BEWOELKT:
+                    alt.add(UNTERGEHEN.alsSatzMitSubjekt(SONNE));
+                    break;
+                case BEDECKT:
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected Bewoelkung: " + this);
+            }
+        }
+
+        return alt.build();
+    }
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
@@ -122,7 +194,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     }
 
     @CheckReturnValue
-    ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(final AvTime time) {
+    ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
+            final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         switch (this) {
@@ -139,11 +212,17 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                                 .alsSatzMitSubjekt(gestirn)));
                 if (time.getTageszeit() == Tageszeit.ABENDS) {
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
-                            // "noch scheint die Sonne"
+                            // "es scheint noch die Sonne"
                             SCHEINEN
                                     .mitAdvAngabe(
                                             new AdvAngabeSkopusVerbAllg("noch"))
                                     .alsSatzMitSubjekt(gestirn)));
+                    // "die Sonne steht schon tief"
+                    alt.add(VerbSubj.STEHEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(
+                                    new AdvAngabeSkopusVerbAllg(
+                                            TIEF.mitAdvAngabe(new AdvAngabeSkopusSatz("schon"))
+                                    )));
                     if (time.kurzVorSonnenuntergang()) {
                         alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                                 // "Die Sonne will eben untergehen"
@@ -158,9 +237,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
                 if (time.getTageszeit() == Tageszeit.NACHTS
                         || time.getTageszeit() == TAGSUEBER) {
-                    // FIXME Mond etc. nicht nennen, wenn der Himmel nicht zu sehen ist
-                    //  (z.B. im Wald)
-
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             SCHEINEN
                                     .mitAdvAngabe(
@@ -185,7 +261,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
             case LEICHT_BEWOELKT:
                 alt.addAll(
-                        mapToList(time.getTageszeit().altGestirn(), SCHEINEN::alsSatzMitSubjekt));
+                        mapToList(time.getTageszeit().altGestirn(),
+                                SCHEINEN::alsSatzMitSubjekt));
                 if (time.getTageszeit() == TAGSUEBER) {
                     alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
                             VerbSubjObj.SCHEINEN
@@ -194,7 +271,25 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                                             new AdvAngabeSkopusVerbWohinWoher(
                                                     "ins Gesicht"))
                                     .alsSatzMitSubjekt(gestirn)));
+                } else if (time.getTageszeit() == Tageszeit.ABENDS) {
+                    // "die Sonne steht schon tief"
+                    alt.add(VerbSubj.STEHEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(
+                                    new AdvAngabeSkopusVerbAllg(
+                                            TIEF.mitAdvAngabe(new AdvAngabeSkopusSatz("schon"))
+                                    )));
+                    if (time.kurzVorSonnenuntergang()) {
+                        alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
+                                // "Die Sonne will eben untergehen"
+                                WOLLEN.mitLexikalischemKern(
+                                        UNTERGEHEN
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz("eben")
+                                                )
+                                ).alsSatzMitSubjekt(gestirn)));
+                    }
                 }
+
                 break;
 
             case BEWOELKT:
@@ -229,9 +324,11 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return altWohinHinausUnterOffenenHimmel(time.getTageszeit());
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
-            final Tageszeit tageszeit) {
-        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableList.builder();
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel
+            (
+                    final Tageszeit tageszeit) {
+        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+                ImmutableList.builder();
 
         alt.addAll(mapToList(altLichtInDemEtwasLiegt(tageszeit, true),
                 licht -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(licht))));
@@ -331,7 +428,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             final Praepositionalphrase alternative) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
         alt.add(alternative);
-        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit, unterOffenemHimmel), IN_DAT::mit));
+        alt.addAll(
+                mapToSet(altLichtInDemEtwasLiegt(tageszeit, unterOffenemHimmel), IN_DAT::mit));
         return alt.build();
     }
 
@@ -402,7 +500,8 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final Tageszeit tageszeit, final boolean unterOffenemHimmel) {
-        final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt = ImmutableList.builder();
+        final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
+                ImmutableList.builder();
 
         switch (this) {
             case WOLKENLOS:

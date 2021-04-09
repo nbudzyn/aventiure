@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.satz.EinzelnerSatz;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
+    ALLMAEHLICH("allmählich"),
     ANDERS("anders", "ander"),
     ANGESPANNT("angespannt"),
     AUFGEBRACHT("aufgebracht"),
@@ -69,12 +70,14 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     KRUMM("krumm"),
     KUEHL("kühl"),
     LANG("lang"),
+    LANGSAM("langsam"),
     LEICHT("leicht"),
     MAGER("mager"),
     MISSTRAUISCH("misstrauisch"),
     MORGENDLICH("morgendlich"),
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
+    NEU("neu"),
     ROSA(Adjektiv.nichtFlektierbar("rosa")),
     ROETLICH("rötlich"),
     SANFT("sanft"),
@@ -84,6 +87,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     SKEPTISCH("skeptisch"),
     STARK("stark"),
     STRAHLEND("strahlend"),
+    TIEF("tief"),
     TRAURIG("traurig"),
     TODMUEDE("todmüde"),
     TROTZIG("trotzig"),
@@ -130,6 +134,16 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     @Override
     public EinzelnerSatz alsEsIstSatz(final @Nullable String anschlusswort) {
         return toAdjPhr().alsEsIstSatz(anschlusswort);
+    }
+
+    @Override
+    public EinzelnerSatz alsEsWirdSatz() {
+        return alsEsWirdSatz(null);
+    }
+
+    @Override
+    public EinzelnerSatz alsEsWirdSatz(final @Nullable String anschlusswort) {
+        return toAdjPhr().alsEsWirdSatz(anschlusswort);
     }
 
     @Override

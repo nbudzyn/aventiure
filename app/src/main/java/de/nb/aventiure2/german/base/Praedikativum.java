@@ -7,6 +7,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
@@ -16,8 +17,18 @@ public interface Praedikativum {
         return alsEsIstSatz(null);
     }
 
-    default EinzelnerSatz alsEsIstSatz(@javax.annotation.Nullable final String anschlusswort) {
+    default EinzelnerSatz alsEsIstSatz(@Nullable final String anschlusswort) {
         return praedikativumPraedikatMit(this)
+                .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
+                .mitAnschlusswort(anschlusswort);
+    }
+
+    default EinzelnerSatz alsEsWirdSatz() {
+        return alsEsWirdSatz(null);
+    }
+
+    default EinzelnerSatz alsEsWirdSatz(@Nullable final String anschlusswort) {
+        return praedikativumPraedikatWerdenMit(this)
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
     }

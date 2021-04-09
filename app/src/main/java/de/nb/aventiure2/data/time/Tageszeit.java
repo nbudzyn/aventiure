@@ -1,23 +1,32 @@
 package de.nb.aventiure2.data.time;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BLAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLAR;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MORGENDLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ROETLICH;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNENSCHEIN;
@@ -35,9 +44,13 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ANBRECHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
+import static java.util.stream.Collectors.toSet;
 
 public enum Tageszeit {
+    // Reihenfolge ist relevant, nicht ändern!
     NACHTS(NACHT,
             DUNKEL,
             ImmutableList.of(MOND),
@@ -71,7 +84,7 @@ public enum Tageszeit {
             ImmutableList.of("guten Tag", "schönen guten Tag", "einen schönen guten Tag"),
             ImmutableList.of("schönen Tag noch", "einen schönten Tag noch")),
 
-    ABENDS(NomenFlexionsspalte.ABEND,
+    ABENDS(ABEND,
             HELL,
             ImmutableList.of(ABENDSONNE),
             ImmutableList.of(ABENDSONNENSCHEIN, ABENDSONNE),
@@ -139,6 +152,44 @@ public enum Tageszeit {
         this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
     }
 
+    /**
+     * Gibt Sätze zurück wie "langsam wird es Morgen", "der Tag bricht an",
+     * "langsam beginnt der Abend" o. Ä.
+     */
+    public ImmutableSet<EinzelnerSatz> altLangsamBeginntSaetze() {
+        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+
+        alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
+                .map(a -> esWirdSatz().mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
+                .collect(toSet()));
+
+        alt.add(
+                // "der Tag bricht an"
+                ANBRECHEN.alsSatzMitSubjekt(substantivischePhrase),
+                ANBRECHEN.alsSatzMitSubjekt(substantivischePhrase)
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz(ALLMAEHLICH)),
+                VerbSubj.BEGINNEN.alsSatzMitSubjekt(substantivischePhrase)
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz(LANGSAM))
+        );
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt einen Satz zurück wie "es wird Morgen" oder "es wird Tag".
+     */
+    public EinzelnerSatz esWirdSatz() {
+        return esWirdSatz(null);
+    }
+
+    /**
+     * Gibt einen Satz zurück wie "und es wird Morgen" oder "und es wird Tag".
+     */
+    public EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
+        return praedikativumPraedikatWerdenMit(substantivischePhrase)
+                .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
+    }
+
     public ImmutableList<EinzelneSubstantivischePhrase> altGestirn() {
         return altGestirn;
     }
@@ -189,4 +240,17 @@ public enum Tageszeit {
     public EinzelneSubstantivischePhrase getEinzelneSubstantivischePhrase() {
         return substantivischePhrase;
     }
+
+    public boolean hasFolgetageszeit(final Tageszeit other) {
+        final int myIndex = Arrays.asList(values()).indexOf(this);
+        final int otherIndex = Arrays.asList(values()).indexOf(other);
+        if (otherIndex == myIndex + 1) {
+            return true;
+        }
+        if (myIndex == values().length - 1 && otherIndex == 0) {
+            return true;
+        }
+        return false;
+    }
+
 }
