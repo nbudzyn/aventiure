@@ -111,9 +111,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
                 isScUnterOffenemHimmel());
     }
 
-    public void onTimePassed(final AvDateTime startTime, @NonNull final AvDateTime endTime) {
+    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().onTimePassed(startTime, endTime);
+                requirePcd().altTimePassed(startTime, endTime);
 
         if (!alt.isEmpty()) {
             n.narrateAlt(alt, NO_TIME);
