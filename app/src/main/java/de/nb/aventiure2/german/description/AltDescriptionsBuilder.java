@@ -16,7 +16,6 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableSet.builder;
@@ -55,7 +54,7 @@ public class AltDescriptionsBuilder {
 
     @Nonnull
     @CheckReturnValue
-    public static AltDescriptionsBuilder altSaetze(final Collection<Satz> saetze) {
+    public static AltDescriptionsBuilder altSaetze(final Collection<? extends Satz> saetze) {
         return altSaetze(WORD, saetze);
     }
 
@@ -67,14 +66,14 @@ public class AltDescriptionsBuilder {
 
     @Nonnull
     @CheckReturnValue
-    public static AltDescriptionsBuilder altNeueSaetze(final Collection<Satz> saetze) {
+    public static AltDescriptionsBuilder altNeueSaetze(final Collection<? extends Satz> saetze) {
         return altSaetze(SENTENCE, saetze);
     }
 
     @Nonnull
     @CheckReturnValue
     private static AltDescriptionsBuilder altSaetze(
-            final StructuralElement startsNew, final Collection<Satz> saetze) {
+            final StructuralElement startsNew, final Collection<? extends Satz> saetze) {
         return alt().addAll(saetze.stream().map(s -> DescriptionBuilder.satz(startsNew, s)));
     }
 
@@ -144,8 +143,8 @@ public class AltDescriptionsBuilder {
                 addAll((AltDescriptionsBuilder) other);
             } else if (other instanceof AbstractDescription<?>) {
                 add((AbstractDescription<?>) other);
-            } else if (other instanceof EinzelnerSatz) {
-                add((EinzelnerSatz) other);
+            } else if (other instanceof Satz) {
+                add((Satz) other);
             } else {
                 throw new IllegalArgumentException("Unexpected addition: " + other);
             }
@@ -154,7 +153,7 @@ public class AltDescriptionsBuilder {
         return this;
     }
 
-    public AltDescriptionsBuilder addIfOtherwiseEmpty(final EinzelnerSatz satz) {
+    public AltDescriptionsBuilder addIfOtherwiseEmpty(final Satz satz) {
         return addIfOtherwiseEmpty(DescriptionBuilder.satz(satz));
     }
 
@@ -167,7 +166,7 @@ public class AltDescriptionsBuilder {
         return this;
     }
 
-    public AltDescriptionsBuilder add(final EinzelnerSatz... saetze) {
+    public AltDescriptionsBuilder add(final Satz... saetze) {
         // FIXME Sätze werden nicht korrekt mit Punkt abgeschlossen, und der
         //  neue Satz nicht großgeschrieben. Fehler im Konzept. Natürlich
         //  sollen die Descriptions nachträglich noch änderbar bleiben, die
@@ -176,7 +175,7 @@ public class AltDescriptionsBuilder {
         //  - Du gibsz ihr die goldene kugel aber... ohne punkt
         //  - Der gehört der zauberin magisch, wenn du micj fragst ohnecPunkt
 
-        for (final EinzelnerSatz satz : saetze) {
+        for (final Satz satz : saetze) {
             add(DescriptionBuilder.satz(satz));
         }
         return this;

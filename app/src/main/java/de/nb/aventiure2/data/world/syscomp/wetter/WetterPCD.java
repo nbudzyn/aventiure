@@ -56,40 +56,47 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @NonNull
     AltDescriptionsBuilder altScKommtNachDraussenInsWetter(
-            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
-        return wetter.altScKommtNachDraussenInsWetter(time, lichtverhaeltnisseDraussen);
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
+            final boolean unterOffenenHimmel) {
+        return wetter.altScKommtNachDraussenInsWetter(time, lichtverhaeltnisseDraussen,
+                unterOffenenHimmel);
     }
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag" o.Ä.
-     * beziehen - soweit sinnvoll, sonst eine leere Collection.
+     * beziehen - soweit draußen sinnvoll, sonst eine leere Collection.
      */
     @NonNull
     ImmutableCollection<AbstractDescription<?>>
-    altDescUeberHeuteOderDenTagWennSinnvoll(final AvTime time) {
-        return wetter.altDescUeberHeuteOderDenTagWennSinnvoll(time);
+    altDescUeberHeuteOderDenTagWennDraussenSinnvoll(final AvTime time,
+                                                    final boolean unterOffenemHimmel) {
+        return wetter.altDescUeberHeuteOderDenTagWennDraussenSinnvoll(time, unterOffenemHimmel);
     }
 
 
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
-            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
-        return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen);
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
+            final boolean unterOffenenHimmel) {
+        return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen, unterOffenenHimmel);
     }
 
     ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
         return wetter.altUnterOffenemHimmel(time);
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time) {
-        return wetter.altBeiLichtImLicht(time);
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
+                                                          final boolean unterOffenemHimmel) {
+        return wetter.altBeiLichtImLicht(time, unterOffenemHimmel);
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time) {
-        return wetter.altBeiTageslichtImLicht(time);
+    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
+                                                               final boolean unterOffenemHimmel) {
+        return wetter.altBeiTageslichtImLicht(time, unterOffenemHimmel);
     }
 
-    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(final AvTime time) {
-        return wetter.altLichtInDemEtwasLiegt(time);
+    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
+            final AvTime time, final boolean unterOffenemHimmel) {
+        return wetter.altLichtInDemEtwasLiegt(time, unterOffenemHimmel);
     }
 
     @NonNull

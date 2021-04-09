@@ -24,6 +24,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.BaumFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ASTGABEL;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -79,7 +80,7 @@ public class BaumFactory {
                 locationComp,
                 ASTGABEL,
                 false,
-                true, LEUCHTET_NIE,
+                MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS, LEUCHTET_NIE,
                 conDataAltDesc("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),

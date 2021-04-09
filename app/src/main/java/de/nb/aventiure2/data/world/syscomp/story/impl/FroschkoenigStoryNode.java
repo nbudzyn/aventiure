@@ -387,10 +387,16 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadWetter().wetterComp().getTemperatur().compareTo(Temperatur.RECHT_HEISS)
                 >= 0) {
-            final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
-                    world.loadWetter().wetterComp().altDescUeberHeuteOderDenTagWennSinnvoll();
-            alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
-            alt.addAll(altParagraphs(altHeuteHeisserTagSaetze, "– ein kühler Ort wäre schön"));
+            if (scIsDraussen(world)) {
+                final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
+                        world.loadWetter().wetterComp()
+                                .altDescUeberHeuteOderDenTagWennDraussenSinnvoll();
+                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
+                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze, "– ein kühler Ort wäre schön"));
+            } else {
+                alt.addAll(world.loadWetter().wetterComp().getTemperatur()
+                        .altStatischeBeschreibungSaetze(false));
+            }
         }
 
         if (world.loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
@@ -404,5 +410,10 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         //  Heiß vielleicht irgendwo am wasser...
 
         return alt.build();
+    }
+
+    private static boolean scIsDraussen(final World world) {
+        return world.loadSC().locationComp().getLocation().storingPlaceComp()
+                .getDrinnenDraussen().isDraussen();
     }
 }

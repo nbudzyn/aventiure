@@ -50,20 +50,11 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     private final boolean niedrig;
 
     /**
-     * Die "Lichtdurchlässigkeit" dieses Ablageplatzes:
-     * <ul>
-     * <li>Entweder man kann hineinsehen und Licht scheint hinein (wenn außen Licht
-     * ist, ggf. das Tageslicht) und hinaus (falls beleuchtet, vgl.
-     * {@link #leuchtetErmittler}.
-     * <li>Oder man kann nicht hineinsehen, Licht scheint nicht hinein und es scheint auch
-     * kein Licht heraus.
-     * </ul>
-     * <p>
-     * {@code true} bei typischen draußen-Räumen, die von der Sonne beleuchtet werden, und bei
-     * Innenräumen mit Fenstern nach draußen. {@code false} z.B. unter dem Bett oder bei
-     * Gegenständen, die an sich geschlossen sind.
+     * In wieweit das {@link ILocationGO} offen oder geschlossen ist. Besonders relevant für die
+     * Ermittlung der Lichtverhältnisse, wie sehr der SC der Witterung ausgesetzt ist
+     * (ist der SC drinnen oder draußen?) etc.
      */
-    private final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus;
+    private final Geschlossenheit geschlossenheit;
 
     /**
      * Ermittelt, ob dieses Game Object (z.B. dieser Raum oder diese Tasche) leuchtet.
@@ -82,9 +73,9 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
                             final boolean niedrig,
-                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus) {
+                            final Geschlossenheit geschlossenheit) {
         this(id, timeTaker, world, locationComp, locationMode, niedrig,
-                manKannHineinsehenUndLichtScheintHineinUndHinaus, LEUCHTET_NIE);
+                geschlossenheit, LEUCHTET_NIE);
     }
 
     public StoringPlaceComp(final GameObjectId id,
@@ -93,10 +84,11 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
                             final boolean niedrig,
-                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                            final Geschlossenheit geschlossenheit,
                             final Supplier<Boolean> leuchtetErmittler) {
         this(id, timeTaker, world, locationComp, locationMode, niedrig,
-                manKannHineinsehenUndLichtScheintHineinUndHinaus, leuchtetErmittler,
+                geschlossenheit,
+                leuchtetErmittler,
                 null, null);
     }
 
@@ -106,7 +98,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             @Nullable final LocationComp locationComp,
                             final StoringPlaceType locationMode,
                             final boolean niedrig,
-                            final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                            final Geschlossenheit geschlossenheit,
                             final Supplier<Boolean> leuchtetErmittler,
                             @Nullable final SpatialConnectionData spatialConnectionInData,
                             @Nullable final SpatialConnectionData spatialConnectionOutData) {
@@ -116,8 +108,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         this.locationComp = locationComp;
         this.locationMode = locationMode;
         this.niedrig = niedrig;
-        this.manKannHineinsehenUndLichtScheintHineinUndHinaus =
-                manKannHineinsehenUndLichtScheintHineinUndHinaus;
+        this.geschlossenheit = geschlossenheit;
         this.leuchtetErmittler = leuchtetErmittler;
         this.spatialConnectionInData = spatialConnectionInData;
         this.spatialConnectionOutData = spatialConnectionOutData;
@@ -151,10 +142,11 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
             return Lichtverhaeltnisse.HELL;
         }
 
+        final boolean draussen = outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte
+                .manKannHineinsehenUndLichtScheintHineinUndHinaus();
         if ( // Die outermost Location, aus der noch Licht in diese
             // StoringPlaceComp hineinscheint, ist draußen...
-                outerMostStoringPlaceCompAusDerNochLichtScheinenKoennte
-                        .manKannHineinsehenUndLichtScheintHineinUndHinaus
+                draussen
                         //...und draußen ist es hell
                         && timeTaker.now().getTageszeit()
                         .getLichtverhaeltnisseDraussen() == Lichtverhaeltnisse.HELL) {
@@ -169,24 +161,10 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         }
 
         return Lichtverhaeltnisse.DUNKEL;
-
-        // FIXME Wetterphänomene (Regen) und der "tageszeitliche Himmel"
-        //  ("du siehst ein schönes Abendrot") nur dann erzählt werden, wenn der SC
-        //  "draußen" ist oder "einen Blick auf den Himmel hat". Auch diese Fragen ließen
-        //  sich analog beantworten.
-        //  Grundsätzlich ist "draußen" wohl nichts anderes als
-        //  outerStoringPlaceComp == null
-        //  und manKannHineinsehenUndLichtScheintHineinUndHinaus == true.
-        //  (Siehe oben.)
-        //  Denkbar wäre allerdings eine (ergänzende?) Kategorisierung wie
-        //  unter offenem Himmel, draußen geschützt (z.B. Wald), untergestellt,
-        //  drinnen mit Ausblick, drinnen ohne Ausblick.
-        //  Man könnte vielleicht manKannHineinsehenUndLichtScheintHineinUndHinaus
-        //  entsprechend ergänzen.
     }
 
     public boolean manKannHineinsehenUndLichtScheintHineinUndHinaus() {
-        return manKannHineinsehenUndLichtScheintHineinUndHinaus;
+        return geschlossenheit.manKannHineinsehenUndLichtScheintHineinUndHinaus();
     }
 
     public Boolean leuchtet() {
@@ -194,14 +172,42 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     }
 
     /**
+     * Ermittelt, wie sehr ein {@link ILocationGO}
+     * drinnen oder draußen ist.
+     */
+    public DrinnenDraussen getDrinnenDraussen() {
+        DrinnenDraussen res = DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+        @Nullable StoringPlaceComp tmpStoringPlaceComp = this;
+
+        while (tmpStoringPlaceComp != null) {
+            switch (tmpStoringPlaceComp.geschlossenheit) {
+                case NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT:
+                    break;
+                case MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS:
+                    res = DrinnenDraussen.DRAUSSEN_GESCHUETZT;
+                    break;
+                case MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS:
+                    return DrinnenDraussen.DRINNEN;
+            }
+
+            tmpStoringPlaceComp = tmpStoringPlaceComp.getOuterStoringPlaceComp();
+
+            if (tmpStoringPlaceComp == null) {
+                return res; // ==>
+            }
+        }
+
+        return res;
+    }
+
+    /**
      * Ermittelt die äußerste {@code StoringPlaceComp}, aus der noch Licht in diese
-     *
-     * @code StoringPlaceComp} hineinscheinen könnte.
+     * {@code StoringPlaceComp} hineinscheinen könnte.
      */
     private StoringPlaceComp getOuterMostStoringPlaceCompAusDerNochLichtScheinenKoennte() {
         StoringPlaceComp res = this;
 
-        while (res.manKannHineinsehenUndLichtScheintHineinUndHinaus) {
+        while (res.manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
             @Nullable final StoringPlaceComp outer = res.getOuterStoringPlaceComp();
 
             if (outer == null) {

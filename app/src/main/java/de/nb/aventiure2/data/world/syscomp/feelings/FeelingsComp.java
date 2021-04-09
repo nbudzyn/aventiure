@@ -237,6 +237,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return requirePcd().getMovementSpeedFactor();
     }
 
+    // FIXME Man könnte also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
+    //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
+    //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
+    //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
+
     // IDEA Frosch läuft während des Schlafs weg. Oder kommt ggf. Auch wieder. Oder läuft
     //  weg und kommt wieder.
     //  Es sollte in der Zeit keine narrations geben (der Spieler bekommt ja nichts mit, es sei
@@ -277,16 +282,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
     //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
-
-    // FIXME Man könnte auch, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
-    //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
-    //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
-    //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
-    //  werden.
-    //  Man müsste also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
-    //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
-    //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
-    //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
 
     // IDEA Der Benutzer (oder auch andere Game Objects) könnte auch über
     //  die Assumed Locations hinaus ein Mental Model haben, wo

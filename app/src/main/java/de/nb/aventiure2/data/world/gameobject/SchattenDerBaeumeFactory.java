@@ -26,6 +26,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.SchattenDerBaeumeFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -72,7 +73,7 @@ class SchattenDerBaeumeFactory {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, world,
                 locationComp,
                 STAMM_EINES_BAUMS,
-                false, true, LEUCHTET_NIE,
+                false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS, LEUCHTET_NIE,
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),

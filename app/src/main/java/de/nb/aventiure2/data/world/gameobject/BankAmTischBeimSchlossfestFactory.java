@@ -22,6 +22,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.BankAmTischBeimSchlossfestFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
@@ -71,7 +72,8 @@ class BankAmTischBeimSchlossfestFactory {
                 locationComp,
                 NEBEN_SC_AUF_EINER_BANK,
                 false,
-                true, LEUCHTET_NIE,
+                NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT,
+                LEUCHTET_NIE,
                 conData("neben einer Bank an einem Tisch",
                         "An einen Tisch setzen",
                         mins(3),

@@ -20,7 +20,6 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.string.NoLetterException;
 
@@ -194,7 +193,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                         ((Collection<?>) part).stream()
                                 .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
-            } else if (part instanceof EinzelnerSatz) {
+            } else if (part instanceof Satz) {
                 // Alternativen!
                 alternativePartKonstituentenfolgen = ((Satz) part).altVerzweitsaetze();
             } else if (part instanceof Konstituentenfolge) {

@@ -22,6 +22,7 @@ import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.BettFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT;
@@ -69,7 +70,7 @@ public class BettFactory {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, world,
                 locationComp,
                 UNTER_DEM_BETT,
-                true, false,
+                true, MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
                 LEUCHTET_NIE,
                 conData("auf dem Holzboden",
                         "Unter das Bett kriechen",

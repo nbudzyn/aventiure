@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 
@@ -78,7 +79,9 @@ public class SpielerCharakterFactory {
                 locationComp,
                 mentalModelComp,
                 new StoringPlaceComp(id, timeTaker, world, locationComp, EINE_TASCHE,
-                        true, false, LEUCHTET_NIE),
+                        true,
+                        MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
+                        LEUCHTET_NIE),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

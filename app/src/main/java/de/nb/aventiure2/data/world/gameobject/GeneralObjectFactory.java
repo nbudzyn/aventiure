@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
@@ -58,13 +59,13 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLocationId,
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
+                      final Geschlossenheit geschlossenheit,
                       final boolean niedrig,
-                      final StoringPlaceType locationMode,
-                      final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus) {
+                      final StoringPlaceType locationMode) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                movable, locationMode, niedrig, geschlossenheit,
                 LEUCHTET_NIE);
     }
 
@@ -75,14 +76,14 @@ class GeneralObjectFactory {
                              final boolean movable,
                              final StoringPlaceType locationMode,
                              final boolean niedrig,
-                             final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                             final Geschlossenheit geschlossenheit,
                              final Supplier<Boolean> leuchgetErmittler) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
-                movable, locationMode, niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                movable, locationMode, niedrig, geschlossenheit,
                 leuchgetErmittler);
     }
 
@@ -94,11 +95,12 @@ class GeneralObjectFactory {
                       @Nullable final GameObjectId initialLastLocationId,
                       final boolean movable,
                       final StoringPlaceType locationMode,
+                      final Geschlossenheit geschlossenheit,
                       final boolean niedrig) {
         return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown,
                 initialLocationId, initialLastLocationId, movable, locationMode,
-                niedrig, true, LEUCHTET_NIE);
+                niedrig, geschlossenheit, LEUCHTET_NIE);
     }
 
     private GameObject create(final GameObjectId id,
@@ -110,7 +112,7 @@ class GeneralObjectFactory {
                               final boolean movable,
                               final StoringPlaceType locationMode,
                               final boolean niedrig,
-                              final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                              final Geschlossenheit geschlossenheit,
                               final Supplier<Boolean> leuchtetErmittler) {
         final LocationComp locationComp =
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
@@ -121,7 +123,7 @@ class GeneralObjectFactory {
                         shortDescriptionWhenKnown),
                 locationComp,
                 new StoringPlaceComp(id, timeTaker, world, locationComp, locationMode,
-                        niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                        niedrig, geschlossenheit,
                         leuchtetErmittler));
     }
 }

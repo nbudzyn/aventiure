@@ -10,7 +10,6 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -167,15 +166,15 @@ public class DescriptionBuilder {
 
     @NonNull
     @CheckReturnValue
-    public static StructuredDescription satz(final EinzelnerSatz satz) {
-        return satz(WORD, satz);
+    public static StructuredDescription satz(final StructuralElement startsNew,
+                                             final Satz satz) {
+        return satz(startsNew, satz, WORD);
     }
 
     @NonNull
     @CheckReturnValue
-    public static StructuredDescription satz(final StructuralElement startsNew,
-                                             final Satz satz) {
-        return satz(startsNew, satz, WORD);
+    public static StructuredDescription satz(final Satz satz) {
+        return satz(WORD, satz);
     }
 
     @NonNull

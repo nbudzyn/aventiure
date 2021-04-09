@@ -13,11 +13,13 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldBeimBrunnenConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
 
 /**
  * A factory for special {@link GameObject}s: Rooms in the world.
@@ -41,7 +43,7 @@ public class RoomFactory {
     public GameObject createImWaldBeimBrunnen() {
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(IM_WALD_BEIM_BRUNNEN,
                 timeTaker, world, null, StoringPlaceType.NEBEN_DEM_BRUNNEN, false,
-                true);
+                MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS);
 
         return new Room(IM_WALD_BEIM_BRUNNEN, storingPlaceComp,
                 new ImWaldBeimBrunnenConnectionComp(db, timeTaker, n, world, storingPlaceComp));
@@ -54,12 +56,12 @@ public class RoomFactory {
     public GameObject create(final GameObjectId id,
                              final StoringPlaceType locationMode,
                              final boolean niedrig,
-                             final boolean manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                             final Geschlossenheit geschlossenheit,
                              final Supplier<Boolean> leuchtetErmittler,
                              final AbstractSpatialConnectionComp spatialConnectionComp) {
         return new Room(id,
                 new StoringPlaceComp(id, timeTaker, world, null, locationMode,
-                        niedrig, manKannHineinsehenUndLichtScheintHineinUndHinaus,
+                        niedrig, geschlossenheit,
                         leuchtetErmittler),
                 spatialConnectionComp);
     }

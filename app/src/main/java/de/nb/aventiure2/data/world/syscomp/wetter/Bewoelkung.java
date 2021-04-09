@@ -71,19 +71,15 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altScKommtNachDraussenSaetze(final AvTime time) {
+    ImmutableCollection<Satz> altScKommtUnterOffenenHimmel(final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altStatischeBeschreibungSaetze(time),
+        alt.addAll(mapToList(altUnterOffenemHimmelStatischeBeschreibungSaetze(time),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         switch (this) {
             case WOLKENLOS:
                 break;
-
-            // FIXME  "Der Mond ist aufgegangen", "Der Mond ist schon aufgestiegen"
-            //  (MACHT NUR SINN, WENN ES EINE ÄNDERUNG GEGENÜBER
-            //  DEM LETZTEN INFORMATIONSSTAND IST)
 
             // FIXME "Der Mond ist indessen über dem Berg
             //  aufgestiegen, und es ist so hell, daß man eine Stecknadel finden könnte."
@@ -126,7 +122,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     }
 
     @CheckReturnValue
-    ImmutableCollection<Satz> altStatischeBeschreibungSaetze(final AvTime time) {
+    ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         switch (this) {
@@ -228,15 +224,16 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return compareTo(LEICHT_BEWOELKT) <= 0;
     }
 
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(final AvTime time) {
-        return altWohinHinaus(time.getTageszeit());
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
+            final AvTime time) {
+        return altWohinHinausUnterOffenenHimmel(time.getTageszeit());
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
             final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altLichtInDemEtwasLiegt(tageszeit),
+        alt.addAll(mapToList(altLichtInDemEtwasLiegt(tageszeit, true),
                 licht -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(licht))));
 
         switch (this) {
@@ -290,8 +287,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return mapToSet(res.build(), AdvAngabeSkopusVerbWohinWoher::new);
     }
 
-    // FIXME es klart auf / der Himmel bedeckt sich/ bezieht sich
-
     public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausBedeckt(
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<String> res = ImmutableSet.builder();
@@ -320,19 +315,23 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return mapToSet(res.build(), AdvAngabeSkopusVerbWohinWoher::new);
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit) {
-        return altImLicht(tageszeit, BEI_DAT.mit(LICHT_OHNE_ART));
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit,
+                                                          final boolean unterOffenemHimmel) {
+        return altImLicht(tageszeit, unterOffenemHimmel, BEI_DAT.mit(LICHT_OHNE_ART));
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit) {
-        return altImLicht(tageszeit, BEI_DAT.mit(TAGESLICHT_OHNE_ART));
+    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit,
+                                                               final boolean unterOffenemHimmel) {
+        return altImLicht(tageszeit, unterOffenemHimmel, BEI_DAT.mit(TAGESLICHT_OHNE_ART));
     }
 
     private ImmutableSet<Praepositionalphrase> altImLicht(
-            final Tageszeit tageszeit, final Praepositionalphrase alternative) {
+            final Tageszeit tageszeit,
+            final boolean unterOffenemHimmel,
+            final Praepositionalphrase alternative) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
         alt.add(alternative);
-        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit), IN_DAT::mit));
+        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit, unterOffenemHimmel), IN_DAT::mit));
         return alt.build();
     }
 
@@ -344,7 +343,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(altOffenerHimmel(tageszeit), UNTER_DAT::mit));
-        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit), IN_DAT::mit));
+        alt.addAll(mapToSet(altLichtInDemEtwasLiegt(tageszeit, true), IN_DAT::mit));
 
         if (this == LEICHT_BEWOELKT) {
             alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
@@ -375,7 +374,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
      * Gibt alternative Adjektivphrasen zurück, die den (offenen) Himmel
      * beschreiben - <i>Ergebnis kann leer sein</i>.
      */
-    ImmutableSet<AdjPhrOhneLeerstellen> altAdjPhrHimmel(
+    private ImmutableSet<AdjPhrOhneLeerstellen> altAdjPhrHimmel(
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
 
@@ -402,15 +401,17 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     }
 
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
-            final Tageszeit tageszeit) {
+            final Tageszeit tageszeit, final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt = ImmutableList.builder();
 
         switch (this) {
             case WOLKENLOS:
-                if (tageszeit == TAGSUEBER) {
-                    alt.add(np(HELL, TAGESLICHT));
-                } else if (tageszeit == NACHTS) {
-                    alt.add(STERNENLICHT);
+                if (unterOffenemHimmel) {
+                    if (tageszeit == TAGSUEBER) {
+                        alt.add(np(HELL, TAGESLICHT));
+                    } else if (tageszeit == NACHTS) {
+                        alt.add(STERNENLICHT);
+                    }
                 }
                 // fall-through
             case LEICHT_BEWOELKT:

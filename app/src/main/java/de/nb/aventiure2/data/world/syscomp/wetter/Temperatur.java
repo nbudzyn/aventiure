@@ -75,7 +75,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
     ImmutableCollection<Satz> altScKommtNachDraussenSaetze() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altStatischeBeschreibungSaetze(),
+        alt.addAll(mapToList(altStatischeBeschreibungSaetze(true),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         switch (this) {
@@ -107,10 +107,10 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altStatischeBeschreibungSaetze() {
+    public ImmutableCollection<Satz> altStatischeBeschreibungSaetze(final boolean draussen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altPraedikativa(), Praedikativum::alsEsIstSatz));
+        alt.addAll(mapToList(altPraedikativa(draussen), Praedikativum::alsEsIstSatz));
         switch (this) {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
@@ -165,7 +165,8 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     /**
      * Gibt zurück, ob bei dieser Temperatur zu dieser Uhrzeit Sätze über "heute" oder "den Tag"
-     * sinnvoll sind.
+     * sinnvoll sind. - Generell wird es noch von anderen Kriterien abhängen, wann solche
+     * Sätze sinnvoll sind, z.B. wohl nur draußen.
      */
     public boolean saetzeUeberHeuteOderDenTagSinnvoll(final AvTime time) {
         return
@@ -179,15 +180,18 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     /**
      * Gibt alternative Sätze zurück, die sich auf "heute", "den Tag" o.Ä.
-     * beziehen.
+     * beziehen. Solche Sätze sind nur in gewissen Kontexten sinnvoll, insbesondere
+     * nur draußen.
      */
     @NonNull
-    public ImmutableCollection<Satz> altSaetzeUeberHeuteOderDenTag() {
+    public ImmutableCollection<Satz> altDraussenSaetzeUeberHeuteOderDenTag() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Heute ist es heiß / schönes Wetter."
         alt.addAll(
-                mapToList(altPraedikativa(), a -> a.alsEsIstSatz()
+                mapToList(altPraedikativa(true // Drinnen sind solche Sätze
+                        // nicht sinnvoll
+                ), a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
 
         alt.addAll(altDerTagIstSaetze());
@@ -195,9 +199,13 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
+    /**
+     * Erzeugt Sätze in der Art "Der Tag ist sehr heiß" - nur unter gewissen
+     * Umständen sinnvoll, z.B. nur draußen.
+     */
     @NonNull
     private ImmutableCollection<Satz> altDerTagIstSaetze() {
-        return altPraedikativa().stream()
+        return altPraedikativa(true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
                 .collect(toImmutableList());
@@ -208,11 +216,11 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
      */
     @NonNull
-    ImmutableCollection<Satz> altIstNochSaetze() {
+    ImmutableCollection<Satz> altIstNochSaetze(final boolean draussen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        alt.addAll(altPraedikativa().stream()
+        alt.addAll(altPraedikativa(draussen).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -221,7 +229,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
                 .collect(toImmutableList()));
 
         // "Es ist noch schönes Wetter."
-        alt.addAll(altPraedikativa().stream()
+        alt.addAll(altPraedikativa(draussen).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
@@ -239,7 +247,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
-    ImmutableList<Praedikativum> altPraedikativa() {
+    ImmutableList<Praedikativum> altPraedikativa(final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
         alt.addAll(altAdjektivphrasen());
@@ -254,10 +262,14 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case KUEHL:
                 break;
             case WARM:
-                alt.add(Nominalphrase.np(AdjektivOhneErgaenzungen.WARM, WETTER_OHNE_ART));
+                if (draussen) {
+                    alt.add(Nominalphrase.np(AdjektivOhneErgaenzungen.WARM, WETTER_OHNE_ART));
+                }
                 break;
             case RECHT_HEISS:
-                alt.add(Nominalphrase.np(HEISS, TAG_EIN));
+                if (draussen) {
+                    alt.add(Nominalphrase.np(HEISS, TAG_EIN));
+                }
                 break;
             case SEHR_HEISS:
                 break;

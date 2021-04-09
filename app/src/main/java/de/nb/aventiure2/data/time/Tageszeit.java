@@ -80,7 +80,7 @@ public enum Tageszeit {
             ImmutableList.of("guten Abend", "schönen guten Abend"),
             ImmutableList.of("gute Nacht"));
 
-    private final EinzelneSubstantivischePhrase einzelneSubstantivischePhrase;
+    private final EinzelneSubstantivischePhrase substantivischePhrase;
 
     private final Lichtverhaeltnisse lichtverhaeltnisseDraussen;
 
@@ -121,7 +121,7 @@ public enum Tageszeit {
      */
     private final ImmutableList<String> verabschiedungen;
 
-    Tageszeit(final EinzelneSubstantivischePhrase einzelneSubstantivischePhrase,
+    Tageszeit(final EinzelneSubstantivischePhrase substantivischePhrase,
               final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirn,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein,
@@ -129,7 +129,7 @@ public enum Tageszeit {
               final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen,
               final Collection<String> begruessungen,
               final Collection<String> verabschiedungen) {
-        this.einzelneSubstantivischePhrase = einzelneSubstantivischePhrase;
+        this.substantivischePhrase = substantivischePhrase;
         this.lichtverhaeltnisseDraussen = lichtverhaeltnisseDraussen;
         this.altGestirn = altGestirn;
         this.altGestirnschein = altGestirnschein;
@@ -143,7 +143,6 @@ public enum Tageszeit {
         return altGestirn;
     }
 
-    // FIXME Sollte nur unter offenem Himmel verwendet werden!
     public ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein() {
         return altGestirnschein;
     }
@@ -187,7 +186,7 @@ public enum Tageszeit {
         return verabschiedungen;
     }
 
-    public EinzelneSubstantivischePhrase getNominalphrase() {
-        return einzelneSubstantivischePhrase;
+    public EinzelneSubstantivischePhrase getEinzelneSubstantivischePhrase() {
+        return substantivischePhrase;
     }
 }

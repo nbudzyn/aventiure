@@ -20,6 +20,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
 import static de.nb.aventiure2.data.world.gameobject.BettgestellFactory.Counter.*;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETTGESTELL;
@@ -66,7 +67,8 @@ class BettgestellFactory {
                 locationComp,
                 ECKE_IM_BETTGESTELL,
                 false,
-                true, LEUCHTET_NIE,
+                NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT,
+                LEUCHTET_NIE,
                 conData("auf der Bettkante",
                         "In das Bett legen",
                         secs(15),
