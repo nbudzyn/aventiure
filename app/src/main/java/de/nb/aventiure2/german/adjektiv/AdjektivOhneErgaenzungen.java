@@ -92,6 +92,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     MORGENDLICH("morgendlich"),
     MUEDE("müde"),
     MUERRISCH("mürrisch"),
+    NACHTSCHWARZ("nachtschwarz"),
     NEU("neu"),
     ROSA(Adjektiv.nichtFlektierbar("rosa")),
     ROETLICH("rötlich"),

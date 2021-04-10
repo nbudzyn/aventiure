@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.talking;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -191,7 +192,8 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     }
 
     @Nullable
-    private ITalkerGO<?> getTalkingTo() {
+    @VisibleForTesting
+    public ITalkerGO<?> getTalkingTo() {
         @Nullable final GameObjectId talkingToId = getTalkingToId();
         if (talkingToId == null) {
             return null;

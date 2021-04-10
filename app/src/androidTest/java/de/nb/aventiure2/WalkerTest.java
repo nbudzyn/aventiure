@@ -5,6 +5,8 @@ import android.content.Context;
 import androidx.annotation.Nullable;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.google.common.collect.ImmutableList;
+
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,8 @@ import java.io.File;
 import java.util.List;
 
 import de.nb.aventiure2.androidtest.AndroidTestBase;
+import de.nb.aventiure2.data.world.gameobject.player.*;
+import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -127,8 +131,18 @@ public class WalkerTest extends AndroidTestBase {
                 // For easier debugging
                 scActionService.getPlayerActions();
 
+                final SpielerCharakter spielerCharakter = world.loadSC();
+
+                final ImmutableList<? extends ILivingBeingGO> livingBeings =
+                        world.loadDescribableLocatableLivingBeings();
+
                 fail("No actions. SC at " + scActionService.getSCLocation()
-                        + "Text: " + n.getNarrationText());
+                        + ", livingBeings: " + livingBeings
+                        + ", spielerCharakter.talkingComp().isInConversation(): "
+                        + spielerCharakter.talkingComp().isInConversation()
+                        + ", spielerCharakter.talkingComp().getTalkingTo(): "
+                        + spielerCharakter.talkingComp().getTalkingTo()
+                        + ", Text: " + n.getNarrationText());
             }
 
             try {

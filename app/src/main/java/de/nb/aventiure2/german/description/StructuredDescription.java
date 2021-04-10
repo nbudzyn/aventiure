@@ -303,4 +303,16 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     public boolean vorangestelltenSatzanschlussMitUndVermeiden() {
         return satz.isSatzreihungMitUnd();
     }
+
+    @Override
+    public String toString() {
+        // FIXME Nur zum Testen, dann wieder entfernen
+        return super.toString()
+                + "{" +
+                "startsNew=" + startsNew +
+                ", endsThis=" + endsThis +
+                ", satz=" + satz.getVerbzweitsatzStandard().joinToString() +
+                ", phorikKandidat=" + phorikKandidat +
+                '}';
+    }
 }

@@ -329,7 +329,7 @@ class WetterData {
                 alt.addAll(altNeueSaetze(
                         ImmutableList.of("allmählich", "unterdessen"),
                         "ist es",
-                        currentTageszeit.getEinzelneSubstantivischePhrase().nomK(), // "Morgen"
+                        currentTageszeit.getSubstantivischePhrase().nomK(), // "Morgen"
                         "geworden"
                         // Der Tageszeitenwechsel ist parallel passiert.
                 ));
@@ -338,13 +338,13 @@ class WetterData {
                 alt.addAll(altNeueSaetze(
                         PARAGRAPH,
                         bewoelkung
-                                .altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar(
+                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
                                         currentTageszeit,
                                         drinnenDraussen ==
                                                 DRAUSSEN_UNTER_OFFENEM_HIMMEL)));
             } else {
                 alt.add(neuerSatz("Ob es wohl allmählich",
-                        currentTageszeit.getEinzelneSubstantivischePhrase().nomK(), // "Morgen"
+                        currentTageszeit.getSubstantivischePhrase().nomK(), // "Morgen"
                         "geworden ist?"
                         // Der Tageszeitenwechsel ist parallel passiert.
                 ));
@@ -362,7 +362,7 @@ class WetterData {
                 // "Die Sonne geht gerade auf"
                 alt.addAll(mapToSet(
                         bewoelkung
-                                .altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar(
+                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
                                         currentTageszeit,
                                         drinnenDraussen ==
                                                 DRAUSSEN_UNTER_OFFENEM_HIMMEL),
@@ -477,7 +477,7 @@ class WetterData {
                     final ImmutableCollection<Satz>
                             altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar =
                             bewoelkung.
-                                    altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar(
+                                    altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
                                             currentTageszeit,
                                             drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                                     );
@@ -868,7 +868,7 @@ class WetterData {
                 alt.addAll(bewoelkung.altWohinHinausUnterOffenenHimmel(time));
             } else {
                 alt.add(new AdvAngabeSkopusVerbWohinWoher(
-                        IN_AKK.mit(time.getTageszeit().getEinzelneSubstantivischePhrase())));
+                        IN_AKK.mit(time.getTageszeit().getSubstantivischePhrase())));
             }
         }
 
@@ -905,7 +905,7 @@ class WetterData {
 
             if (temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.add(new AdvAngabeSkopusVerbWohinWoher(
-                        IN_AKK.mit(time.getTageszeit().getEinzelneSubstantivischePhrase())));
+                        IN_AKK.mit(time.getTageszeit().getSubstantivischePhrase())));
             }
         }
 
