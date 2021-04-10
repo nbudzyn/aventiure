@@ -16,6 +16,12 @@ import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
  * Storys sind in gewisser Weise mit "Missionen" vergleichbar.
  */
 public enum Story {
+    // IDEA Der Spieler(charakter) als Plot-Magnet: Dinge so einrichten, dass sie
+    //  - was ein Zufall! - genau dem Spieler passieren / dort passieren, wo der
+    //  Spieler ist, dann passieren, wenn der Spieler es erlebt etc.
+    //  Wenn das nicht möglich ist, dann Dinge (Veränderungen), die passieren,
+    //  Auswirkungen haben lassen, die der SC (bald danach) mitbekommt.
+
     // FIXME Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?
     //  Was sind die Zwischenziele? Was sind die Aktionen?
     //  Immer feiner, das aus dem Märchen nehmen, was geht, sonst improvisieren.

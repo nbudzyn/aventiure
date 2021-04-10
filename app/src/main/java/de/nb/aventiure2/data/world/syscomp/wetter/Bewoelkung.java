@@ -196,6 +196,11 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     @CheckReturnValue
     ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
             final AvTime time) {
+        // FIXME: Alles Wetteränderungen, die passiert sind oder inzwischen passiert sind,
+        //  auch alle "Veränderungsverben"
+        //  als statische, präsentische Statusinformationen einbauen (die man problemlos auch
+        //  mehrfach lesen kann).
+
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         switch (this) {

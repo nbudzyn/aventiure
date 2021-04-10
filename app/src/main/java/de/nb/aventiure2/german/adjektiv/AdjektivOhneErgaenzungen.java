@@ -17,6 +17,17 @@ import de.nb.aventiure2.german.satz.EinzelnerSatz;
  * Ein Adjektiv, das keine Ergänzungen fordert.
  */
 public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
+    // FIXME einige von diesen sind eigentlich
+    //  Partizipien II (oder vielleicht auch I) von Verben.
+    //  Auch Partizipien ohne fehlende Ergänzungen sollten AdjPhrOhneLeerstellen
+    //  sein. (Subj heizt Obj auf -> Partizip II "aufgeheizt")
+
+    // FIXME Partizipien mit fehlenden Ergänzungen sollten Adjektive mit X Ergänzungen
+    //  sein (natürlich keine Enums, sondern separate Klassen).
+    //  Erst einmal pro Verb-Valenz-Typ separat programmieren, wie man
+    //  Partizipien erzeugt.
+
+    // FIXME Hat man Partizipien II, kann man auch Perfekt bilden!
     ALLMAEHLICH("allmählich"),
     ANDERS("anders", "ander"),
     ANGESPANNT("angespannt"),
@@ -24,6 +35,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     AUFGEDREHT("aufgedreht"),
     // "schlecht aufgelegt", ...
     AUFGELEGT("aufgelegt"),
+    AUFGEHEIZT("aufgeheizt"),
     BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
     BENOMMEN("benommen"),
@@ -36,6 +48,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     DICK("dick"),
     DUESTER("düster"),
     DUNKEL("dunkel", "dunkl"),
+    EISIG("eisig"),
+    EISKALT("eiskalt"),
     EITEL_NICHT_FLEKTIERBAR(Adjektiv.nichtFlektierbar("eitel")),
     ENTTAEUSCHT("enttäuscht"),
     ERHELLT("erhellt"),
@@ -71,6 +85,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     KUEHL("kühl"),
     LANG("lang"),
     LANGSAM("langsam"),
+    LAU("lau"),
     LEICHT("leicht"),
     MAGER("mager"),
     MISSTRAUISCH("misstrauisch"),

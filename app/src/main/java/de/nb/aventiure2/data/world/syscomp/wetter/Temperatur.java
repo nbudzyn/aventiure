@@ -18,7 +18,6 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
@@ -28,20 +27,30 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISKALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLIRREND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LAU;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LEIB;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG_EIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER_OHNE_ART;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
+import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumWerdenMitDat;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
+@SuppressWarnings("DuplicateBranchesInSwitch")
 public enum Temperatur implements Betweenable<Temperatur> {
     // Reihenfolge ist relevant, nicht ändern!
     KLIRREND_KALT,
@@ -72,11 +81,15 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altScKommtNachDraussenSaetze() {
+    ImmutableCollection<Satz> altScKommtNachDraussenSaetze(final Tageszeit tageszeit) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altStatischeBeschreibungSaetze(true),
+        alt.addAll(mapToList(altStatischeBeschreibungSaetze(tageszeit, true),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+
+        if (isBetweenIncluding(KNAPP_UEBER_DEM_GEFRIERPUNKT, RECHT_HEISS)) {
+            alt.addAll(altStatischeBeschreibungSaetze(tageszeit, true));
+        }
 
         switch (this) {
             case KLIRREND_KALT:
@@ -84,13 +97,12 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
                 break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.add(dativPraedikativumWerdenMitDat(duSc()) //
+                        // "dir wird"
+                        .mit(KALT)
+                        .alsSatz());
                 break;
             case KUEHL:
-                alt.add(VerbOhneSubjAusserOptionalemExpletivemEs.FROESTELN
-                        .mit(duSc())
-                        .alsSatzMitSubjekt(null)
-                        .mitAdvAngabe(
-                                new AdvAngabeSkopusVerbAllg("ein wenig")));
                 break;
             case WARM:
                 break;
@@ -107,10 +119,20 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    public ImmutableCollection<Satz> altStatischeBeschreibungSaetze(final boolean draussen) {
+    public ImmutableCollection<Satz> altStatischeBeschreibungSaetze(
+            final Tageszeit tageszeit,
+            final boolean draussen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         alt.addAll(mapToList(altPraedikativa(draussen), Praedikativum::alsEsIstSatz));
+
+        if (draussen) {
+            // "die Luft ist kalt"
+            alt.addAll(mapToList(
+                    altAdjektivphrasenLuft(tageszeit),
+                    a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
+        }
+
         switch (this) {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
@@ -126,15 +148,12 @@ public enum Temperatur implements Betweenable<Temperatur> {
                         // "es friert"
                         Witterungsverb.FRIEREN.alsSatz(),
                         // "du frierst"
-                        VerbSubj.FRIEREN.alsSatzMitSubjekt(duSc()));
+                        VerbSubj.FRIEREN.alsSatzMitSubjekt(duSc()),
+                        // "dir ist kalt"
+                        dativPraedikativumMitDat(duSc()).mit(KALT).alsSatz());
                 break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                alt.add(DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen
-                                .dativPraedikativumWerdenMitDat(duSc()) //
-                                // "wird dir"
-                                .mit(KALT)
-                                .alsSatz(),
-                        // "dich friert"
+                alt.add(// "dich friert"
                         VerbOhneSubjAusserOptionalemExpletivemEs.FRIEREN
                                 .mit(duSc())
                                 .alsSatzMitSubjekt(null));
@@ -163,11 +182,16 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
+    // FIXME wohin mit Beschreibungen, die erst nach einer Weile Sinn ergeben:
+    //  - Die ganze Zeit über ist dir kalt
+    //  - du("schmachtest", "in der Hitze")
+
     /**
      * Gibt zurück, ob bei dieser Temperatur zu dieser Uhrzeit Sätze über "heute" oder "den Tag"
      * sinnvoll sind. - Generell wird es noch von anderen Kriterien abhängen, wann solche
      * Sätze sinnvoll sind, z.B. wohl nur draußen.
      */
+    @CheckReturnValue
     public boolean saetzeUeberHeuteOderDenTagSinnvoll(final AvTime time) {
         return
                 // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
@@ -184,6 +208,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * nur draußen.
      */
     @NonNull
+    @CheckReturnValue
     public ImmutableCollection<Satz> altDraussenSaetzeUeberHeuteOderDenTag() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
@@ -204,6 +229,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * Umständen sinnvoll, z.B. nur draußen.
      */
     @NonNull
+    @CheckReturnValue
     private ImmutableCollection<Satz> altDerTagIstSaetze() {
         return altPraedikativa(true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
@@ -216,11 +242,12 @@ public enum Temperatur implements Betweenable<Temperatur> {
      * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
      */
     @NonNull
-    ImmutableCollection<Satz> altIstNochSaetze(final boolean draussen) {
+    @CheckReturnValue
+    ImmutableCollection<Satz> altIstNochSaetzeDraussen() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        alt.addAll(altPraedikativa(draussen).stream()
+        alt.addAll(altPraedikativa(true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -229,7 +256,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
                 .collect(toImmutableList()));
 
         // "Es ist noch schönes Wetter."
-        alt.addAll(altPraedikativa(draussen).stream()
+        alt.addAll(altPraedikativa(true).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
@@ -247,6 +274,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
+    @CheckReturnValue
     ImmutableList<Praedikativum> altPraedikativa(final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
@@ -281,21 +309,65 @@ public enum Temperatur implements Betweenable<Temperatur> {
     }
 
     /**
+     * Gibt alternative Adjektivphrasen <i>für die Luft</i> zurück:
+     * (Die Luft ist) "frostig kalt", "warm", "aufgeheizt" etc.
+     */
+    @NonNull
+    @CheckReturnValue
+    ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasenLuft(final Tageszeit tageszeit) {
+        final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
+                ImmutableList.builder();
+
+        alt.addAll(altAdjektivphrasen());
+
+        switch (this) {
+            case KLIRREND_KALT:
+                alt.add(EISIG);
+                break;
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                break;
+            case KUEHL:
+                break;
+            case WARM:
+                if (tageszeit == ABENDS || tageszeit == NACHTS) {
+                    alt.add(LAU);
+                }
+                break;
+            case RECHT_HEISS:
+                alt.add(AUFGEHEIZT);
+                break;
+            case SEHR_HEISS:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + this);
+        }
+
+        return alt.build();
+    }
+
+    /**
      * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
      * "Es ist (sehr kalt / ziemlich warm)" oder "Heute ist es ..." oder
      * "Draußen ist es ...".
      */
     @NonNull
+    @CheckReturnValue
     ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasen() {
         switch (this) {
             case KLIRREND_KALT:
-                return ImmutableList.of(KALT.mitGraduativerAngabe("klirrend"));
+                return ImmutableList.of(
+                        KALT.mitGraduativerAngabe("klirrend"),
+                        EISKALT);
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(KALT.mitGraduativerAngabe("sehr"));
+                return ImmutableList.of(KALT.mitGraduativerAngabe("sehr"),
+                        KALT.mitGraduativerAngabe("frostig"));
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
                 return ImmutableList.of(KALT);
             case KUEHL:
                 return ImmutableList.of(
+                        AdjektivOhneErgaenzungen.KUEHL,
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("etwas"),
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"));
             case WARM:
@@ -312,6 +384,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
         }
     }
 
+    @CheckReturnValue
     boolean isUnauffaellig(final Tageszeit tageszeit) {
         if (tageszeit == NACHTS) {
             return this == KUEHL;
@@ -320,33 +393,47 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return isBetweenIncluding(KUEHL, WARM);
     }
 
+    @NonNull
+    @CheckReturnValue
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(final AvTime time) {
+        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+                ImmutableList.builder();
+
+        // "in die klirrend kalte Luft"
+        alt.addAll(mapToList(altAdjektivphrasenLuft(time.getTageszeit()),
+                a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(LUFT.mit(a)))));
+
         switch (this) {
             case KLIRREND_KALT:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die Eiseskälte"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Eiseskälte"),
+                        new AdvAngabeSkopusVerbWohinWoher("beißende Kälte"));
+                break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die frostige Kälte"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die frostige Kälte"));
+                break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                return altWohinHinausKnappUeberGefrierpunkt(time);
+                alt.addAll(altWohinHinausKnappUeberGefrierpunkt(time));
+                break;
             case KUEHL:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("ins Kühle"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher("ins Kühle"));
+                break;
             case WARM:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die Wärme"),
-                        new AdvAngabeSkopusVerbWohinWoher("in die warme Luft"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Wärme"));
+                break;
             case RECHT_HEISS:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die aufgeheizte Luft"));
+                break;
             case SEHR_HEISS:
-                return altWohinHinausSehrHeiss(time);
+                alt.addAll(altWohinHinausSehrHeiss(time));
+                break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + this);
         }
+
+        return alt.build();
     }
 
+    @NonNull
+    @CheckReturnValue
     public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausKnappUeberGefrierpunkt(
             final AvTime time) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
@@ -360,6 +447,8 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
+    @NonNull
+    @CheckReturnValue
     public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSehrHeiss(
             final AvTime time) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
@@ -375,42 +464,38 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausDunkelheit() {
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausDunkelheit(
+            final Tageszeit tageszeit) {
+        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+                ImmutableList.builder();
+
+        alt.addAll(mapToList(
+                altAdjektivphrasenLuft(tageszeit),
+                // "in die eiskalte Dunkelheit"
+                a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(DUNKELHEIT.mit(a)))));
+
         switch (this) {
             case KLIRREND_KALT:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die eiskalte Dunkelheit"),
-                        new AdvAngabeSkopusVerbWohinWoher(
-                                "in die klirrend kalte Dunkelheit"));
+                break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die frostige Dunkelheit"));
+                break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die kalte Dunkelheit"));
+                break;
             case KUEHL:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die kühle Dunkelheit"));
+                break;
             case WARM:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die warme Dunkelheit"));
+                break;
             case RECHT_HEISS:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die aufgeheizte Dunkelheit"));
+                break;
             case SEHR_HEISS:
-                return ImmutableList.of(
-                        new AdvAngabeSkopusVerbWohinWoher("in die dunkle Hitze"));
+                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die dunkle Hitze"));
+                break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + this);
         }
-    }
 
-    // FIXME wohin damit? Die ganze Zeit über ist dir kalt // du frierst...
-    //  du("schmachtest", "in der Hitze"), "dir ist heiß"
-    //  Konzept am Hunger orientieren? Als "Erinnerung"?
-    //  Vor allem auch bedenken, dass es ja über den Tag immer wärmer (und auch wieder
-    //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
-    //  eigentliche "Tagestemperatur" nicht ändern.
-    //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
-    //  Temperatur-Wert speichern?
+        return alt.build();
+    }
 }

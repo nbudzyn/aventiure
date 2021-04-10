@@ -208,7 +208,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
-                alt.addAll(altHintZumBrunnenGehen(world));
+                alt.addAll(altHintZumBrunnenGehen(timeTaker, world));
             }
         }
 
@@ -231,7 +231,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                     alt.addAll(altNachtsSchlafen(world));
                 } else {
-                    alt.addAll(altHintZumBrunnenGehen(world));
+                    alt.addAll(altHintZumBrunnenGehen(timeTaker, world));
                 }
             }
         } else {
@@ -382,7 +382,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altHintZumBrunnenGehen(
-            final World world) {
+            final TimeTaker timeTaker, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadWetter().wetterComp().getTemperatur().compareTo(Temperatur.RECHT_HEISS)
@@ -395,7 +395,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 alt.addAll(altParagraphs(altHeuteHeisserTagSaetze, "– ein kühler Ort wäre schön"));
             } else {
                 alt.addAll(world.loadWetter().wetterComp().getTemperatur()
-                        .altStatischeBeschreibungSaetze(false));
+                        .altStatischeBeschreibungSaetze(
+                                timeTaker.now().getTageszeit(), false));
             }
         }
 

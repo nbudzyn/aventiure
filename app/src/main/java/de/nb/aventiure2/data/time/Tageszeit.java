@@ -152,6 +152,11 @@ public enum Tageszeit {
         this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
     }
 
+    // FIXME: Alles Wetteränderungen, die passiert sind oder inzwischen passiert sind,
+    //  auch alle "Veränderungsverben"
+    //  als statische, präsentische Statusinformationen einbauen (die man problemlos auch
+    //  mehrfach lesen kann):
+
     /**
      * Gibt Sätze zurück wie "langsam wird es Morgen", "der Tag bricht an",
      * "langsam beginnt der Abend" o. Ä.

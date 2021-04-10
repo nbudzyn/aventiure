@@ -7,26 +7,17 @@ import com.google.common.collect.ImmutableSet;
 import java.util.stream.Stream;
 
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static java.util.stream.Collectors.toSet;
 
 public enum Lichtverhaeltnisse {
     HELL(AdjektivOhneErgaenzungen.HELL), DUNKEL(AdjektivOhneErgaenzungen.DUNKEL);
 
     private final AdjektivOhneErgaenzungen adjektiv;
-
-    public static ImmutableSet<AbstractDescription<?>> altSCKommtNachDraussenInDunkelheit() {
-        return alt().add(neuerSatz("Draußen ist es dunkel"))
-                .schonLaenger()
-                .build();
-    }
 
     Lichtverhaeltnisse(final AdjektivOhneErgaenzungen adjektiv) {
         this.adjektiv = adjektiv;
@@ -57,6 +48,20 @@ public enum Lichtverhaeltnisse {
      */
     public EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
         return getAdjektiv().alsEsWirdSatz(anschlusswort);
+    }
+
+    /**
+     * Gibt einen Satz zurück wie "es ist hell".
+     */
+    public EinzelnerSatz esIstSatz() {
+        return esIstSatz(null);
+    }
+
+    /**
+     * Gibt einen Satz zurück wie "und es ist hell".
+     */
+    public EinzelnerSatz esIstSatz(final @Nullable String anschlusswort) {
+        return getAdjektiv().alsEsIstSatz(anschlusswort);
     }
 
     public AdjektivOhneErgaenzungen getAdjektiv() {

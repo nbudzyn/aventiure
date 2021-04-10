@@ -74,6 +74,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     LEIB(M, DEF, "Leib", "Leibe"),
     LICHT(N, DEF, "Licht"),
     LICHT_OHNE_ART(N, null, "Licht"),
+    LUFT(F, DEF, "Luft"),
     MITTAGSHITZE(F, DEF, "Mittagshitze"),
     MITTAGSSONNE(F, DEF, "Mittagssonne"),
     MITTE(F, DEF, "Mitte"),

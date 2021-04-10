@@ -52,6 +52,21 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return new WetterPCD(WETTER, wetterData);
     }
 
+
+    /**
+     * Beschreibt - sofern nötig - das aktuelle Wetter.
+     */
+    public void narrateWetterIfNecessary() {
+        // Ggf. scActionStepCountDao verwenden,
+        // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
+        final ImmutableCollection<AbstractDescription<?>>
+                altHinweise = requirePcd().altWetterHinweiseWennNoetig(loadScDrinnenDraussen());
+
+        if (!altHinweise.isEmpty()) {
+            n.narrateAlt(altHinweise, NO_TIME);
+        }
+    }
+
     @NonNull
     public ImmutableSet<AbstractDescription<?>> altScKommtNachDraussenInsWetter(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
@@ -113,7 +128,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().altTimePassed(startTime, endTime, loadScDrinnenDraussen());
+                requirePcd().registerTimePassed(startTime, endTime,
+                        loadScDrinnenDraussen());
 
         if (!alt.isEmpty()) {
             n.narrateAlt(alt, NO_TIME);
