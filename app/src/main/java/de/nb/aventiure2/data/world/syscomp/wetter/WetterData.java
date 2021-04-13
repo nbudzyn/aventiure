@@ -18,6 +18,10 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraedikativumDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraepPhrDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TagestemperaturverlaufUtil;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
@@ -84,6 +88,20 @@ class WetterData {
     private static final TemperaturSatzDescriber TEMPERATUR_SATZ_DESCRIBER =
             new TemperaturSatzDescriber(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
 
+    private static final BewoelkungPraedikativumDescriber BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER =
+            new BewoelkungPraedikativumDescriber();
+
+    private static final BewoelkungPraepPhrDescriber BEWOELKUNG_PRAEP_PHR_DESCRIBER =
+            new BewoelkungPraepPhrDescriber(BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber
+            BEWOELKUNG_ADV_ANGABE_SKOPUS_VERB_WOHIN_WOHER_DESCRIBER =
+            new BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber(
+                    BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final BewoelkungSatzDescriber BEWOELKUNG_SATZ_DESCRIBER =
+            new BewoelkungSatzDescriber(BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
+
     private final Temperatur tageshoechsttemperatur;
 
     private final Temperatur tagestiefsttemperatur;
@@ -142,7 +160,8 @@ class WetterData {
                     TEMPERATUR_SATZ_DESCRIBER.altStatisch(
                             temperatur, time.getTageszeit(), true),
                     "und",
-                    bewoelkung.altUnterOffenemHimmelStatischSaetze(time)));
+                    BEWOELKUNG_SATZ_DESCRIBER
+                            .altUnterOffenemHimmelStatisch(bewoelkung, time)));
 
             if (    // Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
                     bewoelkung.isUnauffaellig(time.getTageszeit())) {
@@ -155,7 +174,8 @@ class WetterData {
                 // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
                 // erwähnen.
 
-                alt.addAll(bewoelkung.altUnterOffenemHimmelStatischSaetze(time));
+                alt.addAll(BEWOELKUNG_SATZ_DESCRIBER
+                        .altUnterOffenemHimmelStatisch(bewoelkung, time));
                 if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
                     alt.addAll(
                             altNeueSaetze(
@@ -228,7 +248,8 @@ class WetterData {
                     TEMPERATUR_SATZ_DESCRIBER.altKommtNachDraussen(
                             temperatur, time.getTageszeit()),
                     "und",
-                    bewoelkung.altUnterOffenemHimmelStatischSaetze(time)));
+                    BEWOELKUNG_SATZ_DESCRIBER
+                            .altUnterOffenemHimmelStatisch(bewoelkung, time)));
 
 
             if (// Eine leichte Bewölkung braucht man nicht unbedingt zu erwähnen
@@ -242,7 +263,8 @@ class WetterData {
                 // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
                 // erwähnen.
                 // "Draußen ist der Himmel bewölkt"
-                alt.addAll(bewoelkung.altScKommtUnterOffenenHimmel(time, true));
+                alt.addAll(BEWOELKUNG_SATZ_DESCRIBER
+                        .altKommtUnterOffenenHimmel(bewoelkung, time, true));
                 if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
                     alt.addAll(
                             altNeueSaetze(
@@ -291,7 +313,7 @@ class WetterData {
                 temperatur, time)
                 && unterOffenenHimmel) {
             alt.addAll(altNeueSaetze(
-                    bewoelkung.altScKommtUnterOffenenHimmel(time, true),
+                    BEWOELKUNG_SATZ_DESCRIBER.altKommtUnterOffenenHimmel(bewoelkung, time, true),
                     ";",
                     TEMPERATUR_SATZ_DESCRIBER.altDraussenUeberHeuteOderDenTag(
                             temperatur
@@ -318,7 +340,7 @@ class WetterData {
                 temperatur, time)
                 && unterOffenenHimmel) {
             alt.addAll(altNeueSaetze(
-                    bewoelkung.altUnterOffenemHimmelStatischSaetze(time),
+                    BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmelStatisch(bewoelkung, time),
                     ";",
                     TEMPERATUR_SATZ_DESCRIBER.altDraussenUeberHeuteOderDenTag(temperatur)));
         } else if (time.getTageszeit() == Tageszeit.ABENDS) {
@@ -340,7 +362,8 @@ class WetterData {
         if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
             if (unterOffenenHimmel) {
                 alt.addAll(altNeueSaetze(
-                        bewoelkung.altScKommtUnterOffenenHimmel(time, true),
+                        BEWOELKUNG_SATZ_DESCRIBER
+                                .altKommtUnterOffenenHimmel(bewoelkung, time, true),
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altIstNochDraussen(temperatur)));
             } else {
@@ -368,7 +391,8 @@ class WetterData {
         if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
             if (unterOffenenHimmel) {
                 alt.addAll(altNeueSaetze(
-                        bewoelkung.altUnterOffenemHimmelStatischSaetze(time),
+                        BEWOELKUNG_SATZ_DESCRIBER
+                                .altUnterOffenemHimmelStatisch(bewoelkung, time),
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altIstNochDraussen(temperatur)));
             } else {
@@ -404,7 +428,8 @@ class WetterData {
                         praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
                                 .alsSatzMitSubjekt(EXPLETIVES_ES),
                         ",",
-                        bewoelkung.altUnterOffenemHimmelStatischSaetze(time)));
+                        BEWOELKUNG_SATZ_DESCRIBER
+                                .altUnterOffenemHimmelStatisch(bewoelkung, time)));
             } else {
                 // "Es ist ein schöner Abend"
                 alt.add(praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
@@ -524,9 +549,9 @@ class WetterData {
                 // Die Sonne geht auf
                 alt.addAll(altNeueSaetze(
                         PARAGRAPH,
-                        bewoelkung
-                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
-                                        currentTageszeit,
+                        BEWOELKUNG_SATZ_DESCRIBER
+                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSofernSichtbar(
+                                        bewoelkung, currentTageszeit,
                                         drinnenDraussen ==
                                                 DRAUSSEN_UNTER_OFFENEM_HIMMEL)));
             } else {
@@ -549,9 +574,9 @@ class WetterData {
             if (drinnenDraussen.isDraussen()) {
                 // "Die Sonne geht gerade auf"
                 alt.addAll(mapToSet(
-                        bewoelkung
-                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
-                                        currentTageszeit,
+                        BEWOELKUNG_SATZ_DESCRIBER
+                                .altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSofernSichtbar(
+                                        bewoelkung, currentTageszeit,
                                         drinnenDraussen ==
                                                 DRAUSSEN_UNTER_OFFENEM_HIMMEL),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))));
@@ -673,9 +698,9 @@ class WetterData {
                 if (drinnenDraussen.isDraussen()) {
                     final ImmutableCollection<Satz>
                             altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar =
-                            bewoelkung.
-                                    altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
-                                            currentTageszeit,
+                            BEWOELKUNG_SATZ_DESCRIBER.
+                                    altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSofernSichtbar(
+                                            bewoelkung, currentTageszeit,
                                             drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                                     );
                     if (altGestirnbewegungUndHimmelaenderungenBeiTageszeitenWechselSaetzeSofernSichtbar
@@ -1089,7 +1114,8 @@ class WetterData {
             if (temperatur.isUnauffaellig(time.getTageszeit())) {
                 // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
                 // erwähnen.
-                alt.addAll(bewoelkung.altWohinHinausUnterOffenenHimmel(time));
+                alt.addAll(BEWOELKUNG_ADV_ANGABE_SKOPUS_VERB_WOHIN_WOHER_DESCRIBER
+                        .altWohinHinausUnterOffenenHimmel(bewoelkung, time));
             }
         } else if (temperatur.isUnauffaellig(time.getTageszeit())) {
             // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
@@ -1179,7 +1205,8 @@ class WetterData {
         // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
-        alt.addAll(getBewoelkung().altUnterOffenemHimmel(time.getTageszeit()));
+        alt.addAll(BEWOELKUNG_PRAEP_PHR_DESCRIBER
+                .altUnterOffenemHimmel(getBewoelkung(), time.getTageszeit()));
 
         final ImmutableList<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
                 altSonnenhitzeWennUnterOffenemHimmelSinnvoll(time);
@@ -1228,14 +1255,16 @@ class WetterData {
     @CheckReturnValue
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
                                                           final boolean unterOffenemHimmel) {
-        return getBewoelkung().altBeiLichtImLicht(time.getTageszeit(), unterOffenemHimmel);
+        return BEWOELKUNG_PRAEP_PHR_DESCRIBER
+                .altBeiLichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
     }
 
     @NonNull
     @CheckReturnValue
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
                                                                final boolean unterOffenemHimmel) {
-        return getBewoelkung().altBeiTageslichtImLicht(time.getTageszeit(), unterOffenemHimmel);
+        return BEWOELKUNG_PRAEP_PHR_DESCRIBER
+                .altBeiTageslichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
     }
 
     @NonNull
@@ -1243,7 +1272,8 @@ class WetterData {
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvTime time,
             final boolean unterOffenemHimmel) {
-        return getBewoelkung().altLichtInDemEtwasLiegt(time.getTageszeit(), unterOffenemHimmel);
+        return BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER
+                .altLichtInDemEtwasLiegt(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
     }
 
     @NonNull
