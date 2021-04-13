@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 
 /**
@@ -83,49 +84,38 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * wird).
      */
     ImmutableCollection<AbstractDescription<?>> altWetterHinweiseWennNoetig(
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisse,
             final DrinnenDraussen drinnenDraussen) {
         if ((drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreiben)) {
-            final ImmutableCollection<AbstractDescription<?>> alt = altWetterHinweise();
-            resetWetterHinweiseFlags(drinnenDraussen);
-            return alt;
+            return altWetterHinweiseFuerDraussen(time, lichtverhaeltnisse,
+                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
         }
 
         return ImmutableSet.of();
     }
 
     /**
-     * Vermerkt, dass gerade ein Wetterhinweis gegeben wird.
-     */
-    private void resetWetterHinweiseFlags(final DrinnenDraussen drinnenDraussen) {
-        if (drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
-            setWennWiederDraussenWetterBeschreiben(false);
-            setWennWiederUnterOffenemHimmelWetterBeschreiben(false);
-        } else if (drinnenDraussen.isDraussen()) {
-            setWennWiederDraussenWetterBeschreiben(false);
-        }
-    }
-
-    /**
-     * Gibt alterantive Wetterhinweise zurück.
+     * Gibt alterantive Wetterhinweise zurück (für draußen).
      * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
      * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
      * wird).
      */
-    private static ImmutableCollection<AbstractDescription<?>> altWetterHinweise() {
-        // FIXME Wetterhinweise erzeugen - unter Verwendung der Methoden unten
-
-        // FIXME immer, wenn ein Wetterhinweis hier oder woanders erzeugt wird:
-        //  reset...()
-        return ImmutableSet.of();
+    private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
+            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisse,
+            final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+        return wetter.altWetterHinweiseFuerDraussen(time, lichtverhaeltnisse, unterOffenemHimmel);
     }
 
     @NonNull
     AltDescriptionsBuilder altScKommtNachDraussenInsWetter(
             final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
             final boolean unterOffenenHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
+
         return wetter.altScKommtNachDraussenInsWetter(time, lichtverhaeltnisseDraussen,
                 unterOffenenHimmel);
     }
@@ -145,6 +135,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 wetter.altTimePassed(startTime, endTime, drinnenDraussen);
 
         if (alt != null) {
+            resetWetterHinweiseFlags(drinnenDraussen);
+
             if (!drinnenDraussen.isDraussen()) {
                 setWennWiederDraussenWetterBeschreiben(true);
             }
@@ -165,6 +157,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
     ImmutableCollection<AbstractDescription<?>>
     altDescUeberHeuteOderDenTagWennDraussenSinnvoll(final AvTime time,
                                                     final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+
         return wetter.altDescUeberHeuteOderDenTagWennDraussenSinnvoll(time, unterOffenemHimmel);
     }
 
@@ -172,25 +166,35 @@ public class WetterPCD extends AbstractPersistentComponentData {
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
             final boolean unterOffenenHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
+
         return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen, unterOffenenHimmel);
     }
 
     ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
+        resetWetterHinweiseFlagsDraussen(true);
+
         return wetter.altUnterOffenemHimmel(time);
     }
 
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
                                                           final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+
         return wetter.altBeiLichtImLicht(time, unterOffenemHimmel);
     }
 
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
                                                                final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+
         return wetter.altBeiTageslichtImLicht(time, unterOffenemHimmel);
     }
 
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvTime time, final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+
         return wetter.altLichtInDemEtwasLiegt(time, unterOffenemHimmel);
     }
 
@@ -201,9 +205,16 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @NonNull
     Temperatur getTemperatur(final AvTime time) {
+        // Nur weil die Temperatur abgefragt wird, gehen wir nicht davon aus, dass ein
+        // "qualifizierter" Wetterhinweis gegeben wurde
+
         return wetter.getTemperatur(time);
     }
 
+    /**
+     * Soll nur von ROOM aufgerufen werden. (Sonst wäre nicht klar, ob schon Wetterhinweise
+     * gegeben wurden.)
+     */
     @NonNull
     WetterData getWetter() {
         return wetter;
@@ -212,6 +223,26 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @Nullable
     PlanwetterData getPlan() {
         return plan;
+    }
+
+    /**
+     * Vermerkt, dass gerade draußen ein Wetterhinweis gegeben wird.
+     */
+    private void resetWetterHinweiseFlagsDraussen(final boolean unterOffenemHimmel) {
+        resetWetterHinweiseFlags(unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
+                DRAUSSEN_GESCHUETZT);
+    }
+
+    /**
+     * Vermerkt, dass gerade ein Wetterhinweis gegeben wird.
+     */
+    private void resetWetterHinweiseFlags(final DrinnenDraussen drinnenDraussen) {
+        if (drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
+            setWennWiederDraussenWetterBeschreiben(false);
+            setWennWiederUnterOffenemHimmelWetterBeschreiben(false);
+        } else if (drinnenDraussen.isDraussen()) {
+            setWennWiederDraussenWetterBeschreiben(false);
+        }
     }
 
     private void setWennWiederDraussenWetterBeschreiben(

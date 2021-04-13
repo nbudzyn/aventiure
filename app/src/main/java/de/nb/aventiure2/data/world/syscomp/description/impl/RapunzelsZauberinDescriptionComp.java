@@ -9,7 +9,6 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MAGER;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN_EINE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -34,7 +33,7 @@ public class RapunzelsZauberinDescriptionComp extends MultiDescriptionComp {
                 np(MAGER, FRAU, RAPUNZELS_ZAUBERIN),
                 np(NomenFlexionsspalte.FRAU, RAPUNZELS_ZAUBERIN));
         zauberinDescriptionTriple = new DescriptionTriple(
-                np(MAGER, ZAUBERIN_EINE, RAPUNZELS_ZAUBERIN),
+                np(INDEF, MAGER, ZAUBERIN, RAPUNZELS_ZAUBERIN),
                 np(ZAUBERIN, RAPUNZELS_ZAUBERIN));
     }
 

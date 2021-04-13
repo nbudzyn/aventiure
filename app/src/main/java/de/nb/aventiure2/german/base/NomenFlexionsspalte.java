@@ -8,8 +8,6 @@ import java.util.regex.Pattern;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -26,104 +24,107 @@ import static de.nb.aventiure2.german.base.Person.P3;
 public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     // Flexionsspalten allgemeines Nomen ohne Bezugsobjekt
 
-    ABEND(M, DEF, "Abend"),
-    ABEND_EIN(M, INDEF, "Abend"),
-    ABENDDAEMMERUNG(F, DEF, "Abenddämmerung"),
-    ABENDHIMMEL(M, DEF, "Abendhimmel"),
-    ABENDLICHT(N, DEF, "Abendlicht"),
-    ABENDSONNE(F, DEF, "Abendsonne"),
-    ABENDSONNENSCHEIN(M, DEF, "Abendsonnenschein"),
-    ABRISS_EIN(M, INDEF, "Abriss"),
-    ANGEBOTE_OHNE_ART(PL_MFN, INDEF, "Angebote", "Angeboten"),
-    ASTGABEL(F, DEF, "Astgabel"),
-    BANK(F, DEF, "Bank"),
-    BAUM(M, DEF, "Baum"),
-    BAUM_EIN(M, INDEF, "Baum"),
-    BAEUME(PL_MFN, DEF, "Bäume", "Bäumen"),
-    BETT(N, DEF, "Bett"),
-    BETT_EIN(N, INDEF, "Bett"),
-    BETTGESTELL(N, DEF, "Bettgestell"),
-    BETTGESTELL_EIN(N, INDEF, "Bettgestell"),
-    BRETTERTISCH(M, DEF, "Brettertisch"),
-    DINGE(PL_MFN, DEF, "Dinge", "Dingen"),
-    DAEMMERLICHT(N, DEF, "Dämmerlicht"),
-    DUESTERNIS(F, DEF, "Düsternis"),
-    DUNKEL(N, DEF, "Dunkel"),
-    DUNKELHEIT(F, DEF, "Dunkelheit"),
-    ELEFANTEN_INDEF(PL_MFN, INDEF, "Elefanten"),
-    FIRMAMENT(N, DEF, "Firmament"),
-    FRAU(F, DEF, "Frau"),
-    FREUDE_OHNE_ART(F, null, "Freude"),
-    FROSCH(M, DEF, "Frosch"),
-    FUSS(M, DEF, "Fuß"),
-    GARTEN(M, DEF, "Garten"),
-    GESPRAECH(N, DEF, "Gespräch"),
-    GESPRAECH_EIN(N, INDEF, "Gespräch"),
-    HAARE(PL_MFN, DEF, "Haare", "Haaren"),
-    HAENDE(PL_MFN, DEF, "Hände", "Händen"),
-    HALBDUNKEL(N, DEF, "Halbdunkel"),
-    HERZ(N, DEF, "Herz"),
-    HELLEBARDE(F, DEF, "Hellebarde"),
-    HIMMEL(M, DEF, "Himmel"),
-    HOEHE(F, DEF, "Höhe"),
-    KAELTE(F, DEF, "Kälte"),
-    KAELTE_OHNE_ART(F, null, "Kälte"),
-    KINN(N, DEF, "Kinn"),
-    KOENIGSSOHN(M, DEF, "Königssohn"),
-    KUGEL(F, DEF, "Kugel"),
-    LEIB(M, DEF, "Leib", "Leibe"),
-    LICHT(N, DEF, "Licht"),
-    LICHT_OHNE_ART(N, null, "Licht"),
-    LUFT(F, DEF, "Luft"),
-    MITTAGSHITZE(F, DEF, "Mittagshitze"),
-    MITTAGSSONNE(F, DEF, "Mittagssonne"),
-    MITTE(F, DEF, "Mitte"),
-    MOND(M, DEF, "Mond"),
-    MONDLICHT(N, DEF, "Mondlicht"),
-    MONDSCHEIN(M, DEF, "Mondschein"),
-    MORGEN(M, DEF, "Morgen"),
-    MORGENLICHT(N, DEF, "Morgenlicht"),
-    MORGENSONNE(F, DEF, "Morgensonne"),
-    NACHT(F, DEF, "Nacht"),
-    NACHTHIMMEL(M, DEF, "Nachthimmel"),
-    NAME(M, DEF, "Name", "Namen", "Namen"),
-    NASE(F, DEF, "Nase"),
-    NOTLUEGE_EINE(F, INDEF, "Notlüge"),
-    OSTEN(M, DEF, "Osten"),
-    PLATZ(M, DEF, "Platz"),
-    RAPUNZEL(F, null, "Rapunzel"),
-    RETTUNG_OHNE_ART(F, null, "Rettung"),
-    ROTWEINE_INDEF(PL_MFN, INDEF, "Rotweine", "Rotweinen"),
-    SCHATTEN(M, DEF, "Schatten"),
-    SCHLOSSWACHE(F, DEF, "Schlosswache"),
-    SCHUMMERLICHT(N, DEF, "Schummerlicht"),
-    SONNE(F, DEF, "Sonne"),
-    SONNENHITZE(F, DEF, "Sonnenhitze"),
-    SONNENSCHEIN(M, DEF, "Sonnenschein"),
-    SONNENSTRAHLEN(PL_MFN, DEF, "Sonnenstrahlen"),
-    TISCH(M, DEF, "Tisch"),
-    STERNENHIMMEL(M, DEF, "Sternenhimmel"),
-    STERNENLICHT(N, DEF, "Sternenlicht"),
-    TAG(M, DEF, "Tag"),
-    TAG_EIN(M, INDEF, "Tag"),
-    TAGESLICHT(N, DEF, "Tageslicht"),
-    TAGESLICHT_OHNE_ART(N, null, "Tageslicht"),
-    TASCHE_EINE(F, INDEF, "Tasche"),
-    VOLLMOND(M, DEF, "Vollmond"),
-    WAHRHEIT(F, DEF, "Wahrheit"),
-    WETTER_EIN(N, INDEF, "Wetter"),
-    WETTER_OHNE_ART(N, null, "Wetter"),
-    WOLKEN_OHNE_ART(PL_MFN, INDEF, "Wolken"),
-    WUT_OHNE_ART(F, null, "Wut"),
-    ZAUBERIN(F, DEF, "Zauberin"),
-    ZAUBERIN_EINE(F, INDEF, "Zauberin"),
-    ZIEL(N, DEF, "Ziel"),
-    ZWIELICHT(N, DEF, "Zwielicht");
+    ABEND(M, "Abend"),
+    ABENDDAEMMERUNG(F, "Abenddämmerung"),
+    ABENDHIMMEL(M, "Abendhimmel"),
+    ABENDLICHT(N, "Abendlicht"),
+    ABENDSONNE(F, "Abendsonne"),
+    ABENDSONNENSCHEIN(M, "Abendsonnenschein"),
+    ABRISS(M, "Abriss"),
+    ANGEBOTE(PL_MFN, "Angebote", "Angeboten"),
+    ASTGABEL(F, "Astgabel"),
+    BANK(F, "Bank"),
+    BAUM(M, "Baum"),
+    BAEUME(PL_MFN, "Bäume", "Bäumen"),
+    BETT(N, "Bett"),
+    BETTGESTELL(N, "Bettgestell"),
+    BRETTERTISCH(M, "Brettertisch"),
+    DINGE(PL_MFN, "Dinge", "Dingen"),
+    DAEMMERLICHT(N, "Dämmerlicht"),
+    DUESTERNIS(F, "Düsternis"),
+    DUNKEL(N, "Dunkel"),
+    DUNKELHEIT(F, "Dunkelheit"),
+    ELEFANTEN(PL_MFN, "Elefanten"),
+    FIRMAMENT(N, "Firmament"),
+    FRAU(F, "Frau"),
+    FREUDE(F, "Freude"),
+    FROSCH(M, "Frosch"),
+    FUSS(M, "Fuß"),
+    GARTEN(M, "Garten"),
+    GESPRAECH(N, "Gespräch"),
+    HAARE(PL_MFN, "Haare", "Haaren"),
+    HAENDE(PL_MFN, "Hände", "Händen"),
+    HALBDUNKEL(N, "Halbdunkel"),
+    HERZ(N, "Herz"),
+    HELLEBARDE(F, "Hellebarde"),
+    HIMMEL(M, "Himmel"),
+    HOEHE(F, "Höhe"),
+    KAELTE(F, "Kälte"),
+    KINN(N, "Kinn"),
+    KOENIGSSOHN(M, "Königssohn"),
+    KUGEL(F, "Kugel"),
+    LEIB(M, "Leib", "Leibe"),
+    LICHT(N, "Licht"),
+    LUFT(F, "Luft"),
+    MITTAGSHITZE(F, "Mittagshitze"),
+    MITTAGSSONNE(F, "Mittagssonne"),
+    MITTE(F, "Mitte"),
+    MOND(M, "Mond"),
+    MONDLICHT(N, "Mondlicht"),
+    MONDSCHEIN(M, "Mondschein"),
+    MORGEN(M, "Morgen"),
+    MORGENLICHT(N, "Morgenlicht"),
+    MORGENSONNE(F, "Morgensonne"),
+    NACHT(F, "Nacht"),
+    NACHTHIMMEL(M, "Nachthimmel"),
+    NAME(M, "Name", "Namen", "Namen"),
+    NASE(F, "Nase"),
+    NOTLUEGE(F, "Notlüge"),
+    OSTEN(M, "Osten"),
+    PLATZ(M, "Platz"),
+    RAPUNZEL(F, true, "Rapunzel"),
+    RETTUNG(F, "Rettung"),
+    ROTWEINE(PL_MFN, "Rotweine", "Rotweinen"),
+    SCHATTEN(M, "Schatten"),
+    SCHLOSSWACHE(F, "Schlosswache"),
+    SCHUMMERLICHT(N, "Schummerlicht"),
+    SONNE(F, "Sonne"),
+    SONNENHITZE(F, "Sonnenhitze"),
+    SONNENSCHEIN(M, "Sonnenschein"),
+    SONNENSTRAHLEN(PL_MFN, "Sonnenstrahlen"),
+    TISCH(M, "Tisch"),
+    STERNENHIMMEL(M, "Sternenhimmel"),
+    STERNENLICHT(N, "Sternenlicht"),
+    TAG(M, "Tag"),
+    TAGESLICHT(N, "Tageslicht"),
+    TASCHE(F, "Tasche"),
+    VOLLMOND(M, "Vollmond"),
+    WAHRHEIT(F, "Wahrheit"),
+    WETTER(N, "Wetter"),
+    WOLKEN(PL_MFN, "Wolken"),
+    WUT(F, "Wut"),
+    ZAUBERIN(F, "Zauberin"),
+    ZIEL(N, "Ziel"),
+    ZWIELICHT(N, "Zwielicht");
 
     private final NumerusGenus numerusGenus;
 
-    @Nullable
-    private final Artikel.Typ artikelTyp;
+    /**
+     * Ob das Nomen <i>grundsätzlich artikellos</i> ist, also
+     * in aller Regel ohne Artikel steht (z.B. Eigennamen: "Rapunzel").
+     * <p>
+     * Auch Nomen, die nicht "grundsätzlich artikellos sind",
+     * können allerdings artikellos auftreten, z.B. "ich erhoffe mir Retttung".
+     * Außerdem können grundsätzlich artikellose Nomen auch Artikel erhalten:
+     * "eine Anna".
+     */
+    private final boolean grundsaetzlichArtikellos;
+
+    // Es gibt außerdem seltene Fälle, wo die Deklination ausfallen kann und statt
+    // eines z.b. Dativs die Nominativ-Form steht. (Man könnte das
+    // "Ersatznominativ" nennen: "für den Arzt und den Patienten" / "für Arzt und Patient").
+    // Im einfachen Fall eines definiten oder indefinitiven Artikels scheint immer
+    // die volle Deklination zulässig zu sein - vielleicht sogar in jedem Fall.
 
     private final Flexionsreihe flexionsreiheArtikellos;
 
@@ -131,9 +132,17 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
                         final String nominalNominativDativUndAkkusativ) {
-        this(numerusGenus, artikelTyp,
+        this(numerusGenus, nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        @Nullable final boolean grundsaetzlichArtikellos,
+                        final String nominalNominativDativUndAkkusativ) {
+        this(numerusGenus, grundsaetzlichArtikellos,
                 nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
     }
 
@@ -141,22 +150,48 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
                         final String nominalNominativUndAkkusativ,
                         final String nominalDativ) {
-        this(numerusGenus, artikelTyp,
-                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ);
+        this(numerusGenus, nominalNominativUndAkkusativ, nominalDativ,
+                nominalNominativUndAkkusativ);
     }
+
 
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
+                        @Nullable final boolean grundsaetzlichArtikellos,
+                        final String nominalNominativUndAkkusativ,
+                        final String nominalDativ) {
+        this(numerusGenus, grundsaetzlichArtikellos,
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ);
+    }
+
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final String nominalNominativ,
                         final String nominalDativ,
                         final String nominalAkkusativ) {
-        this(numerusGenus, artikelTyp,
+        this(numerusGenus, false,
+                nominalNominativ,
+                nominalDativ,
+                nominalAkkusativ);
+    }
+
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final boolean grundsaetzlichArtikellos,
+                        final String nominalNominativ,
+                        final String nominalDativ,
+                        final String nominalAkkusativ) {
+        this(numerusGenus, grundsaetzlichArtikellos,
                 fr(checkNoWhitespace(nominalNominativ),
                         checkNoWhitespace(nominalDativ),
                         checkNoWhitespace(nominalAkkusativ)));
@@ -169,10 +204,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final Artikel.Typ artikelTyp,
+                        final boolean grundsaetzlichArtikellos,
                         final Flexionsreihe flexionsreiheArtikellos) {
         this.numerusGenus = numerusGenus;
-        this.artikelTyp = artikelTyp;
+        this.grundsaetzlichArtikellos = grundsaetzlichArtikellos;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
 
@@ -221,11 +256,6 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return toNominalphrase().akkStr();
     }
 
-    @Nullable
-    public Artikel getArtikel() {
-        return Artikel.get(artikelTyp, getNumerusGenus());
-    }
-
     @Override
     public Personalpronomen persPron() {
         return Personalpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
@@ -256,9 +286,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return P3;
     }
 
-    @Nullable
-    public Artikel.Typ getArtikelTyp() {
-        return artikelTyp;
+    public boolean isGrundsaetzlichArtikellos() {
+        return grundsaetzlichArtikellos;
     }
 
     public Flexionsreihe getFlexionsreiheArtikellos() {

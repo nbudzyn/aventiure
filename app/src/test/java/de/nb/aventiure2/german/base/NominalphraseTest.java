@@ -22,18 +22,19 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GRUEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HERB;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LEICHT;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ANGEBOTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ELEFANTEN_INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ELEFANTEN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH_EIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RAPUNZEL;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ROTWEINE_INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ROTWEINE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -84,7 +85,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Indef_Nom_Sg() {
         // GIVEN
-        final Nominalphrase np = GESPRAECH_EIN.mit(FROEHLICH);
+        final Nominalphrase np = np(INDEF, FROEHLICH, GESPRAECH);
 
         // WHEN
         final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
@@ -102,7 +103,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Indef_Dat_Sg() {
         // GIVEN
-        final Nominalphrase np = GESPRAECH_EIN.mit(FROEHLICH);
+        final Nominalphrase np = np(INDEF, FROEHLICH, GESPRAECH);
 
         // WHEN
         final Konstituente actual = np.imK(DAT).joinToSingleKonstituente();
@@ -120,7 +121,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Indef_Pl() {
         // GIVEN
-        final Nominalphrase np = ANGEBOTE_OHNE_ART.mit(DUNKEL);
+        final Nominalphrase np = np(INDEF, DUNKEL, ANGEBOTE);
 
         // WHEN
         final Konstituente actual = np.imK(AKK).joinToSingleKonstituente();
@@ -138,7 +139,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektivattribute_ohne_Artikel() {
         // GIVEN
-        final Nominalphrase np = FREUDE_OHNE_ART.mit(BESONDERS);
+        final Nominalphrase np = np(null, BESONDERS, FREUDE);
 
         // WHEN
         final Konstituente actual = np.imK(AKK).joinToSingleKonstituente();
@@ -156,7 +157,7 @@ public class NominalphraseTest {
     @Test
     public void test_nurAdjektivattribute_nicht_flektierbar() {
         // GIVEN
-        final Nominalphrase np = FREUDE_OHNE_ART.mit(EITEL_NICHT_FLEKTIERBAR);
+        final Nominalphrase np = np(null, EITEL_NICHT_FLEKTIERBAR, FREUDE);
 
         // WHEN
         final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
@@ -250,8 +251,10 @@ public class NominalphraseTest {
     @Test
     public void test_Reihung_nurAdjektiattribute_gleichrangig() {
         // GIVEN
-        final Nominalphrase np = ROTWEINE_INDEF.mit(new ZweiAdjPhrOhneLeerstellen(LEICHT, HERB,
-                true));
+        final Nominalphrase np =
+                np(INDEF, new ZweiAdjPhrOhneLeerstellen(LEICHT, HERB,
+                                true),
+                        ROTWEINE);
 
         // WHEN
         final Konstituente actual = np.imK(AKK).joinToSingleKonstituente();
@@ -269,8 +272,10 @@ public class NominalphraseTest {
     @Test
     public void test_Reihung_nurAdjektivattribute_nichtGleichrangig() {
         // GIVEN
-        final Nominalphrase np = ELEFANTEN_INDEF.mit(new ZweiAdjPhrOhneLeerstellen(GROSS, GRUEN,
-                false));
+        final Nominalphrase np =
+                np(INDEF, new ZweiAdjPhrOhneLeerstellen(GROSS, GRUEN,
+                                false),
+                        ELEFANTEN);
 
         // WHEN
         final Konstituente actual = np.imK(AKK).joinToSingleKonstituente();

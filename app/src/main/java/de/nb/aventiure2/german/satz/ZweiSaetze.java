@@ -21,12 +21,27 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 
 public class ZweiSaetze implements Satz {
     private final EinzelnerSatz ersterSatz;
+
+    /**
+     * String, mit dem beide Sätze verbunden werden: ", und", ";" o.Ä. -
+     * manchmal muss aus grammatikalischen Gründen ein anderer Konnektor verwendet werden
+     */
+    private final String konnektor;
+
     private final EinzelnerSatz zweiterSatz;
 
     private ZweiSaetze(
             final EinzelnerSatz ersterSatz,
             final EinzelnerSatz zweiterSatz) {
+        this(ersterSatz, ", und", zweiterSatz);
+    }
+
+    public ZweiSaetze(
+            final EinzelnerSatz ersterSatz,
+            final String konnektor,
+            final EinzelnerSatz zweiterSatz) {
         this.ersterSatz = ersterSatz;
+        this.konnektor = konnektor;
         this.zweiterSatz = zweiterSatz;
     }
 
@@ -92,7 +107,7 @@ public class ZweiSaetze implements Satz {
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         return joinToKonstituentenfolge(
                 ersterSatz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption(),
-                ", und",
+                konnektor,
                 zweiterSatz.getVerbzweitsatzStandard());
     }
 
@@ -104,7 +119,7 @@ public class ZweiSaetze implements Satz {
         for (final Konstituentenfolge ersterVerbzweitsatz : ersterSatz.altVerzweitsaetze()) {
             for (final Konstituentenfolge zweiterVerbzweitsatz : zweiterSatz.altVerzweitsaetze()) {
                 res.add(joinToKonstituentenfolge(
-                        ersterVerbzweitsatz, ", und", zweiterVerbzweitsatz));
+                        ersterVerbzweitsatz, konnektor, zweiterVerbzweitsatz));
             }
         }
 
@@ -114,14 +129,14 @@ public class ZweiSaetze implements Satz {
     @Override
     public Konstituentenfolge getVerbzweitsatzStandard() {
         return joinToKonstituentenfolge(
-                ersterSatz.getVerbzweitsatzStandard(), ", und",
+                ersterSatz.getVerbzweitsatzStandard(), konnektor,
                 zweiterSatz.getVerbzweitsatzStandard());
     }
 
     @Override
     public Konstituentenfolge getVerbzweitsatzMitVorfeld(final String vorfeld) {
         return joinToKonstituentenfolge(
-                ersterSatz.getVerbzweitsatzMitVorfeld(vorfeld), ", und",
+                ersterSatz.getVerbzweitsatzMitVorfeld(vorfeld), konnektor,
                 zweiterSatz.getVerbzweitsatzStandard());
     }
 
@@ -145,7 +160,7 @@ public class ZweiSaetze implements Satz {
 
     @Override
     public boolean isSatzreihungMitUnd() {
-        return true;
+        return konnektor.contains("und");
     }
 
     @Override

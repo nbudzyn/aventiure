@@ -54,13 +54,19 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
 
     /**
-     * Beschreibt - sofern nötig - das aktuelle Wetter.
+     * Beschreibt - sofern nötig - das aktuelle Wetter
+     * (oder auch einen Tageszeitenwechsel, wenn der SC drinnen ist).
      */
-    public void narrateWetterIfNecessary() {
+    public void narrateWetterOrTageszeitIfNecessary() {
         // Ggf. scActionStepCountDao verwenden,
         // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
+
         final ImmutableCollection<AbstractDescription<?>>
-                altHinweise = requirePcd().altWetterHinweiseWennNoetig(loadScDrinnenDraussen());
+                altHinweise = requirePcd().altWetterHinweiseWennNoetig(
+                timeTaker.now().getTime(),
+                world.loadSC().locationComp().getLocation().storingPlaceComp()
+                        .getLichtverhaeltnisse(),
+                loadScDrinnenDraussen());
 
         if (!altHinweise.isEmpty()) {
             n.narrateAlt(altHinweise, NO_TIME);

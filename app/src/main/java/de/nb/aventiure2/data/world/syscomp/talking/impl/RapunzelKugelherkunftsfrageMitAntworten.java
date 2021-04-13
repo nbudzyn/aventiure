@@ -23,7 +23,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelKugelherkunftsfrageMitAntworten.Counter.FRAGE_BEANTWORTET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLEIN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NOTLUEGE_EINE;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NOTLUEGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WAHRHEIT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -67,7 +68,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
     public Iterable<SCTalkAction> getAntwortActions() {
 
         return ImmutableList.of(
-                st(SICH_ERLAUBEN.mit(Nominalphrase.np(KLEIN, NOTLUEGE_EINE)),
+                st(SICH_ERLAUBEN.mit(Nominalphrase.np(INDEF, KLEIN, NOTLUEGE)),
                         this::notluege),
                 st(ANGEBEN,
                         this::aufschneiden),

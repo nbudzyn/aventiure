@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
@@ -93,7 +94,7 @@ public enum Tageszeit {
             ImmutableList.of("guten Abend", "schönen guten Abend"),
             ImmutableList.of("gute Nacht"));
 
-    private final EinzelneSubstantivischePhrase substantivischePhrase;
+    private final NomenFlexionsspalte nomenFlexionsspalte;
 
     private final Lichtverhaeltnisse lichtverhaeltnisseDraussen;
 
@@ -134,7 +135,7 @@ public enum Tageszeit {
      */
     private final ImmutableList<String> verabschiedungen;
 
-    Tageszeit(final EinzelneSubstantivischePhrase substantivischePhrase,
+    Tageszeit(final NomenFlexionsspalte nomenFlexionsspalte,
               final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirn,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein,
@@ -142,7 +143,7 @@ public enum Tageszeit {
               final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen,
               final Collection<String> begruessungen,
               final Collection<String> verabschiedungen) {
-        this.substantivischePhrase = substantivischePhrase;
+        this.nomenFlexionsspalte = nomenFlexionsspalte;
         this.lichtverhaeltnisseDraussen = lichtverhaeltnisseDraussen;
         this.altGestirn = altGestirn;
         this.altGestirnschein = altGestirnschein;
@@ -151,12 +152,7 @@ public enum Tageszeit {
         this.begruessungen = ImmutableList.copyOf(begruessungen);
         this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
     }
-
-    // FIXME: Alles Tageszeitveränderungen, die passiert sind oder inzwischen passiert sind,
-    //  auch alle "Veränderungsverben"
-    //  als statische, präsentische Statusinformationen einbauen (die man problemlos auch
-    //  mehrfach lesen kann):
-
+    
     /**
      * Gibt Sätze zurück wie "langsam wird es Morgen", "der Tag bricht an",
      * "langsam beginnt der Abend" o. Ä.
@@ -170,10 +166,10 @@ public enum Tageszeit {
 
         alt.add(
                 // "der Tag bricht an"
-                ANBRECHEN.alsSatzMitSubjekt(substantivischePhrase),
-                ANBRECHEN.alsSatzMitSubjekt(substantivischePhrase)
+                ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte),
+                ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte)
                         .mitAdvAngabe(new AdvAngabeSkopusSatz(ALLMAEHLICH)),
-                VerbSubj.BEGINNEN.alsSatzMitSubjekt(substantivischePhrase)
+                VerbSubj.BEGINNEN.alsSatzMitSubjekt(nomenFlexionsspalte)
                         .mitAdvAngabe(new AdvAngabeSkopusSatz(LANGSAM))
         );
 
@@ -191,7 +187,7 @@ public enum Tageszeit {
      * Gibt einen Satz zurück wie "und es wird Morgen" oder "und es wird Tag".
      */
     public EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
-        return praedikativumPraedikatWerdenMit(substantivischePhrase)
+        return praedikativumPraedikatWerdenMit(nomenFlexionsspalte)
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
     }
 
@@ -242,8 +238,8 @@ public enum Tageszeit {
         return verabschiedungen;
     }
 
-    public EinzelneSubstantivischePhrase getSubstantivischePhrase() {
-        return substantivischePhrase;
+    public NomenFlexionsspalte getNomenFlexionsspalte() {
+        return nomenFlexionsspalte;
     }
 
     public boolean hasFolgetageszeit(final Tageszeit other) {

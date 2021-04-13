@@ -11,7 +11,7 @@ import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -57,11 +57,11 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         this.verb = verb;
     }
 
-    public Satz alsSatz() {
+    public EinzelnerSatz alsSatz() {
         return alsSatz(null);
     }
 
-    public Satz alsSatz(final @Nullable String anschlusswort) {
+    public EinzelnerSatz alsSatz(final @Nullable String anschlusswort) {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
     }
 

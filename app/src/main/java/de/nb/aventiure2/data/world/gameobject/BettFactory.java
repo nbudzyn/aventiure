@@ -25,8 +25,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSE
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT_EIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -59,7 +59,7 @@ public class BettFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(BETT_EIN, id),
+                        np(INDEF, BETT, id),
                         np(BETT, id),
                         np(BETT, id));
 

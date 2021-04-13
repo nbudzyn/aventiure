@@ -25,7 +25,7 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -112,7 +112,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         this.praedikativum = praedikativum;
     }
 
-    public Satz alsSatz() {
+    public EinzelnerSatz alsSatz() {
         return alsSatzMitSubjekt(null);
     }
 

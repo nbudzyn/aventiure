@@ -118,9 +118,26 @@ public class Nominalphrase
                 fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
     }
 
+    /**
+     * Erzeugt eine Nominalphrase mit definitem Artikel - oder ohne Artikel,
+     * falls das Nomen grundsätzlich artikellos ist.
+     */
     @NonNull
     public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte) {
-        return np(nomenFlexionsspalte, null);
+        return np(nomenFlexionsspalte.isGrundsaetzlichArtikellos() ?
+                        null : DEF,
+                nomenFlexionsspalte, null);
+    }
+
+    @NonNull
+    public static Nominalphrase npArtikellos(final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(null, null, nomenFlexionsspalte, null);
+    }
+
+    @NonNull
+    public static Nominalphrase np(final Artikel.Typ artikelTyp,
+                                   final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(artikelTyp, nomenFlexionsspalte, null);
     }
 
     @NonNull
@@ -136,14 +153,70 @@ public class Nominalphrase
         return np(adjPhr, nomenFlexionsspalte, null);
     }
 
+    /**
+     * Erzeugt eine Nominalphrase mit definitem Artikel - oder ohne Artikel,
+     * falls das Nomen grundsätzlich artikellos ist.
+     */
     @NonNull
     public static Nominalphrase np(final NomenFlexionsspalte nomenFlexionsspalte,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
-        return np(null, nomenFlexionsspalte, bezugsobjekt);
+        return np(nomenFlexionsspalte.isGrundsaetzlichArtikellos() ?
+                        null : DEF,
+                nomenFlexionsspalte, bezugsobjekt);
     }
 
     @NonNull
+    public static Nominalphrase npArtikellos(@Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                             final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(null, adjPhr, nomenFlexionsspalte, null);
+    }
+
+    @NonNull
+    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+                                   @Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                   final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(artikeltyp, adjPhr, nomenFlexionsspalte, null);
+    }
+
+    @NonNull
+    public static Nominalphrase npArtikellos(final NomenFlexionsspalte nomenFlexionsspalte,
+                                             @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(null, null, nomenFlexionsspalte, bezugsobjekt);
+    }
+
+    @NonNull
+    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+                                   final NomenFlexionsspalte nomenFlexionsspalte,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(artikeltyp, null, nomenFlexionsspalte, bezugsobjekt);
+    }
+
+    /**
+     * Erzeugt eine artikellose Nominalphrase
+     */
+    @NonNull
+    public static Nominalphrase npArtikellos(@Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                             final NomenFlexionsspalte nomenFlexionsspalte,
+                                             @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(null, adjPhr, nomenFlexionsspalte, bezugsobjekt);
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase mit definitem Artikel - oder ohne Artikel,
+     * falls das Nomen grundsätzlich artikellos ist.
+     */
+    @NonNull
     public static Nominalphrase np(@Nullable final AdjPhrOhneLeerstellen adjPhr,
+                                   final NomenFlexionsspalte nomenFlexionsspalte,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(nomenFlexionsspalte.isGrundsaetzlichArtikellos() ?
+                        null : DEF,
+                adjPhr, nomenFlexionsspalte, bezugsobjekt);
+    }
+
+    @NonNull
+    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+                                   @Nullable final AdjPhrOhneLeerstellen adjPhr,
                                    final NomenFlexionsspalte nomenFlexionsspalte,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
         // Beispiel für eine voll ausgebaute Nominalphrase:
@@ -162,11 +235,12 @@ public class Nominalphrase
 
         return new Nominalphrase(
                 nomenFlexionsspalte.getNumerusGenus(),
-                nomenFlexionsspalte.getArtikelTyp(),
+                artikeltyp,
                 adjPhr,
                 nomenFlexionsspalte.getFlexionsreiheArtikellos(),
                 bezugsobjekt);
     }
+
 
     public static Nominalphrase np(final NumerusGenus numerusGenus,
                                    @Nullable final Artikel.Typ artikelTyp,

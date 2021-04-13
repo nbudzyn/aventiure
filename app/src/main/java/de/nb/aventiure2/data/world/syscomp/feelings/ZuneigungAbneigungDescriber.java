@@ -33,8 +33,9 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ERLEICHT
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHLECHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERSCHUECHTERT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ZORNIG;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE_OHNE_ART;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WUT_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FREUDE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WUT;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
@@ -90,7 +91,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
                                     .mitModAdverbOderAdjektiv("ganz"))
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                                    VOR.mit(WUT_OHNE_ART)))
+                                    VOR.mit(npArtikellos(WUT))))
                             .alsSatzMitSubjekt(gameObjectSubjekt)
                             .mitAngabensatz(
                                     new Konditionalsatz("als",
@@ -146,7 +147,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     praedikativumPraedikatMit(
                             AUSSER_DAT.mit(gameObjectSubjekt.reflPron()))
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                                    VOR.mit(FREUDE_OHNE_ART)))
+                                    VOR.mit(npArtikellos(FREUDE))))
                             .alsSatzMitSubjekt(gameObjectSubjekt)
                             .mitAngabensatz(
                                     new Konditionalsatz("als",

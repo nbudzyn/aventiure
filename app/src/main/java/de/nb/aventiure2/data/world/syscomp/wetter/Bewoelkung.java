@@ -11,7 +11,9 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
@@ -28,14 +30,22 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEZOGEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GANZ;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GETRUEBT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GRAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELLICHT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLAR;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LICHTLOS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.NACHTSCHWARZ;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SANFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHUMMRIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STOCKDUNKEL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TIEF;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TRUEB;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERHANGEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WOLKENVERHANGEN;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDDAEMMERUNG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DAEMMERLICHT;
@@ -46,7 +56,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FIRMAMENT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HALBDUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT_OHNE_ART;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGENLICHT;
@@ -54,11 +63,12 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHUMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENLICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT_OHNE_ART;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKEN_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKEN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZWIELICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
@@ -149,11 +159,16 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altScKommtUnterOffenenHimmel(final AvTime time) {
+    ImmutableCollection<Satz> altScKommtUnterOffenenHimmel(
+            final AvTime time, final boolean warVorherDrinnen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altUnterOffenemHimmelStatischeBeschreibungSaetze(time),
-                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+        if (warVorherDrinnen) {
+            alt.addAll(mapToList(altUnterOffenemHimmelStatischeBeschreibungSaetze(time),
+                    s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+        } else {
+            alt.addAll(altUnterOffenemHimmelStatischeBeschreibungSaetze(time));
+        }
 
         switch (this) {
             case WOLKENLOS:
@@ -164,9 +179,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
             // FIXME "Als der Mond kommt"
 
-            //  FIXME "bis der Mond aufgeht"
-            //   "bis der Mond aufgestiegen ist"
-            //   "der Weiher liegt so ruhig wie zuvor, und nur der Mond glänzt darauf."
+            //  IDEA "bis der Mond aufgeht", "bis der Mond aufgestiegen ist"
 
             //  FIXME Mondphasen?! Immer Vollmond? Nicht erwähnen? Oder Zeitreisen?
             //   "Und als der volle Mond aufgestiegen ist,"
@@ -182,13 +195,6 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             case LEICHT_BEWOELKT:
                 break;
             case BEWOELKT:
-                alt.addAll(mapToList(time.getTageszeit().altGestirn(), gestirn ->
-                        // "Der Mond ist gerade von einer dunklen Wolke bedeckt")
-                        praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEDECKT
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz(
-                                        "von einer dunklen Wolke")))
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))
-                                .alsSatzMitSubjekt(gestirn)));
                 break;
             case BEDECKT:
                 break;
@@ -205,10 +211,16 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        // FIXME: Alles Wetteränderungen, die passiert sind oder inzwischen passiert sind,
-        //  auch alle "Veränderungsverben"
-        //  als statische, präsentische Statusinformationen einbauen (die man problemlos auch
-        //  mehrfach lesen kann).
+        //  FIXME Mondphasen?! Immer Vollmond? Nicht erwähnen? Oder Zeitreisen?
+        //   "der volle Mond steht hoch"
+        //   "der Vollmond scheint", "der Vollmond ist zu sehen"
+        //   "Der Mond steht rund und groß über dem Berg, und es ist so hell, dass man
+        //   eine Stecknadel finden könnte."
+        //   "der Vollmond steht hoch oben am... Himmel"
+        //   "der Weiher liegt so ruhig wie zuvor, und nur das Gesicht des
+        //    Vollmondes glänzt darauf."
+        //    gestirn, gestirnschein etc.  VOLLMOND
+
         alt.addAll(altUnterOffenemHimmelStatischeBeschreibungSaetze(time.getTageszeit()));
 
         switch (this) {
@@ -222,6 +234,22 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
                                                     new AdvAngabeSkopusSatz("eben")
                                             )
                             ).alsSatzMitSubjekt(gestirn)));
+                }
+                if (time.mittenInDerNacht()) {
+                    alt.addAll(mapToSet(time.getTageszeit().altGestirn(), gestirn ->
+                            // "Der Mond steht hoch"
+                            STEHEN.alsSatzMitSubjekt(gestirn)
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HOCH))));
+                    alt.addAll(mapToSet(time.getTageszeit().altGestirn(), gestirn ->
+                            // "Der Mond steht hoch oben am Himmel"
+                            STEHEN.alsSatzMitSubjekt(gestirn)
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                            "hoch oben am Himmel"))));
+                    // IDEA
+                    //  - "Der Mond steht über dem Berg"
+                    //    (Problem: Keine Inkonsistenzen erzeugen. Der Mond darf
+                    //    nicht hüpfen - und die Sonne muss Mittags mit Süden stehen etc."
+                    //  - "Der Mond steht hoch über dem Berg"
                 }
                 break;
             case LEICHT_BEWOELKT:
@@ -250,12 +278,26 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     @CheckReturnValue
     private ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
             final Tageszeit tageszeit) {
-        // FIXME: Alles Wetteränderungen, die passiert sind oder inzwischen passiert sind,
-        //  auch alle "Veränderungsverben"
-        //  als statische, präsentische Statusinformationen einbauen (die man problemlos auch
-        //  mehrfach lesen kann).
-
+        //  IDEA
+        //   - "Der Mond glänzt auf dem Weiher"
+        //   - "der Weiher liegt ruhig da und (nur) der Mond glänzt darauf."
+        //   - "der Weiher liegt so ruhig wie zuvor, und nur der Mond glänzt darauf."
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        // "der Himmel ist wolkenlos"
+        alt.addAll(mapToSet(altAdjPhrHimmel(tageszeit),
+                a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(HIMMEL)));
+
+        // "es ist ein grauer Morgen"
+        alt.addAll(mapToSet(altTageszeitUnterOffenenHimmelIndefMitAdj(tageszeit),
+                Praedikativum::alsEsIstSatz));
+
+        if (compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+            // "es ist hellichter Tag"
+            alt.add(TAG.mit(HELLICHT).alsEsIstSatz());
+        }
+
+        // IDEA: "Was (für) ein grauer Tag!"
 
         if (this == WOLKENLOS || this == LEICHT_BEWOELKT) {
             alt.addAll(tageszeit.altGestirn().stream()
@@ -356,12 +398,19 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
             case BEWOELKT:
                 alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEWOELKT)
                         .alsSatzMitSubjekt(HIMMEL));
+                alt.addAll(mapToList(tageszeit.altGestirn(), gestirn ->
+                        // "Der Mond ist gerade von einer dunklen Wolke bedeckt")
+                        praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEDECKT
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz(
+                                        "von einer dunklen Wolke")))
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))
+                                .alsSatzMitSubjekt(gestirn)));
                 break;
             case BEDECKT:
                 alt.add(
                         // "Düstere Wolken bedecken den ganzen Himmel"
                         BEDECKEN.mit(np(GANZ, HIMMEL))
-                                .alsSatzMitSubjekt(np(DUESTER, WOLKEN_OHNE_ART)));
+                                .alsSatzMitSubjekt(np(INDEF, DUESTER, WOLKEN)));
                 alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.WOLKENVERHANGEN)
                         .alsSatzMitSubjekt(HIMMEL));
                 break;
@@ -385,34 +434,86 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return altWohinHinausUnterOffenenHimmel(time.getTageszeit());
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel
-            (
-                    final Tageszeit tageszeit) {
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
+            final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableList.builder();
 
         alt.addAll(mapToList(altLichtInDemEtwasLiegt(tageszeit, true),
                 licht -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(licht))));
 
+        // "in den grauen Morgen"
+        alt.addAll(mapToSet(altTageszeitUnterOffenenHimmelDef(tageszeit),
+                s -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(s))));
+
+        if (this == BEWOELKT && tageszeit == TAGSUEBER) {
+            alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(TAG)));
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt Alternativen wie "der schummrige Morgen" oder "der Tag" zurück.
+     */
+    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelDef(
+            final Tageszeit tageszeit) {
+        final ImmutableCollection<AdjektivOhneErgaenzungen> altAdj =
+                altAdjTageszeitUnterOffenemHimmel(tageszeit);
+
+        if (!altAdj.isEmpty()) {
+            // "der schummrige Morgen"
+            return mapToSet(altAdj, a -> tageszeit.getNomenFlexionsspalte().mit(a));
+        }
+
+        // "der Morgen"
+        return ImmutableSet.of(tageszeit.getNomenFlexionsspalte());
+    }
+
+    /**
+     * Gibt Alternativen wie "ein schummriger Morgen" zurück, immer mit Adjektiv, ggf. leer.
+     */
+    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelIndefMitAdj(
+            final Tageszeit tageszeit) {
+        // "ein schummriger Morgen"
+        return mapToSet(altAdjTageszeitUnterOffenemHimmel(tageszeit), a ->
+                np(INDEF, a, tageszeit.getNomenFlexionsspalte()));
+    }
+
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAdjTageszeitUnterOffenemHimmel(
+            final Tageszeit tageszeit) {
+        switch (tageszeit) {
+            case MORGENS:
+                return altAdjMorgenUnterOffenenHimmel();
+            case TAGSUEBER:
+                return altAdjTagUnterOffenenHimmel();
+            case ABENDS:
+                return altAdjAbendUnterOffenenHimmel();
+            case NACHTS:
+                return altAdjNachtUnterOffenenHimmel();
+            default:
+                throw new IllegalStateException("Unexpected Tageszeit: " + this);
+        }
+    }
+
+    /**
+     * Gibt Alternativen wie "schummeriger Morgen" zurück (immer mit Adjektivphrase), evtl. leer.
+     */
+    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjMorgenUnterOffenenHimmel() {
+        final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
+                ImmutableList.builder();
         switch (this) {
             case WOLKENLOS:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in den klaren Morgen"));
+                alt.add(KLAR);
                 // fall-through
             case LEICHT_BEWOELKT:
-                alt.addAll(mapToList(tageszeit.altGestirnschein(),
-                        schein -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(schein))));
-
-                if (tageszeit == Tageszeit.MORGENS) {
-                    alt.add(new AdvAngabeSkopusVerbWohinWoher("in den hellen Morgen"));
-                } else if (tageszeit == TAGSUEBER) {
-                    alt.add(new AdvAngabeSkopusVerbWohinWoher("in den hellen Tag"));
-                }
+                alt.add(HELL);
                 break;
             case BEWOELKT:
-                alt.addAll(altWohinHinausBewoelkt(tageszeit));
+                alt.add(SCHUMMRIG);
                 break;
             case BEDECKT:
-                alt.addAll(altWohinHinausBedeckt(tageszeit));
+                alt.add(TRUEB, DUESTER, GRAU, LICHTLOS, VERHANGEN);
                 break;
             default:
                 throw new IllegalStateException("Unexpected Bewoelkung: " + this);
@@ -421,66 +522,87 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausBewoelkt(
-            final Tageszeit tageszeit) {
-        final ImmutableSet.Builder<String> res = ImmutableSet.builder();
-
-        switch (tageszeit) {
-            case MORGENS:
-                res.add("in den schummrigen Morgen");
+    /**
+     * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
+     */
+    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjTagUnterOffenenHimmel() {
+        final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
+                ImmutableList.builder();
+        switch (this) {
+            case WOLKENLOS:
+                // fall-through
+            case LEICHT_BEWOELKT:
+                alt.add(HELL);
                 break;
-            case TAGSUEBER:
-                res.add("in den Tag");
+            case BEWOELKT:
                 break;
-            case ABENDS:
-                res.add("in den dunklen Abend");
-                break;
-            case NACHTS:
-                res.add("in die dunkle Nacht");
+            case BEDECKT:
+                alt.add(TRUEB, DUESTER, GRAU);
                 break;
             default:
-                throw new IllegalStateException("Unexpected Tageszeit: " + this);
+                throw new IllegalStateException("Unexpected Bewoelkung: " + this);
         }
 
-        return mapToSet(res.build(), AdvAngabeSkopusVerbWohinWoher::new);
+        return alt.build();
     }
 
-    private static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausBedeckt(
-            final Tageszeit tageszeit) {
-        final ImmutableSet.Builder<String> res = ImmutableSet.builder();
-
-        switch (tageszeit) {
-            case MORGENS:
-                res.add("in den trüben Morgen", "in den düsteren Morgen",
-                        "in den grauen Morgen", "in den lichtlosen Morgen",
-                        "in den verhangenen Morgen");
+    /**
+     * Gibt Alternativen wie "schummerige" zurück, ggf. leer.
+     */
+    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjAbendUnterOffenenHimmel() {
+        final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
+                ImmutableList.builder();
+        switch (this) {
+            case WOLKENLOS:
                 break;
-            case TAGSUEBER:
-                res.add("in den trüben Tag", "in den düsteren Tag",
-                        "in den grauen Tag");
+            case LEICHT_BEWOELKT:
                 break;
-            case ABENDS:
-                res.add("in den düsteren Abend",
-                        "in den dunklen Abend", "in den schummrigen Abend");
+            case BEWOELKT:
+                alt.add(AdjektivOhneErgaenzungen.DUNKEL);
                 break;
-            case NACHTS:
-                res.add("in die dunkle Nacht", "in die stockdunkle Nacht");
-                break;
+            case BEDECKT:
+                alt.add(DUESTER, AdjektivOhneErgaenzungen.DUNKEL, SCHUMMRIG);
             default:
-                throw new IllegalStateException("Unexpected Tageszeit: " + tageszeit);
+                throw new IllegalStateException("Unexpected Bewoelkung: " + this);
         }
 
-        return mapToSet(res.build(), AdvAngabeSkopusVerbWohinWoher::new);
+        return alt.build();
+    }
+
+    /**
+     * Gibt Alternativen wie "stockdunkel" zurück, evtl. leer.
+     */
+    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjNachtUnterOffenenHimmel() {
+        final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
+                ImmutableList.builder();
+        switch (this) {
+            case WOLKENLOS:
+                break;
+            case LEICHT_BEWOELKT:
+                break;
+            case BEWOELKT:
+                alt.add(AdjektivOhneErgaenzungen.DUNKEL);
+                break;
+            case BEDECKT:
+                alt.add(AdjektivOhneErgaenzungen.DUNKEL, STOCKDUNKEL);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Bewoelkung: " + this);
+        }
+
+        return alt.build();
     }
 
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit,
                                                           final boolean unterOffenemHimmel) {
-        return altImLicht(tageszeit, unterOffenemHimmel, BEI_DAT.mit(LICHT_OHNE_ART));
+        return altImLicht(tageszeit, unterOffenemHimmel,
+                BEI_DAT.mit(npArtikellos(LICHT)));
     }
 
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit,
                                                                final boolean unterOffenemHimmel) {
-        return altImLicht(tageszeit, unterOffenemHimmel, BEI_DAT.mit(TAGESLICHT_OHNE_ART));
+        return altImLicht(tageszeit, unterOffenemHimmel,
+                BEI_DAT.mit(npArtikellos(TAGESLICHT)));
     }
 
     private ImmutableSet<Praepositionalphrase> altImLicht(

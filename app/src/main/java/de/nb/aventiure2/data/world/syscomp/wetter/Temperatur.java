@@ -12,7 +12,7 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -34,13 +35,14 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLIRREND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LAU;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LEIB;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG_EIN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER_OHNE_ART;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
@@ -119,10 +121,10 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    public ImmutableCollection<Satz> altStatischeBeschreibungSaetze(
+    public ImmutableCollection<EinzelnerSatz> altStatischeBeschreibungSaetze(
             final Tageszeit tageszeit,
             final boolean draussen) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
 
         alt.addAll(mapToList(altPraedikativa(draussen), Praedikativum::alsEsIstSatz));
 
@@ -137,7 +139,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
             case KLIRREND_KALT:
                 alt.add(LIEGEN.mitAdvAngabe(
                         new AdvAngabeSkopusVerbAllg("in der Luft"))
-                                .alsSatzMitSubjekt(Nominalphrase.np(KLIRREND, KAELTE_OHNE_ART)),
+                                .alsSatzMitSubjekt(npArtikellos(KLIRREND, KAELTE)),
                         // "du frierst am ganzen Leibe"
                         VerbSubj.FRIEREN
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(LEIB)))
@@ -182,7 +184,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return alt.build();
     }
 
-    // FIXME wohin mit Beschreibungen, die erst nach einer Weile Sinn ergeben:
+    // IDEA Beschreibungen, die erst nach einer Weile Sinn ergeben:
     //  - Die ganze Zeit über ist dir kalt
     //  - du("schmachtest", "in der Hitze")
 
@@ -291,12 +293,13 @@ public enum Temperatur implements Betweenable<Temperatur> {
                 break;
             case WARM:
                 if (draussen) {
-                    alt.add(Nominalphrase.np(AdjektivOhneErgaenzungen.WARM, WETTER_OHNE_ART));
+                    alt.add(npArtikellos(AdjektivOhneErgaenzungen.WARM,
+                            NomenFlexionsspalte.WETTER));
                 }
                 break;
             case RECHT_HEISS:
                 if (draussen) {
-                    alt.add(Nominalphrase.np(HEISS, TAG_EIN));
+                    alt.add(np(INDEF, HEISS, TAG));
                 }
                 break;
             case SEHR_HEISS:

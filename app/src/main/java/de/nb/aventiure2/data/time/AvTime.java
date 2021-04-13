@@ -109,6 +109,10 @@ public class AvTime {
                 oClock(19));
     }
 
+    public boolean mittenInDerNacht() {
+        return isEqualOrAfter(oClock(22)) || isEqualOrBefore(oClock(2));
+    }
+
     public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
         if (!other.isBefore(this)) {
             return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);
@@ -169,7 +173,7 @@ public class AvTime {
         return secsSinceMidnight < other.secsSinceMidnight;
     }
 
-    public boolean isEqualOrBefore(final AvTime other) {
+    private boolean isEqualOrBefore(final AvTime other) {
         return secsSinceMidnight <= other.secsSinceMidnight;
     }
 

@@ -23,6 +23,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.ECKE_IM_BETTGESTELL;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETTGESTELL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -55,7 +56,7 @@ class BettgestellFactory {
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(id,
-                        np(NomenFlexionsspalte.BETTGESTELL_EIN, id),
+                        np(INDEF, NomenFlexionsspalte.BETTGESTELL, id),
                         np(BETTGESTELL, id),
                         np(BETTGESTELL, id));
 

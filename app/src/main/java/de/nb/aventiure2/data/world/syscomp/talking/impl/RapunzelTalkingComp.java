@@ -71,14 +71,16 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGEISTE
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FREUDESTRAHLEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENERVT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISCH;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH_EIN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG_OHNE_ART;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHR_NAME;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -163,7 +165,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 return ImmutableList.of();
             case NORMAL:
                 return ImmutableList.of(
-                        entryReEntrySt(VerbSubjAkkPraep.BEGINNEN.mitAkk(GESPRAECH_EIN),
+                        entryReEntrySt(VerbSubjAkkPraep.BEGINNEN.mitAkk(
+                                np(INDEF, GESPRAECH)),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
                         entryReEntrySt(this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
@@ -180,10 +183,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                                 .alsSatzMitSubjekt(duSc())),
                                 this::fragenWieSCHelfenKann),
                         st(this::rapunzelsFreiheitswunschBekanntUndRapunzelUndScKoennenEinanderSehen,
-                                ZUSAGEN.mitAkk(RETTUNG_OHNE_ART),
+                                ZUSAGEN.mitAkk(npArtikellos(RETTUNG)),
                                 this::rapunzelRettungZusagen),
                         st(this::frageNachRapunzelsMutterSinnvoll,
-                                FRAGEN_NACH.mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
+                                FRAGEN_NACH
+                                        .mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
                                 this::nachRapunzelsZauberinFragen),
                         st(this::herzAusschuettenMoeglich,
                                 // "Der jungen Frau dein Herz ausschütten"
@@ -198,7 +202,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         immReEntryStSCHatteGespraechBeendet(
                                 VerbSubjAkkPraep.FORTSETZEN.mitAkk(GESPRAECH),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
-                        immReEntryStSCHatteGespraechBeendet(this::scKenntRapunzelsNamenNicht,
+                        immReEntryStSCHatteGespraechBeendet(
+                                this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
                         immReEntryStSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),
@@ -206,7 +211,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         immReEntryStNSCHatteGespraechBeendet(
                                 VerbSubjAkkPraep.FORTSETZEN.mitAkk(GESPRAECH),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
-                        immReEntryStNSCHatteGespraechBeendet(this::scKenntRapunzelsNamenNicht,
+                        immReEntryStNSCHatteGespraechBeendet(
+                                this::scKenntRapunzelsNamenNicht,
                                 FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
                         immReEntryStNSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),

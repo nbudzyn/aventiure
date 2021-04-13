@@ -26,7 +26,8 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GROB;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS_EIN;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -75,7 +76,8 @@ class NaschereifrageMitAntworten extends AbstractFrageMitAntworten {
                                         new AdvAngabeSkopusVerbAllg(
                                                 GENAU.mitGraduativerAngabe("ganz"))),
                         this::allesGanzGenauErklaeren),
-                st(GEBEN.mitAkk(Nominalphrase.np(GROB, ABRISS_EIN)), this::einenGrobenAbrissGeben));
+                st(GEBEN.mitAkk(Nominalphrase.np(INDEF, GROB, ABRISS)),
+                        this::einenGrobenAbrissGeben));
     }
 
     private void allesGanzGenauErklaeren() {
