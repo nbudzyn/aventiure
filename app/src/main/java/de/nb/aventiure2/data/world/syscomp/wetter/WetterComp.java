@@ -33,7 +33,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.D
 public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private final AvDatabase db;
     private final TimeTaker timeTaker;
-    protected final Narrator n;
+    private final Narrator n;
     private final World world;
 
     public WetterComp(final AvDatabase db, final TimeTaker timeTaker, final Narrator n,

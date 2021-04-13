@@ -204,14 +204,14 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     }
 
     @CheckReturnValue
-    public static Konstituente k(final @Nonnull String text,
-                                 final StructuralElement startsNew,
-                                 final boolean woertlicheRedeNochOffen,
-                                 final boolean kommaStehtAus,
-                                 final StructuralElement endsThis,
-                                 @Nullable
-                                 final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
-                                 @Nullable final IBezugsobjekt bezugsobjekt) {
+    private static Konstituente k(final @Nonnull String text,
+                                  final StructuralElement startsNew,
+                                  final boolean woertlicheRedeNochOffen,
+                                  final boolean kommaStehtAus,
+                                  final StructuralElement endsThis,
+                                  @Nullable
+                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
+                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Konstituente(text, false, false,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus, endsThis,
                 kannAlsBezugsobjektVerstandenWerdenFuer,
@@ -389,7 +389,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     @Nullable
     @VisibleForTesting
-    public NumerusGenus getKannAlsBezugsobjektVerstandenWerdenFuer() {
+    NumerusGenus getKannAlsBezugsobjektVerstandenWerdenFuer() {
         return kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 

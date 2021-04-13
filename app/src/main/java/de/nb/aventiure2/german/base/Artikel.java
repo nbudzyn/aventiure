@@ -83,8 +83,8 @@ public class Artikel implements DeklinierbarePhrase {
         return ALL.get(typ).get(numerusGenus);
     }
 
-    public Artikel(final NumerusGenus numerusGenus,
-                   final Flexionsreihe flexionsreihe) {
+    private Artikel(final NumerusGenus numerusGenus,
+                    final Flexionsreihe flexionsreihe) {
         this.numerusGenus = numerusGenus;
         this.flexionsreihe = flexionsreihe;
     }

@@ -110,8 +110,8 @@ public class DescriptionBuilder {
      */
     @NonNull
     @CheckReturnValue
-    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable final Konstituentenfolge konstituentenfolge) {
+    private static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
+                                          @Nullable final Konstituentenfolge konstituentenfolge) {
         return du(startsNew, verb,
                 konstituentenfolge != null ?
                         konstituentenfolge.joinToSingleKonstituenteOrStructuralElement() : null);
@@ -136,9 +136,9 @@ public class DescriptionBuilder {
      */
     @NonNull
     @CheckReturnValue
-    public static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
-                                         @Nullable
-                                         final IKonstituenteOrStructuralElement remainder) {
+    private static SimpleDuDescription du(final StructuralElement startsNew, final String verb,
+                                          @Nullable
+                                          final IKonstituenteOrStructuralElement remainder) {
         return new SimpleDuDescription(startsNew, verb, remainder);
     }
 

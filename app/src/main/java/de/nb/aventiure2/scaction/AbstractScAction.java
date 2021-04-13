@@ -130,7 +130,7 @@ public abstract class AbstractScAction implements IPlayerAction {
         world.narrateAndDoReactions().afterScActionAndFirstWorldUpdate();
     }
 
-    abstract public void narrateAndDo();
+    protected abstract void narrateAndDo();
 
     protected Kohaerenzrelation getKohaerenzrelationFuerUmformulierung() {
         if (isDefinitivDiskontinuitaet()) {

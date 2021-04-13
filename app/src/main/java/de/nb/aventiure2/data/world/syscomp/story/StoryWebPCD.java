@@ -140,6 +140,7 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
         return res;
     }
 
+    @SuppressWarnings("WeakerAccess")
     int getLastHintActionStepCount() {
         return lastHintActionStepCount;
     }
@@ -169,4 +170,6 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
         // Kein setChanged() !
         storyDataMap.putAll(map);
     }
+
+
 }

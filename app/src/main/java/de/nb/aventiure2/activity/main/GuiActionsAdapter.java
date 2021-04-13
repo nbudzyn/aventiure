@@ -27,7 +27,7 @@ import de.nb.aventiure2.databinding.ActionBinding;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 
-public class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
+class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         private final Button actionButton;
 

@@ -327,11 +327,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @NonNull
-    protected Verb getVerb() {
+    Verb getVerb() {
         return verb;
     }
 
-    public ImmutableList<Modalpartikel> getModalpartikeln() {
+    ImmutableList<Modalpartikel> getModalpartikeln() {
         return modalpartikeln;
     }
 
@@ -459,7 +459,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 // Machen bei Interrogativadverbien keinen Unterschied
                 P3, SG));
     }
-    
+
     @Override
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         return inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;

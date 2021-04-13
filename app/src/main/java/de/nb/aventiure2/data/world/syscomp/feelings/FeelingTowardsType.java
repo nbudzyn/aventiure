@@ -140,7 +140,7 @@ public enum FeelingTowardsType {
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
+    private ImmutableList<AdjPhrOhneLeerstellen> altEindruckBeiBegegnungAdjPhr(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -161,7 +161,7 @@ public enum FeelingTowardsType {
      *
      * @return Möglicherweise eine leere Liste !
      */
-    public ImmutableList<AdjPhrOhneLeerstellen> altEindruckWennTargetGehenMoechteAdjPhr(
+    private ImmutableList<AdjPhrOhneLeerstellen> altEindruckWennTargetGehenMoechteAdjPhr(
             final Person gameObjectSubjektPerson,
             final NumerusGenus gameObjectSubjektNumerusGenus,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,

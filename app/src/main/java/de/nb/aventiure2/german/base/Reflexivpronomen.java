@@ -125,7 +125,7 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
         return null;
     }
 
-    public String dat() {
+    private String dat() {
         return dativ;
     }
 

@@ -86,9 +86,10 @@ public class Action {
         this(type, object, null);
     }
 
-    public Action(final Type type,
-                  @Nullable final GameObjectId object,
-                  @Nullable final GameObjectId adverbial) {
+    @SuppressWarnings("WeakerAccess")
+    Action(final Type type,
+           @Nullable final GameObjectId object,
+           @Nullable final GameObjectId adverbial) {
         this.type = type;
         this.object = object;
         this.adverbial = adverbial;
@@ -129,7 +130,7 @@ public class Action {
     }
 
     @Nullable
-    public GameObjectId getAdverbial() {
+    GameObjectId getAdverbial() {
         return adverbial;
     }
 

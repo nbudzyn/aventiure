@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Data for an {@link GameObject} referenced by its {@link GameObjectId}.
  */
-public abstract class AbstractGameData {
+abstract class AbstractGameData {
     private GameObjectId gameObjectId;
 
     protected AbstractGameData(final GameObjectId gameObjectId) {
@@ -25,7 +25,7 @@ public abstract class AbstractGameData {
         return false;
     }
 
-    public GameObjectId getGameObjectId() {
+    private GameObjectId getGameObjectId() {
         return gameObjectId;
     }
 

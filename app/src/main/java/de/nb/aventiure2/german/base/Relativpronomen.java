@@ -129,9 +129,9 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
         return get(typ, person, numerusGenus, null);
     }
 
-    public static Relativpronomen get(final Typ typ, final Person person,
-                                      final NumerusGenus numerusGenus,
-                                      @Nullable final IBezugsobjekt bezugsobjekt) {
+    private static Relativpronomen get(final Typ typ, final Person person,
+                                       final NumerusGenus numerusGenus,
+                                       @Nullable final IBezugsobjekt bezugsobjekt) {
         @Nullable Relativpronomen ohneBezugsobjekt = requireNonNull(
                 requireNonNull(ALL.get(typ)).get(person)).get(numerusGenus);
         if (ohneBezugsobjekt == null) {

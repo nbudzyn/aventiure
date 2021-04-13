@@ -152,7 +152,7 @@ public enum Tageszeit {
         this.begruessungen = ImmutableList.copyOf(begruessungen);
         this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
     }
-    
+
     /**
      * Gibt Sätze zurück wie "langsam wird es Morgen", "der Tag bricht an",
      * "langsam beginnt der Abend" o. Ä.
@@ -179,14 +179,14 @@ public enum Tageszeit {
     /**
      * Gibt einen Satz zurück wie "es wird Morgen" oder "es wird Tag".
      */
-    public EinzelnerSatz esWirdSatz() {
+    private EinzelnerSatz esWirdSatz() {
         return esWirdSatz(null);
     }
 
     /**
      * Gibt einen Satz zurück wie "und es wird Morgen" oder "und es wird Tag".
      */
-    public EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
         return praedikativumPraedikatWerdenMit(nomenFlexionsspalte)
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
     }

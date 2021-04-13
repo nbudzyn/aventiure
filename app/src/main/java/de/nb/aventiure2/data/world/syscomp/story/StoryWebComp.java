@@ -41,7 +41,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     private final AvDatabase db;
     private final World world;
     private final TimeTaker timeTaker;
-    protected final Narrator n;
+    private final Narrator n;
 
     private final SpatialConnectionSystem spatialConnectionSystem;
 

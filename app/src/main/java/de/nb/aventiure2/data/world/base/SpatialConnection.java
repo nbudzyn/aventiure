@@ -37,12 +37,12 @@ public class SpatialConnection {
                 newLocationDescription.timed(standardDuration));
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        final CardinalDirection cardinalDirection,
-                                        final String actionName,
-                                        final AvTimeSpan standardDuration,
-                                        final TimedDescription<?> newLocationDescription) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         final CardinalDirection cardinalDirection,
+                                         final String actionName,
+                                         final AvTimeSpan standardDuration,
+                                         final TimedDescription<?> newLocationDescription) {
         return con(to, wo, cardinalDirection, () -> actionName, standardDuration,
                 newLocationDescription);
     }
@@ -57,12 +57,12 @@ public class SpatialConnection {
                 newLocationDescription.timed(standardDuration));
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        final CardinalDirection cardinalDirection,
-                                        final Supplier<String> actionNameProvider,
-                                        final AvTimeSpan standardDuration,
-                                        final TimedDescription<?> newLocationDescription) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         final CardinalDirection cardinalDirection,
+                                         final Supplier<String> actionNameProvider,
+                                         final AvTimeSpan standardDuration,
+                                         final TimedDescription<?> newLocationDescription) {
         return con(to, wo, cardinalDirection, actionNameProvider, standardDuration,
                 (SpatialConnectionData.ScMoveTimedDescriptionProvider)
                         (isnewLocationKnown, lichtverhaeltnisseInNewLocation) -> newLocationDescription);
@@ -104,13 +104,13 @@ public class SpatialConnection {
                 newLocationDescriptionKnown.timed(standardDuration));
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        final CardinalDirection cardinalDirection,
-                                        final String actionName,
-                                        final AvTimeSpan standardDuration,
-                                        final TimedDescription<?> newLocationDescriptionUnknown,
-                                        final TimedDescription<?> newLocationDescriptionKnown) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         final CardinalDirection cardinalDirection,
+                                         final String actionName,
+                                         final AvTimeSpan standardDuration,
+                                         final TimedDescription<?> newLocationDescriptionUnknown,
+                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, cardinalDirection, () -> actionName, standardDuration,
                 newLocationDescriptionUnknown, newLocationDescriptionKnown);
     }
@@ -151,13 +151,13 @@ public class SpatialConnection {
                 newLocationDescriptionKnown);
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        final CardinalDirection cardinalDirection,
-                                        final Supplier<String> actionNameSupplier,
-                                        final AvTimeSpan standardDuration,
-                                        final TimedDescription<?> newLocationDescriptionUnknown,
-                                        final TimedDescription<?> newLocationDescriptionKnown) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         final CardinalDirection cardinalDirection,
+                                         final Supplier<String> actionNameSupplier,
+                                         final AvTimeSpan standardDuration,
+                                         final TimedDescription<?> newLocationDescriptionUnknown,
+                                         final TimedDescription<?> newLocationDescriptionKnown) {
         return con(to, wo, cardinalDirection, actionNameSupplier, standardDuration,
                 (SpatialConnectionData.ScMoveTimedDescriptionProvider)
                         (newLocationKnown, lichtverhaeltnisseInNewLocation) ->
@@ -335,15 +335,15 @@ public class SpatialConnection {
                 newLocationDescriptionOther);
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        @Nullable final CardinalDirection cardinalDirection,
-                                        final String actionName,
-                                        final AvTimeSpan standardDuration,
-                                        final AbstractDescription<?> newLocationDescriptionUnknownHell,
-                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
-                                        final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
-                                        final TimedDescription<?> newLocationDescriptionOther) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         @Nullable final CardinalDirection cardinalDirection,
+                                         final String actionName,
+                                         final AvTimeSpan standardDuration,
+                                         final AbstractDescription<?> newLocationDescriptionUnknownHell,
+                                         final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                         final AbstractDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, cardinalDirection, actionName, standardDuration,
                 newLocationDescriptionUnknownHell.timed(standardDuration),
                 newLocationDescriptionUnknownDunkel,
@@ -437,15 +437,15 @@ public class SpatialConnection {
                 newLocationDescriptionOther);
     }
 
-    public static SpatialConnection con(final GameObjectId to,
-                                        final String wo,
-                                        @Nullable final CardinalDirection cardinalDirection,
-                                        final String actionName,
-                                        final AvTimeSpan standardDuration,
-                                        final TimedDescription<?> newLocationDescriptionUnknownHell,
-                                        final TimedDescription<?> newLocationDescriptionUnknownDunkel,
-                                        final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
-                                        final TimedDescription<?> newLocationDescriptionOther) {
+    private static SpatialConnection con(final GameObjectId to,
+                                         final String wo,
+                                         @Nullable final CardinalDirection cardinalDirection,
+                                         final String actionName,
+                                         final AvTimeSpan standardDuration,
+                                         final TimedDescription<?> newLocationDescriptionUnknownHell,
+                                         final TimedDescription<?> newLocationDescriptionUnknownDunkel,
+                                         final TimedDescription<?> newLocationDescriptionKnownFromDarknessHell,
+                                         final TimedDescription<?> newLocationDescriptionOther) {
         return con(to, wo, cardinalDirection, () -> actionName, standardDuration,
                 newLocationDescriptionUnknownHell,
                 newLocationDescriptionUnknownDunkel, newLocationDescriptionKnownFromDarknessHell,
@@ -780,7 +780,7 @@ public class SpatialConnection {
                                 .timed(standardDuration));
     }
 
-    public static SpatialConnection con(
+    private static SpatialConnection con(
             final GameObjectId to,
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,

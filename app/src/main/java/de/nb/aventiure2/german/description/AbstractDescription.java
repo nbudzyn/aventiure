@@ -30,11 +30,11 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
     private final DescriptionParams params;
 
-    protected AbstractDescription() {
+    AbstractDescription() {
         this(new DescriptionParams(false, false, false));
     }
 
-    protected AbstractDescription(final DescriptionParams params) {
+    AbstractDescription(final DescriptionParams params) {
         this.params = params;
     }
 

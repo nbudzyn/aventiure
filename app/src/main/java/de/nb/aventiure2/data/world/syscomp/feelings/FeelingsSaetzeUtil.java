@@ -116,7 +116,7 @@ public class FeelingsSaetzeUtil {
                 adjektivPhrase.alsAdvAngabeSkopusVerbAllg());
     }
 
-    public static ImmutableList<Satz> altAnsehenSaetze(
+    private static ImmutableList<Satz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdvAngabeSkopusVerbAllg advAngabe) {

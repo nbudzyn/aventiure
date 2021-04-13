@@ -17,7 +17,7 @@ import static java.util.Arrays.asList;
  * Biorhythmus für ein bestimmtes Gefühl: Zu gewissen Tages- und Nachtzeiten
  * ist das Gefühl üblicherweise soundso stark.
  */
-public class Biorhythmus {
+class Biorhythmus {
     private final List<Pair<AvTime, Integer>> pairsInTimeOrder;
 
     public Biorhythmus(final AvTime time1, final Integer intensity1,

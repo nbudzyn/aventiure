@@ -59,7 +59,7 @@ public class SpatialConnectionData {
                 newLocationDescription);
     }
 
-    public static SpatialConnectionData conData(
+    private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             final String actionDescription,
@@ -69,7 +69,7 @@ public class SpatialConnectionData {
                 newLocationDescription.timed(standardDuration));
     }
 
-    public static SpatialConnectionData conData(
+    private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             final String actionDescription,
@@ -89,7 +89,7 @@ public class SpatialConnectionData {
         return conData(wo, null, actionName, standardDuration, scMoveDescriptionProvider);
     }
 
-    public static SpatialConnectionData conData(
+    private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             final String actionName,
@@ -119,7 +119,7 @@ public class SpatialConnectionData {
                 scMoveAltTimedDescriptionProvider);
     }
 
-    public static SpatialConnectionData conData(
+    private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             final String actionName,
@@ -177,7 +177,7 @@ public class SpatialConnectionData {
         );
     }
 
-    public static SpatialConnectionData conData(
+    private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,

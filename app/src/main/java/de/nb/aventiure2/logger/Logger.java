@@ -19,7 +19,7 @@ public class Logger {
             value = newValue;
         }
 
-        public int getValue() {
+        int getValue() {
             return value;
         }
     }

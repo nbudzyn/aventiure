@@ -39,14 +39,14 @@ public enum Lichtverhaeltnisse {
     /**
      * Gibt einen Satz zurück wie "es wird hell".
      */
-    public EinzelnerSatz esWirdSatz() {
+    private EinzelnerSatz esWirdSatz() {
         return esWirdSatz(null);
     }
 
     /**
      * Gibt einen Satz zurück wie "und es wird hell".
      */
-    public EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
         return getAdjektiv().alsEsWirdSatz(anschlusswort);
     }
 
@@ -60,11 +60,11 @@ public enum Lichtverhaeltnisse {
     /**
      * Gibt einen Satz zurück wie "und es ist hell".
      */
-    public EinzelnerSatz esIstSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz esIstSatz(final @Nullable String anschlusswort) {
         return getAdjektiv().alsEsIstSatz(anschlusswort);
     }
 
-    public AdjektivOhneErgaenzungen getAdjektiv() {
+    private AdjektivOhneErgaenzungen getAdjektiv() {
         return adjektiv;
     }
 }

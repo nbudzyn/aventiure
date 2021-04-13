@@ -18,7 +18,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * Beschreibt das Gefühl eines Feeling Beings
  * gegenüber dem Target, wenn die beiden sich begegnen.
  */
-public interface FeelingsDescriber {
+interface FeelingsDescriber {
     /**
      * Gibt eventuell adverbiale Angaben zurück, die beschreiben, welchen Eindruck dieses
      * Feeling Being - basiert auf diesem {@link FeelingTowardsType} - auf das  Target

@@ -457,7 +457,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "der schummrige Morgen" oder "der Tag" zurück.
      */
-    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelDef(
+    private ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelDef(
             final Tageszeit tageszeit) {
         final ImmutableCollection<AdjektivOhneErgaenzungen> altAdj =
                 altAdjTageszeitUnterOffenemHimmel(tageszeit);
@@ -474,7 +474,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "ein schummriger Morgen" zurück, immer mit Adjektiv, ggf. leer.
      */
-    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelIndefMitAdj(
+    private ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelIndefMitAdj(
             final Tageszeit tageszeit) {
         // "ein schummriger Morgen"
         return mapToSet(altAdjTageszeitUnterOffenemHimmel(tageszeit), a ->
@@ -500,7 +500,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "schummeriger Morgen" zurück (immer mit Adjektivphrase), evtl. leer.
      */
-    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjMorgenUnterOffenenHimmel() {
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAdjMorgenUnterOffenenHimmel() {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
         switch (this) {
@@ -526,7 +526,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
      */
-    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjTagUnterOffenenHimmel() {
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAdjTagUnterOffenenHimmel() {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
         switch (this) {
@@ -550,7 +550,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "schummerige" zurück, ggf. leer.
      */
-    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjAbendUnterOffenenHimmel() {
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAdjAbendUnterOffenenHimmel() {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
         switch (this) {
@@ -573,7 +573,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     /**
      * Gibt Alternativen wie "stockdunkel" zurück, evtl. leer.
      */
-    ImmutableCollection<AdjektivOhneErgaenzungen> altAdjNachtUnterOffenenHimmel() {
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAdjNachtUnterOffenenHimmel() {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
         switch (this) {

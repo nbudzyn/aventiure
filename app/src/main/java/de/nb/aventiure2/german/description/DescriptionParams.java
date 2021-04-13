@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.description;
 /**
  * Parameter einer {@link AbstractDescription} - mutable!
  */
-public class DescriptionParams {
+class DescriptionParams {
     /**
      * Whether the narration can be continued by a Satzreihenglied without subject where
      * the player character is the implicit subject (such as " und gehst durch die Tür.")

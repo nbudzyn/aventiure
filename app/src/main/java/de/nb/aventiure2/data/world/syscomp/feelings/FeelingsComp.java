@@ -64,11 +64,11 @@ import static java.util.Arrays.asList;
  * has needs and feelings.
  */
 public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
-    protected TimeTaker timeTaker;
+    private final TimeTaker timeTaker;
 
     private final SCActionStepCountDao scActionStepCountDao;
 
-    protected final Narrator n;
+    private final Narrator n;
 
     private final World world;
     @Nullable

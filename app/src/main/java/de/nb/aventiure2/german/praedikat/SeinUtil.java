@@ -29,11 +29,11 @@ public class SeinUtil {
         return istSind(subjektEntitaeten.size());
     }
 
-    public static String istSind(final int number) {
+    private static String istSind(final int number) {
         return istSind(Numerus.forNumber(number));
     }
 
-    public static String istSind(final Numerus numerus) {
+    private static String istSind(final Numerus numerus) {
         return requireNonNull(VERB.getPraesensOhnePartikel(P3, numerus));
     }
 }

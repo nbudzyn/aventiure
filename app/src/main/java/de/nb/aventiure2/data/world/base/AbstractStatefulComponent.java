@@ -79,7 +79,7 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         dao.insert(pcd);
     }
 
-    public PCD requirePcd() {
+    protected PCD requirePcd() {
         return requireNonNull(getPcd());
     }
 

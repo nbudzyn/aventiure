@@ -15,14 +15,14 @@ import de.nb.aventiure2.german.description.AbstractDescription;
  */
 @Immutable
 @ParametersAreNonnullByDefault
-public class TemporaryNarration {
+class TemporaryNarration {
     @Nonnull
     private final Narration.NarrationSource narrationSource;
 
     @Nonnull
     private final Collection<AbstractDescription<?>> descriptionAlternatives;
 
-    public TemporaryNarration(
+    TemporaryNarration(
             final Narration.NarrationSource narrationSource,
             final Collection<AbstractDescription<?>> descriptionAlternatives) {
         this.narrationSource = narrationSource;
@@ -30,12 +30,12 @@ public class TemporaryNarration {
     }
 
     @Nonnull
-    public Narration.NarrationSource getNarrationSource() {
+    Narration.NarrationSource getNarrationSource() {
         return narrationSource;
     }
 
     @Nonnull
-    public Collection<AbstractDescription<?>> getDescriptionAlternatives() {
+    Collection<AbstractDescription<?>> getDescriptionAlternatives() {
         return descriptionAlternatives;
     }
 }

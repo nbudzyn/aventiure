@@ -90,7 +90,7 @@ public class AltTimedDescriptionsBuilder {
         return addAll(stream.collect(toImmutableSet()));
     }
 
-    public AltTimedDescriptionsBuilder addAll(
+    private AltTimedDescriptionsBuilder addAll(
             final ImmutableCollection.Builder<
                     ? extends TimedDescription<
                             ? extends AbstractDescription<?>>> builder) {
@@ -167,7 +167,7 @@ public class AltTimedDescriptionsBuilder {
         return map(d -> d.phorikKandidat(numerusGenus, bezugsobjekt));
     }
 
-    public AltTimedDescriptionsBuilder map(
+    private AltTimedDescriptionsBuilder map(
             final UnaryOperator<TimedDescription<? extends AbstractDescription<?>>> op) {
         if (this.op == null) {
             this.op = op;

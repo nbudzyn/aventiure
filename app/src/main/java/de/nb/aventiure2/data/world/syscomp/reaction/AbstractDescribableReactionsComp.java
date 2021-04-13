@@ -15,9 +15,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 public abstract class AbstractDescribableReactionsComp extends AbstractReactionsComp {
     protected final CounterDao counterDao;
 
-    public AbstractDescribableReactionsComp(final GameObjectId id,
-                                            final CounterDao counterDao,
-                                            final Narrator n, final World world) {
+    protected AbstractDescribableReactionsComp(final GameObjectId id,
+                                               final CounterDao counterDao,
+                                               final Narrator n, final World world) {
         super(id, n, world);
         this.counterDao = counterDao;
     }

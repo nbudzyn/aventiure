@@ -14,7 +14,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
  * Beschreibt dem Spieler die Bewegung eines {@link IMovingGO}. Beschreibt
  * auch die Bewegung des SC in Interaktion mit diesem <code>IMovingGO</code>.
  */
-public interface IMovementNarrator {
+interface IMovementNarrator {
     // IDEA MovementSystem fasst alle Movement-Besxhreibungen
     //  zusammen, auch bei mehreren NPCs am selben Ort. (VOR den Reactions.)
 

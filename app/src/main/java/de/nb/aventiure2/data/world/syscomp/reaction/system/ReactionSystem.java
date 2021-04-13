@@ -102,9 +102,9 @@ public class ReactionSystem
                 toId);
     }
 
-    public void onEnter(final GameObjectId locatableId,
-                        @Nullable final ILocationGO from,
-                        final GameObjectId toId) {
+    private void onEnter(final GameObjectId locatableId,
+                         @Nullable final ILocationGO from,
+                         final GameObjectId toId) {
         onEnter((ILocatableGO) world.load(locatableId), from, toId);
     }
 

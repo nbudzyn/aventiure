@@ -61,11 +61,11 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     /**
      * Constructor for {@link AbstractTalkingComp}.
      */
-    public AbstractTalkingComp(final GameObjectId gameObjectId,
-                               final AvDatabase db,
-                               final TimeTaker timeTaker, final Narrator n,
-                               final World world,
-                               final boolean initialSchonBegruesstMitSC) {
+    protected AbstractTalkingComp(final GameObjectId gameObjectId,
+                                  final AvDatabase db,
+                                  final TimeTaker timeTaker, final Narrator n,
+                                  final World world,
+                                  final boolean initialSchonBegruesstMitSC) {
         super(gameObjectId, db.talkingDao());
         counterDao = db.counterDao();
         this.n = n;

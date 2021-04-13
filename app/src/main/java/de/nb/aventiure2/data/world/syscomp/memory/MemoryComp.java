@@ -174,8 +174,8 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
      * {@link de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IKnownChangedReactions}
      * about any change.
      */
-    public void narrateAndUpgradeKnown(final IGameObject otherGameObject,
-                                       final Known minimalKnown) {
+    private void narrateAndUpgradeKnown(final IGameObject otherGameObject,
+                                        final Known minimalKnown) {
         narrateAndUpgradeKnown(otherGameObject.getId(), minimalKnown);
     }
 

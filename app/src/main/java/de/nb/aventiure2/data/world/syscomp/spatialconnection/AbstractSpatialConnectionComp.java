@@ -32,11 +32,11 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
     protected final Narrator n;
     protected final World world;
 
-    public AbstractSpatialConnectionComp(final GameObjectId id,
-                                         final AvDatabase db,
-                                         final TimeTaker timeTaker,
-                                         final Narrator n,
-                                         final World world) {
+    protected AbstractSpatialConnectionComp(final GameObjectId id,
+                                            final AvDatabase db,
+                                            final TimeTaker timeTaker,
+                                            final Narrator n,
+                                            final World world) {
         super(id);
         this.db = db;
         this.timeTaker = timeTaker;

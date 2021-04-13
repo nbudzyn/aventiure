@@ -103,7 +103,7 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
 
     @NonNull
     @Contract(value = "_ -> new", pure = true)
-    public PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
+    private PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
             final WoertlicheRede woertlicheRede) {
         return new PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle(verb,
                 kasusOderPraepositionalkasus, woertlicheRede);

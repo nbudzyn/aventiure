@@ -61,7 +61,7 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return alsSatz(null);
     }
 
-    public EinzelnerSatz alsSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz alsSatz(final @Nullable String anschlusswort) {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
     }
 

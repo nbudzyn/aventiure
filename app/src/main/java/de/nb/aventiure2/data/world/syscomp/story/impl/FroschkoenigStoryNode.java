@@ -195,7 +195,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
+    private static void narrateAndDoHintAction_MitKugelZumBrunnenGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -215,7 +215,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
+    private static void narrateAndDoHintAction_EtwasImBrunnenVerloren(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -241,7 +241,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
+    private static void narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -267,7 +267,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     @SuppressWarnings("unchecked")
-    public static void narrateAndDoHintAction_ZumSchlossfestGegangen(
+    private static void narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -293,7 +293,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
+    private static void narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -306,7 +306,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_PrinzIstErloest(
+    private static void narrateAndDoHintAction_PrinzIstErloest(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -319,7 +319,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    public static void narrateAndDoHintAction_PrinzIstWeggefahren(
+    private static void narrateAndDoHintAction_PrinzIstWeggefahren(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {
         final AltDescriptionsBuilder alt = alt();

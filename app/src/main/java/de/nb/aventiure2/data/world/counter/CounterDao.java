@@ -79,7 +79,7 @@ public abstract class CounterDao {
         reset(EnumSet.allOf(eenum));
     }
 
-    public void reset(final Iterable<? extends Enum<?>> ids) {
+    private void reset(final Iterable<? extends Enum<?>> ids) {
         for (final Enum<?> id : ids) {
             reset(id);
         }

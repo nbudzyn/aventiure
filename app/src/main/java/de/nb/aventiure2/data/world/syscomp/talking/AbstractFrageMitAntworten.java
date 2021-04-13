@@ -21,9 +21,9 @@ public abstract class AbstractFrageMitAntworten {
     protected final RapunzelStateComp stateComp;
     protected final FeelingsComp feelingsComp;
     protected final IScBegruessable scBegruessable;
-    protected final GameObjectId gameObjectId;
+    private final GameObjectId gameObjectId;
 
-    public AbstractFrageMitAntworten(
+    protected AbstractFrageMitAntworten(
             final GameObjectId gameObjectId,
             final CounterDao counterDao,
             final Narrator n, final World world, final RapunzelStateComp stateComp,
@@ -71,7 +71,7 @@ public abstract class AbstractFrageMitAntworten {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
+    private SubstantivischePhrase anaph(final boolean descShortIfKnown) {
         return world.anaph(gameObjectId, descShortIfKnown);
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractFrageMitAntworten {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected final EinzelneSubstantivischePhrase getDescription(
+    private EinzelneSubstantivischePhrase getDescription(
             final boolean shortIfKnown) {
         return world.getDescription(gameObjectId, shortIfKnown);
     }

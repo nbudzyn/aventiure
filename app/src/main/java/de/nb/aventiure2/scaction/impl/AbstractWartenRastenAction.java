@@ -20,7 +20,7 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
         WARTEN_ODER_RASTEN_IN_FOLGE
     }
 
-    protected final CounterDao counterDao;
+    final CounterDao counterDao;
 
     AbstractWartenRastenAction(
             final CounterDao counterDao, final SCActionStepCountDao scActionStepCountDao,

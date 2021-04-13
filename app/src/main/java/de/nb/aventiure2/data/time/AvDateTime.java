@@ -140,7 +140,7 @@ public class AvDateTime {
         return getTime().getHour();
     }
 
-    public long getDay() {
+    private long getDay() {
         return secsSinceBeginning / SECS_IN_A_DAY;
     }
 

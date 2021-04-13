@@ -39,7 +39,7 @@ public class DescriptionUmformulierer {
     }
 
     @CheckReturnValue
-    public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
+    private static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
             final Collection<? extends TimedDescription<?>> descriptions) {
         return descriptions.stream()

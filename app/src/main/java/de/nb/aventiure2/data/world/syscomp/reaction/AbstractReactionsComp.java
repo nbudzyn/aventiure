@@ -27,9 +27,9 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
 
     // IDEA Player should care about their character / stuff / achievements / reputation.
 
-    public AbstractReactionsComp(final GameObjectId id,
-                                 final Narrator n,
-                                 final World world) {
+    protected AbstractReactionsComp(final GameObjectId id,
+                                    final Narrator n,
+                                    final World world) {
         super(id);
         this.n = n;
         this.world = world;

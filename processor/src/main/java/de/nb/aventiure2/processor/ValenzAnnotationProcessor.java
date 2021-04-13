@@ -31,6 +31,7 @@ import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
 
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SuppressWarnings("WeakerAccess")
 public class ValenzAnnotationProcessor extends AbstractProcessor {
     // See https://stablekernel.com/article/the-10-step-guide-to-annotation-processing-in-android
     // -studio/

@@ -11,8 +11,8 @@ public enum StructuralElement implements IKonstituenteOrStructuralElement {
         return other == StructuralElement.min(this, other);
     }
 
-    public static StructuralElement min(final StructuralElement endsThis,
-                                        final StructuralElement startsNew) {
+    private static StructuralElement min(final StructuralElement endsThis,
+                                         final StructuralElement startsNew) {
         if (endsThis.ordinal() > startsNew.ordinal()) {
             return endsThis;
         }

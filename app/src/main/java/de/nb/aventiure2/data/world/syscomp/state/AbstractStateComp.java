@@ -18,7 +18,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 public abstract class AbstractStateComp<S extends Enum<S>>
         extends AbstractStatefulComponent<StatePCD> {
     private final TimeTaker timeTaker;
-    protected final Narrator n;
+    private final Narrator n;
 
 
     protected final World world;

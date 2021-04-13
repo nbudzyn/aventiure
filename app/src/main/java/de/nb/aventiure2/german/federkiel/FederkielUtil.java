@@ -82,7 +82,7 @@ public class FederkielUtil {
         }
     }
 
-    public static de.nb.federkiel.deutsch.grammatik.kategorie.Kasus
+    private static de.nb.federkiel.deutsch.grammatik.kategorie.Kasus
     toFederkielKasus(final Kasus kasus) {
         switch (kasus) {
             case NOM:

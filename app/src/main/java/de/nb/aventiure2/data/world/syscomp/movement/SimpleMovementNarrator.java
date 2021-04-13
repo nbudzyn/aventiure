@@ -51,7 +51,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      */
     private final boolean eherGross;
 
-    public SimpleMovementNarrator(
+    protected SimpleMovementNarrator(
             final GameObjectId gameObjectId,
             final Narrator n,
             final World world,
@@ -578,16 +578,16 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      *                     Game Object schon kennt, wird eher eine
      *                     kürzere Beschreibung gewählt
      */
-    protected final EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
+    private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
         return world.getDescription(gameObjectId, shortIfKnown);
     }
 
     @NonNull
-    protected final SpielerCharakter loadSC() {
+    private SpielerCharakter loadSC() {
         return world.loadSC();
     }
 
-    protected final GameObjectId getGameObjectId() {
+    private GameObjectId getGameObjectId() {
         return gameObjectId;
     }
 }

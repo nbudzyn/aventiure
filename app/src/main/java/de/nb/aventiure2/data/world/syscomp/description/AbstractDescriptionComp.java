@@ -36,7 +36,7 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
 
     public abstract EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown();
 
-    public abstract EinzelneSubstantivischePhrase getShortDescriptionWhenKnown();
+    protected abstract EinzelneSubstantivischePhrase getShortDescriptionWhenKnown();
 
 
     @NonNull

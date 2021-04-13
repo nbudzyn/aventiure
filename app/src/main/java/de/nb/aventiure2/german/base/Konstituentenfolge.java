@@ -160,7 +160,7 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
      */
     @Nonnull
     @CheckReturnValue
-    public static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
+    private static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 

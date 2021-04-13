@@ -37,7 +37,7 @@ public class GermanStringUtil {
         throw new NoLetterException("No letter found in \"" + string + "\"");
     }
 
-    public static String capitalize(final String string, final int index) {
+    private static String capitalize(final String string, final int index) {
         return string.substring(0, index)
                 + capitalize(string.substring(index, index + 1))
                 + string.substring(index + 1);

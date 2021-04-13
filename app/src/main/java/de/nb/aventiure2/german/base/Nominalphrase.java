@@ -56,9 +56,9 @@ public class Nominalphrase
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
     @NonNull
-    public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
-                                   final String nominalNominativDativUndAkkusativ) {
+    private static Nominalphrase np(final NumerusGenus numerusGenus,
+                                    @Nullable final Artikel.Typ artikelTyp,
+                                    final String nominalNominativDativUndAkkusativ) {
         return np(numerusGenus, artikelTyp, nominalNominativDativUndAkkusativ,
                 (IBezugsobjekt) null);
     }
@@ -98,11 +98,11 @@ public class Nominalphrase
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
     @NonNull
-    public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
-                                   final String nominalNominativ,
-                                   final String nominalDativ,
-                                   final String nominalAkkusativ) {
+    private static Nominalphrase np(final NumerusGenus numerusGenus,
+                                    @Nullable final Artikel.Typ artikelTyp,
+                                    final String nominalNominativ,
+                                    final String nominalDativ,
+                                    final String nominalAkkusativ) {
         return np(numerusGenus, artikelTyp, nominalNominativ, nominalDativ, nominalAkkusativ,
                 null);
     }
@@ -242,10 +242,10 @@ public class Nominalphrase
     }
 
 
-    public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
-                                   final Flexionsreihe flexionsreiheArtikellos,
-                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+    private static Nominalphrase np(final NumerusGenus numerusGenus,
+                                    @Nullable final Artikel.Typ artikelTyp,
+                                    final Flexionsreihe flexionsreiheArtikellos,
+                                    @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Nominalphrase(numerusGenus, artikelTyp, null, flexionsreiheArtikellos,
                 bezugsobjekt);
     }
@@ -479,7 +479,7 @@ public class Nominalphrase
     }
 
     @Nullable
-    public Artikel getArtikel() {
+    private Artikel getArtikel() {
         return Artikel.get(artikelTyp, getNumerusGenus());
     }
 

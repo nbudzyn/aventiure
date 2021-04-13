@@ -133,7 +133,7 @@ public class AltDescriptionsBuilder {
         return addAll(stream.collect(toImmutableSet()));
     }
 
-    public AltDescriptionsBuilder addAll(final ImmutableCollection.Builder<?> builder) {
+    private AltDescriptionsBuilder addAll(final ImmutableCollection.Builder<?> builder) {
         return addAll(builder.build());
     }
 
@@ -224,7 +224,7 @@ public class AltDescriptionsBuilder {
         return map(d -> d.phorikKandidat(numerusGenus, bezugsobjekt));
     }
 
-    public AltDescriptionsBuilder map(final UnaryOperator<AbstractDescription<?>> op) {
+    private AltDescriptionsBuilder map(final UnaryOperator<AbstractDescription<?>> op) {
         if (this.op == null) {
             this.op = op;
         } else {

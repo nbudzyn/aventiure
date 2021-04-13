@@ -80,7 +80,7 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Nullable
-    public IAdvAngabeOderInterrogativSkopusSatz getAdvAngabeSkopusSatz() {
+    IAdvAngabeOderInterrogativSkopusSatz getAdvAngabeSkopusSatz() {
         return advAngabeSkopusSatz;
     }
 

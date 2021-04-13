@@ -86,9 +86,9 @@ public class TimedDescription<
         this(description, timeElapsed, null);
     }
 
-    public TimedDescription(final D description,
-                            final AvTimeSpan timeElapsed,
-                            @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
+    private TimedDescription(final D description,
+                             final AvTimeSpan timeElapsed,
+                             @Nullable final Enum<?> counterIdIncrementedIfTextIsNarrated) {
         this.description = description;
         this.timeElapsed = timeElapsed;
         this.counterIdIncrementedIfTextIsNarrated = counterIdIncrementedIfTextIsNarrated;

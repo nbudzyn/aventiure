@@ -318,7 +318,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasenLuft(final Tageszeit tageszeit) {
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasenLuft(final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();
 
@@ -438,7 +438,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @NonNull
     @CheckReturnValue
-    public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausKnappUeberGefrierpunkt(
+    private static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausKnappUeberGefrierpunkt(
             final AvTime time) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableSet.builder();
@@ -453,7 +453,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @NonNull
     @CheckReturnValue
-    public static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSehrHeiss(
+    private static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSehrHeiss(
             final AvTime time) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableSet.builder();

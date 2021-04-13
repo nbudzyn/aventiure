@@ -14,11 +14,11 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
  * or at least react to an offer.
  */
 public abstract class AbstractTakingComp extends AbstractStatelessComponent {
-    protected final AvDatabase db;
+    private final AvDatabase db;
     protected Narrator n;
     protected final World world;
 
-    public AbstractTakingComp(
+    protected AbstractTakingComp(
             final GameObjectId id,
             final AvDatabase db, final Narrator n, final World world) {
         super(id);

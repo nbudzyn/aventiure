@@ -6,10 +6,10 @@ import androidx.annotation.NonNull;
  * Eine Ergänzung des Adjektivs wie "sehr", "äußerst", "kaum" etc. Sie kann in
  * der Regel <i>nicht</i> abgetrennt (aus der Adjektivphrase herausgelöst) werden.
  */
-public class GraduativeAngabe {
+class GraduativeAngabe {
     private final String text;
 
-    public GraduativeAngabe(final String text) {
+    GraduativeAngabe(final String text) {
         this.text = text;
     }
 

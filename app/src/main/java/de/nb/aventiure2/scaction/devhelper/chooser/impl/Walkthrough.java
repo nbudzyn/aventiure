@@ -9,6 +9,7 @@ import static java.util.Arrays.asList;
 /**
  * Eine vordefinierte Aktionsfolge
  */
+@SuppressWarnings("WeakerAccess")
 public class Walkthrough {
     public static final Walkthrough ANFANG_BIS_FROSCHVERSPRECHEN =
             new Walkthrough(

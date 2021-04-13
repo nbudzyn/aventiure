@@ -101,10 +101,10 @@ public class EinzelnerSatz implements Satz {
         this(anschlusswort, subjekt, praedikat, null);
     }
 
-    public EinzelnerSatz(@Nullable final String anschlusswort,
-                         @Nullable final SubstantivischePhrase subjekt,
-                         final PraedikatOhneLeerstellen praedikat,
-                         @Nullable final Konditionalsatz angabensatz) {
+    private EinzelnerSatz(@Nullable final String anschlusswort,
+                          @Nullable final SubstantivischePhrase subjekt,
+                          final PraedikatOhneLeerstellen praedikat,
+                          @Nullable final Konditionalsatz angabensatz) {
         if (praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
             if (subjekt != null) {
                 Personalpronomen.checkExpletivesEs(subjekt);
@@ -325,7 +325,7 @@ public class EinzelnerSatz implements Satz {
                         null);
     }
 
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht() {
+    private Konstituente getSpeziellesVorfeldSehrErwuenscht() {
         return praedikat.getSpeziellesVorfeldSehrErwuenscht(
                 getPersonFuerPraedikat(), getNumerusFuerPraedikat(),
                 anschlusswort != null);

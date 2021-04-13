@@ -21,7 +21,7 @@ public class WalkthroughActionChooser implements IActionChooser {
         this(walkthrough, Integer.MAX_VALUE);
     }
 
-    public WalkthroughActionChooser(final Walkthrough walkthrough, final int maxSteps) {
+    private WalkthroughActionChooser(final Walkthrough walkthrough, final int maxSteps) {
         this.walkthrough = walkthrough;
         this.maxSteps = maxSteps;
     }

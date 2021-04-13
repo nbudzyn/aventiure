@@ -17,7 +17,7 @@ public class AbstractPersistentComponentData {
     @Ignore
     private boolean changed = false;
 
-    public AbstractPersistentComponentData(@NonNull final GameObjectId gameObjectId) {
+    protected AbstractPersistentComponentData(@NonNull final GameObjectId gameObjectId) {
         this.gameObjectId = gameObjectId;
     }
 

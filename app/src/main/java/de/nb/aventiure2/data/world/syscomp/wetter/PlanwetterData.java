@@ -11,10 +11,10 @@ import de.nb.aventiure2.data.time.AvDateTime;
  */
 @Immutable
 class PlanwetterData {
-    final AvDateTime planDateTime;
+    private final AvDateTime planDateTime;
 
     @Embedded(prefix = "plan")
-    public final WetterData wetter;
+    private final WetterData wetter;
 
     // FIXME Wetterwege: Man weiß Planwetter und Planzeitpunkt.
     //  Man ermittelt immer - ausgehend vom aktuelken Wetter - den nächsten Schritt in Richtung
@@ -27,5 +27,15 @@ class PlanwetterData {
                    final WetterData wetter) {
         this.planDateTime = planDateTime;
         this.wetter = wetter;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    AvDateTime getPlanDateTime() {
+        return planDateTime;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    WetterData getWetter() {
+        return wetter;
     }
 }

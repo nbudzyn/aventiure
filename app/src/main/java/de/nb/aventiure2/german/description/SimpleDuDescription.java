@@ -165,7 +165,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     @CheckReturnValue
-    public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
+    Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
         return joinToKonstituentenfolge(verb, remainder, getEndsThis())
                 .joinToSingleKonstituente();
     }
