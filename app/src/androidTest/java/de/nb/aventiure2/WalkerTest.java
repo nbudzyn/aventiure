@@ -18,6 +18,7 @@ import java.util.List;
 import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
@@ -29,6 +30,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser
 import de.nb.aventiure2.score.ScoreService;
 
 import static com.google.common.truth.Truth.assertThat;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
@@ -133,6 +135,8 @@ public class WalkerTest extends AndroidTestBase {
 
                 final SpielerCharakter spielerCharakter = world.loadSC();
 
+                final ITalkerGO zauberin = (ITalkerGO) world.load(RAPUNZELS_ZAUBERIN);
+
                 final ImmutableList<? extends ILivingBeingGO> livingBeings =
                         world.loadDescribableLocatableLivingBeings();
 
@@ -142,6 +146,10 @@ public class WalkerTest extends AndroidTestBase {
                         + spielerCharakter.talkingComp().isInConversation()
                         + ", spielerCharakter.talkingComp().getTalkingTo(): "
                         + spielerCharakter.talkingComp().getTalkingTo()
+                        + ", zauberin.talkingComp().isInConversation(): "
+                        + zauberin.talkingComp().isInConversation()
+                        + ", zauberin.talkingComp().getTalkingTo(): "
+                        + zauberin.talkingComp().getTalkingTo()
                         + ", Text: " + n.getNarrationText());
             }
 

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 
 public enum Windstaerke {
     WINDSTILL,

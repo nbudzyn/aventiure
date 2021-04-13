@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner;
 
 import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;

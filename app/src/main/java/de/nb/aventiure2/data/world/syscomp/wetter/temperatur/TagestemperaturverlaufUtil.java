@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import de.nb.aventiure2.data.time.AvTime;
 
@@ -7,21 +7,22 @@ import static de.nb.aventiure2.data.time.AvTime.oClock;
 /**
  * Statische Methoden zur Berechnung des Temperaturverlaufs über den Tag.
  */
-class TagestemperaturverlaufUtil {
+public class TagestemperaturverlaufUtil {
     private TagestemperaturverlaufUtil() {
     }
 
     /**
      * Gibt zurück, ob zu dieser Uhrzeit Sätze über "heute" oder "den Tag" sinnvoll sind.
      */
-    public static boolean saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(final AvTime time) {
+    static boolean saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(final AvTime time) {
         return time.isWithin(
                 oClock(7, 59, 59),
                 oClock(14));
     }
 
-    static Temperatur calcTemperatur(final Temperatur tageshoechsttemperatur,
-                                     final Temperatur tagestiefsttemperatur, final AvTime time) {
+    public static Temperatur calcTemperatur(final Temperatur tageshoechsttemperatur,
+                                            final Temperatur tagestiefsttemperatur,
+                                            final AvTime time) {
         return Temperatur.interpolate(tagestiefsttemperatur,
                 tageshoechsttemperatur,
                 calcAnteil(time));

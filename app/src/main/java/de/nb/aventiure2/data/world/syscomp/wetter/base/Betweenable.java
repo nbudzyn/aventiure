@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.base;
 
 public interface Betweenable<T> extends Comparable<T> {
     default boolean isBetweenIncluding(final T one, final T other) {

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -8,6 +8,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.Betweenable;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
@@ -101,7 +102,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
      * Erzeugt ALternativen wie "Die Sonne geht auf" - ggf. auch eine leere Collection.
      */
     @CheckReturnValue
-    ImmutableCollection<Satz>
+    public ImmutableCollection<Satz>
     altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSaetzeSofernSichtbar(
             final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
@@ -159,7 +160,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altScKommtUnterOffenenHimmel(
+    public ImmutableCollection<Satz> altScKommtUnterOffenenHimmel(
             final AvTime time, final boolean warVorherDrinnen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
@@ -207,7 +208,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
 
     @CheckReturnValue
-    ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
+    public ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
             final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
@@ -421,7 +422,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    boolean isUnauffaellig(final Tageszeit tageszeit) {
+    public boolean isUnauffaellig(final Tageszeit tageszeit) {
         if (tageszeit == NACHTS) {
             return compareTo(BEWOELKT) <= 0;
         }
@@ -593,14 +594,14 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit,
-                                                          final boolean unterOffenemHimmel) {
+    public ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Tageszeit tageszeit,
+                                                                 final boolean unterOffenemHimmel) {
         return altImLicht(tageszeit, unterOffenemHimmel,
                 BEI_DAT.mit(npArtikellos(LICHT)));
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit,
-                                                               final boolean unterOffenemHimmel) {
+    public ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Tageszeit tageszeit,
+                                                                      final boolean unterOffenemHimmel) {
         return altImLicht(tageszeit, unterOffenemHimmel,
                 BEI_DAT.mit(npArtikellos(TAGESLICHT)));
     }
@@ -619,7 +620,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
     // FIXME "beim Mondschimmer"
     // FIXME "der Hügel liegt in einsamem Mondschein."
 
-    ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
+    public ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
@@ -685,7 +686,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         return alt.build();
     }
 
-    ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
+    public ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final Tageszeit tageszeit, final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();

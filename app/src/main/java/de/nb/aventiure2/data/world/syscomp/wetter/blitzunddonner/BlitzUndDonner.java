@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner;
 
 public enum BlitzUndDonner {
     KEIN_BLITZ_ODER_DONNER,

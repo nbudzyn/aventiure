@@ -1262,6 +1262,8 @@ public class World {
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
      */
     @Nonnull
+    // FIXME Methode ein <T extends IGame> zurückgeben lassen?
+    //  Und so casts sparen?
     public GameObject load(final GameObjectId id) {
         final GameObject gameObject = get(id);
         gameObject.load();

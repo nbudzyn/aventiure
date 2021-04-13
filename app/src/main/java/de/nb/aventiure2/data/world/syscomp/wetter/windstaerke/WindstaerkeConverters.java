@@ -1,21 +1,21 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 
 import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
-public class BewoelkungConverters {
+public class WindstaerkeConverters {
     @TypeConverter
     @Nullable
-    public static Bewoelkung stringToEnum(@Nullable final String string) {
+    public static Windstaerke stringToEnum(@Nullable final String string) {
         if (string == null) {
             return null;
         }
-        return Bewoelkung.valueOf(string);
+        return Windstaerke.valueOf(string);
     }
 
     @TypeConverter
     @Nullable
-    public static String enumToString(@Nullable final Bewoelkung eenum) {
+    public static String enumToString(@Nullable final Windstaerke eenum) {
         if (eenum == null) {
             return null;
         }

@@ -1,4 +1,4 @@
-package de.nb.aventiure2.data.world.syscomp.wetter;
+package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import androidx.annotation.NonNull;
 
@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.Betweenable;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
@@ -83,7 +84,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
 
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    ImmutableCollection<Satz> altScKommtNachDraussenSaetze(final Tageszeit tageszeit) {
+    public ImmutableCollection<Satz> altScKommtNachDraussenSaetze(final Tageszeit tageszeit) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         alt.addAll(mapToList(altStatischeBeschreibungSaetze(tageszeit, true),
@@ -245,7 +246,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<Satz> altIstNochSaetzeDraussen() {
+    public ImmutableCollection<Satz> altIstNochSaetzeDraussen() {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
@@ -277,7 +278,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
     @CheckReturnValue
-    ImmutableList<Praedikativum> altPraedikativa(final boolean draussen) {
+    public ImmutableList<Praedikativum> altPraedikativa(final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
         alt.addAll(altAdjektivphrasen());
@@ -357,7 +358,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasen() {
+    public ImmutableList<AdjPhrOhneLeerstellen> altAdjektivphrasen() {
         switch (this) {
             case KLIRREND_KALT:
                 return ImmutableList.of(
@@ -388,7 +389,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
     }
 
     @CheckReturnValue
-    boolean isUnauffaellig(final Tageszeit tageszeit) {
+    public boolean isUnauffaellig(final Tageszeit tageszeit) {
         if (tageszeit == NACHTS) {
             return this == KUEHL;
         }
