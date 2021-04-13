@@ -3,9 +3,12 @@ package de.nb.aventiure2.german.description;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
+
+import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
@@ -19,12 +22,14 @@ import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 /**
  * Ein Builder für alternative {@link TimedDescription}s.
  */
+@CanIgnoreReturnValue
 public class AltTimedDescriptionsBuilder {
     private final ImmutableList.Builder<TimedDescription<? extends AbstractDescription<?>>>
             altDescriptions;
 
     private UnaryOperator<TimedDescription<? extends AbstractDescription<?>>> op = null;
 
+    @CheckReturnValue
     public static AltTimedDescriptionsBuilder altTimed() {
         return new AltTimedDescriptionsBuilder();
     }
@@ -33,6 +38,7 @@ public class AltTimedDescriptionsBuilder {
      * Erzeugt einen {@link AltTimedDescriptionsBuilder} auf Basis des
      * AltDescriptionsBuilders.
      */
+    @CheckReturnValue
     AltTimedDescriptionsBuilder(final AltDescriptionsBuilder altDescBuilder,
                                 final AvTimeSpan timeElapsed) {
         altDescriptions =
@@ -40,6 +46,7 @@ public class AltTimedDescriptionsBuilder {
                         .addAll(toTimed(altDescBuilder.build(), timeElapsed));
     }
 
+    @CheckReturnValue
     private AltTimedDescriptionsBuilder() {
         altDescriptions = ImmutableList.builder();
     }
@@ -180,10 +187,12 @@ public class AltTimedDescriptionsBuilder {
         return this;
     }
 
+    @CheckReturnValue
     public boolean isEmpty() {
         return altDescriptions.build().isEmpty();
     }
 
+    @CheckReturnValue
     public ImmutableList<TimedDescription<? extends AbstractDescription<?>>> build() {
         if (op == null) {
             return altDescriptions.build();

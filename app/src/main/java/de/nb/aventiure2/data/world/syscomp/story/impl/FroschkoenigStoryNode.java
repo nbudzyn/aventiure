@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -392,11 +393,12 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                         world.loadWetter().wetterComp()
                                 .altDescUeberHeuteOderDenTagWennDraussenSinnvoll();
                 alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
-                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze, "– ein kühler Ort wäre schön"));
+                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze,
+                        SENTENCE,
+                        "Ein kühler Ort wäre schön"));
             } else {
-                alt.addAll(world.loadWetter().wetterComp().getTemperatur()
-                        .altStatischeBeschreibungSaetze(
-                                timeTaker.now().getTageszeit(), false));
+                alt.addAll(world.loadWetter().wetterComp()
+                        .altStatischeTemperaturBeschreibungSaetze());
             }
         }
 

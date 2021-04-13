@@ -9,6 +9,8 @@ import androidx.room.Ignore;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
@@ -21,6 +23,7 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
@@ -111,13 +114,23 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter.altWetterHinweiseFuerDraussen(time, lichtverhaeltnisse, unterOffenemHimmel);
     }
 
+    @CheckReturnValue
+    ImmutableCollection<EinzelnerSatz> altStatischeTemperaturBeschreibungSaetze(
+            final AvTime time,
+            final boolean draussen) {
+        // Weil hier nur die Temperatur beschrieben wird, setzen wir die
+        // Hinweis-Flags nicht zurück.
+        return wetter.altStatischeTemperaturBeschreibungSaetze(time,
+                draussen);
+    }
+
     @NonNull
-    AltDescriptionsBuilder altScKommtNachDraussenInsWetter(
+    AltDescriptionsBuilder altKommtNachDraussen(
             final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
             final boolean unterOffenenHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
-        return wetter.altScKommtNachDraussenInsWetter(time, lichtverhaeltnisseDraussen,
+        return wetter.altKommtNachDraussen(time, lichtverhaeltnisseDraussen,
                 unterOffenenHimmel);
     }
 

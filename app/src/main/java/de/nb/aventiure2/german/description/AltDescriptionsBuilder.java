@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.description;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.Collection;
 import java.util.function.UnaryOperator;
@@ -30,6 +31,7 @@ import static java.util.Arrays.asList;
 /**
  * Ein Builder für alternative {@link AbstractDescription}s.
  */
+@CanIgnoreReturnValue
 public class AltDescriptionsBuilder {
     private final ImmutableSet.Builder<AbstractDescription<?>> alt = builder();
 
@@ -97,10 +99,12 @@ public class AltDescriptionsBuilder {
                 .map(DescriptionBuilder::neuerSatz));
     }
 
+    @CheckReturnValue
     public static AltDescriptionsBuilder alt() {
         return new AltDescriptionsBuilder();
     }
 
+    @CheckReturnValue
     private AltDescriptionsBuilder() {
     }
 
@@ -240,10 +244,12 @@ public class AltDescriptionsBuilder {
         return new AltTimedDescriptionsBuilder(this, timeElapsed);
     }
 
+    @CheckReturnValue
     private boolean isEmpty() {
         return alt.build().isEmpty();
     }
 
+    @CheckReturnValue
     public ImmutableSet<AbstractDescription<?>> build() {
         if (op == null) {
             return alt.build();

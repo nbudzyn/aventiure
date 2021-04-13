@@ -165,10 +165,10 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         if (warVorherDrinnen) {
-            alt.addAll(mapToList(altUnterOffenemHimmelStatischeBeschreibungSaetze(time),
+            alt.addAll(mapToList(altUnterOffenemHimmelStatischSaetze(time),
                     s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
         } else {
-            alt.addAll(altUnterOffenemHimmelStatischeBeschreibungSaetze(time));
+            alt.addAll(altUnterOffenemHimmelStatischSaetze(time));
         }
 
         switch (this) {
@@ -208,7 +208,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
 
     @CheckReturnValue
-    public ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
+    public ImmutableCollection<Satz> altUnterOffenemHimmelStatischSaetze(
             final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
@@ -222,7 +222,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
         //    Vollmondes glänzt darauf."
         //    gestirn, gestirnschein etc.  VOLLMOND
 
-        alt.addAll(altUnterOffenemHimmelStatischeBeschreibungSaetze(time.getTageszeit()));
+        alt.addAll(altUnterOffenemHimmelStatischSaetze(time.getTageszeit()));
 
         switch (this) {
             case WOLKENLOS:
@@ -277,7 +277,7 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
 
     @CheckReturnValue
-    private ImmutableCollection<Satz> altUnterOffenemHimmelStatischeBeschreibungSaetze(
+    private ImmutableCollection<Satz> altUnterOffenemHimmelStatischSaetze(
             final Tageszeit tageszeit) {
         //  IDEA
         //   - "Der Mond glänzt auf dem Weiher"

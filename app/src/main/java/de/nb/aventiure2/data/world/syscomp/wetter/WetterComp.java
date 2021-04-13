@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import javax.annotation.CheckReturnValue;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
@@ -22,6 +24,7 @@ import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -77,11 +80,19 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         }
     }
 
+    @CheckReturnValue
+    public ImmutableCollection<EinzelnerSatz> altStatischeTemperaturBeschreibungSaetze() {
+        return requirePcd()
+                .altStatischeTemperaturBeschreibungSaetze(timeTaker.now().getTime(),
+                        loadScDrinnenDraussen().isDraussen());
+    }
+
+
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altScKommtNachDraussenInsWetter(
+    public ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         return requirePcd()
-                .altScKommtNachDraussenInsWetter(
+                .altKommtNachDraussen(
                         timeTaker.now().getTime(), lichtverhaeltnisseDraussen,
                         isScUnterOffenemHimmel())
                 .build();
