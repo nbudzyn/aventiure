@@ -50,7 +50,7 @@ public class BewoelkungDescDescriber {
      * (der SC hat z.B. eine Weile geschlafen oder Ähnliches, und die Tageszeit
      * hat in der Zeit mehrfach gewechselt - jedenfalls ist nicht mehr als
      * 1 Tag vergangen!) - oder auch einfach einen (einmaligen) Tageszeitenwechsel
-     * in der Bewölkung erlebt.
+     * in der Bewölkung erlebt - gibt eventuell eine leere Collection zurück.
      * <p>
      * Dabei hat sich in der Regel der {@link Bewoelkung}swert gar nicht geändert,
      * aber trotzdem sieht man an der Bewölkung (oder den Gestirnen), dass die
@@ -170,6 +170,9 @@ public class BewoelkungDescDescriber {
                 }
                 break;
             case NACHTS:
+                // Man sieht nicht mehr so gut, weil die Augen sich erst
+                // anpassen müssen. Eigentlich ist es für Nachtverhältnisse
+                // sogar eher hell - zumindest draußen.
                 if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
                     alt.add(
                             neuerSatz(PARAGRAPH, "Darüber ist es vollständig dunkel "
@@ -215,6 +218,9 @@ public class BewoelkungDescDescriber {
                 }
 
                 if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) >= 0) {
+                    // Man sieht nicht mehr so gut, weil die Augen sich erst
+                    // anpassen müssen. Eigentlich ist es für Nachtverhältnisse
+                    // sogar eher hell - zumindest draußen.
                     alt.add(neuerSatz(PARAGRAPH, "Inzwischen ist es Nacht und man",
                             "sieht nicht mehr so gut"),
                             neuerSatz(PARAGRAPH,
@@ -301,6 +307,9 @@ public class BewoelkungDescDescriber {
             case NACHTS:
                 if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
+                            // Eigentlich fühlt es sich nur "dunkel" an! Weil
+                            // vorher einmal hell war. In derselben Nacht könnte später
+                            // etwas "vom Mond hell erleuchtet" o.Ä. sein.
                             "Es ist jetzt vollständig dunkel geworden. Nur noch "
                                     + "die Sterne und der Mond spenden ein wenig Licht"),
                             neuerSatz(PARAGRAPH, "Jetzt sind am Himmel die Sterne zu",
@@ -309,6 +318,8 @@ public class BewoelkungDescDescriber {
 
                 if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) >= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
+                            // Man sieht nicht mehr so gut, weil die Augen sich erst
+                            // anpassen müssen.
                             "Es ist Nacht geworden und man sieht nicht mehr so gut"));
                 }
                 break;
