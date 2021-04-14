@@ -21,10 +21,16 @@ import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEWOELKT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
@@ -378,5 +384,28 @@ public class BewoelkungDescDescriber {
         }
 
         return alt;
+    }
+
+    public AltDescriptionsBuilder altSchoeneTageszeit(
+            final Bewoelkung bewoelkung,
+            final AvTime time,
+            final boolean unterOffenemHimmel) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (unterOffenemHimmel) {
+            // "Es ist ein schöner Abend, die Sonne scheint"
+            alt.addAll(altNeueSaetze(
+                    praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
+                            .alsSatzMitSubjekt(EXPLETIVES_ES),
+                    ",",
+                    satzDescriber
+                            .altUnterOffenemHimmel(bewoelkung, time)));
+        } else {
+            // "Es ist ein schöner Abend"
+            alt.add(praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
+                    .alsSatzMitSubjekt(EXPLETIVES_ES));
+        }
+
+        return alt.schonLaenger();
     }
 }

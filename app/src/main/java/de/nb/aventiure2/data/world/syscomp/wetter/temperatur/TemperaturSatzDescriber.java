@@ -27,24 +27,33 @@ import de.nb.aventiure2.german.satz.ZweiSaetze;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.RECHT_HEISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLIRREND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STARK;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LEIB;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumWerdenMitDat;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.BRENNEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.HERUNTERSCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -254,7 +263,8 @@ public class TemperaturSatzDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<Satz> altDraussenHeuteDerTagSofernSinnvoll(
-            final Temperatur temperatur, final AvTime time) {
+            final Temperatur temperatur, final AvTime time,
+            final boolean sonneNichtErwaehnen) {
         if (!heuteOderDerTagSinnvoll(temperatur, time)) {
             return ImmutableSet.of();
         }
@@ -271,6 +281,12 @@ public class TemperaturSatzDescriber {
                         .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
 
         alt.addAll(altDerTag(temperatur));
+
+        if (!sonneNichtErwaehnen) {
+            alt.addAll(mapToList(altSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
+                    false),
+                    s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
+        }
 
         return alt.build();
     }
@@ -295,8 +311,8 @@ public class TemperaturSatzDescriber {
      * Sätze sinnvoll sind, z.B. wohl nur draußen.
      */
     @CheckReturnValue
-    public boolean heuteOderDerTagSinnvoll(final Temperatur temperatur,
-                                           final AvTime time) {
+    private boolean heuteOderDerTagSinnvoll(final Temperatur temperatur,
+                                            final AvTime time) {
         return
                 // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
                 TagestemperaturverlaufUtil.saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(time)
@@ -333,4 +349,50 @@ public class TemperaturSatzDescriber {
 
         return alt.build();
     }
+
+    /**
+     * Gibt alternative Sätze zurück über die Sonnenhitze - wenn es entsprechend
+     * heiß ist (und nicht nachts).
+     * <p>
+     * (Solche Sätze sind nur bei geringer Bewölkung sinnvoll, nur draußen und sicher
+     * nicht nachts).
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<Satz> altSonnenhitzeWennHeissUndNichtNachts(
+            final Temperatur temperatur,
+            final AvTime time, final boolean auchMitBezugAufKonkreteTageszeit) {
+        if (time.getTageszeit() == NACHTS) {
+            return ImmutableSet.of();
+        }
+
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
+            alt.add(SCHEINEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                    WARM.mitGraduativerAngabe("sehr"))),
+                    SCHEINEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)),
+                    HERUNTERSCHEINEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)));
+        }
+
+        if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
+            alt.add(BRENNEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)),
+                    BRENNEN.alsSatzMitSubjekt(SONNENHITZE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(STARK))
+            );
+
+            if (auchMitBezugAufKonkreteTageszeit && time.gegenMittag()) {
+                alt.add(BRENNEN.alsSatzMitSubjekt(SONNE)
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("zu Mittag"))
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(HEISS)));
+            }
+        }
+
+        return alt.build();
+    }
+
 }

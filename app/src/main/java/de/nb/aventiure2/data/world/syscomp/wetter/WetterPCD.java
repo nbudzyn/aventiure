@@ -173,7 +173,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                                                     final boolean unterOffenemHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
-        return wetter.altDescUeberHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
+        return wetter.altHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
     }
 
 
