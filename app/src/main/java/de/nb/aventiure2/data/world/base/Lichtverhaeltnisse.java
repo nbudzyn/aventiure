@@ -64,7 +64,7 @@ public enum Lichtverhaeltnisse {
         return getAdjektiv().alsEsIstSatz(anschlusswort);
     }
 
-    private AdjektivOhneErgaenzungen getAdjektiv() {
+    public AdjektivOhneErgaenzungen getAdjektiv() {
         return adjektiv;
     }
 }

@@ -94,6 +94,11 @@ public class AvTime {
                 oClock(5, 55));
     }
 
+    public boolean kurzNachSonnenaufgang() {
+        return isWithin(oClock(6, 01),
+                oClock(6, 30));
+    }
+
     public boolean gegenMittag() {
         return isWithin(oClock(11, 30),
                 oClock(13, 15));

@@ -94,7 +94,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreiben)) {
-            return altWetterHinweiseFuerDraussen(time, lichtverhaeltnisse,
+            return altWetterHinweiseFuerDraussen(time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
         }
 
@@ -108,10 +108,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * wird).
      */
     private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
-            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisse,
+            final AvTime time,
             final boolean unterOffenemHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
-        return wetter.altWetterHinweiseFuerDraussen(time, lichtverhaeltnisse, unterOffenemHimmel);
+        return wetter.altWetterHinweiseFuerDraussen(time, unterOffenemHimmel);
     }
 
     @CheckReturnValue
@@ -126,11 +126,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @NonNull
     AltDescriptionsBuilder altKommtNachDraussen(
-            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
+            final AvTime time,
             final boolean unterOffenenHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
-        return wetter.altKommtNachDraussen(time, lichtverhaeltnisseDraussen,
+        return wetter.altKommtNachDraussen(time,
                 unterOffenenHimmel);
     }
 
@@ -178,11 +178,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
 
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
-            final AvTime time, final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
+            final AvTime time,
             final boolean unterOffenenHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
-        return wetter.altWohinHinaus(time, lichtverhaeltnisseDraussen, unterOffenenHimmel);
+        return wetter.altWohinHinaus(time, unterOffenenHimmel);
     }
 
     ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {

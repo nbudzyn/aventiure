@@ -7,16 +7,19 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
-import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEWOELKT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Bewoelkung} als
  * {@link de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher}.
+ * <p>
+ * Diese Phrasen sind für jede Temperatur sinnvoll (wobei manchmal die Temperatur
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber {
     private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
@@ -42,15 +45,10 @@ public class BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber {
                 licht -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(licht))));
 
         // "in den grauen Morgen"
-        alt.addAll(mapToSet(praedikativumDescriber.altTageszeitUnterOffenenHimmelDef(
-                bewoelkung, tageszeit),
+        alt.addAll(mapToSet(praedikativumDescriber
+                        .altTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, DEF),
                 s -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(s))));
-
-        if (bewoelkung == BEWOELKT && tageszeit == TAGSUEBER) {
-            alt.add(new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(TAG)));
-        }
 
         return alt.build();
     }
-
 }

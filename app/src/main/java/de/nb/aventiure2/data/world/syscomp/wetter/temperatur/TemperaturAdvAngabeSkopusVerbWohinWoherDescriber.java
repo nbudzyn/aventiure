@@ -21,9 +21,13 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Temperatur} in Form von
- * {@link de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher}s
+ * {@link de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher}s.
+ * <p>
+ * Diese Phrasen sind für jede Bewölkung sinnvoll (wobei manchmal die Bewölkung
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings("DuplicateBranchesInSwitch")
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturAdvAngabeSkopusVerbWohinWoherDescriber {
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
 

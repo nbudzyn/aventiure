@@ -16,7 +16,12 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Bewoelkung} als {@link Praepositionalphrase}.
+ * <p>
+ * Diese Phrasen sind für jede Temperatur sinnvoll (wobei manchmal die Temperatur
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungPraepPhrDescriber {
     private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 

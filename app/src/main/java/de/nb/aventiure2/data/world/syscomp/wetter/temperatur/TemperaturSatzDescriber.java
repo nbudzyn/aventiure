@@ -4,14 +4,17 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
@@ -19,6 +22,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.ZweiSaetze;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -38,15 +42,24 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FROESTELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Beschreibt die {@link Temperatur} jeweils als {@link de.nb.aventiure2.german.satz.Satz}.
+ * <p>
+ * Diese Sätze sind für jede Bewölkung sinnvoll (wobei manchmal die Bewölkung
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturSatzDescriber {
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
+    private final TageszeitPraedikativumDescriber tageszeitPraedikativumDescriber;
 
     public TemperaturSatzDescriber(
+            final TageszeitPraedikativumDescriber tageszeitPraedikativumDescriber,
             final TemperaturPraedikativumDescriber praedikativumDescriber) {
+        this.tageszeitPraedikativumDescriber = tageszeitPraedikativumDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
@@ -157,6 +170,40 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
+    public ImmutableCollection<Satz> altStatischMitTageszeitLichtverhaeltnissen(
+            final Temperatur temperatur,
+            final AvTime time) {
+        final ImmutableCollection.Builder<Satz> alt = ImmutableSet.builder();
+
+        // "schon dunkel" / "dunkel"
+        final ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelAdjPhr =
+                tageszeitPraedikativumDescriber.schonBereitsNochDunkelHellAdjPhr(time);
+
+        alt.addAll(
+                altStatisch(temperatur, time.getTageszeit(), true)
+                        .stream()
+                        .flatMap(zweiterSatz ->
+                                altSchonBereitsNochDunkelAdjPhr.stream()
+                                        .map(schonDunkel ->
+                                                new ZweiSaetze(
+                                                        schonDunkel.alsEsIstSatz(),
+                                                        ";",
+                                                        zweiterSatz)))
+                        .collect(toSet()));
+
+        // "es ist schon dunkel und ziemlich kühl"
+        alt.addAll(praedikativumDescriber.altStatisch(temperatur, true).stream()
+                .flatMap(tempAdjPhr ->
+                        altSchonBereitsNochDunkelAdjPhr.stream()
+                                .map(schonDunkel ->
+                                        new ZweiPraedikativa<>(
+                                                schonDunkel, tempAdjPhr)
+                                                .alsEsIstSatz()))
+                .collect(toSet()));
+
+        return alt.build();
+    }
+
     // IDEA Beschreibungen, die erst nach einer Weile Sinn ergeben:
     //  - Die ganze Zeit über ist dir kalt
     //  - du("schmachtest", "in der Hitze")
@@ -217,12 +264,12 @@ public class TemperaturSatzDescriber {
     }
 
     /**
-     * Gibt alternative Sätze zurück in der Art
+     * Gibt alternative Sätze für draußen zurück in der Art
      * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> altIstNochDraussen(final Temperatur temperatur) {
+    public ImmutableCollection<Satz> altEsIstNochDraussen(final Temperatur temperatur) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
@@ -234,7 +281,7 @@ public class TemperaturSatzDescriber {
                         .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES))
                 .collect(toImmutableList()));
 
-        // "Es ist noch schönes Wetter."
+        // "Es ist noch warmes Wetter."
         alt.addAll(praedikativumDescriber.altStatisch(temperatur, true).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()

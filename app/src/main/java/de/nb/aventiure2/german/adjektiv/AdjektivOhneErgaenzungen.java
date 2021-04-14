@@ -29,6 +29,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     // FIXME Hat man Partizipien II, kann man auch Perfekt bilden!
     ALLMAEHLICH("allmählich"),
+    ANBRECHEND("anbrechend"),
     ANDERS("anders", "ander"),
     ANGESPANNT("angespannt"),
     AUFGEBRACHT("aufgebracht"),
@@ -38,6 +39,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     AUFGEHEIZT("aufgeheizt"),
     BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
+    BEGINNEND("beginnend"),
     BENOMMEN("benommen"),
     BESONDERS("besonders", "besonder"),
     BETRUEBT("betrübt"),
@@ -48,6 +50,9 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     DICK("dick"),
     DUESTER("düster"),
     DUNKEL("dunkel", "dunkl"),
+    // TODO Das z.B. sollte besser ein spezielles Partizip II sein.
+    //  Kaum prädikativ sinnvoll.
+    EINBRECHEND("einbrechend"),
     EISIG("eisig"),
     EISKALT("eiskalt"),
     EITEL_NICHT_FLEKTIERBAR(Adjektiv.nichtFlektierbar("eitel")),

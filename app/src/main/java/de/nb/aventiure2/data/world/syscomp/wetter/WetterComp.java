@@ -93,7 +93,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         return requirePcd()
                 .altKommtNachDraussen(
-                        timeTaker.now().getTime(), lichtverhaeltnisseDraussen,
+                        timeTaker.now().getTime(),
                         isScUnterOffenemHimmel())
                 .build();
     }
@@ -125,7 +125,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
-        return requirePcd().altWohinHinaus(timeTaker.now().getTime(), lichtverhaeltnisseDraussen,
+        return requirePcd().altWohinHinaus(timeTaker.now().getTime(),
                 isScUnterOffenemHimmel());
     }
 

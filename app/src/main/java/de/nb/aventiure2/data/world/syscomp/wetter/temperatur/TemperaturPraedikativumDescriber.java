@@ -27,8 +27,12 @@ import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link Praedikativum}.
+ * <p>
+ * Diese Phrasen sind für jede Bewölkung sinnvoll (wobei manchmal die Bewölkung
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings("DuplicateBranchesInSwitch")
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturPraedikativumDescriber {
 
     /**
@@ -38,7 +42,6 @@ public class TemperaturPraedikativumDescriber {
      * <p>
      * Das Eregebnis von {@link #altStatischAdjPhr(Temperatur)} ist bereits enthalten
      */
-    @SuppressWarnings("DuplicateBranchesInSwitch")
     @NonNull
     @CheckReturnValue
     public ImmutableList<Praedikativum> altStatisch(

@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.Artikel;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -28,7 +29,6 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STOCKDUN
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TRUEB;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.VERHANGEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WOLKENVERHANGEN;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DAEMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUESTERNIS;
@@ -48,38 +48,29 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Bewoelkung} als {@link Praedikativum}.
+ * <p>
+ * Diese Phrasen sind für jede Temperatur sinnvoll (wobei manchmal die Temperatur
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungPraedikativumDescriber {
-
-    /**
-     * Gibt Alternativen wie "der schummrige Morgen" oder "der Tag" zurück.
-     */
-    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelDef(
-            final Bewoelkung bewoelkung,
-            final Tageszeit tageszeit) {
-        final ImmutableCollection<AdjektivOhneErgaenzungen> altAdj =
-                altTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit);
-
-        if (!altAdj.isEmpty()) {
-            // "der schummrige Morgen"
-            return mapToSet(altAdj, a -> tageszeit.getNomenFlexionsspalte().mit(a));
-        }
-
-        // "der Morgen"
-        return ImmutableSet.of(tageszeit.getNomenFlexionsspalte());
-    }
 
     /**
      * Gibt Alternativen wie "ein schummriger Morgen" zurück, immer mit Adjektiv, ggf. leer.
      */
-    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelIndefMitAdj(
+    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
-            final Tageszeit tageszeit) {
+            final Tageszeit tageszeit,
+            final Artikel.Typ artikelTyp) {
         // "ein schummriger Morgen"
         return mapToSet(altTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
-                np(INDEF, a, tageszeit.getNomenFlexionsspalte()));
+                np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));
     }
 
+    /**
+     * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
+     */
     private ImmutableCollection<AdjektivOhneErgaenzungen> altTageszeitUnterOffenemHimmelAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
@@ -100,7 +91,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "schummeriger Morgen" zurück (immer mit Adjektivphrase), evtl. leer.
      */
-    private static ImmutableCollection<AdjektivOhneErgaenzungen> altMorgenUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altMorgenUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
@@ -127,7 +118,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
      */
-    private static ImmutableCollection<AdjektivOhneErgaenzungen> altTagUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altTagUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
@@ -152,7 +143,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "schummerige" zurück, ggf. leer.
      */
-    private static ImmutableCollection<AdjektivOhneErgaenzungen> altAbendUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altAbendUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung
     ) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
@@ -242,8 +233,7 @@ public class BewoelkungPraedikativumDescriber {
                 if (tageszeit == NACHTS) {
                     alt.add(NACHTSCHWARZ);
                 } else {
-                    alt.add(AdjektivOhneErgaenzungen.BEDECKT,
-                            BEZOGEN, WOLKENVERHANGEN);
+                    alt.add(AdjektivOhneErgaenzungen.BEDECKT, BEZOGEN, WOLKENVERHANGEN);
                 }
                 break;
             default:
@@ -253,7 +243,7 @@ public class BewoelkungPraedikativumDescriber {
         return alt.build();
     }
 
-    public static ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
+    public ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit, final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
@@ -271,6 +261,8 @@ public class BewoelkungPraedikativumDescriber {
                 // fall-through
             case LEICHT_BEWOELKT:
                 switch (tageszeit) {
+                    // Diese hier sind nur bei entsprechend geringer
+                    // Bewölkung sinnvoll!
                     case MORGENS:
                         alt.add(MORGENLICHT);
                         break;

@@ -57,7 +57,12 @@ import static java.util.stream.Collectors.toSet;
 
 /**
  * Beschreibt die {@link Bewoelkung} jeweils als {@link de.nb.aventiure2.german.satz.Satz}.
+ * <p>
+ * Diese Phrasen sind für jede Temperatur sinnvoll (wobei manchmal die Temperatur
+ * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
+ * vielleicht gar nicht erzeugen wird).
  */
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungSatzDescriber {
     private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
@@ -67,11 +72,16 @@ public class BewoelkungSatzDescriber {
     }
 
     /**
-     * Erzeugt ALternativen wie "Die Sonne geht auf" - ggf. auch eine leere Collection.
+     * Gibt alternative Sätze zurück, die beschreiben, wie man einen (einmaligen) Tageszeitenwechsel
+     * in der Bewölkung - ggf. eine leere Collection.
+     * <p>
+     * Dabei hat sich in der Regel der {@link Bewoelkung}swert gar nicht geändert,
+     * aber trotzdem sieht man an der Bewölkung (oder den Gestirnen), dass die
+     * Tageszeit gewechselt hat: "Die Sonne geht auf" o.Ä.
      */
     @CheckReturnValue
-    public static ImmutableCollection<Satz>
-    altGestirnbewegungUndHimmelsaenderungenBeiTageszeitenwechselSofernSichtbar(
+    public ImmutableCollection<Satz>
+    altTageszeitenwechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
@@ -127,7 +137,6 @@ public class BewoelkungSatzDescriber {
         return alt.build();
     }
 
-    @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     public ImmutableCollection<Satz> altKommtUnterOffenenHimmel(
             final Bewoelkung bewoelkung,
@@ -262,8 +271,9 @@ public class BewoelkungSatzDescriber {
                 a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(HIMMEL)));
 
         // "es ist ein grauer Morgen"
-        alt.addAll(mapToSet(praedikativumDescriber.altTageszeitUnterOffenenHimmelIndefMitAdj(
-                bewoelkung, tageszeit),
+        // "ein schummriger Morgen"
+        alt.addAll(mapToSet(praedikativumDescriber
+                        .altTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, INDEF),
                 Praedikativum::alsEsIstSatz));
 
         if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {

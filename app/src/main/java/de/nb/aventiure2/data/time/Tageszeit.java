@@ -160,6 +160,10 @@ public enum Tageszeit {
     public ImmutableSet<EinzelnerSatz> altLangsamBeginntSaetze() {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
+        // FIXME "es wird Tag", "der Tag bricht an" etc. können leicht als
+        //  "der Morgen beginnt" verstanden werden. Diese Sätze verhindern und
+        //  nötigenfalls andere erzeugen.
+
         alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
                 .map(a -> esWirdSatz().mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
                 .collect(toSet()));
@@ -242,7 +246,16 @@ public enum Tageszeit {
         return nomenFlexionsspalte;
     }
 
-    public boolean hasFolgetageszeit(final Tageszeit other) {
+    public Tageszeit getVorgaenger() {
+        final int myIndex = Arrays.asList(values()).indexOf(this);
+        if (myIndex == 0) {
+            return values()[values().length - 1];
+        }
+
+        return values()[myIndex - 1];
+    }
+
+    public boolean hasNachfolger(final Tageszeit other) {
         final int myIndex = Arrays.asList(values()).indexOf(this);
         final int otherIndex = Arrays.asList(values()).indexOf(other);
         if (otherIndex == myIndex + 1) {
@@ -253,5 +266,4 @@ public enum Tageszeit {
         }
         return false;
     }
-
 }
