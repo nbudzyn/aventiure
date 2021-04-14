@@ -23,7 +23,7 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
@@ -115,13 +115,13 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     @CheckReturnValue
-    ImmutableCollection<EinzelnerSatz> altStatischeTemperaturBeschreibungSaetze(
+    ImmutableCollection<Satz> altStatischeTemperaturBeschreibungSaetze(
             final AvTime time,
-            final boolean draussen) {
+            final DrinnenDraussen drinnenDraussen) {
         // Weil hier nur die Temperatur beschrieben wird, setzen wir die
         // Hinweis-Flags nicht zurück.
         return wetter.altStatischeTemperaturBeschreibungSaetze(time,
-                draussen);
+                drinnenDraussen);
     }
 
     @NonNull
@@ -173,7 +173,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                                                     final boolean unterOffenemHimmel) {
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
-        return wetter.altDescUeberHeuteOderDenTagWennDraussenSinnvoll(time, unterOffenemHimmel);
+        return wetter.altDescUeberHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
     }
 
 

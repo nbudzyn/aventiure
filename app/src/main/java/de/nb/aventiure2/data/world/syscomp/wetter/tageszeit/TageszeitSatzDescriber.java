@@ -54,9 +54,9 @@ public class TageszeitSatzDescriber {
         return alt.build();
     }
 
-    public ImmutableCollection<EinzelnerSatz> esIstSchonBereitsNochDunkelHellAdjPhr(
+    public ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHell(
             final AvTime time) {
-        return mapToSet(praedikativumDescriber.schonBereitsNochDunkelHellAdjPhr(time),
+        return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time),
                 a -> a.alsEsIstSatz());
     }
 

@@ -144,10 +144,10 @@ public class BewoelkungSatzDescriber {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         if (warVorherDrinnen) {
-            alt.addAll(mapToList(altUnterOffenemHimmelStatisch(bewoelkung, time),
+            alt.addAll(mapToList(altUnterOffenemHimmel(bewoelkung, time),
                     s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
         } else {
-            alt.addAll(altUnterOffenemHimmelStatisch(bewoelkung, time));
+            alt.addAll(altUnterOffenemHimmel(bewoelkung, time));
         }
 
         switch (bewoelkung) {
@@ -187,7 +187,7 @@ public class BewoelkungSatzDescriber {
 
 
     @CheckReturnValue
-    public ImmutableCollection<Satz> altUnterOffenemHimmelStatisch(
+    public ImmutableCollection<Satz> altUnterOffenemHimmel(
             final Bewoelkung bewoelkung,
             final AvTime time) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
@@ -202,7 +202,7 @@ public class BewoelkungSatzDescriber {
         //    Vollmondes glänzt darauf."
         //    gestirn, gestirnschein etc.  VOLLMOND
 
-        alt.addAll(altUnterOffenemHimmelStatisch(bewoelkung, time.getTageszeit()));
+        alt.addAll(altUnterOffenemHimmel(bewoelkung, time.getTageszeit()));
 
         switch (bewoelkung) {
             case WOLKENLOS:
@@ -257,7 +257,7 @@ public class BewoelkungSatzDescriber {
 
 
     @CheckReturnValue
-    private ImmutableCollection<Satz> altUnterOffenemHimmelStatisch(
+    private ImmutableCollection<Satz> altUnterOffenemHimmel(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         //  IDEA
@@ -273,7 +273,7 @@ public class BewoelkungSatzDescriber {
         // "es ist ein grauer Morgen"
         // "ein schummriger Morgen"
         alt.addAll(mapToSet(praedikativumDescriber
-                        .altTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, INDEF),
+                        .altStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, INDEF),
                 Praedikativum::alsEsIstSatz));
 
         if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {

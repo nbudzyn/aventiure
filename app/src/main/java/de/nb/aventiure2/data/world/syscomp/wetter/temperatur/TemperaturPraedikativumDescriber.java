@@ -40,15 +40,15 @@ public class TemperaturPraedikativumDescriber {
      * "Es ist (sehr kalt / ziemlich warm / warmes Wetter)" oder "Heute ist es ..." oder
      * "Draußen ist es ...".
      * <p>
-     * Das Eregebnis von {@link #altStatischAdjPhr(Temperatur)} ist bereits enthalten
+     * Das Eregebnis von {@link #altAdjPhr(Temperatur)} ist bereits enthalten
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableList<Praedikativum> altStatisch(
+    ImmutableList<Praedikativum> alt(
             final Temperatur temperatur, final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
-        alt.addAll(altStatischAdjPhr(temperatur));
+        alt.addAll(altAdjPhr(temperatur));
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -85,13 +85,13 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<AdjPhrOhneLeerstellen> altStatischLuftAdjPhr(
+    ImmutableList<AdjPhrOhneLeerstellen> altLuftAdjPhr(
             final Temperatur temperatur,
             final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();
 
-        alt.addAll(altStatischAdjPhr(temperatur));
+        alt.addAll(altAdjPhr(temperatur));
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -127,7 +127,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableList<AdjPhrOhneLeerstellen> altStatischAdjPhr(
+    public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
             final Temperatur temperatur) {
         switch (temperatur) {
             case KLIRREND_KALT:

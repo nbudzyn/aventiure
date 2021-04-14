@@ -38,6 +38,10 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungDescDescriber {
+    // FIXME Noch mit den anderen DescDescribern vergleichen
+    //  und ggf. Benennungen vereinheitlichen, evtl.
+    //  Schnittstelle verkleinern / Aufrufe verringern
+
     private final BewoelkungSatzDescriber satzDescriber;
 
     public BewoelkungDescDescriber(
@@ -162,7 +166,7 @@ public class BewoelkungDescDescriber {
                             //  Dann sollte bei addAll nichts hinzugefügt werden!
                             //  Alle Aufrufe prüfen und ggf. vereinfachen!
                             altTageszeitenwechsel.stream()
-                                    .map(s -> s.mitAnschlusswort("und"))));
+                                    .map(s -> s.mitAnschlusswortUndSofernNichtSchonEnthalten())));
                 }
                 if (unterOffenemHimmel
                         && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
@@ -335,7 +339,7 @@ public class BewoelkungDescDescriber {
             final Bewoelkung bewoelkung,
             final AvTime time) {
         final AltDescriptionsBuilder alt = alt();
-        alt.addAll(satzDescriber.altUnterOffenemHimmelStatisch(bewoelkung, time));
+        alt.addAll(satzDescriber.altUnterOffenemHimmel(bewoelkung, time));
         if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
             alt.addAll(
                     altNeueSaetze(

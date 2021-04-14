@@ -569,7 +569,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet",
                     anaph.nomK(),
                     altEindruckSaetzeAnaphPersPron.stream()
-                            .map(s -> s.mitAnschlusswort("und"))));
+                            .map(s -> s.mitAnschlusswortUndSofernNichtSchonEnthalten())));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
                     alt.addAll(altNeueSaetze(
@@ -850,7 +850,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     anaph().nomK(),
                     zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
                             && duzen() ?
-                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" : null,
+                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" :
+                            null,
                     ".“").schonLaenger()
                     .timed(secs(30)));
         }

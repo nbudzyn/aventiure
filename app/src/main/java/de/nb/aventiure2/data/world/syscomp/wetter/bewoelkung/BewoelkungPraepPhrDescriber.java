@@ -62,8 +62,7 @@ public class BewoelkungPraepPhrDescriber {
     // FIXME "der Hügel liegt in einsamem Mondschein."
 
     public ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
-            final Bewoelkung bewoelkung,
-            final Tageszeit tageszeit) {
+            final Bewoelkung bewoelkung, final Tageszeit tageszeit) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit),

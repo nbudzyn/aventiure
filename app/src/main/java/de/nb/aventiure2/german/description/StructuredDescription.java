@@ -104,7 +104,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @CheckReturnValue
     public TextDescription toTextDescriptionsatzanschlussMitUnd() {
         final Konstituente satzanschlussMitUnd =
-                getSatz().mitAnschlusswort("und")
+                getSatz().mitAnschlusswortUndSofernNichtSchonEnthalten()
                         .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
         return toTextDescriptionKeepParams(satzanschlussMitUnd)
                 // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!

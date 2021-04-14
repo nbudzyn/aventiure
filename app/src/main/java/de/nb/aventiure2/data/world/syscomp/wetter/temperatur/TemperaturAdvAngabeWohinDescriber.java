@@ -9,7 +9,6 @@ import com.google.common.collect.ImmutableSet;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
@@ -28,10 +27,10 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * vielleicht gar nicht erzeugen wird).
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
-public class TemperaturAdvAngabeSkopusVerbWohinWoherDescriber {
+public class TemperaturAdvAngabeWohinDescriber {
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
 
-    public TemperaturAdvAngabeSkopusVerbWohinWoherDescriber(
+    public TemperaturAdvAngabeWohinDescriber(
             final TemperaturPraedikativumDescriber praedikativumDescriber) {
         this.praedikativumDescriber = praedikativumDescriber;
     }
@@ -46,8 +45,12 @@ public class TemperaturAdvAngabeSkopusVerbWohinWoherDescriber {
         // "in die klirrend kalte Luft"
         alt.addAll(
                 mapToList(praedikativumDescriber
-                                .altStatischLuftAdjPhr(temperatur, time.getTageszeit()),
+                                .altLuftAdjPhr(temperatur, time.getTageszeit()),
                         a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(LUFT.mit(a)))));
+
+        if (time.getTageszeit() == NACHTS) {
+            alt.addAll(altWohinHinausNaechtlicheDunkelheit(temperatur));
+        }
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -112,13 +115,13 @@ public class TemperaturAdvAngabeSkopusVerbWohinWoherDescriber {
 
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausDunkelheit(
-            final Temperatur temperatur, final Tageszeit tageszeit) {
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausNaechtlicheDunkelheit(
+            final Temperatur temperatur) {
         final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableList.builder();
 
         alt.addAll(mapToList(
-                praedikativumDescriber.altStatischLuftAdjPhr(temperatur, tageszeit),
+                praedikativumDescriber.altLuftAdjPhr(temperatur, NACHTS),
                 // "in die eiskalte Dunkelheit"
                 a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(DUNKELHEIT.mit(a)))));
 

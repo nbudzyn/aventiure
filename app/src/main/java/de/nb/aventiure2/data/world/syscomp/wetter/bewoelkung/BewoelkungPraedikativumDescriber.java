@@ -59,19 +59,19 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "ein schummriger Morgen" zurück, immer mit Adjektiv, ggf. leer.
      */
-    ImmutableCollection<SubstantivischePhrase> altTageszeitUnterOffenenHimmelMitAdj(
+    ImmutableCollection<SubstantivischePhrase> altStatischTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
             final Artikel.Typ artikelTyp) {
         // "ein schummriger Morgen"
-        return mapToSet(altTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
+        return mapToSet(altStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
                 np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));
     }
 
     /**
      * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
      */
-    private ImmutableCollection<AdjektivOhneErgaenzungen> altTageszeitUnterOffenemHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altStatischTageszeitUnterOffenemHimmelAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         switch (tageszeit) {

@@ -244,7 +244,7 @@ public class TageszeitDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public AltDescriptionsBuilder
+    private AltDescriptionsBuilder
     altWechsel(final Tageszeit newTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 

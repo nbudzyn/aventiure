@@ -24,7 +24,7 @@ import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -81,10 +81,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     @CheckReturnValue
-    public ImmutableCollection<EinzelnerSatz> altStatischeTemperaturBeschreibungSaetze() {
+    public ImmutableCollection<Satz> altStatischeTemperaturBeschreibungSaetze() {
         return requirePcd()
                 .altStatischeTemperaturBeschreibungSaetze(timeTaker.now().getTime(),
-                        loadScDrinnenDraussen().isDraussen());
+                        loadScDrinnenDraussen());
     }
 
 

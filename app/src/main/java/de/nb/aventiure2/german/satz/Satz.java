@@ -19,6 +19,18 @@ import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 public interface Satz {
+    default Satz mitAnschlusswortUndSofernNichtSchonEnthalten() {
+        if (isSatzreihungMitUnd()) {
+            return ohneAnschlusswort();
+        }
+
+        return mitAnschlusswort("und");
+    }
+
+    default Satz ohneAnschlusswort() {
+        return mitAnschlusswort(null);
+    }
+
     Satz mitAnschlusswort(@Nullable String anschlusswort);
 
     /**

@@ -27,7 +27,7 @@ public class TageszeitPraedikativumDescriber {
     /**
      * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht"
      */
-    public ImmutableCollection<EinzelneSubstantivischePhrase> alt(
+    ImmutableCollection<EinzelneSubstantivischePhrase> alt(
             final AvTime time) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();
@@ -55,7 +55,7 @@ public class TageszeitPraedikativumDescriber {
         return alt.build();
     }
 
-    public ImmutableCollection<AdjPhrOhneLeerstellen> schonBereitsNochDunkelHellAdjPhr(
+    public ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelHellAdjPhr(
             final AvTime time) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();

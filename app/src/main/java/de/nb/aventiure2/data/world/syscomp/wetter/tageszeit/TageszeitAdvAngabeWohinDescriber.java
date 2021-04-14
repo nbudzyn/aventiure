@@ -13,10 +13,10 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * Beschreibt die {@link Tageszeit} als {@link AdvAngabeSkopusVerbWohinWoher}.
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
-public class TageszeitAdvAngabeSkopusVerbWohinWoherDescriber {
+public class TageszeitAdvAngabeWohinDescriber {
     private final TageszeitPraedikativumDescriber praedikativumDescriber;
 
-    public TageszeitAdvAngabeSkopusVerbWohinWoherDescriber(
+    public TageszeitAdvAngabeWohinDescriber(
             final TageszeitPraedikativumDescriber praedikativumDescriber) {
         this.praedikativumDescriber = praedikativumDescriber;
     }

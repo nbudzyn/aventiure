@@ -22,6 +22,10 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     //  Auch Partizipien ohne fehlende Ergänzungen sollten AdjPhrOhneLeerstellen
     //  sein. (Subj heizt Obj auf -> Partizip II "aufgeheizt")
 
+    // FIXME Auch ("(Das Boot ist) zu sehen" und "(Das )zu lösende( Problem)"
+    //  ("anzutreffende")... solte man wohl wie Patizip II behandeln.
+    //  "zu " ist wohl quasi ein Präfix.
+
     // FIXME Partizipien mit fehlenden Ergänzungen sollten Adjektive mit X Ergänzungen
     //  sein (natürlich keine Enums, sondern separate Klassen).
     //  Erst einmal pro Verb-Valenz-Typ separat programmieren, wie man

@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -25,7 +26,10 @@ import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.ZweiSaetze;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.RECHT_HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
@@ -63,18 +67,28 @@ public class TemperaturSatzDescriber {
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
+    /**
+     * Gibt Sätze zurück wie "draußen ist es kalt" - es in jedem Fall auch mindesten ein
+     * {@link EinzelnerSatz} dabei.
+     */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     public ImmutableCollection<Satz> altKommtNachDraussen(
             final Temperatur temperatur,
-            final Tageszeit tageszeit) {
+            final AvTime time,
+            final boolean unterOffenenHimmel) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(mapToList(altStatisch(temperatur, tageszeit, true),
-                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+        final DrinnenDraussen kommtNachDrinnenDraussen =
+                unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
+                        DRAUSSEN_GESCHUETZT;
+        alt.addAll(
+                mapToList(alt(temperatur, time,
+                        kommtNachDrinnenDraussen),
+                        s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (temperatur.isBetweenIncluding(KNAPP_UEBER_DEM_GEFRIERPUNKT, RECHT_HEISS)) {
-            alt.addAll(altStatisch(temperatur, tageszeit, true));
+            alt.addAll(alt(temperatur, time, kommtNachDrinnenDraussen));
         }
 
         switch (temperatur) {
@@ -103,22 +117,46 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
+    /**
+     * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
+     * {@link EinzelnerSatz} dabei.
+     */
+    @CheckReturnValue
+    public ImmutableCollection<Satz> alt(
+            final Temperatur temperatur,
+            final AvTime time,
+            final DrinnenDraussen drinnenDraussen) {
+        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+
+        alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen));
+        alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
+                drinnenDraussen));
+
+        return alt.build();
+    }
+
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    public ImmutableCollection<EinzelnerSatz> altStatisch(
+    private ImmutableCollection<EinzelnerSatz> alt(
             final Temperatur temperatur,
             final Tageszeit tageszeit,
-            final boolean draussen) {
-        final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
+            final DrinnenDraussen drinnenDraussen) {
+        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToList(praedikativumDescriber.altStatisch(temperatur, draussen),
+        alt.addAll(mapToList(praedikativumDescriber.alt(temperatur, drinnenDraussen.isDraussen()),
                 Praedikativum::alsEsIstSatz));
 
-        if (draussen) {
+        if (drinnenDraussen.isDraussen()) {
             // "die Luft ist kalt"
             alt.addAll(mapToList(
-                    praedikativumDescriber.altStatischLuftAdjPhr(temperatur, tageszeit),
+                    praedikativumDescriber.altLuftAdjPhr(temperatur, tageszeit),
                     a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
+
+            if (tageszeit == ABENDS
+                    && drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL
+                    && temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
+                alt.addAll(altDraussenNoch(temperatur));
+            }
         }
 
         switch (temperatur) {
@@ -170,17 +208,18 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
-    public ImmutableCollection<Satz> altStatischMitTageszeitLichtverhaeltnissen(
+    private ImmutableCollection<Satz> altMitTageszeitLichtverhaeltnissen(
             final Temperatur temperatur,
-            final AvTime time) {
+            final AvTime time,
+            final DrinnenDraussen drinnenDraussen) {
         final ImmutableCollection.Builder<Satz> alt = ImmutableSet.builder();
 
         // "schon dunkel" / "dunkel"
         final ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelAdjPhr =
-                tageszeitPraedikativumDescriber.schonBereitsNochDunkelHellAdjPhr(time);
+                tageszeitPraedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time);
 
         alt.addAll(
-                altStatisch(temperatur, time.getTageszeit(), true)
+                alt(temperatur, time.getTageszeit(), drinnenDraussen)
                         .stream()
                         .flatMap(zweiterSatz ->
                                 altSchonBereitsNochDunkelAdjPhr.stream()
@@ -192,7 +231,7 @@ public class TemperaturSatzDescriber {
                         .collect(toSet()));
 
         // "es ist schon dunkel und ziemlich kühl"
-        alt.addAll(praedikativumDescriber.altStatisch(temperatur, true).stream()
+        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
                 .flatMap(tempAdjPhr ->
                         altSchonBereitsNochDunkelAdjPhr.stream()
                                 .map(schonDunkel ->
@@ -209,13 +248,55 @@ public class TemperaturSatzDescriber {
     //  - du("schmachtest", "in der Hitze")
 
     /**
+     * Gibt alternative Sätze zurück, die sich auf "heute", "den Tag" o.Ä.
+     * beziehen - sofern sinnvoll - sonst leer.
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<Satz> altDraussenHeuteDerTagSofernSinnvoll(
+            final Temperatur temperatur, final AvTime time) {
+        if (!heuteOderDerTagSinnvoll(temperatur, time)) {
+            return ImmutableSet.of();
+        }
+
+        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+
+        // "Heute ist es heiß / schönes Wetter."
+        alt.addAll(
+                mapToList(praedikativumDescriber.alt(
+                        temperatur,
+                        true // Drinnen sind solche Sätze
+                        // nicht sinnvoll
+                ), a -> a.alsEsIstSatz()
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
+
+        alt.addAll(altDerTag(temperatur));
+
+        return alt.build();
+    }
+
+    /**
+     * Erzeugt Sätze in der Art "Der Tag ist sehr heiß" - nur unter gewissen
+     * Umständen sinnvoll, z.B. nur draußen,
+     * vgl. {@link #heuteOderDerTagSinnvoll(Temperatur, AvTime)}.
+     */
+    @NonNull
+    @CheckReturnValue
+    private ImmutableCollection<Satz> altDerTag(final Temperatur temperatur) {
+        return praedikativumDescriber.alt(temperatur, true).stream()
+                .filter(AdjPhrOhneLeerstellen.class::isInstance)
+                .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
+                .collect(toImmutableList());
+    }
+
+    /**
      * Gibt zurück, ob bei dieser Temperatur zu dieser Uhrzeit Sätze über "heute" oder "den Tag"
      * sinnvoll sind. - Generell wird es noch von anderen Kriterien abhängen, wann solche
      * Sätze sinnvoll sind, z.B. wohl nur draußen.
      */
     @CheckReturnValue
-    public static boolean ueberHeuteOderDenTagSinnvoll(final Temperatur temperatur,
-                                                       final AvTime time) {
+    public boolean heuteOderDerTagSinnvoll(final Temperatur temperatur,
+                                           final AvTime time) {
         return
                 // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
                 TagestemperaturverlaufUtil.saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(time)
@@ -226,54 +307,16 @@ public class TemperaturSatzDescriber {
     }
 
     /**
-     * Gibt alternative Sätze zurück, die sich auf "heute", "den Tag" o.Ä.
-     * beziehen. Solche Sätze sind nur in gewissen Kontexten sinnvoll, insbesondere
-     * nur draußen.
-     */
-    @NonNull
-    @CheckReturnValue
-    public ImmutableCollection<Satz> altDraussenUeberHeuteOderDenTag(
-            final Temperatur temperatur) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
-
-        // "Heute ist es heiß / schönes Wetter."
-        alt.addAll(
-                mapToList(praedikativumDescriber.altStatisch(
-                        temperatur,
-                        true // Drinnen sind solche Sätze
-                        // nicht sinnvoll
-                ), a -> a.alsEsIstSatz()
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
-
-        alt.addAll(altDerTagIst(temperatur));
-
-        return alt.build();
-    }
-
-    /**
-     * Erzeugt Sätze in der Art "Der Tag ist sehr heiß" - nur unter gewissen
-     * Umständen sinnvoll, z.B. nur draußen.
-     */
-    @NonNull
-    @CheckReturnValue
-    private ImmutableCollection<Satz> altDerTagIst(final Temperatur temperatur) {
-        return praedikativumDescriber.altStatisch(temperatur, true).stream()
-                .filter(AdjPhrOhneLeerstellen.class::isInstance)
-                .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
-                .collect(toImmutableList());
-    }
-
-    /**
      * Gibt alternative Sätze für draußen zurück in der Art
      * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> altEsIstNochDraussen(final Temperatur temperatur) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+    public ImmutableCollection<EinzelnerSatz> altDraussenNoch(final Temperatur temperatur) {
+        final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        alt.addAll(praedikativumDescriber.altStatisch(temperatur, true).stream()
+        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -282,7 +325,7 @@ public class TemperaturSatzDescriber {
                 .collect(toImmutableList()));
 
         // "Es ist noch warmes Wetter."
-        alt.addAll(praedikativumDescriber.altStatisch(temperatur, true).stream()
+        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
@@ -290,5 +333,4 @@ public class TemperaturSatzDescriber {
 
         return alt.build();
     }
-
 }

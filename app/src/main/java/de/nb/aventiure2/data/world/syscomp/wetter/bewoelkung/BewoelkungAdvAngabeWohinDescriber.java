@@ -20,21 +20,21 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * vielleicht gar nicht erzeugen wird).
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
-public class BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber {
+public class BewoelkungAdvAngabeWohinDescriber {
     private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
-    public BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber(
+    public BewoelkungAdvAngabeWohinDescriber(
             final BewoelkungPraedikativumDescriber praedikativumDescriber) {
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altHinausUnterOffenenHimmel(
             final Bewoelkung bewoelkung,
             final AvTime time) {
-        return altWohinHinausUnterOffenenHimmel(bewoelkung, time.getTageszeit());
+        return altHinausUnterOffenenHimmel(bewoelkung, time.getTageszeit());
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausUnterOffenenHimmel(
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altHinausUnterOffenenHimmel(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
@@ -46,7 +46,7 @@ public class BewoelkungAdvAngabeSkopusVerbWohinWoherDescriber {
 
         // "in den grauen Morgen"
         alt.addAll(mapToSet(praedikativumDescriber
-                        .altTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, DEF),
+                        .altStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, DEF),
                 s -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(s))));
 
         return alt.build();
