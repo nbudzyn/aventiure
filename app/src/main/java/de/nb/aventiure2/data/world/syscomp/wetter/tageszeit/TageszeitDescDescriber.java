@@ -88,8 +88,7 @@ public class TageszeitDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altSprungOderWechselFromNachtsTo(
+    private AltDescriptionsBuilder altSprungOderWechselFromNachtsTo(
             final Tageszeit currentTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -118,8 +117,7 @@ public class TageszeitDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altSprungOderWechselFromMorgensTo(
+    private AltDescriptionsBuilder altSprungOderWechselFromMorgensTo(
             final Tageszeit currentTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -159,8 +157,7 @@ public class TageszeitDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altSprungOderWechselFromTagsueberTo(
+    private AltDescriptionsBuilder altSprungOderWechselFromTagsueberTo(
             final Tageszeit currentTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
         switch (currentTageszeit) {
@@ -203,8 +200,7 @@ public class TageszeitDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altSprungOderWechselFromAbendsTo(
+    private AltDescriptionsBuilder altSprungOderWechselFromAbendsTo(
             final Tageszeit currentTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -238,14 +234,13 @@ public class TageszeitDescDescriber {
 
     }
 
-
     /**
      * Gibt Alternativen zurück, die den Tageszeitenwechsel beschreiben.
      */
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altWechsel(final Tageszeit newTageszeit, final boolean draussen) {
+    private AltDescriptionsBuilder altWechsel(
+            final Tageszeit newTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 
         if (draussen) {

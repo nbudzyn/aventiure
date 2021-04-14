@@ -201,7 +201,7 @@ class WetterData {
                 // Bei einer mittleren Temperatur braucht man die Temperatur nicht unbedingt zu
                 // erwähnen.
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER
-                        .altUnterOffenemHimmelStatisch(bewoelkung, time));
+                        .altUnterOffenemHimmel(bewoelkung, time));
             }
 
             final ImmutableCollection<Satz> heuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER

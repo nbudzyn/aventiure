@@ -38,10 +38,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungDescDescriber {
-    // FIXME Noch mit den anderen DescDescribern vergleichen
-    //  und ggf. Benennungen vereinheitlichen, evtl.
-    //  Schnittstelle verkleinern / Aufrufe verringern
-
     private final BewoelkungSatzDescriber satzDescriber;
 
     public BewoelkungDescDescriber(
@@ -115,8 +111,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altTageszeitenSprungOderWechselFromNachtsTo(
+    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromNachtsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
@@ -144,8 +139,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altTageszeitenSprungOderWechselFromMorgensTo(
+    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromMorgensTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
@@ -204,8 +198,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altTageszeitenSprungOderWechselFromTagsueberTo(
+    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromTagsueberTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {
@@ -243,8 +236,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altTageszeitenSprungOderWechselFromAbendsTo(
+    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromAbendsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {
@@ -280,9 +272,9 @@ public class BewoelkungDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder
-    altTageszeitenwechsel(final Bewoelkung bewoelkung, final Tageszeit newTageszeit,
-                          final boolean unterOffenemHimmel) {
+    private AltDescriptionsBuilder altTageszeitenwechsel(
+            final Bewoelkung bewoelkung, final Tageszeit newTageszeit,
+            final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altNeueSaetze(
@@ -335,9 +327,8 @@ public class BewoelkungDescDescriber {
     }
 
     @CheckReturnValue
-    public AltDescriptionsBuilder altUnterOffenemHimmelStatisch(
-            final Bewoelkung bewoelkung,
-            final AvTime time) {
+    public AltDescriptionsBuilder altUnterOffenemHimmel(
+            final Bewoelkung bewoelkung, final AvTime time) {
         final AltDescriptionsBuilder alt = alt();
         alt.addAll(satzDescriber.altUnterOffenemHimmel(bewoelkung, time));
         if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
@@ -368,8 +359,7 @@ public class BewoelkungDescDescriber {
         final AltDescriptionsBuilder alt = alt();
 
         // "Draußen ist der Himmel bewölkt"
-        alt.addAll(satzDescriber
-                .altKommtUnterOffenenHimmel(bewoelkung, time, warVorherDrinnen));
+        alt.addAll(satzDescriber.altKommtUnterOffenenHimmel(bewoelkung, time, warVorherDrinnen));
         if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
             alt.addAll(
                     altNeueSaetze(
