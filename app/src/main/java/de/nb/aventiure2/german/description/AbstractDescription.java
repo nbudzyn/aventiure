@@ -5,7 +5,11 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.annotation.CheckReturnValue;
 
@@ -20,6 +24,8 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -36,6 +42,32 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     AbstractDescription(final DescriptionParams params) {
         this.params = params;
+    }
+
+    @CheckReturnValue
+    static Object[] descriptionsToKonstiuenten(final Object... elements) {
+        final Object[] res = new Object[elements.length];
+        for (int i = 0; i < res.length; i++) {
+            if (elements[i] instanceof Set) {
+                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
+                        .map(AbstractDescription::descriptionsToKonstiuenten)
+                        .collect(toImmutableSet());
+            } else if (elements[i] instanceof Collection) {
+                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
+                        .map(AbstractDescription::descriptionsToKonstiuenten)
+                        .collect(toImmutableList());
+            } else if (elements[i].getClass().isArray()) {
+                res[i] = Arrays.asList(elements[i]).stream()
+                        .map(AbstractDescription::descriptionsToKonstiuenten)
+                        .toArray(Object[]::new);
+            } else if (elements[i] instanceof AbstractDescription<?>) {
+                res[i] = ((AbstractDescription<?>) elements[i]).toSingleKonstituente();
+            } else {
+                res[i] = elements[i];
+            }
+        }
+
+        return res;
     }
 
     public abstract StructuralElement getStartsNew();

@@ -25,6 +25,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstitue
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.AbstractDescription.descriptionsToKonstiuenten;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.prependObject;
 import static java.util.Arrays.asList;
 
@@ -95,8 +96,9 @@ public class AltDescriptionsBuilder {
             return altNeueSaetze(prependObject(SENTENCE, parts));
         }
 
-        return alt().addAll(joinToAltKonstituentenfolgen(parts).stream()
-                .map(DescriptionBuilder::neuerSatz));
+        return alt().addAll(
+                joinToAltKonstituentenfolgen(descriptionsToKonstiuenten(parts)).stream()
+                        .map(DescriptionBuilder::neuerSatz));
     }
 
     @CheckReturnValue
