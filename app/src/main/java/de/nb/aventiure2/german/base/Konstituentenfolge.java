@@ -78,6 +78,21 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                 "konstituenten is empty or contained only WORD elements");
     }
 
+
+    /**
+     * Gibt denselben Input zurück, gegebenenfalls in Kommata eingeschlossen.
+     */
+    @Nullable
+    @CheckReturnValue
+    static Konstituentenfolge schliesseInKommaEin(
+            @Nullable final Konstituentenfolge input, final boolean schliesseInKommaEin) {
+        if (!schliesseInKommaEin) {
+            return input;
+        }
+
+        return schliesseInKommaEin(input);
+    }
+
     /**
      * Gibt denselben Input zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
      * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.

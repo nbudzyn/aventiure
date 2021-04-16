@@ -4,17 +4,31 @@ import androidx.annotation.Nullable;
 
 import java.util.Objects;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+
 /**
  * Zwei Prädikativa, die mit <i>und</i> verbunden werden
  */
 public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum {
     private final P erst;
     private final P zweit;
+    private final String konnektor;
+    private final boolean konnektorErfordertKommata;
 
     public ZweiPraedikativa(
             final P erst,
+            final P zweit) {
+        this(erst, false, "und", zweit);
+    }
+
+    public ZweiPraedikativa(
+            final P erst,
+            final boolean konnektorErfordertKommata, final String konnektor,
             final P zweitesPraedikativum) {
         this.erst = erst;
+        this.konnektor = konnektor;
+        this.konnektorErfordertKommata = konnektorErfordertKommata;
         zweit = zweitesPraedikativum;
     }
 
@@ -22,8 +36,10 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
     public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 erst.getPraedikativ(person, numerus),
-                "und",
-                zweit.getPraedikativ(person, numerus)
+                schliesseInKommaEin(
+                        joinToKonstituentenfolge(
+                                konnektor, zweit.getPraedikativ(person, numerus)),
+                        konnektorErfordertKommata)
         );
     }
 
@@ -45,8 +61,10 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
         // -> "Sie ist glücklich, dich zu sehen, gewesen, UND ERFREUT, DICH SO BALD WIEDER
         // ZU TREFFEN"
         return Konstituentenfolge.joinToKonstituentenfolge(
-                "und",
-                zweit.getPraedikativ(person, numerus)
+                schliesseInKommaEin(
+                        joinToKonstituentenfolge(
+                                konnektor, zweit.getPraedikativ(person, numerus)),
+                        konnektorErfordertKommata)
         ).withVorkommaNoetig();
     }
 

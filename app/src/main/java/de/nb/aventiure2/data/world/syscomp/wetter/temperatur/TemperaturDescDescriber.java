@@ -11,12 +11,14 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.STECHEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link AbstractDescription}s.
@@ -30,6 +32,34 @@ public class TemperaturDescDescriber {
         this.satzDescriber = satzDescriber;
     }
 
+
+    /**
+     * Gibt alternative {@link AbstractDescription}s zurück, die die Temperatur
+     * beschreiben.
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
+            final Temperatur temperatur, final AvTime time, final boolean unterOffenenHimmel) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        // "Draußen ist es kühl"
+        alt.addAll(satzDescriber.altKommtNachDraussen(temperatur, time,
+                unterOffenenHimmel));
+
+        alt.addAll(altHeuteDerTagWennDraussenSinnvoll(
+                temperatur, time, unterOffenenHimmel));
+
+        if (unterOffenenHimmel) {
+            alt.addAll(mapToList(
+                    satzDescriber
+                            .altSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
+                                    true),
+                    s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+        }
+
+        return alt.schonLaenger().build();
+    }
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die die Temperatur

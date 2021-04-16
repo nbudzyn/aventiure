@@ -13,6 +13,15 @@ import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerst
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
 public interface Praedikativum {
+    default ZweiPraedikativa<Praedikativum> und(final Praedikativum zweitesPraedikativum) {
+        return new ZweiPraedikativa<>(this, zweitesPraedikativum);
+    }
+
+    default ZweiPraedikativa<Praedikativum> aber(final Praedikativum zweitesPraedikativum) {
+        return new ZweiPraedikativa<>(this, true, "aber",
+                zweitesPraedikativum);
+    }
+
     default EinzelnerSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }

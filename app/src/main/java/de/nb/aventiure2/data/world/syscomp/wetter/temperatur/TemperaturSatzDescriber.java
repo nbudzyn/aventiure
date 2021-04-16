@@ -323,6 +323,20 @@ public class TemperaturSatzDescriber {
     }
 
     /**
+     * Gibt alternative Sätze zurück mit kombinierte Adjektivphrasen, die auf die
+     * schöne Tageszeit referenzieren: "Es ist ein schöner Abend und noch ziemlich warm",
+     * "Es ist ein schöner Tag, aber eiskalt[,]" o.Ä.
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableList<EinzelnerSatz> altSchoneTageszeitUndAberSchonNochAdjPhr(
+            final Temperatur temperatur, final Tageszeit tageszeit) {
+        return mapToList(praedikativumDescriber.altSchoneTageszeitUndAberSchonNochAdjPhr(
+                temperatur, tageszeit),
+                Praedikativum::alsEsIstSatz);
+    }
+
+    /**
      * Gibt alternative Sätze für draußen zurück in der Art
      * "Es ist noch (sehr kalt / ziemlich warm / heißes Wetter)".
      */
@@ -359,7 +373,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> altSonnenhitzeWennHeissUndNichtNachts(
+    ImmutableCollection<Satz> altSonnenhitzeWennHeissUndNichtNachts(
             final Temperatur temperatur,
             final AvTime time, final boolean auchMitBezugAufKonkreteTageszeit) {
         if (time.getTageszeit() == NACHTS) {
