@@ -9,6 +9,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -47,18 +48,32 @@ public class TageszeitSatzDescriber {
                 .getLichtverhaeltnisseDraussen() != newTageszeit
                 .getLichtverhaeltnisseDraussen()) {
             // "langsam wird es hell"
-            alt.addAll(
-                    newTageszeit.getLichtverhaeltnisseDraussen().altLangsamWirdEsSaetze());
+            alt.addAll(newTageszeit.getLichtverhaeltnisseDraussen().altLangsamWirdEsSaetze());
         }
 
         return alt.build();
     }
 
-    public ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHell(
+    public ImmutableCollection<EinzelnerSatz> altDraussen(
+            final AvTime time) {
+        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+
+        if (time.getTageszeit() != Tageszeit.TAGSUEBER) {
+            // "es ist Morgen"
+            alt.addAll(mapToSet(praedikativumDescriber.alt(time.getTageszeit()),
+                    derMorgen -> Nominalphrase.npArtikellos(derMorgen).alsEsIstSatz()));
+        }
+
+        // "es ist schon hell"
+        alt.addAll(altSchonBereitsNochDunkelHellDraussen(time));
+
+        return alt.build();
+    }
+
+
+    public ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHellDraussen(
             final AvTime time) {
         return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time),
                 a -> a.alsEsIstSatz());
     }
-
-
 }

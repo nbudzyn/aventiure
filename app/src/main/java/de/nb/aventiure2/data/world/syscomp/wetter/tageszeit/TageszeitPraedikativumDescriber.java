@@ -45,7 +45,7 @@ public class TageszeitPraedikativumDescriber {
     /**
      * Gibt Alternativen zurück wie "der Tag"
      */
-    private ImmutableCollection<NomenFlexionsspalte> alt(final Tageszeit tageszeit) {
+    public ImmutableCollection<NomenFlexionsspalte> alt(final Tageszeit tageszeit) {
         final ImmutableList.Builder<NomenFlexionsspalte> alt =
                 ImmutableList.builder();
 
