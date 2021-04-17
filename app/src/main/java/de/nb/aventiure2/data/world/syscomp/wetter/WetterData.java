@@ -743,7 +743,8 @@ class WetterData {
     //  -- "Nun ist die Sonne unter:"
 
     // FIXME Automatisch generieren:  "Als (nun / wie nun) das Wetter soundso ist, passiert dies
-    //  und das":
+    //  und das" (an sich nicht besonders kritisch, weil ohnehin nur Sätze derselben SC-Aktion
+    //  miteinander verbunden werden):
     //   Automatisch erzeugen, wenn .als() dran steht?! Allerdings wiedersprechen sich
     //   .als() und schonLaenger(), vielleicht genügt also auch ein Fehlen von
     //   .schonLaenger() - dann wäre "du siehst die Sonne aufsteigen"
