@@ -735,66 +735,97 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-    // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
-    //  - "Der Himmel ist blau, die Luft mild"
+    // FIXME Automatisch generieren: "Das Wetter ist soundso und es passiert dies und das"
+    //  -- "Die Sonne geht auf, und ..."
 
-    // FIXME Verknüpfungen bei Änderungen:
-    //  "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
-    //  "Sobald die Sonne untergegangen ist, " (Uhrzeit berücksichtigen:
-    //  time.kurzNachSonnenuntergang())
+    // FIXME Automatisch generieren:  "Ein Tageszeitenwechsel ist eingetreten: Es passiert dies
+    //  und das"
+    //  -- "Nun ist die Sonne unter:"
 
-    // FIXME Sonne:
+    // FIXME Automatisch generieren:  "Als (nun / wie nun) das Wetter soundso ist, passiert dies
+    //  und das":
+    //   Automatisch erzeugen, wenn .als() dran steht?! Allerdings wiedersprechen sich
+    //   .als() und schonLaenger(), vielleicht genügt also auch ein Fehlen von
+    //   .schonLaenger() - dann wäre "du siehst die Sonne aufsteigen"
+    //   praktisch eine Alternative zu "(Dann) steigt die Sonne auf" - wobei man das "dann"
+    //   nicht schreiben darf, weil der Aktor vorher nicht der Mond ist...!
+    //  -- "Als der Mond kommt,..."
+    //  -- "Als du die Sonne aufsteigen siehst, ..."
+    //  -- "Als aber die Sonne bald untergehen will, "
+    //  -- "Als die Sonne aufgeht, ..."
+    //  -- "Als die Sonne untergeht..."
+    //  -- "Als / wie nun die Sonne über dir steht, "
+
+    // FIXME Automatisch generieren: "Sobald das Wetter soundso ist, passsiert dies und das:"
+    //  -- "Sobald die Sonne untergegangen ist, " (Uhrzeit berücksichtigen:
+    //     time.kurzNachSonnenuntergang())
+    //  -- "Sobald die Sonne wieder warm scheint, gehst du..."
+
+    // FIXME Automatisch generieren: "Als dies und das passiert, ist das Wetter soundso":
+    //   "Als ... steht die Sonne schon hoch am Himmel und scheint heiß herunter."
+
+    // FIXME Automatisch generieren: "Das Wetter ist soundso, als etwas passiert":
+    //  -- "Die Sonne will eben untergehen, als du erwachst"
+
+    // FIXME Automatisch generieren: "Jemand tut dies und das, bis eine Wetterveränderung eintritt":
+    //  -- "..., bis der Mond aufgeht."
+    //  -- "..., bis die Sonne sinkt und die Nacht einbricht."
+    //  -- "Du (bleibst unter der Linde sitzen), bis die Sonne untergeht"
+
+    // FIXME Automatisch generieren: "Als / wie du nun etwas tust und das Wetter soundso ist,
+    //  passiert irgendwas":
+    //  -- "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
+    //     warm und verdrießlich zumut:"
+    //  -- "Wie nun die Sonne kommt und du aufwachst..."
+
+    // IDEA Man könnte Features der Landschaft in die Wetterbeschreibungen einbauen:
+    //  - "Du siehst die Sonne hinter den Bergen aufsteigen"
+    //  - "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
+    //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
+    //  - "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
+    //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
+    //  - "aber was tust du die Augen auf, als du aus (der Finsternis)
+    //    heraus in das Tageslicht kommst, und den grünen Wald,
+    //    Blumen und Vögel und die Morgensonne am Himmel erblickst"
+    //  - "Als nun die Sonne mitten über dem Walde steht..."
+    //  - "die Sonne ist hinter (den Bergen) verschwunden"
+    //  - "mittendurch rauscht ein klarer Bach, auf dem die Sonne glitzert"
+    //  - "gegen Abend, als die Sonne hinter die Berge gesunken ist"
+    //  - "der Mond lässt sein Licht über alle Felder leuchten"
+    //  -- "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
+
+
+    // FIXME Man könnte Gegenstände in die Wetterbeschreibung einbauen
+    //  "die goldene Kugel blitzt in der Sonne"
+    //  "Die Abendsonne scheint über (die
+    //  glänzenden Steine), sie schimmeren und leuchten so prächtig
+    //  in allen Farben, dass..."
+
+    // IDEA Sonne scheint durchs Fenster hinein
+    //  - "Als nun die Sonne durchs Fensterlein scheint und..."
+
+    // FIXME Wetterbeschreibungen als Adverbiale Angaben mit Satz-Skopus:
     //  "mit Sonnenaufgang (machts du dich auch den Weg...)"
-    //  "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
-    //  "und als du erwachst und wieder zu dir selber kommst, bist
-    //   du auf einer schönen Wiese, wo die Sonne scheint"
-    //  "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
-    //  "du liegst in der Sonne ausgestreckt"
-    //  "Als aber die Sonne bald untergehen will, "
     //  "Bei Sonnenaufgang kommt schon..."
     //  "Bei Sonnenuntergang kommst du zu..."
-    //  "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
-    //  brennt, so..."
-    //  "Die Sonne geht auf, und ..."
-    //  "Du ... noch immer, als es schon hoher Tag ist"
-    //  "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
-    //  "Nun ist die Sonne unter:"
-    //  "Als nun die Sonne durchs Fensterlein scheint und..."
-    //  "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
-    //  warm und verdrießlich zumut:"
-    //  "Als / wie nun die Sonne über dir steht, "
-    //  "Wie nun die Sonne kommt und du aufwachst..."
-    //  "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
-    //  "Als die Sonne untergeht..."
-    //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
-    //  "du bist von der Sonnenhitze müde"
-    //  "(Schwerter) blitzen in der Sonne"
-    //  du legst dich "in die Sonne"
-    //  "Die Sonne hat die Erde aufgetaut"
-    //  "Die Abendsonne scheint über (die
-    //  glänzenden Steine), sie schimmerten und leuchteten so prächtig
-    //  in allen Farben, daß..."
-    //  "aber was tust du die Augen auf, als du aus (der Finsternis)
-    //   heraus in das Tageslicht kommst, und den grünen Wald,
-    //   Blumen und Vögel und die Morgensonne am Himmel erblickst"
-    //  "Als nun die Sonne mitten über dem Walde steht..."
-    //  ", bis die Sonne sinkt und die Nacht einbricht."
     //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, "
-    //  "die Sonne ist hinter (den Bergen) verschwunden"
-    //  "mittendurch rauscht ein klarer Bach, auf dem die Sonne glitzert"
-    //  "es bricht eben der erste Sonnenstrahl hervor"
-    //  "gegen Abend, als die Sonne (hinter die Berge) gesunken ist"
+    //  "gegen Abend, als die Sonne untergegangen ist,"
     //  "Du erwachst vor Sonnenuntergang"
-    //  "Die Sonne will eben untergehen, als du erwachst"
-    //  "Du (bleibst unter der Linde sitzen), bis die Sonne untergeht"
-    //  "Als die Sonne aufgeht, ..."
-    //  "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
-    //  "der Mond lässt sein Licht über alle Felder leuchten"
-    //  "Sobald die Sonne wieder warm scheint, gehst du..."
-
-    // FIXME Nacht:
     //  "Bei einbrechender Nacht"
-    //  "Der Mond scheint über..."
+
+    // FIXME Wetterbeschreibungen als "Ortsangaben"
+    //  "du liegst in der Sonne ausgestreckt"
+
+    // FIXME Wetterbeschreibung als "Relativsatz" (im weiteren Sinne):
+    //  "und als du erwachst und wieder zu dir selber kommst, bist
+    //   du auf einer schönen Wiese, wo die Sonne scheint"
+
+    // FIXME Tageszeitwechsel-Angaben (oder untertageszeitliche Wechel) nach langen oder
+    //  mehrfachen Aktionen:
+    //  "Du ... noch immer, als es schon hoher Tag ist"
+
+    // FIXME Tageszeitwechsel-Angaben nach Wartezeiten
+    //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
 
     // FIXME Wind / Sturm
     //  "ein kühles Lüftchen streicht durch das Laub"
@@ -810,7 +841,7 @@ class WetterData {
     //  "das Gezweig"
     //  "es kommt ein starker Wind"
     //  "es weht beständig ein harter Wind"
-    //  "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
+    //  "der Wind (raschelt in den Bäumen), und die Wolken ziehen ganz nah über deinem Haupt weg"
     //  "der Wind saust"
     //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
     //  Der Sturm biegt die Bäume.
@@ -830,7 +861,11 @@ class WetterData {
     //  "Es geht kein Wind, und bewegt sich kein Blättchen"
     //  "Kein Wind weht"
 
-    // FIXME Aufwärmen
+    // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
+    //  - "Der Himmel ist blau, die Luft mild"
+
+    // FIXME Aufwärmen / Auftauen
+    //  "Die Sonne hat die Erde aufgetaut"
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
     //  "du reibst die Hände"
     //  "du bist so erfroren"
@@ -844,6 +879,8 @@ class WetterData {
     //  - Aber dann braucht es Texte in der Art "Hier ist es angenehm kühl", und die Texte
     //   "es ist heiß" etc. dürfen dann nicht kommen, wenn sie außerhalb der Grenzwerte liegen.
     //   Sie sollten aber vielleicht kommen, wenn der Ort verlassen wird.
+    //  "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
+    //  brennt, so..."
 
     // FIXME Plan-Wetter nur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
@@ -851,6 +888,8 @@ class WetterData {
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
     //  onWetterwechsel()? onTemperaturWechsel()?)
     //  "von der Hitze des Tages ermüdet"
+    //  "du bist von der Sonnenhitze müde"
+    //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
     //  "du bist von der Sonnenhitze müde"
 
     @SuppressWarnings("WeakerAccess")

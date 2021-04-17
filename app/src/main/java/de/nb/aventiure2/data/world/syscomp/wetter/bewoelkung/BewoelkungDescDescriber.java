@@ -297,15 +297,6 @@ public class BewoelkungDescDescriber {
                     }
                     if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                         alt.add(du(SENTENCE, "siehst", "die Sonne aufsteigen"));
-                        // FIXME "Als du die Sonne aufsteigen siehst..." - automatisch erzeugen,
-                        //   wenn .als() dran steht?! Allerdings wiedersprechen sich
-                        //   .als() und schonLaenger(), vielleicht genügt also auch ein Fehlen von
-                        //   .schonLaenger() - dann wäre "du siehst die Sonne aufsteigen"
-                        //   praktisch eine
-                        //   Alternative zu "(Dann) steigt die Sonne auf" - wobei man das dann
-                        //   nicht schreiben darf, weil der Aktor vorher nicht der Mond ist...!
-
-                        // IDEA "Du siehst die Sonne hinter den Bergen aufsteigen"
                     }
 
                     if (bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0) {

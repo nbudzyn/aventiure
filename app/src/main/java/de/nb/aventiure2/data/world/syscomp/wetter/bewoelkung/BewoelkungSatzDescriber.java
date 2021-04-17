@@ -141,8 +141,6 @@ public class BewoelkungSatzDescriber {
                         alt.add(AUFSTEIGEN.alsSatzMitSubjekt(MOND));
                         // IDEA: "Der Mond steigt über dem Berg auf"
                         alt.add(KOMMEN.alsSatzMitSubjekt(MOND));
-                        // FIXME: "Als der Mond kommt, "... generieren lassen
-                        // FIXME: ", bis der Mond aufgeht." generieren lassen
                         // IDEA: "bis der Mond aufgestiegen ist"
                     }
 
