@@ -54,6 +54,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     SCHEINEN("scheinen",
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
+    SINKEN("sinken",
+            "sinke", "sinkst", "sinkt", "sinkt",
+            Perfektbildung.SEIN, "gesunken"),
     STECHEN("stechen",
             "steche", "stichst", "sticht", "stecht",
             Perfektbildung.HABEN, "gestochen"),
@@ -73,12 +76,18 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     ANKOMMEN(KOMMEN, "an", Perfektbildung.SEIN),
     AUFGEHEN(GEHEN, "auf", Perfektbildung.SEIN),
     AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
+    AUFSTEIGEN(STEIGEN_AUF, "auf", Perfektbildung.SEIN),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
+    EINBRECHEN(BRECHEN, "ein", Perfektbildung.SEIN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
     EMPORSTEIGEN(STEIGEN_AUF, "empor", Perfektbildung.SEIN),
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
+    HERAUFDRINGEN("heraufdringen",
+            "dringe", "dringst", "dringt", "dringt",
+            "herauf", Perfektbildung.SEIN, "heraufgedrungen"),
     HERUNTERSCHEINEN(SCHEINEN, "herunter", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
+    HERVORBRECHEN(BRECHEN, "hervor", Perfektbildung.SEIN),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
     UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN);
@@ -97,6 +106,17 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
              @NonNull final String ihrForm,
              final Perfektbildung perfektbildung, final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung,
+                partizipII));
+    }
+
+    VerbSubj(final String infinitiv,
+             final String ichForm,
+             final String duForm,
+             final String erSieEsForm,
+             final String ihrForm,
+             @Nullable final String partikel,
+             final Perfektbildung perfektbildung, final String partizipII) {
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
                 partizipII));
     }
 

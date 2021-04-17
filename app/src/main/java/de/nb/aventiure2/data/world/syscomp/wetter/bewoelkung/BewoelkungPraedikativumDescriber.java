@@ -38,6 +38,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HALBDUNKEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDLICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDSCHIMMER;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MORGENLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHUMMERLICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENLICHT;
@@ -273,7 +274,7 @@ public class BewoelkungPraedikativumDescriber {
                         alt.add(ABENDLICHT);
                         break;
                     case NACHTS:
-                        alt.add(MONDLICHT);
+                        alt.add(MONDLICHT, MONDSCHIMMER);
                         break;
                     default:
                         throw new IllegalStateException("Unexpected tageszeit: " + tageszeit);

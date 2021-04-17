@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
@@ -160,22 +161,27 @@ public enum Tageszeit {
     public ImmutableSet<EinzelnerSatz> altLangsamBeginntSaetze() {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        // FIXME "es wird Tag", "der Tag bricht an" etc. können leicht als
-        //  "der Morgen beginnt" verstanden werden. Diese Sätze verhindern und
-        //  nötigenfalls andere erzeugen.
+        if (this == TAGSUEBER) {
+            // "Langsam beginnt der Tag" ist missverständlich (= der Morgen? Der Vormittag?)
+            alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
+                    .map(a -> VerbSubjObj.UEBERGEHEN.mit(TAG)
+                            .alsSatzMitSubjekt(MORGEN)
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
+                    .collect(toSet()));
+        } else {
+            alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
+                    .map(a -> esWirdSatz().mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
+                    .collect(toSet()));
 
-        alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
-                .map(a -> esWirdSatz().mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
-                .collect(toSet()));
-
-        alt.add(
-                // "der Tag bricht an"
-                ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte),
-                ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte)
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz(ALLMAEHLICH)),
-                VerbSubj.BEGINNEN.alsSatzMitSubjekt(nomenFlexionsspalte)
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz(LANGSAM))
-        );
+            alt.add(
+                    // "der Tag bricht an"
+                    ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte),
+                    ANBRECHEN.alsSatzMitSubjekt(nomenFlexionsspalte)
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz(ALLMAEHLICH)),
+                    VerbSubj.BEGINNEN.alsSatzMitSubjekt(nomenFlexionsspalte)
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz(LANGSAM))
+            );
+        }
 
         return alt.build();
     }

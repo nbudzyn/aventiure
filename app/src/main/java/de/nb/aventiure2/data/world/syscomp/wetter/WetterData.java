@@ -9,9 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.concurrent.Immutable;
 
-import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
@@ -37,11 +35,11 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
@@ -134,19 +132,18 @@ class WetterData {
         this.blitzUndDonner = blitzUndDonner;
     }
 
-    // FIXME Ist überall der Fall bedacht, dass der SC in einer undurchsichtigen Kiste sitzt?
-    //  Machen die Methodennamen klar, wann es keinen Sinn macht, sie aufzurufen?
-
-    // FIXME Versuchen, die folgenden Methoden von oben zu vereinfachen!
-    //  Am besten sortieren nach: Temperatur relevant,
-    //  Bewölkung relevant, beides relevant, Tageszeit relevant,
-    //  Lichtverhältnisse relevant, nichts relevant...
-
     /**
-     * Gibt alternative Wetterhinweise zurück (für draußen).
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man es draußen erlebt
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
      */
     ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
-            final AvTime time, final boolean unterOffenemHimmel) {
+            final AvTime time, final boolean unterOffenemHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
 
@@ -167,6 +164,7 @@ class WetterData {
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
                 temperatur)) {
             // "es ist schon dunkel", "es ist Abend"
+            // FIXME Über Tag: es ist schon weit nach Mittag
             alt.addAll(TAGESZEIT_SATZ_DESCRIBER.altDraussen(time));
         }
 
@@ -191,11 +189,10 @@ class WetterData {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 // Temperatur muss nicht erwähnt werden
 
-                alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time));
+                // FIXME Über Tag: die Sonne (draußen, Bewölkung) steht schon hoch
 
-                alt.addAll(
-                        altStatischSaetzeSonneWennUnterOffenemHimmelUndUnauffaeligerTempSinnvoll(
-                                time));
+                alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
             if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
@@ -204,14 +201,16 @@ class WetterData {
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
-                            bewoelkung, time, unterOffenemHimmel));
+                            bewoelkung, time, unterOffenemHimmel,
+                            auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
                 }
             }
         }
 
         if (unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
-            alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(time));
+            alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
+                    time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
         return alt.schonLaenger().build();
@@ -219,11 +218,19 @@ class WetterData {
 
 
     /**
-     * Gibt alternative statische Beschreibungen von Bewoelkung <i>und</i>
-     * Temperatur zurück, wie man sie unter offenem Himmel erlebt.
+     * Gibt alternative statische Beschreibungen von Bewölkung <i>und</i> Temperatur zurück, wie
+     * man sie unter offenem Himmel erlebt
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
      */
     private ImmutableCollection<AbstractDescription<?>>
-    altStatischBewoelkungUndTemperaturUnterOffenemHimmel(final AvTime time) {
+    altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
         final Temperatur temperatur = getTemperatur(time);
@@ -235,7 +242,8 @@ class WetterData {
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
                         .filter(EinzelnerSatz.class::isInstance),
                 BEWOELKUNG_SATZ_DESCRIBER
-                        .altUnterOffenemHimmel(bewoelkung, time).stream()
+                        .altUnterOffenemHimmel(bewoelkung, time,
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
                         // mehrfaches "und" vermeiden
                         .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
 
@@ -245,7 +253,9 @@ class WetterData {
                                 false);
         if (!heuteOderDerTagSaetze.isEmpty()) {
             alt.addAll(altNeueSaetze(
-                    BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time),
+                    BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmel(
+                            bewoelkung, time,
+                            auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -254,7 +264,8 @@ class WetterData {
             if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
                 alt.addAll(altNeueSaetze(
                         BEWOELKUNG_SATZ_DESCRIBER
-                                .altUnterOffenemHimmel(bewoelkung, time),
+                                .altUnterOffenemHimmel(bewoelkung, time,
+                                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur)));
             }
@@ -285,9 +296,20 @@ class WetterData {
                 && temperatur.isUnauffaellig(NACHTS);
     }
 
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie
+     * man sie erlebt, wenn man nach draußen kommt
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
     @CheckReturnValue
     AltDescriptionsBuilder altKommtNachDraussen(
-            final AvTime time, final boolean unterOffenenHimmel) {
+            final AvTime time, final boolean unterOffenenHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
 
@@ -333,13 +355,8 @@ class WetterData {
 
                 // "Draußen ist der Himmel bewölkt"
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER
-                        .altKommtUnterOffenenHimmel(bewoelkung, time, true));
-
-                alt.addAll(
-                        mapToList(
-                                altStatischSaetzeSonneWennUnterOffenemHimmelUndUnauffaeligerTempSinnvoll(
-                                        time),
-                                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+                        .altKommtUnterOffenenHimmel(bewoelkung, time, true,
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
             if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
@@ -348,21 +365,34 @@ class WetterData {
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
-                            bewoelkung, time, unterOffenenHimmel));
+                            bewoelkung, time, unterOffenenHimmel,
+                            auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
                 }
             }
         }
 
         if (unterOffenenHimmel) {
             // "Draußen ist es kühl und der Himmel ist bewölkt"
-            alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(time));
+            alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
+                    time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
         return alt.schonLaenger();
     }
 
+    /**
+     * Gibt alternative Beschreibungen von Bewölkung und Temperatur zurück, wenn der SC unter
+     * offenen Himmel gekommen ist
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch
+     *                                                                 Erlebnisse
+     *                                                                 beschrieben werden
+     *                                                                 sollen, die nur
+     *                                                                 einmalig auftreten
+     */
     private AltDescriptionsBuilder altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
-            final AvTime time) {
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
         final Temperatur temperatur = getTemperatur(time);
@@ -373,7 +403,9 @@ class WetterData {
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
                         .filter(EinzelnerSatz.class::isInstance),
                 BEWOELKUNG_SATZ_DESCRIBER
-                        .altUnterOffenemHimmel(bewoelkung, time).stream()
+                        .altUnterOffenemHimmel(bewoelkung, time,
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)
+                        .stream()
                         .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
 
         final ImmutableCollection<Satz> heuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
@@ -382,7 +414,8 @@ class WetterData {
         if (!heuteOderDerTagSaetze.isEmpty()) {
             alt.addAll(altNeueSaetze(
                     BEWOELKUNG_SATZ_DESCRIBER
-                            .altKommtUnterOffenenHimmel(bewoelkung, time, true),
+                            .altKommtUnterOffenenHimmel(bewoelkung, time, true,
+                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -391,7 +424,8 @@ class WetterData {
             if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
                 alt.addAll(altNeueSaetze(
                         BEWOELKUNG_SATZ_DESCRIBER
-                                .altKommtUnterOffenenHimmel(bewoelkung, time, true),
+                                .altKommtUnterOffenenHimmel(bewoelkung, time, true,
+                                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur)));
             }
@@ -408,45 +442,16 @@ class WetterData {
     }
 
     /**
-     * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
-     * zuallermeist leer.
-     */
-    @NonNull
-    ImmutableCollection<AbstractDescription<?>> altTimePassed(
-            final AvDateTime startTime,
-            final AvDateTime endTime,
-            final DrinnenDraussen drinnenDraussen) {
-        if (endTime.minus(startTime).longerThan(AvTimeSpan.ONE_DAY)) {
-            // Die Spieler-Action hat sicher ohnehin erzählt, was passiert ist.
-            return ImmutableSet.of();
-        }
-
-        // Es gab also potenziell einen (oder mehrere) Tageszeitenwechsel oder Wetterwechsel
-        // während einer Zeit von weniger als einem Tag
-        return altTimePassed(startTime.getTageszeit(), endTime.getTageszeit(), drinnenDraussen);
-    }
-
-    /**
-     * Gibt alternative Beschreibungen zurück für den Fall, dass innerhalb maximal eines Tages
-     * dieser Tageszeitenwechsel geschehen ist - bei gleicher Tageszeit leer.
+     * Gibt alternative Beschreibungen für einen Tageszeitensprung oder -wechsel zurück.
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableCollection<AbstractDescription<?>> altTimePassed(
+    ImmutableCollection<AbstractDescription<?>> altTageszeitensprungOderWechsel(
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit,
             final DrinnenDraussen drinnenDraussen) {
-        if (lastTageszeit == currentTageszeit) {
-            // Entweder ist nur wenig Zeit vergangen - oder mehr als ein Tag, dann hat die
-            // Action
-            // sicher ohnehin erzählt, was passiert ist.
-
-            // FIXME Über den Tag weitere Texte verteilen, so dass die Zeit spürbarer vergeht:
-            //  - die Sonne (draußen, Bewölkung) steht schon hoch
-            //  - es ist schon weit nach Mittag
-            //  (als statische Texte oder als Veränderungen)
-            return ImmutableSet.of();
-        }
+        checkArgument(lastTageszeit != currentTageszeit,
+                "Keine Tageszeitensprung oder -wechsel: " + lastTageszeit);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -463,14 +468,18 @@ class WetterData {
 
             // FIXME WENN lastTageszeit == TAGSUEBER && currentTageszeit == ABENDS:
             //  "Heute ist ein schönes
-            //  Abendrot zu sehen" - welche Voraussetzungen gäbe es dafür?
-            //  Nicht zu kalt? Etwas Bewölkung?!
+            //  Abendrot zu sehen" - das sollte - auch - vom Planwetter abhängen:
+            //  - Es muss LEICHT_BEWOELKT bis BEWOELKT sein
+            //  - Die Bewölkung soll laut Planwetter abnehmen, mindestens auf
+            //    LEICHT_BEWOELKT
+            //  „Du trittst aus dem Wald hinaus. Purpurnes Abendrot erstreckt sich über den
+            //  Horizont....“
         }
 
         return alt.schonLaenger().build();
     }
 
-    // FIXME Idee zur Vereinheitlich (sofern das hilfreich ist):
+    // IDEA Idee zur Vereinheitlich (sofern das hilfreich ist):
     //  - Prio ermitteln: Was soll mit welcher Priorität erzählt werde?
     //   (1. Temp 2. Bewölkumg 3. Tageszeit o.Ä.)
     //  - Danach entsprechende Methoden eines Interfaces
@@ -489,69 +498,25 @@ class WetterData {
     //  über den Tag), könnte es eine Ausgabe geben.
     //  Einfachste Lösung: wennDraussenDannWieder... auf true setzen.
 
-    // FIXME Manche Wetterphänomene und der "tageszeitliche Himmel"
-    //  ("du siehst ein schönes Abendrot") sollten nur dann erzählt werden, wenn der SC
-    //  "draußen" ist bzw. sogar "einen Blick auf den Himmel hat" (drinnenDraussenSc).
-
-    // FIXME Man könnte, wenn der Benutzer erstmals wieder nach draußen kommt, etwas
-    //  schreiben wie "Inzwischen ist es dunkel geworden". Dazu müsste der "Tageszeit-Status"
-    //  (oder zumindest der Zeitpunkt) gespeichert werden, wenn der Benutzer REIN GEHT
-    //  und später beim RAUSTRETEN dieser Status mit dem aktuellen Tageszeitstatus verglichen
-    //  werden. Oder es müsste bei einer Änderung notiert werden, dass später noch eine
-    //  Information zu erfolgen hat (ggf. noch einer Prüfung).
-
-    // FIXME Verschiedene Fälle unterscheiden:
-    //  -SC ist draußen und die Tageszeit hat zwischen startTime und endTime gewechselt:
-    //   "Langsam wird es hell", "Die Sonne geht auf", "Unterdessen ist es hell geworden", ...
-    //  - SC ist draußen und die Tageszeit hat VOR startTime gewechselt:
-    //   "Inzwischen ist es hell geworden", "Unterdessen ist es hell geworden",
-    //   "Die Sonne ist aufgegangen", "Draußen ist es inzwischen hell geworden"
-    //  - SC ist drinnen ohne Sicht nach draußen:
-    //   "Dein Gefühl sagt dir: Allmählich ist es Morgen geworden"
-    //   "Wahrscheinlich ist schon der nächste Tag angebrochen"
-    //   "Ob wohl schon die Sonne aufgegangen ist?"
-
-    // FIXME Weitere Formulierungen für Veränderungen, die man miterlebt
-    //  "der erste Strahl der aufgehenden Sonne dringt am Himmel herauf"
-    //  "Die Sonne geht auf"
-    //  "Der erste Sonnenstrahl bricht hervor"
-    //  "Nun kommt die Sonne"
-    //  "Die Sonne geht unter"
-    //  "Du siehst du die Sonne (hinter den Bergen) aufsteigen"
-    //  "die Sonne sinkt und die Nacht bricht ein"
-    //  "die Nacht bricht ein"
+    // FIXME SC ist nach draußen gekommen und die Tageszeit hat VOR startTime gewechselt:
+    // - "Draußen ist es inzwischen hell geworden"
 
     // FIXME Veränderungen der Temperatur
     //  "es kühlt (deutlich) ab" (Temperatur)
 
     // FIXME Veränderungen der Bewölkung
     //  es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
-    //  "Der Mond geht auf" / "Der Mond steigt (über dem Berg) auf"
-    //  "Der Mond kommt"
 
-    // FIXME Weitere Formulierungen für Veränderungen, die man erst danach bemerkt
-    //  "es bricht eben der erste Sonnenstrahl hervor"
-    //  "in dem Augenblick dringt der erste Strahl der aufgehenden Sonne am Himmel herauf"
-    //  "Die Sonne will eben untergehen"
-    //  "Die Sonne ist untergegangen"
-    //  "Nun ist die Sonne unter"
-    //  "die Sonne ist hinter (den Bergen) verschwunden"
+    // FIXME Häufiger, wenn man geschlossene Räume nach draußen verlässt:
     //  "du kommst aus (der Finsternis) heraus in das Tageslicht"
-    //  "die Sonne ist (hinter die Berge) gesunken"
-
-    // FIXME Nachträglich bemerkte Veränderungen der Bewölkung
-    //  "Der Mond ist aufgegangen", "Der Mond ist schon aufgestiegen"
-    //  (MACHT NUR SINN, WENN ES EINE ÄNDERUNG GEGENÜBER
-    //  DEM LETZTEN INFORMATIONSSTAND IST)
-    //  „Du trittst aus dem Wald hinaus. Purpurnes Abendrot erstreckt sich über den
-    //  Horizont....“
 
     // FIXME Kombination: "Es hat deutlich abgekühlt und der Himmel bezieht sich."
 
     // FIXME Konzept am Hunger orientieren? Als "Erinnerung"?
     //  Vor allem auch bedenken, dass es ja über den Tag immer wärmer (und auch wieder
     //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
-    //  eigentliche "Tagestemperatur" nicht ändern.
+    //  eigentliche "Tagestemperatur" nicht ändern (sofern die Temperatur nicht vorher unerheblich
+    //  ist und bleibt)
     //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
     //  Temperatur-Wert speichern?
 
@@ -573,34 +538,6 @@ class WetterData {
         // Bewoelkung muss nicht erwähnt werden
         return TEMPERATUR_DESC_DESCRIBER.altHeuteDerTagWennDraussenSinnvoll(
                 getTemperatur(time), time, unterOffenemHimmel);
-    }
-
-    /**
-     * Gibt alternative Sätze zurück über die Sonnenhitze - wenn sinnvoll, sonst eine leere
-     * {@link java.util.Collection}.
-     */
-    @NonNull
-    @CheckReturnValue
-    private ImmutableCollection<Satz>
-    altStatischSaetzeSonneWennUnterOffenemHimmelUndUnauffaeligerTempSinnvoll(
-            final AvTime time) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
-
-        // FIXME Windstärke berücksichtigen
-        // FIXME Blitz und Donner berücksichtigen
-
-        if (bewoelkung.isUnauffaellig(time.getTageszeit()) && time.kurzVorSonnenaufgang()) {
-            // Eine normale Temperatur und leichte Bewölkung braucht man nicht
-            // unbedingt zu erwähnen.
-            alt.addAll(mapToSet(
-                    BEWOELKUNG_SATZ_DESCRIBER.
-                            altTageszeitenwechsel
-                                    (bewoelkung, Tageszeit.MORGENS, true),
-                    sonneGehtAuf -> sonneGehtAuf.mitAdvAngabe(
-                            new AdvAngabeSkopusVerbAllg("bald"))));
-        }
-
-        return alt.build();
     }
 
     @NonNull
@@ -784,8 +721,7 @@ class WetterData {
     ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
                                                                final boolean unterOffenemHimmel) {
         return BEWOELKUNG_PRAEP_PHR_DESCRIBER
-                .altBeiTageslichtImLicht(getBewoelkung(), time.getTageszeit(),
-                        unterOffenemHimmel);
+                .altBeiLichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
     }
 
     @NonNull
@@ -911,11 +847,9 @@ class WetterData {
     //   Draußen geschuetzt
     //   Max temoeratur...
 
-    // FIXME
-    //  Fürs Wetter lässt sich wohl einiges von Hunger oder Müdigkeit übernehmen.
+    // FIXME Fürs Wetter lässt sich noch mehr von Hunger oder Müdigkeit übernehmen.
 
-    // FIXME
-    //  Man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
+    // FIXME Man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
 
     // FIXME Plan-Wetter nur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
@@ -954,8 +888,4 @@ class WetterData {
     Windstaerke getWindstaerke() {
         return windstaerke;
     }
-
-    // FIXME Silbentrennung macht Fehler - Silbentrennung auf seltener einstellen?
-    //  Oder anders korrigieren?
-
 }

@@ -30,7 +30,7 @@ public class ZweiSaetze implements Satz {
 
     private final EinzelnerSatz zweiterSatz;
 
-    private ZweiSaetze(
+    public ZweiSaetze(
             final EinzelnerSatz ersterSatz,
             final EinzelnerSatz zweiterSatz) {
         this(ersterSatz, ", und", zweiterSatz);

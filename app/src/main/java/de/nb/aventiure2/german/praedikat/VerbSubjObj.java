@@ -15,6 +15,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.STRAHLEN;
 
 /**
@@ -141,6 +142,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     NACHBLICKEN(ANBLICKEN, DAT, "nach", Perfektbildung.HABEN),
     NACHSCHAUEN(SCHAUEN, DAT, "nach", Perfektbildung.HABEN),
     NACHSEHEN(SEHEN, DAT, "nach", Perfektbildung.HABEN),
+    UEBERGEHEN(GEHEN, IN_AKK, "über", Perfektbildung.SEIN),
     WIEDERSEHEN(SEHEN, AKK, "wieder", Perfektbildung.HABEN),
     ZUGUCKEN(GUCKEN, DAT, "zu", Perfektbildung.HABEN),
     ZUSCHAUEN(SCHAUEN, DAT, "zu", Perfektbildung.HABEN),

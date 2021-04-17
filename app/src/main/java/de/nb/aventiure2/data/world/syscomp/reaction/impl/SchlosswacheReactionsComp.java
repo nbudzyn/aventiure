@@ -198,7 +198,7 @@ public class SchlosswacheReactionsComp
             final ILocationGO wohinRoom) {
         final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
                 LocationSystem.getLichtverhaeltnisse(wohinRoom);
-        return world.loadWetter().wetterComp().altWohinHinaus(lichtverhaeltnisseDraussen);
+        return world.loadWetter().wetterComp().altWohinHinaus();
     }
 
     /**

@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 
 import javax.annotation.CheckReturnValue;
 
@@ -19,7 +20,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEWOELKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
@@ -27,8 +28,10 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
@@ -38,11 +41,10 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * Beschreibt die {@link Bewoelkung} als {@link AbstractDescription}s.
  * <p>
  * Diese {@link AbstractDescription}s sind für jede Temperatur sinnvoll (wobei manchmal die
- * Temperatur
- * oder andere Wetteraspekte wichtiger sind und man dann diese Descriptions
+ * Temperatur oder andere Wetteraspekte wichtiger sind und man dann diese Descriptions
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch"})
 public class BewoelkungDescDescriber {
     private final BewoelkungSatzDescriber satzDescriber;
 
@@ -127,11 +129,13 @@ public class BewoelkungDescDescriber {
                 alt.addAll(altTageszeitenwechsel(bewoelkung, MORGENS, unterOffenemHimmel));
                 break;
             case TAGSUEBER:
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
-                    alt.add(neuerSatz("Zwischenzeitlich ist die Sonne aufgegangen"));
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
+                    alt.addAll(altNeueSaetze(
+                            ImmutableList.of("Zwischenzeitlich", "Über dem"),
+                            "ist die Sonne aufgegangen"));
                 }
                 if (unterOffenemHimmel
-                        && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                        && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz("Inzwischen ist es hellichter Tag"));
                 }
                 break;
@@ -161,15 +165,11 @@ public class BewoelkungDescDescriber {
                                 bewoelkung, currentTageszeit, unterOffenemHimmel);
                 if (!altTageszeitenwechsel.isEmpty()) {
                     alt.addAll(altNeueSaetze("währenddessen ist der Tag vergangen",
-                            // FIXME generell in altNeueSaetze etc. erlauben, dass
-                            //  eine empty Collection hineingegegeben wird.
-                            //  Dann sollte bei addAll nichts hinzugefügt werden!
-                            //  Alle Aufrufe prüfen und ggf. vereinfachen!
                             altTageszeitenwechsel.stream()
-                                    .map(s -> s.mitAnschlusswortUndSofernNichtSchonEnthalten())));
+                                    .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
                 }
                 if (unterOffenemHimmel
-                        && bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                        && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz("Die Sonne ist schon wieder am Untergehen"));
                 }
                 break;
@@ -177,14 +177,14 @@ public class BewoelkungDescDescriber {
                 // Man sieht nicht mehr so gut, weil die Augen sich erst
                 // anpassen müssen. Eigentlich ist es für Nachtverhältnisse
                 // sogar eher hell - zumindest draußen.
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(
                             neuerSatz(PARAGRAPH, "Darüber ist es vollständig dunkel "
                                     + "geworden. Nur noch "
                                     + "die Sterne und der Mond spenden ein wenig Licht"));
                 }
 
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) >= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) >= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
                             "Es ist Nacht geworden und man sieht nicht mehr so gut"));
                 }
@@ -214,13 +214,13 @@ public class BewoelkungDescDescriber {
                 alt.addAll(altTageszeitenwechsel(bewoelkung, ABENDS, unterOffenemHimmel));
                 break;
             case NACHTS:
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
                             "Es ist jetzt vollständig dunkel geworden. Nur noch "
                                     + "die Sterne und der Mond geben etwas Licht"));
                 }
 
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) >= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) >= 0) {
                     // Man sieht nicht mehr so gut, weil die Augen sich erst
                     // anpassen müssen. Eigentlich ist es für Nachtverhältnisse
                     // sogar eher hell - zumindest draußen.
@@ -255,7 +255,7 @@ public class BewoelkungDescDescriber {
             case MORGENS:
                 break;
             case TAGSUEBER:
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz("Es ist schon wieder heller Tag"));
                 }
                 break;
@@ -285,9 +285,8 @@ public class BewoelkungDescDescriber {
 
         alt.addAll(altNeueSaetze(
                 PARAGRAPH,
-                satzDescriber
-                        .altTageszeitenwechsel(
-                                bewoelkung, newTageszeit, unterOffenemHimmel)));
+                satzDescriber.altTageszeitenwechsel(
+                        bewoelkung, newTageszeit, unterOffenemHimmel)));
 
         switch (newTageszeit) {
             case MORGENS:
@@ -295,6 +294,18 @@ public class BewoelkungDescDescriber {
                     if (bewoelkung == Bewoelkung.WOLKENLOS) {
                         alt.add(neuerSatz("Die Sterne verblassen und die Sonne ist",
                                 "am Horizont zu sehen"));
+                    }
+                    if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
+                        alt.add(du(SENTENCE, "siehst", "die Sonne aufsteigen"));
+                        // FIXME "Als du die Sonne aufsteigen siehst..." - automatisch erzeugen,
+                        //   wenn .als() dran steht?! Allerdings wiedersprechen sich
+                        //   .als() und schonLaenger(), vielleicht genügt also auch ein Fehlen von
+                        //   .schonLaenger() - dann wäre "du siehst die Sonne aufsteigen"
+                        //   praktisch eine
+                        //   Alternative zu "(Dann) steigt die Sonne auf" - wobei man das dann
+                        //   nicht schreiben darf, weil der Aktor vorher nicht der Mond ist...!
+
+                        // IDEA "Du siehst die Sonne hinter den Bergen aufsteigen"
                     }
 
                     if (bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0) {
@@ -307,7 +318,7 @@ public class BewoelkungDescDescriber {
             case ABENDS:
                 break;
             case NACHTS:
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) <= 0) {
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
                             // Eigentlich fühlt es sich nur "dunkel" an! Weil
                             // vorher einmal hell war. In derselben Nacht könnte später
@@ -318,7 +329,11 @@ public class BewoelkungDescDescriber {
                                     "sehen. Es ist dunkel und in der Ferne ruft ein Käuzchen"));
                 }
 
-                if (bewoelkung.compareTo(Bewoelkung.LEICHT_BEWOELKT) >= 0) {
+                if (bewoelkung.compareTo(Bewoelkung.BEWOELKT) <= 0 && unterOffenemHimmel) {
+                    alt.add(neuerSatz(PARAGRAPH, "Nun ist die Sonne unter"));
+                }
+
+                if (bewoelkung.compareTo(LEICHT_BEWOELKT) >= 0) {
                     alt.add(neuerSatz(PARAGRAPH,
                             // Man sieht nicht mehr so gut, weil die Augen sich erst
                             // anpassen müssen.
@@ -332,41 +347,115 @@ public class BewoelkungDescDescriber {
         return alt;
     }
 
-    @CheckReturnValue
-    public AltDescriptionsBuilder altUnterOffenemHimmel(
-            final Bewoelkung bewoelkung, final AvTime time) {
-        final AltDescriptionsBuilder alt = alt();
-        alt.addAll(satzDescriber.altUnterOffenemHimmel(bewoelkung, time));
-        if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
-            alt.addAll(
-                    altNeueSaetze(
-                            time.getTageszeit().altGestirn().stream()
-                                    .map(gestirn ->
-                                            // "Der Mond steht hoch"
-                                            STEHEN.alsSatzMitSubjekt(gestirn)
-                                                    .mitAdvAngabe(
-                                                            new AdvAngabeSkopusVerbAllg(
-                                                                    HOCH))),
-                            "und es ist so hell, dass man eine Stecknadel finden könnte"));
-        }
-
-
-        if (time.kurzVorSonnenaufgang() && bewoelkung.compareTo(BEWOELKT) <= 0) {
-            alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
-        }
-
-        return alt;
-    }
-
+    /**
+     * Gibt alternative Wetter-Beschreibungen zurück, wenn der SC unter offenen Himmel
+     * gekommen ist
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
     @CheckReturnValue
     public AltDescriptionsBuilder altKommtUnterOffenenHimmel(
             final Bewoelkung bewoelkung,
-            final AvTime time, final boolean warVorherDrinnen) {
+            final AvTime time, final boolean warVorherDrinnen,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        // Wenn Inhalte für diesen Tageszeitenwechsel nicht mehrfach beschrieben werden
+        // sollen (z.B. bei "schon", "inzwischen", "eben", "xyz ist passiert" etc.), dann
+        // nur bei auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben schreiben!
+
         final AltDescriptionsBuilder alt = alt();
 
         // "Draußen ist der Himmel bewölkt"
-        alt.addAll(satzDescriber.altKommtUnterOffenenHimmel(bewoelkung, time, warVorherDrinnen));
-        if (bewoelkung == Bewoelkung.WOLKENLOS && time.mittenInDerNacht()) {
+        alt.addAll(satzDescriber.altKommtUnterOffenenHimmel(bewoelkung, time, warVorherDrinnen,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+        alt.addAll(altSpezGestirnUnterOffenemHimmel(bewoelkung, time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+        return alt;
+    }
+
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel erlebt
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
+    @CheckReturnValue
+    public AltDescriptionsBuilder altUnterOffenemHimmel(
+            final Bewoelkung bewoelkung, final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.addAll(satzDescriber.altUnterOffenemHimmel(
+                bewoelkung, time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+        alt.addAll(altSpezGestirnUnterOffenemHimmel(
+                bewoelkung, time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+        return alt;
+    }
+
+    /**
+     * Gibt spezielle Beschreibungen der Gestirne zurück, wie man sie unter offenem Himmel erlebt
+     * - evtl. leer.
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszweitenwechsel nur
+     *                                                                 einmalig
+     *                                                                 auftreten
+     */
+    private AltDescriptionsBuilder altSpezGestirnUnterOffenemHimmel(
+            final Bewoelkung bewoelkung,
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        // Wenn Inhalte für diesen Tageszeitenwechsel nicht mehrfach beschrieben werden
+        // sollen (z.B. bei "schon", "inzwischen", "eben", "xyz ist passiert" etc.), dann
+        // nur bei auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben schreiben!
+
+        final AltDescriptionsBuilder alt = alt();
+
+        if (time.kurzVorSonnenaufgang() && bewoelkung.isUnauffaellig(NACHTS)) {
+            alt.addAll(mapToSet(
+                    satzDescriber.altTageszeitenwechsel
+                            (bewoelkung, Tageszeit.MORGENS, true),
+                    sonneGehtAuf -> sonneGehtAuf.mitAdvAngabe(
+                            new AdvAngabeSkopusVerbAllg("bald"))));
+
+            alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
+        }
+
+        if (time.kurzNachSonnenaufgang()
+                && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0
+                && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            alt.add(neuerSatz(SENTENCE, "es bricht eben der erste Sonnenstrahl hervor"));
+        }
+
+        if (time.getTageszeit() == NACHTS
+                && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            alt.add(
+                    // IDEA: "die Sonne ist hinter den Bergen verschwunden"
+                    //  "die Sonne ist hinter die Berge gesunken"
+                    neuerSatz("Der Mond ist aufgegangen"));
+        }
+
+        if (time.mittenInDerNacht() && bewoelkung == Bewoelkung.WOLKENLOS) {
+            if (auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+                alt.add(neuerSatz("Der Mond ist schon aufgestiegen"));
+                alt.add(neuerSatz("Der Mond ist indessen aufgestiegen, und es ist so hell,",
+                        "dass man eine Stecknadel finden könnte"));
+                // IDEA: "Der Mond ist indessen über dem Berg
+                // aufgestiegen, und es ist so hell, dass man eine Stecknadel finden könnte."
+            }
+
             alt.addAll(
                     altNeueSaetze(
                             time.getTageszeit().altGestirn().stream()
@@ -379,17 +468,24 @@ public class BewoelkungDescDescriber {
                             "und es ist so hell, dass man eine Stecknadel finden könnte"));
         }
 
-        if (time.kurzVorSonnenaufgang() && bewoelkung.compareTo(BEWOELKT) <= 0) {
-            alt.add(neuerSatz("die Sonne ist noch nicht wieder hervorgekommen"));
-        }
-
         return alt;
     }
 
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel erlebt,
+     * verbunden mit einem Hinweis auf einen "schönen Morgen" oder Ähnlichem.
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
     public AltDescriptionsBuilder altSchoeneTageszeit(
             final Bewoelkung bewoelkung,
             final AvTime time,
-            final boolean unterOffenemHimmel) {
+            final boolean unterOffenemHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
         if (unterOffenemHimmel) {
@@ -399,7 +495,9 @@ public class BewoelkungDescDescriber {
                             .alsSatzMitSubjekt(EXPLETIVES_ES),
                     ",",
                     satzDescriber
-                            .altUnterOffenemHimmel(bewoelkung, time)));
+                            .altUnterOffenemHimmel(
+                                    bewoelkung, time,
+                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
         } else {
             // "Es ist ein schöner Abend"
             alt.add(praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))

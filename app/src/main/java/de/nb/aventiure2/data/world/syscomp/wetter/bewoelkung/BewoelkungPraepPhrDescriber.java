@@ -5,8 +5,11 @@ import com.google.common.collect.ImmutableSet;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MONDSCHIMMER;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAGESLICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
@@ -33,33 +36,40 @@ public class BewoelkungPraepPhrDescriber {
     public ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Bewoelkung bewoelkung,
                                                                  final Tageszeit tageszeit,
                                                                  final boolean unterOffenemHimmel) {
-        return altImLicht(bewoelkung, tageszeit, unterOffenemHimmel,
-                BEI_DAT.mit(npArtikellos(LICHT)));
-    }
+        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
-    public ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final Bewoelkung bewoelkung,
-                                                                      final Tageszeit tageszeit,
-                                                                      final boolean unterOffenemHimmel) {
-        return altImLicht(bewoelkung, tageszeit, unterOffenemHimmel,
-                BEI_DAT.mit(npArtikellos(TAGESLICHT)));
+        if (tageszeit != NACHTS) {
+            alt.add(BEI_DAT.mit(npArtikellos(LICHT)));
+        }
+
+        if (tageszeit == TAGSUEBER) {
+            alt.add(BEI_DAT.mit(npArtikellos(TAGESLICHT)));
+        }
+
+        if (bewoelkung == LEICHT_BEWOELKT && tageszeit == NACHTS) {
+            alt.add(BEI_DAT.mit(MONDSCHIMMER)); // "beim Mondschimmer"
+        }
+
+        alt.addAll(altImLicht(bewoelkung, tageszeit, unterOffenemHimmel));
+
+        return alt.build();
     }
 
     private ImmutableSet<Praepositionalphrase> altImLicht(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
-            final boolean unterOffenemHimmel,
-            final Praepositionalphrase alternative) {
+            final boolean unterOffenemHimmel) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
-        alt.add(alternative);
-        alt.addAll(
-                mapToSet(praedikativumDescriber
-                                .altLichtInDemEtwasLiegt(bewoelkung, tageszeit, unterOffenemHimmel),
-                        IN_DAT::mit));
+        alt.addAll(mapToSet(
+                praedikativumDescriber
+                        .altLichtInDemEtwasLiegt(bewoelkung, tageszeit, unterOffenemHimmel),
+                IN_DAT::mit));
+
+        // IDEA "der Hügel liegt in einsamem Mondschein." (einsam bezieht sich auf den Hügel
+        //  oder den SC, nicht auf den Mondschein)
+
         return alt.build();
     }
-
-    // FIXME "beim Mondschimmer"
-    // FIXME "der Hügel liegt in einsamem Mondschein."
 
     public ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(
             final Bewoelkung bewoelkung, final Tageszeit tageszeit) {

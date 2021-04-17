@@ -41,6 +41,13 @@ public class Nominalphrase
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
+    public static final Nominalphrase ERSTER_SONNENSTRAHL =
+            np(M, DEF, "erste Sonnenstrahl",
+                    "ersten Sonnenstrahl", "ersten Sonnenstrahl");
+    public static final Nominalphrase ERSTER_STRAHL_DER_AUFGEHENDEN_SONNE =
+            np(M, DEF, "erste Strahl der aufgehenden Sonne",
+                    "ersten Strahl der aufgehenden Sonne",
+                    "ersten Strahl der aufgehenden Sonne");
     public static final Nominalphrase ERSTE_SONNENSTRAHLEN =
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase IHRE_HAARE =

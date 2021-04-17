@@ -16,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
@@ -252,6 +253,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             "entgegen und geht hinter dir davon", PARAGRAPH));
         }
 
+        if (gameObjectId == World.RAPUNZELS_ZAUBERIN
+                && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
+                .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
+                || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
+            throw new IllegalStateException("Darf nicht passieren! Bewegung während des Redens!");
+        }
+
         n.narrateAlt(alt, NO_TIME);
     }
 
@@ -307,6 +315,13 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                     "Dir kommt",
                     desc.nomK(),
                     "entgegen und geht hinter dir davon", PARAGRAPH));
+        }
+
+        if (gameObjectId == World.RAPUNZELS_ZAUBERIN
+                && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
+                .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
+                || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
+            throw new IllegalStateException("Darf nicht passieren! Bewegung während des Redens!");
         }
 
         n.narrateAlt(alt, NO_TIME);

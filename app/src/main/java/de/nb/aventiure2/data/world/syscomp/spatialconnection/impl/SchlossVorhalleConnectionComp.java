@@ -115,7 +115,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 || lichtverhaeltnisseDraussen == DUNKEL) {
             return mapToSet(
                     world.loadWetter().wetterComp()
-                            .altKommtNachDraussen(lichtverhaeltnisseDraussen),
+                            .altKommtNachDraussen(),
                     wetterDesc ->
                             du("verlässt", "das Schloss",
                                     SENTENCE,
@@ -134,7 +134,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         if (lichtverhaeltnisseDraussen == HELL) {
             return mapToSet(world.loadWetter().wetterComp()
-                    .altKommtNachDraussen(lichtverhaeltnisseDraussen), wetterDesc ->
+                    .altKommtNachDraussen(), wetterDesc ->
                     du("gehst",
                             "über eine Marmortreppe hinaus in die Gärten vor dem",
                             "Schloss", CHAPTER,
@@ -147,7 +147,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
         // FIXME altDu() o.Ä.?!
         return mapToSet(world.loadWetter().wetterComp()
-                .altKommtNachDraussen(lichtverhaeltnisseDraussen), wetterDesc ->
+                .altKommtNachDraussen(), wetterDesc ->
                 du("gehst", "über eine Marmortreppe hinaus den "
                                 + "Garten vor dem Schloss.", CHAPTER,
                         wetterDesc.toSingleKonstituente(),

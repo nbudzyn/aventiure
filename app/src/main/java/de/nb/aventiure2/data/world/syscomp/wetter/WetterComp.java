@@ -7,15 +7,16 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
@@ -29,12 +30,12 @@ import de.nb.aventiure2.german.satz.Satz;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
 
 /**
  * Wetter
  */
 public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
-    private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
@@ -42,7 +43,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public WetterComp(final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
                       final World world) {
         super(WETTER, db.wetterDao());
-        this.db = db;
         this.timeTaker = timeTaker;
         this.n = n;
         this.world = world;
@@ -71,8 +71,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         final ImmutableCollection<AbstractDescription<?>>
                 altHinweise = requirePcd().altWetterHinweiseWennNoetig(
                 timeTaker.now().getTime(),
-                world.loadSC().locationComp().getLocation().storingPlaceComp()
-                        .getLichtverhaeltnisse(),
                 loadScDrinnenDraussen());
 
         if (!altHinweise.isEmpty()) {
@@ -89,8 +87,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
 
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
-            final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+    public ImmutableSet<AbstractDescription<?>> altKommtNachDraussen() {
         return requirePcd()
                 .altKommtNachDraussen(
                         timeTaker.now().getTime(),
@@ -123,8 +120,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * Gibt alternative Beschreibungen zurück in der Art "in den Sonnenschein" o.Ä., die mit
      * "hinaus" verknüpft werden können.
      */
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
-            final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus() {
         return requirePcd().altWohinHinaus(timeTaker.now().getTime(),
                 isScUnterOffenemHimmel());
     }
@@ -175,6 +171,12 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     private DrinnenDraussen loadScDrinnenDraussen() {
-        return world.loadSC().locationComp().getLocation().storingPlaceComp().getDrinnenDraussen();
+        @Nullable final ILocationGO location = world.loadSC().locationComp().getLocation();
+        if (location == null) {
+            // Der SC hat die Welt verlassen?
+            return DRINNEN;
+        }
+
+        return location.storingPlaceComp().getDrinnenDraussen();
     }
 }

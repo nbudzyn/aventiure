@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.Satz;
@@ -17,6 +18,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -135,7 +137,6 @@ public class TageszeitDescDescriber {
                 }
                 break;
             case NACHTS:
-                // FIXME Evtl. in TageszeitDescDescriber oder BewoelkungDescDescriber auslagern?
                 if (draussen) {
                     alt.add(neuerSatz("Die Sonne ist über die Zeit untergegangen"),
                             neuerSatz("Jetzt ist es dunkel"),
@@ -189,6 +190,8 @@ public class TageszeitDescDescriber {
                                     "hell geworden"));
                 } else {
                     alt.add(neuerSatz(PARAGRAPH, "Es ist gewiss schon der nächste Morgen"));
+                    alt.add(neuerSatz(PARAGRAPH,
+                            "Wahrscheinlich ist schon der nächste Tag angebrochen"));
                 }
                 break;
             default:
@@ -248,20 +251,44 @@ public class TageszeitDescDescriber {
             alt.addAll(satzDescriber.altWechselDraussen(newTageszeit));
 
             alt.addAll(altNeueSaetze(
-                    ImmutableList.of("allmählich", "unterdessen"),
+                    ImmutableList.of("allmählich", "unterdessen", "inzwischen"),
                     "ist es",
-                    newTageszeit.getNomenFlexionsspalte().nomK(), // "Morgen"
+                    Nominalphrase.npArtikellos(newTageszeit.getNomenFlexionsspalte())
+                            .nomK(), // "Morgen"
                     "geworden"
                     // Der Tageszeitenwechsel ist parallel passiert.
             ));
+
+            if (newTageszeit.getLichtverhaeltnisseDraussen() !=
+                    newTageszeit.getVorgaenger().getLichtverhaeltnisseDraussen()) {
+                alt.addAll(altNeueSaetze(
+                        ImmutableList.of("unterdessen", "inzwischen"),
+                        "ist es",
+                        newTageszeit.getLichtverhaeltnisseDraussen().getAdjektiv(), // "hell"
+                        "geworden"
+                        // Der Tageszeitenwechsel ist parallel passiert.
+                ));
+            }
+
         } else {
+            if (newTageszeit != TAGSUEBER) {
+                alt.add(neuerSatz("Es dürfte wohl inzwischen",
+                        Nominalphrase.npArtikellos(newTageszeit.getNomenFlexionsspalte())
+                                .nomStr(), // "Morgen"
+                        "geworden sein"));
+            }
+
+            alt.add(neuerSatz(PARAGRAPH, "Dein Gefühl sagt dir: ", SENTENCE,
+                    satzDescriber.altWechselDraussen(newTageszeit)
+            ));
+
             alt.add(neuerSatz("Ob es wohl allmählich",
                     newTageszeit.getNomenFlexionsspalte().nomK(), // "Morgen"
                     "geworden ist?"
                     // Der Tageszeitenwechsel ist parallel passiert.
             ));
 
-            // "Ob es wohl langsam Morgen wird?"
+            // "Ob es langsam Morgen wird?"
             alt.addAll(altNeueSaetze(
                     satzDescriber.altWechselDraussen(newTageszeit).stream()
                             .map(Satz::getIndirekteFrage),
@@ -279,12 +306,16 @@ public class TageszeitDescDescriber {
                             // allgemein
                             // sagen
                     );
+                } else {
+                    alt.add(neuerSatz("Wahrscheinlich ist schon der nächste Tag angebrochen"));
                 }
 
                 break;
             case TAGSUEBER:
                 if (draussen) {
                     alt.add(neuerSatz("Die Sonne ist aufgegangen und beginnt ihren Lauf"));
+                } else {
+                    alt.add(paragraph("Ob wohl schon die Sonne aufgegangen ist?"));
                 }
                 break;
             case ABENDS:
