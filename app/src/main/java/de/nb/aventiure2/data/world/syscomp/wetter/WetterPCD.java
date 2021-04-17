@@ -14,9 +14,13 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -25,6 +29,7 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 
@@ -33,6 +38,15 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.D
  */
 @Entity
 public class WetterPCD extends AbstractPersistentComponentData {
+    private static final TageszeitPraedikativumDescriber TAGESZEIT_PRAEDIKATIVUM_DESCRIBER =
+            new TageszeitPraedikativumDescriber();
+
+    private static final TageszeitSatzDescriber TAGESZEIT_SATZ_DESCRIBER =
+            new TageszeitSatzDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final TageszeitDescDescriber TAGESZEIT_DESC_DESCRIBER =
+            new TageszeitDescDescriber(TAGESZEIT_SATZ_DESCRIBER);
+
     /**
      * Das aktuelle Wetter
      */
@@ -148,44 +162,80 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     /**
      * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
-     * zuallermeist leer. Falls aber doch nicht leer, so wird außerdem gespeichert, dass,
+     * zuallermeist leer. Falls aber doch nicht leer, so wird ggf. außerdem gespeichert, dass,
      * wenn der Spieler das nächste Mal nach draußen oder unter den offenen Himmel kommt,
      * das Wetter beschrieben werden soll.
      */
     @NonNull
-    ImmutableCollection<AbstractDescription<?>> registerTimePassed(
+    ImmutableCollection<AbstractDescription<?>> onTimePassed(
             final AvDateTime startTime,
             final AvDateTime endTime,
             final DrinnenDraussen drinnenDraussen) {
-        if (endTime.minus(startTime).shorterThan(AvTimeSpan.ONE_DAY)
-                // Sonst hat die Spieler-Action sicher ohnehin erzählt, was passiert ist.
-                && startTime.getTageszeit() != endTime.getTageszeit()) {
-            // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit 
-            // von weniger als einem Tag
-            final ImmutableCollection<AbstractDescription<?>> alt =
-                    wetter.altTageszeitensprungOderWechsel(startTime.getTageszeit(),
-                            endTime.getTageszeit(), drinnenDraussen);
-
-            resetWetterHinweiseFlags(drinnenDraussen);
-
-            if (!drinnenDraussen.isDraussen()) {
-                // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC wieder
-                // raus kommt. Auch "einmalige Erlebnisse nach Tageszeitenwechsel"
-                // (erster Sonnenstrahl o.Ä.) sollen (einmalig :-) ) erzählt werden.
-                setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
-                        true);
-            }
-
-            if (drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
-                // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC unter
-                // offenen Himmel tritt.
-                setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
-            }
-
-            return alt;
+        if (endTime.minus(startTime).longerThan(AvTimeSpan.ONE_DAY)) {
+            // Dann hat die Spieler-Action sicher ohnehin erzählt, was passiert ist.
+            return ImmutableSet.of();
         }
 
-        return ImmutableSet.of();
+        if (startTime.getTageszeit() == endTime.getTageszeit()) {
+            return onTimePassedZwischentageszeitlicherWechsel(
+                    startTime.getTime(), endTime.getTime(), drinnenDraussen);
+        }
+
+        // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit
+        // von weniger als einem Tag
+        return onTimePassedTageszeitensprungOderWechsel(
+                startTime.getTageszeit(), endTime.getTageszeit(), drinnenDraussen);
+    }
+
+    /**
+     * Erzeugt ggf. ein paar Basis-Hinweise, um dem Spieler zu
+     * vergegenwärtigen, dass auch über den Tag die Zeit vergeht - zumeist eine leere
+     * {@link java.util.Collection}.
+     */
+    @NonNull
+    private static ImmutableCollection<AbstractDescription<?>> onTimePassedZwischentageszeitlicherWechsel(
+            final AvTime before,
+            final AvTime after,
+            final DrinnenDraussen drinnenDraussen) {
+        return TAGESZEIT_DESC_DESCRIBER.altZwischentageszeitlicherWechsel(
+                before, after, drinnenDraussen.isDraussen());
+    }
+
+    /**
+     * Gibt alternative Beschreibungen zurück, dass dieser Tageszeitenwechsel
+     * geschehen ist; außerdem wird ggf. gespeichert, dass,wenn der Spieler das nächste Mal nach
+     * draußen oder unter den offenen Himmel kommt,
+     * das Wetter beschrieben werden soll.
+     */
+    @NonNull
+    private ImmutableCollection<AbstractDescription<?>> onTimePassedTageszeitensprungOderWechsel(
+            final Tageszeit lastTageszeit,
+            final Tageszeit currentTageszeit,
+            final DrinnenDraussen drinnenDraussen) {
+        checkArgument(lastTageszeit != currentTageszeit,
+                "Unveränderte Tageszeit: " + lastTageszeit);
+
+        final ImmutableCollection<AbstractDescription<?>> alt =
+                wetter.altTageszeitensprungOderWechsel(lastTageszeit,
+                        currentTageszeit, drinnenDraussen);
+
+        resetWetterHinweiseFlags(drinnenDraussen);
+
+        if (!drinnenDraussen.isDraussen()) {
+            // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC wieder
+            // raus kommt. Auch "einmalige Erlebnisse nach Tageszeitenwechsel"
+            // (erster Sonnenstrahl o.Ä.) sollen (einmalig :-) ) erzählt werden.
+            setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
+                    true);
+        }
+
+        if (drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
+            // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC unter
+            // offenen Himmel tritt.
+            setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
+        }
+
+        return alt;
     }
 
     /**

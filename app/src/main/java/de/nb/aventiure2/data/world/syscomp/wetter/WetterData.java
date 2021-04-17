@@ -164,7 +164,6 @@ class WetterData {
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
                 temperatur)) {
             // "es ist schon dunkel", "es ist Abend"
-            // FIXME Über Tag: es ist schon weit nach Mittag
             alt.addAll(TAGESZEIT_SATZ_DESCRIBER.altDraussen(time));
         }
 

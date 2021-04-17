@@ -145,7 +145,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().registerTimePassed(startTime, endTime,
+                requirePcd().onTimePassed(startTime, endTime,
                         loadScDrinnenDraussen());
 
         if (!alt.isEmpty()) {

@@ -2,10 +2,13 @@ package de.nb.aventiure2.data.world.syscomp.wetter.tageszeit;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -13,6 +16,7 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -38,6 +42,53 @@ public class TageszeitDescDescriber {
     public TageszeitDescDescriber(
             final TageszeitSatzDescriber satzDescriber) {
         this.satzDescriber = satzDescriber;
+    }
+
+
+    /**
+     * Gibt Alternativen zurück, die innerhalb einer Tageszeit einen "zwischentageszeitlichen
+     * Wechsel" beschreiben - ggf. leer.
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<AbstractDescription<?>>
+    altZwischentageszeitlicherWechsel(final AvTime before, final AvTime after,
+                                      final boolean draussen) {
+        if (before.getTageszeit() != after.getTageszeit()) {
+            return ImmutableSet.of();
+        }
+
+        if (oClock(15).isWithin(before, after)) {
+            return altNachmittagsWechsel(draussen);
+        }
+
+        return ImmutableSet.of();
+    }
+
+    /**
+     * Gibt Alternativen zurück, die den "Nachmittags-Wechsel" beschreiben.
+     */
+    @NonNull
+    @CheckReturnValue
+    private ImmutableCollection<AbstractDescription<?>> altNachmittagsWechsel(
+            final boolean draussen) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (draussen) {
+            alt.add(neuerSatz(PARAGRAPH, "Es ist schon weit nach Mittag"))
+                    .add(neuerSatz(PARAGRAPH, "Die Mittagsstunde ist schon",
+                            "lange herum"))
+                    .add(neuerSatz(PARAGRAPH, "Die Mittagsstunde ist schon",
+                            "lange vorbei"))
+                    .add(neuerSatz(PARAGRAPH, "Längst ist es nach Mittag"));
+        } else {
+            alt.add(neuerSatz(PARAGRAPH, "Es ist sicher schon nach Mittag"))
+                    .add(neuerSatz(PARAGRAPH, "Es wird wohl schon nach Mittag sein"))
+                    .add(neuerSatz(PARAGRAPH,
+                            "Die Mittagsstunde ist sicher schon lang vorbei"));
+        }
+
+        return alt.schonLaenger().build();
     }
 
     /**
@@ -278,7 +329,7 @@ public class TageszeitDescDescriber {
                         "geworden sein"));
             }
 
-            alt.add(neuerSatz(PARAGRAPH, "Dein Gefühl sagt dir: ", SENTENCE,
+            alt.addAll(altNeueSaetze(PARAGRAPH, "Dein Gefühl sagt dir: ", SENTENCE,
                     satzDescriber.altWechselDraussen(newTageszeit)
             ));
 
