@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -36,9 +37,12 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARMORTREPPE;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERGEHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -114,18 +118,21 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
             return mapToSet(
-                    world.loadWetter().wetterComp()
-                            .altKommtNachDraussen(),
+                    world.loadWetter().wetterComp().altKommtNachDraussen(),
                     wetterDesc ->
                             du("verlässt", "das Schloss",
                                     SENTENCE,
                                     wetterDesc.toSingleKonstituente()).timed(mins(1)));
         }
 
-        return ImmutableList.of(
-                du("verlässt", "das Schloss").timed(mins(1))
-                        .undWartest()
-                        .dann());
+        final AltDescriptionsBuilder alt = alt();
+        alt.add(du("verlässt", "das Schloss").undWartest().dann());
+        // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
+        alt.addAll(world.loadWetter().wetterComp().altWohinHinaus().stream()
+                .map(a -> HINUNTERGEHEN.mit(MARMORTREPPE).mitAdvAngabe(a)
+                        .alsSatzMitSubjekt(duSc())));
+
+        return alt.timed(mins(1)).build();
     }
 
     @NonNull
