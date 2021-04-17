@@ -11,8 +11,11 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Numerus;
+import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -27,6 +30,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Tageszeit} als {@link AbstractDescription}.
@@ -391,5 +395,25 @@ public class TageszeitDescDescriber {
         }
 
         return alt.schonLaenger();
+    }
+
+    public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if ((time.getTageszeit() == MORGENS || time.getTageszeit() == NACHTS)
+                && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            alt.add(paragraph("Draußen ist es inzwischen",
+                    time.getTageszeit().getLichtverhaeltnisseDraussen().getAdjektiv()
+                            .getPraedikativ(Person.P3, Numerus.SG), // "hell" / "dunkel"
+                    "geworden"));
+        }
+
+        // "draußen ist es schon dunkel"
+        alt.addAll(mapToSet(satzDescriber.altSchonBereitsNochDunkelHellDraussen(time),
+                s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+
+        return alt.schonLaenger().build();
     }
 }

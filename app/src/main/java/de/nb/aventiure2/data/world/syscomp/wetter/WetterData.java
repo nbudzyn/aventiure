@@ -34,7 +34,6 @@ import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -324,9 +323,9 @@ class WetterData {
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
                 temperatur)) {
             // "draußen ist es schon dunkel"
-            alt.addAll(mapToSet(
-                    TAGESZEIT_SATZ_DESCRIBER.altSchonBereitsNochDunkelHellDraussen(time),
-                    s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
+            alt.addAll(
+                    TAGESZEIT_DESC_DESCRIBER.altKommtNachDraussen(time,
+                            auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
         if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel)) {
@@ -494,9 +493,6 @@ class WetterData {
     //  SC geht aus dem kühlen Schloss in die Hitze oder die Temperatur steigt draußen
     //  über den Tag), könnte es eine Ausgabe geben.
     //  Einfachste Lösung: wennDraussenDannWieder... auf true setzen.
-
-    // FIXME SC ist nach draußen gekommen und die Tageszeit hat VOR startTime gewechselt:
-    // - "Draußen ist es inzwischen hell geworden"
 
     // FIXME Veränderungen der Temperatur
     //  "es kühlt (deutlich) ab" (Temperatur)

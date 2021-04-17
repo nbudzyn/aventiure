@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
@@ -70,10 +71,9 @@ public class TageszeitSatzDescriber {
         return alt.build();
     }
 
-
-    public ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHellDraussen(
+    ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHellDraussen(
             final AvTime time) {
         return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time),
-                a -> a.alsEsIstSatz());
+                Praedikativum::alsEsIstSatz);
     }
 }
