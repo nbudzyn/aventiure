@@ -145,9 +145,13 @@ public class MovementComp
         setTargetLocationId(targetLocationId);
         setupNextStepIfNecessaryAndPossible(now, firstStepTakesNoTime);
 
-        if (hasCurrentStep()) {
-            narrateAndDoMovementLeaves();
+        if (!hasCurrentStep()
+                || requirePcd().getPauseForSCAction() == PAUSED
+                || conversationable.isInConversation()) {
+            return;
         }
+
+        narrateAndDoMovementLeaves();
     }
 
     @Override
@@ -193,17 +197,6 @@ public class MovementComp
         if (!hasCurrentStep()
                 || requirePcd().getPauseForSCAction() == PAUSED
                 || conversationable.isInConversation()) {
-            // FIXME No actions. SC at 30005Text: [...]
-            //  Was willst du hier eigentlich? Du gehst zurück in Richtung Schloss. Eine
-            //  magere Frau mit krummer, bis zum Kinn reichender Nase kommt daher.
-            //  Du gehst wieder den langen, schmalen Pfad den Hügel hinauf bis zum Turm.
-            //  Die magere Frau kommt dir hinterher.
-            //  Du fühlst dich allmählich etwas hungrig.
-            //  Der Tag neigt sich und langsam beginnt der Abend. „Gott zum Gruße“, sprichst du die
-            //   magere Frau an sie blickt dich schlecht aufgelegt an.
-            //  Sie kommt dir entgegen und geht an dir vorbei
-            //  - Vielleicht ein Problem der MovementComp oder der
-            //   BewegenAction oder der TalkingComp.... :-(
             return;
         }
 
@@ -269,7 +262,9 @@ public class MovementComp
         }
 
         setupNextStepIfNecessaryAndPossible(getCurrentStep().getExpDoneTime());
-        if (!hasCurrentStep()) {
+        if (!hasCurrentStep()
+                || requirePcd().getPauseForSCAction() == PAUSED
+                || conversationable.isInConversation()) {
             return false;
         }
 

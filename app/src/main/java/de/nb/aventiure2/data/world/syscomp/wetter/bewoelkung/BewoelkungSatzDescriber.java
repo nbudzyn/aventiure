@@ -290,6 +290,34 @@ public class BewoelkungSatzDescriber {
                                     // Achtung: nicht "im Augenblick"!
                                     "in dem Augenblick")));
                 }
+                if (time.gegenMittag()) {
+                    // "Die Sonne steht sehr hoch"
+                    alt.add(STEHEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                    HOCH.mitGraduativerAngabe("sehr"))));
+                    // "Die Sonne steht hoch am Firmament"
+                    alt.add(STEHEN.alsSatzMitSubjekt(SONNE)
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("hoch am Firmament")));
+                    if (auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+                        // "Die Sonne steht schon hoch"
+                        alt.add(STEHEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                        HOCH.mitGraduativerAngabe("sehr")
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz("schon")))));
+                        // "Inzwischen steht die Sonne schon sehr hoch"
+                        alt.add(STEHEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                        HOCH.mitGraduativerAngabe("sehr")
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz("schon"))))
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen")));
+                        // "Inzwischen steht die Sonne hoch am Firmament
+                        alt.add(STEHEN.alsSatzMitSubjekt(SONNE)
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("hoch am Firmament"))
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen")));
+                    }
+                }
                 break;
             case BEWOELKT:
                 break;
@@ -401,7 +429,6 @@ public class BewoelkungSatzDescriber {
                 }
 
                 break;
-
             case LEICHT_BEWOELKT:
                 alt.addAll(mapToList(tageszeit.altGestirn(), SCHEINEN::alsSatzMitSubjekt));
                 if (tageszeit == TAGSUEBER) {

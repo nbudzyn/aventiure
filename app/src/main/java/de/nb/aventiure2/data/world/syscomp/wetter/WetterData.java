@@ -188,13 +188,6 @@ class WetterData {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 // Temperatur muss nicht erwähnt werden
 
-                // FIXME TAGSUEBER ersetzen durch VORMITTAGS und NACHMITTAGS?
-                //  Über Tag: die Sonne (draußen, Bewölkung) steht schon hoch
-                //  "Inzwischen steht die Sonne schon sehr hoch"
-                //  "Inzwischen steht die Sonne hoch am Firmament
-                //  Dabei aber Bewölkung berücksichtigen!
-                //  Mittags -> "Die Sonne rutscht..."
-
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }

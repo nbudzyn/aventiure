@@ -253,6 +253,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                             "entgegen und geht hinter dir davon", PARAGRAPH));
         }
 
+        // FIXME Wieder entfernen, wenn Problem behoben!
         if (gameObjectId == World.RAPUNZELS_ZAUBERIN
                 && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
@@ -317,6 +318,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                     "entgegen und geht hinter dir davon", PARAGRAPH));
         }
 
+        // FIXME Wieder entfernen, wenn Problem behoben!
         if (gameObjectId == World.RAPUNZELS_ZAUBERIN
                 && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
