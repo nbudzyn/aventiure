@@ -496,22 +496,23 @@ class WetterData {
 
     // FIXME Veränderungen der Temperatur
     //  "es kühlt (deutlich) ab" (Temperatur)
-
-    // FIXME Veränderungen der Bewölkung
-    //  es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
-
-    // FIXME Häufiger, wenn man geschlossene Räume nach draußen verlässt:
-    //  "du kommst aus (der Finsternis) heraus in das Tageslicht"
-
-    // FIXME Kombination: "Es hat deutlich abgekühlt und der Himmel bezieht sich."
-
-    // FIXME Konzept am Hunger orientieren? Als "Erinnerung"?
-    //  Vor allem auch bedenken, dass es ja über den Tag immer wärmer (und auch wieder
+    //  Konzept am Hunger orientieren?
+    //  Bedenken, dass es ja über den Tag immer wärmer (und auch wieder
     //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
     //  eigentliche "Tagestemperatur" nicht ändern (sofern die Temperatur nicht vorher unerheblich
     //  ist und bleibt)
     //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
     //  Temperatur-Wert speichern?
+
+    // FIXME Veränderungen der Bewölkung
+    //  es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
+
+    // FIXME Veränderung von Temperatur und Bewölkung: "Es hat deutlich abgekühlt und der Himmel
+    //  bezieht sich."
+    // FIXME "Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
+    //  Himmel bezieht sich."
+
+    // FIXME Bei extremen / dramtischen Wetterlagen "Erinnerungen", ähnlich dem Hunger-Konzept?
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag"
@@ -835,19 +836,20 @@ class WetterData {
     //  "du bist so erfroren"
     //  "dich wärmen"
     //  "du erwärmst dich"
-    //  Geschlossenheit?
-    //   Drinnen umbeheizt
-    //   Draußen geschuetzt
-    //   Max temoeratur...
 
-    // FIXME Fürs Wetter lässt sich noch mehr von Hunger oder Müdigkeit übernehmen.
-
-    // FIXME Man braucht regelmäßige Hinweise (je nach Dramatik des Wettes).
+    // FIXME Temperatur-Grenzwerte für einzelne Räume festlegen?
+    //  - Im Schloss ist es vielleicht unbeheizt, aber nie maximal warm...
+    //  - Am Brunnen ist es auch nie maximal warm
+    //  - Maximaltemperatur und Minimaltemperatur für jeden Raum festlegen?
+    //  - Aber dann braucht es Texte in der Art "Hier ist es angenehm kühl", und die Texte
+    //   "es ist heiß" etc. dürfen dann nicht kommen, wenn sie außerhalb der Grenzwerte liegen.
+    //   Sie sollten aber vielleicht kommen, wenn der Ort verlassen wird.
 
     // FIXME Plan-Wetter nur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
 
-    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept!)
+    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
+    //  onWetterwechsel()? onTemperaturWechsel()?)
     //  "von der Hitze des Tages ermüdet"
     //  "du bist von der Sonnenhitze müde"
 

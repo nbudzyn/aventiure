@@ -42,9 +42,6 @@ public class SimpleConnectionCompFactory {
                         SOUTH, "Die Hütte verlassen",
                         secs(15),
                         du("zwängst", "dich wieder durch die Tür nach draußen")
-                                // FIXME Hier Wetter / Himmel beschreiben?
-                                //  ... "unter den..."?`wettercomp.nachDraussen()?
-                                //  Evtl. so auch, wenn man aus dem Schluss kommt?
                                 .undWartest()
                                 .dann()
                 ));

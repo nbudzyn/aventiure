@@ -115,11 +115,6 @@ public class BettFactory {
                     .withCounterIdIncrementedIfTextIsNarrated(BETT_DRUNTERKRIECHEN_VERSTECKEN);
         }
 
-        // FIXME Die Szene, dass die Zauberin den SC oben überrascht,
-        //  automatisch triggern, wenn es innerhalb der normalen Besuchszeit ist
-        //  und Rapunzel den SC nicht verraten würde.
-        //  Dann einfach die Zauberin im richtigen Status unten vor dem Turm platzieren! :-)
-
         if (db.counterDao().get(BETT_DRUNTERKRIECHEN_OHNE_SINN) == 0) {
             return du("kriechst",
                     "unter das Bett. Hier ist es eng und staubig")
