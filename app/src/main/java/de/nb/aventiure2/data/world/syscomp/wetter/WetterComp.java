@@ -25,7 +25,6 @@ import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -63,6 +62,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Beschreibt - sofern nötig - das aktuelle Wetter
      * (oder auch einen Tageszeitenwechsel, wenn der SC drinnen ist).
+     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
+     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
+     * wird).
      */
     public void narrateWetterOrTageszeitIfNecessary() {
         // Ggf. scActionStepCountDao verwenden,
@@ -78,21 +80,34 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         }
     }
 
+    /**
+     * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
+     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
+     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
+     * wird).
+     */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altStatischeTemperaturBeschreibungSaetze() {
-        return requirePcd()
-                .altStatischeTemperaturBeschreibungSaetze(timeTaker.now().getTime(),
-                        loadScDrinnenDraussen());
+    public ImmutableCollection<AbstractDescription<?>> altWetterHinweise() {
+        // FIXME Hier (und an den Parallelstellen) gibt es wohl ein konzeptionelles Problem:
+        //  Hier befindet sich der SC NOCH NICHT AM NEUEN ORT.
+        //  Also ist DrinnenDraussen falsch. Und die Zeit wurde noch nicht weitergerechnet -
+        //  also ist die time falsch.
+
+        return requirePcd().altWetterHinweise(timeTaker.now().getTime(), loadScDrinnenDraussen());
     }
 
 
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie
+     * man das Wetter erlebt, wenn man nach draußen kommt, - ggf. eine leere Menge.
+     */
     @NonNull
     public ImmutableSet<AbstractDescription<?>> altKommtNachDraussen() {
         return requirePcd()
                 .altKommtNachDraussen(
                         timeTaker.now().getTime(),
-                        isScUnterOffenemHimmel())
-                .build();
+                        isScUnterOffenemHimmel());
     }
 
     /**

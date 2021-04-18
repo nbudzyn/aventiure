@@ -19,6 +19,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.RECHT_HEISS;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.WARM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
@@ -99,7 +100,10 @@ public class TemperaturPraedikativumDescriber {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();
 
-        alt.addAll(altAdjPhr(temperatur));
+        if (temperatur != RECHT_HEISS) {
+            // ("in die recht heiße Luft hinaus" etc. ist sehr sperrig)
+            alt.addAll(altAdjPhr(temperatur));
+        }
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -136,7 +140,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableList<ZweiPraedikativa<Praedikativum>> altSchoneTageszeitUndAberSchonNochAdjPhr(
+    ImmutableList<ZweiPraedikativa<Praedikativum>> altSchoneTageszeitUndAberSchonNochAdjPhr(
             final Temperatur temperatur, final Tageszeit tageszeit) {
 
         final boolean eherWarm = temperatur.compareTo(WARM) >= 0;
@@ -177,7 +181,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(final Temperatur temperatur) {
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(final Temperatur temperatur) {
         switch (temperatur) {
             case KLIRREND_KALT:
                 return ImmutableList.of(

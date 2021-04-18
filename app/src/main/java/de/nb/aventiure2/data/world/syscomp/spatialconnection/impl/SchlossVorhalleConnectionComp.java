@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.List;
 
@@ -22,8 +23,10 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -37,12 +40,11 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARMORTREPPE;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERGEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -117,19 +119,25 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
-            return mapToSet(
-                    world.loadWetter().wetterComp().altKommtNachDraussen(),
-                    wetterDesc ->
-                            du("verlässt", "das Schloss",
-                                    SENTENCE,
-                                    wetterDesc.toSingleKonstituente()).timed(mins(1)));
+            final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
+                    world.loadWetter().wetterComp().altKommtNachDraussen();
+            if (!altWetterDraussen.isEmpty()) {
+                return mapToSet(
+                        altWetterDraussen,
+                        wetterDesc ->
+                                du("verlässt", "das Schloss",
+                                        SENTENCE,
+                                        wetterDesc.toSingleKonstituente()).timed(mins(1)));
+            }
         }
 
         final AltDescriptionsBuilder alt = alt();
         alt.add(du("verlässt", "das Schloss").undWartest().dann());
         // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
         alt.addAll(world.loadWetter().wetterComp().altWohinHinaus().stream()
-                .map(a -> HINUNTERGEHEN.mit(MARMORTREPPE).mitAdvAngabe(a)
+                .map(a -> GEHEN
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunten"))
+                        .mitAdvAngabe(a)
                         .alsSatzMitSubjekt(duSc())));
 
         return alt.timed(mins(1)).build();
@@ -139,30 +147,33 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     private ImmutableCollection<TimedDescription<?>>
     altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
-        if (lichtverhaeltnisseDraussen == HELL) {
-            return mapToSet(world.loadWetter().wetterComp()
-                    .altKommtNachDraussen(), wetterDesc ->
+        final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
+                world.loadWetter().wetterComp()
+                        .altKommtNachDraussen();
+        if (!altWetterDraussen.isEmpty()) {
+            return mapToSet(altWetterDraussen, wetterDesc ->
                     du("gehst",
                             "über eine Marmortreppe hinaus in die Gärten vor dem",
                             "Schloss", CHAPTER,
                             wetterDesc.toSingleKonstituente(),
                             SENTENCE,
-                            "nahebei liegt ein großer, dunkler Wald")
+                            descWald(lichtverhaeltnisseDraussen))
                             .mitVorfeldSatzglied("über eine Marmortreppe")
                             .timed(mins(1)));
         }
+        return ImmutableSet.of(du("gehst",
+                "über eine Marmortreppe hinaus in die Gärten vor dem",
+                "Schloss", CHAPTER,
+                descWald(lichtverhaeltnisseDraussen))
+                .mitVorfeldSatzglied("über eine Marmortreppe")
+                .timed(mins(1)));
+    }
 
-        // FIXME altDu() o.Ä.?!
-        return mapToSet(world.loadWetter().wetterComp()
-                .altKommtNachDraussen(), wetterDesc ->
-                du("gehst", "über eine Marmortreppe hinaus den "
-                                + "Garten vor dem Schloss.", CHAPTER,
-                        wetterDesc.toSingleKonstituente(),
-                        SENTENCE,
-                        "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt")
-                        .mitVorfeldSatzglied("über eine Marmortreppe")
-                        .timed(mins(1))
-                        .komma());
+    @NonNull
+    private static String descWald(final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        return lichtverhaeltnisseDraussen == HELL ?
+                "Nahebei liegt ein großer, dunkler Wald" :
+                "In der Nähe liegt ein großer Wald, der sehr bedrohlich wirkt";
     }
 
     @NonNull

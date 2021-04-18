@@ -25,9 +25,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
@@ -112,48 +110,53 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
-            return altWetterHinweiseFuerDraussen(time,
-                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
+            return altWetterHinweise(time,
+                    drinnenDraussen);
         }
 
         return ImmutableSet.of();
     }
 
     /**
-     * Gibt alternative Wetterhinweise zurück (für draußen).
+     * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
      * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
      * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
      * wird).
      */
-    private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
+    @CheckReturnValue
+    ImmutableCollection<AbstractDescription<?>> altWetterHinweise(
             final AvTime time,
-            final boolean unterOffenemHimmel) {
+            final DrinnenDraussen drinnenDraussen) {
         final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altWetterHinweiseFuerDraussen(time, unterOffenemHimmel,
+                wetter.altWetterHinweise(time,
+                        drinnenDraussen,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+        resetWetterHinweiseFlags(drinnenDraussen);
 
         return alt;
     }
 
-    @CheckReturnValue
-    ImmutableCollection<Satz> altStatischeTemperaturBeschreibungSaetze(
-            final AvTime time,
-            final DrinnenDraussen drinnenDraussen) {
-        // Weil hier nur die Temperatur beschrieben wird, setzen wir die
-        // Hinweis-Flags nicht zurück.
-        return wetter.altStatischeTemperaturBeschreibungSaetze(time,
-                drinnenDraussen);
-    }
-
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie
+     * man das Wetter erlebt, wenn man nach draußen kommt, - ggf. eine leere Menge.
+     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
+     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
+     * wird).
+     */
     @NonNull
-    AltDescriptionsBuilder altKommtNachDraussen(
+    ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
             final AvTime time,
             final boolean unterOffenenHimmel) {
-        final AltDescriptionsBuilder alt = wetter.altKommtNachDraussen(time,
+        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(time,
                 unterOffenenHimmel,
-                wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
+                wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)
+                .build();
+
+        if (alt.isEmpty()) {
+            return ImmutableSet.of();
+        }
 
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 

@@ -27,6 +27,7 @@ import de.nb.aventiure2.german.satz.ZweiSaetze;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
@@ -85,7 +86,8 @@ public class TemperaturSatzDescriber {
     public ImmutableCollection<Satz> altKommtNachDraussen(
             final Temperatur temperatur,
             final AvTime time,
-            final boolean unterOffenenHimmel) {
+            final boolean unterOffenenHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         final DrinnenDraussen kommtNachDrinnenDraussen =
@@ -93,11 +95,13 @@ public class TemperaturSatzDescriber {
                         DRAUSSEN_GESCHUETZT;
         alt.addAll(
                 mapToList(alt(temperatur, time,
-                        kommtNachDrinnenDraussen),
+                        kommtNachDrinnenDraussen,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (temperatur.isBetweenIncluding(KNAPP_UEBER_DEM_GEFRIERPUNKT, RECHT_HEISS)) {
-            alt.addAll(alt(temperatur, time, kommtNachDrinnenDraussen));
+            alt.addAll(alt(temperatur, time, kommtNachDrinnenDraussen,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
         switch (temperatur) {
@@ -134,12 +138,16 @@ public class TemperaturSatzDescriber {
     public ImmutableCollection<Satz> alt(
             final Temperatur temperatur,
             final AvTime time,
-            final DrinnenDraussen drinnenDraussen) {
+            final DrinnenDraussen drinnenDraussen,
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
         alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen));
-        alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
-                drinnenDraussen));
+        if (drinnenDraussen.isDraussen()) {
+            alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
+                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben));
+        }
 
         return alt.build();
     }
@@ -217,37 +225,50 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
+    /**
+     * Gibt Alternativen zurück wie "es ist schon dunkel und ziemlich kühl" - oder eine leere
+     * {@link java.util.Collection}.
+     */
     private ImmutableCollection<Satz> altMitTageszeitLichtverhaeltnissen(
             final Temperatur temperatur,
             final AvTime time,
-            final DrinnenDraussen drinnenDraussen) {
+            final boolean unterOffenemHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableCollection.Builder<Satz> alt = ImmutableSet.builder();
 
         // "schon dunkel" / "dunkel"
         final ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelAdjPhr =
-                tageszeitPraedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time);
+                tageszeitPraedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(
+                        time,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben
+                                && (time.getTageszeit() == MORGENS || time.getTageszeit() == NACHTS)
+                );
 
-        alt.addAll(
-                alt(temperatur, time.getTageszeit(), drinnenDraussen)
-                        .stream()
-                        .flatMap(zweiterSatz ->
-                                altSchonBereitsNochDunkelAdjPhr.stream()
-                                        .map(schonDunkel ->
-                                                new ZweiSaetze(
-                                                        schonDunkel.alsEsIstSatz(),
-                                                        ";",
-                                                        zweiterSatz)))
-                        .collect(toSet()));
+        if (!altSchonBereitsNochDunkelAdjPhr.isEmpty()) {
+            alt.addAll(
+                    alt(temperatur, time.getTageszeit(),
+                            unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
+                                    DRAUSSEN_UNTER_OFFENEM_HIMMEL)
+                            .stream()
+                            .flatMap(zweiterSatz ->
+                                    altSchonBereitsNochDunkelAdjPhr.stream()
+                                            .map(schonDunkel ->
+                                                    new ZweiSaetze(
+                                                            schonDunkel.alsEsIstSatz(),
+                                                            ";",
+                                                            zweiterSatz)))
+                            .collect(toSet()));
 
-        // "es ist schon dunkel und ziemlich kühl"
-        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
-                .flatMap(tempAdjPhr ->
-                        altSchonBereitsNochDunkelAdjPhr.stream()
-                                .map(schonDunkel ->
-                                        new ZweiPraedikativa<>(
-                                                schonDunkel, tempAdjPhr)
-                                                .alsEsIstSatz()))
-                .collect(toSet()));
+            // "es ist schon dunkel und ziemlich kühl"
+            alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
+                    .flatMap(tempAdjPhr ->
+                            altSchonBereitsNochDunkelAdjPhr.stream()
+                                    .map(schonDunkel ->
+                                            new ZweiPraedikativa<>(
+                                                    schonDunkel, tempAdjPhr)
+                                                    .alsEsIstSatz()))
+                    .collect(toSet()));
+        }
 
         return alt.build();
     }

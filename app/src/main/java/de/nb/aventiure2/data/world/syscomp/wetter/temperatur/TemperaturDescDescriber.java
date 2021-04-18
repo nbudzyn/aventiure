@@ -40,12 +40,13 @@ public class TemperaturDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
-            final Temperatur temperatur, final AvTime time, final boolean unterOffenenHimmel) {
+            final Temperatur temperatur, final AvTime time, final boolean unterOffenenHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         // "Draußen ist es kühl"
         alt.addAll(satzDescriber.altKommtNachDraussen(temperatur, time,
-                unterOffenenHimmel));
+                unterOffenenHimmel, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         alt.addAll(altHeuteDerTagWennDraussenSinnvoll(
                 temperatur, time, unterOffenenHimmel));
@@ -68,11 +69,13 @@ public class TemperaturDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>> alt(
-            final Temperatur temperatur, final AvTime time, final DrinnenDraussen drinnenDraussen) {
+            final Temperatur temperatur, final AvTime time, final DrinnenDraussen drinnenDraussen,
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         // "Es ist kühl"
-        alt.addAll(satzDescriber.alt(temperatur, time, drinnenDraussen));
+        alt.addAll(satzDescriber.alt(temperatur, time, drinnenDraussen,
+                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben));
 
         if (drinnenDraussen.isDraussen()) {
             alt.addAll(altHeuteDerTagWennDraussenSinnvoll(

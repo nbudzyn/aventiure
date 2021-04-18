@@ -397,8 +397,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                         SENTENCE,
                         "Ein kühler Ort wäre schön"));
             } else {
-                alt.addAll(world.loadWetter().wetterComp()
-                        .altStatischeTemperaturBeschreibungSaetze());
+                final ImmutableCollection<AbstractDescription<?>> altWetterHinweise =
+                        world.loadWetter().wetterComp().altWetterHinweise();
+                if (!altWetterHinweise.isEmpty()) {
+                    alt.addAll(altWetterHinweise);
+                }
             }
         }
 

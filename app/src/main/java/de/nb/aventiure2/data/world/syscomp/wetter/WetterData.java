@@ -132,7 +132,34 @@ class WetterData {
     }
 
     /**
-     * Gibt alternative Beschreibungen des Wetters zurück, wie man es draußen erlebt
+     * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
+     * (nur Temperatur) oder draußen erlebt - oder eine leere Menge.
+     *
+     * @param auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                         draußen beschrieben
+     *                                                                         werden sollen, die
+     *                                                                         nach einem
+     *                                                                         Tageszeitenwechsel
+     *                                                                         nur einmalig
+     *                                                                         auftreten
+     */
+    ImmutableCollection<AbstractDescription<?>> altWetterHinweise(
+            final AvTime time, final DrinnenDraussen drinnenDraussen,
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
+        if (drinnenDraussen.isDraussen()) {
+            return altWetterHinweiseFuerDraussen(time,
+                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+        }
+
+        // drinnen!
+        return TEMPERATUR_DESC_DESCRIBER.alt(getTemperatur(time), time, drinnenDraussen,
+                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+    }
+
+    /**
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man es draußen erlebt -
+     * oder eine leere Menge.
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
      *                                                                 beschrieben werden sollen,
@@ -140,7 +167,7 @@ class WetterData {
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
      */
-    ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
+    private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
             final AvTime time, final boolean unterOffenemHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         // FIXME Windstärke berücksichtigen
@@ -163,14 +190,16 @@ class WetterData {
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
                 temperatur)) {
             // "es ist schon dunkel", "es ist Abend"
-            alt.addAll(TAGESZEIT_SATZ_DESCRIBER.altDraussen(time));
+            alt.addAll(TAGESZEIT_SATZ_DESCRIBER.altDraussen(time,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
         if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel)) {
             // Bewölkung muss nicht erwähnt werden
 
             // "Es ist kühl"
-            alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur, time, drinnenDraussen));
+            alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur, time, drinnenDraussen,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
             if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                 // "Es ist ein schöner Abend und noch ziemlich warm"
@@ -234,7 +263,8 @@ class WetterData {
         // "Es ist kühl und der Himmel ist bewölkt"
         alt.addAll(altNeueSaetze(
                 TEMPERATUR_SATZ_DESCRIBER.alt(
-                        temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL).stream()
+                        temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
                         .filter(EinzelnerSatz.class::isInstance),
                 BEWOELKUNG_SATZ_DESCRIBER
@@ -294,7 +324,7 @@ class WetterData {
 
     /**
      * Gibt alternative Beschreibungen des Wetters zurück, wie
-     * man sie erlebt, wenn man nach draußen kommt
+     * man sie erlebt, wenn man nach draußen kommt, - ggf. eine leere Menge.
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
      *                                                                 beschrieben werden sollen,
@@ -333,7 +363,8 @@ class WetterData {
 
             // "Draußen ist es kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.altKommtNachDraussen(
-                    temperatur, time, unterOffenenHimmel));
+                    temperatur, time, unterOffenenHimmel,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
             if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                 // "Es ist ein schöner Abend und noch ziemlich warm"
@@ -395,7 +426,8 @@ class WetterData {
 
         alt.addAll(altNeueSaetze(
                 TEMPERATUR_SATZ_DESCRIBER.altKommtNachDraussen(temperatur, time,
-                        true).stream()
+                        true
+                        , auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
                         .filter(EinzelnerSatz.class::isInstance),
                 BEWOELKUNG_SATZ_DESCRIBER
@@ -428,13 +460,6 @@ class WetterData {
         }
 
         return alt.schonLaenger();
-    }
-
-    @CheckReturnValue
-    ImmutableCollection<Satz> altStatischeTemperaturBeschreibungSaetze(
-            final AvTime time,
-            final DrinnenDraussen drinnenDraussen) {
-        return TEMPERATUR_SATZ_DESCRIBER.alt(getTemperatur(time), time, drinnenDraussen);
     }
 
     /**

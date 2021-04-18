@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
@@ -55,8 +56,15 @@ public class TageszeitPraedikativumDescriber {
         return alt.build();
     }
 
+    /**
+     * Gibt Adjektivphrasen zurück in der Art "noch hell" oder "schon dunkel";
+     * ggf. auch einfach "hell", falls {@code
+     * auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben}
+     * - oder sonst eine leere {@link java.util.Collection}.
+     */
     public ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelHellAdjPhr(
-            final AvTime time) {
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();
 
@@ -79,8 +87,14 @@ public class TageszeitPraedikativumDescriber {
             alt.add(AdjektivOhneErgaenzungen.DUNKEL
                     .mitAdvAngabe(new AdvAngabeSkopusSatz("schon")));
         } else {
-            // "hell" / "dunkel"
-            alt.add(time.getTageszeit().getLichtverhaeltnisseDraussen().getAdjektiv());
+            final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
+                    time.getTageszeit().getLichtverhaeltnisseDraussen();
+
+            if (lichtverhaeltnisseDraussen == Lichtverhaeltnisse.DUNKEL
+                    || auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+                // "hell" / "dunkel"
+                alt.add(lichtverhaeltnisseDraussen.getAdjektiv());
+            }
         }
 
         return alt.build();

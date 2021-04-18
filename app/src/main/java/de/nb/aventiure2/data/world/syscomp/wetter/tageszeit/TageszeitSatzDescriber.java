@@ -9,11 +9,11 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -55,25 +55,37 @@ public class TageszeitSatzDescriber {
         return alt.build();
     }
 
+    /**
+     * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
+     * {@link java.util.Collection}.
+     */
     public ImmutableCollection<EinzelnerSatz> altDraussen(
-            final AvTime time) {
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
         if (time.getTageszeit() != Tageszeit.TAGSUEBER) {
             // "es ist Morgen"
             alt.addAll(mapToSet(praedikativumDescriber.alt(time.getTageszeit()),
-                    derMorgen -> Nominalphrase.npArtikellos(derMorgen).alsEsIstSatz()));
+                    derMorgen -> npArtikellos(derMorgen).alsEsIstSatz()));
         }
 
         // "es ist schon hell"
-        alt.addAll(altSchonBereitsNochDunkelHellDraussen(time));
+        alt.addAll(altSchonBereitsNochDunkelHellDraussen(time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt.build();
     }
 
+    /**
+     * Gibt Alternativen zurück wie "es ist schon dunkel" - oder eine leere
+     * {@link java.util.Collection}.
+     */
     ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHellDraussen(
-            final AvTime time) {
-        return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time),
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 Praedikativum::alsEsIstSatz);
     }
 }

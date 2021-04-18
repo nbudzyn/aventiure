@@ -10,7 +10,6 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -24,6 +23,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -308,7 +308,7 @@ public class TageszeitDescDescriber {
             alt.addAll(altNeueSaetze(
                     ImmutableList.of("allmählich", "unterdessen", "inzwischen"),
                     "ist es",
-                    Nominalphrase.npArtikellos(newTageszeit.getNomenFlexionsspalte())
+                    npArtikellos(newTageszeit.getNomenFlexionsspalte())
                             .nomK(), // "Morgen"
                     "geworden"
                     // Der Tageszeitenwechsel ist parallel passiert.
@@ -328,7 +328,7 @@ public class TageszeitDescDescriber {
         } else {
             if (newTageszeit != TAGSUEBER) {
                 alt.add(neuerSatz("Es dürfte wohl inzwischen",
-                        Nominalphrase.npArtikellos(newTageszeit.getNomenFlexionsspalte())
+                        npArtikellos(newTageszeit.getNomenFlexionsspalte())
                                 .nomStr(), // "Morgen"
                         "geworden sein"));
             }
@@ -338,7 +338,7 @@ public class TageszeitDescDescriber {
             ));
 
             alt.add(neuerSatz("Ob es wohl allmählich",
-                    newTageszeit.getNomenFlexionsspalte().nomK(), // "Morgen"
+                    npArtikellos(newTageszeit.getNomenFlexionsspalte()).nomK(), // "Morgen"
                     "geworden ist?"
                     // Der Tageszeitenwechsel ist parallel passiert.
             ));
@@ -397,6 +397,10 @@ public class TageszeitDescDescriber {
         return alt.schonLaenger();
     }
 
+    /**
+     * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
+     * {@link java.util.Collection}.
+     */
     public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -411,7 +415,8 @@ public class TageszeitDescDescriber {
         }
 
         // "draußen ist es schon dunkel"
-        alt.addAll(mapToSet(satzDescriber.altSchonBereitsNochDunkelHellDraussen(time),
+        alt.addAll(mapToSet(satzDescriber.altSchonBereitsNochDunkelHellDraussen(time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         return alt.schonLaenger().build();
