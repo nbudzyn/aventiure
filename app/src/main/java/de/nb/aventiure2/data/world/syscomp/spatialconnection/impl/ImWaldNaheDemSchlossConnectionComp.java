@@ -11,6 +11,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -117,23 +118,30 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_KeinFest() {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        if (timeTaker.now().getTageszeit() == NACHTS) {
+        final AvDateTime now = timeTaker.now();
+        if (now.getTageszeit() == NACHTS) {
+            final AvTimeSpan wegzeit = mins(15);
             alt.addAll(
-                    world.loadWetter().wetterComp().altUnterOffenemHimmel().stream()
+                    world.loadWetter().wetterComp().altUnterOffenemHimmel(
+                            now.plus(wegzeit)).stream()
                             .map(p ->
-                                    du(SENTENCE, "gehst",
-                                            "noch eine Weile vorsichtig durch",
-                                            "den dunklen",
-                                            "Wald, dann öffnet sich der Weg wieder und du stehst",
-                                            "im Schlossgarten",
-                                            p.getDescription() // "unter dem Sternenhimmel"
-                                    )
-                                            .mitVorfeldSatzglied("noch eine Weile")
-                                            .schonLaenger()
-                                            .timed(mins(15))));
+                            {
+                                return du(SENTENCE, "gehst",
+                                        "noch eine Weile vorsichtig durch",
+                                        "den dunklen",
+                                        "Wald, dann öffnet sich der Weg wieder und du stehst",
+                                        "im Schlossgarten",
+                                        p.getDescription() // "unter dem Sternenhimmel"
+                                )
+                                        .mitVorfeldSatzglied("noch eine Weile")
+                                        .schonLaenger()
+                                        .timed(wegzeit);
+                            }));
         }
 
-        alt.addAll(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt().stream()
+        final AvTimeSpan wegzeit = mins(10);
+        alt.addAll(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
+                now.plus(wegzeit), true).stream()
                 .map(licht ->
                         du("erreichst", "bald",
                                 licht.nomK(), // "das helle Tageslicht"
@@ -141,14 +149,14 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                 licht.relPron().datK(), // "dem"
                                 "der Schlossgarten liegt").schonLaenger()
                                 .mitVorfeldSatzglied("bald")
-                                .timed(mins(10))
+                                .timed(wegzeit)
                                 .undWartest()
                                 .komma()));
 
         alt.add(du("erreichst", "bald den Schlossgarten")
                 .schonLaenger()
                 .mitVorfeldSatzglied("bald")
-                .timed(mins(10))
+                .timed(wegzeit)
                 .undWartest()
                 .komma());
 
@@ -204,11 +212,16 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         }
         if (newLocationKnown == KNOWN_FROM_DARKNESS
                 && lichtverhaeltnisse == HELL) {
+            final AvTimeSpan timeElapsed = mins(25);
+
             return altNeueSaetze("Der schmale Pfad den Hügel hinauf ist",
-                    world.loadWetter().wetterComp().altBeiTageslichtImLicht().stream()
+                    world.loadWetter().wetterComp()
+                            .altBeiLichtImLicht(
+                                    timeTaker.now().plus(timeElapsed),
+                                    true).stream()
                             .map(Praepositionalphrase::getDescription),
                     "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm")
-                    .timed(mins(25)).build();
+                    .timed(timeElapsed).build();
         }
         return ImmutableList.of(du("gehst",
                 "wieder den langen, schmalen Pfad den Hügel hinauf bis zum Turm")

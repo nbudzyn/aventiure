@@ -111,7 +111,7 @@ class CreatureFactory {
         return new ReactionsCreature<>(SCHLOSSWACHE,
                 descriptionComp, locationComp, stateComp,
                 new SchlosswacheReactionsComp(
-                        db.counterDao(), n, world, stateComp,
+                        db.counterDao(), timeTaker, n, world, stateComp,
                         locationComp));
     }
 

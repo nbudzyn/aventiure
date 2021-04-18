@@ -153,7 +153,8 @@ class WetterData {
         }
 
         // drinnen!
-        return TEMPERATUR_DESC_DESCRIBER.alt(getTemperatur(time), time, drinnenDraussen,
+        return TEMPERATUR_DESC_DESCRIBER.alt(getTemperatur(time),
+                time, drinnenDraussen,
                 auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
     }
 
@@ -737,14 +738,6 @@ class WetterData {
 
     @NonNull
     @CheckReturnValue
-    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
-                                                               final boolean unterOffenemHimmel) {
-        return BEWOELKUNG_PRAEP_PHR_DESCRIBER
-                .altBeiLichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
-    }
-
-    @NonNull
-    @CheckReturnValue
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvTime time,
             final boolean unterOffenemHimmel) {
@@ -757,7 +750,8 @@ class WetterData {
     @CheckReturnValue
     Temperatur getTemperatur(final AvTime time) {
         return TagestemperaturverlaufUtil
-                .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
+                .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur,
+                        time);
     }
 
     // FIXME Automatisch generieren: "Das Wetter ist soundso und es passiert dies und das"
@@ -831,6 +825,7 @@ class WetterData {
     //  - "Als nun die Sonne durchs Fensterlein scheint und..."
 
     // FIXME Wetterbeschreibungen als Adverbiale Angaben mit Satz-Skopus:
+    //  - Vielleicht ist das schon angelegt, vgl. unterOffenemHimmel()!
     //  "mit Sonnenaufgang (machts du dich auch den Weg...)"
     //  "Bei Sonnenaufgang kommt schon..."
     //  "Bei Sonnenuntergang kommst du zu..."

@@ -13,6 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -117,39 +118,43 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     lichtverhaeltnisseDraussen);
         }
 
+        final AvTimeSpan wegZeit = mins(1);
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
             final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
-                    world.loadWetter().wetterComp().altKommtNachDraussen();
+                    world.loadWetter().wetterComp().altKommtNachDraussen(
+                            timeTaker.now().plus(wegZeit), true);
             if (!altWetterDraussen.isEmpty()) {
                 return mapToSet(
                         altWetterDraussen,
                         wetterDesc ->
                                 du("verlässt", "das Schloss",
                                         SENTENCE,
-                                        wetterDesc.toSingleKonstituente()).timed(mins(1)));
+                                        wetterDesc.toSingleKonstituente()).timed(wegZeit));
             }
         }
 
         final AltDescriptionsBuilder alt = alt();
         alt.add(du("verlässt", "das Schloss").undWartest().dann());
         // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
-        alt.addAll(world.loadWetter().wetterComp().altWohinHinaus().stream()
+        alt.addAll(world.loadWetter().wetterComp().altWohinHinaus(
+                timeTaker.now().plus(wegZeit), true).stream()
                 .map(a -> GEHEN
-                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunten"))
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunter"))
                         .mitAdvAngabe(a)
                         .alsSatzMitSubjekt(duSc())));
 
-        return alt.timed(mins(1)).build();
+        return alt.timed(wegZeit).build();
     }
 
     @NonNull
     private ImmutableCollection<TimedDescription<?>>
     altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
+        final AvTimeSpan wegZeit = mins(1);
         final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
-                world.loadWetter().wetterComp()
-                        .altKommtNachDraussen();
+                world.loadWetter().wetterComp().altKommtNachDraussen(
+                        timeTaker.now().plus(wegZeit), true);
         if (!altWetterDraussen.isEmpty()) {
             return mapToSet(altWetterDraussen, wetterDesc ->
                     du("gehst",
@@ -159,14 +164,14 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                             SENTENCE,
                             descWald(lichtverhaeltnisseDraussen))
                             .mitVorfeldSatzglied("über eine Marmortreppe")
-                            .timed(mins(1)));
+                            .timed(wegZeit));
         }
         return ImmutableSet.of(du("gehst",
                 "über eine Marmortreppe hinaus in die Gärten vor dem",
                 "Schloss", CHAPTER,
                 descWald(lichtverhaeltnisseDraussen))
                 .mitVorfeldSatzglied("über eine Marmortreppe")
-                .timed(mins(1)));
+                .timed(wegZeit));
     }
 
     @NonNull

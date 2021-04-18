@@ -386,7 +386,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final TimeTaker timeTaker, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (world.loadWetter().wetterComp().getTemperatur().compareTo(Temperatur.RECHT_HEISS)
+        if (world.loadWetter().wetterComp().getTemperaturFuerAktuellenZeitpunktAmOrtDesSC()
+                .compareTo(Temperatur.RECHT_HEISS)
                 >= 0) {
             if (scIsDraussen(world)) {
                 final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
@@ -398,7 +399,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                         "Ein kühler Ort wäre schön"));
             } else {
                 final ImmutableCollection<AbstractDescription<?>> altWetterHinweise =
-                        world.loadWetter().wetterComp().altWetterHinweise();
+                        world.loadWetter().wetterComp()
+                                .altWetterHinweiseFuerAktuellenZeitpunktAmOrtDesSC();
                 if (!altWetterHinweise.isEmpty()) {
                     alt.addAll(altWetterHinweise);
                 }

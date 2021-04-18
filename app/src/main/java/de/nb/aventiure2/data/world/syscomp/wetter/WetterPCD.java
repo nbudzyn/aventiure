@@ -147,9 +147,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @NonNull
     ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
-            final AvTime time,
+            final AvDateTime time,
             final boolean unterOffenenHimmel) {
-        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(time,
+        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(time.getTime(),
                 unterOffenenHimmel,
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)
                 .build();
@@ -259,39 +259,29 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
 
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
-            final AvTime time,
+            final AvDateTime time,
             final boolean unterOffenenHimmel) {
         final ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> alt =
-                wetter.altWohinHinaus(time, unterOffenenHimmel);
+                wetter.altWohinHinaus(time.getTime(), unterOffenenHimmel);
 
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
         return alt;
     }
 
-    ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
+    ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvDateTime time) {
         final ImmutableCollection<Praepositionalphrase> alt =
-                wetter.altUnterOffenemHimmel(time);
+                wetter.altUnterOffenemHimmel(time.getTime());
 
         resetWetterHinweiseFlagsDraussen(true);
 
         return alt;
     }
 
-    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvDateTime time,
                                                           final boolean unterOffenemHimmel) {
         final ImmutableSet<Praepositionalphrase> alt =
-                wetter.altBeiLichtImLicht(time, unterOffenemHimmel);
-
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
-
-        return alt;
-    }
-
-    ImmutableSet<Praepositionalphrase> altBeiTageslichtImLicht(final AvTime time,
-                                                               final boolean unterOffenemHimmel) {
-        final ImmutableSet<Praepositionalphrase> alt =
-                wetter.altBeiTageslichtImLicht(time, unterOffenemHimmel);
+                wetter.altBeiLichtImLicht(time.getTime(), unterOffenemHimmel);
 
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
@@ -299,9 +289,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
-            final AvTime time, final boolean unterOffenemHimmel) {
+            final AvDateTime time, final boolean unterOffenemHimmel) {
         final ImmutableCollection<EinzelneSubstantivischePhrase> alt =
-                wetter.altLichtInDemEtwasLiegt(time, unterOffenemHimmel);
+                wetter.altLichtInDemEtwasLiegt(time.getTime(), unterOffenemHimmel);
 
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
@@ -314,11 +304,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     @NonNull
-    Temperatur getTemperatur(final AvTime time) {
+    Temperatur getTemperatur(final AvDateTime time) {
         // Nur weil die Temperatur abgefragt wird, gehen wir nicht davon aus, dass ein
         // "qualifizierter" Wetterhinweis gegeben wurde
 
-        return wetter.getTemperatur(time);
+        return wetter.getTemperatur(time.getTime());
     }
 
     /**

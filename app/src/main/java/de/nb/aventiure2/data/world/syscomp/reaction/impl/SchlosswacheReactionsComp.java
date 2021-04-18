@@ -6,13 +6,13 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -62,14 +62,17 @@ public class SchlosswacheReactionsComp
         SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM
     }
 
+    private final TimeTaker timeTaker;
     private final SchlosswacheStateComp stateComp;
     private final LocationComp locationComp;
 
     public SchlosswacheReactionsComp(final CounterDao counterDao,
+                                     final TimeTaker timeTaker,
                                      final Narrator n, final World world,
                                      final SchlosswacheStateComp stateComp,
                                      final LocationComp locationComp) {
         super(SCHLOSSWACHE, counterDao, n, world);
+        this.timeTaker = timeTaker;
         this.stateComp = stateComp;
         this.locationComp = locationComp;
     }
@@ -148,9 +151,9 @@ public class SchlosswacheReactionsComp
         // IDEA Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
-        final SpielerCharakter sc = loadSC();
-
         final AltDescriptionsBuilder alt = alt();
+
+        final AvTimeSpan timeElapsed = secs(10);
 
         alt.addAll(altNeueSaetze("Die Wache spricht dich sofort an und macht dir",
                 "unmissverständlich klar, dass du hier vor dem großen Fest nicht",
@@ -164,7 +167,8 @@ public class SchlosswacheReactionsComp
                 //   Man kann dort nicht viel tun - aber bringt die Nacht durch. Am nächsten Tag
                 //   ist ohnehin das Schlossfest.
                 "Du bist leicht zu überzeugen und trittst wieder",
-                altSchlossVerlassenWohinAdvAngaben(raumAusDemDerSCDasSchlossBetretenHat)
+                altSchlossVerlassenWohinAdvAngaben(
+                        timeTaker.now().plus(timeElapsed))
                         .stream()
                         .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
                 "hinaus", PARAGRAPH));
@@ -178,27 +182,17 @@ public class SchlosswacheReactionsComp
                         + "Du bleibst besser draußen", PARAGRAPH)
         );
 
-        n.narrateAlt(alt, secs(10));
+        n.narrateAlt(alt, timeElapsed);
 
-        sc.locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
+        loadSC().locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
 
-        sc.memoryComp().setLastAction(
+        loadSC().memoryComp().setLastAction(
                 new Action(Action.Type.BEWEGEN, raumAusDemDerSCDasSchlossBetretenHat));
     }
 
     private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
-            final ILocationGO raumAusDemDerSCDasSchlossBetretenHat) {
-        return altSchlossVerlassenWohinAdvAngaben(
-                ((ILocationGO) world.load(SCHLOSS_VORHALLE)),
-                raumAusDemDerSCDasSchlossBetretenHat);
-    }
-
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
-            final ILocationGO schlossRoom,
-            final ILocationGO wohinRoom) {
-        final Lichtverhaeltnisse lichtverhaeltnisseDraussen =
-                LocationSystem.getLichtverhaeltnisse(wohinRoom);
-        return world.loadWetter().wetterComp().altWohinHinaus();
+            final AvDateTime timeDraussen) {
+        return world.loadWetter().wetterComp().altWohinHinaus(timeDraussen, true);
     }
 
     /**
