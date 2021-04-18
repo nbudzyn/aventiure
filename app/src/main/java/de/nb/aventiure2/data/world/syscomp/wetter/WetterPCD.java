@@ -104,14 +104,12 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Wetterhinweis nötig sein wird).
      */
     ImmutableCollection<AbstractDescription<?>> altWetterHinweiseWennNoetig(
-            final AvTime time,
-            final DrinnenDraussen drinnenDraussen) {
+            final AvTime time, final DrinnenDraussen drinnenDraussen) {
         if ((drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
-            return altWetterHinweise(time,
-                    drinnenDraussen);
+            return altWetterHinweise(time, drinnenDraussen);
         }
 
         return ImmutableSet.of();

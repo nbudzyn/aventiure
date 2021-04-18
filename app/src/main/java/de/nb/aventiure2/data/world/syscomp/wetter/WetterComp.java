@@ -98,7 +98,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
     altWetterHinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
-        return requirePcd().altWetterHinweise(timeTaker.now().getTime(), loadScDrinnenDraussen());
+        return altWetterHinweise(timeTaker.now().getTime(), loadScDrinnenDraussen());
     }
 
     /**
