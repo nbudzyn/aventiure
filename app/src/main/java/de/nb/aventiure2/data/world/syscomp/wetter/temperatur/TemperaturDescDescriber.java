@@ -107,11 +107,12 @@ public class TemperaturDescDescriber {
                         !unterOffenemHimmel)));
 
         if (unterOffenemHimmel && temperatur.compareTo(Temperatur.RECHT_HEISS) >= 0) {
-            // "der Tag ist heiß, die Sonne sticht"
+            // "Heute ist es heiß / schönes Wetter."
             final ImmutableCollection<Satz> heuteDerTagSaetze =
                     satzDescriber.altDraussenHeuteDerTagSofernSinnvoll(temperatur,
                             time, true);
             if (!heuteDerTagSaetze.isEmpty()) {
+                // "Heute ist es heiß, die Sonne sticht"
                 alt.addAll(altNeueSaetze(
                         heuteDerTagSaetze,
                         ",",

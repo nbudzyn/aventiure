@@ -481,6 +481,11 @@ public class Nominalphrase
     }
 
     @Override
+    public String artikellosAkkStr() {
+        return artikellosAkkK().joinToSingleKonstituente().toTextOhneKontext();
+    }
+
+    @Override
     public String akkStr() {
         return akkK().joinToSingleKonstituente().toTextOhneKontext();
     }

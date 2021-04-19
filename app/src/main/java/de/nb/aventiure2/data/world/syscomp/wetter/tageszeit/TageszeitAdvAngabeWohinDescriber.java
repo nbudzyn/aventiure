@@ -25,9 +25,11 @@ public class TageszeitAdvAngabeWohinDescriber {
      * Gibt Alternativen zurück wie "in den Tag"
      */
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
-            final AvTime time) {
-        // "in die beginnende Nacht"
-        return mapToSet(praedikativumDescriber.alt(time),
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        // "in die beginnende Nacht", "ins Helle"
+        return mapToSet(praedikativumDescriber.alt(time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 substPhr -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(substPhr)));
     }
 }

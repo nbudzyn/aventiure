@@ -24,7 +24,6 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.L
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -482,7 +481,8 @@ public class BewoelkungDescDescriber {
         if (unterOffenemHimmel) {
             // "Es ist ein schöner Abend, die Sonne scheint"
             alt.addAll(altNeueSaetze(
-                    praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
+                    praedikativumPraedikatMit(
+                            np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte()))
                             .alsSatzMitSubjekt(EXPLETIVES_ES),
                     ",",
                     satzDescriber
@@ -491,7 +491,8 @@ public class BewoelkungDescDescriber {
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
         } else {
             // "Es ist ein schöner Abend"
-            alt.add(praedikativumPraedikatMit(np(INDEF, SCHOEN, ABEND))
+            alt.add(praedikativumPraedikatMit(
+                    np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte()))
                     .alsSatzMitSubjekt(EXPLETIVES_ES));
         }
 

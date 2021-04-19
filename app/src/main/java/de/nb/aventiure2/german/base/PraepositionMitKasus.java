@@ -5,13 +5,9 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
 
 /**
  * Eine Präposition, die einen bestimmten Kasus fordert.
@@ -22,15 +18,22 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     AUS("aus", DAT),
     AUF_DAT("auf", DAT),
     AUF_AKK("auf", AKK),
+    // IDEA: "ans", "aufs" (Akk) - die sind allerdings seltener obligatorisch,
+    //  eher nur bei Infinitiven ("ans Kochen") und in festen Wendungen ("bis aufs Messer").
+    //  Eher muss man sie vielleicht manchmal vermeiden.
+    //  Vgl. Duden 924ff
 
-    AUSSER_DAT("außer", DAT), // "außerm" generieren wir nicht, kein rechtes Schriftdeutsch
+    AUSSER_DAT("außer", DAT), // "außerm" generieren wir nicht, kein
+    // rechtes Schriftdeutsch
 
     BEI_DAT("bei", DAT, "beim"),
 
     IN_DAT("in", DAT, "im"),
-    IN_AKK("in", AKK),
+    IN_AKK("in", AKK,
+            null, null, "ins"),
 
-    FUER("für", AKK), // "fürn" generieren wir nicht
+    FUER("für", AKK), // "fürn" generieren wir nicht, auch "fürs" scheint
+    // selten obligatorisch zu sein
 
     /**
      * "mit dem Frosch"
@@ -39,7 +42,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
 
     NACH("nach", DAT),
     UNTER_DAT("unter", DAT),
-    UNTER_AKK("unter", AKK),
+    UNTER_AKK("unter", AKK), // "untern" scheint selten obligatorisch zu sein
 
     /**
      * "vom Tisch"
@@ -51,7 +54,9 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
      */
     VOR("vor", DAT), // "vorm Haus" generieren wir nicht - ist nicht so schön
 
-    ZU("zu", DAT, "zum", "zur");
+    ZU("zu", DAT,
+            "zum", "zur",
+            "zum");
 
     /**
      * Die Präposition (z.B. "mit")
@@ -65,11 +70,10 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
 
     /**
      * Präposition, verschmolzen mit dem definiten Artikel im Maskulinum
-     * oder Neutrum
      * ("zum")
      */
     @Nullable
-    private final String praepositionVerschmolzenMN;
+    private final String praepositionVerschmolzenM;
 
     /**
      * Präposition, verschmolzen mit dem femininen definiten Artikel
@@ -78,32 +82,32 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     @Nullable
     private final String praepositionVerschmolzenF;
 
+    /**
+     * Präposition, verschmolzen mit dem definiten Artikel im Neutrum
+     * ("zum", "ins")
+     */
+    @Nullable
+    private final String praepositionVerschmolzenN;
+
     PraepositionMitKasus(final String praeposition, final Kasus kasus) {
         this(praeposition, kasus, null);
     }
 
     PraepositionMitKasus(final String praeposition, final Kasus kasus,
                          @Nullable final String praepositionVerschmolzenMN) {
-        this(praeposition, kasus, praepositionVerschmolzenMN, null);
+        this(praeposition, kasus, praepositionVerschmolzenMN,
+                null, praepositionVerschmolzenMN);
     }
 
     PraepositionMitKasus(final String praeposition, final Kasus kasus,
-                         @Nullable final String praepositionVerschmolzenMN,
-                         @Nullable final String praepositionVerschmolzenF) {
-        checkArgument(
-                kasus == DAT ||
-                        (praepositionVerschmolzenMN == null &&
-                                praepositionVerschmolzenF == null),
-                "Es werden derzeit nur verschmolzene Präpositionen mit "
-                        + "Dativ-Artikeln unterstützt");
-        // "ins", "ans" und "aufs" sind seltener obligatorisch,
-        // eher nur bei Infinitiven ("ans Kochen") und in festen Wendungen ("bis aufs Messer").
-        // Vgl. Duden 924ff
-
+                         @Nullable final String praepositionVerschmolzenM,
+                         @Nullable final String praepositionVerschmolzenF,
+                         @Nullable final String praepositionVerschmolzenN) {
         this.praeposition = praeposition;
         this.kasus = kasus;
-        this.praepositionVerschmolzenMN = praepositionVerschmolzenMN;
+        this.praepositionVerschmolzenM = praepositionVerschmolzenM;
         this.praepositionVerschmolzenF = praepositionVerschmolzenF;
+        this.praepositionVerschmolzenN = praepositionVerschmolzenN;
     }
 
     public Praepositionalphrase mit(
@@ -126,29 +130,52 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     @CheckReturnValue
     public Konstituente getDescription(final SubstantivischePhrase substantivischePhrase) {
         if (kasus == DAT &&
-                // AKK unterstützen wir derzeit nicht
                 substantivischePhrase.erlaubtVerschmelzungVonPraepositionMitArtikel()) {
-            if (praepositionVerschmolzenMN != null &&
-                    (substantivischePhrase.getNumerusGenus() == M ||
-                            (substantivischePhrase.getNumerusGenus() == N))) {
-                return joinToKonstituentenfolge(
-                        substantivischePhrase.getFokuspartikel(),
-                        praepositionVerschmolzenMN,
-                        substantivischePhrase.ohneFokuspartikel().artikellosDatK())
-                        .joinToSingleKonstituente();
-            }
+            // FIXME Steht dabei ein Relativsatz, der etwas näher definiert ("zu dem Zahnarzt,
+            //  der ihr gestern empfohlen wurde") ist die Verschmelzung verboten.
 
-            if (praepositionVerschmolzenF != null &&
-                    (substantivischePhrase.getNumerusGenus() == F)) {
+            @Nullable final String praepositionVerschmolzen =
+                    getPraepositionVerschmolzen(substantivischePhrase.getNumerusGenus());
+
+            if (praepositionVerschmolzen != null) {
                 return joinToKonstituentenfolge(
                         substantivischePhrase.getFokuspartikel(),
-                        praepositionVerschmolzenF,
+                        praepositionVerschmolzen,
                         substantivischePhrase.ohneFokuspartikel().artikellosDatK())
                         .joinToSingleKonstituente();
             }
         }
 
+        if (kasus == AKK &&
+                substantivischePhrase.erlaubtVerschmelzungVonPraepositionMitArtikel()) {
+            @Nullable final String praepositionVerschmolzen =
+                    getPraepositionVerschmolzen(substantivischePhrase.getNumerusGenus());
+
+            if (praepositionVerschmolzen != null) {
+                return joinToKonstituentenfolge(
+                        substantivischePhrase.getFokuspartikel(),
+                        praepositionVerschmolzen,
+                        substantivischePhrase.ohneFokuspartikel().artikellosAkkK())
+                        .joinToSingleKonstituente();
+            }
+        }
+
         return getDescriptionUnverschmolzen(substantivischePhrase);
+    }
+
+    @Nullable
+    private String getPraepositionVerschmolzen(final NumerusGenus numerusGenus) {
+        switch (numerusGenus) {
+            case M:
+                return praepositionVerschmolzenM;
+            case F:
+                return praepositionVerschmolzenF;
+            case N:
+                return praepositionVerschmolzenN;
+            default:
+                // PL
+                return null;
+        }
     }
 
     @NonNull

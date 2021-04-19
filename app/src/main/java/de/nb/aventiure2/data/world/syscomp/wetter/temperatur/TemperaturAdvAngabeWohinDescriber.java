@@ -4,18 +4,12 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
-import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -26,12 +20,15 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch"})
 public class TemperaturAdvAngabeWohinDescriber {
+    private final TemperaturPraepPhrDescriber praepPhrDescriber;
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
 
     public TemperaturAdvAngabeWohinDescriber(
-            final TemperaturPraedikativumDescriber praedikativumDescriber) {
+            final TemperaturPraedikativumDescriber praedikativumDescriber,
+            final TemperaturPraepPhrDescriber praepPhrDescriber) {
+        this.praepPhrDescriber = praepPhrDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
@@ -42,109 +39,11 @@ public class TemperaturAdvAngabeWohinDescriber {
         final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableList.builder();
 
-        // "in die klirrend kalte Luft"
-        alt.addAll(
-                mapToList(praedikativumDescriber
-                                .altLuftAdjPhr(temperatur, time.getTageszeit()),
-                        a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(LUFT.mit(a)))));
-
-        if (time.getTageszeit() == NACHTS) {
-            alt.addAll(altWohinHinausNaechtlicheDunkelheit(temperatur));
-        }
-
-        switch (temperatur) {
-            case KLIRREND_KALT:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Eiseskälte"),
-                        new AdvAngabeSkopusVerbWohinWoher("beißende Kälte"));
-                break;
-            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die frostige Kälte"));
-                break;
-            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                alt.addAll(altWohinHinausKnappUeberGefrierpunkt(time));
-                break;
-            case KUEHL:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("ins Kühle"));
-                break;
-            case WARM:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Wärme"));
-                break;
-            case RECHT_HEISS:
-                break;
-            case SEHR_HEISS:
-                alt.addAll(altWohinHinausSehrHeiss(time));
-                break;
-            default:
-                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
-        }
+        // "in die klirrend kalte Luft", "in die Eiseskälte"
+        alt.addAll(mapToList(praepPhrDescriber.altInAkk(temperatur, time),
+                AdvAngabeSkopusVerbWohinWoher::new));
 
         return alt.build();
     }
 
-    @NonNull
-    @CheckReturnValue
-    private static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausKnappUeberGefrierpunkt(
-            final AvTime time) {
-        final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
-                ImmutableSet.builder();
-
-        alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Kälte"));
-        if (time.getTageszeit() == NACHTS) {
-            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die nächtliche Kälte"));
-        }
-
-        return alt.build();
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private static ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausSehrHeiss(
-            final AvTime time) {
-        final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
-                ImmutableSet.builder();
-
-        alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Hitze"));
-        if (time.gegenMittag()) {
-            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Mittagshitze"));
-        } else if (time.getTageszeit() == ABENDS) {
-            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die Abendhitze"));
-        }
-
-        return alt.build();
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinausNaechtlicheDunkelheit(
-            final Temperatur temperatur) {
-        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
-                ImmutableList.builder();
-
-        alt.addAll(mapToList(
-                praedikativumDescriber.altLuftAdjPhr(temperatur, NACHTS),
-                // "in die eiskalte Dunkelheit"
-                a -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(DUNKELHEIT.mit(a)))));
-
-        switch (temperatur) {
-            case KLIRREND_KALT:
-                break;
-            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                break;
-            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                break;
-            case KUEHL:
-                break;
-            case WARM:
-                break;
-            case RECHT_HEISS:
-                break;
-            case SEHR_HEISS:
-                alt.add(new AdvAngabeSkopusVerbWohinWoher("in die dunkle Hitze"));
-                break;
-            default:
-                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
-        }
-
-        return alt.build();
-    }
 }

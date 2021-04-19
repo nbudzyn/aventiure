@@ -27,6 +27,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     ABEND(M, "Abend"),
     ABENDDAEMMERUNG(F, "Abenddämmerung"),
     ABENDHIMMEL(M, "Abendhimmel"),
+    ABENDHITZE(F, "Abendhitze"),
     ABENDLICHT(N, "Abendlicht"),
     ABENDSONNE(F, "Abendsonne"),
     ABENDSONNENSCHEIN(M, "Abendsonnenschein"),
@@ -45,6 +46,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     DUNKEL(N, "Dunkel"),
     DUNKELHEIT(F, "Dunkelheit"),
     ELEFANTEN(PL_MFN, "Elefanten"),
+    EISESKAELTE(F, "Eiseskälte"),
     FIRMAMENT(N, "Firmament"),
     FRAU(F, "Frau"),
     FREUDE(F, "Freude"),
@@ -55,13 +57,16 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     HAARE(PL_MFN, "Haare", "Haaren"),
     HAENDE(PL_MFN, "Hände", "Händen"),
     HALBDUNKEL(N, "Halbdunkel"),
+    HELLE(N, "Helle", "Hellen"),
     HERZ(N, "Herz"),
     HELLEBARDE(F, "Hellebarde"),
     HIMMEL(M, "Himmel"),
+    HITZE(F, "Hitze"),
     HOEHE(F, "Höhe"),
     KAELTE(F, "Kälte"),
     KINN(N, "Kinn"),
     KOENIGSSOHN(M, "Königssohn"),
+    KUEHLE(N, "Kühle", "Kühlen"),
     KUGEL(F, "Kugel"),
     LEIB(M, "Leib", "Leibe"),
     LICHT(N, "Licht"),
@@ -94,6 +99,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     SONNENHITZE(F, "Sonnenhitze"),
     SONNENSCHEIN(M, "Sonnenschein"),
     SONNENSTRAHLEN(PL_MFN, "Sonnenstrahlen"),
+    SONNENUNTERGANG(M, "Sonnenuntergang"),
     TISCH(M, "Tisch"),
     STERNENHIMMEL(M, "Sternenhimmel"),
     STERNENLICHT(N, "Sternenlicht"),
@@ -101,6 +107,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     TAGESLICHT(N, "Tageslicht"),
     TASCHE(F, "Tasche"),
     VOLLMOND(M, "Vollmond"),
+    WAERME(F, "Wärme"),
     WAHRHEIT(F, "Wahrheit"),
     WETTER(N, "Wetter"),
     WOLKEN(PL_MFN, "Wolken"),
@@ -251,6 +258,11 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     @Override
     public String artikellosDatStr() {
         return toNominalphrase().artikellosDatStr();
+    }
+
+    @Override
+    public String artikellosAkkStr() {
+        return toNominalphrase().artikellosAkkStr();
     }
 
     @Override

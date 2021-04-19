@@ -45,9 +45,12 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
 
     @Override
     public String artikellosDatStr() {
-        return joinToString(
-                getFokuspartikel(),
-                datStr());
+        return joinToString(getFokuspartikel(), datStr());
+    }
+
+    @Override
+    public String artikellosAkkStr() {
+        return joinToString(getFokuspartikel(), akkStr());
     }
 
     @Override

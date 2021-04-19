@@ -174,7 +174,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(
             final AvDateTime time) {
         // FIXME Hier - und in allen anderen Methoden der Klasse - gibt es ein Problem:
-        //  Es könnte sein, dass sich die Tageszeit inzwischen geändert hat!
+        //  Es könnte sein, dass sich die Tageszeit bis zur Zeit time ändert - aber
+        //  noch kein Tageswechsel beschrieben wurde.
         //  Das kann dann zu etwas führen wie "Du kommst hinaus ins Sternenlicht.
         //  Allmählich sinkt die Sonne und die ersten Sterne erscheinen am Himmel." - dass
         //  also das statische Ergebnis schon *vor* der dynamischen Beschreibung

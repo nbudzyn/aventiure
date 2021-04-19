@@ -41,10 +41,14 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TageszeitDescDescriber {
+    private final TageszeitPraedikativumDescriber praedikativumDescriber;
+
     private final TageszeitSatzDescriber satzDescriber;
 
     public TageszeitDescDescriber(
+            final TageszeitPraedikativumDescriber praedikativumDescriber,
             final TageszeitSatzDescriber satzDescriber) {
+        this.praedikativumDescriber = praedikativumDescriber;
         this.satzDescriber = satzDescriber;
     }
 
@@ -419,6 +423,40 @@ public class TageszeitDescDescriber {
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
+        if (time.getTageszeit() == NACHTS) {
+            // "draußen herrscht Dunkelheit"
+            alt.addAll(
+                    praedikativumDescriber.altLichtverhaeltnisseNomenFlexionsspalte(NACHTS).stream()
+                            .map(dieDunkelheit ->
+                                    neuerSatz("draußen herrscht",
+                                            npArtikellos(dieDunkelheit).nomStr()))); // "Dunkelheit"
+        }
+
         return alt.schonLaenger().build();
+    }
+
+    /**
+     * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
+     * {@link java.util.Collection}.
+     */
+    public ImmutableCollection<AbstractDescription<?>> altDraussen(
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        final AltDescriptionsBuilder alt = alt();
+
+        // "es ist schon dunkel", "es ist Abend"
+        alt.addAll(satzDescriber.altDraussen(time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+        if (time.getTageszeit() == NACHTS) {
+            // "es herrscht Dunkelheit"
+            alt.addAll(
+                    praedikativumDescriber.altLichtverhaeltnisseNomenFlexionsspalte(NACHTS).stream()
+                            .map(dieDunkelheit ->
+                                    neuerSatz("es herrscht",
+                                            npArtikellos(dieDunkelheit).nomStr()))); // "Dunkelheit"
+        }
+
+        return alt.build();
     }
 }

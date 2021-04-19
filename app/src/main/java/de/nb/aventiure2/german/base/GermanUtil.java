@@ -24,8 +24,7 @@ public class GermanUtil {
 
     /**
      * Fügt diese Teile zu einem String zusammen, wobei ein nichtleerer
-     * String das Ergebnis sein muss.
-     * Fügt diese Teile zu einem String zusammen. Der Aufrufer muss Vorkomma, Vordoppelpunkt
+     * String das Ergebnis sein muss. Der Aufrufer muss Vorkomma, Vordoppelpunkt
      * {@code startsNew}, Großschreibung sowie {@code endsThis} und Folgekomma selbst
      * behandeln. Die wörtliche Rede wird automatisch geschlossen, es wird kein
      * automatischer Punkt gesetzt.

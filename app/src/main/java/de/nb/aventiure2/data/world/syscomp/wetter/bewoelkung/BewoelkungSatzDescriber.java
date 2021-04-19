@@ -23,7 +23,6 @@ import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GANZ;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELLICHT;
@@ -235,8 +234,7 @@ public class BewoelkungSatzDescriber {
 
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        alt.addAll(altUnterOffenemHimmel(bewoelkung, time.getTageszeit()
-        ));
+        alt.addAll(altUnterOffenemHimmel(bewoelkung, time.getTageszeit()));
 
         switch (bewoelkung) {
             case WOLKENLOS:
@@ -350,14 +348,11 @@ public class BewoelkungSatzDescriber {
                         .altStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit, INDEF),
                 Praedikativum::alsEsIstSatz));
 
+        // IDEA: "Was (für) ein grauer Tag!"
+
         if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
             // "es ist hellichter Tag"
             alt.add(TAG.mit(HELLICHT).alsEsIstSatz());
-        }
-
-        // IDEA: "Was (für) ein grauer Tag!"
-
-        if (bewoelkung == WOLKENLOS || bewoelkung == LEICHT_BEWOELKT) {
             alt.addAll(tageszeit.altGestirn().stream()
                     .flatMap(gestirn ->
                             praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit).stream()
@@ -373,8 +368,10 @@ public class BewoelkungSatzDescriber {
 
         switch (bewoelkung) {
             case WOLKENLOS:
-                alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BLAU)
-                        .alsSatzMitSubjekt(HIMMEL));
+                if (tageszeit != NACHTS) {
+                    alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BLAU)
+                            .alsSatzMitSubjekt(HIMMEL));
+                }
                 alt.addAll(mapToList(tageszeit.altGestirn(), gestirn ->
                         // "die Sonne scheint auf dich herab"
                         HERABSCHEINEN

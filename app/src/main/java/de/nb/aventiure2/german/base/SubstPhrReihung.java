@@ -89,6 +89,11 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     }
 
     @Override
+    public String artikellosAkkStr() {
+        return joinToString(artikellosAkkK());
+    }
+
+    @Override
     public String akkStr() {
         return joinToString(akkK());
     }
@@ -108,6 +113,23 @@ public class SubstPhrReihung implements SubstantivischePhrase {
                         .addAll(
                                 mapToList(elemente.subList(1, elemente.size()),
                                         SubstantivischePhrase::datK)
+                        )
+                        .build());
+    }
+
+
+    /**
+     * Gibt die substantivische Phrase im Akkusativ, aber ohne Artikel, zurück
+     * ("(ins) Haus") - als Konstituente
+     */
+    @Override
+    public Konstituentenfolge artikellosAkkK() {
+        return toAufzaehlung(
+                ImmutableList.<Konstituentenfolge>builder()
+                        .add(elemente.get(0).artikellosAkkK())
+                        .addAll(
+                                mapToList(elemente.subList(1, elemente.size()),
+                                        SubstantivischePhrase::akkK)
                         )
                         .build());
     }
@@ -185,7 +207,7 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     public IBezugsobjekt getBezugsobjekt() {
         return null;
     }
-    
+
     @Override
     public NumerusGenus getNumerusGenus() {
         return PL_MFN;

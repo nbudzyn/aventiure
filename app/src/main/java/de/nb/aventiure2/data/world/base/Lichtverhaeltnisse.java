@@ -7,20 +7,30 @@ import com.google.common.collect.ImmutableSet;
 import java.util.stream.Stream;
 
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
 import static java.util.stream.Collectors.toSet;
 
 public enum Lichtverhaeltnisse {
-    HELL(AdjektivOhneErgaenzungen.HELL), DUNKEL(AdjektivOhneErgaenzungen.DUNKEL);
+    HELL(AdjektivOhneErgaenzungen.HELL,
+            ImmutableSet.of(NomenFlexionsspalte.HELLE)),
+    DUNKEL(AdjektivOhneErgaenzungen.DUNKEL,
+            ImmutableSet.of(NomenFlexionsspalte.DUNKEL, DUNKELHEIT));
 
     private final AdjektivOhneErgaenzungen adjektiv;
 
-    Lichtverhaeltnisse(final AdjektivOhneErgaenzungen adjektiv) {
+    private final ImmutableSet<NomenFlexionsspalte> altNomenFlexionsspalten;
+
+    Lichtverhaeltnisse(
+            final AdjektivOhneErgaenzungen adjektiv,
+            final ImmutableSet<NomenFlexionsspalte> altNomenFlexionsspalten) {
         this.adjektiv = adjektiv;
+        this.altNomenFlexionsspalten = altNomenFlexionsspalten;
     }
 
     /**
@@ -66,5 +76,9 @@ public enum Lichtverhaeltnisse {
 
     public AdjektivOhneErgaenzungen getAdjektiv() {
         return adjektiv;
+    }
+
+    public ImmutableSet<NomenFlexionsspalte> altNomenFlexionsspalten() {
+        return altNomenFlexionsspalten;
     }
 }

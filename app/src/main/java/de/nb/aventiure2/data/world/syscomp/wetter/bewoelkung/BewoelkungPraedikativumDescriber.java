@@ -9,6 +9,7 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Artikel;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -24,6 +25,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLAR;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LICHTLOS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.NACHTSCHWARZ;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SANFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHUMMRIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STOCKDUNKEL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TRUEB;
@@ -325,4 +327,11 @@ public class BewoelkungPraedikativumDescriber {
         }
     }
 
+    /**
+     * Gibt etwas wie "der schöne Morgen" oder Ähnliches zurück.
+     */
+    public Nominalphrase schoeneTageszeit(final Tageszeit tageszeit) {
+        // "der schöne Abend"
+        return tageszeit.getNomenFlexionsspalte().mit(SCHOEN);
+    }
 }

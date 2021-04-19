@@ -292,7 +292,7 @@ public class TemperaturSatzDescriber {
 
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        // "Heute ist es heiß / schönes Wetter."
+        // "Heute ist es heiß / warmes Wetter."
         alt.addAll(
                 mapToList(praedikativumDescriber.alt(
                         temperatur,

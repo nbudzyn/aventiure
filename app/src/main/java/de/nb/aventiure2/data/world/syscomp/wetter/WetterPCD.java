@@ -43,7 +43,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             new TageszeitSatzDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
 
     private static final TageszeitDescDescriber TAGESZEIT_DESC_DESCRIBER =
-            new TageszeitDescDescriber(TAGESZEIT_SATZ_DESCRIBER);
+            new TageszeitDescDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER, TAGESZEIT_SATZ_DESCRIBER);
 
     /**
      * Das aktuelle Wetter
@@ -260,7 +260,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time,
             final boolean unterOffenenHimmel) {
         final ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> alt =
-                wetter.altWohinHinaus(time.getTime(), unterOffenenHimmel);
+                wetter.altWohinHinaus(time.getTime(), unterOffenenHimmel,
+                        wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
         resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
@@ -281,6 +282,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
         final ImmutableSet<Praepositionalphrase> alt =
                 wetter.altBeiLichtImLicht(time.getTime(), unterOffenemHimmel);
 
+        // FIXME Entweder hier alle Wetterparameter beschreiben lassen - oder
+        //  aber speziell dafür sorgen, dass die noch nicht beschriebenen Parameter noch
+        //  später beschrieben werden!
+
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
         return alt;
@@ -290,6 +295,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time, final boolean unterOffenemHimmel) {
         final ImmutableCollection<EinzelneSubstantivischePhrase> alt =
                 wetter.altLichtInDemEtwasLiegt(time.getTime(), unterOffenemHimmel);
+
+        // FIXME Entweder hier alle Wetterparameter beschreiben lassen - oder
+        //  aber speziell dafür sorgen, dass die noch nicht beschriebenen Parameter noch
+        //  später beschrieben werden!
 
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 

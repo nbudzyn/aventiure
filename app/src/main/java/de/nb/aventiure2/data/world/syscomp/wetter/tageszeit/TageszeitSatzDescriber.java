@@ -59,15 +59,15 @@ public class TageszeitSatzDescriber {
      * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    public ImmutableCollection<EinzelnerSatz> altDraussen(
+    ImmutableCollection<EinzelnerSatz> altDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
         if (time.getTageszeit() != Tageszeit.TAGSUEBER) {
             // "es ist Morgen"
-            alt.addAll(mapToSet(praedikativumDescriber.alt(time.getTageszeit()),
-                    derMorgen -> npArtikellos(derMorgen).alsEsIstSatz()));
+            alt.add(npArtikellos(
+                    time.getTageszeit().getNomenFlexionsspalte()).alsEsIstSatz());
         }
 
         // "es ist schon hell"

@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.tageszeit;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
@@ -13,6 +14,9 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGINNEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINBRECHEND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
 
@@ -29,31 +33,47 @@ public class TageszeitPraedikativumDescriber {
      * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht"
      */
     ImmutableCollection<EinzelneSubstantivischePhrase> alt(
-            final AvTime time) {
+            final AvTime time,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();
 
-        // "der Tag"
-        alt.addAll(alt(time.getTageszeit()));
+        // "der Tag", "das Helle"
+        alt.addAll(alt(time.getTageszeit(),
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         if (time.kurzNachSonnenuntergang()) {
             alt.add(NACHT.mit(EINBRECHEND));
+            alt.add(NACHT.mit(BEGINNEND));
         }
 
         return alt.build();
     }
 
     /**
-     * Gibt Alternativen zurück wie "der Tag"
+     * Gibt Alternativen zurück wie "der Tag", "das Helle"
      */
-    public ImmutableCollection<NomenFlexionsspalte> alt(final Tageszeit tageszeit) {
+    public ImmutableCollection<NomenFlexionsspalte> alt(
+            final Tageszeit tageszeit,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableList.Builder<NomenFlexionsspalte> alt =
                 ImmutableList.builder();
 
         // "der Tag"
         alt.add(tageszeit.getNomenFlexionsspalte());
 
+        if ((tageszeit == MORGENS || tageszeit == NACHTS)
+                && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            // "das Helle", "die Dunkelheit", "das Dunkel"
+            alt.addAll(altLichtverhaeltnisseNomenFlexionsspalte(tageszeit));
+        }
+
         return alt.build();
+    }
+
+    ImmutableSet<NomenFlexionsspalte> altLichtverhaeltnisseNomenFlexionsspalte(
+            final Tageszeit tageszeit) {
+        return tageszeit.getLichtverhaeltnisseDraussen().altNomenFlexionsspalten();
     }
 
     /**

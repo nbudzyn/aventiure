@@ -19,6 +19,13 @@ public interface EinzelneSubstantivischePhrase extends SubstantivischePhrase {
 
     @Override
     @CheckReturnValue
+    default Konstituentenfolge artikellosAkkK() {
+        return joinToKonstituentenfolge(
+                k(artikellosAkkStr(), getNumerusGenus(), getBezugsobjekt()));
+    }
+
+    @Override
+    @CheckReturnValue
     default Konstituentenfolge imK(
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         return joinToKonstituentenfolge(

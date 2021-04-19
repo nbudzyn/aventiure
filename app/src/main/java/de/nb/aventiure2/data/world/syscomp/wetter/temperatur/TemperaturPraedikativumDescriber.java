@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.CheckReturnValue;
@@ -11,10 +12,12 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -43,6 +46,18 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturPraedikativumDescriber {
+    /**
+     * Erzeugt Nominalphrasen in der Art "der heiße Morgen".
+     */
+    @NonNull
+    @CheckReturnValue
+    ImmutableCollection<Nominalphrase> altTageszeit(final Temperatur temperatur,
+                                                    final Tageszeit tageszeit) {
+        return alt(temperatur, true).stream()
+                .filter(AdjPhrOhneLeerstellen.class::isInstance)
+                .map(a -> np((AdjPhrOhneLeerstellen) a, tageszeit.getNomenFlexionsspalte()))
+                .collect(toImmutableSet());
+    }
 
     /**
      * Gibt alternative Prädikative zurück für eine Beschreibung in der Art
@@ -210,5 +225,4 @@ public class TemperaturPraedikativumDescriber {
                 throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
         }
     }
-
 }

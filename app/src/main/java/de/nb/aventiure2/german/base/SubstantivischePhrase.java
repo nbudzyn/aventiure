@@ -59,6 +59,12 @@ public interface SubstantivischePhrase
      */
     Konstituentenfolge artikellosDatK();
 
+    /**
+     * Gibt die substantivische Phrase im Akkusativ, aber ohne Artikel, zurück
+     * ("(ins) Haus") - als Konstituentenfolge
+     */
+    Konstituentenfolge artikellosAkkK();
+
     @Nullable
     @Override
     default NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer() {
@@ -74,6 +80,13 @@ public interface SubstantivischePhrase
      * ("(zum) Haus") - als String
      */
     String artikellosDatStr();
+
+
+    /**
+     * Gibt die substantivische Phrase im Akkusativ, aber ohne Artikel, zurück
+     * ("(ins) Haus") - als String
+     */
+    String artikellosAkkStr();
 
     default String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (kasusOderPraepositionalkasus instanceof Kasus) {
