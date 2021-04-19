@@ -145,7 +145,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 .map(licht ->
                         du("erreichst", "bald",
                                 licht.nomK(), // "das helle Tageslicht"
-                                "in",
+                                ", in",
                                 licht.relPron().datK(), // "dem"
                                 "der Schlossgarten liegt").schonLaenger()
                                 .mitVorfeldSatzglied("bald")
