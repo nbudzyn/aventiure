@@ -318,6 +318,12 @@ public class Nominalphrase
     }
 
     @Override
+    @CheckReturnValue
+    public Konstituentenfolge artikellosAkkK() {
+        return imK(AKK, false);
+    }
+
+    @Override
     public Konstituentenfolge akkK() {
         return imK(AKK);
     }
@@ -484,6 +490,18 @@ public class Nominalphrase
     public String artikellosAkkStr() {
         return artikellosAkkK().joinToSingleKonstituente().toTextOhneKontext();
     }
+
+    // FIXME BUG: java.lang.StackOverflowError: stack size 1043KB
+    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
+    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
+    //	(EinzelneSubstantivischePhrase.java:24)
+    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
+    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
+    //	(EinzelneSubstantivischePhrase.java:24)
+    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
+    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
+    //	(EinzelneSubstantivischePhrase.java:24)
+    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
 
     @Override
     public String akkStr() {
