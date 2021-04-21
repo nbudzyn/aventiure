@@ -25,6 +25,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -268,11 +269,13 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return alt;
     }
 
-    ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(final AvDateTime time) {
-        final ImmutableCollection<Praepositionalphrase> alt =
-                wetter.altUnterOffenemHimmel(time.getTime());
+    ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(final AvDateTime time,
+                                                               final boolean unterOffenemHimmel) {
+        final ImmutableCollection<AdvAngabeSkopusVerbAllg> alt =
+                wetter.altWoDraussen(time.getTime(), unterOffenemHimmel,
+                        wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
-        resetWetterHinweiseFlagsDraussen(true);
+        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
         return alt;
     }

@@ -424,12 +424,7 @@ public class TageszeitDescDescriber {
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (time.getTageszeit() == NACHTS) {
-            // "draußen herrscht Dunkelheit"
-            alt.addAll(
-                    praedikativumDescriber.altLichtverhaeltnisseNomenFlexionsspalte(NACHTS).stream()
-                            .map(dieDunkelheit ->
-                                    neuerSatz("draußen herrscht",
-                                            npArtikellos(dieDunkelheit).nomStr()))); // "Dunkelheit"
+            alt.add(neuerSatz("draußen herrscht Dunkelheit"));
         }
 
         return alt.schonLaenger().build();
@@ -449,12 +444,7 @@ public class TageszeitDescDescriber {
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         if (time.getTageszeit() == NACHTS) {
-            // "es herrscht Dunkelheit"
-            alt.addAll(
-                    praedikativumDescriber.altLichtverhaeltnisseNomenFlexionsspalte(NACHTS).stream()
-                            .map(dieDunkelheit ->
-                                    neuerSatz("es herrscht",
-                                            npArtikellos(dieDunkelheit).nomStr()))); // "Dunkelheit"
+            alt.add(neuerSatz("es herrscht Dunkelheit"));
         }
 
         return alt.build();

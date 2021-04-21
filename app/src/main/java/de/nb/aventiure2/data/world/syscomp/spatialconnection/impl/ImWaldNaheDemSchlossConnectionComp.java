@@ -122,8 +122,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         if (now.getTageszeit() == NACHTS) {
             final AvTimeSpan wegzeit = mins(15);
             alt.addAll(
-                    world.loadWetter().wetterComp().altUnterOffenemHimmel(
-                            now.plus(wegzeit)).stream()
+                    world.loadWetter().wetterComp().altWoDraussen(
+                            now.plus(wegzeit), true).stream()
                             .map(p ->
                             {
                                 return du(SENTENCE, "gehst",
@@ -131,7 +131,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                         "den dunklen",
                                         "Wald, dann öffnet sich der Weg wieder und du stehst",
                                         "im Schlossgarten",
-                                        p.getDescription() // "unter dem Sternenhimmel"
+                                        p.getDescription(duSc()) // "unter dem Sternenhimmel"
                                 )
                                         .mitVorfeldSatzglied("noch eine Weile")
                                         .schonLaenger()

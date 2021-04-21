@@ -4,13 +4,16 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -22,17 +25,31 @@ import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.RECHT_HEISS;
 import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.WARM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEISSEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISKALT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FLIRREND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FROSTIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GLUEHEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LAU;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.NAECHTLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.EISESKAELTE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUEHLE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WAERME;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -46,16 +63,125 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturPraedikativumDescriber {
+
+    ImmutableSet<EinzelneSubstantivischePhrase> altDraussenSubstPhr(
+            final Temperatur temperatur, final AvTime time) {
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+
+        // "die klirrend kalte Luft"
+        alt.addAll(mapToList(altLuftAdjPhr(temperatur, time.getTageszeit()), LUFT::mit));
+
+        if (time.getTageszeit() == NACHTS) {
+            alt.addAll(altNaechtlicheDunkelheitNominalphrase(temperatur));
+        }
+
+        alt.addAll(altTageszeit(temperatur, time.getTageszeit()));
+
+        switch (temperatur) {
+            case KLIRREND_KALT:
+                alt.add(EISESKAELTE, KAELTE.mit(BEISSEND));
+                break;
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                alt.add(KAELTE.mit(FROSTIG));
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.addAll(altAkkKnappUeberGefrierpunktSubstPhr(time));
+                break;
+            case KUEHL:
+                alt.add(KUEHLE);
+                break;
+            case WARM:
+                alt.add(WAERME, WETTER.mit(AdjektivOhneErgaenzungen.WARM));
+                break;
+            case RECHT_HEISS:
+                break;
+            case SEHR_HEISS:
+                alt.addAll(altSehrHeissSubstPhr(time));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
+        }
+
+        return alt.build();
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private static ImmutableCollection<EinzelneSubstantivischePhrase>
+    altAkkKnappUeberGefrierpunktSubstPhr(final AvTime time) {
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt =
+                ImmutableSet.builder();
+
+        alt.add(KAELTE);
+        if (time.getTageszeit() == NACHTS) {
+            alt.add(KAELTE.mit(NAECHTLICH));
+        }
+
+        return alt.build();
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private static ImmutableCollection<EinzelneSubstantivischePhrase>
+    altSehrHeissSubstPhr(final AvTime time) {
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+
+        alt.add(HITZE);
+        alt.add(HITZE);
+        alt.add(HITZE.mit(GLUEHEND));
+        alt.add(HITZE.mit(FLIRREND));
+        if (time.gegenMittag()) {
+            alt.add(MITTAGSHITZE);
+        } else if (time.getTageszeit() == ABENDS) {
+            alt.add(ABENDHITZE);
+        }
+
+        return alt.build();
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private ImmutableCollection<Nominalphrase> altNaechtlicheDunkelheitNominalphrase(
+            final Temperatur temperatur) {
+        final ImmutableList.Builder<Nominalphrase> alt =
+                ImmutableList.builder();
+
+        // "die eiskalte Dunkelheit"
+        alt.addAll(mapToList(altLuftAdjPhr(temperatur, NACHTS), DUNKELHEIT::mit));
+
+        switch (temperatur) {
+            case KLIRREND_KALT:
+                break;
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                break;
+            case KUEHL:
+                break;
+            case WARM:
+                break;
+            case RECHT_HEISS:
+                break;
+            case SEHR_HEISS:
+                alt.add(HITZE.mit(AdjektivOhneErgaenzungen.DUNKEL));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
+        }
+
+        return alt.build();
+    }
+
+
     /**
      * Erzeugt Nominalphrasen in der Art "der heiße Morgen".
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<Nominalphrase> altTageszeit(final Temperatur temperatur,
-                                                    final Tageszeit tageszeit) {
-        return alt(temperatur, true).stream()
-                .filter(AdjPhrOhneLeerstellen.class::isInstance)
-                .map(a -> np((AdjPhrOhneLeerstellen) a, tageszeit.getNomenFlexionsspalte()))
+    private ImmutableCollection<Nominalphrase> altTageszeit(final Temperatur temperatur,
+                                                            final Tageszeit tageszeit) {
+        return altAdjPhr(temperatur, true).stream()
+                .map(a -> tageszeit.getNomenFlexionsspalte().mit(a))
                 .collect(toImmutableSet());
     }
 
@@ -64,7 +190,7 @@ public class TemperaturPraedikativumDescriber {
      * "Es ist (sehr kalt / ziemlich warm / warmes Wetter)" oder "Heute ist es ..." oder
      * "Draußen ist es ...".
      * <p>
-     * Das Eregebnis von {@link #altAdjPhr(Temperatur)} ist bereits enthalten
+     * Das Eregebnis von {@link #altAdjPhr(Temperatur, boolean)}} ist bereits enthalten
      */
     @NonNull
     @CheckReturnValue
@@ -72,7 +198,7 @@ public class TemperaturPraedikativumDescriber {
             final Temperatur temperatur, final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
-        alt.addAll(altAdjPhr(temperatur));
+        alt.addAll(altAdjPhr(temperatur, false));
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -115,10 +241,7 @@ public class TemperaturPraedikativumDescriber {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
                 ImmutableList.builder();
 
-        if (temperatur != RECHT_HEISS) {
-            // ("in die recht heiße Luft hinaus" etc. ist sehr sperrig)
-            alt.addAll(altAdjPhr(temperatur));
-        }
+        alt.addAll(altAdjPhr(temperatur, true));
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -139,6 +262,9 @@ public class TemperaturPraedikativumDescriber {
                 alt.add(AUFGEHEIZT);
                 break;
             case SEHR_HEISS:
+                if (tageszeit != NACHTS) {
+                    alt.add(FLIRREND);
+                }
                 break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
@@ -182,7 +308,7 @@ public class TemperaturPraedikativumDescriber {
             }
         }
 
-        return mapToList(altAdjPhr(temperatur),
+        return mapToList(altAdjPhr(temperatur, false),
                 tempAdjPhr -> new ZweiPraedikativa<>(
                         np(INDEF, SCHOEN, tageszeit.getNomenFlexionsspalte()),
                         konnektorErfordertKommata, konnektor, // ", aber"
@@ -193,36 +319,60 @@ public class TemperaturPraedikativumDescriber {
      * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
      * "Es ist (sehr kalt / ziemlich warm)" oder "Heute ist es ..." oder
      * "Draußen ist es ...".
+     *
+     * @param fuerAttributiveVerwendung ob nur Adjektivphrasen zurückgegeben werden sollen,
+     *                                  die für attributive Verwendung geeignet sind
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(final Temperatur temperatur) {
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
+            final Temperatur temperatur, final boolean fuerAttributiveVerwendung) {
+        final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt = ImmutableList.builder();
+
         switch (temperatur) {
             case KLIRREND_KALT:
-                return ImmutableList.of(
-                        KALT.mitGraduativerAngabe("klirrend"),
-                        EISKALT);
+                alt.add(KALT.mitGraduativerAngabe("klirrend"), EISKALT);
+                break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(KALT.mitGraduativerAngabe("sehr"),
-                        KALT.mitGraduativerAngabe("frostig"));
+                if (!fuerAttributiveVerwendung) {
+                    // "der sehr kalte Morgen" ist sperrig
+                    alt.add(KALT.mitGraduativerAngabe("sehr"));
+                }
+                alt.add(KALT.mitGraduativerAngabe("frostig"));
+                break;
             case KNAPP_UEBER_DEM_GEFRIERPUNKT:
-                return ImmutableList.of(KALT);
+                alt.add(KALT);
+                break;
             case KUEHL:
-                return ImmutableList.of(
-                        AdjektivOhneErgaenzungen.KUEHL,
-                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("etwas"),
+                if (!fuerAttributiveVerwendung) {
+                    // "der etwas kühle Morgen" ist sperrig
+                    alt.add(AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("etwas"));
+                }
+
+                alt.add(AdjektivOhneErgaenzungen.KUEHL,
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"));
+                break;
             case WARM:
-                return ImmutableList.of(AdjektivOhneErgaenzungen.WARM);
+                alt.add(AdjektivOhneErgaenzungen.WARM);
+                break;
             case RECHT_HEISS:
-                return ImmutableList.of(
-                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("recht"),
-                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("ziemlich"));
+                if (!fuerAttributiveVerwendung) {
+                    // "der recht heiße Morgen" ist sperrig
+                    alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("recht"));
+                }
+
+                alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("ziemlich"));
+                break;
             case SEHR_HEISS:
-                return ImmutableList.of(
-                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("sehr"));
+                alt.add(AdjektivOhneErgaenzungen.GLUTHEISS);
+                if (!fuerAttributiveVerwendung) {
+                    alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("sehr"));
+                }
+                break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
         }
+
+        return alt.build();
     }
 }

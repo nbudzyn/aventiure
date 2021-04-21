@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -12,11 +13,11 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * Beschreibt die {@link Tageszeit} als {@link AdvAngabeSkopusVerbWohinWoher}.
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
-public class TageszeitAdvAngabeWohinDescriber {
+public class TageszeitAdvAngabeWoDescriber {
     private final TageszeitPraedikativumDescriber praedikativumDescriber;
     private final TageszeitPraepPhrDescriber praepPhrDescriber;
 
-    public TageszeitAdvAngabeWohinDescriber(
+    public TageszeitAdvAngabeWoDescriber(
             final TageszeitPraedikativumDescriber praedikativumDescriber,
             final TageszeitPraepPhrDescriber praepPhrDescriber) {
         this.praedikativumDescriber = praedikativumDescriber;
@@ -24,14 +25,14 @@ public class TageszeitAdvAngabeWohinDescriber {
     }
 
     /**
-     * Gibt Alternativen zurück wie "in den Tag"
+     * Gibt Alternativen zurück wie "in der nächtlichen Dunkelheit" - evtl. leer.
      */
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        // "in die beginnende Nacht", "ins Helle"
-        return mapToSet(praepPhrDescriber.altWohinHinaus(time,
+        // "im Hellen", "in der Dunkelheit", "im nächtlichen Dunkel"
+        return mapToSet(praepPhrDescriber.altWoDraussen(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
-                AdvAngabeSkopusVerbWohinWoher::new);
+                AdvAngabeSkopusVerbAllg::new);
     }
 }

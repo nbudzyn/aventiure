@@ -18,7 +18,9 @@ import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGINNEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINBRECHEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.NAECHTLICH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Tageszeit} als {@link Praedikativum}.
@@ -30,17 +32,19 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHT;
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TageszeitPraedikativumDescriber {
     /**
-     * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht"
+     * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht" - eventuell leer, wenn
+     * nicht auch reine Tageszeiten zurückgegeben werden sollen.
      */
-    ImmutableCollection<EinzelneSubstantivischePhrase> alt(
+    ImmutableCollection<EinzelneSubstantivischePhrase> altSubstPhr(
             final AvTime time,
-            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+            final boolean auchReineTageszeiten) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();
 
         // "der Tag", "das Helle"
-        alt.addAll(alt(time.getTageszeit(),
-                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        alt.addAll(altSubstPhr(time.getTageszeit(),
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, auchReineTageszeiten));
 
         if (time.kurzNachSonnenuntergang()) {
             alt.add(NACHT.mit(EINBRECHEND));
@@ -51,27 +55,36 @@ public class TageszeitPraedikativumDescriber {
     }
 
     /**
-     * Gibt Alternativen zurück wie "der Tag", "das Helle"
+     * Gibt Alternativen zurück wie "der Tag", "das Helle" - eventuell leer, wenn
+     * nicht auch reine Tageszeiten zurückgegeben werden sollen.
      */
-    public ImmutableCollection<NomenFlexionsspalte> alt(
+    private ImmutableCollection<EinzelneSubstantivischePhrase> altSubstPhr(
             final Tageszeit tageszeit,
-            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        final ImmutableList.Builder<NomenFlexionsspalte> alt =
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+            final boolean auchReineTageszeiten) {
+        final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();
 
-        // "der Tag"
-        alt.add(tageszeit.getNomenFlexionsspalte());
+        if (auchReineTageszeiten) {
+            // "der Tag"
+            alt.add(tageszeit.getNomenFlexionsspalte());
+        }
 
         if ((tageszeit == MORGENS || tageszeit == NACHTS)
                 && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
             // "das Helle", "die Dunkelheit", "das Dunkel"
             alt.addAll(altLichtverhaeltnisseNomenFlexionsspalte(tageszeit));
+
+            if (tageszeit == NACHTS) {
+                alt.addAll(mapToSet(altLichtverhaeltnisseNomenFlexionsspalte(NACHTS),
+                        dunkelheit -> dunkelheit.mit(NAECHTLICH)));
+            }
         }
 
         return alt.build();
     }
 
-    ImmutableSet<NomenFlexionsspalte> altLichtverhaeltnisseNomenFlexionsspalte(
+    private ImmutableSet<NomenFlexionsspalte> altLichtverhaeltnisseNomenFlexionsspalte(
             final Tageszeit tageszeit) {
         return tageszeit.getLichtverhaeltnisseDraussen().altNomenFlexionsspalten();
     }

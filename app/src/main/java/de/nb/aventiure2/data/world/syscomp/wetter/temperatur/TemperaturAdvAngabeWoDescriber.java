@@ -8,37 +8,38 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Temperatur} in Form von
- * {@link de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher}s.
+ * {@link AdvAngabeSkopusVerbWohinWoher}s.
  * <p>
  * Diese Phrasen sind für jede Bewölkung sinnvoll (wobei manchmal die Bewölkung
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch"})
-public class TemperaturAdvAngabeWohinDescriber {
+public class TemperaturAdvAngabeWoDescriber {
     private final TemperaturPraepPhrDescriber praepPhrDescriber;
 
-    public TemperaturAdvAngabeWohinDescriber(
+    public TemperaturAdvAngabeWoDescriber(
             final TemperaturPraepPhrDescriber praepPhrDescriber) {
         this.praepPhrDescriber = praepPhrDescriber;
     }
 
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(
             final Temperatur temperatur, final AvTime time) {
-        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
+        final ImmutableList.Builder<AdvAngabeSkopusVerbAllg> alt =
                 ImmutableList.builder();
 
-        // "in die klirrend kalte Luft", "in die Eiseskälte"
-        alt.addAll(mapToList(praepPhrDescriber.altWohinHinaus(temperatur, time),
-                AdvAngabeSkopusVerbWohinWoher::new));
+        // "in der klirrend kalten Luft", "in der Eiseskälte"
+        alt.addAll(mapToList(praepPhrDescriber.altWoDraussen(temperatur, time),
+                AdvAngabeSkopusVerbAllg::new));
 
         return alt.build();
     }

@@ -12,18 +12,22 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungAdvAngabeWoDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungAdvAngabeWohinDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungDescDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraedikativumDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraepPhrDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWoDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWohinDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraepPhrDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TagestemperaturverlaufUtil;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturAdvAngabeWoDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturAdvAngabeWohinDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturDescDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturPraedikativumDescriber;
@@ -35,6 +39,7 @@ import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
@@ -71,9 +76,18 @@ class WetterData {
                     TAGESZEIT_PRAEDIKATIVUM_DESCRIBER,
                     TAGESZEIT_SATZ_DESCRIBER);
 
+    private static final TageszeitPraepPhrDescriber TAGESZEIT_PRAEP_PHR_DESCRIBER =
+            new TageszeitPraepPhrDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final TageszeitAdvAngabeWoDescriber
+            TAGESZEIT_ADV_ANGABE_WO_DESCRIBER =
+            new TageszeitAdvAngabeWoDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER,
+                    TAGESZEIT_PRAEP_PHR_DESCRIBER);
+
     private static final TageszeitAdvAngabeWohinDescriber
             TAGESZEIT_ADV_ANGABE_WOHIN_DESCRIBER =
-            new TageszeitAdvAngabeWohinDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
+            new TageszeitAdvAngabeWohinDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER,
+                    TAGESZEIT_PRAEP_PHR_DESCRIBER);
 
     // Temperatur-Describer
     private static final TemperaturPraedikativumDescriber TEMPERATUR_PRAEDIKATIVUM_DESCRIBER =
@@ -82,10 +96,15 @@ class WetterData {
     private static final TemperaturPraepPhrDescriber TEMPERATUR_PRAEP_PHR_DESCRIBER =
             new TemperaturPraepPhrDescriber(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
 
+    private static final TemperaturAdvAngabeWoDescriber
+            TEMPERATUR_ADV_ANGABE_WO_DESCRIBER =
+            new TemperaturAdvAngabeWoDescriber(
+                    TEMPERATUR_PRAEP_PHR_DESCRIBER);
+
     private static final TemperaturAdvAngabeWohinDescriber
             TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER =
             new TemperaturAdvAngabeWohinDescriber(
-                    TEMPERATUR_PRAEDIKATIVUM_DESCRIBER, TEMPERATUR_PRAEP_PHR_DESCRIBER);
+                    TEMPERATUR_PRAEP_PHR_DESCRIBER);
 
     private static final TemperaturSatzDescriber TEMPERATUR_SATZ_DESCRIBER =
             new TemperaturSatzDescriber(
@@ -101,6 +120,11 @@ class WetterData {
 
     private static final BewoelkungPraepPhrDescriber BEWOELKUNG_PRAEP_PHR_DESCRIBER =
             new BewoelkungPraepPhrDescriber(BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final BewoelkungAdvAngabeWoDescriber
+            BEWOELKUNG_ADV_ANGABE_WO_DESCRIBER =
+            new BewoelkungAdvAngabeWoDescriber(
+                    BEWOELKUNG_PRAEP_PHR_DESCRIBER, BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
 
     private static final BewoelkungAdvAngabeWohinDescriber
             BEWOELKUNG_ADV_ANGABE_WOHIN_DESCRIBER =
@@ -596,6 +620,9 @@ class WetterData {
         final ImmutableCollection.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableSet.builder();
 
+        // FIXME Windstärke berücksichtigen?
+        // FIXME Blitz und Donner berücksichtigen?
+
         final Temperatur temperatur = getTemperatur(time);
 
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
@@ -628,7 +655,7 @@ class WetterData {
 
         if (unterOffenenHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
-            alt.addAll(altInBewoelkungUndTemperaturHinausUnterOffenemHimmel(time));
+            alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(time));
         }
 
         return alt.build();
@@ -637,7 +664,7 @@ class WetterData {
     @NonNull
     @CheckReturnValue
     private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher>
-    altInBewoelkungUndTemperaturHinausUnterOffenemHimmel(final AvTime time) {
+    altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(final AvTime time) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableSet.builder();
 
         final Temperatur temperatur = getTemperatur(time);
@@ -645,7 +672,7 @@ class WetterData {
         alt.addAll(mapToSet(altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(time),
                 np -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(np))));
 
-        alt.addAll(TEMPERATUR_PRAEP_PHR_DESCRIBER.altInAkk(temperatur, time).stream()
+        alt.addAll(TEMPERATUR_PRAEP_PHR_DESCRIBER.altWohinHinaus(temperatur, time).stream()
                 .flatMap(inDieKaelte ->
                         BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenenHimmelAkk(
                                 bewoelkung, time.getTageszeit()).stream()
@@ -662,8 +689,8 @@ class WetterData {
         return alt.build();
     }
 
-    private ImmutableSet<EinzelneSubstantivischePhrase> altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
-            final AvTime time) {
+    private ImmutableSet<EinzelneSubstantivischePhrase>
+    altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(final AvTime time) {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
 
         final Temperatur temperatur = getTemperatur(time);
@@ -686,29 +713,100 @@ class WetterData {
         return alt.build();
     }
 
-
     @NonNull
     @CheckReturnValue
-    ImmutableSet<Praepositionalphrase> altUnterOffenemHimmel(final AvTime time) {
-        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
+    ImmutableSet<AdvAngabeSkopusVerbAllg> altWoDraussen(
+            final AvTime time,
+            final boolean unterOffenemHimmel,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
 
         // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
-        alt.addAll(BEWOELKUNG_PRAEP_PHR_DESCRIBER
-                .altUnterOffenemHimmelDat(getBewoelkung(), time.getTageszeit()));
+        final Temperatur temperatur = getTemperatur(time);
 
-        final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
-                altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(time);
+        if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
+                temperatur)) {
+            alt.addAll(TAGESZEIT_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(
+                    time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
 
-        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll, IN_DAT::mit));
-        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
-                substPhrOderReflexivpronomen ->
-                        IN_DAT.mit(substPhrOderReflexivpronomen)
-                                .mitModAdverbOderAdjektiv("mitten")));
+        if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel)) {
+            alt.addAll(TEMPERATUR_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(temperatur, time));
+        }
+
+        if (bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
+                temperatur)) {
+            if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
+                // Temperatur muss nicht erwähnt werden
+                alt.addAll(BEWOELKUNG_ADV_ANGABE_WO_DESCRIBER
+                        .altUnterOffenemHimmel(bewoelkung, time,
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+
+            }
+        }
+
+        if (unterOffenemHimmel) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(time));
+        }
 
         return alt.build();
     }
+
+    private ImmutableCollection<AdvAngabeSkopusVerbAllg>
+    altWoInBewoelkungUndTemperaturUnterOffenemHimmel(final AvTime time) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
+
+        final Temperatur temperatur = getTemperatur(time);
+
+        final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
+                altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(time);
+        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
+                np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
+        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
+                substPhr -> new AdvAngabeSkopusVerbAllg(
+                        IN_DAT.mit(substPhr)
+                                .mitModAdverbOderAdjektiv("mitten"))));
+
+        alt.addAll(mapToSet(altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(time),
+                np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
+
+        alt.addAll(TEMPERATUR_PRAEP_PHR_DESCRIBER.altWoDraussen(temperatur, time).stream()
+                .flatMap(inDerKaelte ->
+                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenemHimmelDat(
+                                bewoelkung, time.getTageszeit()).stream()
+                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                        .kommaStehtAus())
+                                .map(unterHimmel ->
+                                        // "in der Kälte unter dem bewölkten Himmel"
+                                        new AdvAngabeSkopusVerbAllg(
+                                                GermanUtil.joinToString(
+                                                        inDerKaelte.getDescription(),
+                                                        unterHimmel.getDescription()))))
+                .collect(toSet()));
+
+        return alt.build();
+    }
+
+    // FIXME altWann() analog zu altWoDraussen(), aber mit Satz-Skopus.
+    //  Vielleicht auch nur Präferenz auf Zeit, also Wetterbeschreibungsflags nicht
+    //  zurücksetzen?
+    //  "mit Sonnenaufgang (machts du dich auf den Weg...)"
+    //  "Bei Sonnenaufgang kommt schon..."
+    //  "Bei Sonnenuntergang kommst du zu..."
+    //  "Du erwachst vor Sonnenuntergang"
+    //  "Bei einbrechender Nacht"
+    //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, " (Problem: "Adverbiale
+    //  Angaben"
+    //   mit Folgekomme unterstützen wir wohl derzeit nicht)
+    //  "gegen Abend, als die Sonne untergegangen ist," (Problem: "Adverbiale Angaben"
+    //    mit Folgekomme unterstützen wir wohl derzeit nicht)
+    //  "gegen Mittag"
+    //  "bei Mittagssonnenschein"
+    //  "als heller Mittag ist..." (Komma...)
+    //  "Schließlich", "nach einer Weile" o.Ä. als Fallback
 
     @NonNull
     @CheckReturnValue
@@ -806,18 +904,6 @@ class WetterData {
     // IDEA Sonne scheint durchs Fenster hinein
     //  - "Als nun die Sonne durchs Fensterlein scheint und..."
 
-    // FIXME Wetterbeschreibungen als Adverbiale Angaben mit Satz-Skopus:
-    //  - Vielleicht ist das schon angelegt, vgl. unterOffenemHimmel()!
-    //  "mit Sonnenaufgang (machts du dich auch den Weg...)"
-    //  "Bei Sonnenaufgang kommt schon..."
-    //  "Bei Sonnenuntergang kommst du zu..."
-    //  "Du erwachst vor Sonnenuntergang"
-    //  "Bei einbrechender Nacht"
-    //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, " (Problem: "Adverbiale Angaben"
-    //   mit Folgekomme unterstützen wir wohl derzeit nicht)
-    //  "gegen Abend, als die Sonne untergegangen ist," (Problem: "Adverbiale Angaben"
-    //    mit Folgekomme unterstützen wir wohl derzeit nicht)
-
     // FIXME Wetterbeschreibungen als "Ortsangaben"
     //  "du liegst in der Sonne ausgestreckt"
 
@@ -886,6 +972,8 @@ class WetterData {
     //   Sie sollten aber vielleicht kommen, wenn der Ort verlassen wird.
     //  "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
     //  brennt, so..."
+
+    // FIXME Die Temperatur sinkt (sofort? Planwetter?!), nachdem der Frosch erschienen ist
 
     // FIXME Plan-Wetter nur dramaturgisch geändert, nicht automatisch? Oder
     //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!

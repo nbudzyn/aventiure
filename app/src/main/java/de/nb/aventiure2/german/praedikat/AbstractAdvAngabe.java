@@ -8,6 +8,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Eine adverbiale Angabe (z.B. "aus Langeweile" oder "fröhlich",
@@ -43,6 +44,11 @@ public abstract class AbstractAdvAngabe {
 
     AbstractAdvAngabe(final AdjPhrOhneLeerstellen adjektivphrase) {
         this.adjektivphrase = adjektivphrase;
+    }
+
+    @CheckReturnValue
+    public Konstituente getDescription(final SubstantivischePhrase subjekt) {
+        return getDescription(subjekt.getPerson(), subjekt.getNumerus());
     }
 
     @CheckReturnValue

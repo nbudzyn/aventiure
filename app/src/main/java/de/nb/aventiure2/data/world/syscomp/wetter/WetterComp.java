@@ -25,6 +25,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
@@ -167,12 +168,13 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
-     * Gibt alternative wetterbezogene Ortsbeschreibungen zurück
+     * Gibt alternative wetterbezogene Ortsbeschreibungen für draußen zurück
      *
-     * @param time Die Zeit, zu der der SC draußen (angekommen) ist
+     * @param time               Die Zeit, zu der der SC dort (angekommen) ist
+     * @param unterOffenemHimmel Ob der SC (dann) unter offenen Himmel ist
      */
-    public ImmutableCollection<Praepositionalphrase> altUnterOffenemHimmel(
-            final AvDateTime time) {
+    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(
+            final AvDateTime time, final boolean unterOffenemHimmel) {
         // FIXME Hier - und in allen anderen Methoden der Klasse - gibt es ein Problem:
         //  Es könnte sein, dass sich die Tageszeit bis zur Zeit time ändert - aber
         //  noch kein Tageswechsel beschrieben wurde.
@@ -199,7 +201,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         //  erzählen nicht in die Datenbank gespeichert wird). Es gibt allerdings immer noch
         //  Probleme, wenn mehrere Texte für dieselbe Ausgabe kombiniert werden. - Das sollte
         //  eher selten vorkommen.
-        return requirePcd().altUnterOffenemHimmel(time);
+        return requirePcd().altWoDraussen(time, unterOffenemHimmel);
     }
 
     /**

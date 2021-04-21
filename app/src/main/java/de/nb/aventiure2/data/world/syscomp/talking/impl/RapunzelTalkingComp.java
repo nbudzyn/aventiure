@@ -850,7 +850,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     anaph().nomK(),
                     zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
                             && duzen() ?
-                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" :
+                            "Der muss sehr altSubstPhr sein. Und magisch, wenn du mich fragst" :
                             null,
                     ".“").schonLaenger()
                     .timed(secs(30)));

@@ -83,9 +83,8 @@ public class BewoelkungPraepPhrDescriber {
                 } else if (tageszeit == ABENDS) {
                     alt.add(IN_AKK.mit(SONNENUNTERGANG));
                 } else if (tageszeit == Tageszeit.NACHTS) {
-                    alt.add(IN_AKK.mit(MONDSCHEIN.mit(HELL)));
-                    alt.add(IN_AKK.mit(
-                            NACHT.mit(AdjektivOhneErgaenzungen.ERHELLT
+                    alt.add(IN_AKK.mit(MONDSCHEIN.mit(HELL)),
+                            IN_AKK.mit(NACHT.mit(AdjektivOhneErgaenzungen.ERHELLT
                                     .mitAdvAngabe(new AdvAngabeSkopusSatz("vom Mond")))));
                 }
                 break;
@@ -102,6 +101,47 @@ public class BewoelkungPraepPhrDescriber {
         return alt.build();
     }
 
+    public ImmutableSet<Praepositionalphrase> altUnterOffenemHimmelDat(
+            final Bewoelkung bewoelkung, final Tageszeit tageszeit) {
+        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
+
+        alt.addAll(mapToSet(praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit),
+                UNTER_DAT::mit));
+        alt.addAll(mapToSet(praedikativumDescriber.altLichtInDemEtwasLiegt(
+                bewoelkung, tageszeit, true),
+                IN_DAT::mit));
+
+        if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
+            alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
+
+            if (tageszeit != NACHTS) {
+                // "in der Morgensonne"
+                alt.addAll(mapToSet(tageszeit.altGestirn(), IN_DAT::mit));
+            }
+        }
+
+        switch (bewoelkung) {
+            case WOLKENLOS:
+                if (tageszeit == TAGSUEBER) {
+                    alt.add(IN_DAT.mit(SONNENSCHEIN.mit(HELL)));
+                } else if (tageszeit == Tageszeit.NACHTS) {
+                    alt.add(IN_DAT.mit(MONDSCHEIN.mit(HELL)),
+                            IN_DAT.mit(NACHT.mit(AdjektivOhneErgaenzungen.ERHELLT
+                                    .mitAdvAngabe(new AdvAngabeSkopusSatz("vom Mond")))));
+                }
+                break;
+            case LEICHT_BEWOELKT:
+                break;
+            case BEWOELKT:
+                break;
+            case BEDECKT:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Bewoelkung: " + bewoelkung);
+        }
+
+        return alt.build();
+    }
 
     public ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final Bewoelkung bewoelkung,
                                                                  final Tageszeit tageszeit,
@@ -169,25 +209,6 @@ public class BewoelkungPraepPhrDescriber {
 
         return alt.build();
     }
-
-
-    public ImmutableSet<Praepositionalphrase> altUnterOffenemHimmelDat(
-            final Bewoelkung bewoelkung, final Tageszeit tageszeit) {
-        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
-
-        alt.addAll(mapToSet(praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit),
-                UNTER_DAT::mit));
-        alt.addAll(mapToSet(
-                praedikativumDescriber.altLichtInDemEtwasLiegt(bewoelkung, tageszeit, true),
-                IN_DAT::mit));
-
-        if (bewoelkung == LEICHT_BEWOELKT) {
-            alt.addAll(mapToList(tageszeit.altGestirnschein(), IN_DAT::mit));
-        }
-
-        return alt.build();
-    }
-
 
     @NonNull
     Praepositionalphrase inSchoeneTageszeit(final Tageszeit tageszeit) {
