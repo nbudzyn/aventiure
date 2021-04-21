@@ -275,6 +275,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 wetter.altWoDraussen(time.getTime(), unterOffenemHimmel,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
+        // FIXME Geben derzeit alle Aufrufer verlässlich die Info raus?
+        //  Vielleicht Methodennamen verändern in der Art "Wetterhinweis..."?
+        //  Dann könnte man fordern, dass entweder alle Alternativen einen Wetterhinweis
+        //  (Desc, Satz, SubstPhr, ...) enthalten - oder keine?
+
         resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
 
         return alt;

@@ -84,6 +84,40 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings("unchecked")
 public class World {
+    // FIXME: Code klarer und strenger in Module schneiden:
+    //  - Jedes Modul ist nur für eine fachliche Sache zuständig und hab die Hoheit über
+    //   Daten und Logik für diese Sache. Jede Datenbanktabelle gehört nur einem einzigen Modul?
+    //   (Problem: Counter!)
+    //   Ein Modul benötigt möglichst wenige andere Module, keine zyklischen Abhängigkeiten
+    //   (IntelliJ Dependency Matrix)
+    //   Vermutlich gibt es
+    //  -- ein UI-Modul,
+    //  -- Module, die nichts mit Objekten der Welt zu tun haben
+    //  -- Listener-Interfaces, die "jedermann" implementiern kann, um über Dinge unterrichtet zu
+    //  werden ("poor man's event bus") - oder andere Basis für Dependency Injection? Hier braucht
+    //     man eine Lösung für "Rapunzel sagt der Zauberin..., die Zauberin macht..., Rapunzel..."
+    //  -- und vielleicht sind außerdem die Components mit ihren Systemen je ein Modul?
+    //  -- Sowie vielleicht ein paar "Querschnittsmodule" mit jeweils spezifischer Funktionalität,
+    //     die von mehreren anderen Modulen benötigt wird.
+    //  - Ein Modul enthält keine "Inseln", die mit dem Rest des Moduls nichts zu tun haben.
+    //    Also sollte ein Modul keine technische Schicht sein.
+    //  - Die Module sind gegeneinander gekapselt und haben nur definierte, möglichst schnmale
+    //   Schnittstellen.
+    //  - Jedes Modul in ein einzige separates top-Level-Package schieben. Die
+    //    Packages nach "Schichten" sortieren: client, fachlich high-level und low-level,
+    //    technische Basisfunktionalität.
+    //  - Innerhalb des Moduls ggf. Subpackages für einzelne Schichten, so dass die modul-internen
+    //    Aufrufreihenfolgen klar sind. Auch
+    //   Tests entsprechend den richtigen Modulen zuordnen.
+    //  - Für jedes Modul eine definierte Fassade erstellen - nur über diese Fassade darf mit
+    //    dem Modul interagiert werden. Aus der Fassade ausschließlich immutable Objects
+    //    rausreichen?
+    //  - Danach Module evtl. in Gradle-Projekte auslagern, so dass die Abhängigkeiten
+    //   kontrolliert werden und je eine öffentliche Schnittstelle definiert werden kann? Oder
+    //   zumindest mit IntelliJ prüfen, dass es keine unerwünschten Abhängigkeiten gibt?
+    //   (Depency Matrix) Oder ArchiUnit-Tests anlegen?
+
+
     public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
                     oClock(5, 30));
