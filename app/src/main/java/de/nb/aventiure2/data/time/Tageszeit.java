@@ -44,7 +44,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
-import static de.nb.aventiure2.german.base.Nominalphrase.ERSTE_SONNENSTRAHLEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
@@ -67,9 +66,7 @@ public enum Tageszeit {
     MORGENS(MORGEN,
             HELL,
             ImmutableList.of(MORGENSONNE),
-            ImmutableList.of(ERSTE_SONNENSTRAHLEN,
-                    np(MORGENDLICH, SONNENSCHEIN),
-                    SONNENSCHEIN, MORGENSONNE),
+            ImmutableList.of(np(MORGENDLICH, SONNENSCHEIN), SONNENSCHEIN, MORGENSONNE),
             ImmutableList.of(KLAR),
             ImmutableList.of(),
             ImmutableList.of("Morgen", "guten Morgen", "schönen guten Morgen",

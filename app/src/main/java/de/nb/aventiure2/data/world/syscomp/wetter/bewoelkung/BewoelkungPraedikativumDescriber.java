@@ -330,7 +330,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt etwas wie "der schöne Morgen" oder Ähnliches zurück.
      */
-    public Nominalphrase schoeneTageszeit(final Tageszeit tageszeit) {
+    Nominalphrase schoeneTageszeit(final Tageszeit tageszeit) {
         // "der schöne Abend"
         return tageszeit.getNomenFlexionsspalte().mit(SCHOEN);
     }

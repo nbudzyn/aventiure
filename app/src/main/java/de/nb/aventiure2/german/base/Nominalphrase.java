@@ -50,6 +50,8 @@ public class Nominalphrase
                     "ersten Strahl der aufgehenden Sonne");
     public static final Nominalphrase ERSTE_SONNENSTRAHLEN =
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
+    public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
+            np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");

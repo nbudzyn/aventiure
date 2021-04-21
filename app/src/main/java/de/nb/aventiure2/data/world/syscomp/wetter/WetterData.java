@@ -808,19 +808,40 @@ class WetterData {
     //  "als heller Mittag ist..." (Komma...)
     //  "Schließlich", "nach einer Weile" o.Ä. als Fallback
 
+    /**
+     * Gibt {@link Praepositionalphrase}n zurück wie "bei Licht" "bei Tageslicht",
+     * "im Morgenlicht" o.Ä. Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
+     * beschrieben.
+     */
     @NonNull
     @CheckReturnValue
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
                                                           final boolean unterOffenemHimmel) {
+        // FIXME Hier gibt es dasselbe Problem wie beim Tageszeitenwechsel:
+        //  Es kann zu etwas kommen wie "Im Morgenlicht siehst du...
+        //  Langsam geht die Nacht in den Morgen über." (Also erst die Zustandsbeschreibung,
+        //  dann die Beschreibung des Übergangs.)
+
         return BEWOELKUNG_PRAEP_PHR_DESCRIBER
                 .altBeiLichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
     }
 
+    /**
+     * Gibt alternativen Beschreibungen des Lichts zurück, in dem etwas liegt
+     * ("Morgenlicht" o.Ä.). Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
+     * beschrieben.
+     */
     @NonNull
     @CheckReturnValue
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvTime time,
             final boolean unterOffenemHimmel) {
+        // FIXME Hier gibt es dasselbe Problem wie beim Tageszeitenwechsel:
+        //  Es kann zu etwas kommen wie "Die erreichst das helle Tageslicht, in dem ... liegt.
+        //  Langsam geht der Morgen in den Tag über." (Also erst die Zustandsbeschreibung,
+        //  dann die Beschreibung des Übergangs.)
+
+        // FIXME Blitze (aber nicht Donner?) berücksichtigen?
         return BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER
                 .altLichtInDemEtwasLiegt(getBewoelkung(), time.getTageszeit(),
                         unterOffenemHimmel);

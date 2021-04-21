@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
@@ -44,39 +43,23 @@ public class BewoelkungAdvAngabeWohinDescriber {
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableSet.builder();
 
-        alt.addAll(altHinausUnterOffenenHimmel(bewoelkung, time.getTageszeit()));
-
-        if (time.kurzNachSonnenaufgang()
-                && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0
-                && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-            alt.add(new AdvAngabeSkopusVerbWohinWoher("in die ersten Sonnenstrahlen"),
-                    new AdvAngabeSkopusVerbWohinWoher(
-                            "in die ersten Strahlen der aufgehenden Sonne"));
-        }
-
-        return alt.build();
-    }
-
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altHinausUnterOffenenHimmel(
-            final Bewoelkung bewoelkung,
-            final Tageszeit tageszeit) {
-        final ImmutableList.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
-                ImmutableList.builder();
-
         // "unter den nachtschwarzen Himmel"
-        alt.addAll(mapToSet(praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung, tageszeit),
+        alt.addAll(mapToSet(praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung,
+                time.getTageszeit()),
                 AdvAngabeSkopusVerbWohinWoher::new));
 
         // "in den grauen Morgen", "in den hellen Tag", "in die Morgensonne",
         // "in den Sonnenschein"
-        alt.addAll(mapToSet(praepPhrDescriber.altInLichtTageszeit(bewoelkung, tageszeit),
+        alt.addAll(mapToSet(praepPhrDescriber.altInLichtTageszeit(bewoelkung, time,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 AdvAngabeSkopusVerbWohinWoher::new));
 
         if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
-            if (tageszeit != NACHTS) {
-                alt.addAll(tageszeit.altGestirn().stream()
+            if (time.getTageszeit() != NACHTS) {
+                alt.addAll(time.getTageszeit().altGestirn().stream()
                         .flatMap(gestirn ->
-                                praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung, tageszeit)
+                                praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung,
+                                        time.getTageszeit())
                                         .stream()
                                         .filter(unterHimmel -> !unterHimmel.getDescription()
                                                 .kommaStehtAus())
@@ -91,21 +74,9 @@ public class BewoelkungAdvAngabeWohinDescriber {
             }
         }
 
-        switch (bewoelkung) {
-            case WOLKENLOS:
-                break;
-            case LEICHT_BEWOELKT:
-                break;
-            case BEWOELKT:
-                break;
-            case BEDECKT:
-                break;
-            default:
-                throw new IllegalStateException("Unexpected Bewoelkung: " + bewoelkung);
-        }
-
         return alt.build();
     }
+
 
     /**
      * Gibt etwas wie "in den schönen Morgen" oder Ähnliches zurück.

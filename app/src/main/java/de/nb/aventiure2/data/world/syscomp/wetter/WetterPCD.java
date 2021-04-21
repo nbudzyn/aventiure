@@ -256,7 +256,6 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return alt;
     }
 
-
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
             final AvDateTime time,
             final boolean unterOffenenHimmel) {
@@ -285,32 +284,24 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return alt;
     }
 
+    /**
+     * Gibt {@link Praepositionalphrase}n zurück wie "bei Licht" "bei Tageslicht",
+     * "im Morgenlicht" o.Ä. Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
+     * beschrieben.
+     */
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvDateTime time,
                                                           final boolean unterOffenemHimmel) {
-        final ImmutableSet<Praepositionalphrase> alt =
-                wetter.altBeiLichtImLicht(time.getTime(), unterOffenemHimmel);
-
-        // FIXME Entweder hier alle Wetterparameter beschreiben lassen - oder
-        //  aber speziell dafür sorgen, dass die noch nicht beschriebenen Parameter noch
-        //  später beschrieben werden!
-
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
-
-        return alt;
+        return wetter.altBeiLichtImLicht(time.getTime(), unterOffenemHimmel);
     }
 
+    /**
+     * Gibt alternativen Beschreibungen des Lichts zurück, in dem etwas liegt
+     * ("Morgenlicht" o.Ä.). Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
+     * beschrieben.
+     */
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvDateTime time, final boolean unterOffenemHimmel) {
-        final ImmutableCollection<EinzelneSubstantivischePhrase> alt =
-                wetter.altLichtInDemEtwasLiegt(time.getTime(), unterOffenemHimmel);
-
-        // FIXME Entweder hier alle Wetterparameter beschreiben lassen - oder
-        //  aber speziell dafür sorgen, dass die noch nicht beschriebenen Parameter noch
-        //  später beschrieben werden!
-
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
-
-        return alt;
+        return wetter.altLichtInDemEtwasLiegt(time.getTime(), unterOffenemHimmel);
     }
 
     @NonNull
