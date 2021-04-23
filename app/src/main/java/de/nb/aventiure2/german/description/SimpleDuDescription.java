@@ -226,13 +226,14 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         final SimpleDuDescription that = (SimpleDuDescription) o;
         // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
         //  probleme mit Sets o.Ä. ergeben... Vgl. auch hashCode()!
-        return verb.equals(that.verb) &&
+        return startsNew == that.startsNew &&
+                Objects.equals(verb, that.verb) &&
                 Objects.equals(remainder, that.remainder) &&
                 Objects.equals(vorfeldSatzglied, that.vorfeldSatzglied);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), verb);
+        return Objects.hash(super.hashCode(), startsNew, verb, remainder, vorfeldSatzglied);
     }
 }

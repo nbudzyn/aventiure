@@ -163,13 +163,15 @@ public class TextDescription extends AbstractDescription<TextDescription> {
             return false;
         }
         final TextDescription that = (TextDescription) o;
-        // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
+        // TODO Prüfen: Konstituente ist nicht final - könnte
         //  probleme mit Sets o.Ä. ergeben... Vgl. auch hashCode()!
         return Objects.equals(konstituente, that.konstituente);
     }
 
     @Override
     public int hashCode() {
+        // TODO Prüfen: Konstiuente einbeziehen? Könnte aber Probleme
+        //  mit Sets ergeben...
         return super.hashCode();
     }
 }

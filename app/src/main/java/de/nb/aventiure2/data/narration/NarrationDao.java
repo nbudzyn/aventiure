@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import org.jetbrains.annotations.Contract;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -299,10 +301,13 @@ public abstract class NarrationDao {
      * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
      * Wiederholungen zu vermeiden.)
      */
+    @NonNull
     private ConsumedAlternatives loadConsumed(final int alternativesStringHash) {
         return toConsumedAlternatives(loadConsumedInternal(alternativesStringHash));
     }
 
+    @NonNull
+    @Contract("_ -> new")
     private static ConsumedAlternatives toConsumedAlternatives(
             final List<ConsumedNarrationAlternativeInfo> infos) {
         return new ConsumedAlternatives(mapToSet(infos,

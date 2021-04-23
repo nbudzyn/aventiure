@@ -59,6 +59,15 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return new WetterPCD(WETTER, wetterData);
     }
 
+    public void onScEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        // FIXME Ggf. etwas schreiben wie "– hier ist es angenehm kühl"
+        //  ("Angenehm kühl ist es hier", ...)
+        //  automatisch erzeugen, wenn man an einen Raum kommt, dessen
+        //  Maximaltemperatur unter der zuletzt beschriebenen oder üblichen...
+        //  Temperatur liegt.
+        //  Außerdem solche Texte entfernen, wo sie derzeit
+        //  erzeugt werden - damit zumindest nichts doppelt kommt.
+    }
 
     /**
      * Beschreibt - sofern nötig - das aktuelle "Wetter" (z.B. die Temperatur, wenn der SC drinnen)

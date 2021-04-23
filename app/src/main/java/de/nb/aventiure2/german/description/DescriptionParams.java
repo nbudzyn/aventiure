@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.description;
 
+import java.util.Objects;
+
 /**
  * Parameter einer {@link AbstractDescription} - mutable!
  */
@@ -64,5 +66,25 @@ class DescriptionParams {
 
     boolean isSchonLaenger() {
         return schonLaenger;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final DescriptionParams that = (DescriptionParams) o;
+        return allowsAdditionalDuSatzreihengliedOhneSubjekt
+                == that.allowsAdditionalDuSatzreihengliedOhneSubjekt &&
+                dann == that.dann &&
+                schonLaenger == that.schonLaenger;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(allowsAdditionalDuSatzreihengliedOhneSubjekt, dann, schonLaenger);
     }
 }

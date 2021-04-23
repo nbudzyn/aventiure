@@ -268,26 +268,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public boolean equals(@Nullable final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        if (!super.equals(o)) {
-            return false;
-        }
-        final StructuredDescription that = (StructuredDescription) o;
-        return satz.equals(that.satz);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), satz);
-    }
-
-    @Override
     public StructuredDescription phorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         this.phorikKandidat = phorikKandidat;
         return this;
@@ -305,14 +285,25 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public String toString() {
-        // FIXME Nur zum Testen, dann wieder entfernen
-        return super.toString()
-                + "{" +
-                "startsNew=" + startsNew +
-                ", endsThis=" + endsThis +
-                ", satz=" + satz.getVerbzweitsatzStandard().joinToString() +
-                ", phorikKandidat=" + phorikKandidat +
-                '}';
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final StructuredDescription that = (StructuredDescription) o;
+        return startsNew == that.startsNew &&
+                endsThis == that.endsThis &&
+                Objects.equals(satz, that.satz) &&
+                Objects.equals(phorikKandidat, that.phorikKandidat);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), startsNew, endsThis, satz, phorikKandidat);
     }
 }
