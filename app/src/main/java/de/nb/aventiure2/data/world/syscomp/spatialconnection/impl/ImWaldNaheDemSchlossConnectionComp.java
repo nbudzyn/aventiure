@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
@@ -40,6 +41,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp.Counter.NACH_DRAUSSEN_KEIN_FEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -56,6 +58,12 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 @SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
+    enum Counter {
+        NACH_DRAUSSEN_KEIN_FEST
+    }
+
     public ImWaldNaheDemSchlossConnectionComp(
             final AvDatabase db,
             final TimeTaker timeTaker,
@@ -116,28 +124,29 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     @NonNull
     private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_KeinFest() {
-        final AltTimedDescriptionsBuilder alt = altTimed();
-
         final AvDateTime now = timeTaker.now();
-        if (now.getTageszeit() == NACHTS) {
+        if (now.getTageszeit() == NACHTS && db.counterDao().get(NACH_DRAUSSEN_KEIN_FEST) % 3 == 0) {
             final AvTimeSpan wegzeit = mins(15);
-            alt.addAll(
-                    world.loadWetter().wetterComp().altWoDraussen(
-                            now.plus(wegzeit), true).stream()
-                            .map(p ->
-                            {
-                                return du(SENTENCE, "gehst",
-                                        "noch eine Weile vorsichtig durch",
-                                        "den dunklen",
-                                        "Wald, dann öffnet sich der Weg wieder und du stehst",
-                                        "im Schlossgarten",
-                                        p.getDescription(duSc()) // "unter dem Sternenhimmel"
-                                )
-                                        .mitVorfeldSatzglied("noch eine Weile")
-                                        .schonLaenger()
-                                        .timed(wegzeit);
-                            }));
+            // Wetterhinweis muss ausgegeben werden!
+            return world.loadWetter().wetterComp().altWetterhinweiseWoDraussen(
+                    now.plus(wegzeit), true).stream()
+                    .map(p ->
+                            du(SENTENCE, "gehst",
+                                    "noch eine Weile vorsichtig durch",
+                                    "den dunklen",
+                                    "Wald, dann öffnet sich der Weg wieder und du stehst",
+                                    "im Schlossgarten",
+                                    p.getDescription(duSc()) // "unter dem Sternenhimmel"
+                            )
+                                    .mitVorfeldSatzglied("noch eine Weile")
+                                    .schonLaenger()
+                                    .timed(wegzeit)
+                                    .withCounterIdIncrementedIfTextIsNarrated(
+                                            NACH_DRAUSSEN_KEIN_FEST))
+                    .collect(toImmutableSet());
         }
+
+        final AltTimedDescriptionsBuilder alt = altTimed();
 
         final AvTimeSpan wegzeit = mins(10);
         alt.addAll(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
@@ -150,6 +159,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                 "der Schlossgarten liegt").schonLaenger()
                                 .mitVorfeldSatzglied("bald")
                                 .timed(wegzeit)
+                                .withCounterIdIncrementedIfTextIsNarrated(
+                                        NACH_DRAUSSEN_KEIN_FEST)
                                 .undWartest()
                                 .komma()));
 
@@ -157,6 +168,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 .schonLaenger()
                 .mitVorfeldSatzglied("bald")
                 .timed(wegzeit)
+                .withCounterIdIncrementedIfTextIsNarrated(NACH_DRAUSSEN_KEIN_FEST)
                 .undWartest()
                 .komma());
 

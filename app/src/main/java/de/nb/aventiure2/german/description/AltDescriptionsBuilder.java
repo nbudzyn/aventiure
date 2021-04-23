@@ -97,7 +97,9 @@ public class AltDescriptionsBuilder {
         }
 
         return alt().addAll(
-                joinToAltKonstituentenfolgen(descriptionsToKonstiuenten(parts)).stream()
+                joinToAltKonstituentenfolgen(
+                        descriptionsToKonstiuenten(parts))
+                        .stream()
                         .map(DescriptionBuilder::neuerSatz));
     }
 

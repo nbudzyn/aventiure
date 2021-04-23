@@ -21,7 +21,8 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionMitVorfeld(final String vorfeld) {
-        return toTextDescriptionKeepParams(toSingleKonstituenteMitVorfeld(vorfeld));
+        return toTextDescriptionKeepParams(
+                toSingleKonstituenteMitVorfeld(vorfeld));
     }
 
     @Override
@@ -46,7 +47,8 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @NonNull
     @CheckReturnValue
     public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
-        return toTextDescriptionKeepParams(toSingleKonstituenteSatzanschlussOhneSubjekt());
+        return toTextDescriptionKeepParams(
+                toSingleKonstituenteSatzanschlussOhneSubjekt());
     }
 
     abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();

@@ -248,10 +248,10 @@ public class BewoelkungPraedikativumDescriber {
 
     public ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final Bewoelkung bewoelkung,
-            final Tageszeit tageszeit, final boolean unterOffenemHimmel) {
+            final Tageszeit tageszeit,
+            final boolean unterOffenemHimmel) {
         final ImmutableList.Builder<EinzelneSubstantivischePhrase> alt =
                 ImmutableList.builder();
-
         switch (bewoelkung) {
             case WOLKENLOS:
                 if (unterOffenemHimmel) {

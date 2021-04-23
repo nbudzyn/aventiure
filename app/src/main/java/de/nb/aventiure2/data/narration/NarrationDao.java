@@ -182,6 +182,7 @@ public abstract class NarrationDao {
         delete(currentNarration);
 
         final Narration res = currentNarration.add(narrationSource, textDescription);
+
         insert(res);
     }
 

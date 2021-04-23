@@ -30,9 +30,7 @@ import static java.util.Arrays.asList;
 /**
  * A description of something and the time it takes.
  */
-public class TimedDescription<
-        D extends AbstractDescription<?>
-        > {
+public class TimedDescription<D extends AbstractDescription<?>> {
     private final D description;
 
     /**

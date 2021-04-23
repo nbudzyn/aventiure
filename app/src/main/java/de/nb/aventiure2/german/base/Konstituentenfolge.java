@@ -6,6 +6,7 @@ import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -198,8 +199,13 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                 //       joinToAltKonstituentenfolgen(((Stream<?>) part).collect(toSet()));
             } else if (part != null && part.getClass().isArray()) {
                 // Alternativen!
+                final List<Object> content = new ArrayList<>(Array.getLength(part));
+                for (int i = 0; i < Array.getLength(part); i++) {
+                    content.add(Array.get(part, i));
+                }
+
                 alternativePartKonstituentenfolgen =
-                        Stream.of((Object[]) part)
+                        content.stream()
                                 .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
             } else if (part instanceof Collection<?>) {

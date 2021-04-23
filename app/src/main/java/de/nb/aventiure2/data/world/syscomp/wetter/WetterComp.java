@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -62,19 +61,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
 
     /**
-     * Beschreibt - sofern nötig - das aktuelle Wetter
-     * (oder auch einen Tageszeitenwechsel, wenn der SC drinnen ist).
-     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
-     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
-     * wird).
+     * Beschreibt - sofern nötig - das aktuelle "Wetter" (z.B. die Temperatur, wenn der SC drinnen)
+     * und vermerkt dann i.A. auch, dass der Spieler über das aktuelle Wetter informiert wurde.
      */
-    public void narrateWetterOrTageszeitIfNecessary() {
+    public void narrateWetterhinweisWennNoetig() {
         // Ggf. scActionStepCountDao verwenden,
         // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
 
         final ImmutableCollection<AbstractDescription<?>>
-                altHinweise = requirePcd().altWetterHinweiseWennNoetig(
-                timeTaker.now().getTime(),
+                altHinweise = requirePcd().altWetterhinweiseWennNoetig(
+                timeTaker.now(),
                 loadScDrinnenDraussen());
 
         if (!altHinweise.isEmpty()) {
@@ -90,42 +86,50 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * also gerade noch nicht das Ziel einer aktuellen Bewegung erreicht hat - oder wenn
      * er gerade eine längere Aktion durchführt, deren Zeit noch nicht verstrichen ist.
      * <p>
-     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
-     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
-     * wird).
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      *
-     * @see #altWetterHinweise(AvTime, DrinnenDraussen)
+     * @see #altWetterhinweise(AvDateTime, DrinnenDraussen)
      */
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
-    altWetterHinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
-        return altWetterHinweise(timeTaker.now().getTime(), loadScDrinnenDraussen());
+    altWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
+        return altWetterhinweise(timeTaker.now(), loadScDrinnenDraussen());
     }
 
     /**
      * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
      * oder draußen erlebt - oder eine leere Menge.
-     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
-     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
-     * wird).
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    private ImmutableCollection<AbstractDescription<?>> altWetterHinweise(
-            final AvTime time, final DrinnenDraussen drinnenDraussen) {
-        return requirePcd().altWetterHinweise(time, drinnenDraussen);
+    private ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
+            final AvDateTime time, final DrinnenDraussen drinnenDraussen) {
+        return requirePcd().altWetterhinweise(time, drinnenDraussen);
     }
 
     /**
      * Gibt alternative Beschreibungen des Wetters zurück, wie
      * man das Wetter erlebt, wenn man nach draußen kommt, - ggf. eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
      * @param time               Die Zeit, zu der der SC draußen angekommen ist
      * @param unterOffenenHimmel Ob der SC unter offenen Himmel kommt
      */
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
+    public ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
             final AvDateTime time, final boolean unterOffenenHimmel) {
-        return requirePcd().altKommtNachDraussen(time, unterOffenenHimmel);
+        return requirePcd().altWetterhinweiseKommtNachDraussen(time, unterOffenenHimmel);
     }
 
     /**
@@ -156,52 +160,36 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
-     * Gibt alternative Beschreibungen zurück in der Art "in den Sonnenschein" o.Ä., die mit
+     * Gibt alternative Wetterhinweise zurück in der Art "in den Sonnenschein" o.Ä., die mit
      * "hinaus" verknüpft werden können.
+     * <p>
+     * Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
      * @param time               Die Zeit, zu der der SC draußen angekommen ist
      * @param unterOffenenHimmel Ob der SC unter offenen Himmel kommt
      */
-    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvDateTime time, final boolean unterOffenenHimmel) {
-        return requirePcd().altWohinHinaus(time, unterOffenenHimmel);
+        return requirePcd().altWetterhinweiseWohinHinaus(time, unterOffenenHimmel);
     }
 
     /**
-     * Gibt alternative wetterbezogene Ortsbeschreibungen für draußen zurück
+     * Gibt alternative wetterbezogene Ortsbeschreibungen für draußen zurück.
+     * <p>
+     * Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
      * @param time               Die Zeit, zu der der SC dort (angekommen) ist
      * @param unterOffenemHimmel Ob der SC (dann) unter offenen Himmel ist
      */
-    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(
+    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
             final AvDateTime time, final boolean unterOffenemHimmel) {
-        // FIXME Hier - und in allen anderen Methoden der Klasse - gibt es ein Problem:
-        //  Es könnte sein, dass sich die Tageszeit bis zur Zeit time ändert - aber
-        //  noch kein Tageswechsel beschrieben wurde.
-        //  Das kann dann zu etwas führen wie "Du kommst hinaus ins Sternenlicht.
-        //  Allmählich sinkt die Sonne und die ersten Sterne erscheinen am Himmel." - dass
-        //  also das statische Ergebnis schon *vor* der dynamischen Beschreibung
-        //  beschrieben wird. Das wäre sehr unschön.
-        //  Eine Lösung könnte sein, dass generell *jede* Methode statische oder aber
-        //  dynamische Ausgaben liefern kann. Die als erstes aufgerufene Methode beschreibt
-        //  die Dynamik ("das Licht der ersten Sterne") und setzt ggf. die Flags - die Folge-
-        //  methoden müssten eine Referenz-Uhrzeit überprüfen (Zeit, bis zu der schon beschrieben
-        //  wurde) und erkennen, dass *kein* Tageszeitenwechsel mehr beschrieben werden muss.
-        //  Allerdings führte das zu Problemen, wenn
-        //  - mehrere Alternativen erzeugt werden und nur eine der Alternativen die WetterComp
-        //   auftruft und diese am Ende gar nicht geschrieben wird -
-        //  - oder mehrere Alternativen die WetterComp aufrufen und von denen nur die erste
-        //    den Tageszeitenwechsel erhalten wird.
-        //  Eine alternative Lösung könnte sein: Die Componente hält den letzten
-        //  "erzählten" Zeitpunkt vor. Der Narrator ruft ein Callback auf (definiert im
-        //  Narrator) in der Art onWasNarrated() - der Callback (hier definiert) setzt dann
-        //  den erzählten Zeitpunkt weiter. (Das könnte man auch für das Hochzählen der Counter
-        //  verwenden). Es gäbe wohl Schwierigkeiten, weil man so einen Callback nicht in die
-        //  Datenbank persistieren kann (theoretisch egal, weil zwischen narrate() und
-        //  erzählen nicht in die Datenbank gespeichert wird). Es gibt allerdings immer noch
-        //  Probleme, wenn mehrere Texte für dieselbe Ausgabe kombiniert werden. - Das sollte
-        //  eher selten vorkommen.
-        return requirePcd().altWoDraussen(time, unterOffenemHimmel);
+        return requirePcd().altWetterhinweiseWoDraussen(time, unterOffenemHimmel);
     }
 
     /**

@@ -22,7 +22,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
@@ -34,13 +33,13 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -59,7 +58,8 @@ public class SchlosswacheReactionsComp
     enum Counter {
         SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE,
         SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM,
-        SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM
+        SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM,
+        SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
     }
 
     private final TimeTaker timeTaker;
@@ -151,38 +151,41 @@ public class SchlosswacheReactionsComp
         // IDEA Ausspinnen: Der Spieler sollte selbst entscheiden,
         //  ob der das Schloss wieder verlässt - oder ggf. im Kerker landet.
 
-        final AltDescriptionsBuilder alt = alt();
-
         final AvTimeSpan timeElapsed = secs(10);
 
-        alt.addAll(altNeueSaetze("Die Wache spricht dich sofort an und macht dir",
-                "unmissverständlich klar, dass du hier vor dem großen Fest nicht",
-                "erwünscht bist.",
-                // FIXME Hier aufteilen? (Spieler nicht gängeln)
-                // - SC könnte drinnen bleiben.
-                // - Oder SC probiert es drei mal (steigende Bedrohung durch die Wache)
-                //   und wird beim dritten mal ins Verlies / Kerker gesperrt.
-                //   (Vgl. Märchen mit Fischer, dessen Tochter ... Stroh zu
-                //   Gold spinnen können soll?)
-                //   Man kann dort nicht viel tun - aber bringt die Nacht durch. Am nächsten Tag
-                //   ist ohnehin das Schlossfest.
-                "Du bist leicht zu überzeugen und trittst wieder",
-                altSchlossVerlassenWohinAdvAngaben(
-                        timeTaker.now().plus(timeElapsed))
-                        .stream()
-                        .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
-                "hinaus", PARAGRAPH));
+        // FIXME ALle Counter-Verwendungen prüfen - gehen verloren bei toKonstitutentenliste!
 
-        alt.add(neuerSatz(PARAGRAPH,
-                "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
-                        + "„Als ob hier ein jeder "
-                        + "nach Belieben hereinspazieren könnt. Das würde dem König so "
-                        + "passen. Und "
-                        + "seinem Kerkermeister auch.“ "
-                        + "Du bleibst besser draußen", PARAGRAPH)
-        );
-
-        n.narrateAlt(alt, timeElapsed);
+        if (counterDao.get(SC_MUSS_SCLOSS_WIEDER_VERLASSEN) % 2 == 0) {
+            n.narrate(neuerSatz(PARAGRAPH,
+                    "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "
+                            + "„Als ob hier ein jeder "
+                            + "nach Belieben hereinspazieren könnt. Das würde dem König so "
+                            + "passen. Und "
+                            + "seinem Kerkermeister auch.“ "
+                            + "Du bleibst besser draußen", PARAGRAPH)
+                    .timed(timeElapsed)
+                    .withCounterIdIncrementedIfTextIsNarrated(SC_MUSS_SCLOSS_WIEDER_VERLASSEN));
+        } else {
+            n.narrateAlt(altNeueSaetze("Die Wache spricht dich sofort an und macht dir",
+                    "unmissverständlich klar, dass du hier vor dem großen Fest nicht",
+                    "erwünscht bist.",
+                    // FIXME Hier aufteilen? (Spieler nicht gängeln)
+                    // - SC könnte drinnen bleiben.
+                    // - Oder SC probiert es drei mal (steigende Bedrohung durch die Wache)
+                    //   und wird beim dritten mal ins Verlies / Kerker gesperrt.
+                    //   (Vgl. Märchen mit Fischer, dessen Tochter ... Stroh zu
+                    //   Gold spinnen können soll?)
+                    //   Man kann dort nicht viel tun - aber bringt die Nacht durch. Am nächsten Tag
+                    //   ist ohnehin das Schlossfest.
+                    "Du bist leicht zu überzeugen und trittst wieder",
+                    altSchlossVerlassenWetterhinweiseWohinAdvAngaben(
+                            timeTaker.now().plus(timeElapsed))
+                            .stream()
+                            .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
+                    "hinaus", PARAGRAPH)
+                    .timed(timeElapsed)
+                    .withCounterIdIncrementedIfTextIsNarrated(SC_MUSS_SCLOSS_WIEDER_VERLASSEN));
+        }
 
         loadSC().locationComp().narrateAndSetLocation(raumAusDemDerSCDasSchlossBetretenHat);
 
@@ -190,9 +193,21 @@ public class SchlosswacheReactionsComp
                 new Action(Action.Type.BEWEGEN, raumAusDemDerSCDasSchlossBetretenHat));
     }
 
-    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWohinAdvAngaben(
+    /**
+     * Gibt alternative Wetterhinweise zurück in der Art "in den Sonnenschein" o.Ä., die mit
+     * "hinaus" verknüpft werden können.
+     * <p>
+     * Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
+     *
+     * @param timeDraussen Die Zeit, zu der der SC draußen angekommen ist
+     */
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWetterhinweiseWohinAdvAngaben(
             final AvDateTime timeDraussen) {
-        return world.loadWetter().wetterComp().altWohinHinaus(timeDraussen, true);
+        return world.loadWetter().wetterComp()
+                .altWetterhinweiseWohinHinaus(timeDraussen, true);
     }
 
     /**

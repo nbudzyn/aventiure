@@ -7,6 +7,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
@@ -23,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativ
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
@@ -31,6 +33,16 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FRISCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.OFFEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
 
 /**
  * Veränderliche (und daher persistente) Daten der {@link WetterComp}-Komponente.
@@ -52,6 +64,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @Embedded
     @NonNull
     private final WetterData wetter;
+
+
+    @Nullable
+    private AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel;
 
     /**
      * Wenn der SC wieder draußen ist, soll das Wetter beschrieben werden - und zwar auch
@@ -78,6 +94,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     WetterPCD(final GameObjectId gameObjectId,
               final WetterData wetter) {
         this(gameObjectId, wetter,
+                null,
                 true,
                 true,
                 null);
@@ -86,11 +103,15 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @SuppressWarnings("WeakerAccess")
     public WetterPCD(final GameObjectId gameObjectId,
                      final WetterData wetter,
+                     @Nullable
+                     final AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel,
                      final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
                      final boolean wennWiederUnterOffenemHimmelWetterBeschreiben,
                      @Nullable final PlanwetterData plan) {
         super(gameObjectId);
         this.wetter = wetter;
+        this.timeLetzterBeschriebenerTageszeitensprungOderWechsel =
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel;
         this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel =
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel;
         this.wennWiederUnterOffenemHimmelWetterBeschreiben =
@@ -100,64 +121,99 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     /**
      * Gibt - wenn nötig - alternative Wetterhinweise zurück.
-     * Die Methode geht in diesem Fall davon aus, dass einer der Wetterhinweise auch
-     * <i>ausgegeben</i> wird (und vermerkt entsprechend i.A., dass nicht gleich wieder ein
-     * Wetterhinweis nötig sein wird).
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
-    ImmutableCollection<AbstractDescription<?>> altWetterHinweiseWennNoetig(
-            final AvTime time, final DrinnenDraussen drinnenDraussen) {
+    ImmutableCollection<AbstractDescription<?>> altWetterhinweiseWennNoetig(
+            final AvDateTime time, final DrinnenDraussen drinnenDraussen) {
         if ((drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
-            return altWetterHinweise(time, drinnenDraussen);
+            return altWetterhinweise(time, drinnenDraussen);
         }
 
         return ImmutableSet.of();
     }
 
     /**
-     * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
-     * oder draußen erlebt - oder eine leere Menge.
-     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
-     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
-     * wird).
+     * Gibt alternative Beschreibungen des "Wetters" als {@link AbstractDescription}s zurück, wie
+     * man es drinnen oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    ImmutableCollection<AbstractDescription<?>> altWetterHinweise(
-            final AvTime time,
+    ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
+            final AvDateTime time,
             final DrinnenDraussen drinnenDraussen) {
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableList.of();
+        }
+
         final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altWetterHinweise(time,
+                wetter.altWetterhinweise(time.getTime(),
                         drinnenDraussen,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
-        resetWetterHinweiseFlags(drinnenDraussen);
+        if (!alt.isEmpty()) {
+            saveWetterhinweisGegeben(drinnenDraussen);
+        }
 
         return alt;
     }
 
     /**
-     * Gibt alternative Beschreibungen des Wetters zurück, wie
-     * man das Wetter erlebt, wenn man nach draußen kommt, - ggf. eine leere Menge.
-     * Die Methode geht davon aus, dass einer der Wetterhinweise auch ausgegeben wird
-     * (und vermerkt entsprechend i.A., dass nicht gleich wieder ein Wetterhinweis nötig sein
-     * wird).
+     * Gibt alternative Beschreibungen des Wetters als {@link AbstractDescription}s zurück, wie
+     * man das Wetter erlebt, wenn man nach draußen kommt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      */
+    // FIXME Sagen wir, es wird wärmer, aber der Benutzer ist drinnen (und dort wird es wärmer) -
+    //  gibt das einen Hinweis?
+    // FIXME Wenn der Benutzer einen temperaturbeschränkten Ort erreicht und die "eigentliche"
+    //  Temperatur außerhalb der Schranken liegt (Benutzer setzt sich in einen Kühlschrank,
+    //  geht in die Sauna oder an den kühlen Brunnen) - gibt das einen Hinweis?
+    // FIXME Sagen wir, es wird generell wärmen, aber der Benutzer merkt es nicht, weil es z.B.
+    //  an einem Ort mit Maximaltemperatur ist. Gibt es - wenn er wieder einen Ort ohne
+    //  Maximaltemperatur erreicht - einen Wetterhinweis?!
+    @CheckReturnValue
     @NonNull
-    ImmutableSet<AbstractDescription<?>> altKommtNachDraussen(
+    ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
             final AvDateTime time,
             final boolean unterOffenenHimmel) {
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableSet.of();
+        }
+
         final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(time.getTime(),
                 unterOffenenHimmel,
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)
                 .build();
 
-        if (alt.isEmpty()) {
-            return ImmutableSet.of();
+        if (!alt.isEmpty()) {
+            saveWetterhinweisDraussenGegeben(unterOffenenHimmel);
         }
-
-        resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
 
         return alt;
     }
@@ -186,7 +242,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         // Es gab also einen (oder mehrere) Tageszeitenwechsel während einer Zeit
         // von weniger als einem Tag
         return onTimePassedTageszeitensprungOderWechsel(
-                startTime.getTageszeit(), endTime.getTageszeit(), drinnenDraussen);
+                startTime.getTageszeit(), endTime, drinnenDraussen);
     }
 
     /**
@@ -195,7 +251,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * {@link java.util.Collection}.
      */
     @NonNull
-    private static ImmutableCollection<AbstractDescription<?>> onTimePassedZwischentageszeitlicherWechsel(
+    private static ImmutableCollection<AbstractDescription<?>>
+    onTimePassedZwischentageszeitlicherWechsel(
             final AvTime before,
             final AvTime after,
             final DrinnenDraussen drinnenDraussen) {
@@ -204,24 +261,32 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     /**
-     * Gibt alternative Beschreibungen zurück, dass dieser Tageszeitenwechsel
+     * Gibt alternative Beschreibungen zurück, dass dieser Tageszeitensprung oder -wechsel
      * geschehen ist; außerdem wird ggf. gespeichert, dass,wenn der Spieler das nächste Mal nach
      * draußen oder unter den offenen Himmel kommt,
      * das Wetter beschrieben werden soll.
+     * <p>
+     * Wenn keine dieser Beschreibungen ausgegeben wird, wird der Tageszeitensprung oder -wechsel
+     * nicht mehr beschrieben werden.
      */
     @NonNull
     private ImmutableCollection<AbstractDescription<?>> onTimePassedTageszeitensprungOderWechsel(
             final Tageszeit lastTageszeit,
-            final Tageszeit currentTageszeit,
+            final AvDateTime currentTime,
             final DrinnenDraussen drinnenDraussen) {
-        checkArgument(lastTageszeit != currentTageszeit,
+        checkArgument(lastTageszeit != currentTime.getTageszeit(),
                 "Unveränderte Tageszeit: " + lastTageszeit);
 
         final ImmutableCollection<AbstractDescription<?>> alt =
                 wetter.altTageszeitensprungOderWechsel(lastTageszeit,
-                        currentTageszeit, drinnenDraussen);
+                        currentTime.getTageszeit(), drinnenDraussen);
 
-        resetWetterHinweiseFlags(drinnenDraussen);
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                currentTime.isAfter(timeLetzterBeschriebenerTageszeitensprungOderWechsel)) {
+            setTimeLetzterBeschriebenerTageszeitensprungOderWechsel(currentTime);
+            // Damit befinden wir uns nicht mehr im "schwebenden Tageszeitenwechsel",
+            // sondern können uns be weiteren Ausgaben auf die aktuelle Tageszeit beziehen.
+        }
 
         if (!drinnenDraussen.isDraussen()) {
             // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC wieder
@@ -243,43 +308,104 @@ public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag" o.Ä.
      * beziehen - soweit draußen sinnvoll, sonst eine leere Collection.
+     * (Dies ist kein Wetterhinweis. Wenn noch ein Wetterhinweis nötig ist, wird noch einer folgen.
+     * Der Text kann erzählt werden - oder auch nicht.)
      */
     @NonNull
     ImmutableCollection<AbstractDescription<?>>
     altDescUeberHeuteOderDenTagWennDraussenSinnvoll(final AvTime time,
                                                     final boolean unterOffenemHimmel) {
-        final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableSet.of();
+        }
 
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+        return wetter.altHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
 
-        return alt;
+        // Kein "vollwertiger Wetterhinweis" - Flags bleiben unverändert.
     }
 
-    ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    private void saveWetterhinweisDraussenGegeben(final boolean unterOffenemHimmel) {
+        saveWetterhinweisGegeben(
+                unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT);
+    }
+
+    /**
+     * Gibt alternative Wetterhinweis in Form  adverbialer Angaben zurück.
+     * <p>
+     * Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
+     */
+    ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvDateTime time,
             final boolean unterOffenenHimmel) {
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            if (unterOffenenHimmel) {
+                return ImmutableSet
+                        .of(new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(HIMMEL.mit(OFFEN))));
+            } else {
+                return ImmutableSet
+                        .of(new AdvAngabeSkopusVerbWohinWoher(AN_AKK.mit(LUFT.mit(FRISCH))));
+            }
+        }
+
         final ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> alt =
-                wetter.altWohinHinaus(time.getTime(), unterOffenenHimmel,
+                wetter.altWetterhinweiseWohinHinaus(time.getTime(), unterOffenenHimmel,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
-        resetWetterHinweiseFlagsDraussen(unterOffenenHimmel);
+        saveWetterhinweisDraussenGegeben(unterOffenenHimmel);
 
         return alt;
     }
 
-    ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(final AvDateTime time,
-                                                               final boolean unterOffenemHimmel) {
+    /**
+     * Gibt alternative wetterbezogene Ortsbeschreibungen für draußen zurück.
+     * <p>
+     * Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
+     *
+     * @param time               Die Zeit, zu der der SC dort (angekommen) ist
+     * @param unterOffenemHimmel Ob der SC (dann) unter offenen Himmel ist
+     */
+    ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
+            final AvDateTime time,
+            final boolean unterOffenemHimmel) {
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            if (unterOffenemHimmel) {
+                return ImmutableSet
+                        .of(new AdvAngabeSkopusVerbAllg(UNTER_DAT.mit(HIMMEL.mit(OFFEN))));
+            } else {
+                return ImmutableSet
+                        .of(new AdvAngabeSkopusVerbAllg(AN_DAT.mit(LUFT.mit(FRISCH))));
+            }
+        }
+
         final ImmutableCollection<AdvAngabeSkopusVerbAllg> alt =
-                wetter.altWoDraussen(time.getTime(), unterOffenemHimmel,
+                wetter.altWetterhinweisWoDraussen(time.getTime(), unterOffenemHimmel,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
-        // FIXME Geben derzeit alle Aufrufer verlässlich die Info raus?
-        //  Vielleicht Methodennamen verändern in der Art "Wetterhinweis..."?
-        //  Dann könnte man fordern, dass entweder alle Alternativen einen Wetterhinweis
-        //  (Desc, Satz, SubstPhr, ...) enthalten - oder keine?
-
-        resetWetterHinweiseFlagsDraussen(unterOffenemHimmel);
+        saveWetterhinweisDraussenGegeben(unterOffenemHimmel);
 
         return alt;
     }
@@ -287,21 +413,44 @@ public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Gibt {@link Praepositionalphrase}n zurück wie "bei Licht" "bei Tageslicht",
      * "im Morgenlicht" o.Ä. Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
-     * beschrieben.
+     * beschrieben. (Dies ist kein Wetterhinweis. Wenn noch ein Wetterhinweis nötig ist, wird
+     * noch einer folgen.)
      */
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvDateTime time,
                                                           final boolean unterOffenemHimmel) {
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableSet.of(BEI_DAT.mit(Nominalphrase.npArtikellos(LICHT)));
+        }
+
         return wetter.altBeiLichtImLicht(time.getTime(), unterOffenemHimmel);
     }
 
     /**
      * Gibt alternativen Beschreibungen des Lichts zurück, in dem etwas liegt
      * ("Morgenlicht" o.Ä.). Bewölkung, Temperatur und Tageszeit werden nur ansatzweise
-     * beschrieben.
+     * beschrieben. (Dies ist kein Wetterhinweis. Wenn noch ein Wetterhinweis nötig ist, wird
+     * noch einer folgen.)
      */
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvDateTime time, final boolean unterOffenemHimmel) {
-        return wetter.altLichtInDemEtwasLiegt(time.getTime(), unterOffenemHimmel);
+        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
+                        .getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableList.of(LICHT);
+        }
+
+        return wetter.altLichtInDemEtwasLiegt(
+                time.getTime(), unterOffenemHimmel);
     }
 
     @NonNull
@@ -331,18 +480,30 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return plan;
     }
 
-    /**
-     * Vermerkt, dass gerade draußen ein Wetterhinweis gegeben wird.
-     */
-    private void resetWetterHinweiseFlagsDraussen(final boolean unterOffenemHimmel) {
-        resetWetterHinweiseFlags(unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
-                DRAUSSEN_GESCHUETZT);
+    private void setTimeLetzterBeschriebenerTageszeitensprungOderWechsel(
+            @Nullable final AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel) {
+        if (this.timeLetzterBeschriebenerTageszeitensprungOderWechsel ==
+                timeLetzterBeschriebenerTageszeitensprungOderWechsel) {
+            return;
+        }
+
+        setChanged();
+        this.timeLetzterBeschriebenerTageszeitensprungOderWechsel
+                = timeLetzterBeschriebenerTageszeitensprungOderWechsel;
     }
 
     /**
-     * Vermerkt, dass gerade ein Wetterhinweis gegeben wird.
+     * Nur für das ROOM-Framework.
      */
-    private void resetWetterHinweiseFlags(final DrinnenDraussen drinnenDraussen) {
+    @Nullable
+    AvDateTime getTimeLetzterBeschriebenerTageszeitensprungOderWechsel() {
+        return timeLetzterBeschriebenerTageszeitensprungOderWechsel;
+    }
+
+    /**
+     * Vermerkt, dass gerade ein Wetterhinweis gegeben wird
+     */
+    private void saveWetterhinweisGegeben(final DrinnenDraussen drinnenDraussen) {
         if (drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
             setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
                     false);
@@ -353,7 +514,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
         }
     }
 
-    private void setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
+    private void
+    setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
             final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel
     ) {
         if (this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel ==

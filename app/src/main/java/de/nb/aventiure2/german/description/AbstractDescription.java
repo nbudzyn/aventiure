@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -57,7 +59,12 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
                         .map(AbstractDescription::descriptionsToKonstiuenten)
                         .collect(toImmutableList());
             } else if (elements[i].getClass().isArray()) {
-                res[i] = Arrays.asList(elements[i]).stream()
+                final List<Object> content = new ArrayList<>(Array.getLength(elements[i]));
+                for (int j = 0; j < Array.getLength(elements[i]); j++) {
+                    content.add(Array.get(elements[i], j));
+                }
+
+                res[i] = content.stream()
                         .map(AbstractDescription::descriptionsToKonstiuenten)
                         .toArray(Object[]::new);
             } else if (elements[i] instanceof AbstractDescription<?>) {
@@ -161,7 +168,8 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
+    TextDescription toTextDescriptionKeepParams(
+            final Konstituente konstituente) {
         return new TextDescription(params.copy(), konstituente);
     }
 
@@ -171,11 +179,13 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     @SuppressWarnings("unchecked")
+    @CanIgnoreReturnValue
     public SELF komma() {
         komma(true);
         return (SELF) this;
     }
 
+    @CanIgnoreReturnValue
     public abstract SELF komma(final boolean kommaStehtAus);
 
     /**
@@ -187,6 +197,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     @SuppressWarnings("unchecked")
+    @CanIgnoreReturnValue
     public SELF undWartest(
             final boolean allowsAdditionalPlayerSatzreihengliedOhneSubjekt) {
         params.undWartest(
@@ -203,6 +214,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     @SuppressWarnings("unchecked")
+    @CanIgnoreReturnValue
     public SELF dann(final boolean dann) {
         params.dann(dann);
         return (SELF) this;
@@ -217,6 +229,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     @SuppressWarnings("unchecked")
+    @CanIgnoreReturnValue
     SELF schonLaenger(final boolean schonLaenger) {
         params.schonLaenger(schonLaenger);
         return (SELF) this;
@@ -226,6 +239,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.isSchonLaenger();
     }
 
+    @CanIgnoreReturnValue
     public SELF phorikKandidat(final SubstantivischePhrase substantivischePhrase,
                                final IBezugsobjekt bezugsobjekt) {
         checkArgument(substantivischePhrase.getPerson() == P3,
@@ -236,16 +250,19 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
     }
 
+    @CanIgnoreReturnValue
     public SELF phorikKandidat(final NumerusGenus numerusGenus,
                                final IGameObject gameObject) {
         return phorikKandidat(numerusGenus, gameObject.getId());
     }
 
+    @CanIgnoreReturnValue
     public SELF phorikKandidat(final NumerusGenus numerusGenus,
                                final IBezugsobjekt bezugsobjekt) {
         return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
     }
 
+    @CanIgnoreReturnValue
     protected abstract SELF phorikKandidat(PhorikKandidat phorikKandidat);
 
     @Nullable

@@ -53,6 +53,8 @@ import static java.util.stream.Collectors.toSet;
 
 public enum Tageszeit {
     // Reihenfolge ist relevant, nicht ändern!
+    // Wenn weitere Tageszeiten eingeführt werden müssen alle Methoden in diesem Enum
+    // überprüft werden - einige gehen davon aus, dass es genau 4 Tageszeiten gibt.
     NACHTS(NACHT,
             DUNKEL,
             ImmutableList.of(MOND),
@@ -251,6 +253,20 @@ public enum Tageszeit {
         return nomenFlexionsspalte;
     }
 
+
+    public boolean enthaltenImIntervall(final Tageszeit von, final Tageszeit bis) {
+        return von == this
+                || (von != bis && von.getNachfolger() == this)
+                || (von != bis && von.getNachfolger() != bis
+                && von.getNachfolger().getNachfolger() == this)
+                || (von != bis && von.getNachfolger() != bis
+                && von.getNachfolger().getNachfolger() != bis);
+    }
+
+    public boolean hasNachfolger(final Tageszeit other) {
+        return getNachfolger() == other;
+    }
+
     public Tageszeit getVorgaenger() {
         final int myIndex = Arrays.asList(values()).indexOf(this);
         if (myIndex == 0) {
@@ -260,15 +276,12 @@ public enum Tageszeit {
         return values()[myIndex - 1];
     }
 
-    public boolean hasNachfolger(final Tageszeit other) {
+    public Tageszeit getNachfolger() {
         final int myIndex = Arrays.asList(values()).indexOf(this);
-        final int otherIndex = Arrays.asList(values()).indexOf(other);
-        if (otherIndex == myIndex + 1) {
-            return true;
+        if (myIndex == values().length - 1) {
+            return Tageszeit.values()[0];
         }
-        if (myIndex == values().length - 1 && otherIndex == 0) {
-            return true;
-        }
-        return false;
+
+        return values()[myIndex + 1];
     }
 }

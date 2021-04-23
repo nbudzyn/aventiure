@@ -63,7 +63,9 @@ public class BewoelkungPraepPhrDescriber {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         alt.addAll(mapToList(praedikativumDescriber
-                        .altLichtInDemEtwasLiegt(bewoelkung, time.getTageszeit(), true),
+                        .altLichtInDemEtwasLiegt(bewoelkung,
+                                time.getTageszeit(),
+                                true),
                 IN_AKK::mit));
 
         if (time.kurzNachSonnenaufgang()
@@ -114,7 +116,8 @@ public class BewoelkungPraepPhrDescriber {
                 mapToSet(praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit),
                         UNTER_DAT::mit));
         alt.addAll(mapToSet(praedikativumDescriber
-                        .altLichtInDemEtwasLiegt(bewoelkung, tageszeit, true),
+                        .altLichtInDemEtwasLiegt(bewoelkung, tageszeit,
+                                true),
                 IN_DAT::mit));
 
         if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
@@ -178,7 +181,8 @@ public class BewoelkungPraepPhrDescriber {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
         alt.addAll(mapToSet(
                 praedikativumDescriber
-                        .altLichtInDemEtwasLiegt(bewoelkung, tageszeit, unterOffenemHimmel),
+                        .altLichtInDemEtwasLiegt(bewoelkung, tageszeit,
+                                unterOffenemHimmel),
                 IN_DAT::mit));
 
         // IDEA "der Hügel liegt in einsamem Mondschein." (einsam bezieht sich auf den Hügel

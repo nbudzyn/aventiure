@@ -209,7 +209,13 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
-                alt.addAll(altHintZumBrunnenGehen(timeTaker, world));
+                final ImmutableCollection<AbstractDescription<?>> hintGgfWetterhinweis =
+                        altHintZumBrunnenGehenGgfWetterhinweis(timeTaker, world);
+                if (!hintGgfWetterhinweis.isEmpty()) {
+                    // Wetterhinweise müssen auf jeden Fall ausgegeben werden
+                    n.narrateAlt(hintGgfWetterhinweis, NO_TIME);
+                    return;
+                }
             }
         }
 
@@ -232,7 +238,13 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 if (timeTaker.now().getTageszeit().equals(NACHTS)) {
                     alt.addAll(altNachtsSchlafen(world));
                 } else {
-                    alt.addAll(altHintZumBrunnenGehen(timeTaker, world));
+                    final ImmutableCollection<AbstractDescription<?>> hintGgfWetterhinweis =
+                            altHintZumBrunnenGehenGgfWetterhinweis(timeTaker, world);
+                    if (!hintGgfWetterhinweis.isEmpty()) {
+                        // Wetterhinweise müssen auf jeden Fall ausgegeben werden!
+                        n.narrateAlt(hintGgfWetterhinweis, NO_TIME);
+                        return;
+                    }
                 }
             }
         } else {
@@ -382,13 +394,23 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     @CheckReturnValue
-    private static ImmutableCollection<AbstractDescription<?>> altHintZumBrunnenGehen(
+    private static ImmutableCollection<AbstractDescription<?>> altHintZumBrunnenGehenGgfWetterhinweis(
             final TimeTaker timeTaker, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadWetter().wetterComp().getTemperaturFuerAktuellenZeitpunktAmOrtDesSC()
                 .compareTo(Temperatur.RECHT_HEISS)
                 >= 0) {
+            if (!scIsDraussen(world)) {
+                final ImmutableCollection<AbstractDescription<?>> altWetterhinweise =
+                        world.loadWetter().wetterComp()
+                                .altWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC();
+                if (!altWetterhinweise.isEmpty()) {
+                    return altWetterhinweise;
+                    // Von denen muss auf jeden Fall einer ausgegeben werden.
+                }
+            }
+
             if (scIsDraussen(world)) {
                 final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
                         world.loadWetter().wetterComp()
@@ -397,13 +419,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 alt.addAll(altParagraphs(altHeuteHeisserTagSaetze,
                         SENTENCE,
                         "Ein kühler Ort wäre schön"));
-            } else {
-                final ImmutableCollection<AbstractDescription<?>> altWetterHinweise =
-                        world.loadWetter().wetterComp()
-                                .altWetterHinweiseFuerAktuellenZeitpunktAmOrtDesSC();
-                if (!altWetterHinweise.isEmpty()) {
-                    alt.addAll(altWetterHinweise);
-                }
             }
         }
 

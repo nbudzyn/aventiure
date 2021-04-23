@@ -38,6 +38,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp.Counter.VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
@@ -56,6 +57,12 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 @SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    public
+    enum Counter {
+        VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL
+    }
+
     public SchlossVorhalleConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         super(SCHLOSS_VORHALLE, db, timeTaker, n, world);
@@ -121,30 +128,41 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         final AvTimeSpan wegZeit = mins(1);
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
-            final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
-                    world.loadWetter().wetterComp().altKommtNachDraussen(
+            final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
+                    world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
                             timeTaker.now().plus(wegZeit), true);
-            if (!altWetterDraussen.isEmpty()) {
+            if (!altWetterhinweiseDraussen.isEmpty()) {
                 return mapToSet(
-                        altWetterDraussen,
+                        altWetterhinweiseDraussen,
                         wetterDesc ->
                                 du("verlässt", "das Schloss",
                                         SENTENCE,
-                                        wetterDesc.toSingleKonstituente()).timed(wegZeit));
+                                        wetterDesc.toSingleKonstituente())
+                                        .timed(wegZeit));
             }
+        }
+
+        if (db.counterDao().get(VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL) % 2 == 0) {
+            final AltDescriptionsBuilder alt = alt();
+            // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
+            // Wetterhinweise auf jeden Fall ausgeben!
+            world.loadWetter().wetterComp().altWetterhinweiseWohinHinaus(
+                    timeTaker.now().plus(wegZeit), true).stream()
+                    .map(a -> GEHEN
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunter"))
+                            .mitAdvAngabe(a)
+                            .alsSatzMitSubjekt(duSc()));
+            return alt.timed(wegZeit)
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL).build();
         }
 
         final AltDescriptionsBuilder alt = alt();
         alt.add(du("verlässt", "das Schloss").undWartest().dann());
-        // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
-        alt.addAll(world.loadWetter().wetterComp().altWohinHinaus(
-                timeTaker.now().plus(wegZeit), true).stream()
-                .map(a -> GEHEN
-                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunter"))
-                        .mitAdvAngabe(a)
-                        .alsSatzMitSubjekt(duSc())));
 
-        return alt.timed(wegZeit).build();
+        return alt.timed(wegZeit)
+                .withCounterIdIncrementedIfTextIsNarrated(
+                        VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL).build();
     }
 
     @NonNull
@@ -152,11 +170,11 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         final AvTimeSpan wegZeit = mins(1);
-        final ImmutableSet<AbstractDescription<?>> altWetterDraussen =
-                world.loadWetter().wetterComp().altKommtNachDraussen(
+        final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
+                world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
                         timeTaker.now().plus(wegZeit), true);
-        if (!altWetterDraussen.isEmpty()) {
-            return mapToSet(altWetterDraussen, wetterDesc ->
+        if (!altWetterhinweiseDraussen.isEmpty()) {
+            return mapToSet(altWetterhinweiseDraussen, wetterDesc ->
                     du("gehst",
                             "über eine Marmortreppe hinaus in die Gärten vor dem",
                             "Schloss", CHAPTER,

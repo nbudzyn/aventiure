@@ -32,6 +32,6 @@ public class WetterReactionsComp extends AbstractReactionsComp
 
     @Override
     public void afterScActionAndFirstWorldUpdate() {
-        wetterComp.narrateWetterOrTageszeitIfNecessary();
+        wetterComp.narrateWetterhinweisWennNoetig();
     }
 }

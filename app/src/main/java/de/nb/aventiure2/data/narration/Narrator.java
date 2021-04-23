@@ -196,7 +196,8 @@ public class Narrator {
         // nicht klar, wieviel Zeit jetzt (!) vergehen muss oder welcher Counter
         // jetzt (!) hochgezählt werden muss!
         final Collection<? extends TimedDescription<?>> bestAlternatives =
-                chooseBestAlternativesWithSameElapsedTimeAndCounterId(alternatives);
+                chooseBestAlternativesWithSameElapsedTimeAndCounterId(
+                        alternatives);
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
                 mapToList(bestAlternatives, TimedDescription::getDescription));
@@ -204,7 +205,8 @@ public class Narrator {
         passTimeAndIncCounter(bestAlternatives.iterator().next());
     }
 
-    private void passTimeAndIncCounter(final TimedDescription<?> timedDescription) {
+    private void passTimeAndIncCounter(
+            final TimedDescription<?> timedDescription) {
         timeTaker.passTime(timedDescription.getTimeElapsed());
         if (timedDescription.getCounterIdIncrementedIfTextIsNarrated() != null) {
             counterDao.inc(timedDescription.getCounterIdIncrementedIfTextIsNarrated());

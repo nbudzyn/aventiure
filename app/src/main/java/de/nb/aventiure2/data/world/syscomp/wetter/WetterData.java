@@ -173,7 +173,7 @@ class WetterData {
      *                                                                         nur einmalig
      *                                                                         auftreten
      */
-    ImmutableCollection<AbstractDescription<?>> altWetterHinweise(
+    ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
             final AvTime time, final DrinnenDraussen drinnenDraussen,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
         if (drinnenDraussen.isDraussen()) {
@@ -613,7 +613,7 @@ class WetterData {
 
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWohinHinaus(
+    ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvTime time,
             final boolean unterOffenenHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -715,7 +715,7 @@ class WetterData {
 
     @NonNull
     @CheckReturnValue
-    ImmutableSet<AdvAngabeSkopusVerbAllg> altWoDraussen(
+    ImmutableSet<AdvAngabeSkopusVerbAllg> altWetterhinweisWoDraussen(
             final AvTime time,
             final boolean unterOffenemHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -790,7 +790,7 @@ class WetterData {
         return alt.build();
     }
 
-    // FIXME altWann() analog zu altWoDraussen(), aber mit Satz-Skopus.
+    // FIXME altWann() analog zu altWetterhinweiseWoDraussen(), aber mit Satz-Skopus.
     //  Vielleicht auch nur Präferenz auf Zeit, also Wetterbeschreibungsflags nicht
     //  zurücksetzen?
     //  "mit Sonnenaufgang (machts du dich auf den Weg...)"
@@ -799,14 +799,13 @@ class WetterData {
     //  "Du erwachst vor Sonnenuntergang"
     //  "Bei einbrechender Nacht"
     //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, " (Problem: "Adverbiale
-    //  Angaben"
-    //   mit Folgekomme unterstützen wir wohl derzeit nicht)
+    //  Angaben" mit Folgekomme unterstützen wir wohl derzeit nicht)
     //  "gegen Abend, als die Sonne untergegangen ist," (Problem: "Adverbiale Angaben"
     //    mit Folgekomme unterstützen wir wohl derzeit nicht)
+    //  "als heller Mittag ist..." (Komma...)
     //  "gegen Mittag"
     //  "bei Mittagssonnenschein"
-    //  "als heller Mittag ist..." (Komma...)
-    //  "Schließlich", "nach einer Weile" o.Ä. als Fallback
+    //  "Schließlich", "nach einer Weile" o.Ä. als Fallback?
 
     /**
      * Gibt {@link Praepositionalphrase}n zurück wie "bei Licht" "bei Tageslicht",
@@ -815,12 +814,10 @@ class WetterData {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvTime time,
-                                                          final boolean unterOffenemHimmel) {
-        // FIXME Hier gibt es dasselbe Problem wie beim Tageszeitenwechsel:
-        //  Es kann zu etwas kommen wie "Im Morgenlicht siehst du...
-        //  Langsam geht die Nacht in den Morgen über." (Also erst die Zustandsbeschreibung,
-        //  dann die Beschreibung des Übergangs.)
+    ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(
+            final AvTime time,
+            final boolean unterOffenemHimmel) {
+        // FIXME Blitze (aber nicht Donner?) berücksichtigen?
 
         return BEWOELKUNG_PRAEP_PHR_DESCRIBER
                 .altBeiLichtImLicht(getBewoelkung(), time.getTageszeit(), unterOffenemHimmel);
@@ -836,14 +833,11 @@ class WetterData {
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvTime time,
             final boolean unterOffenemHimmel) {
-        // FIXME Hier gibt es dasselbe Problem wie beim Tageszeitenwechsel:
-        //  Es kann zu etwas kommen wie "Die erreichst das helle Tageslicht, in dem ... liegt.
-        //  Langsam geht der Morgen in den Tag über." (Also erst die Zustandsbeschreibung,
-        //  dann die Beschreibung des Übergangs.)
-
         // FIXME Blitze (aber nicht Donner?) berücksichtigen?
+
         return BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER
-                .altLichtInDemEtwasLiegt(getBewoelkung(), time.getTageszeit(),
+                .altLichtInDemEtwasLiegt(getBewoelkung(),
+                        time.getTageszeit(),
                         unterOffenemHimmel);
     }
 
