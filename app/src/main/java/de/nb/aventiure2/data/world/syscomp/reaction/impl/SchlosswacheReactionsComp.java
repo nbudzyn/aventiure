@@ -153,8 +153,6 @@ public class SchlosswacheReactionsComp
 
         final AvTimeSpan timeElapsed = secs(10);
 
-        // FIXME ALle Counter-Verwendungen prüfen - gehen verloren bei toKonstitutentenliste!
-
         if (counterDao.get(SC_MUSS_SCLOSS_WIEDER_VERLASSEN) % 2 == 0) {
             n.narrate(neuerSatz(PARAGRAPH,
                     "„Heho, was wird das?“, tönt dir eine laute Stimme entgegen. "

@@ -145,6 +145,10 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
      * Gibt die Beschreibung zurück, in der Regel beginnend mit einem Hauptsatz;
      * handelt es sich bei dieser Description jedoch um eine kleinere Einheit,
      * wird der Text dieser Description zurückgegeben.
+     * <p>
+     * Achtung - wenn die {@link AbstractDescription} Teil einer {@link TimedDescription} ist,
+     * die einen Counter enthält, muss der Counter möglicherweise separat erhalten werden,
+     * denn er ist in der Konstituente nicht mehr enthalten.
      */
     public abstract Konstituente toSingleKonstituente();
 
@@ -168,8 +172,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     toSingleKonstituenteMitKonjunktionaladverbWennNoetig(String konjunktionaladverb);
 
     @NonNull
-    TextDescription toTextDescriptionKeepParams(
-            final Konstituente konstituente) {
+    TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
         return new TextDescription(params.copy(), konstituente);
     }
 
