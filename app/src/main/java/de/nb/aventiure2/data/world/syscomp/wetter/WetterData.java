@@ -790,22 +790,22 @@ class WetterData {
         return alt.build();
     }
 
-    // FIXME altWann() analog zu altWetterhinweiseWoDraussen(), aber mit Satz-Skopus.
-    //  Vielleicht auch nur Präferenz auf Zeit, also Wetterbeschreibungsflags nicht
-    //  zurücksetzen?
-    //  "mit Sonnenaufgang (machts du dich auf den Weg...)"
-    //  "Bei Sonnenaufgang kommt schon..."
-    //  "Bei Sonnenuntergang kommst du zu..."
-    //  "Du erwachst vor Sonnenuntergang"
-    //  "Bei einbrechender Nacht"
-    //  "Als du aber am Morgen bei hellem Sonnenschein aufwachst, " (Problem: "Adverbiale
+    // IDEA: altWann() analog zu altWetterhinweiseWoDraussen(), aber mit Satz-Skopus, und keine
+    //  vollwertigen Wetterhinweise! (Flags nicht zurücksetzen!)
+    //  - "mit Sonnenaufgang (machts du dich auf den Weg...)"
+    //  - "Bei Sonnenaufgang kommt schon..."
+    //  - "Bei Sonnenuntergang kommst du zu..."
+    //  - "Du erwachst vor Sonnenuntergang"
+    //  - "Bei einbrechender Nacht"
+    //  - "gegen Mittag"
+    //  - "bei Mittagssonnenschein"
+    //  - "Als du aber am Morgen bei hellem Sonnenschein aufwachst, " (Problem: "Adverbiale
     //  Angaben" mit Folgekomme unterstützen wir wohl derzeit nicht)
-    //  "gegen Abend, als die Sonne untergegangen ist," (Problem: "Adverbiale Angaben"
+    //  - "gegen Abend, als die Sonne untergegangen ist," (Problem: "Adverbiale Angaben"
     //    mit Folgekomme unterstützen wir wohl derzeit nicht)
-    //  "als heller Mittag ist..." (Komma...)
-    //  "gegen Mittag"
-    //  "bei Mittagssonnenschein"
-    //  "Schließlich", "nach einer Weile" o.Ä. als Fallback?
+    //  - "als heller Mittag ist..." (Komma...)
+    //  Jeder "Zeitpunkt" sollt nur einmal verwendet werden - am besten dann, wenn er
+    //  überschritten wird.
 
     /**
      * Gibt {@link Praepositionalphrase}n zurück wie "bei Licht" "bei Tageslicht",

@@ -63,6 +63,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         this.eherGross = eherGross;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void narrateScFolgtMovingGO(
             final Collection<TimedDescription<?>> normalTimedDescriptions) {
@@ -334,7 +335,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysOut) {
         final SubstantivischePhrase anaph = anaph(false);
 
-        final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
+        @Nullable final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
 
         n.narrateAlt(NO_TIME,
                 neuerSatz(PARAGRAPH,
@@ -416,7 +417,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         final EinzelneSubstantivischePhrase desc = getDescription();
         final SubstantivischePhrase anaph = anaph(false);
 
-        final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
+        @Nullable final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -524,26 +525,30 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final NumberOfWays numberOfWaysIn) {
         final EinzelneSubstantivischePhrase desc = getDescription();
 
-        final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
+        @Nullable final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
-        n.narrateAlt(NO_TIME,
-                neuerSatz(PARAGRAPH,
-                        wo, // "auf dem Weg "
-                        // FIXME Hier oder (auch) an anderer Stelle wird "Kommt die alte Frau"
-                        //  generiert. Sollte höchstens "Da kommt die alte Frau" sein.
-                        "kommt",
-                        desc.nomK(), PARAGRAPH),
-                neuerSatz(PARAGRAPH,
-                        desc.nomK(),
-                        "kommt",
-                        wo, // "auf dem Weg "
-                        "daher", PARAGRAPH),
+        final AltDescriptionsBuilder alt = alt();
+
+        if (wo != null) {
+            alt.add(neuerSatz(PARAGRAPH,
+                    wo, // "auf dem Weg "
+                    "kommt",
+                    desc.nomK(), PARAGRAPH));
+        }
+
+        alt.add(neuerSatz(PARAGRAPH,
+                desc.nomK(),
+                "kommt",
+                wo, // "auf dem Weg "
+                "daher", PARAGRAPH),
                 neuerSatz(PARAGRAPH,
                         desc.nomK(),
                         "kommt",
                         wo, // "auf dem Weg "
                         "gegangen", PARAGRAPH)
         );
+
+        n.narrateAlt(alt, NO_TIME);
     }
 
     @Nullable
