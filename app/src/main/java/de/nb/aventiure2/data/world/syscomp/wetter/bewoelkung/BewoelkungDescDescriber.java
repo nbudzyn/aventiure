@@ -139,6 +139,7 @@ public class BewoelkungDescDescriber {
                 }
                 break;
             case ABENDS:
+                break;
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + currentTageszeit);
         }

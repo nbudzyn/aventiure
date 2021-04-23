@@ -130,12 +130,9 @@ public class WalkerTest extends AndroidTestBase {
         while (true) {
             final List<AbstractScAction> playerActions = scActionService.getPlayerActions();
             if (playerActions.isEmpty()) {
-                // For easier debugging
-                scActionService.getPlayerActions();
-
                 final SpielerCharakter spielerCharakter = world.loadSC();
 
-                final ITalkerGO zauberin = (ITalkerGO) world.load(RAPUNZELS_ZAUBERIN);
+                final ITalkerGO<?> zauberin = (ITalkerGO<?>) world.load(RAPUNZELS_ZAUBERIN);
 
                 final ImmutableList<? extends ILivingBeingGO> livingBeings =
                         world.loadDescribableLocatableLivingBeings();

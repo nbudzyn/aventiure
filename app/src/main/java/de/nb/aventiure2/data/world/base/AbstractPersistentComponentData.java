@@ -12,7 +12,7 @@ import java.util.Objects;
 public class AbstractPersistentComponentData {
     @PrimaryKey
     @NonNull
-    private GameObjectId gameObjectId;
+    private final GameObjectId gameObjectId;
 
     @Ignore
     private boolean changed = false;
@@ -39,10 +39,6 @@ public class AbstractPersistentComponentData {
     @NonNull
     public GameObjectId getGameObjectId() {
         return gameObjectId;
-    }
-
-    void setGameObjectId(@NonNull final GameObjectId gameObjectId) {
-        this.gameObjectId = gameObjectId;
     }
 
     @Override

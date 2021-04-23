@@ -218,6 +218,7 @@ public class TemperaturSatzDescriber {
             case RECHT_HEISS:
                 break;
             case SEHR_HEISS:
+                break;
             default:
                 throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
         }

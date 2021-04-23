@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.base;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -7,7 +9,7 @@ import java.util.Objects;
  * Data for an {@link GameObject} referenced by its {@link GameObjectId}.
  */
 abstract class AbstractGameData {
-    private GameObjectId gameObjectId;
+    private final GameObjectId gameObjectId;
 
     protected AbstractGameData(final GameObjectId gameObjectId) {
         this.gameObjectId = gameObjectId;
@@ -32,11 +34,6 @@ abstract class AbstractGameData {
     /**
      * @Deprecated Only for Android ROOM
      */
-    @Deprecated
-    public void setGameObjectId(final GameObjectId gameObjectId) {
-        this.gameObjectId = gameObjectId;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -54,6 +51,7 @@ abstract class AbstractGameData {
         return Objects.hash(gameObjectId);
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "Data for game object " + gameObjectId;

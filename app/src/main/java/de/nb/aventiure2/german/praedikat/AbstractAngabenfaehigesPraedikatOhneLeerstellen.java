@@ -464,5 +464,33 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         return inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AbstractAngabenfaehigesPraedikatOhneLeerstellen that =
+                (AbstractAngabenfaehigesPraedikatOhneLeerstellen) o;
+        return inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich
+                == that.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich &&
+                verb.equals(that.verb) &&
+                Objects.equals(modalpartikeln, that.modalpartikeln) &&
+                Objects.equals(advAngabeSkopusSatz, that.advAngabeSkopusSatz) &&
+                Objects.equals(advAngabeSkopusVerbAllg, that.advAngabeSkopusVerbAllg) &&
+                Objects
+                        .equals(advAngabeSkopusVerbWohinWoher, that.advAngabeSkopusVerbWohinWoher);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects
+                .hash(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, modalpartikeln,
+                        advAngabeSkopusSatz, advAngabeSkopusVerbAllg,
+                        advAngabeSkopusVerbWohinWoher);
+    }
 }
 

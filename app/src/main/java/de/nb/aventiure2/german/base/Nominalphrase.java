@@ -546,7 +546,7 @@ public class Nominalphrase
     }
 
     @Override
-    public boolean equals(final @Nullable Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -558,11 +558,12 @@ public class Nominalphrase
         }
         final Nominalphrase that = (Nominalphrase) o;
         return artikelTyp == that.artikelTyp &&
+                Objects.equals(adjPhr, that.adjPhr) &&
                 flexionsreiheArtikellos.equals(that.flexionsreiheArtikellos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), artikelTyp, flexionsreiheArtikellos);
+        return Objects.hash(super.hashCode(), artikelTyp, adjPhr, flexionsreiheArtikellos);
     }
 }

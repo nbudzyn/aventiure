@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import java.util.Objects;
+
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 
 public class Endungen {
@@ -27,5 +29,24 @@ public class Endungen {
                 stamm + dativ,
                 stamm + akkusativ
         );
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Endungen endungen = (Endungen) o;
+        return nominativ.equals(endungen.nominativ) &&
+                dativ.equals(endungen.dativ) &&
+                akkusativ.equals(endungen.akkusativ);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(nominativ, dativ, akkusativ);
     }
 }

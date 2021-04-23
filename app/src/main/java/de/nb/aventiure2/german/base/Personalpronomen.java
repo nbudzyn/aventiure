@@ -209,4 +209,24 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
                     "Ungültiger Numerus für Wetterverben, keine expletives es: " + numerus);
         }
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Personalpronomen that = (Personalpronomen) o;
+        return person == that.person;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), person);
+    }
 }

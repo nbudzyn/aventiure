@@ -7,6 +7,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
@@ -430,10 +431,23 @@ public class EinzelnerSatz implements Satz {
         return false;
     }
 
-    // equals() und hashCode() überschreiben wir extra nicht! Alle EinzelnerSatz-Objekte
-    // sollen als "verschieden" gelten. Ansonsten müssten wir auch in allen
-    // SubstantivischePhrase- und
-    // PraedikatOhneLeerstellen-Implementierungen equals() und hashCode()
-    // überschreiben.
-    // Das wäre inhaltlich richtig, aber viel Arbeit.
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final EinzelnerSatz that = (EinzelnerSatz) o;
+        return Objects.equals(anschlusswort, that.anschlusswort) &&
+                Objects.equals(subjekt, that.subjekt) &&
+                Objects.equals(praedikat, that.praedikat) &&
+                Objects.equals(angabensatz, that.angabensatz);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(anschlusswort, subjekt, praedikat, angabensatz);
+    }
 }

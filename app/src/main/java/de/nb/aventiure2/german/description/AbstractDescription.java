@@ -212,6 +212,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.isAllowsAdditionalDuSatzreihengliedOhneSubjekt();
     }
 
+    @CanIgnoreReturnValue
     public SELF dann() {
         return dann(true);
     }

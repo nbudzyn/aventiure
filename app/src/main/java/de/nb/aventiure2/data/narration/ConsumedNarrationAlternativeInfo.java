@@ -54,7 +54,8 @@ public class ConsumedNarrationAlternativeInfo {
 
     static int calcAlternativesStringHash(
             final Collection<? extends TextDescription> alternatives) {
-        return mapToList(alternatives, TextDescription::getTextOhneKontext).hashCode();
+        return // Reihenfolge soll keine Rolle spielen! -> Set!
+                mapToSet(alternatives, TextDescription::getTextOhneKontext).hashCode();
     }
 
     @Override

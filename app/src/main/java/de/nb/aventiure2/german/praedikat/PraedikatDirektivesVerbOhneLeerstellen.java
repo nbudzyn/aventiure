@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -308,5 +309,27 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         }
 
         return lexikalischerKern.getRelativpronomen();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final PraedikatDirektivesVerbOhneLeerstellen that = (PraedikatDirektivesVerbOhneLeerstellen) o;
+        return kasus == that.kasus &&
+                Objects.equals(objekt, that.objekt) &&
+                lexikalischerKern.equals(that.lexikalischerKern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), kasus, objekt, lexikalischerKern);
     }
 }

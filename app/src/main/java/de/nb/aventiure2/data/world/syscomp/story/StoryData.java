@@ -154,13 +154,15 @@ class StoryData {
         }
         final StoryData storyData = (StoryData) o;
         return story == storyData.story &&
+                // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
+                //  probleme mit Sets o.Ä. ergeben...
                 state == storyData.state &&
                 reachedNodes.equals(storyData.reachedNodes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(story, state);
+        return Objects.hash(story);
     }
 
     @NonNull

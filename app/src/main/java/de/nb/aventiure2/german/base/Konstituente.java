@@ -263,6 +263,20 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 bezugsobjekt);
     }
 
+    /**
+     * Gibt eine ganz grobe Angabe zurück, wieviele Wörter diese Konstituente enthaelt.
+     */
+    public int guessNumWords() {
+        int res = 1;
+        for (final char c : toTextOhneKontext().toCharArray()) {
+            if (c == ' ' || c == '\n') {
+                res++;
+            }
+        }
+
+        return res;
+    }
+
     @CheckReturnValue
     public Konstituente mitPhorikKandidat(@Nullable final PhorikKandidat phorikKandidat) {
         if (phorikKandidat == null) {

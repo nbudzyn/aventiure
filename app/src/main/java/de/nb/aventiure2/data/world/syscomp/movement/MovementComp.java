@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.Collection;
 
@@ -280,6 +281,7 @@ public class MovementComp
      * vorbeilaufen. Der SC soll die Möglichkeit erhalten, zumindest einmalig mit dem
      * IMovingGO zu interagieren.
      */
+    @CanIgnoreReturnValue
     private boolean pauseIfSameVisibleOuterMostLocationWithSC() {
         if (locationComp.hasSameVisibleOuterMostLocationAs(SPIELER_CHARAKTER)
             // IDEA Wenn der SC schläft, dann hingegen das Game Object einfach

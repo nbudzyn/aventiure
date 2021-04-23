@@ -685,9 +685,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 fDesc.toTextDescriptionSatzanschlussOhneSubjekt();
 
         final AltTimedDescriptionsBuilder alt = altTimed();
-        alt.add(descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber " +
-                (fDesc.vorangestelltenSatzanschlussMitUndVermeiden() ? ", " : "und "))
-                .timed(description.getTimeElapsed()));
+        alt.add(description.withDescription(
+                descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber " +
+                        (fDesc.vorangestelltenSatzanschlussMitUndVermeiden() ? ", " : "und "))));
         alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
         return alt.build();
     }
@@ -701,12 +701,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 && ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
                 .hasSubjektDu()) {
 
-            alt.add(((AbstractFlexibleDescription<?>) timedDescription.getDescription())
-                    .toTextDescriptionMitVorfeld("dann")
-                    .mitPraefix(joinToKonstituentenfolge(
-                            SENTENCE,
-                            "Du siehst dich nur kurz um, "))
-                    .timed(timedDescription.getTimeElapsed()));
+            alt.add(timedDescription.withDescription(
+                    ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
+                            .toTextDescriptionMitVorfeld("dann")
+                            .mitPraefix(joinToKonstituentenfolge(
+                                    SENTENCE,
+                                    "Du siehst dich nur kurz um, "))));
         } else {
             alt.addAll(timedDescription.altMitPraefix(joinToKonstituentenfolge(
                     PARAGRAPH,

@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
+import java.util.Objects;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -169,5 +171,26 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     @Override
     public boolean enthaeltZuInfinitivOderAngabensatzOderErgaenzungssatz() {
         return true;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final AdjPhrMitIndirektemFragesatzOhneLeerstellen that =
+                (AdjPhrMitIndirektemFragesatzOhneLeerstellen) o;
+        return indirekterFragesatz.equals(that.indirekterFragesatz);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), indirekterFragesatz);
     }
 }

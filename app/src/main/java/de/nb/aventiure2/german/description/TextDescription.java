@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.Objects;
 
@@ -95,6 +96,7 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         return toSingleKonstituente();
     }
 
+    @CanIgnoreReturnValue
     public TextDescription beginntZumindest(final StructuralElement zumindest) {
         if (zumindest == WORD) {
             return this;
@@ -161,11 +163,13 @@ public class TextDescription extends AbstractDescription<TextDescription> {
             return false;
         }
         final TextDescription that = (TextDescription) o;
+        // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
+        //  probleme mit Sets o.Ä. ergeben... Vgl. auch hashCode()!
         return Objects.equals(konstituente, that.konstituente);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), konstituente);
+        return super.hashCode();
     }
 }

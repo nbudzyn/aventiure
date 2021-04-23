@@ -4,6 +4,7 @@ package de.nb.aventiure2.german.praedikat;
 import androidx.annotation.NonNull;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -259,5 +260,23 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         // "Mich muss frieren""
         return lexikalischerKern.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PraedikatModalverbOhneLeerstellen that = (PraedikatModalverbOhneLeerstellen) o;
+        return verb.equals(that.verb) &&
+                lexikalischerKern.equals(that.lexikalischerKern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(verb, lexikalischerKern);
     }
 }

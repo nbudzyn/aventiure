@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -275,5 +276,27 @@ public class PraedikatAkkPraepOhneLeerstellen
         }
 
         return null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final PraedikatAkkPraepOhneLeerstellen that = (PraedikatAkkPraepOhneLeerstellen) o;
+        return akk.equals(that.akk) &&
+                praep.equals(that.praep) &&
+                praepositionMitKasus == that.praepositionMitKasus;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), akk, praep, praepositionMitKasus);
     }
 }

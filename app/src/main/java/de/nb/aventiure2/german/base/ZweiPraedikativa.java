@@ -97,4 +97,24 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
     protected P getZweit() {
         return zweit;
     }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ZweiPraedikativa<?> that = (ZweiPraedikativa<?>) o;
+        return konnektorErfordertKommata == that.konnektorErfordertKommata &&
+                erst.equals(that.erst) &&
+                zweit.equals(that.zweit) &&
+                konnektor.equals(that.konnektor);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(erst, zweit, konnektor, konnektorErfordertKommata);
+    }
 }

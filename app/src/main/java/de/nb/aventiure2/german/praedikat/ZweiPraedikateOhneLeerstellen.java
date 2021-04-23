@@ -22,22 +22,22 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  */
 public class ZweiPraedikateOhneLeerstellen
         implements PraedikatOhneLeerstellen {
-    private final PraedikatOhneLeerstellen ersterSatz;
-    private final PraedikatOhneLeerstellen zweiterSatz;
+    private final PraedikatOhneLeerstellen erstes;
+    private final PraedikatOhneLeerstellen zweites;
 
     public ZweiPraedikateOhneLeerstellen(
-            final PraedikatOhneLeerstellen ersterSatz,
-            final PraedikatOhneLeerstellen zweiterSatz) {
-        this.ersterSatz = ersterSatz;
-        this.zweiterSatz = zweiterSatz;
+            final PraedikatOhneLeerstellen erstes,
+            final PraedikatOhneLeerstellen zweites) {
+        this.erstes = erstes;
+        this.zweites = zweites;
     }
 
     @Override
     public PraedikatOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitModalpartikeln(modalpartikeln),
-                zweiterSatz
+                erstes.mitModalpartikeln(modalpartikeln),
+                zweites
         );
     }
 
@@ -45,8 +45,8 @@ public class ZweiPraedikateOhneLeerstellen
     public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdvAngabe(advAngabe),
-                zweiterSatz
+                erstes.mitAdvAngabe(advAngabe),
+                zweites
         );
     }
 
@@ -54,8 +54,8 @@ public class ZweiPraedikateOhneLeerstellen
     public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdvAngabe(advAngabe),
-                zweiterSatz
+                erstes.mitAdvAngabe(advAngabe),
+                zweites
         );
     }
 
@@ -63,8 +63,8 @@ public class ZweiPraedikateOhneLeerstellen
     public ZweiPraedikateOhneLeerstellen mitAdvAngabe(
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
-                ersterSatz.mitAdvAngabe(advAngabe),
-                zweiterSatz
+                erstes.mitAdvAngabe(advAngabe),
+                zweites
         );
     }
 
@@ -79,9 +79,9 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 // "hebst die goldene Kugel auf"
-                ersterSatz.getVerbzweit(person, numerus),
+                erstes.getVerbzweit(person, numerus),
                 "und",
-                zweiterSatz.getVerbzweit(person, numerus)
+                zweites.getVerbzweit(person, numerus)
                 // "nimmst ein Bad"
         );
     }
@@ -90,10 +90,10 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                ersterSatz.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                erstes.getVerbzweitMitSubjektImMittelfeld(subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
                 "und",
-                zweiterSatz.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+                zweites.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
                 // "fällst dann todmüde ins Bett."
         );
     }
@@ -101,61 +101,61 @@ public class ZweiPraedikateOhneLeerstellen
     @Override
     public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                ersterSatz.getVerbletzt(person, numerus),
+                erstes.getVerbletzt(person, numerus),
                 "und",
-                zweiterSatz.getVerbletzt(person, numerus));
+                zweites.getVerbletzt(person, numerus));
     }
 
     @Override
     public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                ersterSatz.getPartizipIIPhrase(person, numerus),
+                erstes.getPartizipIIPhrase(person, numerus),
                 "und",
-                zweiterSatz.getPartizipIIPhrase(person, numerus)
+                zweites.getPartizipIIPhrase(person, numerus)
         );
     }
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
-        return ersterSatz.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
-                zweiterSatz.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
+        return erstes.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
+                zweites.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden();
     }
 
     @Override
     public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                ersterSatz.getInfinitiv(person, numerus),
+                erstes.getInfinitiv(person, numerus),
                 "und",
-                zweiterSatz.getInfinitiv(person, numerus));
+                zweites.getInfinitiv(person, numerus));
     }
 
     @Override
     public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                ersterSatz.getZuInfinitiv(person, numerus),
+                erstes.getZuInfinitiv(person, numerus),
                 "und",
-                zweiterSatz.getZuInfinitiv(person, numerus));
+                zweites.getZuInfinitiv(person, numerus));
     }
 
     @Override
     public boolean umfasstSatzglieder() {
-        return ersterSatz.umfasstSatzglieder() && zweiterSatz.umfasstSatzglieder();
+        return erstes.umfasstSatzglieder() && zweites.umfasstSatzglieder();
     }
 
     @Override
     public boolean bildetPerfektMitSein() {
-        return ersterSatz.bildetPerfektMitSein() && zweiterSatz.bildetPerfektMitSein();
+        return erstes.bildetPerfektMitSein() && zweites.bildetPerfektMitSein();
     }
 
     @Override
     public boolean hatAkkusativobjekt() {
-        return ersterSatz.hatAkkusativobjekt() && zweiterSatz.hatAkkusativobjekt();
+        return erstes.hatAkkusativobjekt() && zweites.hatAkkusativobjekt();
     }
 
     @Override
     public boolean isBezugAufNachzustandDesAktantenGegeben() {
-        return ersterSatz.isBezugAufNachzustandDesAktantenGegeben() &&
-                zweiterSatz.isBezugAufNachzustandDesAktantenGegeben();
+        return erstes.isBezugAufNachzustandDesAktantenGegeben() &&
+                zweites.isBezugAufNachzustandDesAktantenGegeben();
     }
 
     @Nullable
@@ -163,20 +163,20 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
                                                            final Numerus numerus,
                                                            final boolean nachAnschlusswort) {
-        return ersterSatz.getSpeziellesVorfeldSehrErwuenscht(person, numerus, nachAnschlusswort);
+        return erstes.getSpeziellesVorfeldSehrErwuenscht(person, numerus, nachAnschlusswort);
     }
 
     @Nullable
     @Override
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
                                                                    final Numerus numerus) {
-        return ersterSatz.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+        return erstes.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
     }
 
     @Nullable
     @Override
     public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
-        return zweiterSatz.getNachfeld(person, numerus);
+        return zweites.getNachfeld(person, numerus);
     }
 
     @Nullable
@@ -188,9 +188,9 @@ public class ZweiPraedikateOhneLeerstellen
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
         // Interrogativwort angegeben sein.
         @Nullable final Konstituentenfolge erstesInterrogativwortErsterSatz =
-                ersterSatz.getErstesInterrogativwort();
+                erstes.getErstesInterrogativwort();
         @Nullable final Konstituentenfolge erstesInterrogativwortZweiterSatz =
-                zweiterSatz.getErstesInterrogativwort();
+                zweites.getErstesInterrogativwort();
 
         if (Objects.equals(
                 erstesInterrogativwortErsterSatz, erstesInterrogativwortZweiterSatz)) {
@@ -213,9 +213,9 @@ public class ZweiPraedikateOhneLeerstellen
         // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
         // Relativpronomen ("das") angegeben sein.
         @Nullable final Konstituentenfolge relativpronomenErsterSatz =
-                ersterSatz.getRelativpronomen();
+                erstes.getRelativpronomen();
         @Nullable final Konstituentenfolge relativpronomenZweiterSatz =
-                zweiterSatz.getRelativpronomen();
+                zweites.getRelativpronomen();
 
         if (Objects.equals(relativpronomenErsterSatz, relativpronomenZweiterSatz)) {
             // Beide gleich, vielleicht auch beide null
@@ -231,7 +231,25 @@ public class ZweiPraedikateOhneLeerstellen
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         // "Mich friert und hungert".
         // Aber: "Es friert mich und regnet."
-        return ersterSatz.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()
-                && zweiterSatz.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+        return erstes.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()
+                && zweites.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ZweiPraedikateOhneLeerstellen that = (ZweiPraedikateOhneLeerstellen) o;
+        return erstes.equals(that.erstes) &&
+                zweites.equals(that.zweites);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(erstes, zweites);
     }
 }

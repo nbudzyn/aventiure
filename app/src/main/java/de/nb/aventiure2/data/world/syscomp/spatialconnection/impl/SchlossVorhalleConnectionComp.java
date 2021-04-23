@@ -27,7 +27,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
@@ -42,6 +42,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.Schloss
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -72,16 +73,12 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                        .hasState(BEGONNEN) &&
-                ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
+        return !to.equals(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) ||
+                !((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+                        .hasState(BEGONNEN) ||
+                !((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ)).stateComp()
                         .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
-                                ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
-            return false;
-        }
-
-        return true;
+                                ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN);
     }
 
     @Override
@@ -104,6 +101,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         return "Das Schloss verlassen";
     }
 
+    @SuppressWarnings("SwitchStatementWithTooFewBranches")
     @CheckReturnValue
     private ImmutableCollection<TimedDescription<?>>
     altDescTo_DraussenVorDemSchloss(
@@ -144,14 +142,22 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
         if (db.counterDao().get(VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL) % 2 == 0) {
             final AltDescriptionsBuilder alt = alt();
-            // "Du gehst die Marmortreppe hinunten in den Sonnenschein hinaus"
+            // "Du gehst die Marmortreppe hinunten und in den Sonnenschein hinaus"
             // Wetterhinweise auf jeden Fall ausgeben!
-            world.loadWetter().wetterComp().altWetterhinweiseWohinHinaus(
-                    timeTaker.now().plus(wegZeit), true).stream()
-                    .map(a -> GEHEN
-                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("die Marmortreppe hinunter"))
-                            .mitAdvAngabe(a)
-                            .alsSatzMitSubjekt(duSc()));
+            alt.addAll(
+                    world.loadWetter().wetterComp().altWetterhinweiseWohinHinaus(
+                            timeTaker.now().plus(wegZeit), true).stream()
+                            .map(a -> a.getDescription(duSc()))
+                            .map(advAngkonstituente -> GEHEN
+                                    .mitAdvAngabe(
+                                            new AdvAngabeSkopusVerbWohinWoher(
+                                                    joinToString(
+                                                            "die Marmortreppe hinunter",
+                                                            advAngkonstituente.guessNumWords() > 5 ?
+                                                                    "und" : null,
+                                                            advAngkonstituente,
+                                                            "hinaus")))
+                                    .alsSatzMitSubjekt(duSc())));
             return alt.timed(wegZeit)
                     .withCounterIdIncrementedIfTextIsNarrated(
                             VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL).build();

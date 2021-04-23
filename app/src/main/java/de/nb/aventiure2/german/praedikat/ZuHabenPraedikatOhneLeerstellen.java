@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 
 import java.util.Collection;
+import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -255,5 +256,22 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         // "Mich hat zu frieren".
         return lexikalischerKern.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final ZuHabenPraedikatOhneLeerstellen that = (ZuHabenPraedikatOhneLeerstellen) o;
+        return lexikalischerKern.equals(that.lexikalischerKern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lexikalischerKern);
     }
 }

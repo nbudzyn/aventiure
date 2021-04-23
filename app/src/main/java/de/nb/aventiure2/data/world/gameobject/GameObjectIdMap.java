@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import androidx.annotation.Nullable;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
 import java.util.HashMap;
 
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -12,7 +14,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  * {@link de.nb.aventiure2.data.world.base.GameObject}s.
  */
 class GameObjectIdMap extends HashMap<GameObjectId, GameObject> {
-    @Nullable
     void putAll(final GameObject... gameObjects) {
         for (final GameObject gameObject : gameObjects) {
             put(gameObject);
@@ -20,6 +21,7 @@ class GameObjectIdMap extends HashMap<GameObjectId, GameObject> {
     }
 
     @Nullable
+    @CanIgnoreReturnValue
     private GameObject put(final GameObject gameObject) {
         return super.put(gameObject.getId(), gameObject);
     }

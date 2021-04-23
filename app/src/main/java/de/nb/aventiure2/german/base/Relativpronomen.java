@@ -4,6 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Objects;
+
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -222,5 +224,25 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
     @Override
     public Person getPerson() {
         return person;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final Relativpronomen that = (Relativpronomen) o;
+        return person == that.person;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), person);
     }
 }

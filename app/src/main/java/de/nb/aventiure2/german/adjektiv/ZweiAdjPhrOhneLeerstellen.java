@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.adjektiv;
 
 import com.google.common.base.Joiner;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -175,5 +177,27 @@ public class ZweiAdjPhrOhneLeerstellen
     @Override
     public boolean hasVorangestellteAngaben() {
         return getErst().hasVorangestellteAngaben();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        final ZweiAdjPhrOhneLeerstellen that = (ZweiAdjPhrOhneLeerstellen) o;
+        return gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung
+                == that.gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects
+                .hash(super.hashCode(), gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung);
     }
 }

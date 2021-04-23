@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
@@ -97,5 +99,24 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     @Override
     public boolean hasVorangestellteAngaben() {
         return graduativeAngabe != null || advAngabeSkopusSatz != null;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final AbstractAdjPhrOhneLeerstellen that = (AbstractAdjPhrOhneLeerstellen) o;
+        return Objects.equals(advAngabeSkopusSatz, that.advAngabeSkopusSatz) &&
+                Objects.equals(graduativeAngabe, that.graduativeAngabe) &&
+                adjektiv.equals(that.adjektiv);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
     }
 }

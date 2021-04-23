@@ -37,6 +37,8 @@ public abstract class NarrationDao {
     @Nullable
     private Narration narrationCached;
 
+    // private static final Logger LOGGER = Logger.getLogger();
+
     NarrationDao() {
     }
 
@@ -246,12 +248,17 @@ public abstract class NarrationDao {
             final StemmedWords baseStems) {
         checkArgument(!alternatives.isEmpty(), "No alternatives");
 
+        // LOGGER.d("Alternatives: " + alternatives.stream().map(d -> d.getText()).collect(
+        //        Collectors.toList()));
+
         // Optimierung. Wenn es nur eine Alternative gibt, machen wir keine
         // Buchführung, ob sie verbraucht wird.
         final ConsumedAlternatives consumedAlternatives =
                 alternatives.size() != 1 ?
                         loadConsumed(alternatives) :
                         ConsumedAlternatives.EMPTY;
+
+        // LOGGER.d("# consumed: " + consumedAlternatives.size());
 
         float bestScore = Float.NEGATIVE_INFINITY;
         int bestIndex = -1;

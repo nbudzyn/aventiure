@@ -88,6 +88,8 @@ class AStarNode {
         }
         final AStarNode aStarNode = (AStarNode) o;
         return Objects.equals(location, aStarNode.location) &&
+                // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
+                //  probleme mit Sets o.Ä. ergeben...
                 Objects.equals(dist, aStarNode.dist) &&
                 Objects.equals(estimate, aStarNode.estimate) &&
                 Objects.equals(totalCost, aStarNode.totalCost) &&
