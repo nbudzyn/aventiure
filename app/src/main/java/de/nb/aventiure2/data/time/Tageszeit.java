@@ -253,16 +253,6 @@ public enum Tageszeit {
         return nomenFlexionsspalte;
     }
 
-
-    public boolean enthaltenImIntervall(final Tageszeit von, final Tageszeit bis) {
-        return von == this
-                || (von != bis && von.getNachfolger() == this)
-                || (von != bis && von.getNachfolger() != bis
-                && von.getNachfolger().getNachfolger() == this)
-                || (von != bis && von.getNachfolger() != bis
-                && von.getNachfolger().getNachfolger() != bis);
-    }
-
     public boolean hasNachfolger(final Tageszeit other) {
         return getNachfolger() == other;
     }

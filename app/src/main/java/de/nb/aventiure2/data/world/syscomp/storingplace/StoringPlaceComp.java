@@ -6,10 +6,12 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 
@@ -65,6 +67,12 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
     private final Supplier<Boolean> leuchtetErmittler;
 
     /**
+     * Die Temperatur-Range, die an dieser StoringPlaceComp vorliegen kann (z.B.
+     * weil sie beheizt ist oder wenn es sich um einen kühlen Ort handelt).
+     */
+    private final EnumRange<Temperatur> temperaturRange;
+
+    /**
      * Erzeugt eine Komponente, die nicht selbst über ihre Lichtverhältnisse bestimmt.
      */
     public StoringPlaceComp(final GameObjectId id,
@@ -88,7 +96,21 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             final Supplier<Boolean> leuchtetErmittler) {
         this(id, timeTaker, world, locationComp, locationMode, niedrig,
                 geschlossenheit,
-                leuchtetErmittler,
+                leuchtetErmittler, EnumRange.all(Temperatur.class));
+    }
+
+    public StoringPlaceComp(final GameObjectId id,
+                            final TimeTaker timeTaker,
+                            final World world,
+                            @Nullable final LocationComp locationComp,
+                            final StoringPlaceType locationMode,
+                            final boolean niedrig,
+                            final Geschlossenheit geschlossenheit,
+                            final Supplier<Boolean> leuchtetErmittler,
+                            final EnumRange<Temperatur> temperaturRange) {
+        this(id, timeTaker, world, locationComp, locationMode, niedrig,
+                geschlossenheit,
+                leuchtetErmittler, temperaturRange,
                 null, null);
     }
 
@@ -102,6 +124,22 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
                             final Supplier<Boolean> leuchtetErmittler,
                             @Nullable final SpatialConnectionData spatialConnectionInData,
                             @Nullable final SpatialConnectionData spatialConnectionOutData) {
+        this(id, timeTaker, world, locationComp, locationMode, niedrig, geschlossenheit,
+                leuchtetErmittler, EnumRange.all(Temperatur.class),
+                spatialConnectionInData, spatialConnectionOutData);
+    }
+
+    public StoringPlaceComp(final GameObjectId id,
+                            final TimeTaker timeTaker,
+                            final World world,
+                            @Nullable final LocationComp locationComp,
+                            final StoringPlaceType locationMode,
+                            final boolean niedrig,
+                            final Geschlossenheit geschlossenheit,
+                            final Supplier<Boolean> leuchtetErmittler,
+                            final EnumRange<Temperatur> temperaturRange,
+                            @Nullable final SpatialConnectionData spatialConnectionInData,
+                            @Nullable final SpatialConnectionData spatialConnectionOutData) {
         super(id);
         this.timeTaker = timeTaker;
         this.world = world;
@@ -110,6 +148,7 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
         this.niedrig = niedrig;
         this.geschlossenheit = geschlossenheit;
         this.leuchtetErmittler = leuchtetErmittler;
+        this.temperaturRange = temperaturRange;
         this.spatialConnectionInData = spatialConnectionInData;
         this.spatialConnectionOutData = spatialConnectionOutData;
     }
@@ -191,14 +230,46 @@ public class StoringPlaceComp extends AbstractStatelessComponent {
             }
 
             tmpStoringPlaceComp = tmpStoringPlaceComp.getOuterStoringPlaceComp();
-
-            if (tmpStoringPlaceComp == null) {
-                return res; // ==>
-            }
         }
 
         return res;
     }
+
+    public EnumRange<Temperatur> getEffectiveTemperaturRange() {
+        EnumRange<Temperatur> res = EnumRange.all(Temperatur.class);
+        @Nullable StoringPlaceComp tmpStoringPlaceComp = this;
+
+        while (tmpStoringPlaceComp != null) {
+            @Nullable final EnumRange<Temperatur> intersection =
+                    res.intersect(tmpStoringPlaceComp.temperaturRange);
+            if (intersection == null) {
+                // ein Ofen steht in der Antarktis? Dann gilt die Range des Ofens
+                return res;
+            }
+
+            res = intersection;
+
+            switch (tmpStoringPlaceComp.geschlossenheit) {
+                case NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT:
+                    // Eine Liege steht an einem kühlen Ort - dann
+                    // kann es auf der Liege auch nicht wärmer sein.
+                    break;
+                case MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS:
+                    // Eine offene Kiste steht an einem kühlen Ort - dann
+                    // kann es in der offenen Kiste auch nicht wärmer sein.
+                    break;
+                case MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS:
+                    // Eine geschlossene Kiste steht an einem kühlen Ort -
+                    // dann gilt der Wert der geschlossenen Kiste
+                    return res;
+            }
+
+            tmpStoringPlaceComp = tmpStoringPlaceComp.getOuterStoringPlaceComp();
+        }
+
+        return res;
+    }
+
 
     /**
      * Ermittelt die äußerste {@code StoringPlaceComp}, aus der noch Licht in diese

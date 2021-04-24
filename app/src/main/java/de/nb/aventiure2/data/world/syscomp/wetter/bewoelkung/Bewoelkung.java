@@ -1,7 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
 import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.Betweenable;
+import de.nb.aventiure2.data.world.base.Betweenable;
 
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 

@@ -102,6 +102,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     KLIRREND("klirrend"),
     KRUMM("krumm"),
     KUEHL("kühl"),
+    KUEHLER("kühler"),
     LANG("lang"),
     LANGSAM("langsam"),
     LAU("lau"),
@@ -145,6 +146,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ZUFRIEDEN("zufrieden"),
     WACH("wach"),
     WARM("warm"),
+    WAERMER("wärmer"),
     WOLKENVERHANGEN("wolkenverhangen"),
     WUNDERSCHOEN("wunderschön"),
     ZORNIG("zornig");

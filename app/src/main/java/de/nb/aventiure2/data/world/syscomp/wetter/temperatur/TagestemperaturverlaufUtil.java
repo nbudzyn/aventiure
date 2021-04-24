@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Temperatur;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 
@@ -29,13 +30,13 @@ public class TagestemperaturverlaufUtil {
     }
 
     private static float calcAnteil(final AvTime time) {
-        if (time.isBefore(oClock(3, 30))) {
-            return interpolate(0.25f, oClock(0),
-                    0f, oClock(3, 30), time);
+        if (time.isBefore(oClock(6, 30))) {
+            return interpolate(0.15f, oClock(0),
+                    0f, oClock(6, 30), time);
         }
 
         if (time.isBefore(oClock(13))) {
-            return interpolate(0.0f, oClock(3, 30),
+            return interpolate(0.0f, oClock(6, 30),
                     0.8f, oClock(13), time);
         }
 
@@ -44,8 +45,13 @@ public class TagestemperaturverlaufUtil {
                     1f, oClock(17, 30), time);
         }
 
-        return interpolate(1f, oClock(17, 30),
-                0.25f,
+        if (time.isBefore(oClock(23))) {
+            return interpolate(1f, oClock(17, 30),
+                    0.2f, oClock(23), time);
+        }
+
+        return interpolate(0.2f, oClock(23),
+                0.15f,
                 oClock(23, 59, 59),
                 time);
     }

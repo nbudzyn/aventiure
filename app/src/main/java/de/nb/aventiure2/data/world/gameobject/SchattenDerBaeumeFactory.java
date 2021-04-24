@@ -7,10 +7,12 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -74,6 +76,7 @@ class SchattenDerBaeumeFactory {
                 locationComp,
                 STAMM_EINES_BAUMS,
                 false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS, LEUCHTET_NIE,
+                EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                 conData("vor den Bäumen",
                         "In den Schatten der Bäume setzen",
                         secs(10),

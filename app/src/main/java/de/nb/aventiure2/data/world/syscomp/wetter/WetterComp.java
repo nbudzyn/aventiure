@@ -14,12 +14,14 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
+import de.nb.aventiure2.data.world.base.EnumRange;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
-import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -60,13 +62,17 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onScEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        // FIXME Ggf. etwas schreiben wie "– hier ist es angenehm kühl"
-        //  ("Angenehm kühl ist es hier", ...)
-        //  automatisch erzeugen, wenn man an einen Raum kommt, dessen
-        //  Maximaltemperatur unter der zuletzt beschriebenen oder üblichen...
-        //  Temperatur liegt.
-        //  Außerdem solche Texte entfernen, wo sie derzeit
-        //  erzeugt werden - damit zumindest nichts doppelt kommt.
+        final ImmutableCollection<AbstractDescription<?>> alt =
+                requirePcd().altOnScEnter(
+                        timeTaker.now(),
+                        from != null ?
+                                from.storingPlaceComp().getEffectiveTemperaturRange() :
+                                null,
+                        to.storingPlaceComp().getEffectiveTemperaturRange());
+
+        if (!alt.isEmpty()) {
+            n.narrateAlt(alt, NO_TIME);
+        }
     }
 
     /**
@@ -77,10 +83,17 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         // Ggf. scActionStepCountDao verwenden,
         // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
 
+        @Nullable final ILocationGO location = loadScLocation();
+
         final ImmutableCollection<AbstractDescription<?>>
                 altHinweise = requirePcd().altWetterhinweiseWennNoetig(
                 timeTaker.now(),
-                loadScDrinnenDraussen());
+                location != null ? location.storingPlaceComp().getDrinnenDraussen() :
+                        // Der SC hat die Welt verlassen? - Dann ist kann er wohl gerade nicht den
+                        // irdischen Himmel sehen.
+                        DRINNEN,
+                location != null ? location.storingPlaceComp().getEffectiveTemperaturRange() :
+                        EnumRange.all(Temperatur.class));
 
         if (!altHinweise.isEmpty()) {
             n.narrateAlt(altHinweise, NO_TIME);
@@ -100,12 +113,19 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      *
-     * @see #altWetterhinweise(AvDateTime, DrinnenDraussen)
+     * @see #altWetterhinweise(AvDateTime, DrinnenDraussen, EnumRange)
      */
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
     altWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
-        return altWetterhinweise(timeTaker.now(), loadScDrinnenDraussen());
+        @Nullable final ILocationGO location = loadScLocation();
+        return altWetterhinweise(
+                timeTaker.now(),
+                location != null ?
+                        location.storingPlaceComp().getDrinnenDraussen() : DRINNEN,
+                location != null ?
+                        location.storingPlaceComp().getEffectiveTemperaturRange() :
+                        EnumRange.all(Temperatur.class));
     }
 
     /**
@@ -119,8 +139,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     @CheckReturnValue
     private ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
-            final AvDateTime time, final DrinnenDraussen drinnenDraussen) {
-        return requirePcd().altWetterhinweise(time, drinnenDraussen);
+            final AvDateTime time, final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange) {
+        return requirePcd().altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
     }
 
     /**
@@ -132,13 +153,17 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
-     * @param time               Die Zeit, zu der der SC draußen angekommen ist
-     * @param unterOffenenHimmel Ob der SC unter offenen Himmel kommt
+     * @param time Die Zeit, zu der der SC draußen angekommen ist
      */
     @NonNull
     public ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
-            final AvDateTime time, final boolean unterOffenenHimmel) {
-        return requirePcd().altWetterhinweiseKommtNachDraussen(time, unterOffenenHimmel);
+            final AvDateTime time, final GameObjectId locationId) {
+        @Nullable final ILocationGO location = (ILocationGO) world.load(locationId);
+        return requirePcd().altWetterhinweiseKommtNachDraussen(
+                time,
+                location.storingPlaceComp().getDrinnenDraussen() ==
+                        DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                location.storingPlaceComp().getEffectiveTemperaturRange());
     }
 
     /**
@@ -158,9 +183,18 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
             return ImmutableList.of();
         }
 
+        @Nullable final ILocationGO location = loadScLocation();
+
+        // Der SC hat die Welt verlassen? - Dann ist kann er wohl gerade nicht den
+        // irdischen Himmel sehen.
         return requirePcd()
                 .altDescUeberHeuteOderDenTagWennDraussenSinnvoll(timeTaker.now().getTime(),
-                        isScUnterOffenemHimmel());
+                        location != null
+                                && location.storingPlaceComp().getDrinnenDraussen()
+                                == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                        location != null ?
+                                location.storingPlaceComp().getEffectiveTemperaturRange() :
+                                EnumRange.all(Temperatur.class));
     }
 
     @NonNull
@@ -177,12 +211,17 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
-     * @param time               Die Zeit, zu der der SC draußen angekommen ist
-     * @param unterOffenenHimmel Ob der SC unter offenen Himmel kommt
+     * @param time Die Zeit, zu der der SC draußen angekommen ist
      */
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
-            final AvDateTime time, final boolean unterOffenenHimmel) {
-        return requirePcd().altWetterhinweiseWohinHinaus(time, unterOffenenHimmel);
+            final AvDateTime time, final GameObjectId locationId) {
+        final ILocationGO location = (ILocationGO) world.load(locationId);
+
+        return requirePcd().altWetterhinweiseWohinHinaus(
+                time,
+                location.storingPlaceComp().getDrinnenDraussen() == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                location.storingPlaceComp().getEffectiveTemperaturRange());
+
     }
 
     /**
@@ -193,12 +232,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Leser über das aktuelle Wetter informiert wurde.
      *
-     * @param time               Die Zeit, zu der der SC dort (angekommen) ist
-     * @param unterOffenemHimmel Ob der SC (dann) unter offenen Himmel ist
+     * @param time Die Zeit, zu der der SC dort (angekommen) ist
      */
     public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
-            final AvDateTime time, final boolean unterOffenemHimmel) {
-        return requirePcd().altWetterhinweiseWoDraussen(time, unterOffenemHimmel);
+            final AvDateTime time, final GameObjectId locationId) {
+        final ILocationGO location = (ILocationGO) world.load(locationId);
+
+        return requirePcd().altWetterhinweiseWoDraussen(time,
+                location.storingPlaceComp().getDrinnenDraussen() ==
+                        DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                location.storingPlaceComp().getEffectiveTemperaturRange());
     }
 
     /**
@@ -242,19 +285,18 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     @NonNull
     public Temperatur getTemperaturFuerAktuellenZeitpunktAmOrtDesSC() {
-        return getTemperatur(timeTaker.now());
+        return getTemperatur(timeTaker.now(), loadScLocation());
     }
 
     /**
      * Gibt die Temperatur</i> zurück.
      */
     @NonNull
-    public Temperatur getTemperatur(final AvDateTime time) {
-        return requirePcd().getTemperatur(time);
-    }
-
-    private boolean isScUnterOffenemHimmel() {
-        return loadScDrinnenDraussen() == DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+    public Temperatur getTemperatur(final AvDateTime time,
+                                    @Nullable final ILocationGO location) {
+        return requirePcd().getTemperatur(time,
+                location != null ? location.storingPlaceComp().getEffectiveTemperaturRange() :
+                        EnumRange.all(Temperatur.class));
     }
 
     private boolean isScDraussen() {
@@ -262,7 +304,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     private DrinnenDraussen loadScDrinnenDraussen() {
-        @Nullable final ILocationGO location = world.loadSC().locationComp().getLocation();
+        @Nullable final ILocationGO location = loadScLocation();
         if (location == null) {
             // Der SC hat die Welt verlassen? - Dann ist kann er wohl gerade nicht den
             // irdischen Himmel sehen.
@@ -270,5 +312,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         }
 
         return location.storingPlaceComp().getDrinnenDraussen();
+    }
+
+    @Nullable
+    private ILocationGO loadScLocation() {
+        return world.loadSC().locationComp().getLocation();
     }
 }

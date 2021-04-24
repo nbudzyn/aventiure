@@ -205,7 +205,7 @@ public class SchlosswacheReactionsComp
     private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWetterhinweiseWohinAdvAngaben(
             final AvDateTime timeDraussen) {
         return world.loadWetter().wetterComp()
-                .altWetterhinweiseWohinHinaus(timeDraussen, true);
+                .altWetterhinweiseWohinHinaus(timeDraussen, DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
     /**

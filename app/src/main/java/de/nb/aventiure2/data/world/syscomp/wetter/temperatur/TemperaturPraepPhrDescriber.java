@@ -4,6 +4,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;

@@ -128,7 +128,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                 || lichtverhaeltnisseDraussen == DUNKEL) {
             final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
                     world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
-                            timeTaker.now().plus(wegZeit), true);
+                            timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS);
             if (!altWetterhinweiseDraussen.isEmpty()) {
                 return mapToSet(
                         altWetterhinweiseDraussen,
@@ -146,7 +146,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
             // Wetterhinweise auf jeden Fall ausgeben!
             alt.addAll(
                     world.loadWetter().wetterComp().altWetterhinweiseWohinHinaus(
-                            timeTaker.now().plus(wegZeit), true).stream()
+                            timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS).stream()
                             .map(a -> a.getDescription(duSc()))
                             .map(advAngkonstituente -> GEHEN
                                     .mitAdvAngabe(
@@ -178,7 +178,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         final AvTimeSpan wegZeit = mins(1);
         final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
                 world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
-                        timeTaker.now().plus(wegZeit), true);
+                        timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS);
         if (!altWetterhinweiseDraussen.isEmpty()) {
             return mapToSet(altWetterhinweiseDraussen, wetterDesc ->
                     du("gehst",

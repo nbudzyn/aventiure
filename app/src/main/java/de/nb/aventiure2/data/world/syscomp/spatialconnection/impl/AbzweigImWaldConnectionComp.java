@@ -12,7 +12,6 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -25,7 +24,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
-import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
@@ -156,7 +154,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     @NonNull
-    private TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
+    private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnknownDunkel() {
         final AvTimeSpan wegZeit = mins(10);
         return du("gehst", "den breiteren Weg weiter in",
                 "den Wald hinein. Wohl ist dir dabei nicht",
@@ -164,8 +162,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 "In der Ferne heult ein Wolf – oder hast du",
                 "dir das eingebildet?", PARAGRAPH, "Dann kommst du an einen",
                 "Baum, unter dem ist ein Brunnen.",
-                kuehlOderWaermer(timeTaker.now().plus(wegZeit)) ? "Kühl" : "Kalt",
-                "ist es hier, und der Weg scheint zu Ende zu sein").timed(wegZeit);
+                "Der Weg scheint zu Ende zu sein").timed(wegZeit);
     }
 
     private ImmutableCollection<TimedDescription<?>>
@@ -210,24 +207,15 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 .timed(mins(3));
     }
 
-    private TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
+    private static TimedDescription<?> getDescTo_ImWaldBeimBrunnenUnkownHell() {
         final AvTimeSpan wegZeit = mins(5);
         return neuerSatz("Der breitere Weg führt zu einer alten",
                 "Linde, unter der ist ein Brunnen.",
                 "Hinter dem Brunnen endet der Weg und der",
                 "wilde Wald beginnt", PARAGRAPH,
-                "Du setzt dich an den Brunnenrand",
-                kuehlOderWaermer(timeTaker.now().plus(wegZeit)) ?
-                        "– hier ist es angenehm kühl" :
-                        ". Auch hier ist es kalt",
-                PARAGRAPH)
+                "Du setzt dich an den Brunnenrand")
                 .timed(wegZeit)
                 .dann();
-    }
-
-    private boolean kuehlOderWaermer(final AvDateTime time) {
-        return world.loadWetter().wetterComp().getTemperatur(time)
-                .compareTo(Temperatur.KUEHL) >= 0;
     }
 
     private <LOC_DESC extends ILocatableGO & IDescribableGO>

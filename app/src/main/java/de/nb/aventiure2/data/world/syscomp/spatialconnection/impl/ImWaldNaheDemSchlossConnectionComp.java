@@ -129,7 +129,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             final AvTimeSpan wegzeit = mins(15);
             // Wetterhinweis muss ausgegeben werden!
             return world.loadWetter().wetterComp().altWetterhinweiseWoDraussen(
-                    now.plus(wegzeit), true).stream()
+                    now.plus(wegzeit), DRAUSSEN_VOR_DEM_SCHLOSS).stream()
                     .map(p ->
                             du(SENTENCE, "gehst",
                                     "noch eine Weile vorsichtig durch",

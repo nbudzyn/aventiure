@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 import androidx.annotation.Nullable;
 import androidx.room.TypeConverter;
 
+import de.nb.aventiure2.data.world.base.Temperatur;
+
 public class TemperaturConverters {
     @TypeConverter
     @Nullable

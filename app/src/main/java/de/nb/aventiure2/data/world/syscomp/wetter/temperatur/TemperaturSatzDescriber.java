@@ -10,6 +10,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
@@ -29,11 +30,11 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.base.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
+import static de.nb.aventiure2.data.world.base.Temperatur.RECHT_HEISS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
-import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.RECHT_HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLIRREND;
@@ -160,7 +161,9 @@ public class TemperaturSatzDescriber {
             final DrinnenDraussen drinnenDraussen) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToList(praedikativumDescriber.alt(temperatur, drinnenDraussen.isDraussen()),
+        alt.addAll(mapToList(praedikativumDescriber.alt(
+                temperatur, tageszeit,
+                drinnenDraussen.isDraussen()),
                 Praedikativum::alsEsIstSatz));
 
         if (drinnenDraussen.isDraussen()) {
@@ -172,7 +175,7 @@ public class TemperaturSatzDescriber {
             if (tageszeit == ABENDS
                     && drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL
                     && temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
-                alt.addAll(altDraussenNoch(temperatur));
+                alt.addAll(altDraussenNoch(temperatur, ABENDS));
             }
         }
 
@@ -261,7 +264,8 @@ public class TemperaturSatzDescriber {
                             .collect(toSet()));
 
             // "es ist schon dunkel und ziemlich kühl"
-            alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
+            alt.addAll(praedikativumDescriber.alt(
+                    temperatur, time.getTageszeit(), true).stream()
                     .flatMap(tempAdjPhr ->
                             altSchonBereitsNochDunkelAdjPhr.stream()
                                     .map(schonDunkel ->
@@ -285,9 +289,12 @@ public class TemperaturSatzDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<Satz> altDraussenHeuteDerTagSofernSinnvoll(
-            final Temperatur temperatur, final AvTime time,
+            final Temperatur temperatur,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final AvTime time,
             final boolean sonneNichtErwaehnen) {
-        if (!heuteOderDerTagSinnvoll(temperatur, time)) {
+        if (!heuteOderDerTagSinnvoll(
+                temperatur, generelleTemperaturOutsideLocationTemperaturRange, time)) {
             return ImmutableSet.of();
         }
 
@@ -296,13 +303,13 @@ public class TemperaturSatzDescriber {
         // "Heute ist es heiß / warmes Wetter."
         alt.addAll(
                 mapToList(praedikativumDescriber.alt(
-                        temperatur,
+                        temperatur, time.getTageszeit(),
                         true // Drinnen sind solche Sätze
                         // nicht sinnvoll
                 ), a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
 
-        alt.addAll(altDerTag(temperatur));
+        alt.addAll(altDerTag(time.getTageszeit(), temperatur));
 
         if (!sonneNichtErwaehnen) {
             alt.addAll(mapToList(altSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
@@ -316,12 +323,13 @@ public class TemperaturSatzDescriber {
     /**
      * Erzeugt Sätze in der Art "Der Tag ist sehr heiß" - nur unter gewissen
      * Umständen sinnvoll, z.B. nur draußen,
-     * vgl. {@link #heuteOderDerTagSinnvoll(Temperatur, AvTime)}.
+     * vgl. {@link #heuteOderDerTagSinnvoll(Temperatur, boolean, AvTime)}.
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableCollection<Satz> altDerTag(final Temperatur temperatur) {
-        return praedikativumDescriber.alt(temperatur, true).stream()
+    private ImmutableCollection<Satz> altDerTag(final Tageszeit tageszeit,
+                                                final Temperatur temperatur) {
+        return praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
                 .collect(toImmutableList());
@@ -333,11 +341,15 @@ public class TemperaturSatzDescriber {
      * Sätze sinnvoll sind, z.B. wohl nur draußen.
      */
     @CheckReturnValue
-    private boolean heuteOderDerTagSinnvoll(final Temperatur temperatur,
-                                            final AvTime time) {
-        return
-                // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
-                TagestemperaturverlaufUtil.saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(time)
+    private boolean heuteOderDerTagSinnvoll(
+            final Temperatur temperatur,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final AvTime time) {
+        return // Wenn man das volle Extrem der Temperatur nicht spürt, kein "der Tag ist"!
+                !generelleTemperaturOutsideLocationTemperaturRange
+                        // Abends zu sagen "der Tag ist recht heiß" wäre unnatürlich
+                        && TagestemperaturverlaufUtil
+                        .saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(time)
                         // Zu sagen "der Tag so warm oder kalt wie jeder andere auch" wäre
                         // unnatürlich
                         && !temperatur.isBetweenIncluding(
@@ -364,11 +376,12 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<EinzelnerSatz> altDraussenNoch(final Temperatur temperatur) {
+    public ImmutableCollection<EinzelnerSatz> altDraussenNoch(final Temperatur temperatur,
+                                                              final Tageszeit tageszeit) {
         final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
+        alt.addAll(praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -377,7 +390,7 @@ public class TemperaturSatzDescriber {
                 .collect(toImmutableList()));
 
         // "Es ist noch warmes Wetter."
-        alt.addAll(praedikativumDescriber.alt(temperatur, true).stream()
+        alt.addAll(praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))
@@ -431,4 +444,19 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
+
+    /**
+     * Gibt Sätze zurück wie "hier ist es angenehm kühl".
+     */
+    @CheckReturnValue
+    public ImmutableCollection<Satz> altDeutlicherUnterschiedZuVorLocation(
+            final Temperatur temperatur, final int delta) {
+        return mapToList(
+                praedikativumDescriber
+                        .altAdjPhrDeutlicherUnterschiedZuVorLocation(temperatur, delta),
+                adjPhr -> praedikativumPraedikatMit(adjPhr)
+                        .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("hier"))
+                        .mitAnschlusswort(null));
+    }
 }

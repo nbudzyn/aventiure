@@ -19,9 +19,11 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
@@ -288,7 +290,7 @@ public class World {
                 room.create(SCHLOSS_VORHALLE, StoringPlaceType.EIN_TISCH,
                         false,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_IMMER,
+                        LEUCHTET_IMMER, EnumRange.of(Temperatur.KUEHL, Temperatur.WARM),
                         new SchlossVorhalleConnectionComp(db, timeTaker, n, this)),
                 room.create(DRAUSSEN_VOR_DEM_SCHLOSS,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
@@ -304,6 +306,7 @@ public class World {
                 room.create(IM_WALD_NAHE_DEM_SCHLOSS, StoringPlaceType.WEG,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         new ImWaldNaheDemSchlossConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DEM_ALTEN_TURM,
                         StoringPlaceType.STEINIGER_GRUND_VOR_TURM,
@@ -314,35 +317,43 @@ public class World {
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_NIE,
+                        LEUCHTET_NIE, EnumRange.of(Temperatur.KUEHL, Temperatur.WARM),
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         new AbzweigImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(VOR_DER_HUETTE_IM_WALD,
                         StoringPlaceType.ERDBODEN_VOR_DER_HUETTE,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         new VorDerHuetteImWaldConnectionComp(db, timeTaker, n, this)),
                 room.create(HUETTE_IM_WALD, StoringPlaceType.HOLZTISCH,
                         false,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT,
+                                Temperatur.SEHR_HEISS),
                         connection.createHuetteImWald()),
                 room.create(HINTER_DER_HUETTE, StoringPlaceType.UNTER_DEM_BAUM,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         connection.createHinterDerHuette()),
                 room.createImWaldBeimBrunnen(),
                 room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT,
+                                Temperatur.KUEHL),
                         connection.createNoConnections(UNTEN_IM_BRUNNEN)),
                 room.create(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                         StoringPlaceType.MATSCHIGER_WALDBODEN,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
                 creature.createFroschprinz(),
@@ -368,12 +379,14 @@ public class World {
                         EINE_TASCHE,
                         true,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_NIE),
+                        LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT, Temperatur.WARM)),
                 object.create(HAENDE_DES_SPIELER_CHARAKTERS,
                         np(NomenFlexionsspalte.HAENDE, HAENDE_DES_SPIELER_CHARAKTERS),
                         SPIELER_CHARAKTER, null,
                         false,
-                        NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT, false, HAENDE),
+                        NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT, false, HAENDE,
+                        EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT, Temperatur.WARM)),
                 object.create(GOLDENE_KUGEL,
                         np(F, INDEF, "goldene Kugel",
                                 "goldenen Kugel", GOLDENE_KUGEL),
@@ -399,7 +412,8 @@ public class World {
                                 "langen, aus Brettern gezimmerten Tisch",
                                 SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
                         np(LANG, BRETTERTISCH, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
-                        np(NomenFlexionsspalte.TISCH, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
+                        np(NomenFlexionsspalte.TISCH,
+                                SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST),
                         // Der Tisch wird erst spontan hinzugefügt, wenn
                         // sich der Benutzer an einen Platz setzt.
                         // Ansonsten bekommen wir vorher Aktionen wie

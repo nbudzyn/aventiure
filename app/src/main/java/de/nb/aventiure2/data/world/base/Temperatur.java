@@ -1,13 +1,11 @@
-package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
+package de.nb.aventiure2.data.world.base;
 
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.Betweenable;
 
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 
-@SuppressWarnings("DuplicateBranchesInSwitch")
 public enum Temperatur implements Betweenable<Temperatur> {
     // Reihenfolge ist relevant, nicht ändern!
     KLIRREND_KALT,
@@ -45,4 +43,7 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return isBetweenIncluding(KUEHL, WARM);
     }
 
+    public int minus(final Temperatur other) {
+        return ordinal() - other.ordinal();
+    }
 }

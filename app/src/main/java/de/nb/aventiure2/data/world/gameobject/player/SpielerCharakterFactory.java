@@ -8,8 +8,10 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
@@ -81,7 +83,8 @@ public class SpielerCharakterFactory {
                 new StoringPlaceComp(id, timeTaker, world, locationComp, EINE_TASCHE,
                         true,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_NIE),
+                        LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KUEHL, Temperatur.RECHT_HEISS)),
                 waitingComp,
                 feelingsComp,
                 memoryComp,

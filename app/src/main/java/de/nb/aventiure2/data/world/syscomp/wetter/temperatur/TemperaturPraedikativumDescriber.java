@@ -11,6 +11,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
@@ -24,8 +25,9 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur.WARM;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.data.world.base.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
+import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEISSEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
@@ -195,7 +197,8 @@ public class TemperaturPraedikativumDescriber {
     @NonNull
     @CheckReturnValue
     ImmutableList<Praedikativum> alt(
-            final Temperatur temperatur, final boolean draussen) {
+            final Temperatur temperatur, final Tageszeit tageszeit,
+            final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
 
         alt.addAll(altAdjPhr(temperatur, false));
@@ -210,13 +213,13 @@ public class TemperaturPraedikativumDescriber {
             case KUEHL:
                 break;
             case WARM:
-                if (draussen) {
+                if (draussen && tageszeit != NACHTS) {
                     alt.add(npArtikellos(AdjektivOhneErgaenzungen.WARM,
                             NomenFlexionsspalte.WETTER));
                 }
                 break;
             case RECHT_HEISS:
-                if (draussen) {
+                if (draussen && tageszeit == TAGSUEBER) {
                     alt.add(np(INDEF, HEISS, TAG));
                 }
                 break;
@@ -314,6 +317,114 @@ public class TemperaturPraedikativumDescriber {
                         konnektorErfordertKommata, konnektor, // ", aber"
                         tempAdjPhr.mitAdvAngabe(advAngabe)));
     }
+
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
+     * "Hier ist es (angenehm warm)"
+     */
+    @NonNull
+    @CheckReturnValue
+    ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrDeutlicherUnterschiedZuVorLocation(
+            final Temperatur temperatur, final int delta) {
+        if (delta > 0) {
+            return altAdjPhrDeutlichWaermerAlsVorLocation(temperatur);
+        }
+
+        return altAdjPhrDeutlichKaelterAlsVorLocation(temperatur);
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
+     * "Hier ist es (angenehm warm)"
+     */
+    @NonNull
+    @CheckReturnValue
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrDeutlichWaermerAlsVorLocation(
+            final Temperatur temperatur) {
+        final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt = ImmutableList.builder();
+
+        switch (temperatur) {
+            case KLIRREND_KALT:  // Sollte eigentlich gar nicht sein
+                // Fall-through
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT: // Sollte eigentlich gar nicht sein
+                // Fall-through
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.add(AdjektivOhneErgaenzungen.WAERMER.mitGraduativerAngabe("etwas"),
+                        AdjektivOhneErgaenzungen.WAERMER.mitGraduativerAngabe("ein wenig"),
+                        AdjektivOhneErgaenzungen.KALT.mitGraduativerAngabe("nicht ganz so"),
+                        AdjektivOhneErgaenzungen.KALT
+                                .mitGraduativerAngabe("nicht ganz so elendig"),
+                        AdjektivOhneErgaenzungen.KALT.mitGraduativerAngabe("etwas weniger"));
+                break;
+            case KUEHL:
+                alt.add(AdjektivOhneErgaenzungen.KALT.mitGraduativerAngabe("längst nicht so"),
+                        AdjektivOhneErgaenzungen.KALT.mitGraduativerAngabe("deutlich weniger"),
+                        AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("beinahe schon"),
+                        AdjektivOhneErgaenzungen.WAERMER.mitGraduativerAngabe("deutlich"));
+                break;
+            case WARM:
+                alt.add(AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("angenehm"),
+                        AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("gemütlich"),
+                        AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("schön"),
+                        AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("richtig"),
+                        AdjektivOhneErgaenzungen.WARM.mitGraduativerAngabe("kuschlig"),
+                        AdjektivOhneErgaenzungen.WAERMER.mitGraduativerAngabe("deutlich"));
+                break;
+            case RECHT_HEISS:
+                // Fall-through
+            case SEHR_HEISS:
+                alt.addAll(altAdjPhr(temperatur, false));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
+     * "Hier ist es (angenehm kühl)"
+     */
+    @NonNull
+    @CheckReturnValue
+    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrDeutlichKaelterAlsVorLocation(
+            final Temperatur temperatur) {
+        final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt = ImmutableList.builder();
+
+        switch (temperatur) {
+            case KLIRREND_KALT:
+                // Fall-through
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                // Fall-through
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.addAll(altAdjPhr(temperatur, false));
+                break;
+            case KUEHL:
+                alt.add(AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("angenehm"),
+                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("schön"),
+                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("erfreulich"),
+                        AdjektivOhneErgaenzungen.KUEHLER.mitGraduativerAngabe("deutlich"));
+                break;
+            case WARM:
+                // Fall-through
+            case RECHT_HEISS: // Sollte eigentlich gar nicht sein
+                // Fall-through
+            case SEHR_HEISS: // Sollte eigentlich gar nicht sein
+                alt.add(AdjektivOhneErgaenzungen.KUEHLER,
+                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("nicht ganz so"),
+                        AdjektivOhneErgaenzungen.HEISS
+                                .mitGraduativerAngabe("nicht ganz so elendig"),
+                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("etwas weniger"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + temperatur);
+        }
+
+        return alt.build();
+    }
+
 
     /**
      * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art

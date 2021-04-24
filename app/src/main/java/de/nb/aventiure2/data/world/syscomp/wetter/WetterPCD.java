@@ -17,12 +17,13 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitSatzDescriber;
-import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.Temperatur;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -120,6 +121,55 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     /**
+     * Muss aufgerufen werden, wenn der SC einen Raum betritt. Vermerkt die Temperatur des
+     * Raums und gibt außerdem wenn der SC z.B. zum kühlen Brunnen kommt, alternative
+     * Texte zurück in der Art "hier ist es angenehm kühl" - oder eine leere
+     * {@link java.util.Collection}.
+     */
+    ImmutableCollection<AbstractDescription<?>> altOnScEnter(
+            final AvDateTime time,
+            @Nullable final EnumRange<Temperatur> locationTemperaturRangeFrom,
+            final EnumRange<Temperatur> locationTemperaturRangeTo) {
+        if (locationTemperaturRangeFrom == null) {
+            // Der SC ist aus dem "Nichts" aufgetaucht.
+            return ImmutableList.of();
+        }
+
+        // Wir ermitteln die Temperatur der vorigen Location und die Temperatur dieser
+        // Location - beide für denselben Zeitpunkt! (Wir wollen hier keine Sätze
+        // erzeugen, wenn es einen allgemeinen Temperatursturz gab - sondern nur, wenn
+        // der SC z.B. von einem warmen in in einen kühlen Raum kommt.
+        final Temperatur temperaturFrom = getTemperatur(time, locationTemperaturRangeFrom);
+        final Temperatur temperaturTo = getTemperatur(time, locationTemperaturRangeTo);
+
+        final int delta = temperaturTo.minus(temperaturFrom);
+
+        if (Math.abs(delta) < 2) {
+            return ImmutableList.of();
+        }
+
+        if ( // Es ist wärmer als an der Location zu vor - aber nicht zu warm...
+                (delta > 0 && temperaturTo.compareTo(Temperatur.WARM) <= 0)
+                        // ...oder es ist kälter als an der Location zu vor - aber nicht zu kalt:
+                        || (delta < 0 && temperaturTo.compareTo(Temperatur.KUEHL) >= 0)) {
+            // Die Temperatur ist angenehmer als an der Location zuvor.
+            return wetter.altTemperaturUnterschiedZuVorLocation(
+                    time.getTime(), locationTemperaturRangeTo, delta);
+        }
+
+        // Die Temperatur ist (wieder) unangenehmer als an der Location zuvor.
+
+        if (!temperaturTo.isUnauffaellig(time.getTageszeit())) {
+            // Wir merken uns, dass später noch einmal auf das unangenehme Wetter
+            // hingewiesen werden soll. Und zwar, wenn der SC wieder unter offenen Himmel
+            // kommt - dann ist das Wetter sicher am auffälligsten.
+            setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
+        }
+
+        return ImmutableList.of();
+    }
+
+    /**
      * Gibt - wenn nötig - alternative Wetterhinweise zurück.
      * <p>
      * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
@@ -128,12 +178,13 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     ImmutableCollection<AbstractDescription<?>> altWetterhinweiseWennNoetig(
-            final AvDateTime time, final DrinnenDraussen drinnenDraussen) {
+            final AvDateTime time, final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if ((drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
-            return altWetterhinweise(time, drinnenDraussen);
+            return altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
         }
 
         return ImmutableSet.of();
@@ -151,7 +202,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @CheckReturnValue
     ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
             final AvDateTime time,
-            final DrinnenDraussen drinnenDraussen) {
+            final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
                         .getTageszeit()) {
@@ -165,6 +217,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         final ImmutableCollection<AbstractDescription<?>> alt =
                 wetter.altWetterhinweise(time.getTime(),
                         drinnenDraussen,
+                        locationTemperaturRange,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
         if (!alt.isEmpty()) {
@@ -185,9 +238,6 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     // FIXME Sagen wir, es wird wärmer, aber der Benutzer ist drinnen (und dort wird es wärmer) -
     //  gibt das einen Hinweis?
-    // FIXME Wenn der Benutzer einen temperaturbeschränkten Ort erreicht und die "eigentliche"
-    //  Temperatur außerhalb der Schranken liegt (Benutzer setzt sich in einen Kühlschrank,
-    //  geht in die Sauna oder an den kühlen Brunnen) - gibt das einen Hinweis?
     // FIXME Sagen wir, es wird generell wärmen, aber der Benutzer merkt es nicht, weil es z.B.
     //  an einem Ort mit Maximaltemperatur ist. Gibt es - wenn er wieder einen Ort ohne
     //  Maximaltemperatur erreicht - einen Wetterhinweis?!
@@ -195,7 +245,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @NonNull
     ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
             final AvDateTime time,
-            final boolean unterOffenenHimmel) {
+            final boolean unterOffenenHimmel,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
                         .getTageszeit()) {
@@ -206,8 +257,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
             return ImmutableSet.of();
         }
 
-        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(time.getTime(),
+        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(
+                time.getTime(),
                 unterOffenenHimmel,
+                locationTemperaturRange,
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)
                 .build();
 
@@ -313,8 +366,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @NonNull
     ImmutableCollection<AbstractDescription<?>>
-    altDescUeberHeuteOderDenTagWennDraussenSinnvoll(final AvTime time,
-                                                    final boolean unterOffenemHimmel) {
+    altDescUeberHeuteOderDenTagWennDraussenSinnvoll(
+            final AvTime time,
+            final boolean unterOffenemHimmel,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
                         .getTageszeit()) {
@@ -325,7 +380,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
             return ImmutableSet.of();
         }
 
-        return wetter.altHeuteDerTagWennDraussenSinnvoll(time, unterOffenemHimmel);
+        return wetter.altHeuteDerTagWennDraussenSinnvoll(
+                time, unterOffenemHimmel, locationTemperaturRange);
 
         // Kein "vollwertiger Wetterhinweis" - Flags bleiben unverändert.
     }
@@ -345,7 +401,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvDateTime time,
-            final boolean unterOffenenHimmel) {
+            final boolean unterOffenenHimmel,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
                         .getTageszeit()) {
@@ -364,6 +421,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         final ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> alt =
                 wetter.altWetterhinweiseWohinHinaus(time.getTime(), unterOffenenHimmel,
+                        locationTemperaturRange,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
         saveWetterhinweisDraussenGegeben(unterOffenenHimmel);
@@ -384,7 +442,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
             final AvDateTime time,
-            final boolean unterOffenemHimmel) {
+            final boolean unterOffenemHimmel,
+            final EnumRange<Temperatur> locationTemperaturRange) {
         if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
                         .getTageszeit()) {
@@ -403,6 +462,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         final ImmutableCollection<AdvAngabeSkopusVerbAllg> alt =
                 wetter.altWetterhinweisWoDraussen(time.getTime(), unterOffenemHimmel,
+                        locationTemperaturRange,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
 
         saveWetterhinweisDraussenGegeben(unterOffenemHimmel);
@@ -459,11 +519,12 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     @NonNull
-    Temperatur getTemperatur(final AvDateTime time) {
+    Temperatur getTemperatur(final AvDateTime time,
+                             final EnumRange<Temperatur> locationTemperaturRange) {
         // Nur weil die Temperatur abgefragt wird, gehen wir nicht davon aus, dass ein
         // "qualifizierter" Wetterhinweis gegeben wurde
 
-        return wetter.getTemperatur(time.getTime());
+        return wetter.getTemperatur(time.getTime(), locationTemperaturRange);
     }
 
     /**

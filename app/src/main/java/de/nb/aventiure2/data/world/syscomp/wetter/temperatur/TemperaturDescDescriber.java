@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableCollection;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -23,7 +24,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 /**
  * Beschreibt die {@link Temperatur} als {@link AbstractDescription}s.
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturDescDescriber {
     private final TemperaturSatzDescriber satzDescriber;
 
@@ -40,7 +40,9 @@ public class TemperaturDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
-            final Temperatur temperatur, final AvTime time, final boolean unterOffenenHimmel,
+            final Temperatur temperatur,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final AvTime time, final boolean unterOffenenHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
@@ -49,7 +51,8 @@ public class TemperaturDescDescriber {
                 unterOffenenHimmel, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         alt.addAll(altHeuteDerTagWennDraussenSinnvoll(
-                temperatur, time, unterOffenenHimmel));
+                temperatur, generelleTemperaturOutsideLocationTemperaturRange,
+                time, unterOffenenHimmel));
 
         if (unterOffenenHimmel) {
             alt.addAll(mapToList(
@@ -69,7 +72,9 @@ public class TemperaturDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>> alt(
-            final Temperatur temperatur, final AvTime time, final DrinnenDraussen drinnenDraussen,
+            final Temperatur temperatur,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final AvTime time, final DrinnenDraussen drinnenDraussen,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
@@ -79,7 +84,7 @@ public class TemperaturDescDescriber {
 
         if (drinnenDraussen.isDraussen()) {
             alt.addAll(altHeuteDerTagWennDraussenSinnvoll(
-                    temperatur, time,
+                    temperatur, generelleTemperaturOutsideLocationTemperaturRange, time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
 
             if (drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
@@ -100,16 +105,23 @@ public class TemperaturDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>> altHeuteDerTagWennDraussenSinnvoll(
-            final Temperatur temperatur, final AvTime time, final boolean unterOffenemHimmel) {
+            final Temperatur temperatur,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final AvTime time, final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
         alt.addAll(altNeueSaetze(
-                satzDescriber.altDraussenHeuteDerTagSofernSinnvoll(temperatur, time,
+                satzDescriber.altDraussenHeuteDerTagSofernSinnvoll(
+                        temperatur,
+                        generelleTemperaturOutsideLocationTemperaturRange,
+                        time,
                         !unterOffenemHimmel)));
 
         if (unterOffenemHimmel && temperatur.compareTo(Temperatur.RECHT_HEISS) >= 0) {
             // "Heute ist es heiß / schönes Wetter."
             final ImmutableCollection<Satz> heuteDerTagSaetze =
-                    satzDescriber.altDraussenHeuteDerTagSofernSinnvoll(temperatur,
+                    satzDescriber.altDraussenHeuteDerTagSofernSinnvoll(
+                            temperatur,
+                            generelleTemperaturOutsideLocationTemperaturRange,
                             time, true);
             if (!heuteDerTagSaetze.isEmpty()) {
                 // "Heute ist es heiß, die Sonne sticht"

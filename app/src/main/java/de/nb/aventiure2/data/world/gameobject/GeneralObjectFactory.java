@@ -8,8 +8,10 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit;
@@ -54,19 +56,33 @@ class GeneralObjectFactory {
                         movable));
     }
 
-    GameObject create(final GameObjectId id,
-                      final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
-                      @Nullable final GameObjectId initialLocationId,
-                      @Nullable final GameObjectId initialLastLocationId,
-                      final boolean movable,
-                      final Geschlossenheit geschlossenheit,
-                      final boolean niedrig,
-                      final StoringPlaceType locationMode) {
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final Geschlossenheit geschlossenheit,
+                             final boolean niedrig,
+                             final StoringPlaceType locationMode) {
+        return create(id, descriptionAtFirstSightAndWhenKnown, initialLocationId,
+                initialLastLocationId, movable, geschlossenheit, niedrig,
+                locationMode, EnumRange.all(Temperatur.class));
+    }
+
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final Geschlossenheit geschlossenheit,
+                             final boolean niedrig,
+                             final StoringPlaceType locationMode,
+                             final EnumRange<Temperatur> temperaturRange) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
                 movable, locationMode, niedrig, geschlossenheit,
-                LEUCHTET_NIE);
+                LEUCHTET_NIE, temperaturRange);
     }
 
     public GameObject create(final GameObjectId id,
@@ -78,42 +94,75 @@ class GeneralObjectFactory {
                              final boolean niedrig,
                              final Geschlossenheit geschlossenheit,
                              final Supplier<Boolean> leuchgetErmittler) {
+        return create(id, descriptionAtFirstSightAndWhenKnown, initialLocationId,
+                initialLastLocationId, movable, locationMode, niedrig,
+                geschlossenheit, leuchgetErmittler, EnumRange.all(Temperatur.class));
+    }
+
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSightAndWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final StoringPlaceType locationMode,
+                             final boolean niedrig,
+                             final Geschlossenheit geschlossenheit,
+                             final Supplier<Boolean> leuchgetErmittler,
+                             final EnumRange<Temperatur> temperaturRange) {
         return create(id,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 descriptionAtFirstSightAndWhenKnown,
                 initialLocationId, initialLastLocationId,
                 movable, locationMode, niedrig, geschlossenheit,
-                leuchgetErmittler);
+                leuchgetErmittler, temperaturRange);
     }
 
-    GameObject create(final GameObjectId id,
-                      final EinzelneSubstantivischePhrase descriptionAtFirstSight,
-                      final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
-                      final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
-                      @Nullable final GameObjectId initialLocationId,
-                      @Nullable final GameObjectId initialLastLocationId,
-                      final boolean movable,
-                      final StoringPlaceType locationMode,
-                      final Geschlossenheit geschlossenheit,
-                      final boolean niedrig) {
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final StoringPlaceType locationMode,
+                             final Geschlossenheit geschlossenheit,
+                             final boolean niedrig) {
         return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
                 shortDescriptionWhenKnown,
                 initialLocationId, initialLastLocationId, movable, locationMode,
                 niedrig, geschlossenheit, LEUCHTET_NIE);
     }
 
-    private GameObject create(final GameObjectId id,
-                              final EinzelneSubstantivischePhrase descriptionAtFirstSight,
-                              final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
-                              final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
-                              @Nullable final GameObjectId initialLocationId,
-                              @Nullable final GameObjectId initialLastLocationId,
-                              final boolean movable,
-                              final StoringPlaceType locationMode,
-                              final boolean niedrig,
-                              final Geschlossenheit geschlossenheit,
-                              final Supplier<Boolean> leuchtetErmittler) {
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final StoringPlaceType locationMode,
+                             final boolean niedrig,
+                             final Geschlossenheit geschlossenheit,
+                             final Supplier<Boolean> leuchtetErmittler) {
+        return create(id, descriptionAtFirstSight, normalDescriptionWhenKnown,
+                shortDescriptionWhenKnown, initialLocationId, initialLastLocationId,
+                movable, locationMode, niedrig, geschlossenheit, leuchtetErmittler,
+                EnumRange.all(Temperatur.class));
+    }
+
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
+                             @Nullable final GameObjectId initialLocationId,
+                             @Nullable final GameObjectId initialLastLocationId,
+                             final boolean movable,
+                             final StoringPlaceType locationMode,
+                             final boolean niedrig,
+                             final Geschlossenheit geschlossenheit,
+                             final Supplier<Boolean> leuchtetErmittler,
+                             final EnumRange<Temperatur> temperaturRange) {
         final LocationComp locationComp =
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
                         movable);
@@ -124,6 +173,6 @@ class GeneralObjectFactory {
                 locationComp,
                 new StoringPlaceComp(id, timeTaker, world, locationComp, locationMode,
                         niedrig, geschlossenheit,
-                        leuchtetErmittler));
+                        leuchtetErmittler, temperaturRange));
     }
 }

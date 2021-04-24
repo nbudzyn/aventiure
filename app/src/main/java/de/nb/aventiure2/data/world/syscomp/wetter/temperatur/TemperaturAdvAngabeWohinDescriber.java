@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 import static de.nb.aventiure2.util.StreamUtil.*;
