@@ -18,7 +18,7 @@ public class TagestemperaturverlaufUtil {
     static boolean saetzeUeberHeuteOderDenTagVonDerUhrzeitHerSinnvoll(final AvTime time) {
         return time.isWithin(
                 oClock(7, 59, 59),
-                oClock(14));
+                oClock(16, 15));
     }
 
     public static Temperatur calcTemperatur(final Temperatur tageshoechsttemperatur,

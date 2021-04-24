@@ -573,6 +573,7 @@ class WetterData {
 
     // FIXME Veränderungen der Temperatur
     //  "es kühlt (deutlich) ab" (Temperatur)
+    //  "es wird kalt"
     //  Konzept am Hunger orientieren?
     //  Bedenken, dass es ja über den Tag immer wärmer (und auch wieder
     //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
@@ -996,6 +997,9 @@ class WetterData {
 
     // FIXME Wind / Sturm
     //  "ein kühles Lüftchen streicht durch das Laub"
+    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
+    //  Laub,
+    //  und du bist voll Freude und Lust."
     //  Der Wind wird stärker
     //  Der Wind pfeift dir ums Gesicht
     //  In der Ferne hörst du Donnergrollen

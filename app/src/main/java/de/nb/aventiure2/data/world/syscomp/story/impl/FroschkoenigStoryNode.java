@@ -424,7 +424,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
             alt.addIfOtherwiseEmpty(paragraph("Dir kommt ein Gedanke:",
-                    "Am Brunnen mit der goldenen Kugel zu spielen – das wäre aufregend!"));
+                    "Auf dem Brunnenrand sitzen und ein wenig mit der goldenen Kugel spielen –",
+                    "ja, das stellst du dir sehr meditativ vor!"));
         } else {
             alt.addIfOtherwiseEmpty(paragraph("Es gibt sicher noch viel zu erleben"));
         }

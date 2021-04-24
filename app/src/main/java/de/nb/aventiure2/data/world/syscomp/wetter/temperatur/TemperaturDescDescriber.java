@@ -50,6 +50,8 @@ public class TemperaturDescDescriber {
         alt.addAll(satzDescriber.altKommtNachDraussen(temperatur, time,
                 unterOffenenHimmel, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
+        // IDEA "es ist draußen so kalt, dass dir der Atem friert"
+
         alt.addAll(altHeuteDerTagWennDraussenSinnvoll(
                 temperatur, generelleTemperaturOutsideLocationTemperaturRange,
                 time, unterOffenenHimmel));
