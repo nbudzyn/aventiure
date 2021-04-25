@@ -565,12 +565,6 @@ class WetterData {
     //    - die vielleicht immer gleich ist? - getrennt von
     //    dem "Rendering" als statischem Satz, kommt-nach-draußen-Description o.Ä.
 
-    // FIXME Grundsätzlich könnte man sich die höchste und die niedrigste "heute" schon
-    //  berichtete Temperatur merken. Ändert sich die diese Temperatur (z.B. der
-    //  SC geht aus dem kühlen Schloss in die Hitze oder die Temperatur steigt draußen
-    //  über den Tag), könnte es eine Ausgabe geben.
-    //  Einfachste Lösung: wennDraussenDannWieder... auf true setzen.
-
     // FIXME Veränderungen der Temperatur
     //  "es kühlt (deutlich) ab" (Temperatur)
     //  "es wird kalt"
@@ -581,8 +575,13 @@ class WetterData {
     //  ist und bleibt)
     //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
     //  Temperatur-Wert speichern?
+    //  Kommt es zu einem neuen Aktuellen Generaltemperaturwert (der also nicht durch
+    //  einen "kühlen Ort" o.Ä. erklärt ist, z.B. die Temperatur steigt draußen
+    //  über den Tag), könnte es eine Ausgabe geben.
+    //  Entweder direkt beschreiben - oder, wenn man
+    //  gerade drinnen, an einem kühlen Ort ist o.Ä.: wennDraussenDannWieder... auf true setzen.
 
-    // FIXME Veränderungen der Bewölkung
+    // FIXME Veränderungen der Bewölkung (geschieht nur über Plan, nicht automatisch über den Tag)
     //  es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
 
     // FIXME Veränderung von Temperatur und Bewölkung: "Es hat deutlich abgekühlt und der Himmel
@@ -653,6 +652,8 @@ class WetterData {
 
         // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
+
+        // IDEA "Das ist ein Wetter, als wenn die Welt untergehen sollte!"
 
         return ImmutableSet.of("Schönes Wetter heut!", "Schönes Wetter heut.");
     }
@@ -1005,17 +1006,26 @@ class WetterData {
     //  In der Ferne hörst du Donnergrollen
     //  Hat es eben geblitzt?
     //  "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
+    //  "Der Wind stürmt"
+    //  "Wind und Regen stürmen"
+    //  "Das Wetter wird (aber) (so) schlecht, und Wind und Regen stürmen"
+    //  "Das Wetter ist (aber) (so) schlecht geworden, und Wind und Regen stürmt"
+    //  "Weil aber das Wetter so schlecht geworden ist, und Wind und Regen stürmt, kannst du
+    //  nicht weiter"
+    //  "...und gehts nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
     //  Ein Sturm zieht auf
     //  Hoffentlich bleibt es wenigstens trocken
     //  (Kein Regen - keine nassen Klamotten o.Ä.)
     //  "Die Äste biegen sich"
     //  "das Gezweig"
     //  "es kommt ein starker Wind"
+    //  "Wind und böses Wetter"
     //  "es weht beständig ein harter Wind"
     //  "der Wind (raschelt in den Bäumen), und die Wolken ziehen ganz nah über deinem Haupt weg"
     //  "der Wind saust"
     //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
     //  Der Sturm biegt die Bäume.
+    //  "so bist du vor der Kälte und dem bösen Wetter geschützt"
     //  "darin bist du vor Wind und Wetter geschützt"
     //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
     //  "Die Hitze wird drückender, je näher der Mittag kommt" (KEIN WIND)
@@ -1024,6 +1034,9 @@ class WetterData {
     //  "der Wind rauscht draußen in den Bäumen"
     //  "Weil aber das Wetter so schlecht geworden, und Wind und Regen stürmte,
     //   kannst du nicht weiter und kehrst [...] ein."
+    //  "Und alsbald fängt der Himmel an zu regnen"
+    //  "und weil es anfängt zu regnen"
+    //  "Tropfen fallen"
     //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
     //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
     //  wäre schön.
