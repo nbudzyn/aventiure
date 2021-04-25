@@ -16,7 +16,6 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.STRAHLEN;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
@@ -59,6 +58,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "ignoriert"),
     KUENDIGEN("kündigen", AKK, "kündige", "kündigst", "kündigt",
             "kündigt", Perfektbildung.HABEN, "gekündigt"),
+    KUEHLEN("kühlen", AKK,
+            "kühle", "kühlst", "kühlt", "kühlt",
+            Perfektbildung.HABEN, "gekühlt"),
     LEGEN("legen", AKK, "lege", "legst", "legt",
             "legt",
             Perfektbildung.HABEN, "gelegt"),
@@ -111,6 +113,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "geworfen"),
 
     // Partikelverben
+    ABKUEHLEN(KUEHLEN, AKK, "ab", Perfektbildung.HABEN),
     ABSETZEN(SETZEN, AKK, "ab", Perfektbildung.HABEN),
     ANBLICKEN("anblicken", AKK, "blicke", "blickst", "blickt",
             "blickt", "an", Perfektbildung.HABEN, "angeblickt"),
@@ -119,7 +122,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     ANSCHAUEN(SCHAUEN, AKK, "an", Perfektbildung.HABEN),
     ANSEHEN(SEHEN, AKK, "an", Perfektbildung.HABEN),
     ANSPRECHEN(SPRECHEN, AKK, "an", Perfektbildung.HABEN),
-    ANSTRAHLEN(STRAHLEN, AKK, "an", Perfektbildung.HABEN),
+    ANSTRAHLEN("anstrahlen", AKK,
+            "strahle", "strahlst", "strahlt", "strahlt",
+            "an", Perfektbildung.HABEN, "angestrahlt"),
     AUFFANGEN(FANGEN, AKK, "auf", Perfektbildung.HABEN),
     AUFHEBEN(HEBEN, AKK, "auf", Perfektbildung.HABEN),
     AUFSTEHEN_VON(STEHEN, VON, "auf", Perfektbildung.SEIN),
@@ -217,8 +222,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
 
     @Override
     public PraedikatSubjObjOhneLeerstellen mit(final SubstantivischePhrase substPhr) {
-        return new PraedikatSubjObjOhneLeerstellen(verb,
-                kasusOderPraepositionalkasus, substPhr);
+        return new PraedikatSubjObjOhneLeerstellen(verb, kasusOderPraepositionalkasus, substPhr);
     }
 
     @Nullable

@@ -269,7 +269,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
         final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().onTimePassed(startTime, endTime, loadScDrinnenDraussen());
+                requirePcd().altTimePassed(startTime, endTime, loadScLocation());
 
         if (!alt.isEmpty()) {
             n.narrateAlt(alt, NO_TIME);
@@ -285,16 +285,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     @NonNull
     public Temperatur getTemperaturFuerAktuellenZeitpunktAmOrtDesSC() {
-        return getTemperatur(timeTaker.now(), loadScLocation());
+        return getLokaleTemperatur(timeTaker.now(), loadScLocation());
     }
 
     /**
      * Gibt die Temperatur</i> zurück.
      */
     @NonNull
-    public Temperatur getTemperatur(final AvDateTime time,
-                                    @Nullable final ILocationGO location) {
-        return requirePcd().getTemperatur(time,
+    private Temperatur getLokaleTemperatur(final AvDateTime time,
+                                           @Nullable final ILocationGO location) {
+        return requirePcd().getLokaleTemperatur(time,
                 location != null ? location.storingPlaceComp().getEffectiveTemperaturRange() :
                         EnumRange.all(Temperatur.class));
     }

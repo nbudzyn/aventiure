@@ -62,9 +62,10 @@ public class TageszeitDescDescriber {
     public ImmutableCollection<AbstractDescription<?>>
     altZwischentageszeitlicherWechsel(final AvTime before, final AvTime after,
                                       final boolean draussen) {
-        if (before.getTageszeit() != after.getTageszeit()) {
-            return ImmutableSet.of();
-        }
+        checkArgument(before.getTageszeit() == after.getTageszeit(),
+                "Tageszeit verändert: "
+                        + before.getTageszeit() + " zu "
+                        + after.getTageszeit());
 
         if (oClock(15).isWithin(before, after)) {
             return altNachmittagsWechsel(draussen);

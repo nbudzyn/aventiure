@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Stream;
 
@@ -258,20 +257,18 @@ public enum Tageszeit {
     }
 
     public Tageszeit getVorgaenger() {
-        final int myIndex = Arrays.asList(values()).indexOf(this);
-        if (myIndex == 0) {
+        if (ordinal() == 0) {
             return values()[values().length - 1];
         }
 
-        return values()[myIndex - 1];
+        return values()[ordinal() - 1];
     }
 
     public Tageszeit getNachfolger() {
-        final int myIndex = Arrays.asList(values()).indexOf(this);
-        if (myIndex == values().length - 1) {
-            return Tageszeit.values()[0];
+        if (ordinal() == values().length - 1) {
+            return values()[0];
         }
 
-        return values()[myIndex + 1];
+        return values()[ordinal() + 1];
     }
 }

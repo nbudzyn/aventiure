@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.world.base.Temperatur.KNAPP_UEBER_DEM_GEFRIE
 import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEISSEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BITTERKALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISKALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FLIRREND;
@@ -442,7 +443,7 @@ public class TemperaturPraedikativumDescriber {
 
         switch (temperatur) {
             case KLIRREND_KALT:
-                alt.add(KALT.mitGraduativerAngabe("klirrend"), EISKALT);
+                alt.add(KALT.mitGraduativerAngabe("klirrend"), EISKALT, BITTERKALT);
                 break;
             case KNAPP_UNTER_DEM_GEFRIERPUNKT:
                 if (!fuerAttributiveVerwendung) {

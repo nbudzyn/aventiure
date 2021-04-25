@@ -13,6 +13,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
 
@@ -71,6 +74,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             Perfektbildung.HABEN, "gewacht"),
 
     // Partikelverben
+    ABKUEHLEN(KUEHLEN, "ab", Perfektbildung.HABEN),
     ANBRECHEN(BRECHEN, "an", Perfektbildung.SEIN),
     ANGEBEN(GEBEN, "an", Perfektbildung.HABEN),
     ANKOMMEN(KOMMEN, "an", Perfektbildung.SEIN),
@@ -79,6 +83,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     AUFSTEIGEN(STEIGEN_AUF, "auf", Perfektbildung.SEIN),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINBRECHEN(BRECHEN, "ein", Perfektbildung.SEIN),
+    EINSETZEN(SETZEN, "ein", Perfektbildung.HABEN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
     EMPORSTEIGEN(STEIGEN_AUF, "empor", Perfektbildung.SEIN),
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
@@ -90,6 +95,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     HERVORBRECHEN(BRECHEN, "hervor", Perfektbildung.SEIN),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
+    NACHLASSEN(HINUNTERLASSEN, "nach", Perfektbildung.HABEN),
     UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN);
 
     /**

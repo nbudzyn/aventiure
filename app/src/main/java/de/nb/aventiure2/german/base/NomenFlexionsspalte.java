@@ -51,6 +51,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     FRAU(F, "Frau"),
     FREUDE(F, "Freude"),
     FROSCH(M, "Frosch"),
+    FROST(M, "Frost"),
     FUSS(M, "Fuß"),
     GARTEN(M, "Garten"),
     GESPRAECH(N, "Gespräch"),

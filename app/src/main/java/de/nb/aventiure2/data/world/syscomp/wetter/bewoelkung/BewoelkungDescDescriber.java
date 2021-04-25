@@ -66,7 +66,7 @@ public class BewoelkungDescDescriber {
     @NonNull
     @CheckReturnValue
     public AltDescriptionsBuilder
-    altTageszeitenSprungOderWechsel(
+    altTageszeitensprungOderWechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
@@ -91,22 +91,22 @@ public class BewoelkungDescDescriber {
 
         switch (lastTageszeit) {
             case NACHTS:
-                alt.addAll(altTageszeitenSprungOderWechselFromNachtsTo(
+                alt.addAll(altTageszeitensprungOderWechselFromNachtsTo(
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case MORGENS:
                 alt.addAll(
-                        altTageszeitenSprungOderWechselFromMorgensTo(
+                        altTageszeitensprungOderWechselFromMorgensTo(
                                 bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case TAGSUEBER:
                 alt.addAll(
-                        altTageszeitenSprungOderWechselFromTagsueberTo(
+                        altTageszeitensprungOderWechselFromTagsueberTo(
                                 bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case ABENDS:
                 alt.addAll(
-                        altTageszeitenSprungOderWechselFromAbendsTo(
+                        altTageszeitensprungOderWechselFromAbendsTo(
                                 bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             default:
@@ -118,7 +118,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromNachtsTo(
+    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromNachtsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
@@ -149,7 +149,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromMorgensTo(
+    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromMorgensTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
@@ -204,7 +204,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromTagsueberTo(
+    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromTagsueberTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {
@@ -242,7 +242,7 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenSprungOderWechselFromAbendsTo(
+    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromAbendsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {

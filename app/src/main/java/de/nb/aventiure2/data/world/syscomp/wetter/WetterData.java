@@ -1,14 +1,18 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.Temperatur;
@@ -113,7 +117,8 @@ class WetterData {
                     TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
 
     private static final TemperaturDescDescriber TEMPERATUR_DESC_DESCRIBER =
-            new TemperaturDescDescriber(TEMPERATUR_SATZ_DESCRIBER);
+            new TemperaturDescDescriber(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER,
+                    TEMPERATUR_SATZ_DESCRIBER);
 
     // Bewölkung-Describer
     private static final BewoelkungPraedikativumDescriber BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER =
@@ -186,8 +191,8 @@ class WetterData {
         }
 
         // drinnen!
-        return TEMPERATUR_DESC_DESCRIBER.alt(getTemperatur(time, locationTemperaturRange),
-                !locationTemperaturRange.isInRange(getGenerelleAktuelleTemperatur(time)),
+        return TEMPERATUR_DESC_DESCRIBER.alt(getLokaleTemperatur(time, locationTemperaturRange),
+                !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                 time, drinnenDraussen,
                 auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
     }
@@ -221,7 +226,7 @@ class WetterData {
         final DrinnenDraussen drinnenDraussen =
                 unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT;
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
                 temperatur)) {
@@ -235,7 +240,7 @@ class WetterData {
 
             // "Es ist kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur,
-                    !locationTemperaturRange.isInRange(getGenerelleAktuelleTemperatur(time)),
+                    !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                     time, drinnenDraussen,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
@@ -298,7 +303,7 @@ class WetterData {
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Es ist kühl und der Himmel ist bewölkt"
         alt.addAll(altNeueSaetze(
@@ -318,7 +323,7 @@ class WetterData {
                         .altDraussenHeuteDerTagSofernSinnvoll(
                                 temperatur,
                                 !locationTemperaturRange
-                                        .isInRange(getGenerelleAktuelleTemperatur(time)),
+                                        .isInRange(getAktuelleGenerelleTemperatur(time)),
                                 time,
                                 false);
         if (!heuteOderDerTagSaetze.isEmpty()) {
@@ -393,7 +398,7 @@ class WetterData {
 
         final AltDescriptionsBuilder alt = alt();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
                 temperatur)) {
@@ -409,7 +414,7 @@ class WetterData {
             // "Draußen ist es kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.altKommtNachDraussen(
                     temperatur,
-                    !locationTemperaturRange.isInRange(getGenerelleAktuelleTemperatur(time)),
+                    !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                     time, unterOffenenHimmel,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
@@ -471,7 +476,7 @@ class WetterData {
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         alt.addAll(altNeueSaetze(
                 TEMPERATUR_SATZ_DESCRIBER.altKommtNachDraussen(temperatur, time,
@@ -488,7 +493,7 @@ class WetterData {
         final ImmutableCollection<Satz> heuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
                 .altDraussenHeuteDerTagSofernSinnvoll(
                         temperatur,
-                        !locationTemperaturRange.isInRange(getGenerelleAktuelleTemperatur(time)),
+                        !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                         time,
                         false);
         if (!heuteOderDerTagSaetze.isEmpty()) {
@@ -519,7 +524,7 @@ class WetterData {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<AbstractDescription<?>> altTageszeitensprungOderWechsel(
+    private ImmutableCollection<AbstractDescription<?>> altTageszeitensprungOderWechsel(
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit,
             final DrinnenDraussen drinnenDraussen) {
@@ -534,7 +539,7 @@ class WetterData {
 
         if (drinnenDraussen.isDraussen()) {
             // "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
-            alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitenSprungOderWechsel(
+            alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
                     getBewoelkung(),
                     lastTageszeit, currentTageszeit,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
@@ -565,31 +570,9 @@ class WetterData {
     //    - die vielleicht immer gleich ist? - getrennt von
     //    dem "Rendering" als statischem Satz, kommt-nach-draußen-Description o.Ä.
 
-    // FIXME Veränderungen der Temperatur
-    //  "es kühlt (deutlich) ab" (Temperatur)
-    //  "es wird kalt"
-    //  Konzept am Hunger orientieren?
-    //  Bedenken, dass es ja über den Tag immer wärmer (und auch wieder
-    //  kälter) wird. Die Änderungen müssen wohl also beschrieben werden, obwohl sich die
-    //  eigentliche "Tagestemperatur" nicht ändern (sofern die Temperatur nicht vorher unerheblich
-    //  ist und bleibt)
-    //  Vielleicht muss man doch - wie bei der Müdigkeit - den letzten
-    //  Temperatur-Wert speichern?
-    //  Kommt es zu einem neuen Aktuellen Generaltemperaturwert (der also nicht durch
-    //  einen "kühlen Ort" o.Ä. erklärt ist, z.B. die Temperatur steigt draußen
-    //  über den Tag), könnte es eine Ausgabe geben.
-    //  Entweder direkt beschreiben - oder, wenn man
-    //  gerade drinnen, an einem kühlen Ort ist o.Ä.: wennDraussenDannWieder... auf true setzen.
 
-    // FIXME Veränderungen der Bewölkung (geschieht nur über Plan, nicht automatisch über den Tag)
-    //  es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
-
-    // FIXME Veränderung von Temperatur und Bewölkung: "Es hat deutlich abgekühlt und der Himmel
-    //  bezieht sich."
-    // FIXME "Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
-    //  Himmel bezieht sich."
-
-    // FIXME Bei extremen / dramtischen Wetterlagen "Erinnerungen", ähnlich dem Hunger-Konzept?
+    // FIXME Bei extremen / dramtischen Wetterlagen "Erinnerungen", ähnlich dem
+    //  Müdigkeits-Konzept?
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag"
@@ -610,12 +593,12 @@ class WetterData {
             return ImmutableSet.of();
         }
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // Bewoelkung muss nicht erwähnt werden
         return TEMPERATUR_DESC_DESCRIBER.altHeuteDerTagWennDraussenSinnvoll(
                 temperatur,
-                !locationTemperaturRange.isInRange(getGenerelleAktuelleTemperatur(time)),
+                !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                 time, unterOffenemHimmel);
     }
 
@@ -627,7 +610,7 @@ class WetterData {
             final int delta) {
         return alt()
                 .addAll(TEMPERATUR_SATZ_DESCRIBER.altDeutlicherUnterschiedZuVorLocation(
-                        getTemperatur(time, locationTemperaturRange),
+                        getLokaleTemperatur(time, locationTemperaturRange),
                         delta))
                 .schonLaenger()
                 .build();
@@ -637,7 +620,7 @@ class WetterData {
     @NonNull
     @CheckReturnValue
     ImmutableSet<String> altWetterplauderrede(final AvTime time) {
-        final Temperatur temperatur = getGenerelleAktuelleTemperatur(time);
+        final Temperatur temperatur = getAktuelleGenerelleTemperatur(time);
 
         if (temperatur == Temperatur.KLIRREND_KALT
                 || temperatur == Temperatur.SEHR_HEISS
@@ -671,7 +654,7 @@ class WetterData {
         // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
                 temperatur)) {
@@ -718,7 +701,7 @@ class WetterData {
             final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableSet.builder();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         alt.addAll(mapToSet(altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
                 time, locationTemperaturRange),
@@ -746,7 +729,7 @@ class WetterData {
             final AvTime time, final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
             if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
@@ -778,7 +761,7 @@ class WetterData {
         // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
                 temperatur)) {
@@ -816,7 +799,7 @@ class WetterData {
             final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
 
-        final Temperatur temperatur = getTemperatur(time, locationTemperaturRange);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
                 altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
@@ -902,12 +885,12 @@ class WetterData {
 
     @NonNull
     @CheckReturnValue
-    Temperatur getTemperatur(final AvTime time,
-                             final EnumRange<Temperatur> locationTemperaturRange) {
-        return locationTemperaturRange.clamp(getGenerelleAktuelleTemperatur(time));
+    Temperatur getLokaleTemperatur(final AvTime time,
+                                   final EnumRange<Temperatur> locationTemperaturRange) {
+        return locationTemperaturRange.clamp(getAktuelleGenerelleTemperatur(time));
     }
 
-    private Temperatur getGenerelleAktuelleTemperatur(final AvTime time) {
+    Temperatur getAktuelleGenerelleTemperatur(final AvTime time) {
         return TagestemperaturverlaufUtil
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
@@ -971,7 +954,6 @@ class WetterData {
     //  - "gegen Abend, als die Sonne hinter die Berge gesunken ist"
     //  - "der Mond lässt sein Licht über alle Felder leuchten"
     //  -- "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
-
 
     // FIXME Man könnte Gegenstände in die Wetterbeschreibung einbauen
     //  "die goldene Kugel blitzt in der Sonne"
@@ -1048,13 +1030,12 @@ class WetterData {
     // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
     //  - "Der Himmel ist blau, die Luft mild"
 
-    // FIXME Aufwärmen / Auftauen
-    //  "Die Sonne hat die Erde aufgetaut"
+    // FIXME Aufwärmen / Auftauen (z.B. am Feuer)
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
     //  "du reibst die Hände"
     //  "du bist so erfroren"
     //  "dich wärmen"
-    //  "du erwärmst dich"
+    //  "du erwärmst dich" (am Feuer)
 
     // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
     //  brennt, so..." (Maximaltemperatur vs. allgemeine Temperatur)
@@ -1100,5 +1081,104 @@ class WetterData {
     @CheckReturnValue
     Windstaerke getWindstaerke() {
         return windstaerke;
+    }
+
+    /**
+     * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
+     * zuallermeist leer.
+     * <p>
+     * Wenn es hier Beschreibungen gab und keine von ihnen ausgegeben wird, wird die Änderung
+     * nicht mehr beschrieben werden.
+     *
+     * @param lastLokaleTemperaturBeiRelevanterAenderung    Falls eine Temperaturänderung
+     *                                                      beschrieben werden soll, so steht
+     *                                                      hier die lokale Temperatur vor der
+     *                                                      Änderung. Es kann hier zu seltenen
+     *                                                      Fällen kommen, dass der SC diese
+     *                                                      vorherige Temperatur an diesem Ort
+     *                                                      noch gar nicht erlebt und auch gar
+     *                                                      nicht erwartet hat - z.B. wenn der SC
+     *                                                      den ganzen heißen Tag an einem kühlen
+     *                                                      Ort verbringt den kühlen Ort genau in
+     *                                                      dem Moment verlässt, wenn der Tag sich
+     *                                                      wieder abkühlt. Zurzeit berücksichtigen
+     *                                                      wir diese Fälle nicht.
+     * @param currentLokaleTemperaturBeiRelevanterAenderung Falls eine Temperaturänderung
+     *                                                      beschrieben werden soll, so steht
+     *                                                      hier die lokale Temperatur nach  der
+     *                                                      Änderung; muss und darf nur
+     *                                                      angegeben sein, wenn
+     *                                                      lastLokaleTemperaturBeiRelevanterAenderung
+     *                                                      angegeben ist und muss dann
+     *                                                      unterschiedlich sein.
+     */
+    ImmutableCollection<AbstractDescription<?>> altTimePassed(
+            final AvDateTime lastTime,
+            final AvDateTime currentTime,
+            final boolean tageszeitaenderungSollBeschriebenWerden,
+            @Nullable final Temperatur lastLokaleTemperaturBeiRelevanterAenderung,
+            @Nullable final Temperatur currentLokaleTemperaturBeiRelevanterAenderung,
+            final DrinnenDraussen drinnenDraussen) {
+        checkArgument((lastLokaleTemperaturBeiRelevanterAenderung == null
+                        && currentLokaleTemperaturBeiRelevanterAenderung == null)
+                        || (lastLokaleTemperaturBeiRelevanterAenderung != null
+                        && currentLokaleTemperaturBeiRelevanterAenderung != null
+                        && lastLokaleTemperaturBeiRelevanterAenderung !=
+                        currentLokaleTemperaturBeiRelevanterAenderung),
+                "lastLokaleTemperaturBeiRelevanterAenderung und "
+                        + "currentLokaleTemperaturBeiRelevanterAenderung inkonsistent. "
+                        + "Entweder beide null oder beide gesetzt und verschieden! "
+                        + "lastLokaleTemperaturBeiRelevanterAenderung: "
+                        + lastLokaleTemperaturBeiRelevanterAenderung
+                        + ", currentLokaleTemperaturBeiRelevanterAenderung: "
+                        + currentLokaleTemperaturBeiRelevanterAenderung);
+
+        final boolean temperaturAenderungSollBeschriebenWerden =
+                lastLokaleTemperaturBeiRelevanterAenderung != null;
+
+        final ImmutableCollection<AbstractDescription<?>> alt;
+
+        if (!temperaturAenderungSollBeschriebenWerden && !tageszeitaenderungSollBeschriebenWerden) {
+            // Nichts beschreiben - außer höchtestensuntertägigem Tageszeitenwechsel
+            if (!currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY)
+                    && lastTime.getTageszeit() == currentTime.getTageszeit()) {
+                alt = TAGESZEIT_DESC_DESCRIBER.altZwischentageszeitlicherWechsel(
+                        lastTime.getTime(), currentTime.getTime(), drinnenDraussen.isDraussen());
+            } else {
+                alt = ImmutableList.of();
+            }
+        } else if (temperaturAenderungSollBeschriebenWerden
+                && !tageszeitaenderungSollBeschriebenWerden) {
+            // Nur Temperatur beschreiben
+            alt = TEMPERATUR_DESC_DESCRIBER.altTemperatursprungOderWechsel(
+                    currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
+                    currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
+            // IDEA  "Die Sonne hat die Erde aufgetaut" (bei (aktuell) unauffälliger Bewölkung)
+        } else if (!temperaturAenderungSollBeschriebenWerden
+                && tageszeitaenderungSollBeschriebenWerden) {
+            // Es gab einen Tageszeitenwechsel oder -sprung während einer Zeit
+            // von weniger als einem Tag - nur diesen Tageszeitenwechsel oder -sprung beschreiben
+            alt = altTageszeitensprungOderWechsel(lastTime.getTageszeit(),
+                    currentTime.getTageszeit(), drinnenDraussen);
+        } else {
+            // Es gab einen Tageszeitenwechsel oder -sprung während einer Zeit
+            // von weniger als einem Tag - und auch eine Temperaturänderung.
+            // Temperaturänderung und Tageszeitenwechsel oder -sprung beschreiben
+
+            // FIXME Temperatur- und Tageszeitaenderung beschreiben,
+            //  ähnlich wie TEMPERATUR_DESC_DESCRIBER.altTemperatursprungOderWechsel(
+            //                    currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
+            //                    currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
+
+            alt = altTageszeitensprungOderWechsel(lastTime.getTageszeit(),
+                    currentTime.getTageszeit(), drinnenDraussen);
+
+            // FIXME Veränderungen der Bewölkung (geschieht nur über Plan, nicht automatisch über
+            //  den Tag) es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
+
+            // FIXME Veränderung von Temperatur *und* Bewölkung: "Es hat deutlich abgekühlt und der
+            //  Himmel bezieht sich."
+        }
+        return alt;
     }
 }

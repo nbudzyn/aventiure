@@ -35,16 +35,19 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     ALLMAEHLICH("allmählich"),
     ANBRECHEND("anbrechend"),
     ANDERS("anders", "ander"),
+    ANGENEHM("angenehm"),
     ANGESPANNT("angespannt"),
     AUFGEBRACHT("aufgebracht"),
     AUFGEDREHT("aufgedreht"),
     // "schlecht aufgelegt", ...
     AUFGELEGT("aufgelegt"),
     AUFGEHEIZT("aufgeheizt"),
+    AUSZUHALTEN("auszuhalten"), // So etwas ähnliches wie ein Partizip...
     BEDECKT("bedeckt"),
     BEGEISTERT("begeistert"),
     BEGINNEND("beginnend"),
     BEISSEND("beißend"),
+    BITTERKALT("bitterkalt"),
     BENOMMEN("benommen"),
     BESONDERS("besonders", "besonder"),
     BETRUEBT("betrübt"),
@@ -60,11 +63,13 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     EINBRECHEND("einbrechend"),
     EISIG("eisig"),
     EISKALT("eiskalt"),
+    EISEKALT("eisekalt"),
     EITEL_NICHT_FLEKTIERBAR(Adjektiv.nichtFlektierbar("eitel")),
     ENTTAEUSCHT("enttäuscht"),
     ERHELLT("erhellt"),
     ERLEICHTERT("erleichtert"),
     ERSTAUNT("erstaunt"),
+    ERTRAEGLICHER("erträglicher"),
     ERSCHOEPFT("erschöpft"),
     FINSTER("finster", "finstr"),
     FLIMMERND("flimmernd"),
@@ -88,6 +93,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GROSS("groß"),
     GRUEN("grün"),
     HAESSLICH("hässlich"),
+    HEFTIG("heftig"),
     HEISS("heiß"),
     HELL("hell"),
     // Achtung! Nicht prädikativ möglich? ?"Der Tag ist hellicht"
@@ -136,6 +142,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     UEBERMUEDET("übermüdet"),
     UEBERRASCHT("überrascht"),
     UEBERRUMPELT("überrumpelt"),
+    UNANGENEHM("unangenehm"),
+    UNERWARTET("unerwartet"),
     VERAERGERT("verärgert"),
     VERDROSSEN("verdrossen"),
     VERHANGEN("verhangen"),
@@ -143,14 +151,13 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     VERUNSICHERT("verunsichert"),
     VERWIRRT("verwirrt"),
     VERWUNDERT("verwundert"),
-    ZUFRIEDEN("zufrieden"),
     WACH("wach"),
     WARM("warm"),
     WAERMER("wärmer"),
     WOLKENVERHANGEN("wolkenverhangen"),
     WUNDERSCHOEN("wunderschön"),
-    ZORNIG("zornig");
-
+    ZORNIG("zornig"),
+    ZUFRIEDEN("zufrieden");
     /**
      * Das Adjektiv an sich, ohne Informationen zur Valenz
      */

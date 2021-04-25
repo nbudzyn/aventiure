@@ -43,6 +43,26 @@ public enum Temperatur implements Betweenable<Temperatur> {
         return isBetweenIncluding(KUEHL, WARM);
     }
 
+    public boolean hasNachfolger(final Temperatur other) {
+        return getNachfolger() == other;
+    }
+
+    public Temperatur getVorgaenger() {
+        if (ordinal() == 0) {
+            return values()[values().length - 1];
+        }
+
+        return values()[ordinal() - 1];
+    }
+
+    public Temperatur getNachfolger() {
+        if (ordinal() == values().length - 1) {
+            return values()[0];
+        }
+
+        return values()[ordinal() + 1];
+    }
+
     public int minus(final Temperatur other) {
         return ordinal() - other.ordinal();
     }
