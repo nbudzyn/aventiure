@@ -85,7 +85,7 @@ public class TemperaturDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public AltDescriptionsBuilder altTemperaturUndTagesezeitenSprungOderWechsel(
+    public AltDescriptionsBuilder altTemperaturUndTageszeitenSprungOderWechsel(
             final Tageszeit lastTageszeit,
             final AvTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,

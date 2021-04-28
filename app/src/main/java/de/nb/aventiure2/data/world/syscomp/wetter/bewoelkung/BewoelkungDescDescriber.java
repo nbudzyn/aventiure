@@ -3,7 +3,6 @@ package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
 
 import javax.annotation.CheckReturnValue;
 
@@ -79,7 +78,14 @@ public class BewoelkungDescDescriber {
         }
 
         // Es gab weitere Tageszeiten dazwischen ("Tageszeitensprung")
+        return altTageszeitensprung(bewoelkung, lastTageszeit, currentTageszeit,
+                unterOffenemHimmel);
+    }
 
+    private AltDescriptionsBuilder altTageszeitensprung(final Bewoelkung bewoelkung,
+                                                        final Tageszeit lastTageszeit,
+                                                        final Tageszeit currentTageszeit,
+                                                        final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
 
         // "Die Sonne geht gerade auf"
@@ -95,19 +101,16 @@ public class BewoelkungDescDescriber {
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case MORGENS:
-                alt.addAll(
-                        altTageszeitensprungOderWechselFromMorgensTo(
-                                bewoelkung, currentTageszeit, unterOffenemHimmel));
+                alt.addAll(altTageszeitensprungOderWechselFromMorgensTo(
+                        bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case TAGSUEBER:
-                alt.addAll(
-                        altTageszeitensprungOderWechselFromTagsueberTo(
-                                bewoelkung, currentTageszeit, unterOffenemHimmel));
+                alt.addAll(altTageszeitensprungOderWechselFromTagsueberTo(
+                        bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case ABENDS:
-                alt.addAll(
-                        altTageszeitensprungOderWechselFromAbendsTo(
-                                bewoelkung, currentTageszeit, unterOffenemHimmel));
+                alt.addAll(altTageszeitensprungOderWechselFromAbendsTo(
+                        bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + lastTageszeit);
@@ -129,9 +132,7 @@ public class BewoelkungDescDescriber {
                 break;
             case TAGSUEBER:
                 if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
-                    alt.addAll(altNeueSaetze(
-                            ImmutableList.of("Zwischenzeitlich", "Über dem"),
-                            "ist die Sonne aufgegangen"));
+                    alt.add(neuerSatz("derweil ist die Sonne aufgegangen"));
                 }
                 if (unterOffenemHimmel
                         && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
@@ -278,15 +279,14 @@ public class BewoelkungDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenwechsel(
+    public AltDescriptionsBuilder altTageszeitenwechsel(
             final Bewoelkung bewoelkung, final Tageszeit newTageszeit,
             final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altNeueSaetze(
                 PARAGRAPH,
-                satzDescriber.altTageszeitenwechsel(
-                        bewoelkung, newTageszeit, unterOffenemHimmel)));
+                satzDescriber.altTageszeitenwechsel(bewoelkung, newTageszeit, unterOffenemHimmel)));
 
         switch (newTageszeit) {
             case MORGENS:

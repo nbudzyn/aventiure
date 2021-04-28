@@ -62,6 +62,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -543,24 +544,26 @@ class WetterData {
         final AltDescriptionsBuilder alt = alt();
 
         // "Langsam wird es Morgen" / "hell"
-        alt.addAll(TEMPERATUR_DESC_DESCRIBER.altTemperaturUndTagesezeitenSprungOderWechsel(
+        alt.addAll(TEMPERATUR_DESC_DESCRIBER.altTemperaturUndTageszeitenSprungOderWechsel(
                 lastTageszeit, currentTime,
                 generelleTemperaturOutsideLocationTemperaturRange,
                 currentLokaleTemperaturBeiRelevanterAenderung,
                 drinnenDraussen));
 
         if (drinnenDraussen.isDraussen()) {
-            // FIXME  im WetterData Temperaturänderung, Tageszeitaenderung und
-            //  Bewölkung beschreiben,
-            //  ähnlich wie TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-            //                    currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
-            //                    currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
-
-            // "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
-            alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
-                    getBewoelkung(),
-                    lastTageszeit, currentTime.getTageszeit(),
-                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
+            if (currentLokaleTemperaturBeiRelevanterAenderung != null) {
+                alt.addAll(altTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
+                        lastTageszeit, currentTime,
+                        generelleTemperaturOutsideLocationTemperaturRange,
+                        currentLokaleTemperaturBeiRelevanterAenderung,
+                        drinnenDraussen));
+            } else {
+                // "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
+                alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
+                        getBewoelkung(),
+                        lastTageszeit, currentTime.getTageszeit(),
+                        drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
+            }
 
             // FIXME WENN lastTageszeit == TAGSUEBER && currentTageszeit == ABENDS:
             //  "Heute ist ein schönes
@@ -571,6 +574,42 @@ class WetterData {
             //  „Du trittst aus dem Wald hinaus. Purpurnes Abendrot erstreckt sich über den
             //  Horizont....“
         }
+
+        return alt.schonLaenger().build();
+    }
+
+
+    /**
+     * Gibt alternative Beschreibungen für draußen für eine gleichzeitige Änderung von Temperatur
+     * und Tageszeit zurück und beschreibt dabei auch die Bewölkung.
+     *
+     * @param currentLokaleTemperatur Die lokale Temperatur nach  der Änderung
+     *                                Änderung
+     */
+    @NonNull
+    @CheckReturnValue
+    private ImmutableCollection<AbstractDescription<?>>
+    altTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
+            final Tageszeit lastTageszeit,
+            final AvTime currentTime,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            final Temperatur currentLokaleTemperatur,
+            final DrinnenDraussen drinnenDraussen) {
+        checkArgument(lastTageszeit != currentTime.getTageszeit(),
+                "Kein Tageszeitensprung oder -wechsel: %s", lastTageszeit);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.addAll(altNeueSaetze(
+                BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
+                        bewoelkung,
+                        lastTageszeit, currentTime.getTageszeit(),
+                        drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL),
+                SENTENCE,
+                TEMPERATUR_DESC_DESCRIBER.alt(currentLokaleTemperatur,
+                        generelleTemperaturOutsideLocationTemperaturRange,
+                        currentTime, drinnenDraussen,
+                        true)));
 
         return alt.schonLaenger().build();
     }
@@ -1041,8 +1080,10 @@ class WetterData {
     //  "dich wärmen"
     //  "du erwärmst dich" (am Feuer)
 
-    // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist und die Sonne heiß
-    //  brennt, so..." (Maximaltemperatur vs. allgemeine Temperatur)
+    // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist
+    //  [lokale Temperatur] und die Sonne heiß brennt [generelle Temperatur], so..."
+
+    // FIXME Die Temperatur steigt (sofort? Planwetter?!), wenn man die Kugel nimmt.
 
     // FIXME Die Temperatur sinkt (sofort? Planwetter?!), nachdem der Frosch erschienen ist
 
