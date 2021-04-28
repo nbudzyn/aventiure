@@ -63,9 +63,8 @@ public class TageszeitDescDescriber {
     altZwischentageszeitlicherWechsel(final AvTime before, final AvTime after,
                                       final boolean draussen) {
         checkArgument(before.getTageszeit() == after.getTageszeit(),
-                "Tageszeit verändert: "
-                        + before.getTageszeit() + " zu "
-                        + after.getTageszeit());
+                "Tageszeit verändert: %s zu %s",
+                before.getTageszeit(), after.getTageszeit());
 
         if (oClock(15).isWithin(before, after)) {
             return altNachmittagsWechsel(draussen);
@@ -100,52 +99,23 @@ public class TageszeitDescDescriber {
         return alt.schonLaenger().build();
     }
 
-    /**
-     * Gibt Alternativen zurück, die einen "Tageszeitensprung" beschreiben
-     * (der Benutzer hat z.B. eine Weile geschlafen oder Ähnliches, und die Tageszeit
-     * hat in der Zeit mehrfach gewechselt - jedenfalls ist nicht mehr als
-     * 1 Tag vergangen!) - oder auch einfach einen normalen
-     * (einmaligen) Tageszeitenwechsel.
-     */
     @NonNull
     @CheckReturnValue
-    public AltDescriptionsBuilder
-    altSprungOderWechsel(
+    public AltDescriptionsBuilder altSprungOderWechsel(
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit, final boolean draussen) {
-        checkArgument(lastTageszeit != currentTageszeit,
-                "Kein Tageszeitensprung oder -Wechsel: " + lastTageszeit);
-
-        if (lastTageszeit.hasNachfolger(currentTageszeit)) {
-            // Es gab keine weiteren Tageszeiten dazwischen ("Tageszeitenwechsel")
-            return altWechsel(currentTageszeit, draussen);
-        }
-
-        final AltDescriptionsBuilder alt = alt();
-
-        // Es gab weitere Tageszeiten dazwischen ("Tageszeitensprung")
-
         switch (lastTageszeit) {
             case NACHTS:
-                alt.addAll(altSprungOderWechselFromNachtsTo(currentTageszeit, draussen));
-                break;
+                return altSprungOderWechselFromNachtsTo(currentTageszeit, draussen);
             case MORGENS:
-                alt.addAll(
-                        altSprungOderWechselFromMorgensTo(currentTageszeit, draussen));
-                break;
+                return altSprungOderWechselFromMorgensTo(currentTageszeit, draussen);
             case TAGSUEBER:
-                alt.addAll(
-                        altSprungOderWechselFromTagsueberTo(currentTageszeit, draussen));
-                break;
+                return altSprungOderWechselFromTagsueberTo(currentTageszeit, draussen);
             case ABENDS:
-                alt.addAll(
-                        altSprungOderWechselFromAbendsTo(currentTageszeit, draussen));
-                break;
+                return altSprungOderWechselFromAbendsTo(currentTageszeit, draussen);
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + lastTageszeit);
         }
-
-        return alt.schonLaenger();
     }
 
     @NonNull
@@ -302,7 +272,7 @@ public class TageszeitDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altWechsel(
+    public AltDescriptionsBuilder altWechsel(
             final Tageszeit newTageszeit, final boolean draussen) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -311,7 +281,7 @@ public class TageszeitDescDescriber {
             alt.addAll(satzDescriber.altWechselDraussen(newTageszeit));
 
             alt.addAll(altNeueSaetze(
-                    ImmutableList.of("allmählich", "unterdessen", "inzwischen"),
+                    ImmutableList.of("allmählich", "unterdessen", "inzwischen", "derweil"),
                     "ist es",
                     npArtikellos(newTageszeit.getNomenFlexionsspalte())
                             .nomK(), // "Morgen"
@@ -322,14 +292,13 @@ public class TageszeitDescDescriber {
             if (newTageszeit.getLichtverhaeltnisseDraussen() !=
                     newTageszeit.getVorgaenger().getLichtverhaeltnisseDraussen()) {
                 alt.addAll(altNeueSaetze(
-                        ImmutableList.of("unterdessen", "inzwischen"),
+                        ImmutableList.of("unterdessen", "inzwischen", "derweil"),
                         "ist es",
                         newTageszeit.getLichtverhaeltnisseDraussen().getAdjektiv(), // "hell"
                         "geworden"
                         // Der Tageszeitenwechsel ist parallel passiert.
                 ));
             }
-
         } else {
             if (newTageszeit != TAGSUEBER) {
                 alt.add(neuerSatz("Es dürfte wohl inzwischen",
@@ -413,7 +382,7 @@ public class TageszeitDescDescriber {
 
         if ((time.getTageszeit() == MORGENS || time.getTageszeit() == NACHTS)
                 && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-            alt.add(paragraph("Draußen ist es inzwischen",
+            alt.add(paragraph("Draußen ist es derweil",
                     time.getTageszeit().getLichtverhaeltnisseDraussen().getAdjektiv()
                             .getPraedikativ(Person.P3, Numerus.SG), // "hell" / "dunkel"
                     "geworden"));

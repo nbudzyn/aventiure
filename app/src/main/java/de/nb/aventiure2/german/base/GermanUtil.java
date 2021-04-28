@@ -262,8 +262,8 @@ public class GermanUtil {
                         + "nicht implementiert");
 
         checkArgument(!"\n".contentEquals(firstChar),
-                "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt noch ein "
-                        + "Komma unterzubringen.");
+                "Zeilenwechsel. Hier wäre keine Möglichkeit, syntaktisch korrekt "
+                        + "noch ein Komma unterzubringen.");
 
         return charDecktKommaAb(firstChar);
     }

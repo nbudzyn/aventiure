@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -10,18 +11,24 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -33,14 +40,142 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturDescDescriber {
+    private final TageszeitDescDescriber tageszeitDescDescriber;
     private final TemperaturSatzDescriber satzDescriber;
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
 
     public TemperaturDescDescriber(
+            final TageszeitDescDescriber tageszeitDescDescriber,
             final TemperaturPraedikativumDescriber praedikativumDescriber,
             final TemperaturSatzDescriber satzDescriber) {
+        this.tageszeitDescDescriber = tageszeitDescDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
         this.satzDescriber = satzDescriber;
+    }
+
+
+    /**
+     * Gibt Alternativen zurück, die eventuell einen "Temperatursprung" oder "-wechsel"
+     * beschreiben, auf jeden Fall aber einen "Tageszeitensprung"
+     * (der Benutzer hat z.B. eine Weile geschlafen oder Ähnliches, und die Tageszeit
+     * hat in der Zeit mehrfach gewechselt - jedenfalls ist nicht mehr als
+     * 1 Tag vergangen!) - oder einen (normalen, einmaligen) Tageszeitenwechsel.
+     *
+     * @param lastTemperaturBeiRelevanterAenderung    Falls eine Temperaturänderung
+     *                                                beschrieben werden soll, so steht
+     *                                                hier die lokale Temperatur vor der
+     *                                                Änderung. Es kann hier zu seltenen
+     *                                                Fällen kommen, dass der SC diese
+     *                                                vorherige Temperatur an diesem Ort
+     *                                                noch gar nicht erlebt und auch gar
+     *                                                nicht erwartet hat - z.B. wenn der SC
+     *                                                den ganzen heißen Tag an einem kühlen
+     *                                                Ort verbringt den kühlen Ort genau in
+     *                                                dem Moment verlässt, wenn der Tag sich
+     *                                                wieder abkühlt. Zurzeit berücksichtigen
+     *                                                wir diese Fälle nicht.
+     * @param currentTemperaturBeiRelevanterAenderung Falls eine Temperaturänderung
+     *                                                beschrieben werden soll, so steht
+     *                                                hier die lokale Temperatur nach  der
+     *                                                Änderung; muss und darf nur
+     *                                                angegeben sein, wenn
+     *                                                lastTemperaturBeiRelevanterAenderung
+     *                                                angegeben ist und muss dann
+     *                                                unterschiedlich sein.
+     */
+    @NonNull
+    @CheckReturnValue
+    public AltDescriptionsBuilder altTemperaturUndTagesezeitenSprungOderWechsel(
+            final Tageszeit lastTageszeit,
+            final AvTime currentTime,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final Temperatur currentTemperaturBeiRelevanterAenderung,
+            final DrinnenDraussen drinnenDraussen) {
+
+        checkArgument(lastTageszeit != currentTime.getTageszeit(),
+                "Kein Tageszeitensprung oder -Wechsel: %s", lastTageszeit);
+
+        if (lastTageszeit.hasNachfolger(currentTime.getTageszeit())) {
+            // Es gab keine weiteren Tageszeiten dazwischen ("Tageszeitenwechsel")
+            if (currentTemperaturBeiRelevanterAenderung != null) {
+                return altTemperaturSprungOderWechselUndTageszeitenwechsel(
+                        currentTime.getTageszeit(),
+                        currentTemperaturBeiRelevanterAenderung,
+                        drinnenDraussen.isDraussen());
+            }
+
+            return tageszeitDescDescriber.altWechsel(currentTime.getTageszeit(),
+                    drinnenDraussen.isDraussen());
+        }
+
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        // Es gab weitere Tageszeiten dazwischen ("Tageszeitensprung")
+
+        if (currentTemperaturBeiRelevanterAenderung != null) {
+            alt.addAll(altNeueSaetze(
+                    tageszeitDescDescriber.altSprungOderWechsel(
+                            lastTageszeit, currentTime.getTageszeit(),
+                            drinnenDraussen.isDraussen()),
+                    SENTENCE,
+                    alt(currentTemperaturBeiRelevanterAenderung,
+                            generelleTemperaturOutsideLocationTemperaturRange,
+                            currentTime, drinnenDraussen,
+                            true)));
+        } else {
+            alt.addAll(tageszeitDescDescriber.altSprungOderWechsel(
+                    lastTageszeit, currentTime.getTageszeit(), drinnenDraussen.isDraussen()));
+        }
+
+        return alt.schonLaenger();
+    }
+
+    /**
+     * Gibt Alternativen zurück, die ggf. einen "Temperaturwechsel"
+     * beschreiben, auf jeden Fall aber einen (normalen, einmaligen) "Tageszeitenwechsel".
+     *
+     * @param currentTemperatur Die  Temperatur nach  der Änderung; muss
+     *                          unterschiedlich sein.
+     */
+    @NonNull
+    @CheckReturnValue
+    private AltDescriptionsBuilder altTemperaturSprungOderWechselUndTageszeitenwechsel(
+            final Tageszeit newTageszeit,
+            final Temperatur currentTemperatur,
+            final boolean draussen) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        if (draussen) {
+            alt.addAll(satzDescriber.altTemperaturSprungOderWechselUndTageszeitenwechselDraussen(
+                    newTageszeit, currentTemperatur));
+
+            if (newTageszeit != TAGSUEBER) {
+                alt.addAll(altNeueSaetze(
+                        ImmutableList.of("allmählich", "unterdessen", "inzwischen", "derweil"),
+                        "hat",
+                        // "ein immer noch recht kalter Morgen"
+                        praedikativumDescriber.altAdjPhrTemperaturanstieg(
+                                currentTemperatur,
+                                true).stream()
+                                .map(a -> np(INDEF, a, newTageszeit.getNomenFlexionsspalte())
+                                        .nomK()),
+                        "begonnen"
+                        // Der Tageszeitenwechsel ist parallel passiert.
+                ));
+            }
+        } else {
+            // "Ob es wohl allmählich Morgen geworden ist? Kalt ist es."
+            alt.addAll(altNeueSaetze(
+                    tageszeitDescDescriber.altWechsel(newTageszeit, false),
+                    SENTENCE,
+                    praedikativumDescriber.altAdjPhr(
+                            currentTemperatur,
+                            false).stream()
+                            .map(a -> a.getPraedikativ(P3, SG)),
+                    "ist es"));
+        }
+
+        return alt;
     }
 
     /**
@@ -48,7 +183,8 @@ public class TemperaturDescDescriber {
      * (Temperaturwechsel) oder mehrere Stufen (Temperaturspung) verändert hat.
      *
      * @param lastTemperatur    Die lokale Temperatur vor der Änderung. Es kann hier zu
-     *                          seltenen Fällen kommen, dass der SC diese vorherige Temperatur an
+     *                          seltenen Fällen kommen, dass der SC diese vorherige
+     *                          Temperatur an
      *                          diesem Ort noch gar nicht erlebt und auch gar nicht erwartet hat
      *                          - z.B. wenn der SC den ganzen heißen Tag an einem kühlen Ort
      *                          verbringt den kühlen Ort genau in dem Moment verlässt, wenn der
@@ -57,17 +193,17 @@ public class TemperaturDescDescriber {
      * @param currentTemperatur Die lokale Temperatur nach  der Änderung; muss von
      *                          der lastTemperatur unterschiedlich sein
      */
-    public ImmutableCollection<AbstractDescription<?>> altTemperatursprungOderWechsel(
+    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechsel(
             final AvDateTime time,
             final Temperatur lastTemperatur,
             final Temperatur currentTemperatur,
             final DrinnenDraussen drinnenDraussen) {
         checkArgument(lastTemperatur != currentTemperatur,
-                "Kein Temperatursprung oder -wechsel: " + lastTemperatur);
+                "Kein Temperatursprung oder -wechsel: %s", lastTemperatur);
 
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altTemperatursprungOderWechsel(
+        alt.addAll(satzDescriber.altSprungOderWechsel(
                 time, lastTemperatur, currentTemperatur, drinnenDraussen));
 
         if (lastTemperatur.hasNachfolger(currentTemperatur)) {
@@ -92,7 +228,8 @@ public class TemperaturDescDescriber {
                 case SEHR_HEISS:
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected Temperatur: " + currentTemperatur);
+                    throw new IllegalStateException(
+                            "Unexpected Temperatur: " + currentTemperatur);
             }
         } else if (currentTemperatur.hasNachfolger(lastTemperatur)) {
             // Die Temperatur ist um eine Stufe gesunken
@@ -120,7 +257,8 @@ public class TemperaturDescDescriber {
                 case SEHR_HEISS: // Kann gar nicht sein
                     break;
                 default:
-                    throw new IllegalStateException("Unexpected Temperatur: " + currentTemperatur);
+                    throw new IllegalStateException(
+                            "Unexpected Temperatur: " + currentTemperatur);
             }
         } else {
             // Es gab weitere Temperaturen dazwischen ("Temperatursprung")
@@ -135,7 +273,7 @@ public class TemperaturDescDescriber {
                         praedikativumDescriber.alt(
                                 currentTemperatur, time.getTageszeit(),
                                 drinnenDraussen.isDraussen()).stream()
-                                .map(p -> p.getPraedikativ(Person.P3, Numerus.SG)),
+                                .map(p -> p.getPraedikativ(P3, SG)),
                         "geworden"));
 
                 alt.addAll(altNeueSaetze(
@@ -144,7 +282,7 @@ public class TemperaturDescDescriber {
                         praedikativumDescriber.alt(
                                 currentTemperatur, time.getTageszeit(),
                                 drinnenDraussen.isDraussen()).stream()
-                                .map(p -> p.getPraedikativ(Person.P3, Numerus.SG)),
+                                .map(p -> p.getPraedikativ(P3, SG)),
                         "geworden"));
 
                 alt.addAll(altNeueSaetze(
@@ -153,7 +291,7 @@ public class TemperaturDescDescriber {
                         praedikativumDescriber.alt(
                                 currentTemperatur, time.getTageszeit(),
                                 drinnenDraussen.isDraussen()).stream()
-                                .map(p -> p.getPraedikativ(Person.P3, Numerus.SG)),
+                                .map(p -> p.getPraedikativ(P3, SG)),
                         "geworden"));
 
                 if (drinnenDraussen.isDraussen()) {
@@ -162,7 +300,7 @@ public class TemperaturDescDescriber {
                             // "kalt" / "ein schöner Tag"
                             praedikativumDescriber.altLuftAdjPhr(
                                     currentTemperatur, time.getTageszeit()).stream()
-                                    .map(p -> p.getPraedikativ(Person.P3, Numerus.SG)),
+                                    .map(p -> p.getPraedikativ(P3, SG)),
                             "geworden"));
                 }
             } else {
@@ -175,7 +313,7 @@ public class TemperaturDescDescriber {
                         praedikativumDescriber.alt(
                                 currentTemperatur, time.getTageszeit(),
                                 drinnenDraussen.isDraussen()).stream()
-                                .map(p -> p.getPraedikativ(Person.P3, Numerus.SG))));
+                                .map(p -> p.getPraedikativ(P3, SG))));
             }
 
             if (delta < 0) {
@@ -192,7 +330,7 @@ public class TemperaturDescDescriber {
                             praedikativumDescriber.alt(
                                     currentTemperatur, time.getTageszeit(),
                                     drinnenDraussen.isDraussen()).stream()
-                                    .map(p -> p.getPraedikativ(Person.P3, Numerus.SG))));
+                                    .map(p -> p.getPraedikativ(P3, SG))));
                 }
             } else {
                 alt.add(neuerSatz("es ist spürbar wärmer geworden"),
@@ -206,7 +344,7 @@ public class TemperaturDescDescriber {
                             praedikativumDescriber.alt(
                                     currentTemperatur, time.getTageszeit(),
                                     drinnenDraussen.isDraussen()).stream()
-                                    .map(p -> p.getPraedikativ(Person.P3, Numerus.SG))));
+                                    .map(p -> p.getPraedikativ(P3, SG))));
                 }
             }
         }

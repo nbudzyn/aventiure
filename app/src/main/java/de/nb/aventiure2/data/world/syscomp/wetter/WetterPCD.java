@@ -297,7 +297,6 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         EnumRange.all(Temperatur.class);
 
         final Temperatur aktuelleGenerelleTemperatur = getAktuelleGenerelleTemperatur(endTime);
-
         Temperatur previousLokaleTemperaturBeiRelevanterAenderung = null;
         Temperatur currentLokaleTemperaturBeiRelevanterAenderung = null;
         if ( // Die generelle aktuelle Temperatur hat sich gerade geändert...
@@ -338,6 +337,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         final ImmutableCollection<AbstractDescription<?>> alt =
                 altTimePassed(startTime, endTime,
+                        !locationTemperaturRange.isInRange(aktuelleGenerelleTemperatur),
                         previousLokaleTemperaturBeiRelevanterAenderung,
                         currentLokaleTemperaturBeiRelevanterAenderung,
                         drinnenDraussen);
@@ -382,9 +382,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
     private ImmutableCollection<AbstractDescription<?>> altTimePassed(
             final AvDateTime lastTime,
             final AvDateTime currentTime,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final Temperatur lastLokaleTemperaturBeiRelevanterAenderung,
             @Nullable final Temperatur currentLokaleTemperaturBeiRelevanterAenderung,
-            // IDEA Hier später auch Bewölkungsänderungen etc. einarbeiten
+            // FIXME Hier auch Bewölkungsänderungen etc. einarbeiten
             final DrinnenDraussen drinnenDraussen) {
         final boolean tageszeitaenderungSollBeschriebenWerden =
                 !currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY) &&
@@ -393,6 +394,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         final ImmutableCollection<AbstractDescription<?>> alt =
                 wetter.altTimePassed(lastTime, currentTime,
                         tageszeitaenderungSollBeschriebenWerden,
+                        generelleTemperaturOutsideLocationTemperaturRange,
                         lastLokaleTemperaturBeiRelevanterAenderung,
                         currentLokaleTemperaturBeiRelevanterAenderung,
                         drinnenDraussen

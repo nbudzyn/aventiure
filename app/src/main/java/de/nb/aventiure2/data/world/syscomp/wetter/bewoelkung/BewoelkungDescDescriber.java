@@ -71,7 +71,7 @@ public class BewoelkungDescDescriber {
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
         checkArgument(lastTageszeit != currentTageszeit,
-                "Kein Tageszeitensprung oder -Wechsel: " + lastTageszeit);
+                "Kein Tageszeitensprung oder -Wechsel: %s", lastTageszeit);
 
         if (lastTageszeit.hasNachfolger(currentTageszeit)) {
             // Es gab keine weiteren Tageszeiten dazwischen ("Tageszeitenwechsel")

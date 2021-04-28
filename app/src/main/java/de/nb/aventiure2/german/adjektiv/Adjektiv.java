@@ -84,7 +84,8 @@ public class Adjektiv {
                         || stamm.endsWith("ee") || stamm.endsWith("ie")
                         || stamm.length() <= 2
                         || !stamm.endsWith("e"),
-                "Adjektivstamm eines flektierbaren Adjektivs endet auf e");
+                "Adjektivstamm eines flektierbaren Adjektivs endet auf e: %s",
+                stamm);
 
         this.praedikativ = praedikativ;
         this.stamm = stamm;

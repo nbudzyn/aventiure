@@ -178,6 +178,13 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
     @CheckReturnValue
     private static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
+        // FIXME Visitor-Pattern nutzen? Alle parts sollten
+        //  (wenn sie nicht String o.Ä. sind) ein Interface implementieren,
+        //  so dass man hier auch problemlos AbstractDescriptions,
+        //  AltDescriptionBuilder etc. übergeben kann.
+        //  Dann entfällt auch die Notwendigkeit von
+        //  descriptionsToKonstiuenten()-Methoden.
+
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 
         ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>

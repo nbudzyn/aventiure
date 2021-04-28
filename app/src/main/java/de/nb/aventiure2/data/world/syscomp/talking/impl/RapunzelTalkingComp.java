@@ -30,7 +30,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -1264,7 +1263,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         ",",
                         altDannHaareFestbinden(rapunzelDesc.persPron()).stream()
                                 .flatMap(d -> d.altTextDescriptions().stream())
-                                .map(TextDescription::toSingleKonstituente)
                 ));
                 if (zuneigungZumSC > FeelingIntensity.MERKLICH) {
                     alt.addAll(altNeueSaetze(
@@ -1272,10 +1270,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             duzen() ? "du könntest" : "Ihr könntet",
                             "noch einen Moment bleiben!“, antwortet",
                             anaph().nomK(),
-                            ".",
+                            SENTENCE,
                             altAberDochHaareFestbinden(rapunzelDesc).stream()
                                     .flatMap(d -> d.altTextDescriptions().stream())
-                                    .map(TextDescription::toSingleKonstituente)
                     ));
                 }
             }

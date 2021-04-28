@@ -117,7 +117,8 @@ class WetterData {
                     TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
 
     private static final TemperaturDescDescriber TEMPERATUR_DESC_DESCRIBER =
-            new TemperaturDescDescriber(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER,
+            new TemperaturDescDescriber(TAGESZEIT_DESC_DESCRIBER,
+                    TEMPERATUR_PRAEDIKATIVUM_DESCRIBER,
                     TEMPERATUR_SATZ_DESCRIBER);
 
     // Bewölkung-Describer
@@ -520,28 +521,45 @@ class WetterData {
     }
 
     /**
-     * Gibt alternative Beschreibungen für einen Tageszeitensprung oder -wechsel zurück.
+     * Gibt alternative Beschreibungen für einen Tageszeitensprung oder -wechsel zurück -
+     * und eventuell auch eine Beschreibung einer Temperaturänderung.
+     *
+     * @param currentLokaleTemperaturBeiRelevanterAenderung Falls eine Temperaturänderung
+     *                                                      beschrieben werden soll, so steht
+     *                                                      hier die lokale Temperatur nach  der
+     *                                                      Änderung
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableCollection<AbstractDescription<?>> altTageszeitensprungOderWechsel(
+    private ImmutableCollection<AbstractDescription<?>> altTageszeitenUndEvtlTemperaturaenderung(
             final Tageszeit lastTageszeit,
-            final Tageszeit currentTageszeit,
+            final AvTime currentTime,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final Temperatur currentLokaleTemperaturBeiRelevanterAenderung,
             final DrinnenDraussen drinnenDraussen) {
-        checkArgument(lastTageszeit != currentTageszeit,
-                "Keine Tageszeitensprung oder -wechsel: " + lastTageszeit);
+        checkArgument(lastTageszeit != currentTime.getTageszeit(),
+                "Keine Tageszeitensprung oder -wechsel: %s", lastTageszeit);
 
         final AltDescriptionsBuilder alt = alt();
 
         // "Langsam wird es Morgen" / "hell"
-        alt.addAll(TAGESZEIT_DESC_DESCRIBER.altSprungOderWechsel(
-                lastTageszeit, currentTageszeit, drinnenDraussen.isDraussen()));
+        alt.addAll(TEMPERATUR_DESC_DESCRIBER.altTemperaturUndTagesezeitenSprungOderWechsel(
+                lastTageszeit, currentTime,
+                generelleTemperaturOutsideLocationTemperaturRange,
+                currentLokaleTemperaturBeiRelevanterAenderung,
+                drinnenDraussen));
 
         if (drinnenDraussen.isDraussen()) {
+            // FIXME  im WetterData Temperaturänderung, Tageszeitaenderung und
+            //  Bewölkung beschreiben,
+            //  ähnlich wie TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
+            //                    currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
+            //                    currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
+
             // "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
             alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
                     getBewoelkung(),
-                    lastTageszeit, currentTageszeit,
+                    lastTageszeit, currentTime.getTageszeit(),
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
 
             // FIXME WENN lastTageszeit == TAGSUEBER && currentTageszeit == ABENDS:
@@ -557,21 +575,7 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // IDEA Idee zur Vereinheitlich (sofern das hilfreich ist):
-    //  - Prio ermitteln: Was soll mit welcher Priorität erzählt werde?
-    //   (1. Temp 2. Bewölkumg 3. Tageszeit o.Ä.)
-    //  - Danach entsprechende Methoden eines Interfaces
-    //    aufrufen, etwa altTemperaturBewoelkungTageszeit()
-    //  - Das Interface ist ein paar mal implementiert, jeweils für
-    //    statische Beschreibungssätze, für kommt-nach-draußen-Sätze,
-    //    für Adjektive etc. (Die Implementierungen können sich problemlos
-    //    gegenseitig aufrufen.)
-    //    Damit wäre die Logik "was muss man mit welcher Prio erzählen"
-    //    - die vielleicht immer gleich ist? - getrennt von
-    //    dem "Rendering" als statischem Satz, kommt-nach-draußen-Description o.Ä.
-
-
-    // FIXME Bei extremen / dramtischen Wetterlagen "Erinnerungen", ähnlich dem
+    // FIXME Bei extremen / dramtischen Wetterlagen regelmäßig "Erinnerungen", ähnlich dem
     //  Müdigkeits-Konzept?
 
     /**
@@ -1030,7 +1034,7 @@ class WetterData {
     // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
     //  - "Der Himmel ist blau, die Luft mild"
 
-    // FIXME Aufwärmen / Auftauen (z.B. am Feuer)
+    // FIXME Jemand wärmt sich auf (z.B. am Feuer oder Drinnen)
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
     //  "du reibst die Hände"
     //  "du bist so erfroren"
@@ -1086,9 +1090,6 @@ class WetterData {
     /**
      * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
      * zuallermeist leer.
-     * <p>
-     * Wenn es hier Beschreibungen gab und keine von ihnen ausgegeben wird, wird die Änderung
-     * nicht mehr beschrieben werden.
      *
      * @param lastLokaleTemperaturBeiRelevanterAenderung    Falls eine Temperaturänderung
      *                                                      beschrieben werden soll, so steht
@@ -1116,6 +1117,7 @@ class WetterData {
             final AvDateTime lastTime,
             final AvDateTime currentTime,
             final boolean tageszeitaenderungSollBeschriebenWerden,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final Temperatur lastLokaleTemperaturBeiRelevanterAenderung,
             @Nullable final Temperatur currentLokaleTemperaturBeiRelevanterAenderung,
             final DrinnenDraussen drinnenDraussen) {
@@ -1128,10 +1130,10 @@ class WetterData {
                 "lastLokaleTemperaturBeiRelevanterAenderung und "
                         + "currentLokaleTemperaturBeiRelevanterAenderung inkonsistent. "
                         + "Entweder beide null oder beide gesetzt und verschieden! "
-                        + "lastLokaleTemperaturBeiRelevanterAenderung: "
-                        + lastLokaleTemperaturBeiRelevanterAenderung
-                        + ", currentLokaleTemperaturBeiRelevanterAenderung: "
-                        + currentLokaleTemperaturBeiRelevanterAenderung);
+                        + "lastLokaleTemperaturBeiRelevanterAenderung: %s, "
+                        + "currentLokaleTemperaturBeiRelevanterAenderung: %s",
+                lastLokaleTemperaturBeiRelevanterAenderung,
+                currentLokaleTemperaturBeiRelevanterAenderung);
 
         final boolean temperaturAenderungSollBeschriebenWerden =
                 lastLokaleTemperaturBeiRelevanterAenderung != null;
@@ -1150,34 +1152,26 @@ class WetterData {
         } else if (temperaturAenderungSollBeschriebenWerden
                 && !tageszeitaenderungSollBeschriebenWerden) {
             // Nur Temperatur beschreiben
-            alt = TEMPERATUR_DESC_DESCRIBER.altTemperatursprungOderWechsel(
+            alt = TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
                     currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
                     currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
             // IDEA  "Die Sonne hat die Erde aufgetaut" (bei (aktuell) unauffälliger Bewölkung)
-        } else if (!temperaturAenderungSollBeschriebenWerden
-                && tageszeitaenderungSollBeschriebenWerden) {
-            // Es gab einen Tageszeitenwechsel oder -sprung während einer Zeit
-            // von weniger als einem Tag - nur diesen Tageszeitenwechsel oder -sprung beschreiben
-            alt = altTageszeitensprungOderWechsel(lastTime.getTageszeit(),
-                    currentTime.getTageszeit(), drinnenDraussen);
         } else {
-            // Es gab einen Tageszeitenwechsel oder -sprung während einer Zeit
-            // von weniger als einem Tag - und auch eine Temperaturänderung.
-            // Temperaturänderung und Tageszeitenwechsel oder -sprung beschreiben
-
-            // FIXME Temperatur- und Tageszeitaenderung beschreiben,
-            //  ähnlich wie TEMPERATUR_DESC_DESCRIBER.altTemperatursprungOderWechsel(
-            //                    currentTime, lastLokaleTemperaturBeiRelevanterAenderung,
-            //                    currentLokaleTemperaturBeiRelevanterAenderung, drinnenDraussen);
-
-            alt = altTageszeitensprungOderWechsel(lastTime.getTageszeit(),
-                    currentTime.getTageszeit(), drinnenDraussen);
-
             // FIXME Veränderungen der Bewölkung (geschieht nur über Plan, nicht automatisch über
             //  den Tag) es klart auf / der Himmel bedeckt sich/ bezieht sich (Bewölkung)
 
             // FIXME Veränderung von Temperatur *und* Bewölkung: "Es hat deutlich abgekühlt und der
             //  Himmel bezieht sich."
+
+            // Es gab eine Tageszeitenänderung während einer Zeit
+            // von weniger als einem Tag - und vielleicht soll auch eine Temperaturänderung
+            // beschrieben werden.
+
+            alt = altTageszeitenUndEvtlTemperaturaenderung(lastTime.getTageszeit(),
+                    currentTime.getTime(),
+                    generelleTemperaturOutsideLocationTemperaturRange,
+                    currentLokaleTemperaturBeiRelevanterAenderung,
+                    drinnenDraussen);
         }
         return alt;
     }

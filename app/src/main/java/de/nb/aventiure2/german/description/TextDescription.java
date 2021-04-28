@@ -174,4 +174,12 @@ public class TextDescription extends AbstractDescription<TextDescription> {
         //  mit Sets ergeben...
         return super.hashCode();
     }
+
+    @Override
+    public String toString() {
+        // FIXME Nur zum Test
+        return super.toString() + " {" +
+                "konstituente=" + konstituente +
+                '}';
+    }
 }

@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Nominalphrase;
@@ -21,6 +22,7 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
@@ -28,9 +30,12 @@ import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.base.Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT;
 import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ANGENEHM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGEHEIZT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEISSEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BITTERKALT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BRUELLEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISEKALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EISKALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FLIRREND;
@@ -38,9 +43,15 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FROSTIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GLUEHEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KALT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KUEHL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KUEHLER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.NAECHTLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNANGENEHM;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNERTRAEGLICH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNERWARTET;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WAERMER;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
@@ -56,6 +67,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.util.StreamUtil.*;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link Praedikativum}.
@@ -426,6 +438,180 @@ public class TemperaturPraedikativumDescriber {
         return alt.build();
     }
 
+    /**
+     * Gibt alternative Adjektivphrasen für eine Temperaturänderungen
+     * zurück (um eine oder mehrere Stufen, Abfall oder Anstieg), also einen
+     * "Temperaturwechsel" oder einen "Temperatursprung".
+     *
+     * @param lastTemperatur    Die Temperatur vor der
+     *                          Änderung.
+     * @param currentTemperatur Die Temperatur nach  der Änderung
+     */
+    @NonNull
+    @CheckReturnValue
+    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrTemperaturaenderung(
+            final Temperatur lastTemperatur,
+            final Temperatur currentTemperatur,
+            final boolean fuerAttributiveVerwendung) {
+        checkArgument(lastTemperatur != currentTemperatur,
+                "lastLokaleTemperatur und lastTemperatur gleich: %s",
+                lastTemperatur);
+
+        if (currentTemperatur.compareTo(lastTemperatur) >= 0) {
+            return altAdjPhrTemperaturanstieg(currentTemperatur, fuerAttributiveVerwendung);
+        }
+
+        return altAdjPhrTemperaturabfall(currentTemperatur, fuerAttributiveVerwendung);
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück, die beschreiben, wie die Temperatur gestiegen
+     * ist.
+     *
+     * @param endTemperatur Die lokale Temperatur nach der Änderung
+     */
+    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrTemperaturanstieg(
+            final Temperatur endTemperatur,
+            final boolean fuerAttributiveVerwendung) {
+        final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
+
+        if (endTemperatur.compareTo(Temperatur.KUEHL) <= 0) {
+            // "etwas wärmer, aber immer noch ziemlich kühl"
+            alt.addAll(
+                    altAdjPhrEtwasWaermer().stream()
+                            .flatMap(etwasWaermer -> altAdjPhr(
+                                    endTemperatur, fuerAttributiveVerwendung).stream()
+                                    .map(ziemlichKuehl ->
+                                            ziemlichKuehl.mitAdvAngabe(
+                                                    new AdvAngabeSkopusSatz("immer noch")))
+                                    .map(immerNochZiemlichKuehl ->
+                                            new ZweiAdjPhrOhneLeerstellen(
+                                                    etwasWaermer,
+                                                    true,
+                                                    "aber",
+                                                    immerNochZiemlichKuehl
+                                            )))
+                            .collect(toSet()));
+        }
+
+        switch (endTemperatur) {
+            case KLIRREND_KALT:  // Kann gar nicht sein
+                // fall-through
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                alt.add(EISEKALT.mitGraduativerAngabe("nicht mehr ganz so"),
+                        BITTERKALT.mitGraduativerAngabe("nicht mehr ganz so"));
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.add(new ZweiAdjPhrOhneLeerstellen(
+                        KALT,
+                        true,
+                        "wenn auch",
+                        FROSTIG.mitGraduativerAngabe("nicht länger")));
+                break;
+            case KUEHL:
+                alt.add(KALT.mitGraduativerAngabe("längst nicht mehr so"));
+                break;
+            case WARM:
+                alt.add(AdjektivOhneErgaenzungen.WARM
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz(UNERWARTET)),
+                        AdjektivOhneErgaenzungen.WARM
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz(ANGENEHM)));
+                break;
+            case RECHT_HEISS:
+                alt.add(HEISS.mitAdvAngabe(new AdvAngabeSkopusSatz(
+                        UNANGENEHM.mitGraduativerAngabe("allmählich"))));
+                break;
+            case SEHR_HEISS:
+                alt.add(HEISS.mitAdvAngabe(new AdvAngabeSkopusSatz(
+                        BRUELLEND.mitGraduativerAngabe("nun"))));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + endTemperatur);
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt alternative Adjektivphrasen zurück, die beschreiben, wie die Temperatur gestiegen ist.
+     *
+     * @param endTemperatur Die lokale Temperatur nach der Änderung
+     */
+    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrTemperaturabfall(
+            final Temperatur endTemperatur,
+            final boolean fuerAttributiveVerwendung) {
+        final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
+
+        if (endTemperatur.compareTo(Temperatur.WARM) >= 0) {
+            // "etwas kühler, aber immer noch ziemlich warm"
+            alt.addAll(
+                    altAdjPhrEtwasKuehler().stream()
+                            .flatMap(etwasKuehler -> altAdjPhr(
+                                    endTemperatur, fuerAttributiveVerwendung).stream()
+                                    .map(ziemlichWarm ->
+                                            ziemlichWarm.mitAdvAngabe(
+                                                    new AdvAngabeSkopusSatz("immer noch")))
+                                    .map(immerNochZiemlichWarm ->
+                                            new ZweiAdjPhrOhneLeerstellen(
+                                                    etwasKuehler,
+                                                    true,
+                                                    "aber",
+                                                    immerNochZiemlichWarm)))
+                            .collect(toSet()));
+        }
+
+        switch (endTemperatur) {
+            case KLIRREND_KALT:
+                alt.add(KALT.mitAdvAngabe(
+                        new AdvAngabeSkopusSatz(BEISSEND
+                                .mitAdvAngabe(new AdvAngabeSkopusSatz(UNERTRAEGLICH)))));
+                break;
+            case KNAPP_UNTER_DEM_GEFRIERPUNKT:
+                alt.add(FROSTIG.mitAdvAngabe(new AdvAngabeSkopusSatz("nun")));
+                break;
+            case KNAPP_UEBER_DEM_GEFRIERPUNKT:
+                alt.add(KUEHL.mitAdvAngabe(new AdvAngabeSkopusSatz("empfindlich")));
+                break;
+            case KUEHL:
+                alt.add(KUEHL.mitAdvAngabe(new AdvAngabeSkopusSatz("mittlerweile")));
+                break;
+            case WARM:
+                alt.add(HEISS.mitGraduativerAngabe("längst nicht mehr so"),
+                        HEISS.mitGraduativerAngabe("nun nicht mehr so"));
+                break;
+            case RECHT_HEISS:
+                // fall-through
+            case SEHR_HEISS: // Kann gar nicht sein
+                alt.add(HEISS.mitGraduativerAngabe("nicht mehr ganz so elendig"));
+                break;
+            default:
+                throw new IllegalStateException("Unexpected Temperatur: " + endTemperatur);
+        }
+
+        return alt.build();
+    }
+
+
+    @NonNull
+    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasWaermer() {
+        final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
+
+        alt.add(WAERMER.mitGraduativerAngabe("etwas"));
+        alt.add(WAERMER.mitGraduativerAngabe("wohl"));
+
+        return alt.build();
+    }
+
+    @NonNull
+    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasKuehler() {
+        final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
+
+        alt.add(KUEHLER.mitGraduativerAngabe("etwas"));
+        alt.add(KUEHLER.mitGraduativerAngabe("ein wenig"));
+
+        return alt.build();
+    }
+
 
     /**
      * Gibt alternative Adjektivphrasen zurück für eine Beschreibung in der Art
@@ -437,7 +623,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
+    ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
             final Temperatur temperatur, final boolean fuerAttributiveVerwendung) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt = ImmutableList.builder();
 

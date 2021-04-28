@@ -227,11 +227,11 @@ public class NehmenAction
     @SuppressWarnings("unchecked")
     private void narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
-                "Unexpected creature: " + gameObject);
+                "Unexpected creature: %s", gameObject);
         checkState(((IHasStateGO<FroschprinzState>) gameObject).stateComp()
                         .hasState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                                 HAT_HOCHHEBEN_GEFORDERT),
-                "Unexpected state: " + gameObject);
+                "Unexpected state: %s", gameObject);
 
         narrateAndDoFroschprinz();
     }

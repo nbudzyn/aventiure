@@ -6,12 +6,7 @@ import androidx.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import javax.annotation.CheckReturnValue;
 
@@ -26,8 +21,6 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -44,37 +37,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     AbstractDescription(final DescriptionParams params) {
         this.params = params;
-    }
-
-    @CheckReturnValue
-    static Object[] descriptionsToKonstiuenten(final Object... elements) {
-        final Object[] res = new Object[elements.length];
-        for (int i = 0; i < res.length; i++) {
-            if (elements[i] instanceof Set) {
-                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
-                        .map(AbstractDescription::descriptionsToKonstiuenten)
-                        .collect(toImmutableSet());
-            } else if (elements[i] instanceof Collection) {
-                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
-                        .map(AbstractDescription::descriptionsToKonstiuenten)
-                        .collect(toImmutableList());
-            } else if (elements[i].getClass().isArray()) {
-                final List<Object> content = new ArrayList<>(Array.getLength(elements[i]));
-                for (int j = 0; j < Array.getLength(elements[i]); j++) {
-                    content.add(Array.get(elements[i], j));
-                }
-
-                res[i] = content.stream()
-                        .map(AbstractDescription::descriptionsToKonstiuenten)
-                        .toArray(Object[]::new);
-            } else if (elements[i] instanceof AbstractDescription<?>) {
-                res[i] = ((AbstractDescription<?>) elements[i]).toSingleKonstituente();
-            } else {
-                res[i] = elements[i];
-            }
-        }
-
-        return res;
     }
 
     public abstract StructuralElement getStartsNew();

@@ -112,7 +112,7 @@ public class EinzelnerSatz implements Satz {
             }
         } else {
             Preconditions.checkNotNull(subjekt, "Subjekt null, fehlendes Subjekt " +
-                    "für diese Prädikat nicht möglich: " + praedikat);
+                    "für diese Prädikat nicht möglich: %s", praedikat);
         }
 
         this.anschlusswort = anschlusswort;

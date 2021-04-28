@@ -183,8 +183,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
-                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas"),
-                            true));
+                            true, AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
+                    ));
         } else if (feelingIntensity == FeelingIntensity.NUR_LEICHT) {
             return ImmutableList.of(
                     AdjektivOhneErgaenzungen.ERSTAUNT,
@@ -248,8 +248,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
             return ImmutableList.of(
                     new ZweiAdjPhrOhneLeerstellen(
                             AdjektivOhneErgaenzungen.UEBERRASCHT,
-                            AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas"),
-                            true)
+                            true, AdjektivOhneErgaenzungen.VERWIRRT.mitGraduativerAngabe("etwas")
+                    )
             );
         }
 
@@ -296,8 +296,8 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     gluecklichDichZuSehen,
                     gespanntWasZuBerichten,
                     new ZweiAdjPhrOhneLeerstellen(
-                            gluecklichDichZuSehen, gespanntWasZuBerichten,
-                            true)
+                            gluecklichDichZuSehen, true, gespanntWasZuBerichten
+                    )
             );
         }
 

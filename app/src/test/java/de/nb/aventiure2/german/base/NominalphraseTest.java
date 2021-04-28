@@ -252,8 +252,8 @@ public class NominalphraseTest {
     public void test_Reihung_nurAdjektiattribute_gleichrangig() {
         // GIVEN
         final Nominalphrase np =
-                np(INDEF, new ZweiAdjPhrOhneLeerstellen(LEICHT, HERB,
-                                true),
+                np(INDEF, new ZweiAdjPhrOhneLeerstellen(LEICHT, true, HERB
+                        ),
                         ROTWEINE);
 
         // WHEN
@@ -273,8 +273,8 @@ public class NominalphraseTest {
     public void test_Reihung_nurAdjektivattribute_nichtGleichrangig() {
         // GIVEN
         final Nominalphrase np =
-                np(INDEF, new ZweiAdjPhrOhneLeerstellen(GROSS, GRUEN,
-                                false),
+                np(INDEF, new ZweiAdjPhrOhneLeerstellen(GROSS, false, GRUEN
+                        ),
                         ELEFANTEN);
 
         // WHEN
@@ -295,12 +295,12 @@ public class NominalphraseTest {
         // GIVEN
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(World.duSc())),
-                AdjektivMitIndirektemFragesatz.GESPANNT
+                true, AdjektivMitIndirektemFragesatz.GESPANNT
                         .mitIndirektemFragesatz(
                                 BERICHTEN.mit(Interrogativpronomen.WAS)
                                         .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc())),
-                true));
+                                        .alsSatzMitSubjekt(duSc()))
+        ));
 
         // WHEN
         final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
@@ -321,12 +321,12 @@ public class NominalphraseTest {
         // GIVEN
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 JUNG,
-                AdjektivMitIndirektemFragesatz.GESPANNT
+                true, AdjektivMitIndirektemFragesatz.GESPANNT
                         .mitIndirektemFragesatz(
                                 BERICHTEN.mit(Interrogativpronomen.WAS)
                                         .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc())),
-                true));
+                                        .alsSatzMitSubjekt(duSc()))
+        ));
 
         // WHEN
         final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
@@ -347,12 +347,12 @@ public class NominalphraseTest {
         // GIVEN
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 JUNG,
-                AdjektivMitIndirektemFragesatz.GESPANNT
+                true, AdjektivMitIndirektemFragesatz.GESPANNT
                         .mitIndirektemFragesatz(
                                 BERICHTEN.mit(Interrogativpronomen.WAS)
                                         .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc())),
-                true));
+                                        .alsSatzMitSubjekt(duSc()))
+        ));
 
         // WHEN
         final Konstituente actual = np.imK(DAT).joinToSingleKonstituente();
@@ -373,12 +373,12 @@ public class NominalphraseTest {
         // GIVEN
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(World.duSc())),
-                AdjektivMitIndirektemFragesatz.GESPANNT
+                true, AdjektivMitIndirektemFragesatz.GESPANNT
                         .mitIndirektemFragesatz(
                                 BERICHTEN.mit(Interrogativpronomen.WAS)
                                         .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc())),
-                true));
+                                        .alsSatzMitSubjekt(duSc()))
+        ));
 
         // WHEN
         final Konstituente actual = np.imK(DAT).joinToSingleKonstituente();

@@ -209,7 +209,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     private static String checkNoWhitespace(final String kasusform) {
         checkArgument(!Pattern.compile(".*\\s.*").matcher(kasusform).matches(),
-                "Nomen enthält Whitespace: " + kasusform);
+                "Nomen enthält Whitespace: %s", kasusform);
         return kasusform;
     }
 

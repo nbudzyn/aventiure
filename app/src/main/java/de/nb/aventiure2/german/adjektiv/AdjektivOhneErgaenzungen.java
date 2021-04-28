@@ -32,6 +32,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     //  Partizipien erzeugt.
 
     // FIXME Hat man Partizipien II, kann man auch Perfekt bilden!
+    ABGEKUEHLT("abgekühlt"),
     ALLMAEHLICH("allmählich"),
     ANBRECHEND("anbrechend"),
     ANDERS("anders", "ander"),
@@ -55,6 +56,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     BEWOELKT("bewölkt"),
     BEZOGEN("bezogen"),
     BLAU("blau"),
+    BRUELLEND("brüllend"),
     DICK("dick"),
     DUESTER("düster"),
     DUNKEL("dunkel", "dunkl"),
@@ -143,6 +145,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     UEBERRASCHT("überrascht"),
     UEBERRUMPELT("überrumpelt"),
     UNANGENEHM("unangenehm"),
+    UNERTRAEGLICH("unerträglich"),
     UNERWARTET("unerwartet"),
     VERAERGERT("verärgert"),
     VERDROSSEN("verdrossen"),

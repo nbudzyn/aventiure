@@ -172,7 +172,7 @@ public class AblegenAction
 
     private void narrateAndDoLivingBeing() {
         checkState(gameObject.is(FROSCHPRINZ),
-                "Unexpected creature data: " + gameObject);
+                "Unexpected creature data: %s", gameObject);
 
         narrateAndDoFroschprinz();
     }

@@ -391,8 +391,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
         checkState(kannAlsBezugsobjektVerstandenWerdenFuer != null,
                 "Bezugsobjekt gesetzt, aber kein "
-                        + "kannAlsBezugsobjektVerstandenWerdenFuer! Bezugsobjekt: "
-                        + bezugsobjekt);
+                        + "kannAlsBezugsobjektVerstandenWerdenFuer! Bezugsobjekt: %s",
+                bezugsobjekt);
 
         return new PhorikKandidat(kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
     }

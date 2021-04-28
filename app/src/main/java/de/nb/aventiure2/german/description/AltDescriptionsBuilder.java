@@ -4,7 +4,11 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -19,13 +23,13 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.Satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.builder;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.AbstractDescription.descriptionsToKonstiuenten;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.prependObject;
 import static java.util.Arrays.asList;
 
@@ -251,6 +255,46 @@ public class AltDescriptionsBuilder {
     @CheckReturnValue
     private boolean isEmpty() {
         return alt.build().isEmpty();
+    }
+
+
+    @CheckReturnValue
+    private static Object[] descriptionsToKonstiuenten(final Object... elements) {
+        final Object[] res = new Object[elements.length];
+        for (int i = 0; i < res.length; i++) {
+            if (elements[i] instanceof AltDescriptionsBuilder) {
+                res[i] = ((AltDescriptionsBuilder) elements[i]).build().stream()
+                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
+                        .collect(toImmutableSet());
+            } else if (elements[i] instanceof Set) {
+                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
+                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
+                        .collect(toImmutableSet());
+            } else if (elements[i] instanceof Collection) {
+                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
+                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
+                        .collect(toImmutableList());
+            } else if (elements[i] instanceof Stream) {
+                res[i] = ((Stream<?>) elements[i])
+                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
+                        .collect(toImmutableList());
+            } else if (elements[i].getClass().isArray()) {
+                final List<Object> content = new ArrayList<>(Array.getLength(elements[i]));
+                for (int j = 0; j < Array.getLength(elements[i]); j++) {
+                    content.add(Array.get(elements[i], j));
+                }
+
+                res[i] = content.stream()
+                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
+                        .toArray(Object[]::new);
+            } else if (elements[i] instanceof AbstractDescription<?>) {
+                res[i] = ((AbstractDescription<?>) elements[i]).toSingleKonstituente();
+            } else {
+                res[i] = elements[i];
+            }
+        }
+
+        return res;
     }
 
     @CheckReturnValue

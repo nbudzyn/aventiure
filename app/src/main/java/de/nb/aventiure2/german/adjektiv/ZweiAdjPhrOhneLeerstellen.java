@@ -25,7 +25,8 @@ public class ZweiAdjPhrOhneLeerstellen
     /**
      * Ob die Adjektiv-Phrasen gleichrangig sind (dann werden sie als
      * Adjektivattribute durch Komma getrennt - "leichte, herbe( Rotweine)") -
-     * oder nicht (dann werden sie als Ajektivattribute nicht durch Komma getrennt
+     * oder nicht (dann werden sie - wenn sie nicht durch einen Konnektor wie
+     * "aber" verbunden sind - als Ajektivattribute nicht durch Komma getrennt
      * "dunkles bayrisches( Bier)".
      * <p>
      * Typische Beispiele für nicht gleichrangige Adjektive:
@@ -35,18 +36,38 @@ public class ZweiAdjPhrOhneLeerstellen
      * <li>Nur das zweite Adjektiv bezeichnet eine Herkunft ("(ein )bekannter spanischer( Autor)")
      * <li>Nur das zweite Adjektiv nennt eine Zugehörigkeit ("(eine )wichtige amtliche(
      * Mitteilung)")
-     * </li>
-     * Wohl irrelevant, wenn die zweite Adjektivphrase eine Adjektivphrasen ist.
      */
-    private final boolean gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung;
+    private final boolean gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung;
+
+    /**
+     * Der Konnektor, mit dem die Adjektiv-Phrasen in jedem Fall
+     * (insbesondere die attributiver Verwendung) verbunden werden sollen.
+     * Bei einem adversativen Konnektor ("aber", "wenn auch", "sondern"...)
+     * muss auch
+     * {@link #gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung} gesetzt werden:
+     * "schön, aber teuer" / "das schöne, aber teuer Kleid"
+     */
+    @Nullable
+    private final String konnektor;
 
     public ZweiAdjPhrOhneLeerstellen(
             final AdjPhrOhneLeerstellen erst,
-            final AdjPhrOhneLeerstellen zweit,
-            final boolean gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung) {
+            final boolean gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung,
+            final AdjPhrOhneLeerstellen zweit) {
+        this(erst, gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung,
+                null, zweit
+        );
+    }
+
+    public ZweiAdjPhrOhneLeerstellen(
+            final AdjPhrOhneLeerstellen erst,
+            final boolean gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung,
+            final @Nullable String konnektor, final AdjPhrOhneLeerstellen zweit) {
         super(erst, zweit);
-        this.gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung =
-                gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung;
+
+        this.gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung =
+                gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung;
+        this.konnektor = konnektor;
     }
 
     @Override
@@ -54,8 +75,9 @@ public class ZweiAdjPhrOhneLeerstellen
             @Nullable final GraduativeAngabe graduativeAngabe) {
         return new ZweiAdjPhrOhneLeerstellen(
                 getErst().mitGraduativerAngabe(graduativeAngabe),
-                getZweit(),
-                gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung);
+                gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung, konnektor,
+                getZweit()
+        );
     }
 
     @Override
@@ -63,8 +85,9 @@ public class ZweiAdjPhrOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return new ZweiAdjPhrOhneLeerstellen(
                 getErst().mitAdvAngabe(advAngabe),
-                getZweit(),
-                gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung);
+                gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung, konnektor,
+                getZweit()
+        );
     }
 
     @Nullable
@@ -86,12 +109,14 @@ public class ZweiAdjPhrOhneLeerstellen
         // "(der )große(Mann, glücklich, dich zu sehen)" (umgedreht)
 
         final String separator = kommaBeiAdjektivattributen() ?
-                // "leichte, herbe Rotweine", "dunkles, sehr bayrisches Bier"
-                ", " :
+                // "leichte, herbe Rotweine", "dunkles, sehr bayrisches Bier",
+                // "ein schönes, aber teures Kleid"
+                ", " + (konnektor != null ? konnektor : "") :
                 // "dunkles bayrisches Bier", "wolkenloser blauer Himmel"
                 // "sehr dunkles bayrisches Bier", "oft sehr dunkle bayrische Bier"
                 // (feste Verbindung aus Substantiv und zweiter Adjektivphrase)
-                " ";
+                // "schöne und große Menschen"
+                " " + (konnektor != null ? konnektor : "");
         return Joiner.on(separator)
                 .skipNulls().join(
                         erstesAdjektivattribut,
@@ -103,7 +128,7 @@ public class ZweiAdjPhrOhneLeerstellen
                 // "(das ) dunkle, sehr bayrische( Bier)
                 getZweit().hasVorangestellteAngaben()
                         // "heller, herber Rotwein"
-                        || gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung;
+                        || gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung;
     }
 
     @Nullable
@@ -145,13 +170,16 @@ public class ZweiAdjPhrOhneLeerstellen
             return zweiterLockererNachtrag;
         }
 
-        return new ZweiAdjPhrOhneLeerstellen(ersterLockererNachtrag, zweiterLockererNachtrag,
+        return new ZweiAdjPhrOhneLeerstellen(ersterLockererNachtrag,
+                true,
+                konnektor,
+                zweiterLockererNachtrag
                 // Wenn schon ein lockerer Nachtrag nötig ist, dann ist der zweite
                 // lockere Nachtrag bestimmt komplexer ("glücklich, dich zu sehen")
                 // Tendenziell wäre allein deshalb schon ein Kommma nötig - und außerdem
                 // kann dann diese Adjektivphrasen-Reihung ohnehin nicht direkt als
                 // Adjektivattribute verwendet werden.
-                true);
+        );
     }
 
     @Override
@@ -159,7 +187,12 @@ public class ZweiAdjPhrOhneLeerstellen
                                                           final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getErst().getPraedikativ(person, numerus),
-                "und",
+                konnektor != null ?
+                        (gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung ?
+                                ", " + konnektor : konnektor) :
+                        // Wenn kein Konnektor angegeben ist, schreiben wir "und" -
+                        // dann ist kein Komma notwendig, da "und" nicht adversativ ist.
+                        "und",
                 getZweit().getPraedikativ(person, numerus)
         );
 
@@ -191,13 +224,16 @@ public class ZweiAdjPhrOhneLeerstellen
             return false;
         }
         final ZweiAdjPhrOhneLeerstellen that = (ZweiAdjPhrOhneLeerstellen) o;
-        return gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung
-                == that.gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung;
+        return gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung
+                == that.gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung &&
+                Objects.equals(konnektor, that.konnektor);
     }
 
     @Override
     public int hashCode() {
         return Objects
-                .hash(super.hashCode(), gleichrangigAlsoKommaOderUndBeiAttributiverVerwendung);
+                .hash(super.hashCode(),
+                        gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung,
+                        konnektor);
     }
 }
