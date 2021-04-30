@@ -73,6 +73,10 @@ import static java.util.stream.Collectors.toSet;
 
 @Immutable
 class WetterData {
+    // FIXME Es scheint so, als würden für die Wetterbeschreibungen kurze (oder
+    //  eher unkonkrete) Sätze bevorzugt? Warum? Ist der "ERFAHRUNGSWERT" ungünstig
+    //  gesetzt? Mal Bewertungen ausgeben lassen und experimentieren!
+
     // Tageszeit-Describer
     private static final TageszeitPraedikativumDescriber TAGESZEIT_PRAEDIKATIVUM_DESCRIBER =
             new TageszeitPraedikativumDescriber();
