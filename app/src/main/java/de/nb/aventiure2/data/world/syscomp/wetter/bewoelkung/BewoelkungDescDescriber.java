@@ -6,8 +6,11 @@ import com.google.common.collect.ImmutableCollection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -19,11 +22,15 @@ import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEDECKT;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUNKEL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -42,7 +49,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * Temperatur oder andere Wetteraspekte wichtiger sind und man dann diese Descriptions
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch"})
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungDescDescriber {
     private final BewoelkungSatzDescriber satzDescriber;
 
@@ -50,6 +57,134 @@ public class BewoelkungDescDescriber {
             final BewoelkungSatzDescriber satzDescriber) {
         this.satzDescriber = satzDescriber;
     }
+
+
+    /**
+     * Gibt Alternativen zurück, die beschreiben, wie die Bewölkung sich eine Stufe
+     * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.*
+     */
+    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussen(
+            final AvDateTime time,
+            final WetterParamChange<Bewoelkung> change,
+            final boolean unterOffenemHimmel) {
+        if (unterOffenemHimmel) {
+            return altSprungOderWechselUnterOffenemHimmel(time, change);
+        }
+
+        return altSprungOderWechselDraussenGeschuetzt(time, change);
+    }
+
+    /**
+     * Gibt Alternativen zurück, die beschreiben, wie die Bewölkung sich eine Stufe
+     * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat - erlebt
+     * unter offenem Himmel
+     */
+    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselUnterOffenemHimmel(
+            final AvDateTime time,
+            final WetterParamChange<Bewoelkung> change) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.addAll(satzDescriber.altSprungOderWechselUnterOffenemHimmel(time, change));
+
+        final int delta = change.getNachher().minus(change.getVorher());
+
+        if (Math.abs(delta) <= 1) {
+            if (change.getVorher().hasNachfolger(change.getNachher())) {
+                if (change.getNachher() == LEICHT_BEWOELKT) {
+                    if (time.getTageszeit() == NACHTS) {
+                        alt.add(neuerSatz(
+                                "Die Sterne leuchten nicht mehr so klar wie zuvor"));
+                    } else {
+                        alt.add(neuerSatz(
+                                "Hier und da sind jetzt einzelne Schäfchenwolken zu sehen"));
+                    }
+                } else if (change.getNachher() == BEDECKT) {
+                    alt.addAll(altNeueSaetze(
+                            time.getTageszeit().altGestirn().stream()
+                                    .filter(s -> s.getNumerus() == SG)
+                                    .map(SubstantivischePhrase::nomK), // "die Sonne"
+                            "hat sich versteckt und will hinter den Wolken",
+                            "gar nicht mehr hervorkommen"));
+                    if (time.getTageszeit() != NACHTS) {
+                        alt.add(neuerSatz("Mächtige dunkle Wolken beginnen sich am Himmel",
+                                "aufzutürmen"));
+                    } else {
+                        alt.add(neuerSatz("Die Nacht wird immer dunkler, Sterne sind",
+                                "keine mehr zu sehen"));
+                    }
+                }
+            } else {
+                if (change.getNachher() == WOLKENLOS && time.getTageszeit() != NACHTS) {
+                    alt.add(neuerSatz("Die letzten weißen",
+                            "Schäfchenwolken haben sich verzogen und der ganze Himmel",
+                            "strahlt blau über dir"));
+                } else if (change.getNachher() == LEICHT_BEWOELKT) {
+                    if (time.getTageszeit() != NACHTS) {
+                        alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
+                                "den Blick auf den blauen Himmel frei"));
+                    } else {
+                        alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
+                                "den Blick auf den Sternenhimmel frei"));
+                    }
+                }
+            }
+        }
+
+        if (delta > 1 && change.getNachher() == LEICHT_BEWOELKT
+                && time.getTageszeit() != NACHTS) {
+            alt.add(neuerSatz("Inwischen scheint die Sonne wieder hell"));
+        }
+
+        return alt.schonLaenger().build();
+    }
+
+    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussenGeschuetzt(
+            final AvDateTime time, final WetterParamChange<Bewoelkung> change) {
+        if (change.getVorher() == BEDECKT) {
+            return altSprungOderWechselDraussenGeschuetztVorherBedeckt(time.getTageszeit());
+        }
+
+        if (change.getNachher() == BEDECKT) {
+            return altSprungOderWechselDraussenGeschuetztNachherBedeckt(time.getTageszeit());
+        }
+
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.add(neuerSatz("Ob sich das Licht verändert hat?"),
+                neuerSatz("Jede Tageszeit, jedes Wetter hat doch sein eigenes Licht!"));
+
+        return alt.schonLaenger().build();
+    }
+
+    private ImmutableCollection<AbstractDescription<?>>
+    altSprungOderWechselDraussenGeschuetztVorherBedeckt(final Tageszeit tageszeit) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.add(neuerSatz(
+                tageszeit.getNomenFlexionsspalte().nomK(), // "der Abend"
+                "scheint heller geworden zu sein"),
+                neuerSatz("Alles liegt in einem angenehmen Licht"),
+                neuerSatz("Es ist nicht mehr so dunkel wie zuvor"));
+
+        return alt.schonLaenger().build();
+    }
+
+    private ImmutableCollection<AbstractDescription<?>>
+    altSprungOderWechselDraussenGeschuetztNachherBedeckt(final Tageszeit tageszeit) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.add(neuerSatz(
+                tageszeit.getNomenFlexionsspalte().nomK(), // "der Abend"
+                "scheint dunkler geworden zu sein"),
+                neuerSatz("Das Licht ist schlechter als noch zuvor"),
+                neuerSatz("Es ist",
+                        np(INDEF, DUNKEL.mitGraduativerAngabe("besonders"),
+                                tageszeit.getNomenFlexionsspalte()))); // "eine besonders dunkle
+        // Nacht"
+
+        return alt.schonLaenger().build();
+    }
+
 
     /**
      * Gibt Alternativen zurück, die beschreiben, wie man einen "Tageszeitensprung"
@@ -279,14 +414,15 @@ public class BewoelkungDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public AltDescriptionsBuilder altTageszeitenwechsel(
+    private AltDescriptionsBuilder altTageszeitenwechsel(
             final Bewoelkung bewoelkung, final Tageszeit newTageszeit,
             final boolean unterOffenemHimmel) {
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altNeueSaetze(
                 PARAGRAPH,
-                satzDescriber.altTageszeitenwechsel(bewoelkung, newTageszeit, unterOffenemHimmel)));
+                satzDescriber
+                        .altTageszeitenwechsel(bewoelkung, newTageszeit, unterOffenemHimmel)));
 
         switch (newTageszeit) {
             case MORGENS:
@@ -343,7 +479,8 @@ public class BewoelkungDescDescriber {
      * gekommen ist
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
-     *                                                                 beschrieben werden sollen,
+     *                                                                 beschrieben werden
+     *                                                                 sollen,
      *                                                                 die nach einem
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
@@ -370,10 +507,12 @@ public class BewoelkungDescDescriber {
     }
 
     /**
-     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel erlebt
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel
+     * erlebt
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
-     *                                                                 beschrieben werden sollen,
+     *                                                                 beschrieben werden
+     *                                                                 sollen,
      *                                                                 die nach einem
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
@@ -394,11 +533,13 @@ public class BewoelkungDescDescriber {
     }
 
     /**
-     * Gibt spezielle Beschreibungen der Gestirne zurück, wie man sie unter offenem Himmel erlebt
+     * Gibt spezielle Beschreibungen der Gestirne zurück, wie man sie unter offenem Himmel
+     * erlebt
      * - evtl. leer.
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
-     *                                                                 beschrieben werden sollen,
+     *                                                                 beschrieben werden
+     *                                                                 sollen,
      *                                                                 die nach einem
      *                                                                 Tageszweitenwechsel nur
      *                                                                 einmalig
@@ -463,11 +604,13 @@ public class BewoelkungDescDescriber {
     }
 
     /**
-     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel erlebt,
+     * Gibt alternative Beschreibungen des Wetters zurück, wie man sie unter offenem Himmel
+     * erlebt,
      * verbunden mit einem Hinweis auf einen "schönen Morgen" oder Ähnlichem.
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
-     *                                                                 beschrieben werden sollen,
+     *                                                                 beschrieben werden
+     *                                                                 sollen,
      *                                                                 die nach einem
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten

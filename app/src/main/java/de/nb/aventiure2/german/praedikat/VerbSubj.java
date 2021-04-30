@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
@@ -48,6 +50,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     KOMMEN("kommen",
             "komme", "kommst", "kommt", "kommt",
             Perfektbildung.SEIN, "gekommen"),
+    LEUCHTEN("leuchten",
+            "leuchte", "leuchtest", "leuchtet", "leuchtet",
+            Perfektbildung.HABEN, "geleuchtet"),
     LIEGEN("liegen",
             "liege", "liegst", "liegt", "liegt",
             Perfektbildung.HABEN, "gelegen"),
@@ -72,6 +77,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     WACHEN("wachen",
             "wache", "wachst", "wacht", "wacht",
             Perfektbildung.HABEN, "gewacht"),
+    ZIEHEN("ziehen",
+            "ziehe", "ziehst", "zieht", "zieht",
+            Perfektbildung.SEIN, "gezogen"),
 
     // Partikelverben
     ABKUEHLEN(KUEHLEN, "ab", Perfektbildung.HABEN),
@@ -81,6 +89,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     AUFGEHEN(GEHEN, "auf", Perfektbildung.SEIN),
     AUFSTEHEN(STEHEN, "auf", Perfektbildung.SEIN),
     AUFSTEIGEN(STEIGEN_AUF, "auf", Perfektbildung.SEIN),
+    AUFREISSEN("aufreißen",
+            "reiße", "reißt", "reißt", "reißt",
+            "auf", Perfektbildung.SEIN, "aufgerissen"),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
     EINBRECHEN(BRECHEN, "ein", Perfektbildung.SEIN),
     EINSETZEN(SETZEN, "ein", Perfektbildung.HABEN),
@@ -93,6 +104,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     HERUNTERSCHEINEN(SCHEINEN, "herunter", Perfektbildung.HABEN),
     HEREINKOMMEN(KOMMEN, "herein", Perfektbildung.SEIN),
     HERVORBRECHEN(BRECHEN, "hervor", Perfektbildung.SEIN),
+    HERVORLUGEN("hervorlugen",
+            "luge", "lugst", "lugt", "lugt",
+            "hervor", Perfektbildung.HABEN, "hervorgelugt"),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
     NACHLASSEN(HINUNTERLASSEN, "nach", Perfektbildung.HABEN),
@@ -160,8 +174,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return new Konstituentenfolge(k(verb.getPartizipII()));
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                final Numerus numerus) {
+        return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     @Override
@@ -190,6 +205,11 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
                                                                    final Numerus numerus) {
         return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(person, numerus
         );
+    }
+
+    @Override
+    public PerfektPraedikatOhneLeerstellen perfekt() {
+        return toPraedikat().perfekt();
     }
 
     @Override

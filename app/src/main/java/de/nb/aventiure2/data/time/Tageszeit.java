@@ -27,6 +27,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLAR;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MORGENDLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ROETLICH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WOLKENLOS;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDSONNE;
@@ -42,6 +43,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NACHTHIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENHIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENZELT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
@@ -58,8 +60,8 @@ public enum Tageszeit {
             DUNKEL,
             ImmutableList.of(MOND),
             ImmutableList.of(MONDSCHEIN),
-            ImmutableList.of(),
-            ImmutableList.of(STERNENHIMMEL, NACHTHIMMEL),
+            ImmutableList.of(WOLKENLOS),
+            ImmutableList.of(STERNENHIMMEL, NACHTHIMMEL, STERNENZELT),
             ImmutableList.of(), // "Gute Nacht" etc. sind nur Verabschiedungen!
             ImmutableList.of() // "Gute Nacht" etc. sagt man eher abends
     ),
@@ -89,7 +91,7 @@ public enum Tageszeit {
             HELL,
             ImmutableList.of(ABENDSONNE),
             ImmutableList.of(ABENDSONNENSCHEIN, ABENDSONNE),
-            ImmutableList.of(),
+            ImmutableList.of(WOLKENLOS),
             ImmutableList.of(np(ROETLICH, ABENDHIMMEL), ABENDHIMMEL),
             ImmutableList.of("guten Abend", "schönen guten Abend"),
             ImmutableList.of("gute Nacht"));
@@ -222,7 +224,7 @@ public enum Tageszeit {
 
     /**
      * Gibt alternative Adjektivphrasen zurück, die einen wolkenlosen Himmel zu dieser
-     * Tageszeit beschreiben - <i>Ergebnis kann leer sein</i>.
+     * Tageszeit beschreiben.
      */
     public ImmutableCollection<AdjPhrOhneLeerstellen> altAltAdjPhrWolkenloserHimmel() {
         return altAdjPhrWolkenloserHimmel;

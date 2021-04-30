@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -129,8 +131,7 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
         // möchtest du sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(verb.getPraesensOhnePartikel(
-                        subjekt.getPerson(), subjekt.getNumerus())), // "möchtest"
+                requireNonNull(verb.getPraesensOhnePartikel(subjekt)), // "möchtest"
                 subjekt.nomK(), // "du"
                 lexikalischerKern.getInfinitiv(
                         subjekt.getPerson(), subjekt.getNumerus())); // "dich waschen"
@@ -153,19 +154,22 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                final Numerus numerus) {
         // Spannendes berichten wollen (Ersatzinfinitiv!)
         // dich waschen wollen
         // sagen wollen: "Hallo!"
 
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(person, numerus).cutLast(
-                        // "Spannendesberichten"
-                        nachfeld),
-                verb.getPartizipII(), // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
-                nachfeld); // : Odysseus ist zurück.
+        return ImmutableList.of(new PartizipIIPhrase(
+                Konstituentenfolge.joinToKonstituentenfolge(
+                        lexikalischerKern.getInfinitiv(person, numerus).cutLast(
+                                // "Spannendesberichten"
+                                nachfeld),
+                        verb.getPartizipII(), // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
+                        nachfeld), // : Odysseus ist zurück.
+                verb.getPerfektbildung()));
     }
 
     @Override
@@ -211,11 +215,6 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     @Override
     public boolean umfasstSatzglieder() {
         return lexikalischerKern.umfasstSatzglieder();
-    }
-
-    @Override
-    public boolean bildetPerfektMitSein() {
-        return verb.getPerfektbildung() == Perfektbildung.SEIN;
     }
 
     @Override

@@ -8,8 +8,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 
 /**
  * Ein Verb (ggf. mit Präfix), bei dem das Subjekt fehlen kann oder nur
@@ -78,7 +77,7 @@ public enum VerbOhneSubjAusserOptionalemExpletivemEs
 
     @Nullable
     public String getPraesensOhnePartikel() {
-        return verb.getPraesensOhnePartikel(P3, SG);
+        return verb.getPraesensOhnePartikel(EXPLETIVES_ES);
     }
 
     @Override

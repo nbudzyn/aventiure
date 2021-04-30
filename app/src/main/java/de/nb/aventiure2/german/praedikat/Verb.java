@@ -7,10 +7,13 @@ import com.google.common.base.Joiner;
 
 import java.util.Objects;
 
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.federkiel.string.StringUtil.stripPrefixIfAny;
 
@@ -215,6 +218,11 @@ public class Verb {
     }
 
     @Nullable
+    String getPraesensOhnePartikel(final SubstantivischePhrase subjekt) {
+        return getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus());
+    }
+
+    @Nullable
     String getPraesensOhnePartikel(final Person person, final Numerus numerus) {
         switch (person) {
             case P1:
@@ -236,6 +244,17 @@ public class Verb {
     @Nullable
     String getPartikel() {
         return partikel;
+    }
+
+    @NonNull
+    PartizipIIPhrase getPartizipIIPhrase() {
+        return new PartizipIIPhrase(
+                new Konstituentenfolge(k(getPartizipII())),
+                perfektbildung);
+    }
+
+    Verb getHilfsverbFuerPerfekt() {
+        return perfektbildung.getHilfsverb();
     }
 
     @NonNull
@@ -284,4 +303,5 @@ public class Verb {
                 "infinitiv='" + infinitiv + '\'' +
                 '}';
     }
+
 }

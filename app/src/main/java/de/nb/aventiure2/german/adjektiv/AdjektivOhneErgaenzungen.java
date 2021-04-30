@@ -45,10 +45,13 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     AUFGEHEIZT("aufgeheizt"),
     AUSZUHALTEN("auszuhalten"), // So etwas ähnliches wie ein Partizip...
     BEDECKT("bedeckt"),
+    BEDROHLICH("bedrohlich"),
     BEGEISTERT("begeistert"),
     BEGINNEND("beginnend"),
     BEISSEND("beißend"),
     BITTERKALT("bitterkalt"),
+    BLEIERN("bleiern"),
+    BLEIGRAU("bleigrau"),
     BENOMMEN("benommen"),
     BESONDERS("besonders", "besonder"),
     BETRUEBT("betrübt"),
@@ -60,7 +63,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     DICK("dick"),
     DUESTER("düster"),
     DUNKEL("dunkel", "dunkl"),
-    // TODO Das z.B. sollte besser ein spezielles Partizip II sein.
+    DUNKLER("dunkler"),
+    // TODO EINBRECHEND z.B. sollte besser ein spezielles Partizip II sein.
     //  Kaum prädikativ sinnvoll.
     EINBRECHEND("einbrechend"),
     EISIG("eisig"),
@@ -133,6 +137,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     SCHLECHT("schlecht"),
     SCHOEN("schön"),
     SKEPTISCH("skeptisch"),
+    SPUERBAR("spürbar"),
+    STERNENKLAR("sternenklar"),
     STARK("stark"),
     STOCKDUNKEL("stockdunkel"),
     STRAHLEND("strahlend"),
@@ -157,6 +163,8 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     WACH("wach"),
     WARM("warm"),
     WAERMER("wärmer"),
+    WEISS("weiß"),
+    WOLKENLOS("wolkenlos"),
     WOLKENVERHANGEN("wolkenverhangen"),
     WUNDERSCHOEN("wunderschön"),
     ZORNIG("zornig"),

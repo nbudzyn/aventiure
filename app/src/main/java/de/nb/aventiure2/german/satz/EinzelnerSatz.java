@@ -177,6 +177,12 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
+    public EinzelnerSatz perfekt() {
+        return new EinzelnerSatz(anschlusswort, subjekt, praedikat.perfekt(),
+                angabensatz.perfekt());
+    }
+
+    @Override
     public Konstituentenfolge getIndirekteFrage() {
         // Zurzeit unterstützen wir nur Interrogativpronomen für die normalen Kasus 
         // wie "wer" oder "was" - sowie Interrogativadverbialien ("wann").
@@ -367,10 +373,8 @@ public class EinzelnerSatz implements Satz {
                         null);
     }
 
-    /**
-     * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
-     */
-    Konstituentenfolge getVerbletztsatz() {
+    @Override
+    public Konstituentenfolge getVerbletztsatz() {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 subjekt != null ? subjekt.nomK() : null,

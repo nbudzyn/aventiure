@@ -12,8 +12,6 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -170,21 +168,6 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
                 .collect(toImmutableList());
     }
 
-
-    /**
-     * Gibt das Prädikat als eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
-     * "die Kugel genommen"
-     * <p>
-     * Implizit (oder bei reflexiven Verben auch explizit) hat Phrase
-     * eine Person und einen Numerus - Beispiel:
-     * "[Ich habe] die Kugel an mich genommen"
-     * (nicht *"[Ich habe] die Kugel an sich genommen")
-     */
-    @CheckReturnValue
-    public Konstituente getDescriptionPartizipIIPhrase(final Person person,
-                                                       final Numerus numerus) {
-        return getPraedikat().getPartizipIIPhrase(person, numerus).joinToSingleKonstituente();
-    }
 
     @CheckReturnValue
     private StructuredDescription copy(final Satz satz) {

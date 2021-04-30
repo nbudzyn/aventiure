@@ -234,6 +234,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                 du(SENTENCE, "ruhst",
                         "noch eine Weile aus und lauschst, wie die Insekten",
                         "zirpen und der Wind saust")
+                        // FIXME Wind nur bei Wind!!
                         .schonLaenger()
                         .mitVorfeldSatzglied("eine Weile")
                         .dann()

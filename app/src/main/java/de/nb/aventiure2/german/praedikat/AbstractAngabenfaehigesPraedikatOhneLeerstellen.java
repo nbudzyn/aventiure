@@ -135,8 +135,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final SubstantivischePhrase subjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(
-                        verb.getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus())),
+                requireNonNull(verb.getPraesensOhnePartikel(subjekt)),
                 // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
@@ -155,12 +154,14 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public final Konstituentenfolge getPartizipIIPhrase(final Person person,
-                                                        final Numerus numerus) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(person, numerus),
-                verb.getPartizipII(),
-                getNachfeld(person, numerus));
+    public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                      final Numerus numerus) {
+        return ImmutableList.of(new PartizipIIPhrase(
+                Konstituentenfolge.joinToKonstituentenfolge(
+                        getMittelfeld(person, numerus),
+                        verb.getPartizipII(),
+                        getNachfeld(person, numerus)),
+                verb.getPerfektbildung()));
     }
 
     /**
@@ -320,11 +321,6 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     abstract Konstituentenfolge
     getMittelfeldOhneLinksversetzungUnbetonterPronomen(final Person personSubjekt,
                                                        final Numerus numerusSubjekt);
-
-    @Override
-    public boolean bildetPerfektMitSein() {
-        return verb.getPerfektbildung() == Perfektbildung.SEIN;
-    }
 
     @NonNull
     Verb getVerb() {

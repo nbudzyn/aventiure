@@ -35,6 +35,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     FUER("für", AKK), // "fürn" generieren wir nicht, auch "fürs" scheint
     // selten obligatorisch zu sein
 
+    HINTER_DAT("hinter", DAT, "hinterm"),
+
     /**
      * "mit dem Frosch"
      */

@@ -54,11 +54,6 @@ public interface VerbOhneLeerstellen
     }
 
     @Override
-    default boolean bildetPerfektMitSein() {
-        return getVerb().getPerfektbildung() == Perfektbildung.SEIN;
-    }
-
-    @Override
     default boolean hatAkkusativobjekt() {
         return false;
     }

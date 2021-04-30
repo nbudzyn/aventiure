@@ -2,6 +2,8 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
@@ -20,6 +22,7 @@ import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 
 public enum Witterungsverb implements VerbOhneLeerstellen {
     // Verben ohne Partikel
+    AUFKLAREN("aufklaren", "klart", "auf", "aufgeklart"),
     BLITZEN("blitzen", "blitzt", "geblitzt"),
     DAEMMERN("dämmern", "dämmert", "gedämmert"),
     DONNERN("donnern", "donnert", "gedonnert"),
@@ -44,6 +47,15 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
                    final String partizipII) {
         this(new Verb(infinitiv, null, null,
                 esForm, null, Perfektbildung.HABEN,
+                partizipII));
+    }
+
+    Witterungsverb(final String infinitiv,
+                   final String esForm,
+                   @Nullable final String partikel,
+                   final String partizipII) {
+        this(new Verb(infinitiv, null, null,
+                esForm, null, partikel, Perfektbildung.HABEN,
                 partizipII));
     }
 
@@ -99,16 +111,17 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return toPraedikat().getVerbletzt(person, numerus);
     }
 
-    public Konstituentenfolge getPartizipIIPhrase() {
-        return getPartizipIIPhrase(P3, SG);
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase() {
+        return getPartizipIIPhrasen(EXPLETIVES_ES);
     }
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                final Numerus numerus) {
         Personalpronomen.checkExpletivesEs(person, numerus);
 
-        return new Konstituentenfolge(k(verb.getPartizipII()));
+        return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     public Konstituentenfolge getInfinitiv() {

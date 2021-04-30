@@ -16,18 +16,23 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
  */
 public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
+    BAUEN("bauen", AKK, "baue", "baust", "baut", "baut",
+            Perfektbildung.HABEN, "gebaut"),
     BEDECKEN("bedecken", AKK, "bedecke", "bedeckst", "bedeckt",
             "bedeckt", Perfektbildung.HABEN, "bedeckt"),
     BEENDEN("beenden", AKK, "beende", "beendest", "beendet",
             "beendet", Perfektbildung.HABEN, "beendet"),
     BEGRUESSEN("begrüßen", AKK, "begrüße", "begrüßt", "begrüßt",
             "begrüßt", Perfektbildung.HABEN, "begrüßt"),
+    BEKOMMEN("bekommen", AKK, "bekomme", "bekommst", "bekommt",
+            "bekommt", Perfektbildung.HABEN, "bekommen"),
     BIETEN("bieten", DAT,
             "biete", "bietest", "bietet", "bietet",
             Perfektbildung.HABEN, "geboten"),
@@ -56,11 +61,10 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     IGNORIEREN("ignorieren", AKK, "ignoriere", "ignorierst", "ignoriert",
             "ignoriert",
             Perfektbildung.HABEN, "ignoriert"),
+    KUEHLEN("kühlen", AKK, "kühle", "kühlst", "kühlt",
+            "kühlt", Perfektbildung.HABEN, "gekühlt"),
     KUENDIGEN("kündigen", AKK, "kündige", "kündigst", "kündigt",
             "kündigt", Perfektbildung.HABEN, "gekündigt"),
-    KUEHLEN("kühlen", AKK,
-            "kühle", "kühlst", "kühlt", "kühlt",
-            Perfektbildung.HABEN, "gekühlt"),
     LEGEN("legen", AKK, "lege", "legst", "legt",
             "legt",
             Perfektbildung.HABEN, "gelegt"),
@@ -105,6 +109,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
             Perfektbildung.SEIN, "getreten"),
+    VERTREIBEN("verteiben", AKK,
+            "vertreibe", "vertreibst", "vertreibt", "vertreibt",
+            Perfektbildung.HABEN, "vertrieben"),
     WARTEN("warten", AUF_AKK,
             "warte", "wartest", "wartet", "wartet",
             Perfektbildung.HABEN, "gewartet"),
@@ -128,6 +135,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     AUFFANGEN(FANGEN, AKK, "auf", Perfektbildung.HABEN),
     AUFHEBEN(HEBEN, AKK, "auf", Perfektbildung.HABEN),
     AUFSTEHEN_VON(STEHEN, VON, "auf", Perfektbildung.SEIN),
+    FREIGEBEN(GEBEN, AKK, "frei", Perfektbildung.HABEN),
     HERVORHOLEN(HOLEN, AKK, "hervor", Perfektbildung.HABEN),
     HERAUSKLAUBEN("herausklauben", AKK,
             "klaube", "klaubst", "klaubt",

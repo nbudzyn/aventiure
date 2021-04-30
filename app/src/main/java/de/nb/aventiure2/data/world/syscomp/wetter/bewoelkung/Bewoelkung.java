@@ -20,4 +20,28 @@ public enum Bewoelkung implements Betweenable<Bewoelkung> {
 
         return compareTo(LEICHT_BEWOELKT) <= 0;
     }
+
+    public boolean hasNachfolger(final Bewoelkung other) {
+        return getNachfolger() == other;
+    }
+
+    public Bewoelkung getVorgaenger() {
+        if (ordinal() == 0) {
+            return values()[values().length - 1];
+        }
+
+        return values()[ordinal() - 1];
+    }
+
+    public Bewoelkung getNachfolger() {
+        if (ordinal() == values().length - 1) {
+            return values()[0];
+        }
+
+        return values()[ordinal() + 1];
+    }
+
+    public int minus(final Bewoelkung other) {
+        return ordinal() - other.ordinal();
+    }
 }

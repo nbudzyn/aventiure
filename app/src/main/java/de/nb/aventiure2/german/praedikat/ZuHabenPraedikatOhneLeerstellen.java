@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -37,15 +39,14 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     private final PraedikatOhneLeerstellen lexikalischerKern;
 
     @Valenz
-    ZuHabenPraedikatOhneLeerstellen(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
+    ZuHabenPraedikatOhneLeerstellen(final PraedikatOhneLeerstellen lexikalischerKern) {
         this.lexikalischerKern = lexikalischerKern;
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitModalpartikeln(
+    public ZuHabenPraedikatOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
-        // Bei einem Prädikat wie "Halt noch etwas zu berichten haben"
+        // Bei einem Prädikat wie "halt noch etwas zu berichten haben"
         // kann man nicht differenzieren zwischen *"halt berichten" und *"halt zu haben".
         // Deshalb speichern wir die Modalpartikeln im lexikalischen Kern und erlauben keine
         // zusätzlichen Angaben für "zu haben".
@@ -121,8 +122,7 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // hast du zu sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(
-                        subjekt.getPerson(), subjekt.getNumerus())), // "hast"
+                requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(subjekt)), // "hast"
                 subjekt.nomK(), // "du"
                 lexikalischerKern.getZuInfinitiv(
                         subjekt.getPerson(), subjekt.getNumerus())); // "dich zu waschen"
@@ -137,27 +137,28 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
-                        // "Spannendes zu berichten"
-                        nachfeld),
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(nachfeld),
+                // "Spannendes zu berichten"
                 requireNonNull(HabenUtil.VERB.getPraesensMitPartikel(person, numerus)), // "hast"
                 nachfeld); // : Odysseus ist zurück.
     }
 
     @Override
-    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                final Numerus numerus) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
         // zu sagen gehabt: "Hallo!"
 
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
+        return ImmutableList.of(new PartizipIIPhrase(
+                Konstituentenfolge.joinToKonstituentenfolge(
+                        lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(nachfeld),
                         // "Spannendes zu berichten"
-                        nachfeld),
-                HabenUtil.VERB.getPartizipII(), // "gehabt"
-                nachfeld); // : Odysseus ist zurück.
+                        HabenUtil.VERB.getPartizipII(), // "gehabt"
+                        nachfeld), // : Odysseus ist zurück.
+                Perfektbildung.HABEN)); // "Spannendes zu berichten gehabt haben"
     }
 
     @Override
@@ -178,9 +179,8 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
-                        // "Spannendes zu berichten"
-                        nachfeld),
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(nachfeld),
+                // "Spannendes zu berichten"
                 HabenUtil.VERB.getInfinitiv(), // haben
                 nachfeld); // : Odysseus ist zurück.
     }
@@ -193,9 +193,8 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(
-                        // "Spannendes zu berichten"
-                        nachfeld),
+                lexikalischerKern.getZuInfinitiv(person, numerus).cutLast(nachfeld),
+                // "Spannendes zu berichten"
                 HabenUtil.VERB.getZuInfinitiv(), // zu haben
                 nachfeld); // : Odysseus ist zurück.
     }
@@ -203,11 +202,6 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return lexikalischerKern.umfasstSatzglieder();
-    }
-
-    @Override
-    public boolean bildetPerfektMitSein() {
-        return HabenUtil.VERB.getPerfektbildung() == Perfektbildung.SEIN;
     }
 
     @Override

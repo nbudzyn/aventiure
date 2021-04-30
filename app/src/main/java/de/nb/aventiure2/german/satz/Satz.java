@@ -55,6 +55,8 @@ public interface Satz {
     Satz mitAdvAngabe(
             @Nullable AdvAngabeSkopusVerbWohinWoher advAngabe);
 
+    Satz perfekt();
+
     /**
      * Gibt eine indirekte Frage zurück: Etwas wie
      * <ul>
@@ -111,6 +113,11 @@ public interface Satz {
     Konstituentenfolge getVerbzweitsatzMitVorfeld(String vorfeld);
 
     Konstituentenfolge getSatzanschlussOhneSubjekt();
+
+    /**
+     * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
+     */
+    Konstituentenfolge getVerbletztsatz();
 
     boolean hasSubjektDu();
 

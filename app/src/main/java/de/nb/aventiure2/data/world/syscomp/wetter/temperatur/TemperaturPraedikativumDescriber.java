@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
@@ -22,7 +23,6 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
@@ -443,25 +443,18 @@ public class TemperaturPraedikativumDescriber {
      * zurück (um eine oder mehrere Stufen, Abfall oder Anstieg), also einen
      * "Temperaturwechsel" oder einen "Temperatursprung".
      *
-     * @param lastTemperatur    Die Temperatur vor der
-     *                          Änderung.
-     * @param currentTemperatur Die Temperatur nach  der Änderung
+     * @param change Die Temperaturänderung
      */
     @NonNull
     @CheckReturnValue
     ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrTemperaturaenderung(
-            final Temperatur lastTemperatur,
-            final Temperatur currentTemperatur,
+            final WetterParamChange<Temperatur> change,
             final boolean fuerAttributiveVerwendung) {
-        checkArgument(lastTemperatur != currentTemperatur,
-                "lastLokaleTemperatur und lastTemperatur gleich: %s",
-                lastTemperatur);
-
-        if (currentTemperatur.compareTo(lastTemperatur) >= 0) {
-            return altAdjPhrTemperaturanstieg(currentTemperatur, fuerAttributiveVerwendung);
+        if (change.getNachher().compareTo(change.getVorher()) >= 0) {
+            return altAdjPhrTemperaturanstieg(change.getNachher(), fuerAttributiveVerwendung);
         }
 
-        return altAdjPhrTemperaturabfall(currentTemperatur, fuerAttributiveVerwendung);
+        return altAdjPhrTemperaturabfall(change.getNachher(), fuerAttributiveVerwendung);
     }
 
     /**

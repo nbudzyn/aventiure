@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 import java.util.Objects;
 
@@ -107,12 +109,22 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getPartizipIIPhrase(person, numerus),
-                "und",
-                zweites.getPartizipIIPhrase(person, numerus)
-        );
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                final Numerus numerus) {
+        final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
+
+        PartizipIIPhrase tmp = null;
+        for (final PartizipIIPhrase partizipIIPhrase :
+                erstes.getPartizipIIPhrasen(person, numerus)) {
+            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(res, tmp, partizipIIPhrase);
+        }
+
+        for (final PartizipIIPhrase partizipIIPhrase :
+                zweites.getPartizipIIPhrasen(person, numerus)) {
+            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(res, tmp, partizipIIPhrase);
+        }
+
+        return res.build();
     }
 
     @Override
@@ -140,11 +152,6 @@ public class ZweiPraedikateOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return erstes.umfasstSatzglieder() && zweites.umfasstSatzglieder();
-    }
-
-    @Override
-    public boolean bildetPerfektMitSein() {
-        return erstes.bildetPerfektMitSein() && zweites.bildetPerfektMitSein();
     }
 
     @Override
@@ -222,7 +229,8 @@ public class ZweiPraedikateOhneLeerstellen
             return relativpronomenErsterSatz;
         }
 
-        // Verboten ist etwas wie  *"Sie sieht das Buch, das sie aufhebt und die Kugel mitnimmt."
+        // Verboten ist etwas wie  *"Sie sieht das Buch, das sie aufhebt und die Kugel
+        // mitnimmt."
 
         return null;
     }

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -31,6 +33,15 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     PraedikatOhneLeerstellen mitModalpartikeln(Collection<Modalpartikel> modalpartikeln);
 
     /**
+     * Erzeugt aus diesem Prädikat ein Prädikat im Perfekt
+     * (z.B. <i>Spannendes berichtet haben</i>,  <i>mit Paul diskutiert haben/i>,
+     * <i>geschlafen haben</i>, <i>sich gewaschen haben</i>).
+     */
+    default PerfektPraedikatOhneLeerstellen perfekt() {
+        return new PerfektPraedikatOhneLeerstellen(this);
+    }
+
+    /**
      * Gibt zurück, ob dieses Prädikat in der Regel ohne Subjekt steht
      * ("Mich friert"), aber optional ein expletives "es" möglich ist
      * ("Es friert mich").
@@ -58,8 +69,6 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "hebt die Kugel hoch" hingegen schon.
      */
     boolean umfasstSatzglieder();
-
-    boolean bildetPerfektMitSein();
 
     boolean hatAkkusativobjekt();
 
@@ -127,15 +136,50 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     Konstituentenfolge getVerbletzt(Person person, Numerus numerus);
 
     /**
-     * Gibt eine unflektierte Phrase mit Partizip II zurück: "unten angekommen",
-     * "die Kugel genommen"
+     * Gibt eine (oder in seltenen Fällen mehrere) unflektierte Phrase(n) mit Partizip II zurück:
+     * <i>unten angekommen</i>, <i>die Kugel genommen</i>
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat eine Partizip-II-Phrase
+     * ein Bezugswort, aus dem sich Person und Numerus ergeben - Beispiel:
+     * <i>[Ich habe] die Kugel an mich genommen</i>
+     * (nicht <i>[Ich habe] die Kugel an sich genommen</i>)
+     * <p>
+     * Auch bei mehrteiligen Prädikaten soll diese Methode nach Möglichkeit nur eine einzige
+     * {@link PartizipIIPhrase} zurückgeben, z.B. "unten angekommen und müde geworden".
+     * Wenn allerdings die Teile unterschiedliche Hilfsverben verlangen
+     * (<i>unten angekommen (sein)</i> und <i>die Kugel genommen (haben)</i>), gibt diese
+     * Methode <i>mehrere</i> Partizip-II-Phasen zurück. Der Aufrufer wird diese Phrasen
+     * in der Regel separat mit ihrem jeweiligen Hilfsverb verknüpfen müssen
+     * (<i>Du bist unten angekommen und hast die Kugel genommen</i>). Es sollte allerdings
+     * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
+     * so verlangen sie unterschiedliche Hilfsverben.
+     */
+    default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final SubstantivischePhrase bezugswort) {
+        return getPartizipIIPhrasen(bezugswort.getPerson(), bezugswort.getNumerus());
+    }
+
+    /**
+     * Gibt eine (oder in seltenen Fällen mehrere) unflektierte Phrase(n) mit Partizip II zurück:
+     * <i>unten angekommen</i>, <i>die Kugel genommen</i>
      * <p>
      * Implizit (oder bei reflexiven Verben auch explizit) hat eine Partizip-II-Phrase
      * eine Person und einen Numerus - Beispiel:
-     * "[Ich habe] die Kugel an mich genommen"
-     * (nicht *"[Ich habe] die Kugel an sich genommen")
+     * <i>[Ich habe] die Kugel an mich genommen</i>
+     * (nicht <i>[Ich habe] die Kugel an sich genommen</i>)
+     * <p>
+     * Auch bei mehrteiligen Prädikaten soll diese Methode nach Möglichkeit nur eine einzige
+     * {@link PartizipIIPhrase} zurückgeben, z.B. "unten angekommen und müde geworden".
+     * Wenn allerdings die Teile unterschiedliche Hilfsverben verlangen
+     * (<i>unten angekommen (sein)</i> und <i>die Kugel genommen (haben)</i>), gibt diese
+     * Methode <i>mehrere</i> Partizip-II-Phasen zurück. Der Aufrufer wird diese Phrasen
+     * in der Regel separat mit ihrem jeweiligen Hilfsverb verknüpfen müssen
+     * (<i>Du bist unten angekommen und hast die Kugel genommen</i>). Es sollte allerdings
+     * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
+     * so verlangen sie unterschiedliche Hilfsverben.
      */
-    Konstituentenfolge getPartizipIIPhrase(final Person person, final Numerus numerus);
+    ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                         final Numerus numerus);
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem

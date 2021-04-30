@@ -88,6 +88,13 @@ public class ZweiSaetze implements Satz {
     }
 
     @Override
+    public ZweiSaetze perfekt() {
+        return new ZweiSaetze(
+                ersterSatz.perfekt(),
+                zweiterSatz.perfekt());
+    }
+
+    @Override
     public Konstituentenfolge getIndirekteFrage() {
         return joinToKonstituentenfolge(
                 ersterSatz.getIndirekteFrage(),
@@ -145,6 +152,13 @@ public class ZweiSaetze implements Satz {
         return joinToKonstituentenfolge(
                 ersterSatz.getSatzanschlussOhneSubjekt(), "und",
                 zweiterSatz.getSatzanschlussOhneSubjekt());
+    }
+
+    @Override
+    public Konstituentenfolge getVerbletztsatz() {
+        return joinToKonstituentenfolge(
+                ersterSatz.getVerbletztsatz(), "und",
+                zweiterSatz.getVerbletztsatz());
     }
 
     @Override

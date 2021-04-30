@@ -21,9 +21,8 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitSatzDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -50,15 +49,6 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
  */
 @Entity
 public class WetterPCD extends AbstractPersistentComponentData {
-    private static final TageszeitPraedikativumDescriber TAGESZEIT_PRAEDIKATIVUM_DESCRIBER =
-            new TageszeitPraedikativumDescriber();
-
-    private static final TageszeitSatzDescriber TAGESZEIT_SATZ_DESCRIBER =
-            new TageszeitSatzDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
-
-    private static final TageszeitDescDescriber TAGESZEIT_DESC_DESCRIBER =
-            new TageszeitDescDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER, TAGESZEIT_SATZ_DESCRIBER);
-
     /**
      * Das aktuelle Wetter
      */
@@ -67,7 +57,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
     private final WetterData wetter;
 
     @Nullable
-    private Temperatur lastAktuelleGenerelleTemperatur;
+    private Temperatur lastGenerelleTemperatur;
+
+    @Nullable
+    private Bewoelkung lastBewoelkung;
 
     @Nullable
     private AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel;
@@ -97,7 +90,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     WetterPCD(final GameObjectId gameObjectId,
               final WetterData wetter) {
         this(gameObjectId, wetter,
-                null,
+                null, null,
                 null,
                 true,
                 true,
@@ -107,7 +100,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @SuppressWarnings("WeakerAccess")
     public WetterPCD(final GameObjectId gameObjectId,
                      final WetterData wetter,
-                     @Nullable final Temperatur lastAktuelleGenerelleTemperatur,
+                     @Nullable final Temperatur lastGenerelleTemperatur,
+                     @Nullable final Bewoelkung lastBewoelkung,
                      @Nullable
                      final AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel,
                      final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
@@ -115,7 +109,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
                      @Nullable final PlanwetterData plan) {
         super(gameObjectId);
         this.wetter = wetter;
-        this.lastAktuelleGenerelleTemperatur = lastAktuelleGenerelleTemperatur;
+        this.lastGenerelleTemperatur = lastGenerelleTemperatur;
+        this.lastBewoelkung = lastBewoelkung;
         this.timeLetzterBeschriebenerTageszeitensprungOderWechsel =
                 timeLetzterBeschriebenerTageszeitensprungOderWechsel;
         this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel =
@@ -291,60 +286,129 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         // Himmel.
                         DRINNEN;
 
-        @Nullable final EnumRange<Temperatur> locationTemperaturRange =
-                location != null ?
-                        location.storingPlaceComp().getEffectiveTemperaturRange() :
-                        EnumRange.all(Temperatur.class);
+        final EnumRange<Temperatur> locationTemperaturRange = getTemperaturRange(location);
 
-        final Temperatur aktuelleGenerelleTemperatur = getAktuelleGenerelleTemperatur(endTime);
-        Temperatur previousLokaleTemperaturBeiRelevanterAenderung = null;
-        Temperatur currentLokaleTemperaturBeiRelevanterAenderung = null;
-        if ( // Die generelle aktuelle Temperatur hat sich gerade geändert...
-                lastAktuelleGenerelleTemperatur != null
-                        && aktuelleGenerelleTemperatur != lastAktuelleGenerelleTemperatur
-                        // ...und die Temperatur ist oder war auffällig...
-                        && (
-                        !lastAktuelleGenerelleTemperatur.isUnauffaellig(startTime.getTageszeit())
-                                || !aktuelleGenerelleTemperatur
-                                .isUnauffaellig(endTime.getTageszeit()))) {
-            final Temperatur previousLokaleTemperatur =
-                    locationTemperaturRange.clamp(lastAktuelleGenerelleTemperatur);
-            final Temperatur currentLokaleTemperatur =
-                    locationTemperaturRange.clamp(aktuelleGenerelleTemperatur);
-            if ( // Der SC hat die Veränderung auch merken können...
-                    previousLokaleTemperatur != currentLokaleTemperatur
-                            // ...und sie passiert über eine eher kurze Zeit
-                            && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
-                previousLokaleTemperaturBeiRelevanterAenderung = previousLokaleTemperatur;
-                currentLokaleTemperaturBeiRelevanterAenderung = currentLokaleTemperatur;
-            } else {
-                // Der SC hat die Veränderung nicht merken können (er war gerade an einem
-                // kühlen Ort, im beheizten Schloss o.Ä.) - oder die Temperaturänderung passierte
-                // über lange Zeit (wir wollen ein "auf einmal ist es eiskalt geworden"
-                // vermeiden, wenn es in Wirklichkeit über 5 Stunden allmählich kühler und
-                // kühler geworden ist). Später soll es einen Wetterhinweis geben.
-                setGgfSpaeterWetterBeschreiben(drinnenDraussen);
-                // IDEA Man könnte auch später etwas schreiben wie "Draußen hat sich das Wetter
-                //  verändert. Es hat deutlich abgekühlt.", "Draußen hat sich das Wetter
-                //  verändert. Es hat deutlich abgekühlt und der Himmel bezieht sich." oder
-                //  "Inzwischen ist es ziemlich warm / ziemlich kalt, ..." Das alles
-                //  ergibt aber nur Sinn, wenn man weiß, welche (Temperatur, ...)-Werte der Benutzer
-                //  an diesem Ort tatsächlich erwartet hätte. Da jeder Ort seine eigenen
-                //  Minimal- / Maximaltemperatur hat, ist das (für den allgemeinen Fall)
-                //  etwas mühevoll.
-            }
-        }
+        final Temperatur currentGenerelleTemperatur = getCurrentGenerelleTemperatur(endTime);
 
-        final ImmutableCollection<AbstractDescription<?>> alt =
-                altTimePassed(startTime, endTime,
-                        !locationTemperaturRange.isInRange(aktuelleGenerelleTemperatur),
-                        previousLokaleTemperaturBeiRelevanterAenderung,
-                        currentLokaleTemperaturBeiRelevanterAenderung,
-                        drinnenDraussen);
+        @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant =
+                handleTemperaturChange(startTime, endTime, drinnenDraussen, locationTemperaturRange,
+                        currentGenerelleTemperatur);
 
-        setLastAktuelleGenerelleTemperatur(aktuelleGenerelleTemperatur);
+        @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant =
+                handleBewoelkungChange(startTime, endTime, drinnenDraussen);
+
+        final ImmutableCollection<AbstractDescription<?>> alt = altTimePassed(
+                startTime, endTime,
+                !locationTemperaturRange.isInRange(currentGenerelleTemperatur),
+                temperaturChangeSofernRelevant,
+                bewoelkungChangeSofernRelevant,
+                drinnenDraussen);
+
+        setLastGenerelleTemperatur(currentGenerelleTemperatur);
 
         return alt;
+    }
+
+    @Nullable
+    private WetterParamChange<Temperatur> handleTemperaturChange(
+            final AvDateTime startTime, final AvDateTime endTime,
+            final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final Temperatur currentGenerelleTemperatur) {
+        if ( // Die generelle aktuelle Temperatur hat sich gerade gar nicht geändert...
+                lastGenerelleTemperatur == null
+                        || currentGenerelleTemperatur == lastGenerelleTemperatur
+                        // ...oder die Temperatur ist und war unauffällig...
+                        || (
+                        lastGenerelleTemperatur.isUnauffaellig(startTime.getTageszeit())
+                                && currentGenerelleTemperatur
+                                .isUnauffaellig(endTime.getTageszeit()))) {
+            return null;
+        }
+
+        final Temperatur lastLokaleTemperatur =
+                locationTemperaturRange.clamp(lastGenerelleTemperatur);
+        final Temperatur currentLokaleTemperatur =
+                locationTemperaturRange.clamp(currentGenerelleTemperatur);
+        if ( // Der SC hat die Veränderung auch merken können...
+                lastLokaleTemperatur != currentLokaleTemperatur
+                        // ...und sie passiert über eine eher kurze Zeit
+                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+            return new WetterParamChange<>(lastLokaleTemperatur, currentLokaleTemperatur);
+        }
+
+        // Der SC hat die Veränderung nicht merken können (er war gerade an einem
+        // kühlen Ort, im beheizten Schloss o.Ä.) - oder die Temperaturänderung passierte
+        // über lange Zeit (wir wollen ein "auf einmal ist es eiskalt geworden"
+        // vermeiden, wenn es in Wirklichkeit über 5 Stunden allmählich kühler und
+        // kühler geworden ist). Dann geben wir einfach später mal einen Wetterhinweis.
+        setGgfSpaeterWetterBeschreiben(drinnenDraussen);
+        // IDEA Man könnte auch *später* etwas schreiben wie "Draußen hat sich das Wetter
+        //  verändert. Es hat deutlich abgekühlt.", "Draußen hat sich das Wetter
+        //  verändert. Es hat deutlich abgekühlt und der Himmel bezieht sich." oder
+        //  "Inzwischen ist es ziemlich warm / ziemlich kalt, ..." Das alles
+        //  ergibt aber nur Sinn, wenn man weiß, welche (Temperatur, ...)-Werte der Benutzer
+        //  an diesem Ort tatsächlich erwartet hätte. Da jeder Ort seine eigenen
+        //  Minimal- / Maximaltemperatur hat, ist das (für den allgemeinen Fall)
+        //  etwas mühevoll.
+
+        return null;
+    }
+
+    @Nullable
+    private WetterParamChange<Bewoelkung> handleBewoelkungChange(
+            final AvDateTime startTime, final AvDateTime endTime,
+            final DrinnenDraussen drinnenDraussen) {
+        final Bewoelkung currentBewoelkung = wetter.getBewoelkung();
+
+        if ( // Die Bewölkung hat sich gerade gar nicht geändert...
+                lastBewoelkung == null
+                        || currentBewoelkung == lastBewoelkung
+                        // ...oder die Bewoelkung ist und war unauffällig...
+                        || (
+                        lastBewoelkung.isUnauffaellig(startTime.getTageszeit())
+                                && currentBewoelkung.isUnauffaellig(endTime.getTageszeit()))) {
+            return null;
+        }
+
+        if ( // Der SC hat die Veränderung auch merken können...
+                drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
+                        // ...und sie passiert über eine eher kurze Zeit
+                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+            return new WetterParamChange<>(lastBewoelkung, currentBewoelkung);
+        }
+
+        if ( // Es gab eine kleine Veränderung, die der SC kaum mitbekommen hat...
+                drinnenDraussen.isDraussen()
+                        && (lastBewoelkung == Bewoelkung.BEDECKT
+                        || currentBewoelkung == Bewoelkung.BEDECKT)
+                        // ...und sie passiert über eine eher kurze Zeit
+                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+            // Wir geben später einen Wetterhinweis
+            setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
+
+            return new WetterParamChange<>(lastBewoelkung, currentBewoelkung);
+        }
+
+        // Der SC hat die Veränderung kaum merken können (er hatte gar keinen Blick auf den
+        // offenen Himmel) - oder die Bewölkungsänderung passierte
+        // über lange Zeit (wir wollen ein "auf einmal ist es bedeckt"
+        // vermeiden, wenn es sich in Wirklichkeit über 5 Stunden allmählich immer mehr und mehr
+        // bezogen hat). Dann geben wir einfach später mal einen Wetterhinweis.
+        setGgfSpaeterWetterBeschreiben(drinnenDraussen);
+        // FIXME Man könnte auch *später* etwas schreiben wie "Draußen hat sich das Wetter
+        //  verändert. Es hat deutlich abgekühlt und der Himmel bezieht sich. Dazu müsste man
+        //  aber eigentlich wissen, welche Bewölkung der SC als letztes unter freiem Himmel
+        //  erlebt hat.
+
+        return null;
+    }
+
+
+    private static EnumRange<Temperatur> getTemperaturRange(@Nullable final ILocationGO location) {
+        return location != null ?
+                location.storingPlaceComp().getEffectiveTemperaturRange() :
+                EnumRange.all(Temperatur.class);
     }
 
 
@@ -356,36 +420,18 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Wenn es hier Beschreibungen gab und keine von ihnen ausgegeben wird, wird der
      * Tageszeitensprung oder -wechsel nicht mehr beschrieben werden.
      *
-     * @param lastLokaleTemperaturBeiRelevanterAenderung    Falls eine Temperaturänderung
-     *                                                      beschrieben werden soll, so steht
-     *                                                      hier die lokale Temperatur vor der
-     *                                                      Änderung. Es kann hier zu seltenen
-     *                                                      Fällen kommen, dass der SC diese
-     *                                                      vorherige Temperatur an diesem Ort
-     *                                                      noch gar nicht erlebt und auch gar
-     *                                                      nicht erwartet hat - z.B. wenn der SC
-     *                                                      den ganzen heißen Tag an einem kühlen
-     *                                                      Ort verbringt den kühlen Ort genau in
-     *                                                      dem Moment verlässt, wenn der Tag sich
-     *                                                      wieder abkühlt. Zurzeit berücksichtigen
-     *                                                      wir diese Fälle nicht.
-     * @param currentLokaleTemperaturBeiRelevanterAenderung Falls eine Temperaturänderung
-     *                                                      beschrieben werden soll, so steht
-     *                                                      hier die lokale Temperatur nach  der
-     *                                                      Änderung; muss und darf nur
-     *                                                      angegeben sein, wenn
-     *                                                      lastLokaleTemperaturBeiRelevanterAenderung
-     *                                                      angegeben ist und muss dann
-     *                                                      unterschiedlich sein.
+     * @param temperaturChangeSofernRelevant Die  Temperaturänderung, falls eine       beschrieben
+     *                                       werden soll, sonst {@code null}
+     * @param bewoelkungChangeSofernRelevant Die Änderung der Bewölkung, falls eine beschrieben
+     *                                       werden soll, sonst {@code null}
      */
     @NonNull
     private ImmutableCollection<AbstractDescription<?>> altTimePassed(
             final AvDateTime lastTime,
             final AvDateTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
-            @Nullable final Temperatur lastLokaleTemperaturBeiRelevanterAenderung,
-            @Nullable final Temperatur currentLokaleTemperaturBeiRelevanterAenderung,
-            // FIXME Hier auch Bewölkungsänderungen etc. einarbeiten
+            @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
+            final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen) {
         final boolean tageszeitaenderungSollBeschriebenWerden =
                 !currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY) &&
@@ -395,15 +441,14 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 wetter.altTimePassed(lastTime, currentTime,
                         tageszeitaenderungSollBeschriebenWerden,
                         generelleTemperaturOutsideLocationTemperaturRange,
-                        lastLokaleTemperaturBeiRelevanterAenderung,
-                        currentLokaleTemperaturBeiRelevanterAenderung,
+                        temperaturChangeSofernRelevant,
+                        bewoelkungChangeSofernRelevant,
                         drinnenDraussen
                 );
 
         if (tageszeitaenderungSollBeschriebenWerden) {
             if (timeLetzterBeschriebenerTageszeitensprungOderWechsel == null
-                    || currentTime
-                    .isAfter(timeLetzterBeschriebenerTageszeitensprungOderWechsel)) {
+                    || currentTime.isAfter(timeLetzterBeschriebenerTageszeitensprungOderWechsel)) {
                 setTimeLetzterBeschriebenerTageszeitensprungOderWechsel(currentTime);
                 // Damit befinden wir uns nicht mehr im "schwebenden Tageszeitenwechsel",
                 // sondern können uns bei weiteren Ausgaben auf die aktuelle Tageszeit beziehen.
@@ -611,7 +656,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     }
 
     @NonNull
-    private Temperatur getAktuelleGenerelleTemperatur(final AvDateTime time) {
+    private Temperatur getCurrentGenerelleTemperatur(final AvDateTime time) {
         // Nur weil die aktuelle generelle Temperatur abgefragt wird, gehen wir nicht davon aus,
         // dass ein
         // "qualifizierter" Wetterhinweis gegeben wurde
@@ -628,21 +673,34 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter;
     }
 
-    private void setLastAktuelleGenerelleTemperatur(
-            @Nullable final Temperatur lastAktuelleGenerelleTemperatur) {
-        if (this.lastAktuelleGenerelleTemperatur ==
-                lastAktuelleGenerelleTemperatur) {
+    private void setLastGenerelleTemperatur(@Nullable final Temperatur lastGenerelleTemperatur) {
+        if (this.lastGenerelleTemperatur == lastGenerelleTemperatur) {
             return;
         }
 
         setChanged();
 
-        this.lastAktuelleGenerelleTemperatur = lastAktuelleGenerelleTemperatur;
+        this.lastGenerelleTemperatur = lastGenerelleTemperatur;
     }
 
     @Nullable
-    Temperatur getLastAktuelleGenerelleTemperatur() {
-        return lastAktuelleGenerelleTemperatur;
+    Temperatur getLastGenerelleTemperatur() {
+        return lastGenerelleTemperatur;
+    }
+
+    private void setLastBewoelkung(@Nullable final Bewoelkung lastBewoelkung) {
+        if (this.lastBewoelkung == lastBewoelkung) {
+            return;
+        }
+
+        setChanged();
+
+        this.lastBewoelkung = lastBewoelkung;
+    }
+
+    @Nullable
+    Bewoelkung getLastBewoelkung() {
+        return lastBewoelkung;
     }
 
     @Nullable

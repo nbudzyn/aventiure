@@ -13,6 +13,8 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.praedikat.PartizipIIPhrase;
+import de.nb.aventiure2.german.praedikat.Perfektbildung;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
@@ -100,28 +102,38 @@ class DescriptionCombiner {
         //  "Unten angekommen bist du ziemlich erschöpft"
 
         if (first.getPraedikat().kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
-                first.getPraedikat().bildetPerfektMitSein() &&
                 !first.getPraedikat().hatAkkusativobjekt() &&
                 first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
                 first.getPraedikat().umfasstSatzglieder() &&
                 second.getStartsNew() == WORD) {
-            final Konstituente descriptionPartizipIIPhrase =
-                    first.getDescriptionPartizipIIPhrase(P2, SG);
-            if (!descriptionPartizipIIPhrase.vordoppelpunktNoetig() &&
-                    EnumSet.of(WORD, SENTENCE)
-                            .contains(descriptionPartizipIIPhrase.getEndsThis())) {
-                final String vorfeld =
-                        // "unten angekommen"
-                        descriptionPartizipIIPhrase.toTextOhneKontext() +
-                                (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
-                // Einen Phorik-Kandidat aus first übernehmen wir nicht - das Vorfeld ist
-                // schließlich maximal weit vom Satzende entfernt.
+            final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
+                    first.getPraedikat().getPartizipIIPhrasen(P2, SG);
+            if (partizipIIPhrasen.size() == 1) { // Wenn es mehrere sind, bilden sie
+                // bestimmt nicht alle das Perfekt mit "sein"!
+                // Aber es ist nur eine!
+                final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.iterator().next();
+                if (partizipIIPhrase.getPerfektbildung() == Perfektbildung.SEIN) {
+                    // Und die Phrase bildet das Perfekt mit "sein"!
+                    final Konstituente descriptionPartizipIIPhrase =
+                            partizipIIPhrase.getPhrase().joinToSingleKonstituente();
+                    if (!descriptionPartizipIIPhrase.vordoppelpunktNoetig() &&
+                            EnumSet.of(WORD, SENTENCE)
+                                    .contains(descriptionPartizipIIPhrase.getEndsThis())) {
+                        final String vorfeld =
+                                // "unten angekommen"
+                                descriptionPartizipIIPhrase.toTextOhneKontext() +
+                                        (descriptionPartizipIIPhrase.kommaStehtAus() ? ", " : "");
+                        // Einen Phorik-Kandidat aus first übernehmen wir nicht - das Vorfeld ist
+                        // schließlich maximal weit vom Satzende entfernt.
 
-                res.add(
-                        // "Unten angekommen bist du ziemlich erschäpft"
-                        second.toTextDescriptionMitVorfeld(vorfeld)
-                                .beginntZumindest(
-                                        StructuralElement.max(SENTENCE, first.getStartsNew())));
+                        res.add(
+                                // "Unten angekommen bist du ziemlich erschäpft"
+                                second.toTextDescriptionMitVorfeld(vorfeld)
+                                        .beginntZumindest(
+                                                StructuralElement
+                                                        .max(SENTENCE, first.getStartsNew())));
+                    }
+                }
             }
         }
 

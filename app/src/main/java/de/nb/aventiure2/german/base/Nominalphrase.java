@@ -38,6 +38,8 @@ public class Nominalphrase
     private final Flexionsreihe flexionsreiheArtikellos;
 
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
+    public static final Nominalphrase BLICK_AUF_DEN_STERNENHIMMEL =
+            np(M, DEF, "Blick auf den Sternenhimmel");
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
@@ -60,6 +62,8 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase LETZTE_ZIRREN =
+            np(PL_MFN, DEF, "letzten Zirren");
 
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
