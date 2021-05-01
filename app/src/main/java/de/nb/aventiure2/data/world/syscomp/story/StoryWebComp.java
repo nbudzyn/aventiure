@@ -38,6 +38,17 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
     //  Voraussetzungen der StoryNodes voneinander.
 
+    // FIXME Die Storycomp wählt das Planwetter bei erreichten StorySteps
+    //  - Wie bei startmovement, ggf. ersten Schritt sofort
+    //  - Geschwindigkeit... automatisch nach einer Vorgabe, wie schnell der Wechsel generell
+    //    passieren soll?? (Es wäre unschön, wenn der Spieler auf das Wetter warten müssten -
+    //    also Geschwindigkeit ggf. daran orientieren, ob das SC noch andere StorySteps erreichen
+    //    kann - ansonsten superschneller Weterwechsel?)
+    //  - Wetteränderung sollte schon ein paar StorySteps vorher bevor sie wichtig wird (wenn
+    //    auch nicht bis zum Extrem)
+    //  - Aber: Sollte das Schlossfest auf das Wetter reagieren? Braucht man eine
+    //    IWetterChangedReaction?!
+
     private final AvDatabase db;
     private final World world;
     private final TimeTaker timeTaker;
