@@ -130,7 +130,8 @@ public class Walkthrough {
                     "Rapunzel fragen, wie du ihr helfen kannst",
                     "Rapunzel Rettung zusagen",
                     "Rapunzel bitten ihre Haare wieder hinunterzulassen",
-                    "An den Haaren hinabsteigen");
+                    "An den Haaren hinabsteigen"
+            );
 
     public static final Walkthrough ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN =
             ANFANG_BIS_FROSCHVERSPRECHEN
@@ -212,6 +213,7 @@ public class Walkthrough {
                     "Dich mit der jungen Frau unterhalten",
                     "Dich mit der jungen Frau unterhalten",
                     "Der jungen Frau die goldene Kugel geben",
+                    "Die Wahrheit sagen",
                     "Die junge Frau nach ihrem Namen fragen",
                     "Rapunzel dein Herz ausschütten",
                     "Rapunzel fragen, wie du ihr helfen kannst",

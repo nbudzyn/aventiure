@@ -15,15 +15,25 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
+import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
+import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static java.util.Arrays.asList;
 
@@ -37,17 +47,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     //  einem Graphen) sieht,
     //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
     //  Voraussetzungen der StoryNodes voneinander.
-
-    // FIXME Die Storycomp wählt das Planwetter bei erreichten StorySteps
-    //  - Wie bei startmovement, ggf. ersten Schritt sofort
-    //  - Geschwindigkeit... automatisch nach einer Vorgabe, wie schnell der Wechsel generell
-    //    passieren soll?? (Es wäre unschön, wenn der Spieler auf das Wetter warten müssten -
-    //    also Geschwindigkeit ggf. daran orientieren, ob das SC noch andere StorySteps erreichen
-    //    kann - ansonsten superschneller Weterwechsel?)
-    //  - Wetteränderung sollte schon ein paar StorySteps vorher bevor sie wichtig wird (wenn
-    //    auch nicht bis zum Extrem)
-    //  - Aber: Sollte das Schlossfest auf das Wetter reagieren? Braucht man eine
-    //    IWetterChangedReaction?!
 
     private final AvDatabase db;
     private final World world;
@@ -115,6 +114,114 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     public void reachStoryNode(final IStoryNode storyNode) {
         requirePcd().reachStoryNode(storyNode, scActionStepCountDao.stepCount());
+
+        onStoryNodeReached(storyNode);
+    }
+
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    private void onStoryNodeReached(final IStoryNode storyNode) {
+        updatePlanWetter();
+
+        // IDEA Wenn eine Story beendet wurde, könnte der Narrator eine neue
+        //  (möglichst abstrakte) Überschrift setzen und damit ein neues Kapitel beginnen.
+        //  Die Überschrift bezöge sich lose auf eine der
+        //  jetzt noch verbleibenden und offenen Storys (sofern es überhaupt solche
+        //  gibt). Für jede Story stehen mehrere Überschriften
+        //  bereit, die in einer Reihenfolge gewählt werden.
+    }
+
+    /**
+     * Aktualisert (d.h. setzt, überschreibt oder löscht) das Plan-Wetter - auf Basis
+     * des {@link IStoryNode}s, den der SC - insgesamt über alle
+     * {@link Story}s - erreicht hat.
+     */
+    private void updatePlanWetter() {
+        // FIXME Die Storycomp wählt das Planwetter bei erreichten StorySteps
+        //  - Wie bei startmovement, ggf. ersten Schritt sofort
+        //  - Geschwindigkeit... automatisch nach einer Vorgabe, wie schnell der Wechsel generell
+        //    passieren soll?? (Es wäre unschön, wenn der Spieler auf das Wetter warten müssten -
+        //    also Geschwindigkeit ggf. daran orientieren, ob das SC noch andere StorySteps
+        //    erreichen
+        //    kann - ansonsten superschneller Weterwechsel?)
+        //  - Wetteränderung sollte schon ein paar StorySteps vorher bevor sie wichtig wird (wenn
+        //    auch nicht bis zum Extrem)
+        //  - Aber: Sollte das Schlossfest auf das Wetter reagieren? Braucht man eine
+        //    IWetterChangedReaction?!
+
+        // Diese Bedingungen hier sind Story-übergreifend nach Priorität geordnet!
+
+        final Wetter wetterGO = world.loadWetter();
+
+        if (requirePcd().isReachedOrStoryBeendet(FroschkoenigStoryNode.KUGEL_GENOMMEN)
+                && !requirePcd().isReachedOrStoryBeendet(
+                FroschkoenigStoryNode.ETWAS_IM_BRUNNEN_VERLOREN)) {
+            // Es wird schnell recht heiß, so dass der SC motiviert ist, zum
+            // kühlen Brunnen zu gehen und dort mit der Kugel zu spielen.
+
+            wetterGO.wetterComp().setPlanwetter(
+                    new WetterData(
+                            Temperatur.RECHT_HEISS, Temperatur.KUEHL,
+                            Windstaerke.WINDSTILL,
+                            Bewoelkung.WOLKENLOS,
+                            BlitzUndDonner.KEIN_BLITZ_ODER_DONNER),
+                    true, // Sofort mit der Änderung anfangen
+                    mins(30)); // Und maximal 30 Minuten dafür brauchen
+            return;
+        }
+
+        if (requirePcd().isReachedOrStoryBeendet(
+                RapunzelStoryNode.TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN)
+                && !requirePcd().isReachedOrStoryBeendet(
+                RapunzelStoryNode.STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN)) {
+            // Es kommt ein Sturm auf, der letzlich Äste von den Bäumen bricht.
+            final AvTimeSpan duration = requirePcd().getReachableStoryNodes().size() > 1 ?
+                    // Der Spieler hat auch andere Dinge zu tun - die Wetteränderung
+                    // darf länger dauern
+                    hours(4) :
+                    // Der Spieler hat alle anderen Ziele erreicht - die Wetteränderung
+                    // sollte schnell gehen
+                    mins(30);
+
+            wetterGO.wetterComp().setPlanwetter(
+                    new WetterData(
+                            Temperatur.KUEHL, Temperatur.KUEHL,
+                            Windstaerke.SCHWERER_STURM,
+                            Bewoelkung.BEDECKT,
+                            BlitzUndDonner.BLITZ_UND_DONNER_NICHT_DIREKT_UEBER_EINEM),
+                    true, // Sofort mit der Änderung anfangen
+                    duration);
+            return;
+        }
+
+        if (requirePcd().isReachedOrStoryBeendet(
+                RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT)
+                && !requirePcd().isReachedOrStoryBeendet(
+                RapunzelStoryNode.TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN)) {
+            // Das Wetter wird langsam schlechter
+            wetterGO.wetterComp().setPlanwetter(new WetterData(
+                    Temperatur.KUEHL, Temperatur.KUEHL,
+                    Windstaerke.WINDIG,
+                    Bewoelkung.BEDECKT,
+                    BlitzUndDonner.KEIN_BLITZ_ODER_DONNER));
+            return;
+        }
+
+        if (requirePcd().isReachedOrStoryBeendet(
+                FroschkoenigStoryNode.ETWAS_IM_BRUNNEN_VERLOREN)
+                && !requirePcd().isReachedOrStoryBeendet(
+                FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN)) {
+            // Die Hitze lässt langsam nach
+            wetterGO.wetterComp().setPlanwetter(new WetterData(
+                    Temperatur.WARM, Temperatur.KUEHL,
+                    Windstaerke.LUEFTCHEN,
+                    Bewoelkung.LEICHT_BEWOELKT,
+                    BlitzUndDonner.KEIN_BLITZ_ODER_DONNER));
+            return;
+        }
+
+        // In allen anderen Fällen ändert sich das Wetter langsam wieder zum
+        // Default-Wetter
+        wetterGO.wetterComp().setPlanwetter(WetterData.getDefault());
     }
 
     public void narrateAndDoHintActionIfAny() {

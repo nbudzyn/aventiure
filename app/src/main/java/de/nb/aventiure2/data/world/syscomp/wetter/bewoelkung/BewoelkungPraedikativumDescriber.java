@@ -161,6 +161,7 @@ public class BewoelkungPraedikativumDescriber {
                 break;
             case BEDECKT:
                 alt.add(DUESTER, AdjektivOhneErgaenzungen.DUNKEL, SCHUMMRIG);
+                break;
             default:
                 throw new IllegalStateException("Unexpected Bewoelkung: " + bewoelkung);
         }

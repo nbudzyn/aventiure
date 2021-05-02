@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Objects;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.concurrent.Immutable;
 
@@ -72,6 +74,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toSet;
 
 @Immutable
+public
 class WetterData {
     // FIXME Es scheint so, als würden für die Wetterbeschreibungen kurze (oder
     //  eher unkonkrete) Sätze bevorzugt? Warum? Ist der "ERFAHRUNGSWERT" ungünstig
@@ -174,6 +177,15 @@ class WetterData {
         this.windstaerke = windstaerke;
         this.bewoelkung = bewoelkung;
         this.blitzUndDonner = blitzUndDonner;
+    }
+
+    @NonNull
+    public static WetterData getDefault() {
+        return new WetterData(
+                Temperatur.WARM, Temperatur.KUEHL,
+                Windstaerke.LUEFTCHEN,
+                Bewoelkung.LEICHT_BEWOELKT,
+                BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
     }
 
     /**
@@ -318,7 +330,8 @@ class WetterData {
         alt.addAll(altNeueSaetze(
                 TEMPERATUR_SATZ_DESCRIBER.alt(
                         temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL,
-                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                        false).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
                         .filter(EinzelnerSatz.class::isInstance),
                 BEWOELKUNG_SATZ_DESCRIBER
@@ -504,7 +517,7 @@ class WetterData {
                         temperatur,
                         !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                         time,
-                        false);
+                        true);
         if (!heuteOderDerTagSaetze.isEmpty()) {
             alt.addAll(altNeueSaetze(
                     BEWOELKUNG_SATZ_DESCRIBER
@@ -1092,13 +1105,6 @@ class WetterData {
     // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist
     //  [lokale Temperatur] und die Sonne heiß brennt [generelle Temperatur], so..."
 
-    // FIXME Die Temperatur steigt (sofort? Planwetter?!), wenn man die Kugel nimmt.
-
-    // FIXME Die Temperatur sinkt (sofort? Planwetter?!), nachdem der Frosch erschienen ist
-
-    // FIXME Plan-Wetter nur dramaturgisch geändert, nicht automatisch? Oder
-    //  zwei Plan-Wetter, dramaturgisch und automatisch? Oder Plan-Wetter-Priorität?!
-
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
     //  onWetterwechsel()? onTemperaturWechsel()?)
     //  "von der Hitze des Tages ermüdet"
@@ -1284,5 +1290,27 @@ class WetterData {
                                 drinnenDraussen ==
                                         DRAUSSEN_UNTER_OFFENEM_HIMMEL)
                 )).build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final WetterData that = (WetterData) o;
+        return tageshoechsttemperatur == that.tageshoechsttemperatur &&
+                tagestiefsttemperatur == that.tagestiefsttemperatur &&
+                windstaerke == that.windstaerke &&
+                bewoelkung == that.bewoelkung &&
+                blitzUndDonner == that.blitzUndDonner;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(tageshoechsttemperatur, tagestiefsttemperatur, windstaerke, bewoelkung,
+                blitzUndDonner);
     }
 }

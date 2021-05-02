@@ -183,7 +183,7 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // ein guter Mensch geworden und immer ehrlich geblieben gewesen
         // ein guter Mensch geworden gewesen / dabei viel Mühe gehabt gehabt
         // sich aufgeklart gehabt
-        // ?"ein guter Mensch werden wollen gehabt"
+        // "(Das hatte er vorher nicht) wahrhaben wollen gehabt." (Ersatzinfinitiv!)
         // gesagt gehabt: "Hallo!"
 
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();

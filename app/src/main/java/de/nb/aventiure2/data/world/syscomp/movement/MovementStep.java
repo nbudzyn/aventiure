@@ -41,4 +41,6 @@ class MovementStep {
     AvTimeSpan getExpDuration() {
         return expDuration;
     }
+
+    // FIXME equals(), hashCode()
 }

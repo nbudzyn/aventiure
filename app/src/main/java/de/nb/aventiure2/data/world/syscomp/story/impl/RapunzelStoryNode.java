@@ -88,7 +88,12 @@ public enum RapunzelStoryNode implements IStoryNode {
             ZU_RAPUNZEL_HINAUFGESTIEGEN),
     TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN(10, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
-            RAPUNZEL_RETTUNG_VERSPROCHEN);
+            RAPUNZEL_RETTUNG_VERSPROCHEN),
+
+    //  Dies wird automatisch freigeschaltet, wenn der Sturm die Äste von den Bäumen
+    //  gebrochen hat. Tipps dafür wären nicht sinnvoll
+
+    STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN;
 
     // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
     // dass der SC alles vergessen hat
@@ -98,14 +103,11 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
     //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
 
-    // FIXME Draußen hat sich das Wetter verändert. Es hat deutlich abgekühlt und der
-    //  Himmel bezieht sich. (Oder das passiert später...)
-
-    // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen. Überall liegt 
+    // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen. Überall liegt
     //  Holz herum, kleine und große Äste.
-    // - Du klaubst Holz auf 
-    // - Holz in armlange Stücke brechen
-    // - "du sammelst Holz"
+    //  - Du klaubst Holz auf
+    //  - Holz in armlange Stücke brechen
+    //  - "du sammelst Holz"
 
     // FIXME Beinahe krank werden (draußen beim schlechtem Wetter - man kann nicht klettern -
     //  und Kraut dagegen finden (o.Ä. vgl. Märchen! "Fieber", "krank"...) Aber Spielerlebnis

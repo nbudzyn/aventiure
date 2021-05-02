@@ -64,7 +64,7 @@ class BettgestellFactory {
                 id, db, world, locationId,
                 null, false);
 
-        // FIXME Man braucht eine Logik, dass das Bettgestell zu warm oder kalt ist wie die
+        // FIXME Man braucht eine Logik, dass das Bettgestell so warm oder kalt ist wie die
         //  Hütte gerade.
         final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, world,
                 locationComp,

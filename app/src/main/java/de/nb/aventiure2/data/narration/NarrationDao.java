@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
+import de.nb.aventiure2.logger.Logger;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -39,7 +40,8 @@ public abstract class NarrationDao {
     @Nullable
     private Narration narrationCached;
 
-    // private static final Logger LOGGER = Logger.getLogger();
+    // FIXME entfernen
+    private static final Logger LOGGER = Logger.getLogger();
 
     NarrationDao() {
     }
@@ -276,7 +278,12 @@ public abstract class NarrationDao {
                 bestScore = score;
                 bestIndex = i;
             }
+
+            LOGGER.d("Score " + score + " für \"" + alternative.getText() + "\"");
         }
+
+        LOGGER.d("-> Best score " + bestScore + " für \"" + alternatives.get(bestIndex).getText()
+                + "\"");
 
         return new IndexAndScore(bestIndex, bestScore);
     }

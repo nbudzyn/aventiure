@@ -2,40 +2,53 @@ package de.nb.aventiure2.data.world.syscomp.wetter;
 
 import androidx.room.Embedded;
 
-import javax.annotation.concurrent.Immutable;
+import java.util.Objects;
 
-import de.nb.aventiure2.data.time.AvDateTime;
+import javax.annotation.concurrent.Immutable;
 
 /**
  * Wetter, wie es bis zu einem Zeitpunkt werden soll(te).
  */
 @Immutable
 class PlanwetterData {
-    private final AvDateTime planDateTime;
+    /**
+     * Relative Geschwindigkeit der Wetteränderung. 1 = normale Geschwindigkeit
+     */
+    private final float relativeVelocity;
 
     @Embedded(prefix = "plan")
     private final WetterData wetter;
 
-    // FIXME Wetterwege: Man weiß Planwetter und Planzeitpunkt.
-    //  Man ermittelt immer - ausgehend vom aktuelken Wetter - den nächsten Schritt in Richtung
-    //  Planwetter (programmatisch nach einfachen Regeln in der art: erst kalt, dann bewölkumg,
-    //  dann sturm). Sowie den groben zeitanteil. Man speichert die zeit, bis zu der sich nichts
-    //  ändern soll und ermittelt erst dann wieder neu. Ggf auch mehrere Schrittr - wie
-    //  movementcomp!
-
-    PlanwetterData(final AvDateTime planDateTime,
-                   final WetterData wetter) {
-        this.planDateTime = planDateTime;
+    PlanwetterData(final float relativeVelocity, final WetterData wetter) {
+        this.relativeVelocity = relativeVelocity;
         this.wetter = wetter;
     }
 
     @SuppressWarnings("WeakerAccess")
-    AvDateTime getPlanDateTime() {
-        return planDateTime;
+    float getRelativeVelocity() {
+        return relativeVelocity;
     }
 
     @SuppressWarnings("WeakerAccess")
     WetterData getWetter() {
         return wetter;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final PlanwetterData that = (PlanwetterData) o;
+        return Float.compare(that.relativeVelocity, relativeVelocity) == 0 &&
+                wetter.equals(that.wetter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(relativeVelocity, wetter);
     }
 }

@@ -106,13 +106,15 @@ class TextAdditionEvaluator {
                                                            final float bestScoreSoFar) {
         final LinkedList<Integer> nums = new LinkedList<>(asList(10, 7, 5, 3, 2, 1));
 
-        if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
-                bestAdditionWordSequenceScoresStillPossible(baseStems,
-                        // Mehr als 1000 Wörter werden sicher nicht angefügt werden.
-                        MAX_NUMBER_ADDED_WORDS_STEMMED_WORDS, nums) <
-                        bestScoreSoFar) {
-            return Float.NEGATIVE_INFINITY;
-        }
+        // FIXME Prüfen und ggf. korrigiert wieder einkommentieren! Hier ist wohl ein Denkfehler
+        //  gewesen!
+        // if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
+        //        bestAdditionWordSequenceScoresStillPossible(baseStems,
+        //                // Mehr als 1000 Wörter werden sicher nicht angefügt werden.
+        //                MAX_NUMBER_ADDED_WORDS_STEMMED_WORDS, nums) <
+        //                bestScoreSoFar) {
+        //    return Float.NEGATIVE_INFINITY;
+        // }
 
         final StemmedWords additionStems = StemmedWords.stem(additionCandidate);
 
@@ -132,11 +134,13 @@ class TextAdditionEvaluator {
                                                            final StemmedWords additionStems,
                                                            final float bestScoreSoFar,
                                                            final List<Integer> nums) {
-        if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
-                bestAdditionWordSequenceScoresStillPossible(baseStems, additionStems, nums) <
-                        bestScoreSoFar) {
-            return Float.NEGATIVE_INFINITY;
-        }
+        // FIXME Prüfen und ggf. korrigiert wieder einkommentieren! Hier ist wohl ein Denkfehler
+        //  gewesen!
+        // if (bestScoreSoFar > Float.NEGATIVE_INFINITY &&
+        //        bestAdditionWordSequenceScoresStillPossible(baseStems, additionStems, nums) <
+        //                bestScoreSoFar) {
+        //    return Float.NEGATIVE_INFINITY;
+        // }
         float res = 0;
 
         // Dann suchen wir: Gibt es am Ende von base genau 10 (z.B.) Wortstämme aus addition in

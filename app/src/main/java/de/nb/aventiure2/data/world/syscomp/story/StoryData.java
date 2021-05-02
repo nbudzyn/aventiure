@@ -116,18 +116,26 @@ class StoryData {
         if (storyNode.beendetStory()) {
             state = BEENDET;
 
-            // IDEA Wenn eine Story beendet wurde, könnte der Narrator eine neue
-            //  (möglichst abstrakte) Überschrift setzen und damit ein neues Kapitel beginnen.
-            //  Die Überschrift bezöge sich lose auf eine der
-            //  jetzt noch verbleibenden und offenen Storys (sofern es überhaupt solche
-            //  gibt). Für jede Story stehen mehrere Überschriften
-            //  bereit, die in einer Reihenfolge gewählt werden.
-
             // STORY Wenn alle Storys abgeschlossen sind, wird das Spiel
             //  beendet. ("Du lebst noch lange glücklich und vergnügt.")
         }
 
         return true;
+    }
+
+    /**
+     * Gibt {@code true} zurück, wenn
+     * <ul>
+     *     <li>dieser Story Node erreicht wurde
+     *     <li>oder die Story bereits beendet ist.
+     * </ul>
+     */
+    boolean isReachedOrStoryBeendet(final IStoryNode storyNode) {
+        if (state == BEENDET) {
+            return true;
+        }
+
+        return isReached(storyNode);
     }
 
     private boolean isReached(final IStoryNode storyNode) {

@@ -272,9 +272,10 @@ public class TemperaturDescDescriber {
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        // "Es ist kühl"
+        // "Es ist kühl", "es ist warmes Wetter"
         alt.addAll(satzDescriber.alt(temperatur, time, drinnenDraussen,
-                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben));
+                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+                false));
 
         if (drinnenDraussen.isDraussen()) {
             alt.addAll(altHeuteDerTagWennDraussenSinnvoll(

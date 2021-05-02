@@ -207,15 +207,15 @@ public class TemperaturSatzDescriber {
             if ((delta == -1 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
                     || (delta == 1 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
                 // "es wird kalt"
-                alt.addAll(mapToList(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToList(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         Praedikativum::alsEsWirdSatz));
 
                 // "eben wird es kalt"
-                alt.addAll(mapToList(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToList(praedikativumDescriber.altAdjPhr(
+                        change.getNachher(), false),
                         praedikativum -> praedikativum.alsEsWirdSatz()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("eben"))));
 
@@ -229,7 +229,8 @@ public class TemperaturSatzDescriber {
 
                 // "mit einem Mal friert dich"
                 alt.addAll(mapToList(
-                        alt(change.getNachher(), time.getTageszeit(), drinnenDraussen),
+                        alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                                true),
                         dichFriert -> dichFriert
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("mit einem Mal"))));
             }
@@ -238,9 +239,10 @@ public class TemperaturSatzDescriber {
                     && change.getNachher().compareTo(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT) <= 0)
                     || (delta == 1 && change.getNachher().compareTo(Temperatur.SEHR_HEISS) >= 0)) {
                 // "es ist jetzt wirklich sehr kalt"
-                alt.addAll(mapToList(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToList(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         praedikativum -> praedikativum.alsEsIstSatz()
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wirklich"))));
             }
@@ -264,34 +266,41 @@ public class TemperaturSatzDescriber {
             if ((delta < 0 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
                     || (delta > 0 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
                 // "jetzt ist es kalt"
-                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen),
+                alt.addAll(mapToList(alt(
+                        change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                        true),
                         satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))));
 
                 // "mittlerweile frierst du"
-                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen),
+                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                        true),
                         satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("mittlerweile"))));
 
                 // "längst frierst du"
-                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen),
+                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                        true),
                         satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("längst"))));
 
                 // "es ist ein kalt geworden", "es ist ein schöner Tag geworden"
-                alt.addAll(mapToSet(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToSet(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         kalt -> kalt.alsEsWirdSatz().perfekt()));
 
                 // "darüber ist es kalt geworden", "darüber ist es ein schöner Tag geworden"
-                alt.addAll(mapToSet(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToSet(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         kalt -> kalt.alsEsWirdSatz().perfekt()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("darüber"))));
 
                 // "inzwischen ist es kalt geworden"
-                alt.addAll(mapToSet(praedikativumDescriber.alt(
-                        change.getNachher(), time.getTageszeit(),
-                        drinnenDraussen.isDraussen()),
+                alt.addAll(mapToSet(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         kalt -> kalt.alsEsWirdSatz().perfekt()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen"))));
 
@@ -306,9 +315,10 @@ public class TemperaturSatzDescriber {
                 // "es ist deutlich kühler geworden, aber es ist immer noch ziemlich warm"
                 alt.addAll(Stream.of("deutlich", "spürbar")
                         .flatMap(deutlich ->
-                                praedikativumDescriber.alt(
-                                        change.getNachher(), time.getTageszeit(),
-                                        drinnenDraussen.isDraussen()).stream()
+                                praedikativumDescriber
+                                        .altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                                change.getNachher(), time.getTageszeit(),
+                                                drinnenDraussen.isDraussen()).stream()
                                         .map(ziemlichWarm ->
                                                 new ZweiSaetze(
                                                         (delta < 0 ? KUEHLER : WAERMER)
@@ -333,9 +343,10 @@ public class TemperaturSatzDescriber {
 
                 if (change.getNachher().compareTo(Temperatur.WARM) >= 0) {
                     // "es hat sich abgekühlt, aber es ist immer noch ziemlich warm"
-                    alt.addAll(mapToSet(praedikativumDescriber.alt(
-                            change.getNachher(), time.getTageszeit(),
-                            drinnenDraussen.isDraussen()),
+                    alt.addAll(mapToSet(
+                            praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                    change.getNachher(), time.getTageszeit(),
+                                    drinnenDraussen.isDraussen()),
                             ziemlichWarm ->
                                     new ZweiSaetze(
                                             SICH_ABKUEHLEN.perfekt()
@@ -355,9 +366,10 @@ public class TemperaturSatzDescriber {
                 if (change.getNachher().compareTo(Temperatur.KUEHL) <= 0) {
                     // "es ist ein gutes Stück wärmer geworden, aber es ist immer noch ziemlich
                     // kühl"
-                    alt.addAll(mapToSet(praedikativumDescriber.alt(
-                            change.getNachher(), time.getTageszeit(),
-                            drinnenDraussen.isDraussen()),
+                    alt.addAll(mapToSet(
+                            praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                    change.getNachher(), time.getTageszeit(),
+                                    drinnenDraussen.isDraussen()),
                             ziemlichKuehl ->
                                     new ZweiSaetze(
                                             WAERMER.mitGraduativerAngabe("ein gutes Stück")
@@ -393,9 +405,10 @@ public class TemperaturSatzDescriber {
             // "es wird etwas wärmer, aber es ist immer noch ziemlich kühl"
             alt.addAll(
                     altWirdEtwasWaermer().stream()
-                            .flatMap(esWirdEtwasWaermer -> praedikativumDescriber.alt(
-                                    endTemperatur, tageszeit,
-                                    drinnenDraussen.isDraussen()).stream()
+                            .flatMap(esWirdEtwasWaermer -> praedikativumDescriber
+                                    .altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                            endTemperatur, tageszeit,
+                                            drinnenDraussen.isDraussen()).stream()
                                     .map(praedikativum ->
                                             praedikativum.alsEsWirdSatz()
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
@@ -482,9 +495,10 @@ public class TemperaturSatzDescriber {
             // "es wird etwas kühler, aber es ist immer noch ziemlich warm"
             alt.addAll(
                     altWirdEtwasKuehler().stream()
-                            .flatMap(esWirdEtwasKuehler -> praedikativumDescriber.alt(
-                                    endTemperatur, tageszeit,
-                                    drinnenDraussen.isDraussen()).stream()
+                            .flatMap(esWirdEtwasKuehler -> praedikativumDescriber
+                                    .altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                            endTemperatur, tageszeit,
+                                            drinnenDraussen.isDraussen()).stream()
                                     .map(praedikativum ->
                                             praedikativum.alsEsWirdSatz()
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
@@ -598,12 +612,14 @@ public class TemperaturSatzDescriber {
         alt.addAll(
                 mapToList(alt(temperatur, time,
                         kommtNachDrinnenDraussen,
-                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                        true),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (temperatur.isBetweenIncluding(KNAPP_UEBER_DEM_GEFRIERPUNKT, RECHT_HEISS)) {
             alt.addAll(alt(temperatur, time, kommtNachDrinnenDraussen,
-                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                    false));
         }
 
         switch (temperatur) {
@@ -635,16 +651,33 @@ public class TemperaturSatzDescriber {
     /**
      * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
      * {@link EinzelnerSatz} dabei.
+     *
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der Satz auch für eine
+     *                                                                zusätzliche  adverbiale
+     *                                                                Angabe mit
+     *                                                                Satzskopus geeignet
+     *                                                                sein soll
+     *                                                                (z.B.
+     *                                                                "es ist kalt" -> "heute
+     *                                                                ist es
+     *                                                                kalt") -
+     *                                                                oder es nicht sein muss
+     *                                                                ("es ist warmes
+     *                                                                Wetter", aber
+     *                                                                ?"heute ist es warmes
+     *                                                                Wetter").
      */
     @CheckReturnValue
     public ImmutableCollection<Satz> alt(
             final Temperatur temperatur,
             final AvTime time,
             final DrinnenDraussen drinnenDraussen,
-            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
-        alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen));
+        alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen,
+                nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
         if (drinnenDraussen.isDraussen()) {
             alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
@@ -654,18 +687,41 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
+    /**
+     * Erzeugt alternative Sätze zur Temperatur.
+     *
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der Satz auch für eine
+     *                                                                zusätzliche  adverbiale
+     *                                                                Angabe mit
+     *                                                                Satzskopus geeignet sein soll
+     *                                                                (z.B.
+     *                                                                "es ist kalt" -> "heute ist es
+     *                                                                kalt") -
+     *                                                                oder es nicht sein muss
+     *                                                                ("es ist warmes Wetter", aber
+     *                                                                ?"heute ist es warmes
+     *                                                                Wetter").
+     */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
     private ImmutableCollection<EinzelnerSatz> alt(
             final Temperatur temperatur,
             final Tageszeit tageszeit,
-            final DrinnenDraussen drinnenDraussen) {
+            final DrinnenDraussen drinnenDraussen,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToList(praedikativumDescriber.alt(
-                temperatur, tageszeit,
-                drinnenDraussen.isDraussen()),
-                Praedikativum::alsEsIstSatz));
+        if (nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+            alt.addAll(mapToList(praedikativumDescriber.altAdjPhr(
+                    temperatur, false),
+                    Praedikativum::alsEsIstSatz));
+        } else {
+            alt.addAll(
+                    mapToList(praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                            temperatur, tageszeit,
+                            drinnenDraussen.isDraussen()),
+                            Praedikativum::alsEsIstSatz));
+        }
 
         if (drinnenDraussen.isDraussen()) {
             // "die Luft ist kalt"
@@ -754,7 +810,8 @@ public class TemperaturSatzDescriber {
             alt.addAll(
                     alt(temperatur, time.getTageszeit(),
                             unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
-                                    DRAUSSEN_UNTER_OFFENEM_HIMMEL)
+                                    DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                            false)
                             .stream()
                             .flatMap(zweiterSatz ->
                                     altSchonBereitsNochDunkelAdjPhr.stream()
@@ -766,7 +823,7 @@ public class TemperaturSatzDescriber {
                             .collect(toSet()));
 
             // "es ist schon dunkel und ziemlich kühl"
-            alt.addAll(praedikativumDescriber.alt(
+            alt.addAll(praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
                     temperatur, time.getTageszeit(), true).stream()
                     .flatMap(tempAdjPhr ->
                             altSchonBereitsNochDunkelAdjPhr.stream()
@@ -802,14 +859,16 @@ public class TemperaturSatzDescriber {
 
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        // "Heute ist es heiß / warmes Wetter."
+        // "Heute ist es heiß."
         alt.addAll(
-                mapToList(praedikativumDescriber.alt(
-                        temperatur, time.getTageszeit(),
-                        true // Drinnen sind solche Sätze
-                        // nicht sinnvoll
-                ), a -> a.alsEsIstSatz()
+                mapToList(praedikativumDescriber.altAdjPhr(
+                        temperatur, false), a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
+
+        // IDEA "Heute ist warmes Wetter", "Heute ist ein heißer Tag"
+        //  "Draußen ist ein heißer Tag" (vgl.
+        //  PrädikativumDescriber#altSofernExpletivesEsHoechstensImVorfeldSteht())
+        //  (ohne "es"!", analog "Heute ist hitzefrei")
 
         alt.addAll(altDerTag(time.getTageszeit(), temperatur));
 
@@ -831,8 +890,7 @@ public class TemperaturSatzDescriber {
     @CheckReturnValue
     private ImmutableCollection<Satz> altDerTag(final Tageszeit tageszeit,
                                                 final Temperatur temperatur) {
-        return praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
-                .filter(AdjPhrOhneLeerstellen.class::isInstance)
+        return praedikativumDescriber.altAdjPhr(temperatur, false).stream()
                 .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
                 .collect(toImmutableList());
     }
@@ -883,7 +941,8 @@ public class TemperaturSatzDescriber {
         final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
-        alt.addAll(praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
+        alt.addAll(praedikativumDescriber
+                .altSofernExpletivesEsHoechstensImVorfeldSteht(temperatur, tageszeit, true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
                 .map(a -> praedikativumPraedikatMit(
                         ((AdjPhrOhneLeerstellen) a)
@@ -892,7 +951,8 @@ public class TemperaturSatzDescriber {
                 .collect(toImmutableList()));
 
         // "Es ist noch warmes Wetter."
-        alt.addAll(praedikativumDescriber.alt(temperatur, tageszeit, true).stream()
+        alt.addAll(praedikativumDescriber
+                .altSofernExpletivesEsHoechstensImVorfeldSteht(temperatur, tageszeit, true).stream()
                 .filter(obj -> !(obj instanceof AdjPhrOhneLeerstellen))
                 .map(a -> a.alsEsIstSatz()
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("noch")))

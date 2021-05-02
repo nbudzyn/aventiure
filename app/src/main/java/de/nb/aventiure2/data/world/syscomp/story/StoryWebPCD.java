@@ -120,7 +120,26 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
         return res;
     }
 
-    private ImmutableSet<IStoryNode> getReachableStoryNodes() {
+    /**
+     * Gibt {@code true} zurück, wenn
+     * <ul>
+     *     <li>dieser Story Node erreicht wurde
+     *     <li>oder die Story bereits beendet ist.
+     * </ul>
+     */
+    boolean isReachedOrStoryBeendet(final IStoryNode storyNode) {
+        final Story story = storyNode.getStory();
+        @Nullable final StoryData storyData = storyDataMap.get(story);
+        if (storyData == null) {
+            // Noch nicht ein einziger StoryNode der Story wurde erreicht, die
+            // Story ist (implizit) noch nicht beendet.
+            return false;
+        }
+
+        return storyData.isReachedOrStoryBeendet(storyNode);
+    }
+
+    ImmutableSet<IStoryNode> getReachableStoryNodes() {
         final ImmutableSet.Builder<IStoryNode> res = ImmutableSet.builder();
 
         for (final StoryData storyData : storyDataMap.values()) {

@@ -95,8 +95,6 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
                                 + "Bett wenig zu sehen gibt")
                                 .komma()
                                 .undWartest()),
-                // FIXME Klar machen, dass die Hütte kein kühler Ort ist! "Die Hütte ist
-                //  ordentlich aufgeheizt" oder ähnlich?! (Minimaltemperatur Hütte??!)
                 con(HINTER_DER_HUETTE,
                         "im Garten",
                         NORTH, this::getActionNameTo_HinterDerHuette,

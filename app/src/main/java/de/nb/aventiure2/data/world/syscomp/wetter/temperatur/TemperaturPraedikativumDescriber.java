@@ -202,14 +202,17 @@ public class TemperaturPraedikativumDescriber {
 
     /**
      * Gibt alternative Prädikative zurück für eine Beschreibung in der Art
-     * "Es ist (sehr kalt / ziemlich warm / warmes Wetter)" oder "Heute ist es ..." oder
-     * "Draußen ist es ...".
+     * "Es ist (sehr kalt / ziemlich warm / warmes Wetter)". Es ist wichtig,
+     * dass in den Beschreibungen, wenn sie ein expletives "es" enthalten -
+     * dieses ausschließlich im Vorfeld steht - ansonsten könnte es zu
+     * Sätzen wie ?"heute ist es warmes Wetter" oder ?"draußen ist es warmes Wetter"
+     * führen.
      * <p>
      * Das Eregebnis von {@link #altAdjPhr(Temperatur, boolean)}} ist bereits enthalten
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<Praedikativum> alt(
+    ImmutableList<Praedikativum> altSofernExpletivesEsHoechstensImVorfeldSteht(
             final Temperatur temperatur, final Tageszeit tageszeit,
             final boolean draussen) {
         final ImmutableList.Builder<Praedikativum> alt = ImmutableList.builder();
@@ -227,12 +230,14 @@ public class TemperaturPraedikativumDescriber {
                 break;
             case WARM:
                 if (draussen && tageszeit != NACHTS) {
+                    // "es ist ein heißer Tag", aber nicht ?"heute ist es ein heißer Tag"
                     alt.add(npArtikellos(AdjektivOhneErgaenzungen.WARM,
                             NomenFlexionsspalte.WETTER));
                 }
                 break;
             case RECHT_HEISS:
                 if (draussen && tageszeit == TAGSUEBER) {
+                    // "es ist ein heißer Tag", aber nicht ?"heute ist es ein heißer Tag"
                     alt.add(np(INDEF, HEISS, TAG));
                 }
                 break;

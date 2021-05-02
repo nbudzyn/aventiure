@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.EnumRange;
@@ -20,15 +21,13 @@ import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
-import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
-import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
@@ -52,13 +51,175 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
     @Override
     protected WetterPCD createInitialState() {
-        final WetterData wetterData =
-                new WetterData(
-                        Temperatur.RECHT_HEISS, Temperatur.KUEHL,
-                        Windstaerke.WINDSTILL,
-                        Bewoelkung.WOLKENLOS,
-                        BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
-        return new WetterPCD(WETTER, wetterData);
+        final WetterData wetterData = WetterData.getDefault();
+        return new WetterPCD(WETTER, wetterData,
+                // Der Spieler wird implizit davon ausgehen, dass es wohl tagsüber ist
+                timeTaker.now());
+    }
+
+    /**
+     * Setzt das Planwetter.
+     */
+    public void setPlanwetter(@Nullable final WetterData planwetter) {
+        setPlanwetter(planwetter, false);
+    }
+
+    /**
+     * Setzt das Planwetter.
+     *
+     * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
+     *                             (Wetterwechsel) ganz normal ausgeführt - bei <code>true</code>
+     *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
+     *                             Wetteränderung beginnt also sofort.
+     */
+    private void setPlanwetter(@Nullable final WetterData planwetter,
+                               final boolean firstStepTakesNoTime) {
+        setPlanwetter(planwetter, firstStepTakesNoTime, null);
+    }
+
+    /**
+     * Setzt das Planwetter.
+     *
+     * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
+     *                             (Wetterwechsel) ganz normal ausgeführt - bei <code>true</code>
+     *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
+     *                             Wetteränderung beginnt also sofort.
+     * @param maxDuration          Die Zeit bis das Planwetter spätestens eingetreten sein soll
+     *                             (circa).
+     */
+    public void setPlanwetter(final WetterData planwetter,
+                              final boolean firstStepTakesNoTime,
+                              @Nullable final AvTimeSpan maxDuration) {
+        if (planwetter == null) {
+            requirePcd().setPlanwetter(null);
+            return;
+        }
+
+        final float relativeVelocity;
+        if (maxDuration != null) {
+            final AvTimeSpan duration = WetterPathfinder.getStandardDuration(
+                    getWetter(), planwetter, firstStepTakesNoTime);
+            if (duration.longerThan(maxDuration)) {
+                relativeVelocity = (float) maxDuration.dividedBy(duration);
+            } else {
+                relativeVelocity = 1f;
+            }
+        } else {
+            relativeVelocity = 1f;
+        }
+
+        requirePcd().setPlanwetter(new PlanwetterData(relativeVelocity, planwetter));
+
+        final AvDateTime now = timeTaker.now();
+
+        setupNextWetterStepIfNecessary(now, firstStepTakesNoTime);
+
+        doWetterSteps(now);
+    }
+
+    /**
+     * Wenn ausreichend Zeit bis <code>now</code> vergangen ist, führt diese Methode einen
+     * oder mehrere Wetter-Schritt aus.
+     */
+    private void doWetterSteps(final AvDateTime now) {
+        while (requirePcd().getCurrentWetterStep() != null
+                && now.isEqualOrAfter(requirePcd().getCurrentWetterStep().getExpDoneTime())) {
+            doWetterStep();
+            setupNextWetterStepIfNecessary(requirePcd().getCurrentWetterStep().getExpDoneTime(),
+                    false);
+        }
+    }
+
+    /**
+     * Führt einen Wetter-Schritt aus, es findet also ein Wetterwechsel statt.
+     */
+    private void doWetterStep() {
+        checkNotNull(requirePcd().getCurrentWetterStep(), "No current weather step");
+
+        requirePcd().setWetter(requirePcd().getCurrentWetterStep().getWetterTo());
+    }
+
+    /**
+     * Plant den nächsten Wetter-Schritt ein - sofern noch nötig und überhaupt möglich.
+     *
+     * @param stepTakesNoTime Bei <code>false</code> wird der Schritt
+     *                        ganz normal ausgeführt - bei <code>true</code> wird der
+     *                        Schritt in 0 Sekunden ausgeführt - der Wetterwechsel findet
+     *                        sofort statt.
+     */
+    private void setupNextWetterStepIfNecessary(
+            final AvDateTime startTime, final boolean stepTakesNoTime) {
+        if (getPlanwetter() == null || getPlanwetter().getWetter().equals(getWetter())) {
+            setPlanwetter(null);
+            return;
+        }
+
+        requirePcd().updateCurrentWetterStep(calculateWetterStep(startTime, stepTakesNoTime));
+    }
+
+    /**
+     * Berechnet den nächsten Wetter-Schritt.
+     *
+     * @param stepTakesNoTime Bei <code>false</code> wird der Schritt
+     *                        ganz normal ausgeführt - bei <code>true</code> wird der
+     *                        Schritt in 0 Sekunden ausgeführt - der Wetterwechsel findet
+     *                        sofort statt.
+     */
+    @Nullable
+    private WetterStep calculateWetterStep(
+            final AvDateTime startTime, final boolean stepTakesNoTime) {
+        if (getPlanwetter() == null) {
+            return null;
+        }
+
+        @Nullable final StandardWetterStep firstStep =
+                WetterPathfinder.findFirstStep(getWetter(), getPlanwetter().getWetter());
+
+        return toWetterStep(firstStep, startTime, stepTakesNoTime);
+    }
+
+    /**
+     * Erzeugt den nächsten Wetter-Schritt aus diesem {@link StandardWetterStep} -
+     * {@code null}-safe.
+     *
+     * @param takesNoTime Bei <code>false</code> wird der Schritt
+     *                    ganz normal erzeugt - bei <code>true</code> werden für den
+     *                    Schritt 0 Sekunden eingeplant - der Wetterwechsel wird sofort
+     *                    stattfinden.
+     */
+    @Nullable
+    private WetterStep toWetterStep(@Nullable final StandardWetterStep standardWetterStep,
+                                    final AvDateTime startTime,
+                                    final boolean takesNoTime) {
+        if (standardWetterStep == null) {
+            return null;
+        }
+
+        return new WetterStep(
+                standardWetterStep.getWetterTo(),
+                startTime,
+                calcExpectedDuration(standardWetterStep.getStandardDuration(), takesNoTime));
+    }
+
+    /**
+     * Berechnet die erwartete Dauer für einen Wetter-Schritt auf Basis der Standard-Dauer und
+     * der im Planwetter angegebenen relativen Geschwindigkeit.
+     *
+     * @param takesNoTime Bei <code>false</code> wird die Dauer
+     *                    ganz normal berechnet - bei <code>true</code> werden
+     *                    0 Sekunden eingeplant. Der Wetterwechsel wird also sofort stattfinden.
+     */
+    private AvTimeSpan calcExpectedDuration(final AvTimeSpan standardDuration,
+                                            final boolean takesNoTime) {
+        if (takesNoTime) {
+            return NO_TIME;
+        }
+
+        if (getPlanwetter() == null) {
+            return standardDuration;
+        }
+
+        return standardDuration.times(getPlanwetter().getRelativeVelocity());
     }
 
     public void onScEnter(@Nullable final ILocationGO from, final ILocationGO to) {
@@ -268,6 +429,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+        doWetterSteps(endTime);
+
         final ImmutableCollection<AbstractDescription<?>> alt =
                 requirePcd().altTimePassed(startTime, endTime, loadScLocation());
 
@@ -317,5 +480,15 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @Nullable
     private ILocationGO loadScLocation() {
         return world.loadSC().locationComp().getLocation();
+    }
+
+    @NonNull
+    private WetterData getWetter() {
+        return requirePcd().getWetter();
+    }
+
+    @Nullable
+    private PlanwetterData getPlanwetter() {
+        return requirePcd().getPlan();
     }
 }

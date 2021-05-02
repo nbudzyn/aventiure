@@ -209,7 +209,6 @@ public class MovementComp
      * oder mehrere Bewegungsschritte aus. Am Ende befindet sich das {@link IMovingGO}
      * am Zielort eines Schritts - oder im Dazwischen vor dem Zielort des aktuellen Schritts.
      */
-    @SuppressWarnings("ConstantConditions")
     private void narrateAndMove(final AvDateTime now) {
         checkState(hasCurrentStep(), "No current step");
 
@@ -236,7 +235,6 @@ public class MovementComp
      * Die Methode gibt <code>true</code> zurück.
      * </ul>
      */
-    @SuppressWarnings("ConstantConditions")
     private boolean narrateAndMoveOneStep() {
         checkState(hasCurrentStep(), "No current step");
 
@@ -300,7 +298,6 @@ public class MovementComp
      * direkt verbundene Aktionen aus, z.B. das Speichern, dass der SC nun das {@link IMovingGO}
      * kennt o.Ä.
      */
-    @SuppressWarnings("ConstantConditions")
     private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoEnters() {
         checkState(hasCurrentStep(), "No current step");
 
@@ -380,6 +377,7 @@ public class MovementComp
      *                    ganz normal erzeugt - bei <code>true</code> werden für den
      *                    Schritt 0 Sekunden eingeplant. Der NPC wird also sofort ankommen.
      */
+    @Nullable
     private MovementStep toMovementStep(
             final ILocationGO from,
             @Nullable final SpatialStandardStep spatialStandardStep,
@@ -429,7 +427,6 @@ public class MovementComp
         // from und to.
     }
 
-    @SuppressWarnings("ConstantConditions")
     private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoLeaves() {
         final FROM from = getCurrentStepFrom();
 

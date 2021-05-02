@@ -6,6 +6,7 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -54,7 +55,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @Embedded
     @NonNull
-    private final WetterData wetter;
+    private WetterData wetter;
+
+    @Embedded(prefix = "currentStep")
+    @Nullable
+    private WetterStep currentWetterStep;
 
     @Nullable
     private Temperatur lastGenerelleTemperatur;
@@ -62,8 +67,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @Nullable
     private Bewoelkung lastBewoelkung;
 
-    @Nullable
-    private AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel;
+    private AvDateTime timeLetzteBeschriebeneTageszeit;
 
     /**
      * Wenn der SC wieder draußen ist, soll das Wetter beschrieben werden - und zwar auch
@@ -84,14 +88,16 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @Embedded
     @Nullable
-    private final PlanwetterData plan;
+    private PlanwetterData plan;
 
     @Ignore
     WetterPCD(final GameObjectId gameObjectId,
-              final WetterData wetter) {
+              final WetterData wetter,
+              final AvDateTime timeLetzteBeschriebeneTageszeit) {
         this(gameObjectId, wetter,
-                null, null,
                 null,
+                null, null,
+                timeLetzteBeschriebeneTageszeit,
                 true,
                 true,
                 null);
@@ -100,19 +106,20 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @SuppressWarnings("WeakerAccess")
     public WetterPCD(final GameObjectId gameObjectId,
                      final WetterData wetter,
+                     @Nullable final WetterStep currentWetterStep,
                      @Nullable final Temperatur lastGenerelleTemperatur,
                      @Nullable final Bewoelkung lastBewoelkung,
-                     @Nullable
-                     final AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel,
+                     final AvDateTime timeLetzteBeschriebeneTageszeit,
                      final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
                      final boolean wennWiederUnterOffenemHimmelWetterBeschreiben,
                      @Nullable final PlanwetterData plan) {
         super(gameObjectId);
         this.wetter = wetter;
+        this.currentWetterStep = currentWetterStep;
         this.lastGenerelleTemperatur = lastGenerelleTemperatur;
         this.lastBewoelkung = lastBewoelkung;
-        this.timeLetzterBeschriebenerTageszeitensprungOderWechsel =
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel;
+        this.timeLetzteBeschriebeneTageszeit =
+                timeLetzteBeschriebeneTageszeit;
         this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel =
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel;
         this.wennWiederUnterOffenemHimmelWetterBeschreiben =
@@ -204,9 +211,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time,
             final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
@@ -242,9 +247,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time,
             final boolean unterOffenenHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
@@ -447,9 +450,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 );
 
         if (tageszeitaenderungSollBeschriebenWerden) {
-            if (timeLetzterBeschriebenerTageszeitensprungOderWechsel == null
-                    || currentTime.isAfter(timeLetzterBeschriebenerTageszeitensprungOderWechsel)) {
-                setTimeLetzterBeschriebenerTageszeitensprungOderWechsel(currentTime);
+            if (currentTime.isAfter(timeLetzteBeschriebeneTageszeit)) {
+                setTimeLetzteBeschriebeneTageszeit(currentTime);
                 // Damit befinden wir uns nicht mehr im "schwebenden Tageszeitenwechsel",
                 // sondern können uns bei weiteren Ausgaben auf die aktuelle Tageszeit beziehen.
             }
@@ -490,9 +492,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvTime time,
             final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der
@@ -525,9 +525,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time,
             final boolean unterOffenenHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der
@@ -569,9 +567,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime time,
             final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der
@@ -604,9 +600,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     ImmutableSet<Praepositionalphrase> altBeiLichtImLicht(final AvDateTime time,
                                                           final boolean unterOffenemHimmel) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der
@@ -626,9 +620,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     ImmutableCollection<EinzelneSubstantivischePhrase> altLichtInDemEtwasLiegt(
             final AvDateTime time, final boolean unterOffenemHimmel) {
-        if (timeLetzterBeschriebenerTageszeitensprungOderWechsel != null &&
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel.getTageszeit() != time
-                        .getTageszeit()) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
             // Schwebender Tageszeitenwechsel - möglichst defensiv formulieren!
             // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
             //  Langsam geht die Nacht in den Morgen über." - also erst der
@@ -673,6 +665,40 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter;
     }
 
+    void setWetter(final WetterData wetter) {
+        if (this.wetter.equals(wetter)) {
+            return;
+        }
+
+        setChanged();
+        this.wetter = wetter;
+    }
+
+
+    void updateCurrentWetterStep(@Nullable final WetterStep wetterStep) {
+        if (currentWetterStep == null && wetterStep == null) {
+            // Weiterhin keine Wetterparameteränderung gewünscht
+            return;
+        }
+
+        if (currentWetterStep != null && wetterStep != null
+                && currentWetterStep.getWetterTo().equals(wetterStep.getWetterTo())
+                && currentWetterStep.getExpDoneTime()
+                .isEqualOrBefore(wetterStep.getExpDoneTime())) {
+            // Gewünschte Wetterparameteränderung ist bereits in Arbeit und wird auch
+            // rechtzeitig (oder sogar früher) fertig
+            return;
+        }
+
+        setChanged();
+        currentWetterStep = wetterStep;
+    }
+
+    @Nullable
+    WetterStep getCurrentWetterStep() {
+        return currentWetterStep;
+    }
+
     private void setLastGenerelleTemperatur(@Nullable final Temperatur lastGenerelleTemperatur) {
         if (this.lastGenerelleTemperatur == lastGenerelleTemperatur) {
             return;
@@ -708,24 +734,34 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return plan;
     }
 
-    private void setTimeLetzterBeschriebenerTageszeitensprungOderWechsel(
-            @Nullable final AvDateTime timeLetzterBeschriebenerTageszeitensprungOderWechsel) {
-        if (this.timeLetzterBeschriebenerTageszeitensprungOderWechsel ==
-                timeLetzterBeschriebenerTageszeitensprungOderWechsel) {
+    void setPlanwetter(@Nullable final PlanwetterData planwetterData) {
+        if (Objects.equal(plan, planwetterData)) {
             return;
         }
 
         setChanged();
-        this.timeLetzterBeschriebenerTageszeitensprungOderWechsel
-                = timeLetzterBeschriebenerTageszeitensprungOderWechsel;
+        plan = planwetterData;
+
+        if (plan == null) {
+            updateCurrentWetterStep(null);
+        }
+    }
+
+    private void setTimeLetzteBeschriebeneTageszeit(
+            final AvDateTime timeLetzteBeschriebeneTageszeit) {
+        if (this.timeLetzteBeschriebeneTageszeit == timeLetzteBeschriebeneTageszeit) {
+            return;
+        }
+
+        setChanged();
+        this.timeLetzteBeschriebeneTageszeit = timeLetzteBeschriebeneTageszeit;
     }
 
     /**
      * Nur für das ROOM-Framework.
      */
-    @Nullable
-    AvDateTime getTimeLetzterBeschriebenerTageszeitensprungOderWechsel() {
-        return timeLetzterBeschriebenerTageszeitensprungOderWechsel;
+    AvDateTime getTimeLetzteBeschriebeneTageszeit() {
+        return timeLetzteBeschriebeneTageszeit;
     }
 
     /**
