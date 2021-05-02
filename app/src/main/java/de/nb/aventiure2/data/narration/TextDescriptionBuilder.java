@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Builds {@link TextDescription}s from {@link AbstractDescription}s.
@@ -72,8 +73,22 @@ class TextDescriptionBuilder {
         if (initialNarration.dann() && !desc.isSchonLaenger()) {
             return toTextDescriptionsImDannFall(desc);
         } else {
-            return desc.altTextDescriptions();
+            return toTextDescriptionsUnveraendert(desc);
         }
+    }
+
+    private static ImmutableList<TextDescription> toTextDescriptionsUnveraendert(
+            final AbstractDescription<?> desc) {
+        if (desc instanceof AbstractFlexibleDescription) {
+            // Eine AbstractFlexibleDescription entspricht einem eigenständigen Satz(beginn -
+            // vielleicht auch mehreren Sätzen). Daher soll hier, wo kein Anschluss
+            // zum vorhergehenden Text hergestellt wurde, ein neuer Satz begonnen werden.
+            return mapToList(desc.altTextDescriptions(), d -> d.beginntZumindest(SENTENCE));
+        }
+        // else: Ansonsten könnte die AbstractDescription auch einfach ein paar Wörter sein,
+        // die Vorgabe WORD soll dann erhalten bleiben
+
+        return desc.altTextDescriptions();
     }
 
     @NonNull
@@ -104,11 +119,12 @@ class TextDescriptionBuilder {
         final TextDescription res =
                 desc.toTextDescriptionMitKonjunktionaladverbWennNoetig("dann");
         if (desc instanceof AbstractFlexibleDescription) {
-            // Bei einer AbstractFlexibleDescription ist der Hauptsatz ein echter
-            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
+            // Eine AbstractFlexibleDescription entspricht einem eigenständigen Satz(beginn -
+            // vielleicht auch mehreren Sätzen). Daher soll hier, wo kein Anschluss
+            // zum vorhergehenden Text hergestellt wurde, ein neuer Satz begonnen werden.
             res.beginntZumindest(SENTENCE);
         }
-        // else: Ansonsten könnte der "Hauptsatz" auch einfach ein paar Wörter sein,
+        // else: Ansonsten könnte die AbstractDescription auch einfach ein paar Wörter sein,
         // die Vorgabe WORD soll dann erhalten bleiben
 
         if (res.getTextOhneKontext().startsWith("Dann")) {

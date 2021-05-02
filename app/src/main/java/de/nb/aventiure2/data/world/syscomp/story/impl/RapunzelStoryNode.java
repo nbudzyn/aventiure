@@ -116,10 +116,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
     //  Welt o.ä.).
 
-    // FIXME Satzanfang ohne Punkt und mit Kleinschreibung. Konzept für Satzende
-    //  fehlerhaft. Irgendwo müsste wohl stehen: Es fängt definitiv ein neuer Satz an?!
-    //  Aber Verbindungen mit "und" o.Ä. sollten so lange wir möglich offen bleiben...
-
     // FIXME Binsen, Seil flechten...
     //  - "du rupfst Binsen und flichst ein weiches Seil daraus"
     //  - "Binsenseil"

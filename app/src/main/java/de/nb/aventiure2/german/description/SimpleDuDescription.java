@@ -17,7 +17,6 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
@@ -97,18 +96,13 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     public ImmutableList<TextDescription> altTextDescriptions() {
         final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
 
-        // Bei einer SimpleDuDescription ist der Hauptsatz-Standard ein echter
-        // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-        res.add(toTextDescription().beginntZumindest(SENTENCE));
+        res.add(toTextDescription());
 
         @Nullable final Konstituente hauptsatzMitSpeziellemVorfeld =
                 toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
         if (hauptsatzMitSpeziellemVorfeld != null) {
-            // Bei einer SimpleDuDescription ist auch dieser Hauptsatz ein echter
-            // Hauptsatz. Daher muss ein neuer Satz begonnen werden.
-            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld)
-                    .beginntZumindest(SENTENCE));
+            res.add(toTextDescriptionKeepParams(hauptsatzMitSpeziellemVorfeld));
         }
 
         return res.build();
