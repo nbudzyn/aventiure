@@ -315,7 +315,7 @@ public class DescriptionUmformulierer {
                 praefixRemainder,
                 desc.vorangestelltenSatzanschlussMitUndVermeiden() ?
                         "," : "und",
-                desc.toTextDescriptionSatzanschlussOhneSubjekt().toSingleKonstituente(),
+                desc.toTextDescriptionSatzanschlussOhneSubjekt(),
                 desc.getEndsThis())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann());

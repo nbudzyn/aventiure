@@ -135,7 +135,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                         wetterDesc ->
                                 du("verlässt", "das Schloss",
                                         SENTENCE,
-                                        wetterDesc.toSingleKonstituente())
+                                        wetterDesc)
                                         .timed(wegZeit));
             }
         }
@@ -184,7 +184,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
                     du("gehst",
                             "über eine Marmortreppe hinaus in die Gärten vor dem",
                             "Schloss", CHAPTER,
-                            wetterDesc.toSingleKonstituente(),
+                            wetterDesc,
                             SENTENCE,
                             descWald(lichtverhaeltnisseDraussen))
                             .mitVorfeldSatzglied("über eine Marmortreppe")

@@ -82,8 +82,7 @@ class DescriptionCombiner {
                 secondDescriptionSatzanschlussOhneSubjekt.mitPraefix(
                         joinToKonstituentenfolge(
                                 ",",
-                                first.toTextDescriptionSatzanschlussOhneSubjekt()
-                                        .toSingleKonstituente(),
+                                first.toTextDescriptionSatzanschlussOhneSubjekt(),
                                 second.vorangestelltenSatzanschlussMitUndVermeiden() ?
                                         "," : "und"))
                         .undWartest(false));

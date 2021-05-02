@@ -56,12 +56,6 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     @CheckReturnValue
-    ImmutableList<TextDescription> altMitPraefix(final String praefix) {
-        return altMitPraefix(k(praefix));
-    }
-
-    @NonNull
-    @CheckReturnValue
     public ImmutableList<TextDescription> altMitPraefix(
             final Konstituentenfolge praefixKonstituentenfolge) {
         return altMitPraefix(praefixKonstituentenfolge.joinToSingleKonstituente());
@@ -69,7 +63,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     @CheckReturnValue
-    ImmutableList<TextDescription> altMitPraefix(final Konstituente praefixKonstituente) {
+    private ImmutableList<TextDescription> altMitPraefix(final Konstituente praefixKonstituente) {
         return mapToList(altTextDescriptions(), d -> d.mitPraefix(praefixKonstituente));
     }
 

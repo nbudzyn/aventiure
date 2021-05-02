@@ -1261,8 +1261,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         altReaktionSaetze.stream()
                                 .flatMap(s -> s.altVerzweitsaetze().stream()),
                         ",",
-                        altDannHaareFestbinden(rapunzelDesc.persPron()).stream()
-                                .flatMap(d -> d.altTextDescriptions().stream())
+                        altDannHaareFestbinden(rapunzelDesc.persPron())
                 ));
                 if (zuneigungZumSC > FeelingIntensity.MERKLICH) {
                     alt.addAll(altNeueSaetze(
@@ -1271,8 +1270,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             "noch einen Moment bleiben!“, antwortet",
                             anaph().nomK(),
                             SENTENCE,
-                            altAberDochHaareFestbinden(rapunzelDesc).stream()
-                                    .flatMap(d -> d.altTextDescriptions().stream())
+                            altAberDochHaareFestbinden(rapunzelDesc)
                     ));
                 }
             }

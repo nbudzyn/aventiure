@@ -14,7 +14,6 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
-import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
@@ -101,22 +100,9 @@ public class TimedDescription<D extends AbstractDescription<?>> {
 
     @NonNull
     @CheckReturnValue
-    public ImmutableList<TimedDescription<TextDescription>> altMitPraefix(final String praefix) {
-        return withAltDescriptions(getDescription().altMitPraefix(praefix));
-    }
-
-    @NonNull
-    @CheckReturnValue
     public ImmutableList<TimedDescription<TextDescription>> altMitPraefix(
             final Konstituentenfolge praefixKonstituentenfolge) {
         return withAltDescriptions(getDescription().altMitPraefix(praefixKonstituentenfolge));
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public ImmutableList<TimedDescription<TextDescription>> altMitPraefix(
-            final Konstituente praefixKonstituente) {
-        return withAltDescriptions(getDescription().altMitPraefix(praefixKonstituente));
     }
 
     @NonNull
@@ -148,21 +134,9 @@ public class TimedDescription<D extends AbstractDescription<?>> {
 
     @NonNull
     @CheckReturnValue
-    public TimedDescription<TextDescription> mitPraefix(final String praefix) {
-        return withDescription(getDescription().mitPraefix(praefix));
-    }
-
-    @NonNull
-    @CheckReturnValue
     public TimedDescription<TextDescription> mitPraefix(
             final Konstituentenfolge praefixKonstituentenfolge) {
         return withDescription(getDescription().mitPraefix(praefixKonstituentenfolge));
-    }
-
-    @NonNull
-    @CheckReturnValue
-    public TimedDescription<TextDescription> mitPraefix(final Konstituente praefixKonstituente) {
-        return withDescription(getDescription().mitPraefix(praefixKonstituente));
     }
 
     public TimedDescription<D> withCounterIdIncrementedIfTextIsNarrated(
