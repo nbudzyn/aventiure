@@ -3,6 +3,7 @@ package de.nb.aventiure2.german.satz;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
@@ -10,6 +11,7 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -18,7 +20,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
-public interface Satz {
+public interface Satz extends IAlternativeKonstituentenfolgable {
     default Satz mitAnschlusswortUndSofernNichtSchonEnthalten() {
         if (isSatzreihungMitUnd()) {
             return ohneAnschlusswort();
@@ -95,6 +97,11 @@ public interface Satz {
      * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "am Abend hast du etwas zu berichten"
      */
     Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
+
+    @Override
+    default ImmutableCollection<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return altVerzweitsaetze();
+    }
 
     /**
      * Gibt den Satz als einige alternative Verbzweitsätze aus, z.B. "du hast

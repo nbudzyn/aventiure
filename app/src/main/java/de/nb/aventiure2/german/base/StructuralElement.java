@@ -1,5 +1,10 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+import java.util.Collections;
+
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
@@ -25,5 +30,15 @@ public enum StructuralElement implements IKonstituenteOrStructuralElement {
             return endsThis;
         }
         return startsNew;
+    }
+
+
+    @Override
+    public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
+        if (this == WORD) {
+            return Collections.singletonList(null);
+        }
+
+        return ImmutableList.of(new Konstituentenfolge(this));
     }
 }

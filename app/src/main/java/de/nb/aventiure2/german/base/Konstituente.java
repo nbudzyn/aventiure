@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
@@ -246,6 +247,11 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         this.endsThis = endsThis;
         this.bezugsobjekt = bezugsobjekt;
         this.kannAlsBezugsobjektVerstandenWerdenFuer = kannAlsBezugsobjektVerstandenWerdenFuer;
+    }
+
+    @Override
+    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return ImmutableList.of(new Konstituentenfolge(this));
     }
 
     @CheckReturnValue

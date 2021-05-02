@@ -21,7 +21,6 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
-import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -44,7 +43,9 @@ import static java.util.Objects.requireNonNull;
  * Eine Folge von {@link Konstituente}n.
  */
 @Immutable
-public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralElement> {
+public class Konstituentenfolge
+        implements IAlternativeKonstituentenfolgable,
+        Iterable<IKonstituenteOrStructuralElement> {
     private static final int GEDAECHTNISWEITE_PHORIK = 6;
     private final ImmutableList<IKonstituenteOrStructuralElement> konstituenten;
 
@@ -178,8 +179,9 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
     @CheckReturnValue
     private static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
-        // FIXME Visitor-Pattern nutzen? Alle parts sollten
-        //  (wenn sie nicht String o.Ä. sind) ein Interface implementieren,
+        // FIXME Alle parts sollten
+        //  (wenn sie nicht String o.Ä. sind) IAlternativeKonstituentenfolgable
+        //  implementieren,
         //  so dass man hier auch problemlos AbstractDescriptions,
         //  AltDescriptionBuilder etc. übergeben kann.
         //  Dann entfällt auch die Notwendigkeit von
@@ -221,25 +223,14 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
                         ((Collection<?>) part).stream()
                                 .flatMap(p -> joinToAltKonstituentenfolgen(p).stream())
                                 .collect(Collectors.toSet());
-            } else if (part instanceof Satz) {
-                // Alternativen!
-                alternativePartKonstituentenfolgen = ((Satz) part).altVerzweitsaetze();
-            } else if (part instanceof Konstituentenfolge) {
+            } else if (part instanceof IAlternativeKonstituentenfolgable) {
                 alternativePartKonstituentenfolgen =
-                        Collections.singletonList(
-                                joinToNullKonstituentenfolge((Konstituentenfolge) part));
-            } else if (part instanceof IKonstituenteOrStructuralElement) {
-                alternativePartKonstituentenfolgen =
-                        Collections.singletonList(
-                                part == WORD ? null :
-                                        new Konstituentenfolge(
-                                                (IKonstituenteOrStructuralElement) part));
+                        ((IAlternativeKonstituentenfolgable) part).toAltKonstituentenfolgen();
             } else if (part == null || "".equals(part)) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
             } else {
                 alternativePartKonstituentenfolgen =
-                        Collections.singletonList(
-                                new Konstituentenfolge(Konstituente.k(part.toString())));
+                        ImmutableList.of(new Konstituentenfolge(Konstituente.k(part.toString())));
             }
 
             final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
@@ -805,6 +796,11 @@ public class Konstituentenfolge implements Iterable<IKonstituenteOrStructuralEle
 
     public IKonstituenteOrStructuralElement get(final int index) {
         return konstituenten.get(index);
+    }
+
+    @Override
+    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return ImmutableList.of(this);
     }
 
     @Override
