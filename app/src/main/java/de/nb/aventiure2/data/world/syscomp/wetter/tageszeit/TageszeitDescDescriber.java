@@ -10,8 +10,6 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -24,6 +22,8 @@ import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -294,7 +294,8 @@ public class TageszeitDescDescriber {
                 alt.addAll(altNeueSaetze(
                         ImmutableList.of("unterdessen", "inzwischen", "derweil"),
                         "ist es",
-                        newTageszeit.getLichtverhaeltnisseDraussen().getAdjektiv(), // "hell"
+                        newTageszeit.getLichtverhaeltnisseDraussen().getAdjektiv()
+                                .getPraedikativ(P3, SG), // "hell"
                         "geworden"
                         // Der Tageszeitenwechsel ist parallel passiert.
                 ));
@@ -384,7 +385,7 @@ public class TageszeitDescDescriber {
                 && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
             alt.add(paragraph("Draußen ist es derweil",
                     time.getTageszeit().getLichtverhaeltnisseDraussen().getAdjektiv()
-                            .getPraedikativ(Person.P3, Numerus.SG), // "hell" / "dunkel"
+                            .getPraedikativ(P3, SG), // "hell" / "dunkel"
                     "geworden"));
         }
 

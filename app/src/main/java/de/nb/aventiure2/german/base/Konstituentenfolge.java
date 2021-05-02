@@ -179,14 +179,6 @@ public class Konstituentenfolge
     @CheckReturnValue
     private static Collection<Konstituentenfolge> joinToAltKonstituentenfolgen(
             final Iterable<?> parts) {
-        // FIXME Alle parts sollten
-        //  (wenn sie nicht String o.Ä. sind) IAlternativeKonstituentenfolgable
-        //  implementieren,
-        //  so dass man hier auch problemlos AbstractDescriptions,
-        //  AltDescriptionBuilder etc. übergeben kann.
-        //  Dann entfällt auch die Notwendigkeit von
-        //  descriptionsToKonstiuenten()-Methoden.
-
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 
         ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
@@ -228,9 +220,14 @@ public class Konstituentenfolge
                         ((IAlternativeKonstituentenfolgable) part).toAltKonstituentenfolgen();
             } else if (part == null || "".equals(part)) {
                 alternativePartKonstituentenfolgen = Collections.singletonList(null);
-            } else {
+            } else if (part instanceof CharSequence) {
                 alternativePartKonstituentenfolgen =
                         ImmutableList.of(new Konstituentenfolge(Konstituente.k(part.toString())));
+            } else {
+                throw new IllegalArgumentException("Ungültiges Argument für "
+                        + "joinToAltKonstituentenfolgen: Klasse " + part.getClass() +
+                        ", Wert " + part + ". Ggf. IAlternativeKonstituentenfolgable "
+                        + "implementieren?");
             }
 
             final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>

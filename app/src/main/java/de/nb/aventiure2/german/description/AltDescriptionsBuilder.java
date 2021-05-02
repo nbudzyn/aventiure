@@ -4,11 +4,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.Set;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
@@ -16,14 +12,15 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.builder;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
@@ -37,7 +34,7 @@ import static java.util.Arrays.asList;
  * Ein Builder für alternative {@link AbstractDescription}s.
  */
 @CanIgnoreReturnValue
-public class AltDescriptionsBuilder {
+public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable {
     private final ImmutableSet.Builder<AbstractDescription<?>> alt = builder();
 
     private UnaryOperator<AbstractDescription<?>> op = null;
@@ -100,11 +97,8 @@ public class AltDescriptionsBuilder {
             return altNeueSaetze(prependObject(SENTENCE, parts));
         }
 
-        return alt().addAll(
-                joinToAltKonstituentenfolgen(
-                        descriptionsToKonstiuenten(parts))
-                        .stream()
-                        .map(DescriptionBuilder::neuerSatz));
+        return alt().addAll(joinToAltKonstituentenfolgen(parts).stream()
+                .map(DescriptionBuilder::neuerSatz));
     }
 
     @CheckReturnValue
@@ -257,44 +251,15 @@ public class AltDescriptionsBuilder {
         return alt.build().isEmpty();
     }
 
-
-    @CheckReturnValue
-    private static Object[] descriptionsToKonstiuenten(final Object... elements) {
-        final Object[] res = new Object[elements.length];
-        for (int i = 0; i < res.length; i++) {
-            if (elements[i] instanceof AltDescriptionsBuilder) {
-                res[i] = ((AltDescriptionsBuilder) elements[i]).build().stream()
-                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
-                        .collect(toImmutableSet());
-            } else if (elements[i] instanceof Set) {
-                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
-                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
-                        .collect(toImmutableSet());
-            } else if (elements[i] instanceof Collection) {
-                res[i] = new ArrayList<>((Collection<?>) elements[i]).stream()
-                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
-                        .collect(toImmutableList());
-            } else if (elements[i] instanceof Stream) {
-                res[i] = ((Stream<?>) elements[i])
-                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
-                        .collect(toImmutableList());
-            } else if (elements[i].getClass().isArray()) {
-                final List<Object> content = new ArrayList<>(Array.getLength(elements[i]));
-                for (int j = 0; j < Array.getLength(elements[i]); j++) {
-                    content.add(Array.get(elements[i], j));
-                }
-
-                res[i] = content.stream()
-                        .map(AltDescriptionsBuilder::descriptionsToKonstiuenten)
-                        .toArray(Object[]::new);
-            } else if (elements[i] instanceof AbstractDescription<?>) {
-                res[i] = ((AbstractDescription<?>) elements[i]).toSingleKonstituente();
-            } else {
-                res[i] = elements[i];
-            }
-        }
-
-        return res;
+    /**
+     * Stellt das Objekt als alternative Konstituentenfolgen dar. Dabei können Informationen
+     * verloren gehen (vielleicht solche, wie sie in den {@link DescriptionParams} stehen)!
+     */
+    @Override
+    public ImmutableSet<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return build().stream()
+                .flatMap(d -> d.toAltKonstituentenfolgen().stream())
+                .collect(ImmutableSet.toImmutableSet());
     }
 
     @CheckReturnValue

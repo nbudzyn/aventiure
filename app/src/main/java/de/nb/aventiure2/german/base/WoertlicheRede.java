@@ -1,13 +1,21 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableList;
+
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituente.k;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public class WoertlicheRede {
+public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
     private final String woertlicheRedeText;
 
     public WoertlicheRede(final String woertlicheRedeText) {
         this.woertlicheRedeText = woertlicheRedeText;
+    }
+
+    @Override
+    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return ImmutableList.of(new Konstituentenfolge(k(getDescription())));
     }
 
     public String getDescription() {

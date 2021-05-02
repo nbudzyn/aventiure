@@ -12,6 +12,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -28,7 +29,8 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 /**
  * Abstract superclass for a description.
  */
-public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>> {
+public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>>
+        implements IAlternativeKonstituentenfolgable {
     private final DescriptionParams params;
 
     AbstractDescription() {
@@ -37,6 +39,15 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     AbstractDescription(final DescriptionParams params) {
         this.params = params;
+    }
+
+    /**
+     * Stellt das Objekt als alternative Konstituentenfolgen dar. Dabei können Informationen
+     * verloren gehen (vielleicht solche, wie sie in den {@link DescriptionParams} stehen)!
+     */
+    @Override
+    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return ImmutableList.of(new Konstituentenfolge(toSingleKonstituente()));
     }
 
     public abstract StructuralElement getStartsNew();
