@@ -156,10 +156,8 @@ class WetterPathfinder {
         }
 
         if (!changed) {
-            // Das sollte eigentlich nie passieren...
+            // Das sollte nie passieren...
             throw new IllegalStateException("Kein Wetterschritt! changed = false");
-
-            // FIXME Etwas vorsichtiger: return new StandardWetterStep(ziel, NO_TIME);
         }
 
         final WetterData resWetter = new WetterData(
