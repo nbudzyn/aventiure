@@ -231,12 +231,9 @@ class WetterData {
         // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
 
-        // IDEA:
-        //  boolean tageszeitUndLichtverhaeltnisseRelevant = ;
-        //  boolean temperaturRelevant = ;
-        //  boolean bewoelkungRelevant = ;
-        //  if (nurTemperaturUndEvtlTageszeitRelevant()) {....}
-        //  if (nurTemperaturUndBewoelkungUndEvtlTageszeitRelevant() {...}
+        // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
+        //  beschreiben. Insbesondere ist eine Temperaturänderung eine gute Gelegenheit, auf
+        //  stärkeren Wind hinzuweisen....
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -245,16 +242,19 @@ class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
-                temperatur)) {
+        final boolean temperaturSollBeschriebenWerden =
+                temperaturSollDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+        final boolean bewoelkungSollBeschriebenWerden =
+                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenemHimmel);
+        // FIXME windSollBeschrieben werden
+        if (!temperaturSollBeschriebenWerden
+                && !bewoelkungSollBeschriebenWerden) {
             // "es ist schon dunkel", "es ist Abend"
             alt.addAll(TAGESZEIT_DESC_DESCRIBER.altDraussen(time,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel)) {
-            // Bewölkung muss nicht erwähnt werden
-
+        if (!bewoelkungSollBeschriebenWerden) {
             // "Es ist kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur,
                     !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
@@ -270,18 +270,13 @@ class WetterData {
             }
         }
 
-        if (bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
-                temperatur)) {
+        if (!temperaturSollBeschriebenWerden) {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
-                // Temperatur muss nicht erwähnt werden
-
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
             if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
-                // Temperatur muss nicht erwähnt werden
-
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
@@ -367,26 +362,24 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    private static boolean bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(
-            final AvTime time,
-            final boolean unterOffenemHimmel,
-            final Temperatur temperatur) {
-        return (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit()))
-                ||
-                (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS);
+    private boolean temperaturSollDraussenBeschriebenWerden(final AvTime time,
+                                                            final boolean unterOffenemHimmel,
+                                                            final Temperatur temperatur) {
+        // Wann soll die Temperatur draußen beschrieben werden?
+        return // Immer, wenn es tagsüber ist!
+                time.getTageszeit() != NACHTS
+                        // Und immer, wenn die Temperatur auffällig ist!
+                        || !temperatur.isUnauffaellig(NACHTS)
+                        // Und immer, wenn man den Himmel sieht und die Bewölkung auffällig ist!
+                        || (unterOffenemHimmel && !bewoelkung.isUnauffaellig(time.getTageszeit()));
     }
 
-    private boolean temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(
-            final AvTime time, final boolean unterOffenemHimmel) {
-        return !unterOffenemHimmel || bewoelkung.isUnauffaellig(time.getTageszeit());
-    }
-
-    private boolean tageszeitUndLichtverhaeltnisseGenuegen(final AvTime time,
-                                                           final boolean unterOffenemHimmel,
-                                                           final Temperatur temperatur) {
-        return time.getTageszeit() == NACHTS
-                && (!unterOffenemHimmel || bewoelkung.isUnauffaellig(time.getTageszeit()))
-                && temperatur.isUnauffaellig(NACHTS);
+    private boolean bewoelkungSollDraussenBeschriebenWerden(final AvTime time,
+                                                            final boolean unterOffenemHimmel) {
+        // Wann soll die Bewölkung draußen beschrieben werden?
+        return
+                // Immer, wenn man den HImmel sieht und die Bewölkung auffällig ist!
+                unterOffenemHimmel && !bewoelkung.isUnauffaellig(time.getTageszeit());
     }
 
     /**
@@ -418,17 +411,19 @@ class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
-                temperatur)) {
+        final boolean temperaturSollBeschriebenWerden =
+                temperaturSollDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+        final boolean bewoelkungSollBeschriebenWerden =
+                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenenHimmel);
+        if (!temperaturSollBeschriebenWerden
+                && !bewoelkungSollBeschriebenWerden) {
             // "draußen ist es schon dunkel"
             alt.addAll(
                     TAGESZEIT_DESC_DESCRIBER.altKommtNachDraussen(time,
                             auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel)) {
-            // Bewölkung muss nicht erwähnt werden
-
+        if (!bewoelkungSollBeschriebenWerden) {
             // "Draußen ist es kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.altKommtNachDraussen(
                     temperatur,
@@ -445,11 +440,8 @@ class WetterData {
             }
         }
 
-        if (bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
-                temperatur)) {
+        if (!temperaturSollBeschriebenWerden) {
             if (unterOffenenHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
-                // Temperatur muss nicht erwähnt werden
-
                 // "Draußen ist der Himmel bewölkt"
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER
                         .altKommtUnterOffenenHimmel(bewoelkung, time, true,
@@ -457,8 +449,6 @@ class WetterData {
             }
 
             if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
-                // Temperatur muss nicht erwähnt werden
-
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
@@ -715,27 +705,28 @@ class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
-                temperatur)) {
+        final boolean temperaturSollBeschriebenWerden =
+                temperaturSollDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+        final boolean bewoelkungSollBeschriebenWerden =
+                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenenHimmel);
+        if (!temperaturSollBeschriebenWerden
+                && !bewoelkungSollBeschriebenWerden) {
             alt.addAll(TAGESZEIT_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(
                     time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel)) {
+        if (!bewoelkungSollBeschriebenWerden) {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(temperatur, time));
         }
 
-        if (bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenenHimmel,
-                temperatur)) {
+        if (!temperaturSollBeschriebenWerden) {
             if (unterOffenenHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
-                // Temperatur muss nicht erwähnt werden
                 alt.addAll(BEWOELKUNG_ADV_ANGABE_WOHIN_DESCRIBER
                         .altHinausUnterOffenenHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
             if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
-                // Temperatur muss nicht erwähnt werden
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     alt.add(BEWOELKUNG_ADV_ANGABE_WOHIN_DESCRIBER.schoeneTageszeit(
                             time.getTageszeit()));
@@ -822,20 +813,22 @@ class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        if (tageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
-                temperatur)) {
+        final boolean temperaturSollBeschriebenWerden =
+                temperaturSollDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+        final boolean bewoelkungSollBeschriebenWerden =
+                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenemHimmel);
+        if (!temperaturSollBeschriebenWerden
+                && !bewoelkungSollBeschriebenWerden) {
             alt.addAll(TAGESZEIT_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(
                     time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (temperaturUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel)) {
+        if (!bewoelkungSollBeschriebenWerden) {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(temperatur, time));
         }
 
-        if (bewoelkungUndEvtlTageszeitUndLichtverhaeltnisseGenuegen(time, unterOffenemHimmel,
-                temperatur)) {
+        if (!temperaturSollBeschriebenWerden) {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
-                // Temperatur muss nicht erwähnt werden
                 alt.addAll(BEWOELKUNG_ADV_ANGABE_WO_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
@@ -954,6 +947,114 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
+    // FIXME Wind / Sturm - statisch, ohne Bezug auf Features des Umwelt:
+    //  WINDSTILL:
+    //   "die Luft steht"
+    //   "...und kein Lüftchen"
+    //  "Es geht kein Wind"
+    //  "Kein Wind weht"
+    //  LUEFTCHEN:
+    //   "...und ein Lüftchen streicht"
+    //  WINDIG:
+    //  "der Wind"
+    //  "der Wind saust"
+    //  KRAEFTIGER_WIND:
+    //  "es weht beständig ein harter Wind"
+    //   Der Wind pfeift dir ums Gesicht
+    //   "...und der Wind zaust dein Haar"
+    //  Der Wind ist sehr kräftig und unangenehm.
+    //  "Um Mitternacht geht der Wind..."
+    //  "der Wind rauscht draußen"
+    //  STURM:
+    //  "es stürmt"
+    //  "Sturm"
+    //   "Der Wind stürmt"
+    //  SCHWERER STURM:
+    //   Hoffentlich bleibt es wenigstens trocken
+    //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
+    //  ORKAN:
+    //  Du vermagst dich kaum noch auf den Beinen zu halten
+    //  Du kommst nur sehr langsam voran und mit großer Mühe
+
+    // FIXME Wind / Sturm - statisch, unter Bezug auf Features des Umwelt
+    //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)
+    //  WINDSTILL:
+    //   "...und kein Lüftchen streicht durch das Laub"
+    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
+    //  LUEFTCHEN:
+    //   "...und ein Lüftchen streicht durch das Laub"
+    //  WINDIG:
+    //  "der Wind raschelt in den Bäumen"
+    //  KRAEFTIGER_WIND:
+    //   "das Gezweig"
+    //  "der Wind rauscht draußen in den Bäumen"
+    //  STURM:
+    //   "Die Äste biegen sich"
+    //  SCHWERER STURM:
+    //  Der Sturm biegt die Bäume.
+    //   "...und gehst nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
+    //   Hoffentlich bleibt es wenigstens trocken
+    //  "darin bist du vor dem Wind geschützt"
+    //  "du findest darin Schutz"
+    //  Der Sturm peitscht die Äste über dir... Ein geschützter Platz wäre schön.
+    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
+    //  wäre schön.
+    //  ORKAN:
+
+    // FIXME Wind / Sturm - dynamisch:
+    //  Der Wind wird stärker
+    //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm.
+    //  < ->  KRAEFTIGER_WIND: "es kommt ein starker Wind"
+    //  < -> STURM: Ein Sturm zieht auf
+    //  STURM -> > Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich
+    //  ab.
+
+    // FIXME Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
+    //  (Blätter)
+    //  Der Wind wird stärker
+    //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
+    //  Blättchen mehr"
+
+    // FIXME Wind in Kombination NUR MIT TEMPERATUR (oder Tageszeit) - statisch
+    //  WINDSTILL:
+    //  LUEFTCHEN:
+    //  "ein kühles Lüftchen"
+    //  "ein kühles Lüftchen streicht..."
+    //  "ein kühles Lüftchen streicht durch das Laub"
+    //  WINDIG:
+    //  "Der Wind geht kalt"
+    //  "Der Wind geht so kalt, dass dir nicht warm werden will"
+    //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
+    //  KRAEFTIGER_WIND:
+    //  STURM:
+    //  SCHWERER STURM:
+    //  ORKAN:
+
+    // FIXME Wind in Kombination NICHT ODER NICHT NUR MIT TEMPERATUR - statisch
+    //  WINDSTILL:
+    //  LUEFTCHEN:
+    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
+    //  Laub, und du..."
+    //  - "Der Himmel ist blau, die Luft mild"?!
+    //  WINDIG:
+    //   "Weiße Wölkchen ziehen am blauen Himmel über dir vorbei"
+    //  "Der Himmel ist blau und eine frische Luft weht dir entgegen"
+    //  KRAEFTIGER_WIND:
+    //  "der Wind ... und die Wolken ziehen ganz nah über deinem Haupt weg"
+    //  "Der Wind treibt Wolkenfetzen über den Sternenhimmel"
+    //  STURM:
+    //  SCHWERER STURM:
+    //  ORKAN:
+
+    // FIXME Wind in Kombination - dynamisch
+    //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm. Kalt ist es geworden.
+    //  WINDSTILL, TEMPERATURANSTIEG: "Die Hitze wird drückender, je näher der Mittag kommt"
+
+    // FIXME Donner / Blitz
+    //  In der Ferne hörst du Donnergrollen
+    //  Hat es eben geblitzt?
+
+
     // FIXME Automatisch generieren: "Das Wetter ist soundso und es passiert dies und das"
     //  -- "Die Sonne geht auf, und ..."
 
@@ -1037,59 +1138,24 @@ class WetterData {
     // FIXME Tageszeitwechsel-Angaben nach Wartezeiten
     //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
 
-    // FIXME Wind / Sturm
-    //  "ein kühles Lüftchen streicht durch das Laub"
-    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
-    //  Laub,
-    //  und du bist voll Freude und Lust."
-    //  Der Wind wird stärker
-    //  Der Wind pfeift dir ums Gesicht
-    //  In der Ferne hörst du Donnergrollen
-    //  Hat es eben geblitzt?
-    //  "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
-    //  "Der Wind stürmt"
-    //  "Der Wind treibt Wolkenfetzen über den Sternenhimmel"
-    //  "Weiße Wölkchen ziehen am blauen Himmel über dir vorbei"
-    //  "Wind und Regen stürmen"
-    //  "Das Wetter wird (aber) (so) schlecht, und Wind und Regen stürmen"
-    //  "Das Wetter ist (aber) (so) schlecht geworden, und Wind und Regen stürmt"
-    //  "Weil aber das Wetter so schlecht geworden ist, und Wind und Regen stürmt, kannst du
-    //  nicht weiter"
-    //  "...und gehts nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
-    //  Ein Sturm zieht auf
-    //  Hoffentlich bleibt es wenigstens trocken
-    //  (Kein Regen - keine nassen Klamotten o.Ä.)
-    //  "Die Äste biegen sich"
-    //  "das Gezweig"
-    //  "es kommt ein starker Wind"
-    //  "Wind und böses Wetter"
-    //  "es weht beständig ein harter Wind"
-    //  "der Wind (raschelt in den Bäumen), und die Wolken ziehen ganz nah über deinem Haupt weg"
-    //  "der Wind saust"
-    //  Der Wind ist jetzt sehr kräftig und angenehm. Kalt ist es geworden.
-    //  Der Sturm biegt die Bäume.
-    //  "so bist du vor der Kälte und dem bösen Wetter geschützt"
-    //  "darin bist du vor Wind und Wetter geschützt"
-    //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
-    //  "Die Hitze wird drückender, je näher der Mittag kommt" (KEIN WIND)
-    //  "Sturm"
-    //  "es stürmt", "du findest darin Schutz"
-    //  "der Wind rauscht draußen in den Bäumen"
-    //  "Weil aber das Wetter so schlecht geworden, und Wind und Regen stürmte,
-    //   kannst du nicht weiter und kehrst [...] ein."
+
+    // IDEA: Regen (Problem: Dinge werden nass und trocknen nur langsam - das muss man
+    //  später berücksichtigen)
+    //  - "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
+    //  - "Wind und Regen stürmen"
+    //  - "Das Wetter wird (aber) (so) schlecht, und Wind und Regen stürmen"
+    //  - "Das Wetter ist (aber) (so) schlecht geworden, und Wind und Regen stürmt"
+    //  - "Weil aber das Wetter so schlecht geworden ist, und Wind und Regen stürmt, kannst du
+    //     nicht weiter"
+    //  - "Weil aber das Wetter so schlecht geworden, und Wind und Regen stürmte,
+    //    kannst du nicht weiter und kehrst [...] ein."
+    //  - "Wind und böses Wetter"
+    //  - "so bist du vor der Kälte und dem bösen Wetter geschützt"
+    //  - "darin bist du vor Wind und Wetter geschützt"
     //  "Und alsbald fängt der Himmel an zu regnen"
     //  "und weil es anfängt zu regnen"
     //  "Tropfen fallen"
-    //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
-    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
-    //  wäre schön.
-    //  Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich ab.
-    //  "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein Blättchen mehr"
-    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
-    //  "Kein Wind weht"
 
-    // FIXME Wind in Kombination: "Der Himmel ist blau und eine frische Luft weht dir entgegen"
-    //  - "Der Himmel ist blau, die Luft mild"
 
     // FIXME Jemand wärmt sich auf (z.B. am Feuer oder Drinnen)
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
@@ -1097,6 +1163,7 @@ class WetterData {
     //  "du bist so erfroren"
     //  "dich wärmen"
     //  "du erwärmst dich" (am Feuer)
+    //  "so bist du vor der Kälte geschützt"
 
     // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist
     //  [lokale Temperatur] und die Sonne heiß brennt [generelle Temperatur], so..."
@@ -1107,6 +1174,8 @@ class WetterData {
     //  "du bist von der Sonnenhitze müde"
     //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
     //  "du bist von der Sonnenhitze müde"
+    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
+    //  Laub, und du bist voll Freude und Lust."
 
     @SuppressWarnings("WeakerAccess")
     @NonNull
