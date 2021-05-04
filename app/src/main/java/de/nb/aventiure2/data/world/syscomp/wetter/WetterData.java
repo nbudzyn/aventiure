@@ -267,7 +267,8 @@ class WetterData {
         final boolean windMussBeschriebenWerden =
                 windMussDraussenBeschriebenWerden(windstaerke);
         final boolean temperaturMussBeschriebenWerden =
-                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur,
+                        windstaerke);
         final boolean bewoelkungMussBeschriebenWerden =
                 bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel, windstaerke);
 
@@ -295,8 +296,8 @@ class WetterData {
             }
         }
 
-        if (!bewoelkungMussBeschriebenWerden) {
-            // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -315,12 +316,20 @@ class WetterData {
             }
         }
 
+        if (!bewoelkungMussBeschriebenWerden) {
+            // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        }
+
+        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+
+        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+
+        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
+
+
         // FIXME Je nach windMussBeschriebenWerden ggf. Wind beschreiben
         // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
         //  beschreiben.
-
-        // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
-        //  immer die Temperatur beschrieben wird!
 
         // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
 
@@ -490,7 +499,20 @@ class WetterData {
 
     private boolean temperaturMussDraussenBeschriebenWerden(final AvTime time,
                                                             final boolean unterOffenemHimmel,
-                                                            final Temperatur temperatur) {
+                                                            final Temperatur temperatur,
+                                                            final Windstaerke windstaerke) {
+        // Bei gewissen Windstärken versteht sich die Temperatur von selbst und
+        // muss nur beschrieben werden, wenn sie sehr ungewöhnlich ist
+
+        if (windstaerke.compareTo(STURM) >= 0
+                && temperatur.isBetweenIncluding(KUEHL, Temperatur.WARM)) {
+            return false;
+        }
+
+        if (windstaerke.compareTo(WINDIG) >= 0 && temperatur == KUEHL) {
+            return false;
+        }
+
         // Wann soll die Temperatur draußen beschrieben werden?
         return // Immer, wenn es tagsüber ist!
                 time.getTageszeit() != NACHTS
@@ -539,7 +561,8 @@ class WetterData {
 
         final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
         final boolean temperaturMussBeschriebenWerden =
-                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur,
+                        windstaerke);
         final boolean bewoelkungMussBeschriebenWerden =
                 bewoelkungMussDraussenBeschriebenWerden(time, unterOffenenHimmel, windstaerke);
         if (!windMussBeschriebenWerden
@@ -567,9 +590,8 @@ class WetterData {
                                         temperatur, time.getTageszeit()));
             }
         }
-        if (!bewoelkungMussBeschriebenWerden) {
-            // FIXME Ähnlich diesem alt.addAll(altWoInWindUndTemperatur(time, windstaerke,
-            //  temperatur));
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -589,6 +611,18 @@ class WetterData {
                 }
             }
         }
+
+        if (!bewoelkungMussBeschriebenWerden) {
+            // FIXME Ähnlich diesem alt.addAll(altWoInWindUndTemperatur(time, windstaerke,
+            //  temperatur));
+        }
+
+        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+
+        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+
+        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
+
 
         // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
         //  immer die Temperatur beschrieben wird!
@@ -857,7 +891,8 @@ class WetterData {
 
         final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
         final boolean temperaturMussBeschriebenWerden =
-                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur,
+                        windstaerke);
         final boolean bewoelkungMussBeschriebenWerden =
                 bewoelkungMussDraussenBeschriebenWerden(time, unterOffenenHimmel, windstaerke);
         if (!windMussBeschriebenWerden
@@ -871,8 +906,8 @@ class WetterData {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(temperatur, time));
         }
 
-        if (!bewoelkungMussBeschriebenWerden) {
-            alt.addAll(altWohinInWindUndTemperaturHinaus(time, windstaerke, temperatur));
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -889,6 +924,17 @@ class WetterData {
                 }
             }
         }
+
+        if (!bewoelkungMussBeschriebenWerden) {
+            alt.addAll(altWohinInWindUndTemperaturHinaus(time, windstaerke, temperatur));
+        }
+
+        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+
+        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+
+        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
+
 
         // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
         //  WINDSTILL:
@@ -1011,7 +1057,8 @@ class WetterData {
 
         final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
         final boolean temperaturMussBeschriebenWerden =
-                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur,
+                        windstaerke);
         final boolean bewoelkungMussBeschriebenWerden =
                 bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel, windstaerke);
 
@@ -1026,8 +1073,8 @@ class WetterData {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(temperatur, time));
         }
 
-        if (!bewoelkungMussBeschriebenWerden) {
-            alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -1039,8 +1086,16 @@ class WetterData {
             }
         }
 
-        // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
-        //  immer die Temperatur beschrieben wird!
+        if (!bewoelkungMussBeschriebenWerden) {
+            alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        }
+
+        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+
+        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+
+        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
+
 
         // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
         //  WINDSTILL:
@@ -1098,7 +1153,8 @@ class WetterData {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
 
         // "der kalte Wind" (evtl. leer)
-        alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altLuftAdjPhr(temperatur, time.getTageszeit())
+        alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER
+                .altLuftAdjPhr(temperatur, time.getTageszeit())
                 .stream()
                 .flatMap(kalt -> windstaerke.altNomenFlexionsspalte().stream()
                         .map(wind -> wind.mit(kalt)))
@@ -1114,7 +1170,8 @@ class WetterData {
                                         true,
                                         kalt)))
                         .map(windigKommaKalt ->
-                                time.getTageszeit().getNomenFlexionsspalte().mit(windigKommaKalt))
+                                time.getTageszeit().getNomenFlexionsspalte()
+                                        .mit(windigKommaKalt))
                         .collect(toImmutableSet()));
 
         switch (windstaerke) {
@@ -1331,7 +1388,8 @@ class WetterData {
     // FIXME Automatisch generieren: "Das Wetter ist soundso, als etwas passiert":
     //  -- "Die Sonne will eben untergehen, als du erwachst"
 
-    // FIXME Automatisch generieren: "Jemand tut dies und das, bis eine Wetterveränderung eintritt":
+    // FIXME Automatisch generieren: "Jemand tut dies und das, bis eine Wetterveränderung
+    //  eintritt":
     //  -- "..., bis der Mond aufgeht."
     //  -- "..., bis die Sonne sinkt und die Nacht einbricht."
     //  -- "Du (bleibst unter der Linde sitzen), bis die Sonne untergeht"
@@ -1348,7 +1406,8 @@ class WetterData {
     //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
     //  - "Als nun die Sonne mitten über dem Walde steht..." (eigentlich beschreiben
     //    wir im Wald - geschützt! - keine Sonne)
-    //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
+    //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt
+    //  weg"
 
     // IDEA Man könnte auch andere Features der Landschaft in die Wetterbeschreibungen einbauen:
     //  - "Du siehst die Sonne hinter den Bergen aufsteigen"
@@ -1517,7 +1576,8 @@ class WetterData {
 
         // Es soll eine Tageszeitänderung beschrieben werden
         return altTimePassedTageszeitenaenderung(lastTime, currentTime,
-                generelleTemperaturOutsideLocationTemperaturRange, temperaturChangeSofernRelevant,
+                generelleTemperaturOutsideLocationTemperaturRange,
+                temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant, drinnenDraussen,
                 bewoelkungsaenderungMussBeschriebenWerden);
     }
@@ -1585,16 +1645,16 @@ class WetterData {
                                 currentTime, bewoelkungChangeSofernRelevant,
                                 drinnenDraussen ==
                                         DRAUSSEN_UNTER_OFFENEM_HIMMEL)))
-                // IDEA "Das Wetter ändert sich:...", "Das Wetter schwingt um / ist umgeschwungen"
+                // IDEA "Das Wetter ändert sich:...", "Das Wetter schwingt um / ist
+                //  umgeschwungen"
                 .build();
     }
 
     private ImmutableCollection<AbstractDescription<?>> altTimePassedTageszeitenaenderung(
             final AvDateTime lastTime, final AvDateTime currentTime,
-            final boolean generelleTemperaturOutsideLocationTemperaturRange, @Nullable final
-            WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
-            @Nullable final
-            WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
+            final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
+            @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen,
             final boolean bewoelkungsaenderungMussBeschriebenWerden) {
         if (!bewoelkungsaenderungMussBeschriebenWerden) {
