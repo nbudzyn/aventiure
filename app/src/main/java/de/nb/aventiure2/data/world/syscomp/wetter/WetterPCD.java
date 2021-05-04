@@ -647,6 +647,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter.getLokaleTemperatur(time.getTime(), locationTemperaturRange);
     }
 
+    // FIXME getLokaleWindstaerke?
+
     @NonNull
     private Temperatur getCurrentGenerelleTemperatur(final AvDateTime time) {
         // Nur weil die aktuelle generelle Temperatur abgefragt wird, gehen wir nicht davon aus,

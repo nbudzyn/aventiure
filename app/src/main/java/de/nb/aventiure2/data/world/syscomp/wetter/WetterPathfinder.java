@@ -52,7 +52,7 @@ class WetterPathfinder {
         boolean changed = false;
         Temperatur resTageshoechsttemperatur = start.getTageshoechsttemperatur();
         Temperatur resTagestiefsttemperatur = start.getTagestiefsttemperatur();
-        Windstaerke resWindstaerke = start.getWindstaerke();
+        Windstaerke resWindstaerke = start.getWindstaerkeUnterOffenemHimmel();
         Bewoelkung resBewoelkung = start.getBewoelkung();
         BlitzUndDonner resBlitzUndDonner = start.getBlitzUndDonner();
 
@@ -67,8 +67,9 @@ class WetterPathfinder {
 
         final boolean bewoelkungDarfAuflockernUndTemperaturDarfSteigen =
                 temperaturUndBewoelkungUndWindstaerkeDuerfenSichAendern
-                        && (start.getWindstaerke().compareTo(WINDIG) <= 0
-                        || start.getWindstaerke().compareTo(ziel.getWindstaerke()) <= 0);
+                        && (start.getWindstaerkeUnterOffenemHimmel().compareTo(WINDIG) <= 0
+                        || start.getWindstaerkeUnterOffenemHimmel()
+                        .compareTo(ziel.getWindstaerkeUnterOffenemHimmel()) <= 0);
 
         final boolean temperaturDarfSteigen =
                 bewoelkungDarfAuflockernUndTemperaturDarfSteigen
@@ -120,22 +121,27 @@ class WetterPathfinder {
             }
         }
 
-        if (start.getWindstaerke().compareTo(ziel.getWindstaerke()) < 0) {
+        if (start.getWindstaerkeUnterOffenemHimmel()
+                .compareTo(ziel.getWindstaerkeUnterOffenemHimmel()) < 0) {
             if (temperaturUndBewoelkungUndWindstaerkeDuerfenSichAendern &&
                     (!changed
                             ||
                             (resTageshoechsttemperatur.compareTo(WARM) <= 0
-                                    && (start.getWindstaerke().compareTo(LUEFTCHEN) <= 0
-                                    || resBewoelkung.compareTo(BEWOELKT) >= 0))
+                                    && (
+                                    start.getWindstaerkeUnterOffenemHimmel().compareTo(LUEFTCHEN)
+                                            <= 0
+                                            || resBewoelkung.compareTo(BEWOELKT) >= 0))
                             ||
                             (resTageshoechsttemperatur.compareTo(KUEHL) <= 0
-                                    && start.getWindstaerke().compareTo(WINDIG) <= 0
+                                    && start.getWindstaerkeUnterOffenemHimmel().compareTo(WINDIG)
+                                    <= 0
                                     && resBewoelkung.compareTo(BEWOELKT) >= 0))) {
                 resWindstaerke = resWindstaerke.getNachfolger();
                 resDuration = max(resDuration, mins(15));
                 changed = true;
             }
-        } else if (start.getWindstaerke().compareTo(ziel.getWindstaerke()) > 0) {
+        } else if (start.getWindstaerkeUnterOffenemHimmel()
+                .compareTo(ziel.getWindstaerkeUnterOffenemHimmel()) > 0) {
             if (temperaturUndBewoelkungUndWindstaerkeDuerfenSichAendern) {
                 resWindstaerke = resWindstaerke.getVorgaenger();
                 resDuration = max(resDuration, mins(15));

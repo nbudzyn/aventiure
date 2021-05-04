@@ -223,7 +223,8 @@ public class TemperaturSatzDescriber {
                     // "die Luft wird kalt"
                     alt.addAll(mapToList(
                             praedikativumDescriber
-                                    .altLuftAdjPhr(change.getNachher(), time.getTageszeit()),
+                                    .altLuftAdjPhr(change.getNachher(), time.getTageszeit()
+                                    ),
                             a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
                 }
 
@@ -726,7 +727,8 @@ public class TemperaturSatzDescriber {
         if (drinnenDraussen.isDraussen()) {
             // "die Luft ist kalt"
             alt.addAll(mapToList(
-                    praedikativumDescriber.altLuftAdjPhr(temperatur, tageszeit),
+                    praedikativumDescriber.altLuftAdjPhr(temperatur, tageszeit
+                    ),
                     a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
 
             if (tageszeit == ABENDS

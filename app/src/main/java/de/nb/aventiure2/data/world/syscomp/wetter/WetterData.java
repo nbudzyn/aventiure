@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.concurrent.Immutable;
@@ -42,6 +43,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturPraedikat
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturPraepPhrDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -57,14 +59,32 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.base.Temperatur.KUEHL;
+import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.KRAEFTIGER_WIND;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.LUEFTCHEN;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BRUETEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DRUECKEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HART;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAEFTIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAFTVOLL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.PFEIFEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.RAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STEHEND;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -73,6 +93,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeue
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toSet;
 
+@SuppressWarnings("DuplicateBranchesInSwitch")
 @Immutable
 public
 class WetterData {
@@ -156,7 +177,12 @@ class WetterData {
 
     private final Temperatur tagestiefsttemperatur;
 
-    private final Windstaerke windstaerke;
+    /**
+     * Die Windstärke und offenem Himmel. Die Windstärke kann lokal niedriger sein, z.B.
+     * an einem geschützten Ort draußen. Wir gehen außerdem davon aus, dass drinnen
+     * kein Wind weht.
+     */
+    private final Windstaerke windstaerkeUnterOffenemHimmel;
 
     private final Bewoelkung bewoelkung;
 
@@ -165,12 +191,12 @@ class WetterData {
     @SuppressWarnings("WeakerAccess")
     public WetterData(final Temperatur tageshoechsttemperatur,
                       final Temperatur tagestiefsttemperatur,
-                      final Windstaerke windstaerke,
+                      final Windstaerke windstaerkeUnterOffenemHimmel,
                       final Bewoelkung bewoelkung,
                       final BlitzUndDonner blitzUndDonner) {
         this.tageshoechsttemperatur = tageshoechsttemperatur;
         this.tagestiefsttemperatur = tagestiefsttemperatur;
-        this.windstaerke = windstaerke;
+        this.windstaerkeUnterOffenemHimmel = windstaerkeUnterOffenemHimmel;
         this.bewoelkung = bewoelkung;
         this.blitzUndDonner = blitzUndDonner;
     }
@@ -178,7 +204,7 @@ class WetterData {
     @NonNull
     public static WetterData getDefault() {
         return new WetterData(
-                Temperatur.WARM, Temperatur.KUEHL,
+                WARM, Temperatur.KUEHL,
                 Windstaerke.LUEFTCHEN,
                 Bewoelkung.LEICHT_BEWOELKT,
                 BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
@@ -228,33 +254,32 @@ class WetterData {
             final AvTime time, final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
-
-        // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
-        //  beschreiben. Insbesondere ist eine Temperaturänderung eine gute Gelegenheit, auf
-        //  stärkeren Wind hinzuweisen....
 
         final AltDescriptionsBuilder alt = alt();
 
         final DrinnenDraussen drinnenDraussen =
                 unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT;
 
+        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        final boolean temperaturSollBeschriebenWerden =
-                temperaturSollDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
-        final boolean bewoelkungSollBeschriebenWerden =
-                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenemHimmel);
-        // FIXME windSollBeschrieben werden
-        if (!temperaturSollBeschriebenWerden
-                && !bewoelkungSollBeschriebenWerden) {
+        final boolean windMussBeschriebenWerden =
+                windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean temperaturMussBeschriebenWerden =
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+        final boolean bewoelkungMussBeschriebenWerden =
+                bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel, windstaerke);
+
+        if (!windMussBeschriebenWerden
+                && !temperaturMussBeschriebenWerden
+                && !bewoelkungMussBeschriebenWerden) {
             // "es ist schon dunkel", "es ist Abend"
             alt.addAll(TAGESZEIT_DESC_DESCRIBER.altDraussen(time,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (!bewoelkungSollBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             // "Es ist kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur,
                     !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
@@ -270,13 +295,17 @@ class WetterData {
             }
         }
 
-        if (!temperaturSollBeschriebenWerden) {
+        if (!bewoelkungMussBeschriebenWerden) {
+            // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        }
+
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
-            if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
+            if (temperatur == WARM && time.getTageszeit() == ABENDS) {
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
@@ -285,6 +314,15 @@ class WetterData {
                 }
             }
         }
+
+        // FIXME Je nach windMussBeschriebenWerden ggf. Wind beschreiben
+        // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
+        //  beschreiben.
+
+        // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
+        //  immer die Temperatur beschrieben wird!
+
+        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
 
         if (unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
@@ -296,6 +334,90 @@ class WetterData {
 
         return alt.schonLaenger().build();
     }
+
+    // FIXME Wind / Sturm - statisch, ohne Bezug auf Features des Umwelt:
+    //  WINDSTILL:
+    //   "die Luft steht"
+    //   "...und kein Lüftchen"
+    //  "Es geht kein Wind"
+    //  "Kein Wind weht"
+    //  LUEFTCHEN:
+    //   "...und ein Lüftchen streicht..."
+    //  WINDIG:
+    //  "der Wind"
+    //  "der Wind saust"
+    //  KRAEFTIGER_WIND:
+    //  "draußen geht ein kräftiger, kalter Wind"
+    //  "es weht beständig ein Wind"
+    //  "es weht beständig ein harter Wind"
+    //   Der Wind pfeift dir ums Gesicht
+    //   "...und der Wind zaust dein Haar"
+    //  Der Wind ist sehr kräftig und unangenehm.
+    //  "Um Mitternacht geht der Wind..."
+    //  "der Wind rauscht draußen"
+    //  STURM:
+    //  "es stürmt"
+    //  "Sturm"
+    //   "Der Wind stürmt"
+    //  SCHWERER STURM:
+    //   Hoffentlich bleibt es wenigstens trocken
+    //   Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
+    //   Gehen kostet dich einige Mühe
+
+    // FIXME Wind / Sturm - statisch, unter Bezug auf Features des Umwelt
+    //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)
+    //  WINDSTILL:
+    //   "...und kein Lüftchen streicht durch das Laub"
+    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
+    //  LUEFTCHEN:
+    //   "...und ein Lüftchen streicht durch das Laub"
+    //  WINDIG:
+    //  "der Wind raschelt in den Bäumen"
+    //  KRAEFTIGER_WIND:
+    //   "das Gezweig"
+    //  "der Wind rauscht draußen in den Bäumen"
+    //  STURM:
+    //   "Die Äste biegen sich"
+    //  SCHWERER STURM:
+    //  Der Sturm biegt die Bäume.
+    //   "...und gehst nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
+    //   Hoffentlich bleibt es wenigstens trocken
+    //  "darin bist du vor dem Wind geschützt"
+    //  "du findest darin Schutz"
+    //  Der Sturm peitscht die Äste über dir... Ein geschützter Platz wäre schön.
+    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
+    //  wäre schön.
+
+    // FIXME Wind in Kombination NUR MIT TEMPERATUR (oder Tageszeit) - statisch
+    //  WINDSTILL:
+    //  LUEFTCHEN:
+    //  "ein kühles Lüftchen"
+    //  "ein kühles Lüftchen streicht..."
+    //  "ein kühles Lüftchen streicht durch das Laub"
+    //  WINDIG:
+    //  "Der Wind geht kalt"
+    //  "Der Wind geht so kalt, dass dir nicht warm werden will"
+    //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
+    //  KRAEFTIGER_WIND:
+    //  STURM:
+    //  SCHWERER STURM:
+    //  ORKAN:
+
+    // FIXME Wind in Kombination NICHT ODER NICHT NUR MIT TEMPERATUR - statisch
+    //  WINDSTILL:
+    //  LUEFTCHEN:
+    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
+    //  Laub, und du..."
+    //  - "Der Himmel ist blau, die Luft mild"?!
+    //  WINDIG:
+    //   "Weiße Wölkchen ziehen am blauen Himmel über dir vorbei"
+    //  "Der Himmel ist blau und eine frische Luft weht dir entgegen"
+    //  KRAEFTIGER_WIND:
+    //  "der Wind ... und die Wolken ziehen ganz nah über deinem Haupt weg"
+    //  "Der Wind treibt Wolkenfetzen über den Sternenhimmel"
+    //  STURM:
+    //  SCHWERER STURM:
+    //  ORKAN:
 
 
     /**
@@ -349,7 +471,7 @@ class WetterData {
         }
 
         if (time.getTageszeit() == ABENDS) {
-            if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
+            if (temperatur.isBetweenIncluding(WARM, Temperatur.RECHT_HEISS)) {
                 alt.addAll(altNeueSaetze(
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altUnterOffenemHimmel(bewoelkung, time,
@@ -362,7 +484,11 @@ class WetterData {
         return alt.schonLaenger().build();
     }
 
-    private boolean temperaturSollDraussenBeschriebenWerden(final AvTime time,
+    private static boolean windMussDraussenBeschriebenWerden(final Windstaerke windstaerke) {
+        return !windstaerke.isUnauffaellig();
+    }
+
+    private boolean temperaturMussDraussenBeschriebenWerden(final AvTime time,
                                                             final boolean unterOffenemHimmel,
                                                             final Temperatur temperatur) {
         // Wann soll die Temperatur draußen beschrieben werden?
@@ -374,9 +500,16 @@ class WetterData {
                         || (unterOffenemHimmel && !bewoelkung.isUnauffaellig(time.getTageszeit()));
     }
 
-    private boolean bewoelkungSollDraussenBeschriebenWerden(final AvTime time,
-                                                            final boolean unterOffenemHimmel) {
+    private boolean bewoelkungMussDraussenBeschriebenWerden(final AvTime time,
+                                                            final boolean unterOffenemHimmel,
+                                                            final Windstaerke windstaerke) {
         // Wann soll die Bewölkung draußen beschrieben werden?
+
+        if (windstaerke.compareTo(KRAEFTIGER_WIND) >= 0) {
+            // Ab gewisser Windstärke verliert die Bewölkung an Bedeutung
+            return false;
+        }
+
         return
                 // Immer, wenn man den HImmel sieht und die Bewölkung auffällig ist!
                 unterOffenemHimmel && !bewoelkung.isUnauffaellig(time.getTageszeit());
@@ -397,33 +530,28 @@ class WetterData {
             final AvTime time, final boolean unterOffenenHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        // FIXME Windstärke berücksichtigen
         // FIXME Blitz und Donner berücksichtigen
-
-        // IDEA:
-        //  boolean tageszeitUndLichtverhaeltnisseRelevant = ;
-        //  boolean temperaturRelevant = ;
-        //  boolean bewoelkungRelevant = ;
-        //  if (nurTemperaturUndEvtlTageszeitRelevant()) {....}
-        //  if (nurTemperaturUndBewoelkungUndEvtlTageszeitRelevant() {...}
 
         final AltDescriptionsBuilder alt = alt();
 
+        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenenHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        final boolean temperaturSollBeschriebenWerden =
-                temperaturSollDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
-        final boolean bewoelkungSollBeschriebenWerden =
-                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenenHimmel);
-        if (!temperaturSollBeschriebenWerden
-                && !bewoelkungSollBeschriebenWerden) {
+        final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean temperaturMussBeschriebenWerden =
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+        final boolean bewoelkungMussBeschriebenWerden =
+                bewoelkungMussDraussenBeschriebenWerden(time, unterOffenenHimmel, windstaerke);
+        if (!windMussBeschriebenWerden
+                && !temperaturMussBeschriebenWerden
+                && !bewoelkungMussBeschriebenWerden) {
             // "draußen ist es schon dunkel"
             alt.addAll(
                     TAGESZEIT_DESC_DESCRIBER.altKommtNachDraussen(time,
                             auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (!bewoelkungSollBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             // "Draußen ist es kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.altKommtNachDraussen(
                     temperatur,
@@ -439,8 +567,12 @@ class WetterData {
                                         temperatur, time.getTageszeit()));
             }
         }
+        if (!bewoelkungMussBeschriebenWerden) {
+            // FIXME Ähnlich diesem alt.addAll(altWoInWindUndTemperatur(time, windstaerke,
+            //  temperatur));
+        }
 
-        if (!temperaturSollBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
             if (unterOffenenHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 // "Draußen ist der Himmel bewölkt"
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER
@@ -448,7 +580,7 @@ class WetterData {
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
-            if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
+            if (temperatur == WARM && time.getTageszeit() == ABENDS) {
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     // "Es ist ein schöner Abend, die Sonne scheint"
                     alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSchoeneTageszeit(
@@ -457,6 +589,11 @@ class WetterData {
                 }
             }
         }
+
+        // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
+        //  immer die Temperatur beschrieben wird!
+
+        // FIXME Wind ggf.  mitbeschreiben
 
         if (unterOffenenHimmel) {
             // "Draußen ist es kühl und der Himmel ist bewölkt"
@@ -514,7 +651,7 @@ class WetterData {
         }
 
         if (time.getTageszeit() == ABENDS) {
-            if (temperatur.isBetweenIncluding(Temperatur.WARM, Temperatur.RECHT_HEISS)) {
+            if (temperatur.isBetweenIncluding(WARM, Temperatur.RECHT_HEISS)) {
                 alt.addAll(altNeueSaetze(
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altKommtUnterOffenenHimmel(bewoelkung, time, true,
@@ -634,13 +771,19 @@ class WetterData {
             final AvTime time,
             final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        // FIXME Windstärke berücksichtigen
-        // FIXME Blitz und Donner berücksichtigen
-
         if (unterOffenemHimmel && !bewoelkung.isUnauffaellig(time.getTageszeit())) {
             // Die Bewölkung soll nicht unterschlagen werden.
             return ImmutableSet.of();
         }
+
+        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        if (windstaerke.compareTo(STURM) >= 0) {
+            // Sturm steht definitiv im Vordergrund - aber Sturm geht selten den ganzen Tag!
+            return ImmutableSet.of();
+        }
+
+        // FIXME Blitz und Donner berücksichtigen, wohl ggf. auch einfach hier abbrechen,
+        //  weil Gewitter nicht den ganzen Tag geht.
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
@@ -665,27 +808,34 @@ class WetterData {
                 .build();
     }
 
+    // FIXME altWindstaerkeUnterschiedZuVorLocation,
+    //  getLokaleWindstärkeDraussen(unterOffenemHimmel) verwenden!
+    //  Ggf. zusammenfassen in der Art xyz soll beschrieben werden?!!
 
     @NonNull
     @CheckReturnValue
     ImmutableSet<String> altWetterplauderrede(final AvTime time) {
         final Temperatur temperatur = getAktuelleGenerelleTemperatur(time);
 
+        // FIXME Blitz und Donner berücksichtigen
+
+        if (windstaerkeUnterOffenemHimmel.compareTo(STURM) >= 0) {
+            return ImmutableSet
+                    .of("Das ist ein Wetter, als wenn die Welt untergehen sollte!");
+        }
+
         if (temperatur == Temperatur.KLIRREND_KALT
                 || temperatur == Temperatur.SEHR_HEISS
-                || bewoelkung == Bewoelkung.BEDECKT) {
+                || bewoelkung == Bewoelkung.BEDECKT
+                || windstaerkeUnterOffenemHimmel.compareTo(KRAEFTIGER_WIND) >= 0) {
             return ImmutableSet
                     .of("Was ein Wetter!", "Was für ein Wetter!", "Welch ein Wetter!");
         }
 
-        if (bewoelkung == Bewoelkung.BEWOELKT) {
+        if (bewoelkung == Bewoelkung.BEWOELKT
+                || windstaerkeUnterOffenemHimmel.compareTo(WINDIG) >= 0) {
             return ImmutableSet.of("Das Wetter war ja auch schon mal besser.");
         }
-
-        // FIXME Windstärke berücksichtigen
-        // FIXME Blitz und Donner berücksichtigen
-
-        // IDEA "Das ist ein Wetter, als wenn die Welt untergehen sollte!"
 
         return ImmutableSet.of("Schönes Wetter heut!", "Schönes Wetter heut.");
     }
@@ -700,39 +850,69 @@ class WetterData {
         final ImmutableCollection.Builder<AdvAngabeSkopusVerbWohinWoher> alt =
                 ImmutableSet.builder();
 
-        // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
+        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenenHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        final boolean temperaturSollBeschriebenWerden =
-                temperaturSollDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
-        final boolean bewoelkungSollBeschriebenWerden =
-                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenenHimmel);
-        if (!temperaturSollBeschriebenWerden
-                && !bewoelkungSollBeschriebenWerden) {
+        final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean temperaturMussBeschriebenWerden =
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenenHimmel, temperatur);
+        final boolean bewoelkungMussBeschriebenWerden =
+                bewoelkungMussDraussenBeschriebenWerden(time, unterOffenenHimmel, windstaerke);
+        if (!windMussBeschriebenWerden
+                && !temperaturMussBeschriebenWerden
+                && !bewoelkungMussBeschriebenWerden) {
             alt.addAll(TAGESZEIT_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(
                     time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (!bewoelkungSollBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(temperatur, time));
         }
 
-        if (!temperaturSollBeschriebenWerden) {
+        if (!bewoelkungMussBeschriebenWerden) {
+            alt.addAll(altWohinInWindUndTemperaturHinaus(time, windstaerke, temperatur));
+        }
+
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
             if (unterOffenenHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.addAll(BEWOELKUNG_ADV_ANGABE_WOHIN_DESCRIBER
                         .altHinausUnterOffenenHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
             }
 
-            if (temperatur == Temperatur.WARM && time.getTageszeit() == ABENDS) {
+            if (temperatur == WARM && time.getTageszeit() == ABENDS) {
                 if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
                     alt.add(BEWOELKUNG_ADV_ANGABE_WOHIN_DESCRIBER.schoeneTageszeit(
                             time.getTageszeit()));
                 }
             }
         }
+
+        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
+        //  WINDSTILL:
+        //  LUEFTCHEN:
+        //  WINDIG:
+        //  "in den sausenden Wind"
+        //  KRAEFTIGER_WIND
+        //  "in den kräftigen Wind"
+        //  "in den beständigen Wind"?
+        //  "in den harten Wind"
+        //  "in den pfeifenden Wind"
+        //  "in den kräfigen, unangenehmen Wind"
+        //  "in den rauschenden Wind"
+        //  STURM:
+        //  "in das Unwetter" ? (sehr unspezifizisch)
+        //  "in den Sturm"
+        //  "in den stürmenden Wind"
+        //  "in den stürmischen Tag"
+        //  "in den nächtlichen Sturm"
+        //  SCHWERER STURM:
+        //  "in den mit aller Kraft blasenden Sturm" (nur wohin?)
+        //  "in den schweren Sturm"
+        //  "in den tobenden Sturm"
+        //  "in den tosenden Sturm"
 
         if (unterOffenenHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
@@ -741,6 +921,22 @@ class WetterData {
         }
 
         return alt.build();
+    }
+
+    private static ImmutableList<AdvAngabeSkopusVerbWohinWoher> altWohinInWindUndTemperaturHinaus(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final Temperatur temperatur) {
+        return mapToList(altWohinInWindUndTemperaturHinausPraepPhr(time, windstaerke, temperatur),
+                AdvAngabeSkopusVerbWohinWoher::new);
+    }
+
+    private static ImmutableSet<Praepositionalphrase> altWohinInWindUndTemperaturHinausPraepPhr(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final Temperatur temperatur) {
+        return mapToSet(altDraussenWindUndTemperaturSubstPhr(time, windstaerke, temperatur),
+                IN_AKK::mit);
     }
 
     @NonNull
@@ -808,26 +1004,33 @@ class WetterData {
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
 
-        // FIXME Windstärke berücksichtigen?
         // FIXME Blitz und Donner berücksichtigen?
 
+        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        final boolean temperaturSollBeschriebenWerden =
-                temperaturSollDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
-        final boolean bewoelkungSollBeschriebenWerden =
-                bewoelkungSollDraussenBeschriebenWerden(time, unterOffenemHimmel);
-        if (!temperaturSollBeschriebenWerden
-                && !bewoelkungSollBeschriebenWerden) {
+        final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean temperaturMussBeschriebenWerden =
+                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur);
+        final boolean bewoelkungMussBeschriebenWerden =
+                bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel, windstaerke);
+
+        if (!windMussBeschriebenWerden
+                && !temperaturMussBeschriebenWerden
+                && !bewoelkungMussBeschriebenWerden) {
             alt.addAll(TAGESZEIT_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(
                     time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (!bewoelkungSollBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             alt.addAll(TEMPERATUR_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(temperatur, time));
         }
 
-        if (!temperaturSollBeschriebenWerden) {
+        if (!bewoelkungMussBeschriebenWerden) {
+            alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+        }
+
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.addAll(BEWOELKUNG_ADV_ANGABE_WO_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
@@ -836,10 +1039,131 @@ class WetterData {
             }
         }
 
+        // FIXME !temperaturMussBeschriebenWerden? Irrelevant, da draußen quasi
+        //  immer die Temperatur beschrieben wird!
+
+        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
+        //  WINDSTILL:
+        //  LUEFTCHEN:
+        //  WINDIG:
+        //  "im sausenden Wind"
+        //  KRAEFTIGER_WIND
+        //  "im kräftigen Wind"
+        //  "im beständigen Wind"?
+        //  "im harten Wind"
+        //  "im pfeifenden Wind"
+        //  "im kräfigen, unangenehmen Wind"
+        //  "im rauschenden Wind"
+        //  STURM:
+        //  "im Unwetter" ? (sehr unspezifische - stürmischen..?)
+        //  "im den Sturm"
+        //  "im den stürmenden Wind"
+        //  "im nächtlichen Sturm"
+        //  SCHWERER STURM:
+        //  "mitten im blasenden Sturm"
+        //  "(mitten) im schweren Sturm"
+        //  "(mitten) im tobenden Sturm"
+        //  "(mitten) im tosenden Sturm"
+
         if (unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
                     time, locationTemperaturRange));
+        }
+
+        return alt.build();
+    }
+
+    private static ImmutableList<AdvAngabeSkopusVerbAllg> altWoInWindUndTemperatur(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final Temperatur temperatur) {
+        return mapToList(altWoInWindUndTemperaturPraepPhr(time, windstaerke, temperatur),
+                AdvAngabeSkopusVerbAllg::new);
+    }
+
+    private static ImmutableSet<Praepositionalphrase> altWoInWindUndTemperaturPraepPhr(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final Temperatur temperatur) {
+        return mapToSet(altDraussenWindUndTemperaturSubstPhr(time, windstaerke, temperatur),
+                IN_DAT::mit);
+    }
+
+    private static ImmutableSet<EinzelneSubstantivischePhrase>
+    altDraussenWindUndTemperaturSubstPhr(final AvTime time,
+                                         final Windstaerke windstaerke,
+                                         final Temperatur temperatur) {
+
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+
+        // "der kalte Wind" (evtl. leer)
+        alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altLuftAdjPhr(temperatur, time.getTageszeit())
+                .stream()
+                .flatMap(kalt -> windstaerke.altNomenFlexionsspalte().stream()
+                        .map(wind -> wind.mit(kalt)))
+                .collect(toSet()));
+
+        // "der windige, kalte Morgen" (evtl. leer)
+        alt.addAll(
+                TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(temperatur, true)
+                        .stream()
+                        .flatMap(kalt -> windstaerke.altAdjPhrWetter().stream()
+                                .map(windig -> new ZweiAdjPhrOhneLeerstellen(
+                                        windig,
+                                        true,
+                                        kalt)))
+                        .map(windigKommaKalt ->
+                                time.getTageszeit().getNomenFlexionsspalte().mit(windigKommaKalt))
+                        .collect(toImmutableSet()));
+
+        switch (windstaerke) {
+            case WINDSTILL:
+                if (temperatur == Temperatur.SEHR_HEISS) {
+                    alt.add(HITZE.mit(DRUECKEND));
+                    alt.add(HITZE.mit(BRUETEND));
+
+                    if (time.gegenMittag()) {
+                        alt.add(MITTAGSHITZE.mit(DRUECKEND));
+                    }
+                }
+                if (temperatur.compareTo(WARM) >= 0) {
+                    // "die stehende, heiße Luft"
+                    alt.addAll(mapToSet(
+                            TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
+                                    temperatur, true),
+                            heiss -> LUFT.mit(
+                                    new ZweiAdjPhrOhneLeerstellen(
+                                            STEHEND,
+                                            true,
+                                            heiss))));
+                }
+                break;
+            case LUEFTCHEN:
+                break;
+            case WINDIG:
+                break;
+            case KRAEFTIGER_WIND:
+                //  "der kräftige, kalte Wind"
+                alt.addAll(Stream.of(KRAEFTIG, KRAFTVOLL, HART, PFEIFEND)
+                        .flatMap(kraeftig ->
+                                TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
+                                        temperatur, true).stream()
+                                        .map(kalt -> WIND.mit(
+                                                new ZweiAdjPhrOhneLeerstellen(
+                                                        kraeftig,
+                                                        true,
+                                                        kalt))))
+                        .collect(toSet()));
+                if (temperatur.compareTo(KUEHL) <= 0) {
+                    // "der raue Morgen"
+                    alt.add(time.getTageszeit().getNomenFlexionsspalte().mit(RAU));
+                }
+                break;
+            case STURM:
+                break;
+            case SCHWERER_STURM:
+                break;
         }
 
         return alt.build();
@@ -851,6 +1175,7 @@ class WetterData {
             final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
 
+        // FIXME getLokaleWindstärkeDraussen(unterOffenemHimmel) verwenden!
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
@@ -935,6 +1260,26 @@ class WetterData {
                         unterOffenemHimmel);
     }
 
+    private Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
+        if (unterOffenemHimmel) {
+            return windstaerkeUnterOffenemHimmel;
+        }
+
+        return getLokaleWindstaerkeDraussenGeschuetzt();
+    }
+
+    private Windstaerke getLokaleWindstaerkeDraussenGeschuetzt() {
+        if (windstaerkeUnterOffenemHimmel.compareTo(LUEFTCHEN) <= 0) {
+            return windstaerkeUnterOffenemHimmel;
+        }
+
+        if (windstaerkeUnterOffenemHimmel.compareTo(KRAEFTIGER_WIND) <= 0) {
+            return windstaerkeUnterOffenemHimmel.getVorgaenger();
+        }
+
+        return windstaerkeUnterOffenemHimmel.getVorgaenger().getVorgaenger();
+    }
+
     @NonNull
     @CheckReturnValue
     Temperatur getLokaleTemperatur(final AvTime time,
@@ -947,108 +1292,6 @@ class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-    // FIXME Wind / Sturm - statisch, ohne Bezug auf Features des Umwelt:
-    //  WINDSTILL:
-    //   "die Luft steht"
-    //   "...und kein Lüftchen"
-    //  "Es geht kein Wind"
-    //  "Kein Wind weht"
-    //  LUEFTCHEN:
-    //   "...und ein Lüftchen streicht"
-    //  WINDIG:
-    //  "der Wind"
-    //  "der Wind saust"
-    //  KRAEFTIGER_WIND:
-    //  "es weht beständig ein harter Wind"
-    //   Der Wind pfeift dir ums Gesicht
-    //   "...und der Wind zaust dein Haar"
-    //  Der Wind ist sehr kräftig und unangenehm.
-    //  "Um Mitternacht geht der Wind..."
-    //  "der Wind rauscht draußen"
-    //  STURM:
-    //  "es stürmt"
-    //  "Sturm"
-    //   "Der Wind stürmt"
-    //  SCHWERER STURM:
-    //   Hoffentlich bleibt es wenigstens trocken
-    //  Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
-    //  ORKAN:
-    //  Du vermagst dich kaum noch auf den Beinen zu halten
-    //  Du kommst nur sehr langsam voran und mit großer Mühe
-
-    // FIXME Wind / Sturm - statisch, unter Bezug auf Features des Umwelt
-    //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)
-    //  WINDSTILL:
-    //   "...und kein Lüftchen streicht durch das Laub"
-    //  "Es geht kein Wind, und bewegt sich kein Blättchen"
-    //  LUEFTCHEN:
-    //   "...und ein Lüftchen streicht durch das Laub"
-    //  WINDIG:
-    //  "der Wind raschelt in den Bäumen"
-    //  KRAEFTIGER_WIND:
-    //   "das Gezweig"
-    //  "der Wind rauscht draußen in den Bäumen"
-    //  STURM:
-    //   "Die Äste biegen sich"
-    //  SCHWERER STURM:
-    //  Der Sturm biegt die Bäume.
-    //   "...und gehst nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
-    //   Hoffentlich bleibt es wenigstens trocken
-    //  "darin bist du vor dem Wind geschützt"
-    //  "du findest darin Schutz"
-    //  Der Sturm peitscht die Äste über dir... Ein geschützter Platz wäre schön.
-    //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
-    //  wäre schön.
-    //  ORKAN:
-
-    // FIXME Wind / Sturm - dynamisch:
-    //  Der Wind wird stärker
-    //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm.
-    //  < ->  KRAEFTIGER_WIND: "es kommt ein starker Wind"
-    //  < -> STURM: Ein Sturm zieht auf
-    //  STURM -> > Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut allmählich
-    //  ab.
-
-    // FIXME Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
-    //  (Blätter)
-    //  Der Wind wird stärker
-    //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
-    //  Blättchen mehr"
-
-    // FIXME Wind in Kombination NUR MIT TEMPERATUR (oder Tageszeit) - statisch
-    //  WINDSTILL:
-    //  LUEFTCHEN:
-    //  "ein kühles Lüftchen"
-    //  "ein kühles Lüftchen streicht..."
-    //  "ein kühles Lüftchen streicht durch das Laub"
-    //  WINDIG:
-    //  "Der Wind geht kalt"
-    //  "Der Wind geht so kalt, dass dir nicht warm werden will"
-    //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
-    //  KRAEFTIGER_WIND:
-    //  STURM:
-    //  SCHWERER STURM:
-    //  ORKAN:
-
-    // FIXME Wind in Kombination NICHT ODER NICHT NUR MIT TEMPERATUR - statisch
-    //  WINDSTILL:
-    //  LUEFTCHEN:
-    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
-    //  Laub, und du..."
-    //  - "Der Himmel ist blau, die Luft mild"?!
-    //  WINDIG:
-    //   "Weiße Wölkchen ziehen am blauen Himmel über dir vorbei"
-    //  "Der Himmel ist blau und eine frische Luft weht dir entgegen"
-    //  KRAEFTIGER_WIND:
-    //  "der Wind ... und die Wolken ziehen ganz nah über deinem Haupt weg"
-    //  "Der Wind treibt Wolkenfetzen über den Sternenhimmel"
-    //  STURM:
-    //  SCHWERER STURM:
-    //  ORKAN:
-
-    // FIXME Wind in Kombination - dynamisch
-    //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm. Kalt ist es geworden.
-    //  WINDSTILL, TEMPERATURANSTIEG: "Die Hitze wird drückender, je näher der Mittag kommt"
 
     // FIXME Donner / Blitz
     //  In der Ferne hörst du Donnergrollen
@@ -1099,21 +1342,25 @@ class WetterData {
     //     warm und verdrießlich zumut:"
     //  -- "Wie nun die Sonne kommt und du aufwachst..."
 
-    // IDEA Man könnte Features der Landschaft in die Wetterbeschreibungen einbauen:
+    // FIXME Man könnte (wo? / wie?) spezielle Beschreibungen dafür einauen, dass sich das SC
+    //  im Wald befindet (oder allgemein in einer Landschaftsform???):
+    //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
+    //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
+    //  - "Als nun die Sonne mitten über dem Walde steht..." (eigentlich beschreiben
+    //    wir im Wald - geschützt! - keine Sonne)
+    //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
+
+    // IDEA Man könnte auch andere Features der Landschaft in die Wetterbeschreibungen einbauen:
     //  - "Du siehst die Sonne hinter den Bergen aufsteigen"
     //  - "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
-    //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
     //  - "Noch halb steht die Sonne über (dem Berg) und halb ist sie unter."
-    //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
     //  - "aber was tust du die Augen auf, als du aus (der Finsternis)
     //    heraus in das Tageslicht kommst, und den grünen Wald,
     //    Blumen und Vögel und die Morgensonne am Himmel erblickst"
-    //  - "Als nun die Sonne mitten über dem Walde steht..."
     //  - "die Sonne ist hinter (den Bergen) verschwunden"
     //  - "mittendurch rauscht ein klarer Bach, auf dem die Sonne glitzert"
     //  - "gegen Abend, als die Sonne hinter die Berge gesunken ist"
     //  - "der Mond lässt sein Licht über alle Felder leuchten"
-    //  -- "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt weg"
 
     // FIXME Man könnte Gegenstände in die Wetterbeschreibung einbauen
     //  "die goldene Kugel blitzt in der Sonne"
@@ -1138,7 +1385,6 @@ class WetterData {
     // FIXME Tageszeitwechsel-Angaben nach Wartezeiten
     //  "Es dauert nicht lange, so siehst du die Sonne (hinter den Bergen) aufsteigen"
 
-
     // IDEA: Regen (Problem: Dinge werden nass und trocknen nur langsam - das muss man
     //  später berücksichtigen)
     //  - "der Regen schlägt dir ins Gesicht und der Wind zaust dein Haar"
@@ -1156,7 +1402,6 @@ class WetterData {
     //  "und weil es anfängt zu regnen"
     //  "Tropfen fallen"
 
-
     // FIXME Jemand wärmt sich auf (z.B. am Feuer oder Drinnen)
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
     //  "du reibst die Hände"
@@ -1170,12 +1415,13 @@ class WetterData {
 
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
     //  onWetterwechsel()? onTemperaturWechsel()?)
-    //  "von der Hitze des Tages ermüdet"
+    //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)
     //  "du bist von der Sonnenhitze müde"
     //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
     //  "du bist von der Sonnenhitze müde"
     //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
     //  Laub, und du bist voll Freude und Lust."
+    //  SC kann bei Wind oder bei Sturm draußen nicht einschlafen
 
     @SuppressWarnings("WeakerAccess")
     @NonNull
@@ -1204,8 +1450,8 @@ class WetterData {
 
     @NonNull
     @CheckReturnValue
-    Windstaerke getWindstaerke() {
-        return windstaerke;
+    Windstaerke getWindstaerkeUnterOffenemHimmel() {
+        return windstaerkeUnterOffenemHimmel;
     }
 
     /**
@@ -1220,7 +1466,7 @@ class WetterData {
     ImmutableCollection<AbstractDescription<?>> altTimePassed(
             final AvDateTime lastTime,
             final AvDateTime currentTime,
-            final boolean tageszeitaenderungSollBeschriebenWerden,
+            final boolean tageszeitaenderungMussBeschriebenWerden,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
@@ -1229,26 +1475,51 @@ class WetterData {
                         || drinnenDraussen.isDraussen(),
                 "Bewölkungsänderungen werden nur draußen erzählt");
 
-        final boolean temperaturaenderungSollBeschriebenWerden =
+        // FIXME Änderung der Windstärke (soweit der SC sie mitbekommen haben kann)
+
+        // FIXME Wind / Sturm - dynamisch:
+        //  Der Wind wird stärker
+        //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm.
+        //  < ->  KRAEFTIGER_WIND: "es kommt ein starker Wind"
+        //  < -> STURM: Ein Sturm zieht auf
+        //  STURM -> > Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut
+        //  allmählich
+        //  ab.
+
+        // FIXME Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
+        //  (Blätter)
+        //  Der Wind wird stärker
+        //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
+        //  Blättchen mehr"
+
+        // FIXME Wind in Kombination - dynamisch
+        //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm. Kalt ist es
+        //  geworden.
+        //  WINDSTILL, TEMPERATURANSTIEG: "Die Hitze wird drückender, je näher der Mittag kommt"
+
+        // FIXME Eine Temperaturänderung könnte eine gute Gelegenheit sein, auf stärkeren Wind
+        //  hinzuweisen...
+
+        final boolean temperaturaenderungMussBeschriebenWerden =
                 temperaturChangeSofernRelevant != null;
 
-        final boolean bewoelkungsaenderungSollBeschriebenWerden =
+        final boolean bewoelkungsaenderungMussBeschriebenWerden =
                 bewoelkungChangeSofernRelevant != null;
 
-        if (!tageszeitaenderungSollBeschriebenWerden) {
+        if (!tageszeitaenderungMussBeschriebenWerden) {
             // Es soll keine Tageszeitänderung beschrieben werden
             return altTimePassedKeineTageszeitenaenderung(lastTime, currentTime,
                     temperaturChangeSofernRelevant,
                     bewoelkungChangeSofernRelevant, drinnenDraussen,
-                    temperaturaenderungSollBeschriebenWerden,
-                    bewoelkungsaenderungSollBeschriebenWerden);
+                    temperaturaenderungMussBeschriebenWerden,
+                    bewoelkungsaenderungMussBeschriebenWerden);
         }
 
         // Es soll eine Tageszeitänderung beschrieben werden
         return altTimePassedTageszeitenaenderung(lastTime, currentTime,
                 generelleTemperaturOutsideLocationTemperaturRange, temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant, drinnenDraussen,
-                bewoelkungsaenderungSollBeschriebenWerden);
+                bewoelkungsaenderungMussBeschriebenWerden);
     }
 
     private static ImmutableCollection<AbstractDescription<?>>
@@ -1257,10 +1528,10 @@ class WetterData {
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen,
-            final boolean temperaturaenderungSollBeschriebenWerden,
-            final boolean bewoelkungsaenderungSollBeschriebenWerden) {
-        if (!temperaturaenderungSollBeschriebenWerden
-                && !bewoelkungsaenderungSollBeschriebenWerden) {
+            final boolean temperaturaenderungMussBeschriebenWerden,
+            final boolean bewoelkungsaenderungMussBeschriebenWerden) {
+        if (!temperaturaenderungMussBeschriebenWerden
+                && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nichts beschreiben - außer höchtestensuntertägigem Tageszeitenwechsel
             if (!currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY)
                     && lastTime.getTageszeit() == currentTime.getTageszeit()) {
@@ -1272,16 +1543,16 @@ class WetterData {
             return ImmutableList.of();
         }
 
-        if (temperaturaenderungSollBeschriebenWerden
-                && !bewoelkungsaenderungSollBeschriebenWerden) {
+        if (temperaturaenderungMussBeschriebenWerden
+                && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Temperatur beschreiben
             return TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
                     currentTime, temperaturChangeSofernRelevant, drinnenDraussen);
             // IDEA  "Die Sonne hat die Erde aufgetaut" (bei (aktuell) unauffälliger Bewölkung)
         }
 
-        if (!temperaturaenderungSollBeschriebenWerden
-                && bewoelkungsaenderungSollBeschriebenWerden) {
+        if (!temperaturaenderungMussBeschriebenWerden
+                && bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Bewölkung beschreiben
             return BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
                     currentTime, bewoelkungChangeSofernRelevant,
@@ -1325,8 +1596,8 @@ class WetterData {
             @Nullable final
             WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen,
-            final boolean bewoelkungsaenderungSollBeschriebenWerden) {
-        if (!bewoelkungsaenderungSollBeschriebenWerden) {
+            final boolean bewoelkungsaenderungMussBeschriebenWerden) {
+        if (!bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Tageszeitenänderunge und - evtl. - Temperaturänderung beschreiben
 
             return altTageszeitenUndEvtlTemperaturaenderung(lastTime.getTageszeit(),
@@ -1368,14 +1639,15 @@ class WetterData {
         final WetterData that = (WetterData) o;
         return tageshoechsttemperatur == that.tageshoechsttemperatur &&
                 tagestiefsttemperatur == that.tagestiefsttemperatur &&
-                windstaerke == that.windstaerke &&
+                windstaerkeUnterOffenemHimmel == that.windstaerkeUnterOffenemHimmel &&
                 bewoelkung == that.bewoelkung &&
                 blitzUndDonner == that.blitzUndDonner;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(tageshoechsttemperatur, tagestiefsttemperatur, windstaerke, bewoelkung,
+        return Objects.hash(tageshoechsttemperatur, tagestiefsttemperatur,
+                windstaerkeUnterOffenemHimmel, bewoelkung,
                 blitzUndDonner);
     }
 }

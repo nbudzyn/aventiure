@@ -84,7 +84,8 @@ public class TemperaturPraedikativumDescriber {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
 
         // "die klirrend kalte Luft"
-        alt.addAll(mapToList(altLuftAdjPhr(temperatur, time.getTageszeit()), LUFT::mit));
+        alt.addAll(mapToList(altLuftAdjPhr(temperatur, time.getTageszeit()
+        ), LUFT::mit));
 
         if (time.getTageszeit() == NACHTS) {
             alt.addAll(altNaechtlicheDunkelheitNominalphrase(temperatur));
@@ -162,7 +163,8 @@ public class TemperaturPraedikativumDescriber {
                 ImmutableList.builder();
 
         // "die eiskalte Dunkelheit"
-        alt.addAll(mapToList(altLuftAdjPhr(temperatur, NACHTS), DUNKELHEIT::mit));
+        alt.addAll(mapToList(altLuftAdjPhr(temperatur, NACHTS),
+                DUNKELHEIT::mit));
 
         switch (temperatur) {
             case KLIRREND_KALT:
@@ -256,7 +258,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<AdjPhrOhneLeerstellen> altLuftAdjPhr(
+    public ImmutableList<AdjPhrOhneLeerstellen> altLuftAdjPhr(
             final Temperatur temperatur,
             final Tageszeit tageszeit) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =
@@ -621,7 +623,7 @@ public class TemperaturPraedikativumDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
+    public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr(
             final Temperatur temperatur, final boolean fuerAttributiveVerwendung) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt = ImmutableList.builder();
 
