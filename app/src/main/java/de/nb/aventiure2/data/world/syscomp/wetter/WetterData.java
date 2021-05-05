@@ -45,8 +45,10 @@ import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturSatzDescr
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeAdvAngabeWoDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeAdvAngabeWohinDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeDescDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkePraedikativumDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkePraepPhrDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeSatzDescriber;
 import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.GermanUtil;
@@ -199,6 +201,16 @@ class WetterData {
             new WindstaerkeAdvAngabeWohinDescriber(
                     WINDSTAERKE_PRAEP_PHR_DESCRIBER);
 
+    private static final WindstaerkeSatzDescriber WINDSTAERKE_SATZ_DESCRIBER =
+            new WindstaerkeSatzDescriber(
+                    TAGESZEIT_PRAEDIKATIVUM_DESCRIBER,
+                    WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final WindstaerkeDescDescriber WINDSTAERKE_DESC_DESCRIBER =
+            new WindstaerkeDescDescriber(TAGESZEIT_DESC_DESCRIBER,
+                    WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER,
+                    WINDSTAERKE_SATZ_DESCRIBER);
+
 
     // Wetterparameter etc.
     private final Temperatur tageshoechsttemperatur;
@@ -325,10 +337,7 @@ class WetterData {
         }
 
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
-            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
-            //  Vgl. mit TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER
-            //            alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus
-            //            (windstaerke, time));
+            alt.addAll(WINDSTAERKE_DESC_DESCRIBER.alt(time, windstaerke));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -348,10 +357,27 @@ class WetterData {
         }
 
         if (!bewoelkungMussBeschriebenWerden) {
-            // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+            // FIXME Wind  + TEmperatur!
+// FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
             // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
             //  beschreiben.
+            // FIXME Anbindung mit und: "...und der Wind zaust dein Haar"
+
+            // FIXME Wind in Kombination NUR MIT TEMPERATUR (oder Tageszeit) - statisch
+            //  WINDSTILL:
+            //  LUEFTCHEN:
+            //  "ein kühles Lüftchen"
+            //  "ein kühles Lüftchen streicht..."
+            //  "ein kühles Lüftchen streicht durch das Laub"
+            //  WINDIG:
+            //  "Der Wind geht kalt"
+            //  "Der Wind geht so kalt, dass dir nicht warm werden will"
+            //  "Um Mitternacht geht der Wind so kalt, dass dir nicht warm werden will"
+            //  KRAEFTIGER_WIND:
+            //  STURM:
+            //  SCHWERER STURM:
         }
+
 
         if (!windMussBeschriebenWerden && unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
@@ -368,6 +394,24 @@ class WetterData {
 
         if (unterOffenemHimmel) {
             // FIXME Hier muss der Wind mitbeschrieben werden!
+            // FIXME Anbindung mit und: "...und der Wind zaust dein Haar"
+
+            // FIXME Wind in Kombination NICHT ODER NICHT NUR MIT TEMPERATUR - statisch
+            //  WINDSTILL:
+            //  LUEFTCHEN:
+            //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts
+            //  durch das
+            //  Laub, und du..."
+            //  - "Der Himmel ist blau, die Luft mild"?!
+            //  WINDIG:
+            //   "Weiße Wölkchen ziehen am blauen Himmel über dir vorbei"
+            //  "Der Himmel ist blau und eine frische Luft weht dir entgegen"
+            //  KRAEFTIGER_WIND:
+            //  "der Wind ... und die Wolken ziehen ganz nah über deinem Haupt weg"
+            //  "Der Wind treibt Wolkenfetzen über den Sternenhimmel"
+            //  STURM:
+            //  SCHWERER STURM:
+
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
                     time,
@@ -377,6 +421,9 @@ class WetterData {
 
         return alt.schonLaenger().build();
     }
+
+    // FIXME Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
+    // FIXME  Gehen kostet dich einige Mühe -> Zeit
 
     // FIXME Wind / Sturm - statisch, ohne Bezug auf Features des Umwelt:
     //  WINDSTILL:
@@ -461,7 +508,6 @@ class WetterData {
     //  STURM:
     //  SCHWERER STURM:
     //  ORKAN:
-
 
     /**
      * Gibt alternative statische Beschreibungen von Bewölkung <i>und</i> Temperatur zurück, wie
@@ -1605,6 +1651,9 @@ class WetterData {
         return windstaerkeUnterOffenemHimmel;
     }
 
+    // IDEA Wenn man drinnen ist und die Wände dünn: "Draußen rauscht der Wind rauscht"
+
+
     /**
      * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
      * zuallermeist leer.
@@ -1647,6 +1696,11 @@ class WetterData {
         //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm. Kalt ist es
         //  geworden.
         //  WINDSTILL, TEMPERATURANSTIEG: "Die Hitze wird drückender, je näher der Mittag kommt"
+
+
+        // FIXME  "Um Mitternacht geht der Wind..." - ergibt fast nur Sinn, wenn der
+        //  SC z.B. gewartet hat o.Ä. und man nichts anderes (außer dieser Wetterveränderung)
+        //  beschreiben möchte.
 
         // FIXME Eine Temperaturänderung könnte eine gute Gelegenheit sein, auf stärkeren Wind
         //  hinzuweisen...
@@ -1802,4 +1856,8 @@ class WetterData {
                 windstaerkeUnterOffenemHimmel, bewoelkung,
                 blitzUndDonner);
     }
+
+    // FIXME WetterReactions.onChange()
+    // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
+    //  (Rapunzel zuckt zusammmen und bekommt Angst)
 }

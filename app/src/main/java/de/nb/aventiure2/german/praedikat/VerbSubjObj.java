@@ -73,6 +73,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "gemustert"),
     NEHMEN("nehmen", AKK, "nehme", "nimmst", "nimmt",
             "nehmt", Perfektbildung.HABEN, "genommen"),
+    PFEIFEN("pfeifen", DAT,
+            "pfeife", "pfeifst", "pfeift", "pfeift",
+            Perfektbildung.HABEN, "gepfiffen"),
     POLIEREN("polieren", AKK,
             "poliere", "polierst", "poliert",
             "poliert",
@@ -118,6 +121,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     WERFEN("werfen", AKK,
             "werfe", "wirfst", "wirft", "werft",
             Perfektbildung.HABEN, "geworfen"),
+    ZAUSEN("zausen", AKK,
+            "zause", "zaust", "zaust", "zaust",
+            Perfektbildung.HABEN, "gezaust"),
 
     // Partikelverben
     ABKUEHLEN(KUEHLEN, AKK, "ab", Perfektbildung.HABEN),

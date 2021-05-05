@@ -31,6 +31,7 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     HAGELN("hageln", "hagelt", "gehagelt"),
     REGNEN("regnen", "regnet", "geregnet"),
     SCHNEIEN("schneien", "schneit", "geschneit"),
+    STUERMEN("stürmen", "stürmt", "gestürmt"),
     TAUEN("tauen", "taut", "getaut"),
     WEIHNACHTEN("weihnachten", "weihnachtet", "geweihnachtet"),
     ZIEHEN("ziehen", "zieht", "gezogen");

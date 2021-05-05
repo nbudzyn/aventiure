@@ -41,6 +41,9 @@ public class Nominalphrase
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
     public static final Nominalphrase BLICK_AUF_DEN_STERNENHIMMEL =
             np(M, DEF, "Blick auf den Sternenhimmel");
+    public static final Nominalphrase DEIN_HAAR =
+            np(N, null, "dein Haar",
+                    "deinem Haar");
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
@@ -75,6 +78,9 @@ public class Nominalphrase
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase KEIN_WIND =
+            np(M, null, "kein Wind",
+                    "keinem Winde", "keinen Wind");
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
     public static final Nominalphrase VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT =
