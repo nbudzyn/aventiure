@@ -16,15 +16,29 @@ import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
  * Storys sind in gewisser Weise mit "Missionen" vergleichbar.
  */
 public enum Story {
+    // IDEA Charged Situations. Der SC muss interagieren, es könnte zu allen möglichen 
+    //  Ergebnissen / Geschehnissen kommen (pirate ship crashed on mars). Auch, wenn der SC 
+    //  passiv reagiert, hat das Auswirkungen (die er später zu sehen bekommt.
+
     // IDEA Der Spieler(charakter) als Plot-Magnet: Dinge so einrichten, dass sie
     //  - was ein Zufall! - genau dem Spieler passieren / dort passieren, wo der
     //  Spieler ist, dann passieren, wenn der Spieler es erlebt etc.
     //  Wenn das nicht möglich ist, dann Dinge (Veränderungen), die passieren,
     //  Auswirkungen haben lassen, die der SC (bald danach) mitbekommt.
+    //  Die Ereignisse müssen bereits in Gang sein, wenn der SC daherkommt. Der SC kommt zufällig 
+    //  gerade zum / kurz vor dem entscheidenden Zeitpunkt daher! ("Wir wollten gerade das Schloss
+    //  stürmen und das Klnigreich übernehnen).
+
+    // IDEA https://www.technicalgrimoire.com/downloads - alternative Ideen zum Tod
 
     // FIXME Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?
     //  Was sind die Zwischenziele? Was sind die Aktionen?
     //  Immer feiner, das aus dem Märchen nehmen, was geht, sonst improvisieren.
+
+    // IDEA Alle Dinge sollten schiefgehen können.
+    //  - Wenn etwas schiefgeht, was ist die (logsiche) Konsequenz (in der Welt)?
+    //    (Kein "geht noch nicht" vs. "try again")
+    //  - Wie entscheidet sich (ohne Zufall :-) ), wann etwas schief geht?
 
     // IDEA Storys einschließlich der Story Nodes könnten auch generiert werden,
     //  basierend auf Story-Telling-Theorien.

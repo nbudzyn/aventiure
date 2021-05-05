@@ -43,6 +43,10 @@ import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturPraedikat
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturPraepPhrDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeAdvAngabeWoDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeAdvAngabeWohinDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkePraedikativumDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkePraepPhrDescriber;
 import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.GermanUtil;
@@ -172,6 +176,24 @@ class WetterData {
     private static final BewoelkungDescDescriber BEWOELKUNG_DESC_DESCRIBER =
             new BewoelkungDescDescriber(BEWOELKUNG_SATZ_DESCRIBER);
 
+    // Wind-Describer
+    private static final WindstaerkePraedikativumDescriber WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER =
+            new WindstaerkePraedikativumDescriber();
+
+    private static final WindstaerkePraepPhrDescriber WINDSTAERKE_PRAEP_PHR_DESCRIBER =
+            new WindstaerkePraepPhrDescriber(WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER);
+
+    private static final WindstaerkeAdvAngabeWoDescriber
+            WINDSTAERKE_ADV_ANGABE_WO_DESCRIBER =
+            new WindstaerkeAdvAngabeWoDescriber(
+                    WINDSTAERKE_PRAEP_PHR_DESCRIBER);
+
+    private static final WindstaerkeAdvAngabeWohinDescriber
+            WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER =
+            new WindstaerkeAdvAngabeWohinDescriber(
+                    WINDSTAERKE_PRAEP_PHR_DESCRIBER);
+
+
     // Wetterparameter etc.
     private final Temperatur tageshoechsttemperatur;
 
@@ -298,6 +320,9 @@ class WetterData {
 
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
+            //  Vgl. mit TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER
+            //            alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus
+            //            (windstaerke, time));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -320,9 +345,18 @@ class WetterData {
             // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
         }
 
-        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+        if (!windMussBeschriebenWerden) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
+                    time,
+                    locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
 
-        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+        // Für den seltenen Fall windstaerkeMussBeschriebenWerden &&
+        //  !temperaturMussBeschriebenWerden &&
+        //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
+        //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
         // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
 
@@ -333,13 +367,11 @@ class WetterData {
 
         // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
 
-        if (unterOffenemHimmel) {
-            // Temperatur und Bewölkung werden beide erwähnt
-            alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
-                    time,
-                    locationTemperaturRange,
-                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
-        }
+        // Temperatur und Bewölkung werden beide erwähnt
+        alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
+                time,
+                locationTemperaturRange,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt.schonLaenger().build();
     }
@@ -592,6 +624,8 @@ class WetterData {
         }
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
+            // Vgl. mit TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER
+            // alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(windstaerke, time));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -617,9 +651,17 @@ class WetterData {
             //  temperatur));
         }
 
-        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+        if (!windMussBeschriebenWerden) {
+            // "Draußen ist es kühl und der Himmel ist bewölkt"
+            alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
+                    time, locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
 
-        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+        // Für den seltenen Fall windstaerkeMussBeschriebenWerden &&
+        //  !temperaturMussBeschriebenWerden &&
+        //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
+        //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
         // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
 
@@ -629,12 +671,10 @@ class WetterData {
 
         // FIXME Wind ggf.  mitbeschreiben
 
-        if (unterOffenenHimmel) {
-            // "Draußen ist es kühl und der Himmel ist bewölkt"
-            alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
-                    time, locationTemperaturRange,
-                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
-        }
+        // "Draußen ist es kühl und der Himmel ist bewölkt"
+        alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
+                time, locationTemperaturRange,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt.schonLaenger();
     }
@@ -907,7 +947,7 @@ class WetterData {
         }
 
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
-            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
+            alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(windstaerke, time));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -929,9 +969,16 @@ class WetterData {
             alt.addAll(altWohinInWindUndTemperaturHinaus(time, windstaerke, temperatur));
         }
 
-        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+        if (!windMussBeschriebenWerden) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(
+                    time, locationTemperaturRange));
+        }
 
-        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+        // Für den seltenen Fall windstaerkeMussBeschriebenWerden &&
+        //  !temperaturMussBeschriebenWerden &&
+        //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
+        //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
         // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
 
@@ -960,11 +1007,9 @@ class WetterData {
         //  "in den tobenden Sturm"
         //  "in den tosenden Sturm"
 
-        if (unterOffenenHimmel) {
-            // Temperatur und Bewölkung werden beide erwähnt
-            alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(
-                    time, locationTemperaturRange));
-        }
+        // Temperatur und Bewölkung werden beide erwähnt
+        alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(
+                time, locationTemperaturRange));
 
         return alt.build();
     }
@@ -1074,7 +1119,7 @@ class WetterData {
         }
 
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
-            // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
+            alt.addAll(WINDSTAERKE_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(windstaerke, time));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -1082,7 +1127,6 @@ class WetterData {
                 alt.addAll(BEWOELKUNG_ADV_ANGABE_WO_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
-
             }
         }
 
@@ -1090,9 +1134,16 @@ class WetterData {
             alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
         }
 
-        // FIXME Häufiger Fall: !windMussBeschriebenWerden;
+        if (!windMussBeschriebenWerden) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
+                    time, locationTemperaturRange));
+        }
 
-        // FIXME Sehr seltener Fall: !temperaturMussBeschriebenWerden
+        // Für den seltenen Fall windstaerkeMussBeschriebenWerden &&
+        //  !temperaturMussBeschriebenWerden &&
+        //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
+        //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
         // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
 
@@ -1120,11 +1171,9 @@ class WetterData {
         //  "(mitten) im tobenden Sturm"
         //  "(mitten) im tosenden Sturm"
 
-        if (unterOffenemHimmel) {
-            // Temperatur und Bewölkung werden beide erwähnt
-            alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
-                    time, locationTemperaturRange));
-        }
+        // Temperatur und Bewölkung werden beide erwähnt
+        alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
+                time, locationTemperaturRange));
 
         return alt.build();
     }
@@ -1221,6 +1270,8 @@ class WetterData {
                 break;
             case SCHWERER_STURM:
                 break;
+            default:
+                throw new IllegalArgumentException("Unexpected Windstaerke: " + windstaerke);
         }
 
         return alt.build();
