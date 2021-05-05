@@ -18,6 +18,7 @@ import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -43,6 +44,18 @@ public class Nominalphrase
     public static final Nominalphrase DEIN_HERZ =
             np(N, null, "dein Herz",
                     "deinem Herzen");
+    public static final Nominalphrase BRUETENDE_HITZE_DER_MITTAGSSONNE =
+            np(F, DEF, "brütende Hitze der Mittagssonne",
+                    "brütenden Hitze der Mittagssonne");
+    public static final Nominalphrase BRUETENDE_HITZE_DER_SONNE =
+            np(F, DEF, "brütende Hitze der Sonne",
+                    "brütenden Hitze der Sonne");
+    public static final Nominalphrase DRUECKENDE_HITZE_DER_MITTAGSSONNE =
+            np(F, DEF, "drückende Hitze der Mittagssonne",
+                    "drückenden Hitze der Mittagssonne");
+    public static final Nominalphrase DRUECKENDE_HITZE_DER_SONNE =
+            np(F, DEF, "drückende Hitze der Sonne",
+                    "drückenden Hitze der Sonne");
     public static final Nominalphrase ERSTER_SONNENSTRAHL =
             np(M, DEF, "erste Sonnenstrahl",
                     "ersten Sonnenstrahl", "ersten Sonnenstrahl");
@@ -64,6 +77,9 @@ public class Nominalphrase
             np(N, null, "ihr Ziel", "ihrem Ziel");
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
+    public static final Nominalphrase VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT =
+            np(F, DEF, "von der Sonne aufgeheizte stehende Luft",
+                    "von der Sonne aufgeheizten stehenden Luft");
 
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.

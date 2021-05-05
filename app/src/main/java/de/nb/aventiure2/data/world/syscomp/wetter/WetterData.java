@@ -71,6 +71,7 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.LUEFTCHEN;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDSTILL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BRUETEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DRUECKEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HART;
@@ -89,6 +90,11 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
+import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -345,7 +351,7 @@ class WetterData {
             // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
         }
 
-        if (!windMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
                     time,
@@ -367,11 +373,13 @@ class WetterData {
 
         // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
 
-        // Temperatur und Bewölkung werden beide erwähnt
-        alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
-                time,
-                locationTemperaturRange,
-                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        if (unterOffenemHimmel) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
+                    time,
+                    locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
 
         return alt.schonLaenger().build();
     }
@@ -651,7 +659,7 @@ class WetterData {
             //  temperatur));
         }
 
-        if (!windMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && unterOffenenHimmel) {
             // "Draußen ist es kühl und der Himmel ist bewölkt"
             alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
                     time, locationTemperaturRange,
@@ -671,10 +679,12 @@ class WetterData {
 
         // FIXME Wind ggf.  mitbeschreiben
 
-        // "Draußen ist es kühl und der Himmel ist bewölkt"
-        alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
-                time, locationTemperaturRange,
-                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        if (unterOffenenHimmel) {
+            // "Draußen ist es kühl und der Himmel ist bewölkt"
+            alt.addAll(altKommtUnterOffenenHimmelMitBewoelkungUndTemperatur(
+                    time, locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
 
         return alt.schonLaenger();
     }
@@ -969,7 +979,7 @@ class WetterData {
             alt.addAll(altWohinInWindUndTemperaturHinaus(time, windstaerke, temperatur));
         }
 
-        if (!windMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && unterOffenenHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(
                     time, locationTemperaturRange));
@@ -980,36 +990,42 @@ class WetterData {
         //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
         //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
-        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
+        if (unterOffenenHimmel) {
+            // Alles beschreiben: Wind, Temperatur und Bewölkung
+            alt.addAll(altWohinInWindBewoelkungUndTemperaturHinausUnterOffenenHimmel(
+                    time, windstaerke, locationTemperaturRange));
+        }
 
+        return alt.build();
+    }
 
-        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
-        //  WINDSTILL:
-        //  LUEFTCHEN:
-        //  WINDIG:
-        //  "in den sausenden Wind"
-        //  KRAEFTIGER_WIND
-        //  "in den kräftigen Wind"
-        //  "in den beständigen Wind"?
-        //  "in den harten Wind"
-        //  "in den pfeifenden Wind"
-        //  "in den kräfigen, unangenehmen Wind"
-        //  "in den rauschenden Wind"
-        //  STURM:
-        //  "in das Unwetter" ? (sehr unspezifizisch)
-        //  "in den Sturm"
-        //  "in den stürmenden Wind"
-        //  "in den stürmischen Tag"
-        //  "in den nächtlichen Sturm"
-        //  SCHWERER STURM:
-        //  "in den mit aller Kraft blasenden Sturm" (nur wohin?)
-        //  "in den schweren Sturm"
-        //  "in den tobenden Sturm"
-        //  "in den tosenden Sturm"
+    @NonNull
+    @CheckReturnValue
+    private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher>
+    altWohinInWindBewoelkungUndTemperaturHinausUnterOffenenHimmel(
+            final AvTime time, final Windstaerke windstaerke,
+            final EnumRange<Temperatur> locationTemperaturRange) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableSet.builder();
 
-        // Temperatur und Bewölkung werden beide erwähnt
-        alt.addAll(altWohinInBewoelkungUndTemperaturHinausUnterOffenenHimmel(
-                time, locationTemperaturRange));
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        alt.addAll(mapToSet(altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+                time, windstaerke, locationTemperaturRange),
+                np -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(np))));
+
+        alt.addAll(altWohinInWindUndTemperaturHinausPraepPhr(time, windstaerke, temperatur).stream()
+                .flatMap(inDieKaelte ->
+                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenenHimmelAkk(
+                                bewoelkung, time.getTageszeit()).stream()
+                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                        .kommaStehtAus())
+                                .map(unterHimmel ->
+                                        // "in den kalten Wind unter den bewölkten Himmel"
+                                        new AdvAngabeSkopusVerbWohinWoher(
+                                                GermanUtil.joinToString(
+                                                        inDieKaelte.getDescription(),
+                                                        unterHimmel.getDescription()))))
+                .collect(toSet()));
 
         return alt.build();
     }
@@ -1086,6 +1102,35 @@ class WetterData {
         return alt.build();
     }
 
+
+    private ImmutableSet<EinzelneSubstantivischePhrase>
+    altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+            final AvTime time, final Windstaerke windstaerke,
+            final EnumRange<Temperatur> locationTemperaturRange) {
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        if (bewoelkung.isUnauffaellig(time.getTageszeit())
+                && windstaerke == WINDSTILL) {
+            if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
+                // "von der Sonne aufgeheizte stehende Luft"
+                alt.add(VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT);
+            }
+
+            if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
+                alt.add(BRUETENDE_HITZE_DER_SONNE, DRUECKENDE_HITZE_DER_SONNE);
+
+                if (time.gegenMittag()) {
+                    alt.add(BRUETENDE_HITZE_DER_MITTAGSSONNE, DRUECKENDE_HITZE_DER_MITTAGSSONNE);
+                }
+            }
+        }
+
+        return alt.build();
+    }
+
+
     @NonNull
     @CheckReturnValue
     ImmutableSet<AdvAngabeSkopusVerbAllg> altWetterhinweisWoDraussen(
@@ -1134,7 +1179,7 @@ class WetterData {
             alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
         }
 
-        if (!windMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && unterOffenemHimmel) {
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
                     time, locationTemperaturRange));
@@ -1145,35 +1190,11 @@ class WetterData {
         //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
         //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
-        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
-
-
-        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
-        //  WINDSTILL:
-        //  LUEFTCHEN:
-        //  WINDIG:
-        //  "im sausenden Wind"
-        //  KRAEFTIGER_WIND
-        //  "im kräftigen Wind"
-        //  "im beständigen Wind"?
-        //  "im harten Wind"
-        //  "im pfeifenden Wind"
-        //  "im kräfigen, unangenehmen Wind"
-        //  "im rauschenden Wind"
-        //  STURM:
-        //  "im Unwetter" ? (sehr unspezifische - stürmischen..?)
-        //  "im den Sturm"
-        //  "im den stürmenden Wind"
-        //  "im nächtlichen Sturm"
-        //  SCHWERER STURM:
-        //  "mitten im blasenden Sturm"
-        //  "(mitten) im schweren Sturm"
-        //  "(mitten) im tobenden Sturm"
-        //  "(mitten) im tosenden Sturm"
-
-        // Temperatur und Bewölkung werden beide erwähnt
-        alt.addAll(altWoInBewoelkungUndTemperaturUnterOffenemHimmel(
-                time, locationTemperaturRange));
+        if (unterOffenemHimmel) {
+            // Alles beschreiben: Wind, Temperatur und Bewölkung
+            alt.addAll(altWoInWindBewoelkungUndTemperaturUnterOffenemHimmel(
+                    time, windstaerke, locationTemperaturRange));
+        }
 
         return alt.build();
     }
@@ -1283,7 +1304,6 @@ class WetterData {
             final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
 
-        // FIXME getLokaleWindstärkeDraussen(unterOffenemHimmel) verwenden!
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
@@ -1295,10 +1315,6 @@ class WetterData {
                 substPhr -> new AdvAngabeSkopusVerbAllg(
                         IN_DAT.mit(substPhr)
                                 .mitModAdverbOderAdjektiv("mitten"))));
-
-        alt.addAll(mapToSet(altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
-                time, locationTemperaturRange),
-                np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
 
         alt.addAll(TEMPERATUR_PRAEP_PHR_DESCRIBER.altWoDraussen(temperatur, time).stream()
                 .flatMap(inDerKaelte ->
@@ -1316,6 +1332,37 @@ class WetterData {
 
         return alt.build();
     }
+
+    private ImmutableCollection<AdvAngabeSkopusVerbAllg>
+    altWoInWindBewoelkungUndTemperaturUnterOffenemHimmel(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final EnumRange<Temperatur> locationTemperaturRange) {
+        final ImmutableSet.Builder<AdvAngabeSkopusVerbAllg> alt = ImmutableSet.builder();
+
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        alt.addAll(mapToSet(altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+                time, windstaerke, locationTemperaturRange),
+                np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
+
+        alt.addAll(altWoInWindUndTemperaturPraepPhr(time, windstaerke, temperatur).stream()
+                .flatMap(imKaltenWind ->
+                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenemHimmelDat(
+                                bewoelkung, time.getTageszeit()).stream()
+                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                        .kommaStehtAus())
+                                .map(unterHimmel ->
+                                        // "im kalten Wind unter dem bewölkten Himmel"
+                                        new AdvAngabeSkopusVerbAllg(
+                                                GermanUtil.joinToString(
+                                                        imKaltenWind.getDescription(),
+                                                        unterHimmel.getDescription()))))
+                .collect(toSet()));
+
+        return alt.build();
+    }
+
 
     // IDEA: altWann() analog zu altWetterhinweiseWoDraussen(), aber mit Satz-Skopus, und keine
     //  vollwertigen Wetterhinweise! (Flags nicht zurücksetzen!)
