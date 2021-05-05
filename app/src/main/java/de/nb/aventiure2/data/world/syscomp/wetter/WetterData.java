@@ -349,6 +349,8 @@ class WetterData {
 
         if (!bewoelkungMussBeschriebenWerden) {
             // FIXME ähnlich alt.addAll(altWoInWindUndTemperatur(time, windstaerke, temperatur));
+            // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
+            //  beschreiben.
         }
 
         if (!windMussBeschriebenWerden && unterOffenemHimmel) {
@@ -364,16 +366,8 @@ class WetterData {
         //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
         //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
-        // FIXME Immer außerdem nach allen ifs: Alles beschreiben - Wind, Temperatur und Bewölkung!
-
-
-        // FIXME Je nach windMussBeschriebenWerden ggf. Wind beschreiben
-        // FIXME: Tendenziell lassen sich Wind und Temperatur häufig gut in einem
-        //  beschreiben.
-
-        // FIXME Hier muss evtl. der Wind mitbeschrieben werden!
-
         if (unterOffenemHimmel) {
+            // FIXME Hier muss der Wind mitbeschrieben werden!
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
                     time,
@@ -632,8 +626,9 @@ class WetterData {
         }
         if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
             // FIXME nur Wind beschreiben - ähnlich altWoInWindUndTemperatur()
-            // Vgl. mit TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER
-            // alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(windstaerke, time));
+            //  Vgl. mit TEMPERATUR_ADV_ANGABE_WOHIN_DESCRIBER
+            //  alt.addAll(WINDSTAERKE_ADV_ANGABE_WOHIN_DESCRIBER.altWohinHinaus(windstaerke,
+            //  time));
         }
 
         if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
@@ -804,7 +799,6 @@ class WetterData {
 
         return alt.schonLaenger().build();
     }
-
 
     /**
      * Gibt alternative Beschreibungen für draußen für eine gleichzeitige Änderung von Temperatur
