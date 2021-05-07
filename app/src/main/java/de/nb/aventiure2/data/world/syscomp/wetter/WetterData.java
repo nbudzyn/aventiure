@@ -735,6 +735,15 @@ public class WetterData {
         return alt.build();
     }
 
+    // FIXME Man könnte (wo? / wie?) spezielle Beschreibungen dafür einauen, dass sich das SC
+    //  im Wald befindet (oder allgemein in einer Landschaftsform???):
+    //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
+    //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
+    //  - "Als nun die Sonne mitten über dem Walde steht..." (eigentlich beschreiben
+    //    wir im Wald - geschützt! - keine Sonne)
+    //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt
+    //  weg"
+
     // FIXME Statisch Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
     //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)?
     //  WINDSTILL:
@@ -2049,15 +2058,6 @@ public class WetterData {
     //     warm und verdrießlich zumut:"
     //  -- "Wie nun die Sonne kommt und du aufwachst..."
 
-    // FIXME Man könnte (wo? / wie?) spezielle Beschreibungen dafür einauen, dass sich das SC
-    //  im Wald befindet (oder allgemein in einer Landschaftsform???):
-    //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
-    //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
-    //  - "Als nun die Sonne mitten über dem Walde steht..." (eigentlich beschreiben
-    //    wir im Wald - geschützt! - keine Sonne)
-    //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt
-    //  weg"
-
     // IDEA Man könnte auch andere Features der Landschaft in die Wetterbeschreibungen einbauen:
     //  - "Du siehst die Sonne hinter den Bergen aufsteigen"
     //  - "Als aber die ersten Sonnenstrahlen in den Garten fallen, so..."
@@ -2070,16 +2070,16 @@ public class WetterData {
     //  - "gegen Abend, als die Sonne hinter die Berge gesunken ist"
     //  - "der Mond lässt sein Licht über alle Felder leuchten"
 
-    // FIXME Man könnte Gegenstände in die Wetterbeschreibung einbauen
+    // IDEA Man könnte Gegenstände in die Wetterbeschreibung einbauen
     //  "die goldene Kugel blitzt in der Sonne"
     //  "Die Abendsonne scheint über (die
-    //  glänzenden Steine), sie schimmeren und leuchten so prächtig
-    //  in allen Farben, dass..."
+    //   glänzenden Steine), sie schimmeren und leuchten so prächtig
+    //   in allen Farben, dass..."
 
     // IDEA Sonne scheint durchs Fenster hinein
     //  - "Als nun die Sonne durchs Fensterlein scheint und..."
 
-    // FIXME Wetterbeschreibungen als "Ortsangaben"
+    // IDEA Wetterbeschreibungen als "Ortsangaben"
     //  "du liegst in der Sonne ausgestreckt"
 
     // FIXME Wetterbeschreibung als "Relativsatz" (im weiteren Sinne):
@@ -2120,16 +2120,6 @@ public class WetterData {
 
     // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist
     //  [lokale Temperatur] und die Sonne heiß brennt [generelle Temperatur], so..."
-
-    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
-    //  onWetterwechsel()? onTemperaturWechsel()?)
-    //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)
-    //  "du bist von der Sonnenhitze müde"
-    //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
-    //  "du bist von der Sonnenhitze müde"
-    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
-    //  Laub, und du bist voll Freude und Lust."
-    //  SC kann bei Wind oder bei Sturm draußen nicht einschlafen
 
     @SuppressWarnings("WeakerAccess")
     @NonNull
@@ -2390,4 +2380,13 @@ public class WetterData {
     //  Geschichte notwendig)
     // FIXME Schlossfest reagiert auf Unwetter?
     // FIXME Gehen bei Sturm kostet einige Mühe -> Zeit, Müdigkeit
+    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
+    //  onWetterwechsel()? onTemperaturWechsel()?)
+    //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)
+    //  "du bist von der Sonnenhitze müde"
+    //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
+    //  "du bist von der Sonnenhitze müde"
+    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
+    //  Laub, und du bist voll Freude und Lust."
+    //  SC kann bei Wind oder bei Sturm draußen nicht einschlafen
 }
