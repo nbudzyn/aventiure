@@ -126,8 +126,9 @@ public class EinzelnerSatz implements Satz {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz);
     }
 
-    private EinzelnerSatz mitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
-        return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz);
+    private EinzelnerSatz mitSubjektExpletivesEs() {
+        return new EinzelnerSatz(anschlusswort, Personalpronomen.EXPLETIVES_ES, praedikat,
+                angabensatz);
     }
 
     @Override
@@ -179,7 +180,7 @@ public class EinzelnerSatz implements Satz {
     @Override
     public EinzelnerSatz perfekt() {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.perfekt(),
-                angabensatz.perfekt());
+                angabensatz != null ? angabensatz.perfekt() : null);
     }
 
     @Override
@@ -300,7 +301,7 @@ public class EinzelnerSatz implements Satz {
         if (subjekt == null && praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()
                 && getSpeziellesVorfeldSehrErwuenscht() != null) {
             // "Es friert mich".
-            res.add(mitSubjekt(Personalpronomen.EXPLETIVES_ES).getVerbzweitsatzStandard());
+            res.add(mitSubjektExpletivesEs().getVerbzweitsatzStandard());
         }
 
         @Nullable final Konstituentenfolge speziellesVorfeld =

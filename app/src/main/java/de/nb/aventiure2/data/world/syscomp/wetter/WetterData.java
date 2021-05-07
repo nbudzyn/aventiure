@@ -735,11 +735,8 @@ public class WetterData {
         return alt.build();
     }
 
-    // FIXME Ein ziemlicher Krach (Hexe geht nicht mehr spazieren. Schlossfest?!)
-    // FIXME  Gehen kostet dich einige Mühe -> Zeit
-
-    // FIXME Wind / Sturm - statisch, unter Bezug auf Features des Umwelt
-    //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)
+    // FIXME Statisch Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
+    //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)?
     //  WINDSTILL:
     //   "...und kein Lüftchen streicht durch das Laub"
     //  "Es geht kein Wind, und bewegt sich kein Blättchen"
@@ -2389,4 +2386,8 @@ public class WetterData {
     // FIXME WetterReactions.onChange()
     // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
     //  (Rapunzel zuckt zusammmen und bekommt Angst)
+    // FIXME Bei starkem Wind geht die Zauberin nicht mehr spazieren (außer es wäre für die
+    //  Geschichte notwendig)
+    // FIXME Schlossfest reagiert auf Unwetter?
+    // FIXME Gehen bei Sturm kostet einige Mühe -> Zeit, Müdigkeit
 }
