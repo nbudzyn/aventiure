@@ -328,5 +328,4 @@ public class TemperaturDescDescriber {
 
         return alt.schonLaenger().build();
     }
-
 }

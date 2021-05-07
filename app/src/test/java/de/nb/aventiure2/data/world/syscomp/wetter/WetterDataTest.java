@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import org.junit.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import de.nb.aventiure2.data.time.AvTime;
@@ -17,6 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static java.util.Arrays.asList;
 
 public class WetterDataTest {
     @Test
@@ -182,7 +182,7 @@ public class WetterDataTest {
     }
 
     @Test
-    public void altTemperaturUnterschiedZuVorLocationNieLeer() {
+    public void altAngenehmereTemperaturOderWindAlsVorLocationNieLeer_Temperatur() {
         // GIVEN, WHEN, THEN
         for (final Temperatur tagestiefsttemperatur : Temperatur.values()) {
             for (final Temperatur tageshoechsttemperatur : Temperatur.values()) {
@@ -200,31 +200,32 @@ public class WetterDataTest {
                                             + tageshoechsttemperatur + " "
                                             + time);
 
-                            assertThat(underTest.altTemperaturUnterschiedZuVorLocation(
-                                    time,
-                                    EnumRange.of(tagestiefsttemperatur,
-                                            tageshoechsttemperatur),
-                                    delta)
+                            assertThat(underTest
+                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                            time,
+                                            EnumRange.of(tagestiefsttemperatur,
+                                                    tageshoechsttemperatur),
+                                            delta, Windstaerke.STURM, Windstaerke.STURM)
                                     .isEmpty()).isFalse();
 
-                            assertThat(underTest.altTemperaturUnterschiedZuVorLocation(
-                                    time,
-                                    EnumRange
-                                            .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
-                                                    Temperatur.KUEHL),
-                                    delta)
+                            assertThat(underTest
+                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                            time,
+                                            EnumRange
+                                                    .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
+                                                            Temperatur.KUEHL),
+                                            delta, Windstaerke.LUEFTCHEN, Windstaerke.LUEFTCHEN)
                                     .isEmpty()).isFalse();
                         }
                     }
                 }
             }
-
         }
     }
 
     @NonNull
     private static List<AvTime> relevantTimes() {
-        return Arrays.asList(oClock(5, 45),
+        return asList(oClock(5, 45),
                 oClock(6, 15),
                 oClock(12), oClock(14), oClock(18, 20),
                 oClock(18, 45),

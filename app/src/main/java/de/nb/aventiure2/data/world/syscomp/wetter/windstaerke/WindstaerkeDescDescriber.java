@@ -10,18 +10,76 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeDescDescriber {
+    private final WindstaerkePraedikativumDescriber praedikativumDescriber;
     private final WindstaerkeSatzDescriber satzDescriber;
 
-    public WindstaerkeDescDescriber(final WindstaerkeSatzDescriber satzDescriber) {
+    public WindstaerkeDescDescriber(final WindstaerkeSatzDescriber satzDescriber,
+                                    final WindstaerkePraedikativumDescriber praedikativumDescriber) {
         this.satzDescriber = satzDescriber;
+        this.praedikativumDescriber = praedikativumDescriber;
     }
 
+    /**
+     * Gibt Beschreibungen zurück, wenn der SC aus dem Wind nach drinnen kommt -
+     * je nach Windstärke oft leer.
+     */
+    public ImmutableCollection<AbstractDescription<?>> altKommtNachDrinnen(
+            final AvTime time,
+            final Windstaerke windstaerkeFrom) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+        if (windstaerkeFrom.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
+                    windUndWetter ->
+                            du("bist",
+                                    "hier vor", windUndWetter.datK(),
+                                    "geschützt").mitVorfeldSatzglied("hier")));
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
+                    windUndWetter ->
+                            du("findest",
+                                    "hier Zuflucht vor", windUndWetter.datK())
+                                    .mitVorfeldSatzglied("hier")));
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
+                    windUndWetter ->
+                            du("findest",
+                                    "hier Schutz vor", windUndWetter.datK())
+                                    .mitVorfeldSatzglied("hier")));
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt Beschreibungen zurück, wenn der SC in einen windgeschützteren Bereich kommt -
+     * je nach Windstärke oft leer.
+     */
+    public ImmutableCollection<AbstractDescription<?>> altAngenehmerAlsVorLocation(
+            final Windstaerke windstaerkeFrom,
+            final Windstaerke windstaerkeTo) {
+        checkArgument(windstaerkeFrom.compareTo(windstaerkeTo) > 0);
+
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.addAll(satzDescriber.altAngenehmerAlsVorLocation(windstaerkeFrom, windstaerkeTo));
+
+        if (windstaerkeFrom.compareTo(Windstaerke.WINDIG) >= 0) {
+            alt.add(du("suchst", "so ein wenig Schutz vor dem Wetter")
+                    .mitVorfeldSatzglied("so"));
+        }
+
+        return alt.schonLaenger().build();
+    }
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die die Windstärke

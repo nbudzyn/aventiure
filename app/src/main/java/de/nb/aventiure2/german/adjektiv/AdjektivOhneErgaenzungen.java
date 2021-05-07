@@ -185,6 +185,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     WAERMER("wärmer"),
     WEISS("weiß"),
     WINDIG("windig"),
+    WINDGESCHUETZT("windgeschützt"),
     WINDSTILL("windstill"),
     WOLKENLOS("wolkenlos"),
     WOLKENVERHANGEN("wolkenverhangen"),

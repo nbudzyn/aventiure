@@ -227,12 +227,11 @@ public class WetterData {
                     WINDSTAERKE_PRAEP_PHR_DESCRIBER);
 
     private static final WindstaerkeSatzDescriber WINDSTAERKE_SATZ_DESCRIBER =
-            new WindstaerkeSatzDescriber(
-            );
+            new WindstaerkeSatzDescriber();
 
     private static final WindstaerkeDescDescriber WINDSTAERKE_DESC_DESCRIBER =
             new WindstaerkeDescDescriber(
-                    WINDSTAERKE_SATZ_DESCRIBER);
+                    WINDSTAERKE_SATZ_DESCRIBER, WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER);
 
 
     // Wetterparameter etc.
@@ -1438,20 +1437,36 @@ public class WetterData {
     @NonNull
     @CheckReturnValue
     ImmutableCollection<AbstractDescription<?>>
-    altTemperaturUnterschiedZuVorLocation(
+    altAngenehmereTemperaturOderWindAlsVorLocation(
             final AvTime time, final EnumRange<Temperatur> locationTemperaturRange,
-            final int delta) {
+            final int deltaTemperatur,
+            @Nullable final Windstaerke windstaerkeFromSofernRelevant,
+            @Nullable final Windstaerke windstaerkeTo) {
+        checkArgument(windstaerkeTo == null
+                        || windstaerkeFromSofernRelevant != null,
+                "Wenn eine windstaerkeTo angegeben ist, muss auch eine "
+                        + "(relevante) Windstärke-From angegeben sein");
+
+        if (windstaerkeFromSofernRelevant != null) {
+            // Wind-Beschreibung ist hier relevanter als Temperatur.
+            // Lässt der Wind nach, merkt man eine gleichzeitig nachlassende
+            // Temperatur gar nicht.
+            if (windstaerkeTo == null) {
+                return WINDSTAERKE_DESC_DESCRIBER.altKommtNachDrinnen(
+                        time, windstaerkeFromSofernRelevant);
+            }
+
+            return WINDSTAERKE_DESC_DESCRIBER.altAngenehmerAlsVorLocation(
+                    windstaerkeFromSofernRelevant, windstaerkeTo);
+        }
+
         return alt()
                 .addAll(TEMPERATUR_SATZ_DESCRIBER.altDeutlicherUnterschiedZuVorLocation(
                         getLokaleTemperatur(time, locationTemperaturRange),
-                        delta))
+                        deltaTemperatur))
                 .schonLaenger()
                 .build();
     }
-
-    // FIXME altWindstaerkeUnterschiedZuVorLocation,
-    //  getLokaleWindstärkeDraussen(unterOffenemHimmel) verwenden!
-    //  Ggf. zusammenfassen in der Art xyz soll beschrieben werden?!!
 
     @NonNull
     @CheckReturnValue
@@ -1972,7 +1987,7 @@ public class WetterData {
                         unterOffenemHimmel);
     }
 
-    private Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
+    Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
         if (unterOffenemHimmel) {
             return windstaerkeUnterOffenemHimmel;
         }
@@ -2015,7 +2030,6 @@ public class WetterData {
     //  -- "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streicht durch das
     //      Laub, und du..."
 
-
     // FIXME Automatisch generieren:  "Ein Tageszeitenwechsel ist eingetreten: Es passiert dies
     //  und das"
     //  -- "Nun ist die Sonne unter:"
@@ -2057,6 +2071,10 @@ public class WetterData {
     //  -- "Wie du nun (dies und jenes tust) und zu Mittag die Sonne heiß brennt, wird dir so
     //     warm und verdrießlich zumut:"
     //  -- "Wie nun die Sonne kommt und du aufwachst..."
+
+    // FIXME automatisch generieren: "Du tust dies und jenes, folgende angenehme lokale
+    //  Wetterveränderung zu nutzen":
+    //  "Du gehst nach dem Wald zu, dort ein wenig Schutz vor dem Wetter zu suchen"
 
     // IDEA Man könnte auch andere Features der Landschaft in die Wetterbeschreibungen einbauen:
     //  - "Du siehst die Sonne hinter den Bergen aufsteigen"

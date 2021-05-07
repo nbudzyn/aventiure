@@ -24,6 +24,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
@@ -135,6 +136,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     ImmutableCollection<AbstractDescription<?>> altOnScEnter(
             final AvDateTime time,
+            final DrinnenDraussen drinnenDraussenFrom,
+            final DrinnenDraussen drinnenDraussenTo,
             @Nullable final EnumRange<Temperatur> locationTemperaturRangeFrom,
             final EnumRange<Temperatur> locationTemperaturRangeTo) {
         if (locationTemperaturRangeFrom == null) {
@@ -149,24 +152,50 @@ public class WetterPCD extends AbstractPersistentComponentData {
         final Temperatur temperaturFrom = getLokaleTemperatur(time, locationTemperaturRangeFrom);
         final Temperatur temperaturTo = getLokaleTemperatur(time, locationTemperaturRangeTo);
 
-        final int delta = temperaturTo.minus(temperaturFrom);
+        final int deltaTemperatur = temperaturTo.minus(temperaturFrom);
 
-        if (Math.abs(delta) < 2) {
-            return ImmutableList.of();
-        }
+        @Nullable final Windstaerke windstaerkeFrom =
+                drinnenDraussenFrom.isDraussen() ?
+                        getLokaleWindstaerkeDraussen(
+                                drinnenDraussenFrom == DRAUSSEN_UNTER_OFFENEM_HIMMEL) :
+                        null;
+        @Nullable final Windstaerke windstaerkeTo =
+                drinnenDraussenTo.isDraussen() ?
+                        getLokaleWindstaerkeDraussen(
+                                drinnenDraussenTo == DRAUSSEN_UNTER_OFFENEM_HIMMEL) :
+                        null;
 
-        if ( // Es ist wärmer als an der Location zu vor - aber nicht zu warm...
-                (delta > 0 && temperaturTo.compareTo(Temperatur.WARM) <= 0)
+        final boolean temperaturAuffaelligAngenehmerInToAlsInFrom = Math.abs(deltaTemperatur) >= 2
+                && (
+                // Es ist wärmer als an der Location zu vor - aber nicht zu warm...
+                (deltaTemperatur > 0 && temperaturTo.compareTo(Temperatur.WARM) <= 0)
                         // ...oder es ist kälter als an der Location zu vor - aber nicht zu kalt:
-                        || (delta < 0 && temperaturTo.compareTo(Temperatur.KUEHL) >= 0)) {
-            // Die Temperatur ist angenehmer als an der Location zuvor.
-            return wetter.altTemperaturUnterschiedZuVorLocation(
-                    time.getTime(), locationTemperaturRangeTo, delta);
+                        || (deltaTemperatur < 0
+                        && temperaturTo.compareTo(Temperatur.KUEHL) >= 0));
+
+        final boolean windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom =
+                windstaerkeFrom != null
+                        && windstaerkeFrom.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0
+                        && (windstaerkeTo == null || windstaerkeFrom.compareTo(windstaerkeTo) > 0);
+
+        if (temperaturAuffaelligAngenehmerInToAlsInFrom
+                || windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom) {
+            // Die Temperatur oder Windverhältnisse sind auffällig angenehmer als an der Location
+            // zuvor.
+            return wetter.altAngenehmereTemperaturOderWindAlsVorLocation(
+                    time.getTime(), locationTemperaturRangeTo,
+                    temperaturAuffaelligAngenehmerInToAlsInFrom ? deltaTemperatur : 0,
+                    windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom ?
+                            windstaerkeFrom : null,
+                    windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom ? windstaerkeTo : null);
         }
 
         // Die Temperatur ist (wieder) unangenehmer als an der Location zuvor.
+        final boolean temperaturAuffaelligUnangenehmerInToAlsInFrom =
+                Math.abs(deltaTemperatur) >= 2
+                        && !temperaturTo.isUnauffaellig(time.getTageszeit());
 
-        if (!temperaturTo.isUnauffaellig(time.getTageszeit())) {
+        if (temperaturAuffaelligUnangenehmerInToAlsInFrom) {
             // Wir merken uns, dass später noch einmal auf das unangenehme Wetter
             // hingewiesen werden soll. Und zwar, wenn der SC wieder unter offenen Himmel
             // kommt - dann ist das Wetter sicher am auffälligsten.
@@ -300,6 +329,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
         @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant =
                 handleBewoelkungChange(startTime, endTime, drinnenDraussen);
 
+        setGgfSpaeterWetterBeschreibenWegenWind(drinnenDraussen);
+
         final ImmutableCollection<AbstractDescription<?>> alt = altTimePassed(
                 startTime, endTime,
                 !locationTemperaturRange.isInRange(currentGenerelleTemperatur),
@@ -311,6 +342,26 @@ public class WetterPCD extends AbstractPersistentComponentData {
         setLastBewoelkung(wetter.getBewoelkung());
 
         return alt;
+    }
+
+    private void setGgfSpaeterWetterBeschreibenWegenWind(final DrinnenDraussen drinnenDraussen) {
+        if (!drinnenDraussen.isDraussen()
+                && !getLokaleWindstaerkeDraussen(true).isUnauffaellig()) {
+            // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC wieder
+            // raus kommt. Auch "einmalige Erlebnisse nach Tageszeitenwechsel"
+            // (erster Sonnenstrahl o.Ä.) sollen (einmalig :-) ) erzählt werden.
+            setWennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel(
+                    true);
+        }
+
+        if (drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL
+                && getLokaleWindstaerkeDraussen(false) !=
+                getLokaleWindstaerkeDraussen(true)) {
+            // Der SC ist an einem windgeschützten Ort.
+            // Wenn er dann wieder unter offenen Himmel kommt, soll der Wind-ohne-Schutz
+            // beschrieben werden.
+            setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
+        }
     }
 
     @Nullable
@@ -646,6 +697,14 @@ public class WetterPCD extends AbstractPersistentComponentData {
         // "qualifizierter" Wetterhinweis gegeben wurde
 
         return wetter.getLokaleTemperatur(time.getTime(), locationTemperaturRange);
+    }
+
+    @NonNull
+    private Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
+        // Nur weil die Windstärke abgefragt wird, gehen wir nicht davon aus, dass ein
+        // "qualifizierter" Wetterhinweis gegeben wurde
+
+        return wetter.getLokaleWindstaerkeDraussen(unterOffenemHimmel);
     }
 
     // FIXME getLokaleWindstaerke?

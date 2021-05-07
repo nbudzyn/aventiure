@@ -82,6 +82,8 @@ public class Nominalphrase
                     "keinem Winde", "keinen Wind");
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
+    public static final Nominalphrase SCHUTZ_VOR_DEM_AERGSTEN_STURM =
+            np(M, null, "Schutz vor dem ärgsten Sturm");
     public static final Nominalphrase VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT =
             np(F, DEF, "von der Sonne aufgeheizte stehende Luft",
                     "von der Sonne aufgeheizten stehenden Luft");

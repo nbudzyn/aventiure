@@ -89,4 +89,8 @@ public enum Windstaerke {
 
         return values()[ordinal() + 1];
     }
+
+    public int minus(final Windstaerke other) {
+        return ordinal() - other.ordinal();
+    }
 }

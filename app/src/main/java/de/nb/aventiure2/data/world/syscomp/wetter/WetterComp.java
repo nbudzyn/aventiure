@@ -227,6 +227,12 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
                 requirePcd().altOnScEnter(
                         timeTaker.now(),
                         from != null ?
+                                from.storingPlaceComp().getDrinnenDraussen() :
+                                DRINNEN,
+                        to != null ?
+                                to.storingPlaceComp().getDrinnenDraussen() :
+                                DRINNEN,
+                        from != null ?
                                 from.storingPlaceComp().getEffectiveTemperaturRange() :
                                 null,
                         to.storingPlaceComp().getEffectiveTemperaturRange());
