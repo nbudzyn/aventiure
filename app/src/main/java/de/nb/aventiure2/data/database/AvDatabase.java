@@ -123,6 +123,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 //  "In a real app, you should consider setting a directory for Room to [...] export the
 //  schema so you can check the current schema into your version control system."
 public abstract class AvDatabase extends RoomDatabase {
+    // FIXME internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
+    //  Möglichkeit dieses Log - inkl. dem erzeugten Story Text - jederzeit
+    //  zu sharen, d.h. zb per E-Mail zu versenden
+    // FIXME Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
+    //  hat - inkl. der Differenz zur vorgesehenen Schrittzahl.
+    //  Klug einberechnen, dass mehrere Story Steps gleichzeit offen sind!
+    //  (Also addieren o.Ä.)
+
     private static final String DATABASE_NAME = "aventiureDatabase";
 
     @VisibleForTesting

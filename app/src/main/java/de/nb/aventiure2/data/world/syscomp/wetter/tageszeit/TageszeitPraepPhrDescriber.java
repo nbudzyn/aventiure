@@ -31,7 +31,6 @@ public class TageszeitPraepPhrDescriber {
     ImmutableSet<Praepositionalphrase> altWohinHinaus(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
         // "in die beginnende Nacht", "ins Helle"
         return mapToSet(praedikativumDescriber.altSubstPhr(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, true),
@@ -45,7 +44,6 @@ public class TageszeitPraepPhrDescriber {
     ImmutableSet<Praepositionalphrase> altWoDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
         // "im Hellen", "in der Dunkelheit", "im nächtlichen Dunkel"
         return mapToSet(praedikativumDescriber.altSubstPhr(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, false),

@@ -45,8 +45,6 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -54,8 +52,6 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Arrays.asList;
 
@@ -977,23 +973,23 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 
         res.addAll(mapToList(altMuedigkeitAdjPhr(),
-                p -> du(PARAGRAPH, praedikativumPraedikatWerdenMit(p), PARAGRAPH)));
+                p -> du(PARAGRAPH, p.alsWerdenPraedikativumPraedikat(), PARAGRAPH)));
 
         res.addAll(mapToList(altMuedigkeitAdjPhr(),
-                p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)));
+                p -> du(PARAGRAPH, p.alsPraedikativumPraedikat(), PARAGRAPH)));
 
         res.addAll(mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH, "fühlst",
-                "dich auf einmal", p.getPraedikativ(P2, SG), PARAGRAPH)
+                "dich auf einmal", p.getPraedikativ(World.duSc()), PARAGRAPH)
                 .mitVorfeldSatzglied("auf einmal")));
 
         res.addAll(
                 mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH,
-                        praedikativumPraedikatMit(p).mitAdvAngabe(
+                        p.alsPraedikativumPraedikat().mitAdvAngabe(
                                 new AdvAngabeSkopusSatz("auf einmal")),
                         PARAGRAPH)));
 
         res.addAll(mapToList(altMuedigkeitAdjPhr(),
-                p -> du(PARAGRAPH, praedikativumPraedikatMit(p).mitAdvAngabe(
+                p -> du(PARAGRAPH, p.alsPraedikativumPraedikat().mitAdvAngabe(
                         new AdvAngabeSkopusSatz("mit einem Mal")),
                         PARAGRAPH)));
 
@@ -1129,11 +1125,11 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
         res.addAll(
                 mapToList(altMuedigkeitAdjPhr(),
-                        p -> du(PARAGRAPH, praedikativumPraedikatMit(p), PARAGRAPH)
+                        p -> du(PARAGRAPH, p.alsPraedikativumPraedikat(), PARAGRAPH)
                                 .schonLaenger()));
 
         res.addAll(mapToList(altMuedigkeitAdjPhr(), p -> du(PARAGRAPH, "fühlst",
-                "dich", p.getPraedikativ(P2, SG), PARAGRAPH)
+                "dich", p.getPraedikativ(World.duSc()), PARAGRAPH)
                 .schonLaenger()));
 
         if (getMuedigkeit() == FeelingIntensity.NUR_LEICHT) {

@@ -87,7 +87,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * @param maxDuration          Die Zeit bis das Planwetter spätestens eingetreten sein soll
      *                             (circa).
      */
-    public void setPlanwetter(final WetterData planwetter,
+    public void setPlanwetter(@Nullable final WetterData planwetter,
                               final boolean firstStepTakesNoTime,
                               @Nullable final AvTimeSpan maxDuration) {
         if (planwetter == null) {

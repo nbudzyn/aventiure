@@ -4,10 +4,10 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
+import de.nb.aventiure2.german.praedikat.WerdenUtil;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
@@ -22,12 +22,13 @@ public interface Praedikativum {
                 zweitesPraedikativum);
     }
 
+
     default EinzelnerSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
 
     default EinzelnerSatz alsEsIstSatz(@Nullable final String anschlusswort) {
-        return praedikativumPraedikatMit(this)
+        return alsPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
     }
@@ -37,9 +38,19 @@ public interface Praedikativum {
     }
 
     default EinzelnerSatz alsEsWirdSatz(@Nullable final String anschlusswort) {
-        return praedikativumPraedikatWerdenMit(this)
+        return alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
+    }
+
+    default PraedikativumPraedikatOhneLeerstellen alsPraedikativumPraedikat() {
+        return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
+                this);
+    }
+
+    default PraedikativumPraedikatOhneLeerstellen alsWerdenPraedikativumPraedikat() {
+        return new PraedikativumPraedikatOhneLeerstellen(
+                WerdenUtil.VERB, this);
     }
 
     /**
@@ -52,6 +63,14 @@ public interface Praedikativum {
             final Person person, final Numerus numerus) {
         return getPraedikativ(person, numerus).cutLast(
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
+    }
+
+    /**
+     * Gibt die prädikative Form zurück: "hoch", "glücklich, dich zu sehen",
+     * "glücklich, sich erheben zu dürfen"
+     */
+    default Konstituentenfolge getPraedikativ(final SubstantivischePhrase bezug) {
+        return getPraedikativ(bezug.getPerson(), bezug.getNumerus());
     }
 
     /**

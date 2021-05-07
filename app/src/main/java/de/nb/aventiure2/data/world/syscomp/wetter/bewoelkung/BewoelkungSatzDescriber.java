@@ -73,8 +73,6 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.praedikat.Modalverb.WOLLEN;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_AUFBAUEN;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_BEWOELKEN;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_BEZIEHEN;
@@ -236,7 +234,7 @@ public class BewoelkungSatzDescriber {
             // "Jetzt ist der Himmel wieder wolkenlos"
             alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(
                     change.getNachher(), time.getTageszeit()),
-                    a -> praedikativumPraedikatMit(a)
+                    a -> a.alsPraedikativumPraedikat()
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
                             .alsSatzMitSubjekt(HIMMEL)
                             .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))));
@@ -244,7 +242,7 @@ public class BewoelkungSatzDescriber {
             if (delta > 0) {
                 if (change.getNachher() == WOLKENLOS
                         && time.getTageszeit() != NACHTS) {
-                    alt.add(praedikativumPraedikatMit(BLAU.mitGraduativerAngabe("vollständig"))
+                    alt.add(BLAU.mitGraduativerAngabe("vollständig").alsPraedikativumPraedikat()
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
                             .alsSatzMitSubjekt(HIMMEL));
                 }
@@ -296,7 +294,7 @@ public class BewoelkungSatzDescriber {
                 break;
             case BEWOELKT:
                 if (tageszeit != NACHTS) {
-                    alt.add(praedikativumPraedikatWerdenMit(DUNKLER).alsSatzMitSubjekt(WOLKEN));
+                    alt.add(DUNKLER.alsWerdenPraedikativumPraedikat().alsSatzMitSubjekt(WOLKEN));
                 }
 
                 alt.add(SICH_VERDUNKELN.alsSatzMitSubjekt(HIMMEL),
@@ -353,7 +351,7 @@ public class BewoelkungSatzDescriber {
         switch (endBewoelkung) {
             case WOLKENLOS:
                 if (tageszeit == NACHTS) {
-                    alt.add(praedikativumPraedikatWerdenMit(STERNENKLAR)
+                    alt.add(STERNENKLAR.alsWerdenPraedikativumPraedikat()
                             .alsSatzMitSubjekt(NACHT)
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("jetzt")));
                 } else {
@@ -576,7 +574,7 @@ public class BewoelkungSatzDescriber {
 
         // "der Himmel ist wolkenlos"
         alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(bewoelkung, tageszeit),
-                a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(HIMMEL)));
+                a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(HIMMEL)));
 
         // "es ist ein grauer Morgen"
         // "ein schummriger Morgen"
@@ -607,7 +605,7 @@ public class BewoelkungSatzDescriber {
         switch (bewoelkung) {
             case WOLKENLOS:
                 if (tageszeit != NACHTS) {
-                    alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BLAU)
+                    alt.add(AdjektivOhneErgaenzungen.BLAU.alsPraedikativumPraedikat()
                             .alsSatzMitSubjekt(HIMMEL));
                 }
                 alt.addAll(mapToList(tageszeit.altGestirn(), gestirn ->
@@ -655,7 +653,7 @@ public class BewoelkungSatzDescriber {
                 }
 
                 if (tageszeit == Tageszeit.NACHTS) {
-                    alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.ERHELLT)
+                    alt.add(AdjektivOhneErgaenzungen.ERHELLT.alsPraedikativumPraedikat()
                             .mitAdvAngabe(
                                     new AdvAngabeSkopusVerbAllg("vom Mond"))
                             .alsSatzMitSubjekt(NACHT));
@@ -688,13 +686,12 @@ public class BewoelkungSatzDescriber {
                 break;
 
             case BEWOELKT:
-                alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEWOELKT)
+                alt.add(AdjektivOhneErgaenzungen.BEWOELKT.alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(HIMMEL));
-                alt.addAll(mapToList(tageszeit.altGestirn(), gestirn ->
-                        // "Der Mond ist gerade von einer dunklen Wolke bedeckt")
-                        praedikativumPraedikatMit(AdjektivOhneErgaenzungen.BEDECKT
+                alt.addAll(mapToList(tageszeit.altGestirn(),
+                        gestirn -> AdjektivOhneErgaenzungen.BEDECKT
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz(
-                                        "von einer dunklen Wolke")))
+                                        "von einer dunklen Wolke")).alsPraedikativumPraedikat()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))
                                 .alsSatzMitSubjekt(gestirn)));
                 break;
@@ -703,7 +700,7 @@ public class BewoelkungSatzDescriber {
                         // "Düstere Wolken bedecken den ganzen Himmel"
                         BEDECKEN.mit(np(GANZ, HIMMEL))
                                 .alsSatzMitSubjekt(np(INDEF, DUESTER, WOLKEN)));
-                alt.add(praedikativumPraedikatMit(AdjektivOhneErgaenzungen.WOLKENVERHANGEN)
+                alt.add(AdjektivOhneErgaenzungen.WOLKENVERHANGEN.alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(HIMMEL));
                 break;
             default:

@@ -118,6 +118,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Binsen, Seil flechten...
     //  - "du rupfst Binsen und flichst ein weiches Seil daraus"
+    //  -- oder Seilflechten erst von eine (alten? armen?) Frau lernen? ("Mentor")
     //  - "Binsenseil"
     //  - "Sprossen"
     //  - "steigst die Leiter herauf"

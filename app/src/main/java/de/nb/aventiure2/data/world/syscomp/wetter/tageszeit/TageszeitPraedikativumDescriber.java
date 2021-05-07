@@ -29,7 +29,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"MethodMayBeStatic"})
 public class TageszeitPraedikativumDescriber {
     /**
      * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht" - eventuell leer, wenn

@@ -24,17 +24,13 @@ import static java.util.stream.Collectors.toSet;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungAdvAngabeWohinDescriber {
-    private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
     private final BewoelkungPraepPhrDescriber praepPhrDescriber;
 
     public BewoelkungAdvAngabeWohinDescriber(
-            final BewoelkungPraepPhrDescriber praepPhrDescriber,
-            final BewoelkungPraedikativumDescriber praedikativumDescriber) {
+            final BewoelkungPraepPhrDescriber praepPhrDescriber) {
         this.praepPhrDescriber = praepPhrDescriber;
-        this.praedikativumDescriber = praedikativumDescriber;
     }
 
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altHinausUnterOffenenHimmel(

@@ -26,8 +26,6 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
@@ -166,7 +164,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                         "die Augen von selber zu und du schläfst ein"));
             }
             alt.addAll(altNeueSaetze(sc.feelingsComp().altMuedigkeitAdjPhr().stream()
-                            .map(a -> a.getPraedikativ(P2, SG)), // müde
+                            .map(a -> a.getPraedikativ(World.duSc())), // müde
                     "wie du bist schläfst du sofort ein"));
         }
 

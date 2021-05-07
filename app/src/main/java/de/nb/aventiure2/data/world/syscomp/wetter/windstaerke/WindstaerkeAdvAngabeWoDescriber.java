@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
 import static de.nb.aventiure2.util.StreamUtil.*;
 
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeAdvAngabeWoDescriber {
     private final WindstaerkePraepPhrDescriber praepPhrDescriber;
 

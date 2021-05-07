@@ -47,7 +47,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STERNENZELT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TAG;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANBRECHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toSet;
@@ -198,8 +197,7 @@ public enum Tageszeit {
      * Gibt einen Satz zurück wie "und es wird Morgen" oder "und es wird Tag".
      */
     private EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
-        return praedikativumPraedikatWerdenMit(
-                npArtikellos(nomenFlexionsspalte))
+        return npArtikellos(nomenFlexionsspalte).alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
     }
 

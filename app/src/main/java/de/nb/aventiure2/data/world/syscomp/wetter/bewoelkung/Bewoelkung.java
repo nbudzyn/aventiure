@@ -5,7 +5,6 @@ import de.nb.aventiure2.data.world.base.Betweenable;
 
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 
-@SuppressWarnings("DuplicateBranchesInSwitch")
 public enum Bewoelkung implements Betweenable<Bewoelkung> {
     // Reihenfolge ist relevant, nicht ändern!
     WOLKENLOS,

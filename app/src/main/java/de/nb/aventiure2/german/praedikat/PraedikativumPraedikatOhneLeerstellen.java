@@ -37,21 +37,9 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Komplement
     private final Praedikativum praedikativum;
 
-    public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatWerdenMit(
-            final Praedikativum praedikativum) {
-        return new PraedikativumPraedikatOhneLeerstellen(WerdenUtil.VERB,
-                praedikativum);
-    }
-
-    public static PraedikativumPraedikatOhneLeerstellen praedikativumPraedikatMit(
-            final Praedikativum praedikativum) {
-        return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
-                praedikativum);
-    }
-
     @Valenz
-    private PraedikativumPraedikatOhneLeerstellen(final Verb verb,
-                                                  final Praedikativum praedikativum) {
+    public PraedikativumPraedikatOhneLeerstellen(final Verb verb,
+                                                 final Praedikativum praedikativum) {
         this(verb, praedikativum,
                 ImmutableList.of(),
                 null, null,
@@ -278,7 +266,8 @@ public class PraedikativumPraedikatOhneLeerstellen
         if (!super.equals(o)) {
             return false;
         }
-        final PraedikativumPraedikatOhneLeerstellen that = (PraedikativumPraedikatOhneLeerstellen) o;
+        final PraedikativumPraedikatOhneLeerstellen that =
+                (PraedikativumPraedikatOhneLeerstellen) o;
         return Objects.equals(praedikativum, that.praedikativum);
     }
 

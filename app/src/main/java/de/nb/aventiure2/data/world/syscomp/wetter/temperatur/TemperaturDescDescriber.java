@@ -23,8 +23,7 @@ import de.nb.aventiure2.german.satz.Satz;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -35,7 +34,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 /**
  * Beschreibt die {@link Temperatur} als {@link AbstractDescription}s.
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch"})
 public class TemperaturDescDescriber {
     private final TageszeitDescDescriber tageszeitDescDescriber;
     private final TemperaturSatzDescriber satzDescriber;
@@ -140,7 +139,7 @@ public class TemperaturDescDescriber {
                     praedikativumDescriber.altAdjPhr(
                             currentTemperatur,
                             false).stream()
-                            .map(a -> a.getPraedikativ(P3, SG)),
+                            .map(a -> a.getPraedikativ(EXPLETIVES_ES)),
                     "ist es"));
         }
 

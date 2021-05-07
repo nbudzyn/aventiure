@@ -22,7 +22,6 @@ import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
@@ -39,7 +38,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
 
         // "gespannt sein, was wer zu berichten hat"
         final PraedikativumPraedikatOhneLeerstellen praedikativumPraedikat =
-                praedikativumPraedikatMit(this);
+                alsPraedikativumPraedikat();
 
         // "die"
         final Relativpronomen relativpronomen = Relativpronomen

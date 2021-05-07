@@ -8,7 +8,6 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
@@ -422,7 +421,7 @@ public class Nominalphrase
                                 : null,
                         attributivAnteilLockererNachtrag != null ?
                                 schliesseInKommaEin(attributivAnteilLockererNachtrag
-                                        .getPraedikativ(getPerson(), getNumerus()))
+                                        .getPraedikativ(this))
                                 // (Hier nichts aus dem Prädikativum ins Nachfeld auslagern,
                                 // führt zu falscher Bedeutung)
                                 : null
@@ -491,8 +490,7 @@ public class Nominalphrase
 
                 // "die gespannt ist, was wer zu berichten hat"
                 attributivAnteilRelativsatz =
-                        PraedikativumPraedikatOhneLeerstellen
-                                .praedikativumPraedikatMit(praedikativumFuerRelativsatz)
+                        praedikativumFuerRelativsatz.alsPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(relativpronomen);
             }
         }

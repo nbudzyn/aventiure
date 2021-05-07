@@ -43,7 +43,7 @@ class WetterPathfinder {
 
     @Nullable
     static StandardWetterStep findFirstStep(
-            final WetterData start, final WetterData ziel) {
+            final WetterData start, final @Nullable WetterData ziel) {
         if (ziel == null || start.equals(ziel)) {
             return null;
         }

@@ -18,7 +18,6 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
@@ -38,7 +37,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WUT;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUSSER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.ReflVerbZuInfSubjektkontrolle.SICH_FREUEN_ZU;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSTRAHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MUSTERN;
@@ -68,7 +66,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                 altFeelingBeiBegegnungPraedikativum(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
                         targetDesc, feelingIntensity, targetKnown).stream()
-                        .map(PraedikativumPraedikatOhneLeerstellen::praedikativumPraedikatMit)
+                        .map(praedikativum -> praedikativum.alsPraedikativumPraedikat())
                         .map(p -> p.alsSatzMitSubjekt(gameObjectSubjekt))
                         .collect(ImmutableList.toImmutableList())
         );
@@ -86,18 +84,16 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
         if (feelingIntensity <= -FeelingIntensity.SEHR_STARK) {
             // "ganz außer sich vor Wut, als sie dich sieht"
-            res.addAll(mapToList(altSehenVerben, v ->
-                    praedikativumPraedikatMit(
-                            AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
-                                    .mitModAdverbOderAdjektiv("ganz"))
-                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                                    VOR.mit(npArtikellos(WUT))))
-                            .alsSatzMitSubjekt(gameObjectSubjekt)
-                            .mitAngabensatz(
-                                    new Konditionalsatz("als",
-                                            v.mit(targetDesc)
-                                                    .alsSatzMitSubjekt(gameObjectSubjekt))
-                            )));
+            res.addAll(mapToList(altSehenVerben, v -> AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
+                    .mitModAdverbOderAdjektiv("ganz").alsPraedikativumPraedikat()
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                            VOR.mit(npArtikellos(WUT))))
+                    .alsSatzMitSubjekt(gameObjectSubjekt)
+                    .mitAngabensatz(
+                            new Konditionalsatz("als",
+                                    v.mit(targetDesc)
+                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                    )));
         } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
             if (targetKnown) {
                 res.add(ENTGEGENRUFEN
@@ -106,16 +102,14 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                         .alsSatzMitSubjekt(gameObjectSubjekt));
             }
         } else if (feelingIntensity == -FeelingIntensity.STARK) {
-            res.addAll(mapToList(altSehenVerben, v ->
-                    praedikativumPraedikatMit(
-                            ZORNIG
-                                    .mitGraduativerAngabe("ganz"))
-                            .alsSatzMitSubjekt(gameObjectSubjekt)
-                            .mitAngabensatz(
-                                    new Konditionalsatz("als",
-                                            v.mit(targetDesc)
-                                                    .alsSatzMitSubjekt(gameObjectSubjekt))
-                            )));
+            res.addAll(mapToList(altSehenVerben, v -> ZORNIG
+                    .mitGraduativerAngabe("ganz").alsPraedikativumPraedikat()
+                    .alsSatzMitSubjekt(gameObjectSubjekt)
+                    .mitAngabensatz(
+                            new Konditionalsatz("als",
+                                    v.mit(targetDesc)
+                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                    )));
             res.add(ENTGEGENBLAFFEN
                     .mitObjekt(targetDesc)
                     .mitWoertlicheRede("Lass mich in Frieden!")
@@ -143,17 +137,16 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             .alsSatzMitSubjekt(gameObjectSubjekt)));
         } else if (feelingIntensity >= FeelingIntensity.SEHR_STARK) {
             // "außer sich vor Freude, als sie dich sieht"
-            res.addAll(mapToList(altSehenVerben, v ->
-                    praedikativumPraedikatMit(
-                            AUSSER_DAT.mit(gameObjectSubjekt.reflPron()))
-                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                                    VOR.mit(npArtikellos(FREUDE))))
-                            .alsSatzMitSubjekt(gameObjectSubjekt)
-                            .mitAngabensatz(
-                                    new Konditionalsatz("als",
-                                            v.mit(targetDesc)
-                                                    .alsSatzMitSubjekt(gameObjectSubjekt))
-                            )));
+            res.addAll(mapToList(altSehenVerben, v -> AUSSER_DAT.mit(gameObjectSubjekt.reflPron())
+                    .alsPraedikativumPraedikat()
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                            VOR.mit(npArtikellos(FREUDE))))
+                    .alsSatzMitSubjekt(gameObjectSubjekt)
+                    .mitAngabensatz(
+                            new Konditionalsatz("als",
+                                    v.mit(targetDesc)
+                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                    )));
         }
 
         return res.build();

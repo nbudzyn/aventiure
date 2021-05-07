@@ -38,7 +38,6 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
@@ -138,7 +137,7 @@ public class BewoelkungDescDescriber {
         return alt.schonLaenger().build();
     }
 
-    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussenGeschuetzt(
+    private ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussenGeschuetzt(
             final AvDateTime time, final WetterParamChange<Bewoelkung> change) {
         if (change.getVorher() == BEDECKT) {
             return altSprungOderWechselDraussenGeschuetztVorherBedeckt(time.getTageszeit());
@@ -179,8 +178,8 @@ public class BewoelkungDescDescriber {
                 neuerSatz("Das Licht ist schlechter als noch zuvor"),
                 neuerSatz("Es ist",
                         np(INDEF, DUNKEL.mitGraduativerAngabe("besonders"),
-                                tageszeit.getNomenFlexionsspalte()))); // "eine besonders dunkle
-        // Nacht"
+                                tageszeit.getNomenFlexionsspalte())
+                                .nomK())); // "eine besonders dunkle Nacht"
 
         return alt.schonLaenger().build();
     }
@@ -625,8 +624,8 @@ public class BewoelkungDescDescriber {
         if (unterOffenemHimmel) {
             // "Es ist ein schöner Abend, die Sonne scheint"
             alt.addAll(altNeueSaetze(
-                    praedikativumPraedikatMit(
-                            np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte()))
+                    np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte())
+                            .alsPraedikativumPraedikat()
                             .alsSatzMitSubjekt(EXPLETIVES_ES),
                     ",",
                     satzDescriber
@@ -635,8 +634,8 @@ public class BewoelkungDescDescriber {
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
         } else {
             // "Es ist ein schöner Abend"
-            alt.add(praedikativumPraedikatMit(
-                    np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte()))
+            alt.add(np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte())
+                    .alsPraedikativumPraedikat()
                     .alsSatzMitSubjekt(EXPLETIVES_ES));
         }
 

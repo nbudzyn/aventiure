@@ -16,7 +16,6 @@ import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANGUCKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
@@ -85,11 +84,10 @@ public class FeelingsSaetzeUtil {
                 .flatMap(adjPhr ->
                         altEindruckAdverbien(subjektUndFeelingTargetKoennenEinanderSehen).stream()
                                 .map(
-                                        advAng ->
-                                                praedikativumPraedikatMit(adjPhr)
-                                                        .mitAdvAngabe(
-                                                                new AdvAngabeSkopusSatz(advAng))
-                                                        .alsSatzMitSubjekt(subjekt)
+                                        advAng -> adjPhr.alsPraedikativumPraedikat()
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusSatz(advAng))
+                                                .alsSatzMitSubjekt(subjekt)
                                 )
                 ).collect(toImmutableList()));
 

@@ -76,8 +76,6 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitPraedikativum;
 import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumWerdenMitDat;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatMit;
-import static de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen.praedikativumPraedikatWerdenMit;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_ABKUEHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ABKUEHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANBRECHEN;
@@ -225,7 +223,7 @@ public class TemperaturSatzDescriber {
                             praedikativumDescriber
                                     .altLuftAdjPhr(change.getNachher(), time.getTageszeit()
                                     ),
-                            a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
+                            a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(LUFT)));
                 }
 
                 // "mit einem Mal friert dich"
@@ -309,7 +307,7 @@ public class TemperaturSatzDescriber {
                     // "die Luft ist kalt geworden"
                     alt.addAll(mapToSet(praedikativumDescriber.altLuftAdjPhr(
                             change.getNachher(), time.getTageszeit()),
-                            kalt -> praedikativumPraedikatWerdenMit(kalt).perfekt()
+                            kalt -> kalt.alsWerdenPraedikativumPraedikat().perfekt()
                                     .alsSatzMitSubjekt(LUFT)));
                 }
             } else {
@@ -441,8 +439,8 @@ public class TemperaturSatzDescriber {
                         KALT.mitGraduativerAngabe("längst nicht mehr so")
                                 .alsEsIstSatz()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")),
-                        praedikativumPraedikatWerdenMit(
-                                ERTRAEGLICHER.mitGraduativerAngabe("wieder"))
+                        ERTRAEGLICHER.mitGraduativerAngabe("wieder")
+                                .alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(KAELTE.mit(UNANGENEHM)),
                         SICH_ABKUEHLEN.alsSatzMitSubjekt(LUFT));
                 break;
@@ -460,13 +458,13 @@ public class TemperaturSatzDescriber {
                                 .alsSatz());
                 break;
             case RECHT_HEISS:
-                alt.add(praedikativumPraedikatWerdenMit(UNANGENEHM)
+                alt.add(UNANGENEHM.alsWerdenPraedikativumPraedikat()
                         .alsSatzMitSubjekt(HITZE)
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("allmählich")));
                 break;
             case SEHR_HEISS:
-                alt.add(praedikativumPraedikatWerdenMit(HEFTIG).alsSatzMitSubjekt(HITZE),
-                        praedikativumPraedikatMit(AUSZUHALTEN.mitGraduativerAngabe("kaum mehr"))
+                alt.add(HEFTIG.alsWerdenPraedikativumPraedikat().alsSatzMitSubjekt(HITZE),
+                        AUSZUHALTEN.mitGraduativerAngabe("kaum mehr").alsPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(HITZE.mit(GLUEHEND))
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("jetzt")));
                 break;
@@ -562,8 +560,8 @@ public class TemperaturSatzDescriber {
             case SEHR_HEISS: // Kann gar nicht sein
                 alt.add(NACHLASSEN.alsSatzMitSubjekt(HITZE)
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ein wenig")),
-                        praedikativumPraedikatWerdenMit(
-                                ERTRAEGLICHER.mitGraduativerAngabe("wieder"))
+                        ERTRAEGLICHER.mitGraduativerAngabe("wieder")
+                                .alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(HITZE)
                 );
                 break;
@@ -577,7 +575,7 @@ public class TemperaturSatzDescriber {
     private ImmutableCollection<EinzelnerSatz> altWirdEtwasWaermer() {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrEtwasWaermer(),
+        alt.addAll(mapToSet(TemperaturPraedikativumDescriber.altAdjPhrEtwasWaermer(),
                 Praedikativum::alsEsWirdSatz));
 
         return alt.build();
@@ -586,7 +584,7 @@ public class TemperaturSatzDescriber {
     private ImmutableCollection<EinzelnerSatz> altWirdEtwasKuehler() {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrEtwasKuehler(),
+        alt.addAll(mapToSet(TemperaturPraedikativumDescriber.altAdjPhrEtwasKuehler(),
                 Praedikativum::alsEsWirdSatz));
 
         alt.add(VerbSubj.ABKUEHLEN.alsSatzMitSubjekt(EXPLETIVES_ES));
@@ -729,7 +727,7 @@ public class TemperaturSatzDescriber {
             alt.addAll(mapToList(
                     praedikativumDescriber.altLuftAdjPhr(temperatur, tageszeit
                     ),
-                    a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(LUFT)));
+                    a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(LUFT)));
 
             if (tageszeit == ABENDS
                     && drinnenDraussen != DRAUSSEN_UNTER_OFFENEM_HIMMEL
@@ -872,7 +870,7 @@ public class TemperaturSatzDescriber {
         //  PrädikativumDescriber#altSofernExpletivesEsHoechstensImVorfeldSteht())
         //  (ohne "es"!", analog "Heute ist hitzefrei")
 
-        alt.addAll(altDerTag(time.getTageszeit(), temperatur));
+        alt.addAll(altDerTag(temperatur));
 
         if (!sonneNichtErwaehnen) {
             alt.addAll(mapToList(altSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
@@ -890,10 +888,9 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableCollection<Satz> altDerTag(final Tageszeit tageszeit,
-                                                final Temperatur temperatur) {
+    private ImmutableCollection<Satz> altDerTag(final Temperatur temperatur) {
         return praedikativumDescriber.altAdjPhr(temperatur, false).stream()
-                .map(a -> praedikativumPraedikatMit(a).alsSatzMitSubjekt(TAG))
+                .map(a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(TAG))
                 .collect(toImmutableList());
     }
 
@@ -946,9 +943,8 @@ public class TemperaturSatzDescriber {
         alt.addAll(praedikativumDescriber
                 .altSofernExpletivesEsHoechstensImVorfeldSteht(temperatur, tageszeit, true).stream()
                 .filter(AdjPhrOhneLeerstellen.class::isInstance)
-                .map(a -> praedikativumPraedikatMit(
-                        ((AdjPhrOhneLeerstellen) a)
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("noch")))
+                .map(a -> ((AdjPhrOhneLeerstellen) a)
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("noch")).alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(EXPLETIVES_ES))
                 .collect(toImmutableList()));
 
@@ -1018,7 +1014,7 @@ public class TemperaturSatzDescriber {
         return mapToList(
                 praedikativumDescriber
                         .altAdjPhrDeutlicherUnterschiedZuVorLocation(temperatur, delta),
-                adjPhr -> praedikativumPraedikatMit(adjPhr)
+                adjPhr -> adjPhr.alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(EXPLETIVES_ES)
                         .mitAdvAngabe(new AdvAngabeSkopusSatz("hier"))
                         .mitAnschlusswort(null));

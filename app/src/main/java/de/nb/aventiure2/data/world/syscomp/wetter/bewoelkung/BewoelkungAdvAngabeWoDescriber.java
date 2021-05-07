@@ -19,17 +19,13 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungAdvAngabeWoDescriber {
-    private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
     private final BewoelkungPraepPhrDescriber praepPhrDescriber;
 
     public BewoelkungAdvAngabeWoDescriber(
-            final BewoelkungPraepPhrDescriber praepPhrDescriber,
-            final BewoelkungPraedikativumDescriber praedikativumDescriber) {
+            final BewoelkungPraepPhrDescriber praepPhrDescriber) {
         this.praepPhrDescriber = praepPhrDescriber;
-        this.praedikativumDescriber = praedikativumDescriber;
     }
 
     public ImmutableCollection<AdvAngabeSkopusVerbAllg> altUnterOffenemHimmel(

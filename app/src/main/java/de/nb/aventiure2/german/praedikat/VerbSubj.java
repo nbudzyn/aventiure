@@ -15,7 +15,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
@@ -29,6 +28,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     BEGINNEN("beginnen",
             "beginne", "beginnst", "beginnt", "beginnt",
             Perfektbildung.HABEN, "begonnen"),
+    BLASEN("blasen", "blase", "bläst", "bläst", "blast",
+            Perfektbildung.HABEN, "geblasen"),
     BRAUSEN("brausen", "brause", "braust", "braust", "braust",
             Perfektbildung.HABEN, "gebraust"),
     BRECHEN("brechen",
@@ -120,7 +121,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             "hervor", Perfektbildung.HABEN, "hervorgelugt"),
     HINABKLETTERN(KLETTERN, "hinab", Perfektbildung.SEIN),
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
-    NACHLASSEN(HINUNTERLASSEN, "nach", Perfektbildung.HABEN),
+    NACHLASSEN("nachlassen", "lasse", "lässt", "lässt", "lasst",
+            "nach", Perfektbildung.HABEN, "nachgelassen"),
     UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN);
 
     /**

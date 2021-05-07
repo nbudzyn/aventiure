@@ -21,7 +21,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch"})
 public class TemperaturAdvAngabeWohinDescriber {
     private final TemperaturPraepPhrDescriber praepPhrDescriber;
 

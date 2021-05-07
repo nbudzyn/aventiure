@@ -28,6 +28,9 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
 
     BEI_DAT("bei", DAT, "beim"),
 
+    DURCH("durch", AKK,
+            null, null, "durchs"),
+
     IN_DAT("in", DAT, "im"),
     IN_AKK("in", AKK,
             null, null, "ins"),
@@ -43,6 +46,8 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     MIT_DAT("mit", DAT),
 
     NACH("nach", DAT),
+    UEBER_DAT("über", DAT),
+    UEBER_AKK("über", AKK), // "übern" scheint selten obligatorisch zu sein
     UNTER_DAT("unter", DAT),
     UNTER_AKK("unter", AKK), // "untern" scheint selten obligatorisch zu sein
 

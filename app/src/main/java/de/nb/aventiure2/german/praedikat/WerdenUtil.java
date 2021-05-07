@@ -3,8 +3,8 @@ package de.nb.aventiure2.german.praedikat;
 /**
  * Hilfsmethoden und Konstanten zum Verb "werden".
  */
-class WerdenUtil {
-    static final Verb VERB =
+public class WerdenUtil {
+    public static final Verb VERB =
             new Verb("werden",
                     "werde", "wirst",
                     "wird",

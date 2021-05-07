@@ -31,7 +31,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkePraedikativumDescriber {
     ImmutableSet<SubstantivischePhrase> altDraussenSubstPhr(
             final Windstaerke windstaerke, final AvTime time) {
@@ -40,7 +40,7 @@ public class WindstaerkePraedikativumDescriber {
         // "der Wind" (evtl. leer)
         alt.addAll(windstaerke.altNomenFlexionsspalte());
 
-        // "der windige Morgen" (evtl. leer)
+        // "der windige Morgen"
         alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),
                 windig -> time.getTageszeit().getNomenFlexionsspalte().mit(windig)));
 

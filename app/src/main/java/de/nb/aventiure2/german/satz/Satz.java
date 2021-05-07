@@ -23,6 +23,8 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 public interface Satz extends IAlternativeKonstituentenfolgable {
     default Satz mitAnschlusswortUndSofernNichtSchonEnthalten() {
         if (isSatzreihungMitUnd()) {
+            // FIXME In diesem Fall fehlt fast immer ein Komma!
+            //  Die Methode ist kein tragfähiges Konzept!
             return ohneAnschlusswort();
         }
 

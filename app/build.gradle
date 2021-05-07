@@ -42,6 +42,7 @@ dependencies {
     annotationProcessor project(':processor')
     annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
     annotationProcessor "androidx.lifecycle:lifecycle-common-java8:$rootProject.archLifecycleVersion"
+    annotationProcessor 'javax.annotation:javax.annotation-api:1.3.2'
 
     implementation project(':annotations')
     implementation 'androidx.appcompat:appcompat:1.2.0'
@@ -52,7 +53,7 @@ dependencies {
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation 'com.google.guava:guava:30.1-jre'
     implementation 'de.nb.holdbold:federkiel:0.0.4'
-    implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
+    implementation 'javax.annotation:javax.annotation-api:1.3.2'
     implementation 'org.jetbrains:annotations:13.0@jar'
 
     // testImplementation 'androidx.test:core:1.0.0'

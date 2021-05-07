@@ -76,9 +76,8 @@ import static java.util.stream.Collectors.toSet;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen wird).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class TemperaturPraedikativumDescriber {
-
     ImmutableSet<EinzelneSubstantivischePhrase> altDraussenSubstPhr(
             final Temperatur temperatur, final AvTime time) {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
@@ -593,7 +592,7 @@ public class TemperaturPraedikativumDescriber {
 
 
     @NonNull
-    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasWaermer() {
+    static ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasWaermer() {
         final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
 
         alt.add(WAERMER.mitGraduativerAngabe("etwas"));
@@ -603,7 +602,7 @@ public class TemperaturPraedikativumDescriber {
     }
 
     @NonNull
-    ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasKuehler() {
+    static ImmutableCollection<AdjPhrOhneLeerstellen> altAdjPhrEtwasKuehler() {
         final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();
 
         alt.add(KUEHLER.mitGraduativerAngabe("etwas"));
@@ -648,7 +647,8 @@ public class TemperaturPraedikativumDescriber {
                 }
 
                 alt.add(AdjektivOhneErgaenzungen.KUEHL,
-                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"));
+                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"),
+                        AdjektivOhneErgaenzungen.FRISCH);
                 break;
             case WARM:
                 alt.add(AdjektivOhneErgaenzungen.WARM);

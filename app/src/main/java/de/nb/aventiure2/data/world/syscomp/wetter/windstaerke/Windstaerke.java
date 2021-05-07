@@ -5,7 +5,9 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEAENGSTIGEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STUERMISCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STURMWIND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.UNWETTER;
@@ -26,13 +28,13 @@ public enum Windstaerke {
     //  Gutes Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
     //  reagieren können?
     KRAEFTIGER_WIND(ImmutableList.of(),
-            ImmutableList.of()),
+            ImmutableList.of(AdjektivOhneErgaenzungen.WINDIG.mitGraduativerAngabe("sehr"))),
     // FIXME Kann der SC bei STURM oder schwerem Sturm auf einen Baum klettern?
     //  Zu Rapunzeln hinauf oder hinabsteigen?
     STURM(ImmutableList.of(NomenFlexionsspalte.STURM, STURMWIND),
             ImmutableList.of(STUERMISCH)),
     SCHWERER_STURM(ImmutableList.of(UNWETTER),
-            ImmutableList.of());
+            ImmutableList.of(STUERMISCH.mitAdvAngabe(new AdvAngabeSkopusSatz(BEAENGSTIGEND))));
     // IDEA ORKAN (müsste dann zu starken Reaktionen der Umwelt und der NSCs führen,
     //  würde Schäden anrichten und dem SC massiv z.B. beim Gehen oder Klettern
     //  behindern)
@@ -62,7 +64,7 @@ public enum Windstaerke {
     }
 
     /**
-     * Gibt alternative Adjektivphrasen für das Wetter zurück, evtl. leer.
+     * Gibt alternative Adjektivphrasen für das Wetter zurück
      */
     public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter() {
         return altAdjPhrWetter;

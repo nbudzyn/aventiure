@@ -15,7 +15,9 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.BLASEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.WEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 
 /**
@@ -109,6 +111,12 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     STEHEN("stehen", DAT, "stehe", "stehst", "steht",
             "steht",
             Perfektbildung.HABEN, "gestanden"),
+    STREICHEN("streichen", DAT, "streiche",
+            "streichst", "streicht", "streicht",
+            Perfektbildung.HABEN, "gestrichen"),
+    TREIBEN("treiben", AKK, "treibe", "treibst", "treibt",
+            "treibt",
+            Perfektbildung.HABEN, "getrieben"),
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
             Perfektbildung.SEIN, "getreten"),
@@ -141,6 +149,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     AUFFANGEN(FANGEN, AKK, "auf", Perfektbildung.HABEN),
     AUFHEBEN(HEBEN, AKK, "auf", Perfektbildung.HABEN),
     AUFSTEHEN_VON(STEHEN, VON, "auf", Perfektbildung.SEIN),
+    ENTGEGENBLASEN(BLASEN, DAT, "entgegen", Perfektbildung.HABEN),
+    ENTGEGENWEHEN(WEHEN, DAT, "entgegen", Perfektbildung.HABEN),
     FREIGEBEN(GEBEN, AKK, "frei", Perfektbildung.HABEN),
     HERVORHOLEN(HOLEN, AKK, "hervor", Perfektbildung.HABEN),
     HERAUSKLAUBEN("herausklauben", AKK,

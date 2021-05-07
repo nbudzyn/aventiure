@@ -44,6 +44,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     AUFGELEGT("aufgelegt"),
     AUFGEHEIZT("aufgeheizt"),
     AUSZUHALTEN("auszuhalten"), // So etwas ähnliches wie ein Partizip...
+    BEAENGSTIGEND("beängstigend"),
     BEDECKT("bedeckt"),
     BEDROHLICH("bedrohlich"),
     BEGEISTERT("begeistert"),

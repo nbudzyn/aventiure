@@ -22,8 +22,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -39,16 +38,13 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
  * vielleicht gar nicht erzeugen werden).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
+@SuppressWarnings({"MethodMayBeStatic"})
 public class TageszeitDescDescriber {
-    private final TageszeitPraedikativumDescriber praedikativumDescriber;
 
     private final TageszeitSatzDescriber satzDescriber;
 
     public TageszeitDescDescriber(
-            final TageszeitPraedikativumDescriber praedikativumDescriber,
             final TageszeitSatzDescriber satzDescriber) {
-        this.praedikativumDescriber = praedikativumDescriber;
         this.satzDescriber = satzDescriber;
     }
 
@@ -278,7 +274,7 @@ public class TageszeitDescDescriber {
 
         if (draussen) {
             // "Langsam wird es Morgen" / "hell"
-            alt.addAll(satzDescriber.altWechselDraussen(newTageszeit));
+            alt.addAll(TageszeitSatzDescriber.altWechselDraussen(newTageszeit));
 
             alt.addAll(altNeueSaetze(
                     ImmutableList.of("allmählich", "unterdessen", "inzwischen", "derweil"),
@@ -295,7 +291,7 @@ public class TageszeitDescDescriber {
                         ImmutableList.of("unterdessen", "inzwischen", "derweil"),
                         "ist es",
                         newTageszeit.getLichtverhaeltnisseDraussen().getAdjektiv()
-                                .getPraedikativ(P3, SG), // "hell"
+                                .getPraedikativ(EXPLETIVES_ES), // "hell"
                         "geworden"
                         // Der Tageszeitenwechsel ist parallel passiert.
                 ));
@@ -309,7 +305,7 @@ public class TageszeitDescDescriber {
             }
 
             alt.addAll(altNeueSaetze(PARAGRAPH, "Dein Gefühl sagt dir: ", SENTENCE,
-                    satzDescriber.altWechselDraussen(newTageszeit)
+                    TageszeitSatzDescriber.altWechselDraussen(newTageszeit)
             ));
 
             alt.add(neuerSatz("Ob es wohl allmählich",
@@ -320,7 +316,7 @@ public class TageszeitDescDescriber {
 
             // "Ob es langsam Morgen wird?"
             alt.addAll(altNeueSaetze(
-                    satzDescriber.altWechselDraussen(newTageszeit).stream()
+                    TageszeitSatzDescriber.altWechselDraussen(newTageszeit).stream()
                             .map(Satz::getIndirekteFrage),
                     "?"));
         }
@@ -385,7 +381,7 @@ public class TageszeitDescDescriber {
                 && auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
             alt.add(paragraph("Draußen ist es derweil",
                     time.getTageszeit().getLichtverhaeltnisseDraussen().getAdjektiv()
-                            .getPraedikativ(P3, SG), // "hell" / "dunkel"
+                            .getPraedikativ(EXPLETIVES_ES), // "hell" / "dunkel"
                     "geworden"));
         }
 

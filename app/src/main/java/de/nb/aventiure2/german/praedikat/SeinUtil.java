@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
  * Hilfsmethoden und Konstanten zum Verb "sein".
  */
 public class SeinUtil {
-    static final Verb VERB =
+    public static final Verb VERB =
             new Verb("sein",
                     "bin", "bist", "ist",
                     "sind", "seid",

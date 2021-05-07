@@ -308,6 +308,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 drinnenDraussen);
 
         setLastGenerelleTemperatur(currentGenerelleTemperatur);
+        setLastBewoelkung(wetter.getBewoelkung());
 
         return alt;
     }
@@ -434,7 +435,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             final AvDateTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
-            final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
+            @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen) {
         final boolean tageszeitaenderungSollBeschriebenWerden =
                 !currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY) &&
