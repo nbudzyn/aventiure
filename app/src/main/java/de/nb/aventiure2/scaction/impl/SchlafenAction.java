@@ -72,6 +72,8 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
+        // FIXME Im starken Wind kann man nicht einschlafen?
+        
         // IDEA "Vor Hunger kannst du nicht einschlafen"
         if (sc.feelingsComp().getMuedigkeit() >=
                 // Es ist nicht besonders gemütlich. NUR_LEICHT müde genügt nicht

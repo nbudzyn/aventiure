@@ -14,7 +14,8 @@ import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.BEENDET;
 import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.NICHT_BEGONNEN;
 
 /**
- * Persistente Daten für eine {@link Story}.
+ * Mutable persistente Daten für eine {@link Story}. Änderbar - nicht als Schlüssel in Maps
+ * oder in Sets verwenden!
  */
 class StoryData {
     enum State {
@@ -64,13 +65,9 @@ class StoryData {
     }
 
     private boolean isReachable(final IStoryNode node) {
-        if (state == BEENDET || isReached(node) || !allNodesReachedRequiredFor(node) ||
-                // oder der Node wird automatisch freigeschaltet
-                node.getExpAchievementSteps() == null) {
-            return false;
-        }
-
-        return true;
+        return state != BEENDET && !isReached(node) && allNodesReachedRequiredFor(node) &&
+                // der Node wird auch nicht automatisch freigeschaltet
+                node.getExpAchievementSteps() != null;
     }
 
     private boolean allNodesReachedRequiredFor(final IStoryNode node) {
@@ -162,8 +159,6 @@ class StoryData {
         }
         final StoryData storyData = (StoryData) o;
         return story == storyData.story &&
-                // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
-                //  probleme mit Sets o.Ä. ergeben...
                 state == storyData.state &&
                 reachedNodes.equals(storyData.reachedNodes);
     }

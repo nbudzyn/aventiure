@@ -8,7 +8,8 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
 
 /**
- * Node datastructure for the A* pathfinding algorithm
+ * Mutable node datastructure for the A* pathfinding algorithm. Do not use as hash map key,
+ * do not store in sets.
  */
 class AStarNode {
     /**
@@ -88,8 +89,6 @@ class AStarNode {
         }
         final AStarNode aStarNode = (AStarNode) o;
         return Objects.equals(location, aStarNode.location) &&
-                // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
-                //  probleme mit Sets o.Ä. ergeben...
                 Objects.equals(dist, aStarNode.dist) &&
                 Objects.equals(estimate, aStarNode.estimate) &&
                 Objects.equals(totalCost, aStarNode.totalCost) &&

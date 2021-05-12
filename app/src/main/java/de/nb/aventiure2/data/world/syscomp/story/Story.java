@@ -31,6 +31,8 @@ public enum Story {
 
     // IDEA https://www.technicalgrimoire.com/downloads - alternative Ideen zum Tod
 
+    // FIXME 1W6-Freunde Abenteuergenerator-Tabelle
+
     // FIXME Idee für Märchenumsetzung: von hinten Beginnen! Was ist das Ziel?
     //  Was sind die Zwischenziele? Was sind die Aktionen?
     //  Immer feiner, das aus dem Märchen nehmen, was geht, sonst improvisieren.
@@ -43,8 +45,6 @@ public enum Story {
     // IDEA Storys einschließlich der Story Nodes könnten auch generiert werden,
     //  basierend auf Story-Telling-Theorien.
     //  Aber dann können es natürlich keine Enums mehr sein!
-
-    // IDEA Meine Story als "Front" (analog Dungeon World) betrachten?
 
     // IDEA Kernelemente der Geschichte sollten im Environment sichtbar sein. Schon zu
     //  Beginn (2. Text o.ä.) und danach geändert.

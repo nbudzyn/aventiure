@@ -68,6 +68,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @Nullable
     private Bewoelkung lastBewoelkung;
 
+    @Nullable
+    private Windstaerke lastWindstaerkeUnterOffenemHimmel;
+
     private AvDateTime timeLetzteBeschriebeneTageszeit;
 
     /**
@@ -96,7 +99,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
               final WetterData wetter,
               final AvDateTime timeLetzteBeschriebeneTageszeit) {
         this(gameObjectId, wetter,
-                null,
+                null, null,
                 null, null,
                 timeLetzteBeschriebeneTageszeit,
                 true,
@@ -110,6 +113,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                      @Nullable final WetterStep currentWetterStep,
                      @Nullable final Temperatur lastGenerelleTemperatur,
                      @Nullable final Bewoelkung lastBewoelkung,
+                     @Nullable final Windstaerke lastWindstaerkeUnterOffenemHimmel,
                      final AvDateTime timeLetzteBeschriebeneTageszeit,
                      final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
                      final boolean wennWiederUnterOffenemHimmelWetterBeschreiben,
@@ -119,6 +123,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         this.currentWetterStep = currentWetterStep;
         this.lastGenerelleTemperatur = lastGenerelleTemperatur;
         this.lastBewoelkung = lastBewoelkung;
+        this.lastWindstaerkeUnterOffenemHimmel = lastWindstaerkeUnterOffenemHimmel;
         this.timeLetzteBeschriebeneTageszeit =
                 timeLetzteBeschriebeneTageszeit;
         this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel =
@@ -322,6 +327,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         final Temperatur currentGenerelleTemperatur = getCurrentGenerelleTemperatur(endTime);
 
+        @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant =
+                handleWindstaerkeChange(startTime, endTime, drinnenDraussen);
+
         @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant =
                 handleTemperaturChange(startTime, endTime, drinnenDraussen, locationTemperaturRange,
                         currentGenerelleTemperatur);
@@ -334,17 +342,22 @@ public class WetterPCD extends AbstractPersistentComponentData {
         final ImmutableCollection<AbstractDescription<?>> alt = altTimePassed(
                 startTime, endTime,
                 !locationTemperaturRange.isInRange(currentGenerelleTemperatur),
-                temperaturChangeSofernRelevant,
+                windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant,
                 drinnenDraussen);
 
         setLastGenerelleTemperatur(currentGenerelleTemperatur);
         setLastBewoelkung(wetter.getBewoelkung());
+        setLastWindstaerkeUnterOffenemHimmel(wetter.getWindstaerkeUnterOffenemHimmel());
 
         return alt;
     }
 
     private void setGgfSpaeterWetterBeschreibenWegenWind(final DrinnenDraussen drinnenDraussen) {
+        // Selbst wenn es keine Veränderung gab, soll besonderer Wind
+        // beschrieben werden, wenn der SC später nach draußen kommt oder einen
+        // geschützten Bereich verlässt
+
         if (!drinnenDraussen.isDraussen()
                 && !getLokaleWindstaerkeDraussen(true).isUnauffaellig()) {
             // Vermerken: Es soll einen Wetterhinweis geben, wenn der SC wieder
@@ -451,10 +464,62 @@ public class WetterPCD extends AbstractPersistentComponentData {
         // vermeiden, wenn es sich in Wirklichkeit über 5 Stunden allmählich immer mehr und mehr
         // bezogen hat). Dann geben wir einfach später mal einen Wetterhinweis.
         setGgfSpaeterWetterBeschreiben(drinnenDraussen);
-        // FIXME Man könnte auch *später* etwas schreiben wie "Draußen hat sich das Wetter
+        // IDEA Man könnte auch *später* etwas schreiben wie "Draußen hat sich das Wetter
         //  verändert. Es hat deutlich abgekühlt und der Himmel bezieht sich. Dazu müsste man
         //  aber eigentlich wissen, welche Bewölkung der SC als letztes unter freiem Himmel
         //  erlebt hat.
+
+        return null;
+    }
+
+    @Nullable
+    private WetterParamChange<Windstaerke> handleWindstaerkeChange(
+            final AvDateTime startTime, final AvDateTime endTime,
+            final DrinnenDraussen drinnenDraussen) {
+        final Windstaerke currentWindstaerkeUnterOffenemHimmel =
+                wetter.getWindstaerkeUnterOffenemHimmel();
+
+        if ( // Die Windstärke unter offenem Himmel hat sich gerade gar nicht geändert...
+                lastWindstaerkeUnterOffenemHimmel == null
+                        || currentWindstaerkeUnterOffenemHimmel == lastWindstaerkeUnterOffenemHimmel
+                        // ...oder die Windstärke ist und war unauffällig...
+                        || (
+                        lastWindstaerkeUnterOffenemHimmel.isUnauffaellig()
+                                && currentWindstaerkeUnterOffenemHimmel.isUnauffaellig())) {
+            return null;
+        }
+
+        if (drinnenDraussen.isDraussen()) {
+            // Der SC hat die Veränderung vielleicht merken können, jedenfalls ist er draußen...
+
+            final Windstaerke lastLokaleWindstaerke =
+                    lastWindstaerkeUnterOffenemHimmel.getLokaleWindstaerkeDraussen(
+                            drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
+
+            final Windstaerke currentLokaleWindstaerke =
+                    currentWindstaerkeUnterOffenemHimmel.getLokaleWindstaerkeDraussen(
+                            drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
+
+            if ( // Der SC hat die Veränderung auch merken können...
+                    lastLokaleWindstaerke != currentLokaleWindstaerke
+                            // ...und sie passiert über eine eher kurze Zeit
+                            && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+                return new WetterParamChange<>(lastLokaleWindstaerke, currentLokaleWindstaerke);
+            }
+        }
+
+        // Der SC hat die Veränderung nicht merken können (er war gerade drinnen
+        // oder an einem wingeschützten Ort) - oder die Windveränderung passierte
+        // über lange Zeit (wir wollen ein "auf einmal ist ein Sturm hereingebrochen"
+        // vermeiden, wenn es in Wirklichkeit über 5 Stunden allmählich immer windiger
+        // geworden ist). Dann geben wir einfach später mal einen Wetterhinweis.
+        setGgfSpaeterWetterBeschreiben(drinnenDraussen);
+        // IDEA Man könnte auch *später* etwas schreiben wie "Draußen hat sich das Wetter
+        //  verändert. Ein Sturm ist hereingebrochen.", "Draußen hat sich das Wetter
+        //  verändert. Der Sturm ist vorbei" Das  ergibt aber nur Sinn, wenn man weiß,
+        //  welche (Windstärke, ...)-Werte der Benutzer
+        //  an diesem Ort tatsächlich erwartet hätte. Da manche Orte geschützt sind, andere
+        //  nicht, könnte das (für den allgemeinen Fall) etwas mühevoll sein.
 
         return null;
     }
@@ -469,22 +534,24 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     /**
      * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
-     * zuallermeist leer. Außerdem wird ggf. auch gespeichert, dass, wenn der Spieler das nächste
-     * Mal nach draußen oder unter den offenen Himmel kommt, das Wetter beschrieben werden soll.
+     * zuallermeist leer.
      * <p>
      * Wenn es hier Beschreibungen gab und keine von ihnen ausgegeben wird, wird der
      * Tageszeitensprung oder -wechsel nicht mehr beschrieben werden.
      *
-     * @param temperaturChangeSofernRelevant Die  Temperaturänderung, falls eine       beschrieben
-     *                                       werden soll, sonst {@code null}
-     * @param bewoelkungChangeSofernRelevant Die Änderung der Bewölkung, falls eine beschrieben
-     *                                       werden soll, sonst {@code null}
+     * @param windstaerkeChangeSofernRelevant Die Änderung der Windstärke, falls eine beschrieben
+     *                                        werden soll, sonst {@code null}
+     * @param temperaturChangeSofernRelevant  Die  Temperaturänderung, falls eine       beschrieben
+     *                                        werden soll, sonst {@code null}
+     * @param bewoelkungChangeSofernRelevant  Die Änderung der Bewölkung, falls eine beschrieben
+     *                                        werden soll, sonst {@code null}
      */
     @NonNull
     private ImmutableCollection<AbstractDescription<?>> altTimePassed(
             final AvDateTime lastTime,
             final AvDateTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen) {
@@ -496,7 +563,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 wetter.altTimePassed(lastTime, currentTime,
                         tageszeitaenderungSollBeschriebenWerden,
                         generelleTemperaturOutsideLocationTemperaturRange,
-                        temperaturChangeSofernRelevant,
+                        windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                         bewoelkungChangeSofernRelevant,
                         drinnenDraussen
                 );
@@ -704,10 +771,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
         // Nur weil die Windstärke abgefragt wird, gehen wir nicht davon aus, dass ein
         // "qualifizierter" Wetterhinweis gegeben wurde
 
-        return wetter.getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        return wetter.windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
     }
-
-    // FIXME getLokaleWindstaerke?
 
     @NonNull
     private Temperatur getCurrentGenerelleTemperatur(final AvDateTime time) {
@@ -789,6 +855,22 @@ public class WetterPCD extends AbstractPersistentComponentData {
     @Nullable
     Bewoelkung getLastBewoelkung() {
         return lastBewoelkung;
+    }
+
+    private void setLastWindstaerkeUnterOffenemHimmel(
+            @Nullable final Windstaerke lastWindstaerkeUnterOffenemHimmel) {
+        if (this.lastWindstaerkeUnterOffenemHimmel == lastWindstaerkeUnterOffenemHimmel) {
+            return;
+        }
+
+        setChanged();
+
+        this.lastWindstaerkeUnterOffenemHimmel = lastWindstaerkeUnterOffenemHimmel;
+    }
+
+    @Nullable
+    Windstaerke getLastWindstaerkeUnterOffenemHimmel() {
+        return lastWindstaerkeUnterOffenemHimmel;
     }
 
     @Nullable

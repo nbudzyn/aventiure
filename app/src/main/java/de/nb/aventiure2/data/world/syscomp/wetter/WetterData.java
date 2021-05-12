@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -29,6 +30,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraedikat
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungPraepPhrDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungSatzDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWoDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWohinDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitDescDescriber;
@@ -78,7 +80,6 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.B
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.KRAEFTIGER_WIND;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.LUEFTCHEN;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDSTILL;
@@ -149,15 +150,16 @@ public class WetterData {
     private static final TageszeitPraepPhrDescriber TAGESZEIT_PRAEP_PHR_DESCRIBER =
             new TageszeitPraepPhrDescriber(TAGESZEIT_PRAEDIKATIVUM_DESCRIBER);
 
-    private static final TageszeitAdvAngabeWoDescriber
-            TAGESZEIT_ADV_ANGABE_WO_DESCRIBER =
-            new TageszeitAdvAngabeWoDescriber(
-                    TAGESZEIT_PRAEP_PHR_DESCRIBER);
+    private static final TageszeitAdvAngabeWoDescriber TAGESZEIT_ADV_ANGABE_WO_DESCRIBER =
+            new TageszeitAdvAngabeWoDescriber(TAGESZEIT_PRAEP_PHR_DESCRIBER);
 
     private static final TageszeitAdvAngabeWohinDescriber
             TAGESZEIT_ADV_ANGABE_WOHIN_DESCRIBER =
             new TageszeitAdvAngabeWohinDescriber(
                     TAGESZEIT_PRAEP_PHR_DESCRIBER);
+
+    private static final TageszeitAdvAngabeWannDescriber TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER =
+            new TageszeitAdvAngabeWannDescriber();
 
     // Temperatur-Describer
     private static final TemperaturPraedikativumDescriber TEMPERATUR_PRAEDIKATIVUM_DESCRIBER =
@@ -179,11 +181,11 @@ public class WetterData {
     private static final TemperaturSatzDescriber TEMPERATUR_SATZ_DESCRIBER =
             new TemperaturSatzDescriber(
                     TAGESZEIT_PRAEDIKATIVUM_DESCRIBER,
-                    TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
+                    TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER, TEMPERATUR_PRAEDIKATIVUM_DESCRIBER);
 
     private static final TemperaturDescDescriber TEMPERATUR_DESC_DESCRIBER =
             new TemperaturDescDescriber(TAGESZEIT_DESC_DESCRIBER,
-                    TEMPERATUR_PRAEDIKATIVUM_DESCRIBER,
+                    TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER, TEMPERATUR_PRAEDIKATIVUM_DESCRIBER,
                     TEMPERATUR_SATZ_DESCRIBER);
 
     // Bewölkung-Describer
@@ -204,10 +206,12 @@ public class WetterData {
                     BEWOELKUNG_PRAEP_PHR_DESCRIBER);
 
     private static final BewoelkungSatzDescriber BEWOELKUNG_SATZ_DESCRIBER =
-            new BewoelkungSatzDescriber(BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
+            new BewoelkungSatzDescriber(TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER,
+                    BEWOELKUNG_PRAEDIKATIVUM_DESCRIBER);
 
     private static final BewoelkungDescDescriber BEWOELKUNG_DESC_DESCRIBER =
-            new BewoelkungDescDescriber(BEWOELKUNG_SATZ_DESCRIBER);
+            new BewoelkungDescDescriber(TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER,
+                    BEWOELKUNG_SATZ_DESCRIBER);
 
     // Wind-Describer
     private static final WindstaerkePraedikativumDescriber WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER =
@@ -227,11 +231,13 @@ public class WetterData {
                     WINDSTAERKE_PRAEP_PHR_DESCRIBER);
 
     private static final WindstaerkeSatzDescriber WINDSTAERKE_SATZ_DESCRIBER =
-            new WindstaerkeSatzDescriber();
+            new WindstaerkeSatzDescriber(TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER
+            );
 
     private static final WindstaerkeDescDescriber WINDSTAERKE_DESC_DESCRIBER =
             new WindstaerkeDescDescriber(
-                    WINDSTAERKE_SATZ_DESCRIBER, WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER);
+                    TAGESZEIT_ADV_ANGABE_WANN_DESCRIBER, WINDSTAERKE_SATZ_DESCRIBER,
+                    WINDSTAERKE_PRAEDIKATIVUM_DESCRIBER);
 
 
     // Wetterparameter etc.
@@ -244,7 +250,7 @@ public class WetterData {
      * an einem geschützten Ort draußen. Wir gehen außerdem davon aus, dass drinnen
      * kein Wind weht.
      */
-    private final Windstaerke windstaerkeUnterOffenemHimmel;
+    final Windstaerke windstaerkeUnterOffenemHimmel;
 
     private final Bewoelkung bewoelkung;
 
@@ -323,7 +329,8 @@ public class WetterData {
         final DrinnenDraussen drinnenDraussen =
                 unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT;
 
-        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
         final boolean generelleTemperaturOutsideLocationTemperaturRange =
                 !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time));
@@ -898,7 +905,8 @@ public class WetterData {
 
         final AltDescriptionsBuilder alt = alt();
 
-        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenenHimmel);
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenenHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
         final boolean generelleTemperaturOutsideLocationTemperaturRange =
                 !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time));
@@ -1416,7 +1424,8 @@ public class WetterData {
             return ImmutableSet.of();
         }
 
-        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
         if (windstaerke.compareTo(STURM) >= 0) {
             // Sturm steht definitiv im Vordergrund - aber Sturm geht selten den ganzen Tag!
             return ImmutableSet.of();
@@ -1508,7 +1517,8 @@ public class WetterData {
 
         // FIXME Blitz und Donner berücksichtigen?
 
-        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenenHimmel);
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenenHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
@@ -1714,7 +1724,8 @@ public class WetterData {
 
         // FIXME Blitz und Donner berücksichtigen?
 
-        final Windstaerke windstaerke = getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
@@ -1987,26 +1998,6 @@ public class WetterData {
                         unterOffenemHimmel);
     }
 
-    Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
-        if (unterOffenemHimmel) {
-            return windstaerkeUnterOffenemHimmel;
-        }
-
-        return getLokaleWindstaerkeDraussenGeschuetzt();
-    }
-
-    private Windstaerke getLokaleWindstaerkeDraussenGeschuetzt() {
-        if (windstaerkeUnterOffenemHimmel.compareTo(LUEFTCHEN) <= 0) {
-            return windstaerkeUnterOffenemHimmel;
-        }
-
-        if (windstaerkeUnterOffenemHimmel.compareTo(KRAEFTIGER_WIND) <= 0) {
-            return windstaerkeUnterOffenemHimmel.getVorgaenger();
-        }
-
-        return windstaerkeUnterOffenemHimmel.getVorgaenger().getVorgaenger();
-    }
-
     @NonNull
     @CheckReturnValue
     Temperatur getLokaleTemperatur(final AvTime time,
@@ -2034,7 +2025,7 @@ public class WetterData {
     //  und das"
     //  -- "Nun ist die Sonne unter:"
 
-    // FIXME Automatisch generieren:  "Als (nun / wie nun) das Wetter soundso ist, passiert dies
+    // IDEA Automatisch generieren:  "Als (nun / wie nun) das Wetter soundso ist, passiert dies
     //  und das" (an sich nicht besonders kritisch, weil ohnehin nur Sätze derselben SC-Aktion
     //  miteinander verbunden werden):
     //   Automatisch erzeugen, wenn .als() dran steht?! Allerdings wiedersprechen sich
@@ -2044,12 +2035,11 @@ public class WetterData {
     //   nicht schreiben darf, weil der Aktor vorher nicht der Mond ist...!
     //  -- "Als der Mond kommt,..."
     //  -- "Als du die Sonne aufsteigen siehst, ..."
-    //  -- "Als aber die Sonne bald untergehen will, "
-    //  -- "Als die Sonne aufgeht, ..."
-    //  -- "Als die Sonne untergeht..."
     //  -- "Als / wie nun die Sonne über dir steht, "
+    //  (Hier geht es um das Wetter, nicht um Zeitwechsel! Es ist etwas anderes als
+    //   die aus dem TageszeitAdvAngabeWannDescriber gelieferten Angabensätze!)
 
-    // FIXME Automatisch generieren: "Sobald das Wetter soundso ist, passsiert dies und das:"
+    // IDEA Automatisch generieren: "Sobald das Wetter soundso ist, passsiert dies und das:"
     //  -- "Sobald die Sonne untergegangen ist, " (Uhrzeit berücksichtigen:
     //     time.kurzNachSonnenuntergang())
     //  -- "Sobald die Sonne wieder warm scheint, gehst du..."
@@ -2100,7 +2090,7 @@ public class WetterData {
     // IDEA Wetterbeschreibungen als "Ortsangaben"
     //  "du liegst in der Sonne ausgestreckt"
 
-    // FIXME Wetterbeschreibung als "Relativsatz" (im weiteren Sinne):
+    // IDEA Wetterbeschreibung als "Relativsatz" (im weiteren Sinne):
     //  "und als du erwachst und wieder zu dir selber kommst, bist
     //   du auf einer schönen Wiese, wo die Sonne scheint"
 
@@ -2128,7 +2118,7 @@ public class WetterData {
     //  "und weil es anfängt zu regnen"
     //  "Tropfen fallen"
 
-    // FIXME Jemand wärmt sich auf (z.B. am Feuer oder Drinnen)
+    // IDEA Jemand wärmt sich auf (z.B. am Feuer oder Drinnen)
     //  "du bist halb erfroren und willst dich nur ein wenig wärmen"
     //  "du reibst die Hände"
     //  "du bist so erfroren"
@@ -2136,7 +2126,7 @@ public class WetterData {
     //  "du erwärmst dich" (am Feuer)
     //  "so bist du vor der Kälte geschützt"
 
-    // FIXME "Du kommst in den Wald, und da es darin kühl und lieblich ist
+    // IDEA Du kommst in den Wald, und da es darin kühl und lieblich ist
     //  [lokale Temperatur] und die Sonne heiß brennt [generelle Temperatur], so..."
 
     @SuppressWarnings("WeakerAccess")
@@ -2170,59 +2160,62 @@ public class WetterData {
         return windstaerkeUnterOffenemHimmel;
     }
 
-    // IDEA Wenn man drinnen ist und die Wände dünn: "Draußen rauscht der Wind rauscht"
-
+    // IDEA Wenn man drinnen ist und die Wände dünn: "Draußen rauscht der Wind"
 
     /**
      * Gibt alternative Beschreibungen zurück für den Fall, dass diese Zeit vergangen ist -
      * zuallermeist leer.
      *
-     * @param temperaturChangeSofernRelevant Temperaturänderung, falls eine beschrieben
-     *                                       werden soll, sonst {@code null}
-     * @param bewoelkungChangeSofernRelevant Änderung der Bewölkung, falls eine beschrieben
-     *                                       werden soll, sonst {@code null}
+     * @param windstaerkeChangeSofernRelevant Änderung der Windstärke, falls eine beschrieben
+     *                                        werden soll, sonst {@code null}
+     * @param temperaturChangeSofernRelevant  Temperaturänderung, falls eine beschrieben
+     *                                        werden soll, sonst {@code null}
+     * @param bewoelkungChangeSofernRelevant  Änderung der Bewölkung, falls eine beschrieben
+     *                                        werden soll, sonst {@code null}
      */
     ImmutableCollection<AbstractDescription<?>> altTimePassed(
             final AvDateTime lastTime,
             final AvDateTime currentTime,
             final boolean tageszeitaenderungMussBeschriebenWerden,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen) {
         checkArgument(bewoelkungChangeSofernRelevant == null
                         || drinnenDraussen.isDraussen(),
                 "Bewölkungsänderungen werden nur draußen erzählt");
+        checkArgument(windstaerkeChangeSofernRelevant == null
+                        || drinnenDraussen.isDraussen(),
+                "Windstärke-Änderungen werden nur draußen erzählt");
 
-        // FIXME Änderung der Windstärke (soweit der SC sie mitbekommen haben kann)
+        if (!tageszeitaenderungMussBeschriebenWerden) {
+            // Es soll keine Tageszeitänderung beschrieben werden
+            return altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime, currentTime,
+                    windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
+                    bewoelkungChangeSofernRelevant,
+                    drinnenDraussen, drinnenDraussen.isDraussen());
+        }
 
-        // FIXME Wind / Sturm - dynamisch:
-        //  Der Wind wird stärker
-        //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm.
-        //  < ->  KRAEFTIGER_WIND: "es kommt ein starker Wind"
-        //  < -> STURM: Ein Sturm zieht auf
-        //  STURM -> > Langsam scheint sich das Wetter wieder zu bessern / der Sturm flaut
-        //  allmählich
-        //  ab.
+        // Es soll eine Tageszeitänderung beschrieben werden
+        return altTimePassedTageszeitenaenderung(lastTime, currentTime,
+                generelleTemperaturOutsideLocationTemperaturRange,
+                windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
+                bewoelkungChangeSofernRelevant,
+                drinnenDraussen);
+    }
 
-        // FIXME Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
-        //  (Blätter)
-        //  Der Wind wird stärker
-        //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
-        //  Blättchen mehr"
-
-        // FIXME Wind in Kombination - dynamisch
-        //  < ->  KRAEFTIGER_WIND: Der Wind ist jetzt sehr kräftig und unangenehm. Kalt ist es
-        //  geworden.
-        //  WINDSTILL, TEMPERATURANSTIEG: "Die Hitze wird drückender, je näher der Mittag kommt"
-
-
-        // FIXME  "Um Mitternacht geht der Wind..." - ergibt fast nur Sinn, wenn der
-        //  SC z.B. gewartet hat o.Ä. und man nichts anderes (außer dieser Wetterveränderung)
-        //  beschreiben möchte.
-
-        // FIXME Eine Temperaturänderung könnte eine gute Gelegenheit sein, auf stärkeren Wind
-        //  hinzuweisen...
+    @VisibleForTesting
+    static ImmutableCollection<AbstractDescription<?>>
+    altTimePassedTageszeitenaenderungNichtBeschreiben(
+            final AvDateTime lastTime, final AvDateTime currentTime,
+            @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
+            @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
+            @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
+            final DrinnenDraussen drinnenDraussen,
+            final boolean auchZeitwechselreferenzen) {
+        final boolean windstaerkeaenderungMussBeschriebenWerden =
+                windstaerkeChangeSofernRelevant != null;
 
         final boolean temperaturaenderungMussBeschriebenWerden =
                 temperaturChangeSofernRelevant != null;
@@ -2230,44 +2223,10 @@ public class WetterData {
         final boolean bewoelkungsaenderungMussBeschriebenWerden =
                 bewoelkungChangeSofernRelevant != null;
 
-        if (!tageszeitaenderungMussBeschriebenWerden) {
-            // Es soll keine Tageszeitänderung beschrieben werden
-            return altTimePassedKeineTageszeitenaenderung(lastTime, currentTime,
-                    temperaturChangeSofernRelevant,
-                    bewoelkungChangeSofernRelevant, drinnenDraussen,
-                    temperaturaenderungMussBeschriebenWerden,
-                    bewoelkungsaenderungMussBeschriebenWerden);
-        }
-
-        // Es soll eine Tageszeitänderung beschrieben werden
-        return altTimePassedTageszeitenaenderung(lastTime, currentTime,
-                generelleTemperaturOutsideLocationTemperaturRange,
-                temperaturChangeSofernRelevant,
-                bewoelkungChangeSofernRelevant, drinnenDraussen,
-                bewoelkungsaenderungMussBeschriebenWerden);
-    }
-
-    private static ImmutableCollection<AbstractDescription<?>>
-    altTimePassedKeineTageszeitenaenderung(
-            final AvDateTime lastTime, final AvDateTime currentTime,
-            @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
-            @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
-            final DrinnenDraussen drinnenDraussen,
-            final boolean temperaturaenderungMussBeschriebenWerden,
-            final boolean bewoelkungsaenderungMussBeschriebenWerden) {
-        checkArgument(temperaturChangeSofernRelevant != null
-                        || !temperaturaenderungMussBeschriebenWerden,
-                "Temperatur-Change nicht angegeben, obwohl Temperaturänderung "
-                        + "beschrieben werden muss");
-
-        checkArgument(bewoelkungChangeSofernRelevant != null
-                        || !bewoelkungsaenderungMussBeschriebenWerden,
-                "Bewölkungs-Change nicht angegeben, obwohl Bewölkungsveränderung "
-                        + "beschrieben werden muss");
-
-        if (!temperaturaenderungMussBeschriebenWerden
+        if (!windstaerkeaenderungMussBeschriebenWerden
+                && !temperaturaenderungMussBeschriebenWerden
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
-            // Nichts beschreiben - außer höchtestensuntertägigem Tageszeitenwechsel
+            // Nichts beschreiben - außer höchtestens untertägigem Tageszeitenwechsel
             if (!currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY)
                     && lastTime.getTageszeit() == currentTime.getTageszeit()) {
                 return TAGESZEIT_DESC_DESCRIBER.altZwischentageszeitlicherWechsel(
@@ -2278,68 +2237,227 @@ public class WetterData {
             return ImmutableList.of();
         }
 
-        if (temperaturaenderungMussBeschriebenWerden
+        if (!windstaerkeaenderungMussBeschriebenWerden
+                && temperaturaenderungMussBeschriebenWerden
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Temperatur beschreiben
             return TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                    currentTime, temperaturChangeSofernRelevant, drinnenDraussen);
+                    lastTime.getTime(),
+                    currentTime, temperaturChangeSofernRelevant, drinnenDraussen,
+                    drinnenDraussen.isDraussen());
             // IDEA  "Die Sonne hat die Erde aufgetaut" (bei (aktuell) unauffälliger Bewölkung)
         }
 
-        if (!temperaturaenderungMussBeschriebenWerden
-                && bewoelkungsaenderungMussBeschriebenWerden) {
+        if (!windstaerkeaenderungMussBeschriebenWerden
+                && !temperaturaenderungMussBeschriebenWerden) {
             // Nur Bewölkung beschreiben
             return BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
+                    lastTime.getTime(),
                     currentTime, bewoelkungChangeSofernRelevant,
-                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
+                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                    auchZeitwechselreferenzen && drinnenDraussen.isDraussen());
         }
 
-        // Nur Temperaturänderung und Bewölkungsänderung beschreiben
+        if (windstaerkeaenderungMussBeschriebenWerden
+                && !temperaturaenderungMussBeschriebenWerden
+                && !bewoelkungsaenderungMussBeschriebenWerden) {
+            // Nur Windstärkeänderung beschreiben
+            return WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
+                    lastTime.getTime(),
+                    currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                    auchZeitwechselreferenzen && drinnenDraussen.isDraussen());
+        }
+
+        if (windstaerkeaenderungMussBeschriebenWerden
+                && temperaturaenderungMussBeschriebenWerden
+                && !bewoelkungsaenderungMussBeschriebenWerden) {
+            return alt()
+                    .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
+                            lastTime.getTime(),
+                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen()).stream()
+                            .flatMap(windSatz ->
+                                    TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
+                                            lastTime.getTime(),
+                                            currentTime, temperaturChangeSofernRelevant,
+                                            drinnenDraussen,
+                                            false)
+                                            .stream()
+                                            .filter(EinzelnerSatz.class::isInstance)
+                                            .map(tempSatz ->
+                                                    new ZweiSaetze(
+                                                            (EinzelnerSatz) windSatz,
+                                                            (EinzelnerSatz) tempSatz)))
+                            .collect(toImmutableSet()))
+                    .addAll(altNeueSaetze(WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
+                            lastTime.getTime(),
+                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen()),
+                            SENTENCE,
+                            TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
+                                    lastTime.getTime(),
+                                    currentTime, temperaturChangeSofernRelevant, drinnenDraussen,
+                                    false)))
+                    .addAll(altNeueSaetze("Das Wetter ändert sich:",
+                            SENTENCE,
+                            WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
+                                    lastTime.getTime(),
+                                    currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                    false),
+                            SENTENCE,
+                            TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
+                                    lastTime.getTime(),
+                                    currentTime, temperaturChangeSofernRelevant,
+                                    drinnenDraussen,
+                                    false)))
+                    .build();
+        }
+
+        if (windstaerkeaenderungMussBeschriebenWerden
+                && !temperaturaenderungMussBeschriebenWerden) {
+            // Nur Windstärkeänderung und Bewölungsänderung beschreiben
+            return alt()
+                    .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
+                            lastTime.getTime(),
+                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
+                            .stream()
+                            .flatMap(windSatz ->
+                                    BEWOELKUNG_SATZ_DESCRIBER
+                                            .altSprungOderWechselUnterOffenemHimmel(
+                                                    lastTime.getTime(), currentTime,
+                                                    bewoelkungChangeSofernRelevant,
+                                                    false)
+                                            .stream()
+                                            .filter(EinzelnerSatz.class::isInstance)
+                                            .map(bewSatz ->
+                                                    new ZweiSaetze(
+                                                            (EinzelnerSatz) windSatz,
+                                                            (EinzelnerSatz) bewSatz)))
+                            .collect(toImmutableSet()))
+                    .addAll(altNeueSaetze(
+                            WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
+                                    lastTime.getTime(), currentTime.getTime(),
+                                    windstaerkeChangeSofernRelevant,
+                                    auchZeitwechselreferenzen && drinnenDraussen.isDraussen()),
+                            SENTENCE,
+                            BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
+                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    drinnenDraussen ==
+                                            DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                                    false)))
+                    .build();
+        }
+
+        if (!windstaerkeaenderungMussBeschriebenWerden) {
+            // Nur Temperaturänderung und Bewölkungsänderung beschreiben
+
+            return alt()
+                    .addAll(TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
+                            lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                            drinnenDraussen,
+                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
+                            .stream()
+                            .filter(EinzelnerSatz.class::isInstance)
+                            .flatMap(tempSatz ->
+                                    BEWOELKUNG_SATZ_DESCRIBER
+                                            .altSprungOderWechselUnterOffenemHimmel(
+                                                    lastTime.getTime(), currentTime,
+                                                    bewoelkungChangeSofernRelevant,
+                                                    false)
+                                            .stream()
+                                            .filter(EinzelnerSatz.class::isInstance)
+                                            .map(bewSatz ->
+                                                    new ZweiSaetze(
+                                                            (EinzelnerSatz) tempSatz,
+                                                            (EinzelnerSatz) bewSatz)))
+                            .collect(toImmutableSet()))
+                    .addAll(altNeueSaetze(
+                            TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
+                                    lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                                    drinnenDraussen, true),
+                            SENTENCE,
+                            BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
+                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    drinnenDraussen ==
+                                            DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                                    false)))
+                    .build();
+        }
+
         return alt()
-                .addAll(TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                        currentTime, temperaturChangeSofernRelevant, drinnenDraussen)
-                        .stream()
-                        .filter(EinzelnerSatz.class::isInstance)
-                        .flatMap(tempSatz ->
-                                BEWOELKUNG_SATZ_DESCRIBER
-                                        .altSprungOderWechselUnterOffenemHimmel(
-                                                currentTime, bewoelkungChangeSofernRelevant)
-                                        .stream()
-                                        .filter(EinzelnerSatz.class::isInstance)
-                                        .map(bewSatz ->
-                                                new ZweiSaetze(
-                                                        (EinzelnerSatz) tempSatz,
-                                                        (EinzelnerSatz) bewSatz)))
-                        .collect(toImmutableSet()))
-                .addAll(altNeueSaetze(
-                        TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                                currentTime, temperaturChangeSofernRelevant,
-                                drinnenDraussen),
+                .addAll(altNeueSaetze("Das Wetter ändert sich:",
+                        SENTENCE,
+                        WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
+                                lastTime.getTime(),
+                                currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                false),
+                        SENTENCE,
+                        TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
+                                lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                                drinnenDraussen, false)
+                                .stream()
+                                .filter(EinzelnerSatz.class::isInstance)
+                                .flatMap(tempSatz ->
+                                        BEWOELKUNG_SATZ_DESCRIBER
+                                                .altSprungOderWechselUnterOffenemHimmel(
+                                                        lastTime.getTime(), currentTime,
+                                                        bewoelkungChangeSofernRelevant,
+                                                        false)
+                                                .stream()
+                                                .filter(EinzelnerSatz.class::isInstance)
+                                                .map(bewSatz ->
+                                                        new ZweiSaetze(
+                                                                (EinzelnerSatz) tempSatz,
+                                                                (EinzelnerSatz) bewSatz)))))
+                .addAll(altNeueSaetze("Das Wetter ist umgeschwungen:",
+                        SENTENCE,
+                        WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
+                                lastTime.getTime(),
+                                currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                false).stream()
+                                .flatMap(windSatz ->
+                                        TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
+                                                lastTime.getTime(),
+                                                currentTime, temperaturChangeSofernRelevant,
+                                                drinnenDraussen,
+                                                false)
+                                                .stream()
+                                                .filter(EinzelnerSatz.class::isInstance)
+                                                .map(tempSatz ->
+                                                        new ZweiSaetze(
+                                                                (EinzelnerSatz) windSatz,
+                                                                (EinzelnerSatz) tempSatz))),
                         SENTENCE,
                         BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
+                                lastTime.getTime(),
                                 currentTime, bewoelkungChangeSofernRelevant,
-                                drinnenDraussen ==
-                                        DRAUSSEN_UNTER_OFFENEM_HIMMEL)))
-                // IDEA "Das Wetter ändert sich:...", "Das Wetter schwingt um / ist
-                //  umgeschwungen"
+                                drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                                false)))
                 .build();
     }
 
-    private ImmutableCollection<AbstractDescription<?>> altTimePassedTageszeitenaenderung(
+    @VisibleForTesting
+    ImmutableCollection<AbstractDescription<?>> altTimePassedTageszeitenaenderung(
             final AvDateTime lastTime, final AvDateTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
+            @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
-            final DrinnenDraussen drinnenDraussen,
-            final boolean bewoelkungsaenderungMussBeschriebenWerden) {
-        checkArgument(bewoelkungChangeSofernRelevant != null
-                        || !bewoelkungsaenderungMussBeschriebenWerden,
-                "Bewölkungs-Change nicht angegeben, obwohl Bewölkungsveränderung "
-                        + "beschrieben werden muss");
+            final DrinnenDraussen drinnenDraussen) {
+        // FIXME Gegen Mitternacht... (Wenn nicht schon eingebaut!)
 
-        if (!bewoelkungsaenderungMussBeschriebenWerden) {
-            // Nur Tageszeitenänderunge und - evtl. - Temperaturänderung beschreiben
+        final boolean windstaerkeaenderungMussBeschriebenWerden =
+                windstaerkeChangeSofernRelevant != null;
 
+        final boolean bewoelkungsaenderungMussBeschriebenWerden =
+                bewoelkungChangeSofernRelevant != null;
+
+
+        if (!bewoelkungsaenderungMussBeschriebenWerden
+                && !windstaerkeaenderungMussBeschriebenWerden) {
+
+            // Nur Tageszeitenänderung und - evtl. - Temperaturänderung beschreiben
             return altTageszeitenUndEvtlTemperaturaenderung(lastTime.getTageszeit(),
                     currentTime.getTime(),
                     generelleTemperaturOutsideLocationTemperaturRange,
@@ -2348,23 +2466,45 @@ public class WetterData {
                     drinnenDraussen);
         }
 
-        // Bewölkung und Tageszeitenänderung und - evtl. - Temperaturänderung
+        if (!windstaerkeaenderungMussBeschriebenWerden) {
+            // Bewölkung und Tageszeitenänderung und - evtl. - Temperaturänderung
+            // beschreiben
+            return alt()
+                    .addAll(altNeueSaetze(
+                            // FIXME Vielleicht in altNeueSaetze bei jeder neuen Anfühgung etwas
+                            //  einbauen wie "chooseBest()" - und sehr schlechte ausschließen?!
+                            //  Es wäre schön, "Jetzt... Jetzt.." zu vermeiden...
+                            //  (Vielleicht gibt es dafür auch bessere Ideen....)
+                            altTageszeitenUndEvtlTemperaturaenderung(
+                                    lastTime.getTageszeit(),
+                                    currentTime.getTime(),
+                                    generelleTemperaturOutsideLocationTemperaturRange,
+                                    temperaturChangeSofernRelevant != null ?
+                                            temperaturChangeSofernRelevant.getNachher() :
+                                            null,
+                                    drinnenDraussen),
+                            SENTENCE,
+                            BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
+                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    drinnenDraussen ==
+                                            DRAUSSEN_UNTER_OFFENEM_HIMMEL, false)
+                    )).build();
+        }
+
+        // Tageszeitenänderung, Windstärkeänderung, Bewölkung und - evtl. - Temperaturänderung
         // beschreiben
         return alt()
                 .addAll(altNeueSaetze(
-                        altTageszeitenUndEvtlTemperaturaenderung(
-                                lastTime.getTageszeit(),
-                                currentTime.getTime(),
-                                generelleTemperaturOutsideLocationTemperaturRange,
-                                temperaturChangeSofernRelevant != null ?
-                                        temperaturChangeSofernRelevant.getNachher() :
-                                        null,
-                                drinnenDraussen),
+                        TAGESZEIT_DESC_DESCRIBER.altSprungOderWechsel(
+                                lastTime.getTageszeit(), currentTime.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
                         SENTENCE,
-                        BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                                currentTime, bewoelkungChangeSofernRelevant,
-                                drinnenDraussen ==
-                                        DRAUSSEN_UNTER_OFFENEM_HIMMEL)
+                        altTimePassedTageszeitenaenderungNichtBeschreiben(
+                                lastTime, currentTime,
+                                windstaerkeChangeSofernRelevant,
+                                temperaturChangeSofernRelevant,
+                                bewoelkungChangeSofernRelevant, drinnenDraussen,
+                                false)
                 )).build();
     }
 

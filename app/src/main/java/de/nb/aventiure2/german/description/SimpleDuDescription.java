@@ -21,7 +21,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
- * "Du gehst in den Wald."
+ * "Du gehst in den Wald." Do not change after having put it into a set or into a
+ * hash map as a key.
  */
 public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDescription> {
     /**
@@ -218,8 +219,6 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
             return false;
         }
         final SimpleDuDescription that = (SimpleDuDescription) o;
-        // FIXME Prüfen: Hier sind einige Felder nicht final - könnte
-        //  probleme mit Sets o.Ä. ergeben... Vgl. auch hashCode()!
         return startsNew == that.startsNew &&
                 Objects.equals(verb, that.verb) &&
                 Objects.equals(remainder, that.remainder) &&

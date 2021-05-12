@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -16,6 +17,7 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
@@ -28,6 +30,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.ZweiSaetze;
 
@@ -100,13 +103,16 @@ import static java.util.stream.Collectors.toSet;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class TemperaturSatzDescriber {
+    private final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber;
     private final TemperaturPraedikativumDescriber praedikativumDescriber;
     private final TageszeitPraedikativumDescriber tageszeitPraedikativumDescriber;
 
     public TemperaturSatzDescriber(
             final TageszeitPraedikativumDescriber tageszeitPraedikativumDescriber,
+            final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber,
             final TemperaturPraedikativumDescriber praedikativumDescriber) {
         this.tageszeitPraedikativumDescriber = tageszeitPraedikativumDescriber;
+        this.tageszeitAdvAngabeWannDescriber = tageszeitAdvAngabeWannDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
@@ -189,22 +195,69 @@ public class TemperaturSatzDescriber {
      *               - z.B. wenn der SC den ganzen heißen Tag an einem kühlen Ort
      *               verbringt den kühlen Ort genau in dem Moment verlässt, wenn der
      *               Tag sich wieder abkühlt. Zurzeit berücksichtigen wir diese Fälle
-     *               nicht.
      */
     public ImmutableCollection<Satz> altSprungOderWechsel(
-            final AvDateTime time,
+            final AvTime lastTime, final AvDateTime time,
             final WetterParamChange<Temperatur> change,
-            final DrinnenDraussen drinnenDraussen) {
+            final DrinnenDraussen drinnenDraussen,
+            final boolean auchZeitwechselreferenzen) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+
+        final ImmutableCollection<EinzelnerSatz> altStatisch = alt(
+                change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                true);
 
         final int delta = change.getNachher().minus(change.getVorher());
         if (Math.abs(delta) <= 1) {
             // Die Temperatur hat sich nur um eine Stufe verändert
             // ("Temperaturwechsel").
 
+            @Nullable final ImmutableSet<AdvAngabeSkopusSatz> altWann =
+                    (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) ?
+                            tageszeitAdvAngabeWannDescriber
+                                    .altWannDraussen(lastTime, time.getTime()) :
+                            null;
+
+            final ImmutableSet<Konditionalsatz> altWannSaetze =
+                    (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) ?
+                            tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
+                                    lastTime, time.getTime()) :
+                            null;
+
+            if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
+                // "Gegen Mitternacht ist es kalt"
+                alt.addAll(altWann.stream().flatMap(gegenMitternacht -> altStatisch.stream()
+                        .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                        .collect(toSet()));
+                // "Als der Tag angebrochen ist, ist es kalt"
+                alt.addAll(altWannSaetze.stream()
+                        .flatMap(alsDerTagAngebrochenIst -> altStatisch.stream()
+                                .filter(s -> !s.hatAngabensatz())
+                                .map(s -> s.mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                        .collect(toSet()));
+                // "Gegen Mitternacht wird die Luft kalt"
+                alt.addAll(altWann.stream().flatMap(gegenMitternacht ->
+                        praedikativumDescriber
+                                .altLuftAdjPhr(change.getNachher(), time.getTageszeit())
+                                .stream()
+                                .map(a -> a.alsPraedikativumPraedikat()
+                                        .mitAdvAngabe(gegenMitternacht)
+                                        .alsSatzMitSubjekt(LUFT)))
+                        .collect(toSet()));
+                // "Als der Tag angebrochen ist, wird die Luft kalt"
+                alt.addAll(altWannSaetze.stream().flatMap(alsDerTagAngebrochenIst ->
+                        praedikativumDescriber
+                                .altLuftAdjPhr(change.getNachher(), time.getTageszeit())
+                                .stream()
+                                .map(a -> a.alsPraedikativumPraedikat()
+                                        .alsSatzMitSubjekt(LUFT)
+                                        .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                        .collect(toSet()));
+            }
+
             if ((delta == -1 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
                     || (delta == 1 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
-                // "es wird kalt"
+                // "es ist ein heißer Tag"
                 alt.addAll(mapToList(
                         praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
                                 change.getNachher(), time.getTageszeit(),
@@ -221,15 +274,13 @@ public class TemperaturSatzDescriber {
                     // "die Luft wird kalt"
                     alt.addAll(mapToList(
                             praedikativumDescriber
-                                    .altLuftAdjPhr(change.getNachher(), time.getTageszeit()
-                                    ),
+                                    .altLuftAdjPhr(change.getNachher(), time.getTageszeit()),
                             a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(LUFT)));
                 }
 
                 // "mit einem Mal friert dich"
                 alt.addAll(mapToList(
-                        alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
-                                true),
+                        altStatisch,
                         dichFriert -> dichFriert
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("mit einem Mal"))));
             }
@@ -248,137 +299,200 @@ public class TemperaturSatzDescriber {
 
             if (change.getVorher().hasNachfolger(change.getNachher())) {
                 // Die Temperatur ist um eine Stufe angestiegen
-
                 alt.addAll(altWechselAnstieg(
-                        time.getTageszeit(), change.getNachher(), drinnenDraussen));
+                        time.getTageszeit(), change.getNachher(), drinnenDraussen,
+                        false
+                ));
+
+                if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
+                    alt.addAll(altWann.stream()
+                            .flatMap(gegenMitternacht ->
+                                    altWechselAnstieg(
+                                            time.getTageszeit(), change.getNachher(),
+                                            drinnenDraussen,
+                                            true)
+                                            .stream()
+                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                            .collect(toSet()));
+
+                    alt.addAll(altWannSaetze.stream()
+                            .flatMap(alsDerTagAngebrochenIst ->
+                                    altWechselAnstieg(
+                                            time.getTageszeit(), change.getNachher(),
+                                            drinnenDraussen,
+                                            true)
+                                            .stream()
+                                            .filter(s -> !s.hatAngabensatz())
+                                            .map(s -> s
+                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                            .collect(toSet()));
+                }
             } else {
                 // Die Temperatur ist um eine Stufe gesunken
                 alt.addAll(altWechselAbfall(
-                        time.getTageszeit(), change.getNachher(), drinnenDraussen));
+                        time.getTageszeit(), change.getNachher(), drinnenDraussen,
+                        false
+                ));
+
+                if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
+                    alt.addAll(altWann.stream()
+                            .flatMap(gegenMitternacht ->
+                                    altWechselAbfall(
+                                            time.getTageszeit(), change.getNachher(),
+                                            drinnenDraussen,
+                                            true)
+                                            .stream()
+                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                            .collect(toSet()));
+
+                    alt.addAll(altWannSaetze.stream()
+                            .flatMap(alsDerTagAngebrochenIst ->
+                                    altWechselAbfall(
+                                            time.getTageszeit(), change.getNachher(),
+                                            drinnenDraussen,
+                                            true)
+                                            .stream()
+                                            .filter(s -> !s.hatAngabensatz())
+                                            .map(s -> s
+                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                            .collect(toSet()));
+                }
             }
         } else {
             // Es gab weitere Temperaturen dazwischen ("Temperatursprung")
-            alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturaenderung(
-                    change, false),
-                    Praedikativum::alsEsIstSatz));
+            alt.addAll(altSprung(time, change, drinnenDraussen));
+        }
 
-            if ((delta < 0 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
-                    || (delta > 0 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
-                // "jetzt ist es kalt"
-                alt.addAll(mapToList(alt(
-                        change.getNachher(), time.getTageszeit(), drinnenDraussen,
-                        true),
-                        satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))));
+        return alt.build();
+    }
 
-                // "mittlerweile frierst du"
-                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
-                        true),
-                        satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("mittlerweile"))));
+    private ImmutableCollection<Satz> altSprung(final AvDateTime time,
+                                                final WetterParamChange<Temperatur> change,
+                                                final DrinnenDraussen drinnenDraussen) {
+        final int delta = change.getNachher().minus(change.getVorher());
 
-                // "längst frierst du"
-                alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
-                        true),
-                        satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("längst"))));
+        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
-                // "es ist ein kalt geworden", "es ist ein schöner Tag geworden"
-                alt.addAll(mapToSet(
-                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                change.getNachher(), time.getTageszeit(),
-                                drinnenDraussen.isDraussen()),
-                        kalt -> kalt.alsEsWirdSatz().perfekt()));
+        alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturaenderung(
+                change, false),
+                Praedikativum::alsEsIstSatz));
 
-                // "darüber ist es kalt geworden", "darüber ist es ein schöner Tag geworden"
-                alt.addAll(mapToSet(
-                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                change.getNachher(), time.getTageszeit(),
-                                drinnenDraussen.isDraussen()),
-                        kalt -> kalt.alsEsWirdSatz().perfekt()
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("darüber"))));
+        if ((delta < 0 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
+                || (delta > 0 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
+            // "jetzt ist es kalt"
+            alt.addAll(mapToList(alt(
+                    change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                    true),
+                    satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))));
 
-                // "inzwischen ist es kalt geworden"
-                alt.addAll(mapToSet(
-                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                change.getNachher(), time.getTageszeit(),
-                                drinnenDraussen.isDraussen()),
-                        kalt -> kalt.alsEsWirdSatz().perfekt()
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen"))));
+            // "mittlerweile frierst du"
+            alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                    true),
+                    satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("mittlerweile"))));
 
-                if (drinnenDraussen.isDraussen()) {
-                    // "die Luft ist kalt geworden"
-                    alt.addAll(mapToSet(praedikativumDescriber.altLuftAdjPhr(
-                            change.getNachher(), time.getTageszeit()),
-                            kalt -> kalt.alsWerdenPraedikativumPraedikat().perfekt()
-                                    .alsSatzMitSubjekt(LUFT)));
-                }
-            } else {
-                // "es ist deutlich kühler geworden, aber es ist immer noch ziemlich warm"
-                alt.addAll(Stream.of("deutlich", "spürbar")
-                        .flatMap(deutlich ->
-                                praedikativumDescriber
-                                        .altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                                change.getNachher(), time.getTageszeit(),
-                                                drinnenDraussen.isDraussen()).stream()
-                                        .map(ziemlichWarm ->
-                                                new ZweiSaetze(
-                                                        (delta < 0 ? KUEHLER : WAERMER)
-                                                                .mitGraduativerAngabe(deutlich)
-                                                                .alsEsWirdSatz().perfekt(),
-                                                        ", aber",
-                                                        ziemlichWarm.alsEsIstSatz()
-                                                                .mitAdvAngabe(
-                                                                        new AdvAngabeSkopusVerbAllg(
-                                                                                "immer noch")))))
-                        .collect(toImmutableSet()));
+            // "längst frierst du"
+            alt.addAll(mapToList(alt(change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                    true),
+                    satz -> satz.mitAdvAngabe(new AdvAngabeSkopusSatz("längst"))));
+
+            // "es ist ein kalt geworden", "es ist ein schöner Tag geworden"
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                            change.getNachher(), time.getTageszeit(),
+                            drinnenDraussen.isDraussen()),
+                    kalt -> kalt.alsEsWirdSatz().perfekt()));
+
+            // "darüber ist es kalt geworden", "darüber ist es ein schöner Tag geworden"
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                            change.getNachher(), time.getTageszeit(),
+                            drinnenDraussen.isDraussen()),
+                    kalt -> kalt.alsEsWirdSatz().perfekt()
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("darüber"))));
+
+            // "inzwischen ist es kalt geworden"
+            alt.addAll(mapToSet(
+                    praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                            change.getNachher(), time.getTageszeit(),
+                            drinnenDraussen.isDraussen()),
+                    kalt -> kalt.alsEsWirdSatz().perfekt()
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen"))));
+
+            if (drinnenDraussen.isDraussen()) {
+                // "die Luft ist kalt geworden"
+                alt.addAll(mapToSet(praedikativumDescriber.altLuftAdjPhr(
+                        change.getNachher(), time.getTageszeit()),
+                        kalt -> kalt.alsWerdenPraedikativumPraedikat().perfekt()
+                                .alsSatzMitSubjekt(LUFT)));
             }
+        } else {
+            // "es ist deutlich kühler geworden, aber es ist immer noch ziemlich warm"
+            alt.addAll(Stream.of("deutlich", "spürbar")
+                    .flatMap(deutlich ->
+                            praedikativumDescriber
+                                    .altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                            change.getNachher(), time.getTageszeit(),
+                                            drinnenDraussen.isDraussen()).stream()
+                                    .map(ziemlichWarm ->
+                                            new ZweiSaetze(
+                                                    (delta < 0 ? KUEHLER : WAERMER)
+                                                            .mitGraduativerAngabe(deutlich)
+                                                            .alsEsWirdSatz().perfekt(),
+                                                    ", aber",
+                                                    ziemlichWarm.alsEsIstSatz()
+                                                            .mitAdvAngabe(
+                                                                    new AdvAngabeSkopusVerbAllg(
+                                                                            "immer noch")))))
+                    .collect(toImmutableSet()));
+        }
 
-            if (delta < 0) {
-                alt.add(ABKUEHLEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("deutlich"))
-                                .alsSatzMitSubjekt(EXPLETIVES_ES).perfekt(),
-                        ABKUEHLEN.alsSatzMitSubjekt(LUFT).perfekt(),
-                        ABKUEHLEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("deutlich"))
-                                .alsSatzMitSubjekt(NomenFlexionsspalte.WETTER).perfekt(),
-                        KUEHLER.mitGraduativerAngabe("deutlich").alsEsWirdSatz().perfekt(),
-                        KUEHLER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt());
+        if (delta < 0) {
+            alt.add(ABKUEHLEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("deutlich"))
+                            .alsSatzMitSubjekt(EXPLETIVES_ES).perfekt(),
+                    ABKUEHLEN.alsSatzMitSubjekt(LUFT).perfekt(),
+                    ABKUEHLEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("deutlich"))
+                            .alsSatzMitSubjekt(NomenFlexionsspalte.WETTER).perfekt(),
+                    KUEHLER.mitGraduativerAngabe("deutlich").alsEsWirdSatz().perfekt(),
+                    KUEHLER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt());
 
-                if (change.getNachher().compareTo(Temperatur.WARM) >= 0) {
-                    // "es hat sich abgekühlt, aber es ist immer noch ziemlich warm"
-                    alt.addAll(mapToSet(
-                            praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                    change.getNachher(), time.getTageszeit(),
-                                    drinnenDraussen.isDraussen()),
-                            ziemlichWarm ->
-                                    new ZweiSaetze(
-                                            SICH_ABKUEHLEN.perfekt()
-                                                    .alsSatzMitSubjekt(EXPLETIVES_ES),
-                                            ", aber",
-                                            ziemlichWarm.alsEsIstSatz()
-                                                    .mitAdvAngabe(
-                                                            new AdvAngabeSkopusVerbAllg(
-                                                                    "immer noch")))));
-                }
-            } else {
-                alt.add(WAERMER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt(),
-                        WAERMER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt()
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen")),
-                        WAERMER.mitGraduativerAngabe("ein gutes Stück").alsEsWirdSatz().perfekt());
+            if (change.getNachher().compareTo(Temperatur.WARM) >= 0) {
+                // "es hat sich abgekühlt, aber es ist immer noch ziemlich warm"
+                alt.addAll(mapToSet(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
+                        ziemlichWarm ->
+                                new ZweiSaetze(
+                                        SICH_ABKUEHLEN.perfekt()
+                                                .alsSatzMitSubjekt(EXPLETIVES_ES),
+                                        ", aber",
+                                        ziemlichWarm.alsEsIstSatz()
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusVerbAllg(
+                                                                "immer noch")))));
+            }
+        } else {
+            alt.add(WAERMER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt(),
+                    WAERMER.mitGraduativerAngabe("spürbar").alsEsWirdSatz().perfekt()
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("inzwischen")),
+                    WAERMER.mitGraduativerAngabe("ein gutes Stück").alsEsWirdSatz().perfekt());
 
-                if (change.getNachher().compareTo(Temperatur.KUEHL) <= 0) {
-                    // "es ist ein gutes Stück wärmer geworden, aber es ist immer noch ziemlich
-                    // kühl"
-                    alt.addAll(mapToSet(
-                            praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                    change.getNachher(), time.getTageszeit(),
-                                    drinnenDraussen.isDraussen()),
-                            ziemlichKuehl ->
-                                    new ZweiSaetze(
-                                            WAERMER.mitGraduativerAngabe("ein gutes Stück")
-                                                    .alsEsWirdSatz().perfekt(),
-                                            ", aber",
-                                            ziemlichKuehl.alsEsIstSatz()
-                                                    .mitAdvAngabe(
-                                                            new AdvAngabeSkopusVerbAllg(
-                                                                    "immer noch")))));
-                }
+            if (change.getNachher().compareTo(Temperatur.KUEHL) <= 0) {
+                // "es ist ein gutes Stück wärmer geworden, aber es ist immer noch ziemlich
+                // kühl"
+                alt.addAll(mapToSet(
+                        praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
+                                change.getNachher(), time.getTageszeit(),
+                                drinnenDraussen.isDraussen()),
+                        ziemlichKuehl ->
+                                new ZweiSaetze(
+                                        WAERMER.mitGraduativerAngabe("ein gutes Stück")
+                                                .alsEsWirdSatz().perfekt(),
+                                        ", aber",
+                                        ziemlichKuehl.alsEsIstSatz()
+                                                .mitAdvAngabe(
+                                                        new AdvAngabeSkopusVerbAllg(
+                                                                "immer noch")))));
             }
         }
 
@@ -389,11 +503,20 @@ public class TemperaturSatzDescriber {
      * Gibt alternative Sätze zurück, die beschreiben, wie die Temperatur um eine Stufe
      * gestiegen ist.
      *
-     * @param endTemperatur Die lokale Temperatur nach der Änderung
+     * @param endTemperatur                                           Die lokale Temperatur nach
+     *                                                                der Änderung
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Gibt nur Sätze
+     *                                                                zurück, die für eine
+     *                                                                zusätztliche
+     *                                                                Adverbiale Angabe mit
+     *                                                                Skopus Sotz
+     *                                                                (z.B. "gegen Mitternacht"
+     *                                                                geeignet sind)
      */
     private ImmutableCollection<Satz> altWechselAnstieg(
             final Tageszeit tageszeit,
-            final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen) {
+            final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturanstieg(
@@ -436,13 +559,16 @@ public class TemperaturSatzDescriber {
                 break;
             case KUEHL:
                 alt.add(NACHLASSEN.alsSatzMitSubjekt(KAELTE.mit(UNANGENEHM)),
-                        KALT.mitGraduativerAngabe("längst nicht mehr so")
-                                .alsEsIstSatz()
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")),
                         ERTRAEGLICHER.mitGraduativerAngabe("wieder")
                                 .alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(KAELTE.mit(UNANGENEHM)),
                         SICH_ABKUEHLEN.alsSatzMitSubjekt(LUFT));
+                if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                    alt.add(NACHLASSEN.alsSatzMitSubjekt(KAELTE.mit(UNANGENEHM)),
+                            KALT.mitGraduativerAngabe("längst nicht mehr so")
+                                    .alsEsIstSatz()
+                                    .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")));
+                }
                 break;
             case WARM:
                 alt.add(WARM.mitAdvAngabe(new AdvAngabeSkopusSatz(UNERWARTET)).alsEsWirdSatz(),
@@ -451,11 +577,13 @@ public class TemperaturSatzDescriber {
                                 .mit(duSc()).alsSatz(),
                         dativPraedikativumMitPraedikativum(WARM.mitGraduativerAngabe("wohlig"))
                                 .mit(duSc())
-                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")).alsSatz(),
-                        dativPraedikativumMitPraedikativum(WARM.mitGraduativerAngabe("wieder"))
-                                .mit(duSc())
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("endlich"))
-                                .alsSatz());
+                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")).alsSatz());
+                if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                    alt.add(dativPraedikativumMitPraedikativum(WARM.mitGraduativerAngabe("wieder"))
+                            .mit(duSc())
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("endlich"))
+                            .alsSatz());
+                }
                 break;
             case RECHT_HEISS:
                 alt.add(UNANGENEHM.alsWerdenPraedikativumPraedikat()
@@ -479,11 +607,20 @@ public class TemperaturSatzDescriber {
      * Gibt alternative Sätze zurück, die beschreiben, wie die Temperatur um eine Stufe
      * gesunken ist.
      *
-     * @param endTemperatur Die lokale Temperatur nach der Änderung
+     * @param endTemperatur                                           Die lokale Temperatur nach
+     *                                                                der Änderung
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Gibt nur Sätze
+     *                                                                zurück, die für eine
+     *                                                                zusätztliche
+     *                                                                Adverbiale Angabe mit
+     *                                                                Skopus Sotz
+     *                                                                (z.B. "gegen Mitternacht"
+     *                                                                geeignet sind)
      */
     private ImmutableCollection<Satz> altWechselAbfall(
             final Tageszeit tageszeit,
-            final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen) {
+            final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturabfall(
@@ -529,9 +666,11 @@ public class TemperaturSatzDescriber {
                                 .alsSatz(),
                         // "Kälte setzt ein"
                         EINSETZEN.alsSatzMitSubjekt(npArtikellos(KAELTE)));
-                if (tageszeit == NACHTS) {
-                    // "Die nächtliche Kälte setzt ein"
-                    alt.add(EINSETZEN.alsSatzMitSubjekt(KAELTE.mit(NAECHTLICH)));
+                if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                    if (tageszeit == NACHTS) {
+                        // "Die nächtliche Kälte setzt ein"
+                        alt.add(EINSETZEN.alsSatzMitSubjekt(KAELTE.mit(NAECHTLICH)));
+                    }
                 }
                 break;
             case KUEHL:
@@ -547,13 +686,15 @@ public class TemperaturSatzDescriber {
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")),
                         NACHLASSEN.alsSatzMitSubjekt(HITZE)
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("allmählich")),
-                        HEISS.mitGraduativerAngabe("längst nicht mehr so")
-                                .alsEsIstSatz()
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")),
                         HEISS.mitGraduativerAngabe("nicht mehr so")
                                 .alsEsIstSatz()
                                 .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))
                 );
+                if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                    alt.add(HEISS.mitGraduativerAngabe("längst nicht mehr so")
+                            .alsEsIstSatz()
+                            .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt")));
+                }
                 break;
             case RECHT_HEISS:
                 // fall-through

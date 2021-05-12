@@ -44,4 +44,9 @@ public class WetterParamChange<E extends Enum<?>> {
     public int hashCode() {
         return Objects.hash(vorher, nachher);
     }
+
+    @Override
+    public String toString() {
+        return vorher + " -> " + nachher;
+    }
 }

@@ -17,6 +17,8 @@ import de.nb.aventiure2.data.world.gameobject.*;
  * Alle Implementierungen sollen {@link Enum}s sein.
  */
 public interface IStoryNode {
+    // STORY Dem sc etwas nützliches geben dann wegnehmen. Am Ende muss er es aufgeben.
+
     // STORY Neue Branches in Twine entwickeln
 
     // IDEA Weitere Schritte in Twine modellieren, insbesondere mit dem Ziel, immer

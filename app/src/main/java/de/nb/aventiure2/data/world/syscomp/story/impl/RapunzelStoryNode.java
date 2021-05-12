@@ -46,14 +46,18 @@ import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnnecessaryReturnStatement")
 public enum RapunzelStoryNode implements IStoryNode {
-    // FIXME Die zentrale Dramatische Frage für des Märchens ermitteln:
-    //  Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
-    //  Zwei oder mehr Charaktere, ein gewünschtes Ergebnis
-    //  Oft ist X der Actor, Y der Resistor.
-    //  Im Idealfall können wir die zentrale dramatische Frage des Märchen direkt übernehmen. Je
-    //  früher man sie einführt, desto besser.
-    //  Das Ergebnis / Ziel sollte (für den Character / den SC) schwer zu
-    //  erreichen sein. Das erzeugt Spannung.
+    // Zentrale Dramatische Frage für des Märchens:
+    // FIXME Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
+    // Charaktere: FIXME Charaktere
+    // Gewünschtes Ergebnis: FIXME Gewünschtes Ergebnis
+    // FIXME Oft ist X der Actor, Y der Resistor.
+    // Schwierigkeiten:
+    //  - FIXME Schwierigkeiten
+    // (FIXME Das Ergebnis / Ziel sollte (für den Character / den SC) schwer zu erreichen sein.
+    //   Das erzeugt Spannung.)
+    //  (FIXME Im Idealfall können wir die zentrale dramatische Frage des Märchen direkt
+    //   übernehmen.)
+    // FIXME Je früher man die zentrale dramtische Frage einführt, desto besser.
 
     //FIXME Es sollte nach jedem Story Beat noch eine offene Dramatische Frage geben.
     // Bestenfalls die zentrale Dramatische Frage des Märchens - oder eine andere.
@@ -61,6 +65,11 @@ public enum RapunzelStoryNode implements IStoryNode {
     // wenn die Frage nicht zu allgemein ist.
     // Oft ist es dramatisch interessanter, wenn eine dramatische Frage mit
     // Nein beantwortet wird.
+
+    // FIXME Es sollte jederzeit (nicht nur die aktuelle dramatische Frage, sondern auch andere)
+    //  offene Fragen geben ("Warum...?").
+
+    // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
@@ -116,12 +125,37 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
     //  Welt o.ä.).
 
+    // FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
+    //  - Seilerin?
+    //  Vorher sollt es ein Gespräch geben o.Ä. - sie sollte es nicht direkt anbieten!
+    //  - Vielleicht muss man ihr etwas bringen (Beeren...??!)
+    //  und das Seilflechten kommt erst im Gespräch danach zu auf?!
+    //  - Sie könnte auch auf dem Schlossfest sitzen und man sieht ihr zu und lernt es dabei?!
+    //  - Man könnte sie auch fragen - sie hat kein Seil mehr, das lang genug ist?!
+
     // FIXME Binsen, Seil flechten...
     //  - "du rupfst Binsen und flichst ein weiches Seil daraus"
-    //  -- oder Seilflechten erst von eine (alten? armen?) Frau lernen? ("Mentor")
     //  - "Binsenseil"
     //  - "Sprossen"
-    //  - "steigst die Leiter herauf"
+
+    // FIXME Jedes "Puzzle" sollte möglichst nur "Verbs" (Aktionen) verwenden, die der Spieler
+    //  schon zuvor kennengelernt hat (Beispiel: hochwerfern -> Kugel an richtiger Stelle
+    //  hochwerfen; nehmen -> Äste nehmen; ?? -> Seil flechten;
+    //  ?? -> Aus Seil und Ästen Strickleiter bauen). Oder es sollte zu einem sehr einfachen
+    //  "Puzzle" mit einem neuen Verb ein schwereres Puzzle mit demselben Verb geben.
+
+    // FIXME Wenn ein "Puzzle" grundsätzlich zu leicht ist: Das Feedback, ob der Spieler auf dem
+    //  richigen Weg ist, verzögern.
+
+    // FIXME Wenn ein "Puzzle" (für den Spieler im Moment) zu schwer ist: Feedback geben, dass /
+    //  ob der SC auf dem richtigen Weg ist. (Kann man als "Tipps" einbauen.)
+
+    // FIXME "steigst die Leiter herauf"
+
+    // FIXME Zauberin hat Rapunzel zwischenzeitlich die Haare abgeschnitten und sie
+    //  in einen Vogel verwandelt
+
+    // FIXME Blume löst sich auf nach erlösung rapunzel
 
     // FIXME Rabe mit Sinn HINTERlegen!
     // FIXME Begrenzte Tragkraft?!

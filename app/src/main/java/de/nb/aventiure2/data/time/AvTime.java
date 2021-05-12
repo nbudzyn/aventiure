@@ -78,8 +78,6 @@ public class AvTime {
         }
 
         return NACHTS;
-
-        // FIXME MITTERNACHT?  "Mitternacht", "mitten in der Nacht", "Geisterstunde"
     }
 
     public boolean kurzVorSonnenaufgang() {
@@ -88,13 +86,23 @@ public class AvTime {
     }
 
     public boolean kurzNachSonnenaufgang() {
-        return isWithin(oClock(6, 01),
+        return isWithin(oClock(6, 1),
                 oClock(6, 30));
+    }
+
+    public boolean vorMittag() {
+        return isWithin(oClock(11),
+                oClock(11, 29));
     }
 
     public boolean gegenMittag() {
         return isWithin(oClock(11, 30),
                 oClock(13, 15));
+    }
+
+    public boolean nachmittags() {
+        return isWithin(oClock(13, 45),
+                oClock(16, 59));
     }
 
     public boolean kurzVorSonnenuntergang() {
@@ -107,8 +115,19 @@ public class AvTime {
                 oClock(19));
     }
 
+    public boolean spaetInDerNacht() {
+        return isEqualOrAfter(oClock(21, 30))
+                || isEqualOrBefore(oClock(22, 29));
+    }
+
     public boolean mittenInDerNacht() {
-        return isEqualOrAfter(oClock(22)) || isEqualOrBefore(oClock(2));
+        return isEqualOrAfter(oClock(22, 30))
+                || isEqualOrBefore(oClock(2));
+    }
+
+    public boolean umMitternacht() {
+        return isEqualOrAfter(oClock(23, 45))
+                || isEqualOrBefore(oClock(0, 30));
     }
 
     public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {

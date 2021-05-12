@@ -64,6 +64,12 @@ public class EinzelnerSatz implements Satz {
     @Nullable
     private final Konditionalsatz angabensatz;
 
+    /**
+     * Ob der Angabensatz - wenn es überhaupt einen gibt - nach Möglichkeit vorangestellt
+     * werden soll
+     */
+    private final boolean angabensatzMoeglichstVorangestellt;
+
     public static ImmutableList<Satz> altSubjObjSaetze(
             @Nullable final SubstantivischePhrase subjekt,
             final PraedikatMitEinerObjektleerstelle praedikat, final SubstantivischePhrase objekt,
@@ -99,13 +105,15 @@ public class EinzelnerSatz implements Satz {
     public EinzelnerSatz(@Nullable final String anschlusswort,
                          @Nullable final SubstantivischePhrase subjekt,
                          final PraedikatOhneLeerstellen praedikat) {
-        this(anschlusswort, subjekt, praedikat, null);
+        this(anschlusswort, subjekt, praedikat, null, false);
     }
 
     private EinzelnerSatz(@Nullable final String anschlusswort,
                           @Nullable final SubstantivischePhrase subjekt,
                           final PraedikatOhneLeerstellen praedikat,
-                          @Nullable final Konditionalsatz angabensatz) {
+                          @Nullable final Konditionalsatz angabensatz,
+                          final boolean angabensatzMoeglichstVorangestellt) {
+        this.angabensatzMoeglichstVorangestellt = angabensatzMoeglichstVorangestellt;
         if (praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
             if (subjekt != null) {
                 Personalpronomen.checkExpletivesEs(subjekt);
@@ -123,12 +131,13 @@ public class EinzelnerSatz implements Satz {
 
     @Override
     public EinzelnerSatz mitAnschlusswort(@Nullable final String anschlusswort) {
-        return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz);
+        return new EinzelnerSatz(anschlusswort, subjekt, praedikat,
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     private EinzelnerSatz mitSubjektExpletivesEs() {
         return new EinzelnerSatz(anschlusswort, Personalpronomen.EXPLETIVES_ES, praedikat,
-                angabensatz);
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
@@ -139,48 +148,53 @@ public class EinzelnerSatz implements Satz {
         }
 
         return new EinzelnerSatz(anschlusswort, subjekt.mitFokuspartikel(subjektFokuspartikel),
-                praedikat, angabensatz);
+                praedikat, angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitModalpartikeln(final Collection<Modalpartikel> modalpartikeln) {
         return new EinzelnerSatz(anschlusswort, subjekt,
                 praedikat.mitModalpartikeln(modalpartikeln),
-                angabensatz);
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitAdvAngabe(@Nullable final AdvAngabeSkopusSatz advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
-                angabensatz);
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbAllg advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
-                angabensatz);
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
-                angabensatz);
+                angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
-    public EinzelnerSatz mitAngabensatz(@Nullable final Konditionalsatz angabensatz) {
+    @Override
+    public EinzelnerSatz mitAngabensatz(
+            @Nullable final Konditionalsatz angabensatz,
+            final boolean angabensatzMoeglichstVorangestellt) {
         if (angabensatz == null) {
             return this;
         }
 
-        return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz);
+        return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz,
+                angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz perfekt() {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.perfekt(),
-                angabensatz != null ? angabensatz.perfekt() : null);
+                angabensatz != null ? angabensatz.perfekt() : null,
+                angabensatzMoeglichstVorangestellt);
     }
 
     @Override
@@ -210,8 +224,11 @@ public class EinzelnerSatz implements Satz {
                 erstesInterrogativwortImPraedikat, // "was" / "wem" / "wann"
                 getVerbletztsatz().cutFirst(
                         erstesInterrogativwortImPraedikat
-                ) // "du zu berichten hast", "wer zu berichten hat", "er kommt"
-        );
+                ), // "du zu berichten hast", "wer zu berichten hat", "er kommt"
+                angabensatz != null ?
+                        Konstituentenfolge
+                                .schliesseInKommaEin(angabensatz.getDescription()) :
+                        null); // "[, ]als er kommt[, ]"
     }
 
     private Konstituentenfolge getIndirekteFrageNachSubjekt() {
@@ -255,15 +272,17 @@ public class EinzelnerSatz implements Satz {
                 relativpronomenImPraedikat, // "das" / "dem"
                 getVerbletztsatz().cutFirst(
                         relativpronomenImPraedikat
-                ) // "du zu berichten hast", "er was gegeben hat", "kommt"
-        );
+                ), // "du zu berichten hast", "er was gegeben hat", "kommt"
+                angabensatz != null ?
+                        Konstituentenfolge
+                                .schliesseInKommaEin(angabensatz.getDescription()) :
+                        null); // "[, ]als er kommt[, ]"
     }
 
     private Konstituentenfolge getRelativsatzMitRelativpronomenSubjekt() {
         // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
         return getVerbletztsatz();
     }
-
 
     @Override
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
@@ -306,9 +325,8 @@ public class EinzelnerSatz implements Satz {
 
         @Nullable final Konstituentenfolge speziellesVorfeld =
                 praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        getPersonFuerPraedikat(), getNumerusFuerPraedikat()
-                );
-        if (speziellesVorfeld == null) {
+                        getPersonFuerPraedikat(), getNumerusFuerPraedikat());
+        if (speziellesVorfeld != null) {
             res.add(getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
         }
 
@@ -323,9 +341,20 @@ public class EinzelnerSatz implements Satz {
             return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
         }
 
+        if (angabensatzMoeglichstVorangestellt) {
+            return joinToKonstituentenfolge(
+                    anschlusswort, // "und"
+                    angabensatz != null ?
+                            Konstituentenfolge
+                                    .schliesseInKommaEin(angabensatz.getDescription()) :
+                            null, // "[, ]als er kommt[, ]"
+                    praedikat.getVerbzweitMitSubjektImMittelfeld(
+                            subjekt != null ? subjekt : Personalpronomen.EXPLETIVES_ES));
+        }
+
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES,
+                subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES.nomK(),
                 praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge
@@ -434,6 +463,11 @@ public class EinzelnerSatz implements Satz {
     @Override
     public boolean isSatzreihungMitUnd() {
         return false;
+    }
+
+    @Override
+    public boolean hatAngabensatz() {
+        return angabensatz != null;
     }
 
     @Override

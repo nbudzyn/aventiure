@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -38,60 +39,63 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
-    // FIXME Die zentrale Dramatische Frage für des Märchens ermitteln:
-    //  Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
-    //  Zwei oder mehr Charaktere, ein gewünschtes Ergebnis
-    //  Oft ist X der Actor, Y der Resistor.
-    //  Im Idealfall können wir die zentrale dramatische Frage des Märchen direkt übernehmen. Je
-    //  früher man sie einführt, desto besser.
-    //  Das Ergebnis / Ziel sollte (für den Character / den SC) schwer zu
-    //  erreichen sein. Das erzeugt Spannung.
-
-    //FIXME Es sollte nach jedem Story Beat noch eine offene Dramatische Frage geben.
-    // Bestenfalls die zentrale Dramatische Frage des Märchens - oder eine andere.
-    // Die Tipps könnten auf die / eine noch offene dramatische Frage Bezug nehmen -
-    // wenn die Frage nicht zu allgemein ist.
-    // Oft ist es dramatisch interessanter, wenn eine dramatische Frage mit
-    // Nein beantwortet wird.
+    // Zentrale Dramatische Frage für des Märchens:
+    //  Schafft es der SC, sich zu überwinden und mit dem Frosch zu essen, so dass etwas
+    //  Magisches passiert?
+    //  Charaktere: SC, Frosch
+    //  Gewünschtes Ergebnis: etwas Magisches passiert
+    //  Der SC ist Actor und Resistor gleichermaßen.
+    //  Schwierigkeiten:
+    //  - Der SC muss ich überwinden.
+    //  - Der SC muss erkennen, dass man beim Schlossfest zusammen essen kann.
+    //  - Der SC muss auf das Schlossfest warten.
+    //  (Also für den Spieler eher leicht zu erreichen -> geringe Spannung.)
+    //  (Das könnte auch die zentrale dramatische Frage des Märchen sein.)
+    //  Die Frage wird eher spät eingeführt. (Zu den dramtischen Fragen vorher siehe unten.)
 
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
+    // Dramatische Frage (vor diesem Story Node):
+    // Schafft es der Spieler, etwas die App richtig zu bedienen, so dass er Spaß hat und
+    // nicht kaputt geht oder er nicht stirbt?
     KUGEL_GENOMMEN(20, SCHLOSS_VORHALLE,
             FroschkoenigStoryNode::narrateAndDoHintAction_KugelGenommen),
+    // Dramatische Frage: Schafft es der SC, die goldene Kugel zu nehmen, ohne dass er ins
+    // Gefängnis kommt o.Ä.?
     MIT_KUGEL_ZUM_BRUNNEN_GEGANGEN(8, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_MitKugelZumBrunnenGegangen,
-            KUGEL_GENOMMEN
-    ),
+            KUGEL_GENOMMEN),
+    // Dramatische Fragen: Schafft es der SC, mit der goldenen Kugel das Schloss zu verlassen?
+    // Schaft es der SC, etwas Sinnvolles mit der goldenen Kugel anzustellen?
     ETWAS_IM_BRUNNEN_VERLOREN(
             6, IM_WALD_BEIM_BRUNNEN,
             FroschkoenigStoryNode::narrateAndDoHintAction_EtwasImBrunnenVerloren,
-            KUGEL_GENOMMEN // IDEA Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
-    ),
+            KUGEL_GENOMMEN), // IDEA Es könnte auch andere Dinge zum Im-Brunnen-Verlieren geben
+    // Dramatische Frage: Schafft es der SC seine goldene Kugel zurückzubekommen?
     FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT(10, IM_WALD_BEIM_BRUNNEN,
-            FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt
-            ,
-            ETWAS_IM_BRUNNEN_VERLOREN
-    ),
+            FroschkoenigStoryNode::narrateAndDoHintAction_FroschHatEtwasAusBrunnenGeholt,
+            ETWAS_IM_BRUNNEN_VERLOREN),
+    // Ab hier zentrale dramatische Frage!
     ZUM_SCHLOSSFEST_GEGANGEN(15,
             DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_ZumSchlossfestGegangen,
             KUGEL_GENOMMEN, // Ansonsten kann der Spieler nicht wissen, dass es ein Schlossfest
             // überhaupt gibt
-            FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT // Ansonsten bringt einem das Schlossfest nichts
-    ),
+            FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT),// Ansonsten bringt einem das Schlossfest nichts
     BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT(4,
             SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
             FroschkoenigStoryNode::narrateAndDoHintAction_BeimSchlossfestAnDenTischGesetzt,
-            ZUM_SCHLOSSFEST_GEGANGEN
-    ),
+            ZUM_SCHLOSSFEST_GEGANGEN),
     PRINZ_IST_ERLOEST(6, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
             FroschkoenigStoryNode::narrateAndDoHintAction_PrinzIstErloest,
-            BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT
-    ),
+            BEIM_SCHLOSSFEST_AN_DEN_TISCH_GESETZT),
+    // Dramatische Frage: Schafft es der SC, zu erfahren, wie es mit dem Prinzen weitergeht?
     PRINZ_IST_WEGGEFAHREN(4, DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_PrinzIstWeggefahren,
-            PRINZ_IST_ERLOEST
-    );
+            PRINZ_IST_ERLOEST);
+
+    // FIXME Sobald eine Story beendet ist: Zwingend einen (klaren) Tipp zur nächsten noch
+    //  offenen Story geben!
 
     private final ImmutableSet<FroschkoenigStoryNode> preconditions;
 
@@ -153,9 +157,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return false;
     }
 
-    // IDEA Alternativen für Tipp-Texte, bei denen Foreshadowing stärker im
-    //  Vordergrund steht
-
     private static void narrateAndDoHintAction_KugelGenommen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
@@ -210,7 +211,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 alt.addAll(altNachtsSchlafen(world));
             } else {
                 final ImmutableCollection<AbstractDescription<?>> hintGgfWetterhinweis =
-                        altHintZumBrunnenGehenGgfWetterhinweis(timeTaker, world);
+                        altHintZumBrunnenGehenGgfWetterhinweis(world);
                 if (!hintGgfWetterhinweis.isEmpty()) {
                     // Wetterhinweise müssen auf jeden Fall ausgegeben werden
                     n.narrateAlt(hintGgfWetterhinweis, NO_TIME);
@@ -239,7 +240,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     alt.addAll(altNachtsSchlafen(world));
                 } else {
                     final ImmutableCollection<AbstractDescription<?>> hintGgfWetterhinweis =
-                            altHintZumBrunnenGehenGgfWetterhinweis(timeTaker, world);
+                            altHintZumBrunnenGehenGgfWetterhinweis(world);
                     if (!hintGgfWetterhinweis.isEmpty()) {
                         // Wetterhinweise müssen auf jeden Fall ausgegeben werden!
                         n.narrateAlt(hintGgfWetterhinweis, NO_TIME);
@@ -395,7 +396,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altHintZumBrunnenGehenGgfWetterhinweis(
-            final TimeTaker timeTaker, final World world) {
+            final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadWetter().wetterComp().getTemperaturFuerAktuellenZeitpunktAmOrtDesSC()
@@ -426,6 +427,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             alt.addIfOtherwiseEmpty(paragraph("Dir kommt ein Gedanke:",
                     "Auf dem Brunnenrand sitzen und ein wenig mit der goldenen Kugel spielen –",
                     "ja, das stellst du dir sehr meditativ vor!"));
+            // FIXME Nicht so klar sagen!
         } else {
             alt.addIfOtherwiseEmpty(paragraph("Es gibt sicher noch viel zu erleben"));
         }
@@ -437,7 +439,12 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     }
 
     private static boolean scIsDraussen(final World world) {
-        return world.loadSC().locationComp().getLocation().storingPlaceComp()
-                .getDrinnenDraussen().isDraussen();
+        @Nullable final ILocationGO scLocation = world.loadSC().locationComp().getLocation();
+
+        if (scLocation == null) {
+            return false;
+        }
+
+        return scLocation.storingPlaceComp().getDrinnenDraussen().isDraussen();
     }
 }

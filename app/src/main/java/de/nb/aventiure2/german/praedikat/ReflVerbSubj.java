@@ -34,6 +34,8 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
             "beziehe", "beziehst", "bezieht",
             "bezieht",
             Perfektbildung.HABEN, "bezogen"),
+    SICH_LEGEN("legen", AKK, "lege", "legst", "legt", "legt",
+            Perfektbildung.HABEN, "gelegt"),
     SICH_VERDUNKELN("verdunkeln", AKK,
             "verdunkle", "verdunkelst", "verdunkelt",
             "verdunkelt",
@@ -73,20 +75,6 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
             final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung, partizipII),
                 reflKasus);
-    }
-
-    ReflVerbSubj(
-            final String infinitiv,
-            final Kasus reflKasus,
-            final String ichForm,
-            final String duForm,
-            final String erSieEsForm,
-            final String ihrForm,
-            @Nullable final String partikel,
-            final Perfektbildung perfektbildung,
-            final String partizipII) {
-        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel,
-                perfektbildung, partizipII), reflKasus);
     }
 
     ReflVerbSubj(final VerbMitValenz verbMitValenz,

@@ -568,7 +568,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet",
                     anaph.nomK(),
                     altEindruckSaetzeAnaphPersPron.stream()
-                            .map(s -> s.mitAnschlusswortUndSofernNichtSchonEnthalten())));
+                            .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
                     alt.addAll(altNeueSaetze(
@@ -1173,9 +1173,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         rapunzelLaesstHaareZumAbstiegHerunterBzwGibtDemSCNochZeitZumVerstecken();
 
-        // TODO Anfrage nach Storytelling / Narrative Designer bei Github einstellen?
-        //  Inhalt: Storytelling Grimms Märchen deutsch rein textbasiert, kein Zufall
-        //  (kein Auswürfeln), aber simulierte Welt
         gespraechspartnerBeendetGespraech();
     }
 
@@ -1319,9 +1316,6 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     public void narrateOWehZauberinKommt() {
-        final int zuneigung = feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
-                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
-
         n.narrateAlt(
                 neuerSatz("„O weh, die Alte kommt!“, entfährt es der jungen",
                         "Frau. „",

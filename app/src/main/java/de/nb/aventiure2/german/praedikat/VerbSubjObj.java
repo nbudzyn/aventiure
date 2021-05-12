@@ -10,6 +10,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
@@ -107,13 +108,15 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             "setzt", Perfektbildung.HABEN, "gesetzt"),
     SPRECHEN("sprechen", MIT_DAT, "spreche", "sprichst", "spricht",
             "sprecht", Perfektbildung.HABEN, "gesprochen"),
-    STEIGEN_AUF("steigen", AUF_AKK,
-            "steige", "steigst", "steigt", "steigt",
-            Perfektbildung.SEIN, "gestiegen"),
+    SPUEREN("spüren", AKK, "spüre", "spürst", "spürt", "spürt",
+            Perfektbildung.HABEN, "gespürt"),
     // Z.B. "jm. vor Augen stehen"
     STEHEN("stehen", DAT, "stehe", "stehst", "steht",
             "steht",
             Perfektbildung.HABEN, "gestanden"),
+    STEIGEN_AUF("steigen", AUF_AKK,
+            "steige", "steigst", "steigt", "steigt",
+            Perfektbildung.SEIN, "gestiegen"),
     STREICHEN("streichen", DAT, "streiche",
             "streichst", "streicht", "streicht",
             Perfektbildung.HABEN, "gestrichen"),
@@ -125,6 +128,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
             Perfektbildung.SEIN, "getreten"),
+    VERLIEREN_AN("verlieren", AN_DAT, "verliere", "verlierst", "verliert", "verliert",
+            Perfektbildung.HABEN, "verloren"),
     VERTREIBEN("verteiben", AKK,
             "vertreibe", "vertreibst", "vertreibt", "vertreibt",
             Perfektbildung.HABEN, "vertrieben"),

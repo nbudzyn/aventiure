@@ -145,6 +145,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     SANFT("sanft"),
     SAUSEND("sausend"),
     SCHUMMRIG("schummrig"),
+    SCHWAECHER("schwächer"),
     SCHWER("schwer"),
     SENGEND("sengend"),
     SCHLECHT("schlecht"),
@@ -153,6 +154,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     SPUERBAR("spürbar"),
     STERNENKLAR("sternenklar"),
     STARK("stark"),
+    STAERKER("stärker"),
     STEHEND("stehend"),
     STOCKDUNKEL("stockdunkel"),
     STRAHLEND("strahlend"),
@@ -232,7 +234,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
 
     @Override
     public AdjPhrOhneErgaenzungenOhneLeerstellen mitGraduativerAngabe(
-            final GraduativeAngabe graduativeAngabe) {
+            @Nullable final GraduativeAngabe graduativeAngabe) {
         return toAdjPhr().mitGraduativerAngabe(graduativeAngabe);
     }
 

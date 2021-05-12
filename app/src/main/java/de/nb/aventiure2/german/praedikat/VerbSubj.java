@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
@@ -94,6 +95,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             Perfektbildung.SEIN, "gezogen"),
 
     // Partikelverben
+    ABFLAUEN("abflauen", "flaue", "flaust", "flaut", "flaut",
+            "ab", Perfektbildung.HABEN, "abgeflaut"),
     ABKUEHLEN(KUEHLEN, "ab", Perfektbildung.HABEN),
     ANBRECHEN(BRECHEN, "an", Perfektbildung.SEIN),
     ANGEBEN(GEBEN, "an", Perfektbildung.HABEN),
@@ -105,11 +108,13 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             "reiße", "reißt", "reißt", "reißt",
             "auf", Perfektbildung.SEIN, "aufgerissen"),
     AUFWACHEN(WACHEN, "auf", Perfektbildung.SEIN),
+    AUFZIEHEN(ZIEHEN, "auf", Perfektbildung.SEIN),
     EINBRECHEN(BRECHEN, "ein", Perfektbildung.SEIN),
     EINSETZEN(SETZEN, "ein", Perfektbildung.HABEN),
     EINTRETEN(TRETEN_AUF, "ein", Perfektbildung.SEIN),
     EMPORSTEIGEN(STEIGEN_AUF, "empor", Perfektbildung.SEIN),
     HERABSCHEINEN(SCHEINEN, "herab", Perfektbildung.HABEN),
+    HERANKOMMEN(KOMMEN, "heran", Perfektbildung.SEIN),
     HERAUFDRINGEN("heraufdringen",
             "dringe", "dringst", "dringt", "dringt",
             "herauf", Perfektbildung.SEIN, "heraufgedrungen"),
@@ -123,7 +128,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     HINABSTEIGEN(STEIGEN_AUF, "hinab", Perfektbildung.SEIN),
     NACHLASSEN("nachlassen", "lasse", "lässt", "lässt", "lasst",
             "nach", Perfektbildung.HABEN, "nachgelassen"),
-    UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN);
+    UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN),
+    ZUNEHMEN(NEHMEN, "zu", Perfektbildung.HABEN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

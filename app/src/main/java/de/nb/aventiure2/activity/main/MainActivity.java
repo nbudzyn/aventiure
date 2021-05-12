@@ -64,6 +64,14 @@ public class MainActivity extends AppCompatActivity {
     private GuiActionsAdapter guiActionsAdapter;
     // TODO Text der Geschichte teilen (share)?
 
+    // FIXME internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
+    //  Möglichkeit dieses Log - inkl. dem erzeugten Story Text - jederzeit
+    //  zu sharen, d.h. zb per E-Mail zu versenden
+    // FIXME Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
+    //  hat - inkl. der Differenz zur vorgesehenen Schrittzahl.
+    //  Klug einberechnen, dass mehrere Story Steps gleichzeit offen sind!
+    //  (Also addieren o.Ä.)
+
     private MainViewModel mainViewModel;
     private Toolbar toolbar;
 

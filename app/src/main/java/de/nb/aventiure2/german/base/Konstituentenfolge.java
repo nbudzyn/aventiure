@@ -47,6 +47,8 @@ public class Konstituentenfolge
         implements IAlternativeKonstituentenfolgable,
         Iterable<IKonstituenteOrStructuralElement> {
     private static final int GEDAECHTNISWEITE_PHORIK = 6;
+    private static final int MAX_ANZAHL_ALTERNATIVEN_FOR_1_PART = 300;
+    private static final int EXTRA_ANZAHL_ALTERNATIVEN_PER_EXTRA_PART = 25;
     private final ImmutableList<IKonstituenteOrStructuralElement> konstituenten;
 
     @Nullable
@@ -182,11 +184,14 @@ public class Konstituentenfolge
         // IDEA Ggf. Konstituentenfolge und AbstractDescription zusammenführen?
 
         ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
-                alternativeKonstituentenfolgen = new ArrayList<>();
+                alternativeKonstituentenfolgenBuilder = new ArrayList<>();
 
-        alternativeKonstituentenfolgen.add(ImmutableList.builder());
+        alternativeKonstituentenfolgenBuilder.add(ImmutableList.builder());
 
+        int partCount = 0;
         for (final Object part : parts) {
+            partCount++;
+
             final Collection<Konstituentenfolge> alternativePartKonstituentenfolgen;
 
             if (part instanceof Stream<?>) {
@@ -230,34 +235,89 @@ public class Konstituentenfolge
                         + "implementieren?");
             }
 
-            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
-                    ergaenzteAlternativeKonstituentenfolgen = new ArrayList<>();
-
-            for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> alternative :
-                    alternativeKonstituentenfolgen) {
-                for (final Konstituentenfolge alternativePartKonstituentenfolge :
-                        alternativePartKonstituentenfolgen) {
-                    if (alternativePartKonstituentenfolge != null) {
-                        final ImmutableList.Builder<IKonstituenteOrStructuralElement>
-                                ergaenzteKonstituentenfolge = ImmutableList.builder();
-                        ergaenzteKonstituentenfolge.addAll(alternative.build());
-                        ergaenzteKonstituentenfolge
-                                .addAll(alternativePartKonstituentenfolge.konstituenten);
-                        ergaenzteAlternativeKonstituentenfolgen.add(ergaenzteKonstituentenfolge);
-                    } else {
-                        ergaenzteAlternativeKonstituentenfolgen.add(alternative);
-                    }
-                }
-            }
-
-            alternativeKonstituentenfolgen = ergaenzteAlternativeKonstituentenfolgen;
+            final int limit = MAX_ANZAHL_ALTERNATIVEN_FOR_1_PART +
+                    (partCount - 1) * EXTRA_ANZAHL_ALTERNATIVEN_PER_EXTRA_PART;
+            // Im ersten Schritt akzeptieren wir maximal (z.B.) 300 Alternativen.
+            // Im zweiten Schritt dürfen dann (durch "Ausmultiplizieren") maximal
+            // (z.B.) 25 weitere hinzukommen etc.
+            alternativeKonstituentenfolgenBuilder =
+                    appendAllCombinations(alternativeKonstituentenfolgenBuilder,
+                            alternativePartKonstituentenfolgen, limit);
         }
 
+        return buildKonstituentenfolgen(alternativeKonstituentenfolgenBuilder);
+    }
+
+    @NonNull
+    private static ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+    appendAllCombinations(
+            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                    leftBuilderList,
+            final Collection<Konstituentenfolge> rightList,
+            final int limit) {
+        final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                res = new ArrayList<>();
+        int count = 0;
+
+        // Falls wir zu viele Eregebnisse hätten, wollen wird möglichst links Variabilität.
+        // (Auf einsilbige rechte Seiten kann der Folgetext abwechslungsreich reagieren.)
+        // Daher gehen wir in der äußeren ("langsamen") Schleife die rechten Seiten durch.
+
+        for (final @Nullable Konstituentenfolge right : rightList) {
+            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                    tmp = appendToAll(leftBuilderList, right, limit - count);
+
+            res.addAll(tmp);
+            count += tmp.size();
+
+            if (count >= limit) {
+                return res;
+            }
+        }
+
+        return res;
+    }
+
+    private static ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>> appendToAll(
+            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>> leftBuilderList,
+            @Nullable final Konstituentenfolge right, final int limit) {
+        final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                res = new ArrayList<>();
+
+        int count = 0;
+
+        for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> left : leftBuilderList) {
+            if (count >= limit) {
+                return res;
+            }
+
+            res.add(append(left, right));
+            count++;
+        }
+
+        return res;
+    }
+
+    private static ImmutableList.Builder<IKonstituenteOrStructuralElement> append(
+            final ImmutableList.Builder<IKonstituenteOrStructuralElement> left,
+            final @Nullable Konstituentenfolge right) {
+        if (right == null) {
+            return left;
+        }
+
+        return ImmutableList.<IKonstituenteOrStructuralElement>builder()
+                .addAll(left.build())
+                .addAll(right.konstituenten);
+    }
+
+    @NonNull
+    private static HashSet<Konstituentenfolge> buildKonstituentenfolgen(
+            final ArrayList<ImmutableList.Builder<IKonstituenteOrStructuralElement>>
+                    konstituentenfolgenBuilderList) {
         final HashSet<Konstituentenfolge> res = new HashSet<>();
-        for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> alternative :
-                alternativeKonstituentenfolgen) {
-            final ImmutableList<IKonstituenteOrStructuralElement> konstituenten =
-                    alternative.build();
+        for (final ImmutableList.Builder<IKonstituenteOrStructuralElement> builder :
+                konstituentenfolgenBuilderList) {
+            final ImmutableList<IKonstituenteOrStructuralElement> konstituenten = builder.build();
 
             if (konstituenten.isEmpty()) {
                 res.add(null);

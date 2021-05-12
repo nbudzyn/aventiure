@@ -13,6 +13,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.federkiel.string.StringUtil.stripPrefixIfAny;
@@ -145,7 +146,7 @@ public class Verb {
         this.wirSieFormOhnePartikel = wirSieFormOhnePartikel;
         this.ihrFormOhnePartikel = ihrFormOhnePartikel;
         this.partikel = partikel;
-        this.perfektbildung = perfektbildung;
+        this.perfektbildung = checkNotNull(perfektbildung, "perfektbildung ist null");
         this.partizipII = partizipII;
 
         checkArgument(partikel == null || infinitiv.startsWith(partikel),
@@ -254,7 +255,14 @@ public class Verb {
     }
 
     Verb getHilfsverbFuerPerfekt() {
-        return perfektbildung.getHilfsverb();
+        switch (perfektbildung) {
+            case HABEN:
+                return HabenUtil.VERB;
+            case SEIN:
+                return SeinUtil.VERB;
+            default:
+                throw new IllegalStateException("Unexpected Perfektbildung");
+        }
     }
 
     @NonNull

@@ -69,15 +69,19 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     KAELTE(F, "Kälte"),
     KINN(N, "Kinn"),
     KOENIGSSOHN(M, "Königssohn"),
+    KRAFT(F, "Kraft"),
     KUEHLE(N, "Kühle", "Kühlen"),
     KUGEL(F, "Kugel"),
     LEIB(M, "Leib", "Leibe"),
     LICHT(N, "Licht"),
     LUFT(F, "Luft"),
+    LUFTHAUCH(M, "Lufthauch"),
     LUFTZUG(M, "Luftzug"),
+    MITTAG(M, "Mittag"),
     MITTAGSHITZE(F, "Mittagshitze"),
     MITTAGSSONNE(F, "Mittagssonne"),
     MITTE(F, "Mitte"),
+    MITTERNACHT(F, "Mitternacht"),
     MARMORTREPPE(F, "Marmortreppe"),
     MOND(M, "Mond"),
     MONDLICHT(N, "Mondlicht"),
@@ -164,7 +168,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final boolean grundsaetzlichArtikellos,
+                        final boolean grundsaetzlichArtikellos,
                         final String nominalNominativDativUndAkkusativ) {
         this(numerusGenus, grundsaetzlichArtikellos,
                 nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
@@ -185,7 +189,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        @Nullable final boolean grundsaetzlichArtikellos,
+                        final boolean grundsaetzlichArtikellos,
                         final String nominalNominativUndAkkusativ,
                         final String nominalDativ) {
         this(numerusGenus, grundsaetzlichArtikellos,

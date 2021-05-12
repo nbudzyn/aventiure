@@ -185,7 +185,7 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
 
-                // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
+                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
                 //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
                 //  (vgl. AblegenAction)
                 n.narrateAlt(
@@ -225,7 +225,8 @@ public class FroschprinzReactionsComp
                                 "ein Schauer über den Rücken, als",
                                 // IDEA Nur Bezugsobjekt und Kasus übergeben und
                                 //  Text / Anaphern automatisch wählen lassen?
-                                //  Abhängigkeiten gut bedenken.
+                                //  Abhängigkeiten gut bedenken (grobe Idee:
+                                //  Visitor Pattern).
                                 desc.persPron().nomK(),
                                 "fordert: „Nicht länger gezögert – nun lass uns zusammen",
                                 "essen!“", PARAGRAPH)
@@ -260,7 +261,7 @@ public class FroschprinzReactionsComp
 
         final EinzelneSubstantivischePhrase desc = getDescription();
 
-        // STORY Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
+        // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
         n.narrate(du("siehst", getDescription().akkK()).schonLaenger()
                 .timed(NO_TIME));
@@ -295,18 +296,18 @@ public class FroschprinzReactionsComp
                         .schonLaenger()
                         .timed(mins(2)));
 
-        // TODO Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
+        // STORY Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
         //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
         //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
         //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
         //  und einen Tipp!
-        // "Vor dem Schloss sind viele Leute zzsammengekimmen.
-        //  Ein einfach gekleideter Mann spricht dich von der Seite an: Ein Prinz azs einen
-        //  fernen Land!
-        // Ich habe erzählen hören, er sei verzaubert gewesen. Ein Unfug, wenn Ihr mich fragt!
-        // Aber sein Vatwr wird überglücklich sein, dass er wieder aufgetaucht ist!
-        // Du bist kurz in Gedanken. Als du dich ihm zuwwnden Willsr, ist der Mann schon in der
-        // Menge verscgwunden.
+        //  "Vor dem Schloss sind viele Leute zzsammengekimmen.
+        //   Ein einfach gekleideter Mann spricht dich von der Seite an: Ein Prinz azs einen
+        //   fernen Land!
+        //  Ich habe erzählen hören, er sei verzaubert gewesen. Ein Unfug, wenn Ihr mich fragt!
+        //  Aber sein Vatwr wird überglücklich sein, dass er wieder aufgetaucht ist!
+        //  Du bist kurz in Gedanken. Als du dich ihm zuwwnden Willsr, ist der Mann schon in der
+        //  Menge verscgwunden.
 
         locationComp.narrateAndUnsetLocation();
     }

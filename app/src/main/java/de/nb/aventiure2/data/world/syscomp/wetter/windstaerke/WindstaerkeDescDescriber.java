@@ -4,13 +4,23 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
+import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -19,13 +29,72 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeDescDescriber {
+    private final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber;
     private final WindstaerkePraedikativumDescriber praedikativumDescriber;
     private final WindstaerkeSatzDescriber satzDescriber;
 
-    public WindstaerkeDescDescriber(final WindstaerkeSatzDescriber satzDescriber,
-                                    final WindstaerkePraedikativumDescriber praedikativumDescriber) {
+    public WindstaerkeDescDescriber(
+            final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber,
+            final WindstaerkeSatzDescriber satzDescriber,
+            final WindstaerkePraedikativumDescriber praedikativumDescriber) {
+        this.tageszeitAdvAngabeWannDescriber = tageszeitAdvAngabeWannDescriber;
         this.satzDescriber = satzDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
+    }
+
+    /**
+     * Gibt Alternativen zurück, die beschreiben, wie die Windstaerke sich um eine Stufe
+     * (Windstärkewechsel) oder um mehrere Stufen (Windstärkesprung) verändert hat.*
+     */
+    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechsel(
+            final AvTime lastTime, final AvTime time,
+            final WetterParamChange<Windstaerke> change,
+            final boolean auchZeitwechselreferenzen) {
+        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+
+        alt.addAll(satzDescriber.altSprungOderWechsel(
+                lastTime, time, change, auchZeitwechselreferenzen));
+
+        // IDEA Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
+        //  (Blätter)
+        //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
+        //  Blättchen mehr"
+
+        final ImmutableSet<Konstituente> altWann =
+                auchZeitwechselreferenzen ?
+                        tageszeitAdvAngabeWannDescriber.altWannDraussen(
+                                lastTime, time).stream()
+                                .map(gegenMitternacht -> gegenMitternacht
+                                        .getDescription(EXPLETIVES_ES))
+                                .collect(toImmutableSet()) :
+                        null;
+
+        final ImmutableSet<Konstituentenfolge> altWannSaetze =
+                auchZeitwechselreferenzen ?
+                        mapToSet(
+                                tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
+                                        lastTime, time),
+                                Konditionalsatz::getDescription) :
+                        null;
+
+        if (change.getNachher().minus(change.getVorher()) == 1) {
+            // "es kommt ein Wind"
+            alt.addAll(altNeueSaetze(
+                    "es kommt",
+                    change.getNachher().altNomenFlexionsspalte().stream()
+                            .map(wind -> np(INDEF, wind).nomK())));
+        }
+
+        if (change.getVorher() == Windstaerke.WINDIG
+                && change.getNachher() == Windstaerke.KRAEFTIGER_WIND) {
+            alt.add(neuerSatz("es kommt ein starker Wind"));
+            if (auchZeitwechselreferenzen) {
+                alt.addAll(altNeueSaetze(altWann, "kommt ein starker Wind"));
+                alt.addAll(altNeueSaetze(altWannSaetze, ", kommt ein starker Wind"));
+            }
+        }
+
+        return alt.schonLaenger().build();
     }
 
     /**

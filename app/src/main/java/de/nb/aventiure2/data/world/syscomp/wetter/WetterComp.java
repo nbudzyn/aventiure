@@ -229,9 +229,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
                         from != null ?
                                 from.storingPlaceComp().getDrinnenDraussen() :
                                 DRINNEN,
-                        to != null ?
-                                to.storingPlaceComp().getDrinnenDraussen() :
-                                DRINNEN,
+                        to.storingPlaceComp().getDrinnenDraussen(),
                         from != null ?
                                 from.storingPlaceComp().getEffectiveTemperaturRange() :
                                 null,

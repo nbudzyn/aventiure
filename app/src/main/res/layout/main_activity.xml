@@ -43,13 +43,13 @@
             android:id="@+id/narrationView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:justificationMode="inter_word"
-            android:hyphenationFrequency="full"
             android:breakStrategy="high_quality"
+            android:hyphenationFrequency="full"
+            android:justificationMode="inter_word"
             android:text=""
-            tools:text="Eine lange Geschichte. Eine sehr lange Geschichte. Eine sehr, sehr lange Geschichte..."
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@color/colorOldNarration" />
+            android:textColor="@color/colorOldNarration"
+            tools:text="Eine lange Geschichte. Eine sehr lange Geschichte. Eine sehr, sehr lange Geschichte..." />
 
     </ScrollView>
 

@@ -88,6 +88,14 @@ public class ZweiSaetze implements Satz {
     }
 
     @Override
+    public ZweiSaetze mitAngabensatz(@Nullable final Konditionalsatz angabensatz,
+                                     final boolean angabensatzMoeglichstVorangestellt) {
+        return new ZweiSaetze(
+                ersterSatz.mitAngabensatz(angabensatz, angabensatzMoeglichstVorangestellt),
+                zweiterSatz);
+    }
+
+    @Override
     public ZweiSaetze perfekt() {
         return new ZweiSaetze(
                 ersterSatz.perfekt(),
@@ -180,6 +188,11 @@ public class ZweiSaetze implements Satz {
     @Override
     public SubstantivischePhrase getErstesSubjekt() {
         return ersterSatz.getSubjekt();
+    }
+
+    @Override
+    public boolean hatAngabensatz() {
+        return ersterSatz.hatAngabensatz() || zweiterSatz.hatAngabensatz();
     }
 
     @Override

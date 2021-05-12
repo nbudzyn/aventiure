@@ -1,15 +1,18 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.junit.Test;
 
 import java.util.List;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
@@ -36,8 +39,7 @@ public class WetterDataTest {
                                         blitzUndDonner);
                                 for (final DrinnenDraussen drinnenDraussen : DrinnenDraussen
                                         .values()) {
-                                    for (final AvTime time :
-                                            relevantTimes()) {
+                                    for (final AvTime time : relevantTimes()) {
                                         System.out.println(
                                                 tagestiefsttemperatur + " "
                                                         + tageshoechsttemperatur + " "
@@ -51,7 +53,7 @@ public class WetterDataTest {
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
                                                 true)
-                                                .isEmpty()).isFalse();
+                                        ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
                                                 time, drinnenDraussen,
@@ -59,14 +61,14 @@ public class WetterDataTest {
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                                 Temperatur.KUEHL),
                                                 true)
-                                                .isEmpty()).isFalse();
+                                        ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
                                                 false)
-                                                .isEmpty()).isFalse();
+                                        ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
                                                 time, drinnenDraussen,
@@ -74,7 +76,7 @@ public class WetterDataTest {
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                                 Temperatur.KUEHL),
                                                 false)
-                                                .isEmpty()).isFalse();
+                                        ).isNotEmpty();
                                     }
                                 }
                             }
@@ -101,8 +103,7 @@ public class WetterDataTest {
                                         windstaerkeUnterOffenemHimmel,
                                         bewoelkung,
                                         blitzUndDonner);
-                                for (final AvTime time :
-                                        relevantTimes()) {
+                                for (final AvTime time : relevantTimes()) {
                                     System.out.println(
                                             tagestiefsttemperatur + " "
                                                     + tageshoechsttemperatur + " "
@@ -116,7 +117,7 @@ public class WetterDataTest {
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             true)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, true,
@@ -124,14 +125,14 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, true,
@@ -139,7 +140,7 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, false,
@@ -155,14 +156,14 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                     assertThat(underTest.altKommtNachDraussen(
                                             time, false,
@@ -170,7 +171,7 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .build().isEmpty()).isFalse();
+                                            .build()).isNotEmpty();
 
                                 }
                             }
@@ -192,9 +193,8 @@ public class WetterDataTest {
                             Windstaerke.LUEFTCHEN,
                             Bewoelkung.LEICHT_BEWOELKT,
                             BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
-                    for (int delta = -3; delta <= 3; delta++) {
-                        for (final AvTime time :
-                                relevantTimes()) {
+                    for (int deltaTemperatur = -3; deltaTemperatur <= 3; deltaTemperatur++) {
+                        for (final AvTime time : relevantTimes()) {
                             System.out.println(
                                     tagestiefsttemperatur + " "
                                             + tageshoechsttemperatur + " "
@@ -205,8 +205,8 @@ public class WetterDataTest {
                                             time,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
-                                            delta, Windstaerke.STURM, Windstaerke.STURM)
-                                    .isEmpty()).isFalse();
+                                            deltaTemperatur, null, null)
+                            ).isNotEmpty();
 
                             assertThat(underTest
                                     .altAngenehmereTemperaturOderWindAlsVorLocation(
@@ -214,22 +214,23 @@ public class WetterDataTest {
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
-                                            delta, Windstaerke.LUEFTCHEN, Windstaerke.LUEFTCHEN)
-                                    .isEmpty()).isFalse();
+                                            deltaTemperatur, null, null)
+                            ).isNotEmpty();
+
+                            assertThat(underTest
+                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                            time,
+                                            EnumRange
+                                                    .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
+                                                            Temperatur.KUEHL),
+                                            deltaTemperatur, Windstaerke.WINDIG,
+                                            Windstaerke.LUEFTCHEN)
+                            ).isNotEmpty();
                         }
                     }
                 }
             }
         }
-    }
-
-    @NonNull
-    private static List<AvTime> relevantTimes() {
-        return asList(oClock(5, 45),
-                oClock(6, 15),
-                oClock(12), oClock(14), oClock(18, 20),
-                oClock(18, 45),
-                oClock(21), oClock(23));
     }
 
     @Test
@@ -247,8 +248,7 @@ public class WetterDataTest {
                                         windstaerkeUnterOffenemHimmel,
                                         bewoelkung,
                                         blitzUndDonner);
-                                for (final AvTime time :
-                                        relevantTimes()) {
+                                for (final AvTime time : relevantTimes()) {
                                     System.out.println(
                                             tagestiefsttemperatur + " "
                                                     + tageshoechsttemperatur + " "
@@ -261,7 +261,7 @@ public class WetterDataTest {
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, true,
@@ -269,13 +269,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, true,
@@ -283,13 +283,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, false,
@@ -297,13 +297,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweiseWohinHinaus(
                                             time, false,
@@ -311,7 +311,7 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                 }
                             }
                         }
@@ -336,8 +336,7 @@ public class WetterDataTest {
                                         windstaerkeUnterOffenemHimmel,
                                         bewoelkung,
                                         blitzUndDonner);
-                                for (final AvTime time :
-                                        relevantTimes()) {
+                                for (final AvTime time : relevantTimes()) {
                                     System.out.println(
                                             tagestiefsttemperatur + " "
                                                     + tageshoechsttemperatur + " "
@@ -349,8 +348,8 @@ public class WetterDataTest {
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
-                                            true)
-                                            .isEmpty()).isFalse();
+                                            true))
+                                            .isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, true,
@@ -358,13 +357,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, true,
@@ -372,13 +371,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, false,
@@ -386,13 +385,13 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             true)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
 
                                     assertThat(underTest.altWetterhinweisWoDraussen(
                                             time, false,
@@ -400,7 +399,7 @@ public class WetterDataTest {
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                             Temperatur.KUEHL),
                                             false)
-                                            .isEmpty()).isFalse();
+                                    ).isNotEmpty();
                                 }
                             }
                         }
@@ -410,8 +409,373 @@ public class WetterDataTest {
         }
     }
 
+    @Test
+    public void altTimePassedTageszeitenaenderungNichtBeschreiben() {
+        // GIVEN, WHEN, THEN
+        final List<AvTime> relevantTimes = relevantTimes();
 
-// FIXME Tests anlegen für die anderen WetterComp / WetterData-Methoden
-//  für alle Kombinationen von Wetterparametern, die
-//  sicherstellen, dass niemals eine leere Menge geschrieben werden soll.
+        for (int i = 0; i < relevantTimes.size(); i++) {
+            final AvDateTime lastTime = new AvDateTime(1, relevantTimes.get(i));
+            for (int j = 0; j < relevantTimes.size(); j++) {
+                // (Keine Änderung, Wechsel, Sprung)
+
+                final AvDateTime currentTime =
+                        j < i ?
+                                new AvDateTime(2, relevantTimes.get(j)) :
+                                new AvDateTime(1, relevantTimes.get(j));
+
+                for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                        .values()) {
+                    for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                            .values()) {
+                        if (bewoelkungVorher != bewoelkungNachher) {
+                            final WetterParamChange<Bewoelkung>
+                                    bewoelkungChange =
+                                    new WetterParamChange<>(
+                                            bewoelkungVorher,
+                                            bewoelkungNachher);
+
+                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                                    currentTime,
+                                    null, null,
+                                    bewoelkungChange);
+                        }
+                    }
+                }
+
+                final WetterParamChange<Temperatur> temperaturChange =
+                        new WetterParamChange<>(Temperatur.WARM,
+                                Temperatur.RECHT_HEISS);
+
+                testAltTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                        currentTime,
+                        null, temperaturChange, null);
+
+                for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                        .values()) {
+                    for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                            .values()) {
+                        if (bewoelkungVorher != bewoelkungNachher) {
+                            final WetterParamChange<Bewoelkung>
+                                    bewoelkungChange =
+                                    new WetterParamChange<>(
+                                            bewoelkungVorher,
+                                            bewoelkungNachher);
+
+                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                    lastTime, currentTime,
+                                    null, temperaturChange,
+                                    bewoelkungChange);
+                        }
+                    }
+                }
+                for (final Windstaerke windstaerkeVorher : Windstaerke.values()) {
+                    for (final Windstaerke windstaerkeNachher : Windstaerke.values()) {
+                        if (windstaerkeNachher != windstaerkeVorher) {
+                            final WetterParamChange<Windstaerke> windstaerkeChange =
+                                    new WetterParamChange<>(windstaerkeVorher, windstaerkeNachher);
+
+                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                                    currentTime,
+                                    windstaerkeChange, null, null);
+
+                            for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                                    .values()) {
+                                for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                                        .values()) {
+                                    if (bewoelkungVorher != bewoelkungNachher) {
+                                        final WetterParamChange<Bewoelkung>
+                                                bewoelkungChange =
+                                                new WetterParamChange<>(
+                                                        bewoelkungVorher,
+                                                        bewoelkungNachher);
+
+                                        testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                                lastTime, currentTime,
+                                                windstaerkeChange, null,
+                                                bewoelkungChange);
+                                    }
+                                }
+                            }
+
+                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                    lastTime, currentTime,
+                                    windstaerkeChange, temperaturChange, null);
+
+                            for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                                    .values()) {
+                                for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                                        .values()) {
+                                    if (bewoelkungVorher != bewoelkungNachher) {
+                                        final WetterParamChange<Bewoelkung>
+                                                bewoelkungChange =
+                                                new WetterParamChange<>(
+                                                        bewoelkungVorher,
+                                                        bewoelkungNachher);
+
+                                        testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                                lastTime, currentTime,
+                                                windstaerkeChange, temperaturChange,
+                                                bewoelkungChange);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    public void altTimePassedTageszeitenaenderung() {
+        // GIVEN, WHEN, THEN
+        final List<AvTime> relevantTimes = relevantTimes();
+
+        for (int i = 0; i < relevantTimes.size(); i++) {
+            final AvDateTime lastTime = new AvDateTime(1, relevantTimes.get(i));
+            for (int j = 0; j < relevantTimes.size(); j++) {
+                // (Wechsel, Sprung)
+
+                final AvDateTime currentTime =
+                        j < i ?
+                                new AvDateTime(2, relevantTimes.get(j)) :
+                                new AvDateTime(1, relevantTimes.get(j));
+
+                if (lastTime.getTageszeit() == currentTime.getTageszeit()) {
+                    break;
+                }
+
+                testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                        null, null, null);
+
+                for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                        .values()) {
+                    for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                            .values()) {
+                        if (bewoelkungVorher != bewoelkungNachher) {
+                            final WetterParamChange<Bewoelkung>
+                                    bewoelkungChange =
+                                    new WetterParamChange<>(
+                                            bewoelkungVorher,
+                                            bewoelkungNachher);
+
+                            testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                                    null, null,
+                                    bewoelkungChange);
+                        }
+                    }
+                }
+
+                final WetterParamChange<Temperatur> temperaturChange =
+                        new WetterParamChange<>(Temperatur.WARM, Temperatur.KUEHL);
+
+                testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                        null, temperaturChange, null);
+
+                for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                        .values()) {
+                    for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                            .values()) {
+                        if (bewoelkungVorher != bewoelkungNachher) {
+                            final WetterParamChange<Bewoelkung>
+                                    bewoelkungChange =
+                                    new WetterParamChange<>(
+                                            bewoelkungVorher,
+                                            bewoelkungNachher);
+
+                            testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                                    null, temperaturChange,
+                                    bewoelkungChange);
+                        }
+                    }
+                }
+                for (final Windstaerke windstaerkeVorher : Windstaerke.values()) {
+                    for (final Windstaerke windstaerkeNachher : Windstaerke.values()) {
+                        if (windstaerkeNachher != windstaerkeVorher) {
+                            final WetterParamChange<Windstaerke> windstaerkeChange =
+                                    new WetterParamChange<>(windstaerkeVorher, windstaerkeNachher);
+
+                            testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                                    windstaerkeChange, null, null);
+
+                            for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                                    .values()) {
+                                for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                                        .values()) {
+                                    if (bewoelkungVorher != bewoelkungNachher) {
+                                        final WetterParamChange<Bewoelkung>
+                                                bewoelkungChange =
+                                                new WetterParamChange<>(
+                                                        bewoelkungVorher,
+                                                        bewoelkungNachher);
+
+                                        testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                                                windstaerkeChange, null,
+                                                bewoelkungChange);
+                                    }
+                                }
+                            }
+
+                            testAltTimePassedTageszeitenaenderung(lastTime, currentTime,
+                                    windstaerkeChange, temperaturChange, null);
+
+                            for (final Bewoelkung bewoelkungVorher : Bewoelkung
+                                    .values()) {
+                                for (final Bewoelkung bewoelkungNachher : Bewoelkung
+                                        .values()) {
+                                    if (bewoelkungVorher != bewoelkungNachher) {
+                                        final WetterParamChange<Bewoelkung>
+                                                bewoelkungChange =
+                                                new WetterParamChange<>(
+                                                        bewoelkungVorher,
+                                                        bewoelkungNachher);
+
+                                        testAltTimePassedTageszeitenaenderung(lastTime,
+                                                currentTime,
+                                                windstaerkeChange, temperaturChange,
+                                                bewoelkungChange);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static void testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+            final AvDateTime lastTime,
+            final AvDateTime currentTime,
+            @Nullable final WetterParamChange<Windstaerke> windstaerkeChange,
+            @Nullable final WetterParamChange<Temperatur> temperaturChange,
+            @Nullable final WetterParamChange<Bewoelkung> bewoelkungChange) {
+        System.out.println(lastTime + " -> " + currentTime + " "
+                + (windstaerkeChange != null ? windstaerkeChange + " " : "")
+                + (temperaturChange != null ? temperaturChange + " " : "")
+                + (bewoelkungChange != null ? bewoelkungChange + " " : ""));
+
+        if (windstaerkeChange != null
+                || temperaturChange != null
+                || bewoelkungChange != null) {
+            if (bewoelkungChange == null && windstaerkeChange == null) {
+                assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                        currentTime,
+                        windstaerkeChange,
+                        temperaturChange,
+                        bewoelkungChange,
+                        DrinnenDraussen.DRINNEN, false)).isNotEmpty();
+            }
+
+            if ((windstaerkeChange != null
+                    && windstaerkeChange.getVorher().getLokaleWindstaerkeDraussenGeschuetzt() !=
+                    windstaerkeChange.getNachher().getLokaleWindstaerkeDraussenGeschuetzt())
+                    || temperaturChange != null
+                    || bewoelkungChange != null) {
+                assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                        currentTime,
+                        windstaerkeChange,
+                        temperaturChange,
+                        bewoelkungChange,
+                        DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
+            } else {
+                // Es soll nicht abstürzen
+                WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                        currentTime,
+                        windstaerkeChange,
+                        temperaturChange,
+                        bewoelkungChange,
+                        DrinnenDraussen.DRAUSSEN_GESCHUETZT, true);
+            }
+
+            assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                    currentTime,
+                    windstaerkeChange,
+                    temperaturChange,
+                    bewoelkungChange,
+                    DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                    true)).isNotEmpty();
+        } else {
+            // Es soll nicht abstürzen
+            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                    currentTime,
+                    null,
+                    null,
+                    null,
+                    DrinnenDraussen.DRINNEN, false);
+
+            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                    currentTime,
+                    null,
+                    null,
+                    null,
+                    DrinnenDraussen.DRAUSSEN_GESCHUETZT, true);
+
+            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime,
+                    currentTime,
+                    null,
+                    null,
+                    null,
+                    DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, true);
+        }
+    }
+
+    private static void testAltTimePassedTageszeitenaenderung(final AvDateTime lastTime,
+                                                              final AvDateTime currentTime,
+                                                              @Nullable
+                                                              final WetterParamChange<Windstaerke> windstaerkeChange,
+                                                              @Nullable
+                                                              final WetterParamChange<Temperatur> temperaturChange,
+                                                              @Nullable
+                                                              final WetterParamChange<Bewoelkung> bewoelkungChange) {
+        final WetterData underTest = new WetterData(Temperatur.SEHR_HEISS,
+                Temperatur.KLIRREND_KALT,
+                windstaerkeChange != null ? windstaerkeChange.getNachher() :
+                        Windstaerke.LUEFTCHEN,
+                bewoelkungChange != null ? bewoelkungChange.getNachher() :
+                        Bewoelkung.LEICHT_BEWOELKT,
+                BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
+
+        System.out.println(lastTime + " -> " + currentTime + " "
+                + (windstaerkeChange != null ? windstaerkeChange + " " : "")
+                + (temperaturChange != null ? temperaturChange + " " : "")
+                + (bewoelkungChange != null ? bewoelkungChange + " " : ""));
+
+        if (bewoelkungChange == null && windstaerkeChange == null) {
+            assertThat(underTest.altTimePassedTageszeitenaenderung(lastTime,
+                    currentTime,
+                    false,
+                    windstaerkeChange,
+                    temperaturChange,
+                    bewoelkungChange,
+                    DrinnenDraussen.DRINNEN)).isNotEmpty();
+        }
+
+        assertThat(underTest.altTimePassedTageszeitenaenderung(lastTime,
+                currentTime,
+                false,
+                windstaerkeChange,
+                temperaturChange,
+                bewoelkungChange,
+                DrinnenDraussen.DRAUSSEN_GESCHUETZT)).isNotEmpty();
+
+        assertThat(underTest.altTimePassedTageszeitenaenderung(lastTime,
+                currentTime,
+                false,
+                windstaerkeChange,
+                temperaturChange,
+                bewoelkungChange,
+                DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL)).isNotEmpty();
+    }
+
+    @NonNull
+    private static List<AvTime> relevantTimes() {
+        return asList(oClock(5, 45),
+                oClock(6, 15),
+                oClock(12), oClock(14), oClock(18, 20),
+                oClock(18, 45),
+                oClock(21), oClock(23));
+    }
 }

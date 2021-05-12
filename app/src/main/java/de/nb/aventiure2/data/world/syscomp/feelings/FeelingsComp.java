@@ -233,7 +233,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return requirePcd().getMovementSpeedFactor();
     }
 
-    // FIXME Man könnte also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
+    // IDEA Man könnte also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
     //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
     //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
     //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.

@@ -4,19 +4,14 @@ public enum Perfektbildung {
     /**
      * Das Verb bildet sein Perfekt mit "haben": "Ich habe gegessen"
      */
-    HABEN(HabenUtil.VERB),
+    HABEN,
     /**
      * Das Verb bildet sein Perfekt mit "sein": "Ich bin gelaufen"
      */
-    SEIN(SeinUtil.VERB);
+    SEIN;
 
-    private final Verb hilfsverb;
-
-    Perfektbildung(final Verb hilfsverb) {
-        this.hilfsverb = hilfsverb;
-    }
-
-    public Verb getHilfsverb() {
-        return hilfsverb;
-    }
+    // Leider können wir hier keine Refererenz zum Hilfsverb haben -
+    // das gibt sonst zirkuläre Abhängigkeiten zum SeinUtil und HabenUtil,
+    // die beim Laden der Klassen (oder später zu NullPointerExceptions)
+    // führen.
 }

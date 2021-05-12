@@ -239,7 +239,8 @@ public class ReactionSystem
         //  Danach die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
         //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann
         //  "Plitsch platsch" Frosch-Reactions.
-        //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben.
+        //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben, oder
+        //  sie werden programmatisch in einer bestimmten Reihenfolge aufgerufen...
 
         final AvDateTime reactionsStartTime = timeTaker.now();
         AvDateTime timeAfterAllReactions = reactionsStartTime;

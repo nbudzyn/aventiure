@@ -11,6 +11,8 @@ import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Eine unflektierte Phrase mit Partizip II, einschließlich der Information,
  * welche Hilfsverb verlangt ist: "unten angekommen (sein)",
@@ -48,6 +50,9 @@ public class PartizipIIPhrase {
 
     public PartizipIIPhrase(final Konstituentenfolge phrase,
                             final Perfektbildung perfektbildung) {
+        checkNotNull(phrase, "phrase ist null");
+        checkNotNull(perfektbildung, "perfektbildung ist null");
+
         this.phrase = phrase;
         this.perfektbildung = perfektbildung;
     }
@@ -76,7 +81,14 @@ public class PartizipIIPhrase {
     }
 
     Verb getHilfsverb() {
-        return perfektbildung.getHilfsverb();
+        switch (perfektbildung) {
+            case HABEN:
+                return HabenUtil.VERB;
+            case SEIN:
+                return SeinUtil.VERB;
+            default:
+                throw new IllegalStateException("Unexpected Perfektbildung");
+        }
     }
 
     @NonNull

@@ -618,9 +618,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private void narrateLocationOnly(@NonNull final ILocationGO to) {
-        // IDEA Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
-        //  Prädikat: "und weiter in Richtung Schloss".
-
         // STORY Wenn Bewegung Wiederholung ist (z.B. Rund um den Turm): Zur Sicherheit...
         //  noch einmal. Um sicher zu
         //  gehen... noch einmal. Du gehst SOGAR noch einmal...

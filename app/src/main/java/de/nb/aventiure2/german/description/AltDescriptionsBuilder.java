@@ -110,27 +110,6 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
     private AltDescriptionsBuilder() {
     }
 
-    public AltDescriptionsBuilder addAllIfOtherwiseEmpty(final AltDescriptionsBuilder other) {
-        return addAllIfOtherwiseEmpty(other.alt);
-    }
-
-    public AltDescriptionsBuilder addAllIfOtherwiseEmpty(final Stream<?> stream) {
-        return addAllIfOtherwiseEmpty(stream.collect(toImmutableSet()));
-    }
-
-    private AltDescriptionsBuilder addAllIfOtherwiseEmpty(
-            final ImmutableCollection.Builder<?> builder) {
-        return addAllIfOtherwiseEmpty(builder.build());
-    }
-
-    private AltDescriptionsBuilder addAllIfOtherwiseEmpty(final Iterable<?> others) {
-        if (isEmpty()) {
-            addAll(others);
-        }
-
-        return this;
-    }
-
     public AltDescriptionsBuilder addAll(final AltDescriptionsBuilder other) {
         return addAll(other.alt);
     }
@@ -146,7 +125,7 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
     public AltDescriptionsBuilder addAll(final Iterable<?> others) {
         for (final Object other : others) {
             if (other instanceof AltDescriptionsBuilder) {
-                addAll((AltDescriptionsBuilder) other);
+                alt.addAll(((AltDescriptionsBuilder) other).build());
             } else if (other instanceof AbstractDescription<?>) {
                 add((AbstractDescription<?>) other);
             } else if (other instanceof Satz) {
@@ -159,10 +138,7 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
         return this;
     }
 
-    public AltDescriptionsBuilder addIfOtherwiseEmpty(final Satz satz) {
-        return addIfOtherwiseEmpty(DescriptionBuilder.satz(satz));
-    }
-
+    @SuppressWarnings("UnusedReturnValue")
     public AltDescriptionsBuilder addIfOtherwiseEmpty(
             final AbstractDescription<?>... altDescriptions) {
         if (isEmpty()) {

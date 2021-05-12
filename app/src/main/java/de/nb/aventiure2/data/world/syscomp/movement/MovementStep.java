@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import java.util.Objects;
+
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.time.AvDateTime;
@@ -42,5 +44,33 @@ class MovementStep {
         return expDuration;
     }
 
-    // FIXME equals(), hashCode()
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final MovementStep that = (MovementStep) o;
+        return fromId.equals(that.fromId) &&
+                toId.equals(that.toId) &&
+                startTime.equals(that.startTime) &&
+                expDuration.equals(that.expDuration);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fromId, toId, startTime, expDuration);
+    }
+
+    @Override
+    public String toString() {
+        return "MovementStep{" +
+                "fromId=" + fromId +
+                ", toId=" + toId +
+                ", startTime=" + startTime +
+                ", expDuration=" + expDuration +
+                '}';
+    }
 }

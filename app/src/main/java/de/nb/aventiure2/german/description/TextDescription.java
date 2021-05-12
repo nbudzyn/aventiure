@@ -39,6 +39,9 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Dazu bräuchte man wohl eine Kontextinfo in der Art "Womit endet die TextDescription?"
     //  Das könnte allerdings auch über die Prädikate... gelöst werden...
 
+    // IDEA Verkürzungen automatisch erzeugen, z.B. erzeugen eines Nachfelds nach einem
+    //  Prädikat: "und weiter in Richtung Schloss".
+
     public TextDescription(final Konstituente konstituente) {
         super(new DescriptionParams());
         this.konstituente = konstituente;

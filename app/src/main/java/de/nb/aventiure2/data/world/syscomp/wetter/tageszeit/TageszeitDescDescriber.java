@@ -136,6 +136,7 @@ public class TageszeitDescDescriber {
                     alt.add(neuerSatz("Inzwischen wird es schon wieder dunkel"),
                             neuerSatz("Die Sonne ist schon wieder am Untergehen"));
                 }
+                break;
             default:
                 throw new IllegalStateException("Unerwartete Tageszeit: " + currentTageszeit);
         }

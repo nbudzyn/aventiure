@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -10,6 +12,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -20,6 +23,7 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.ZweiSaetze;
 
@@ -114,10 +118,13 @@ import static java.util.stream.Collectors.toSet;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungSatzDescriber {
+    private final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber;
     private final BewoelkungPraedikativumDescriber praedikativumDescriber;
 
     public BewoelkungSatzDescriber(
+            final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber,
             final BewoelkungPraedikativumDescriber praedikativumDescriber) {
+        this.tageszeitAdvAngabeWannDescriber = tageszeitAdvAngabeWannDescriber;
         this.praedikativumDescriber = praedikativumDescriber;
     }
 
@@ -209,8 +216,8 @@ public class BewoelkungSatzDescriber {
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.
      */
     public ImmutableCollection<Satz> altSprungOderWechselUnterOffenemHimmel(
-            final AvDateTime time,
-            final WetterParamChange<Bewoelkung> change) {
+            final AvTime lastTime, final AvDateTime time,
+            final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         final int delta = change.getNachher().minus(change.getVorher());
@@ -218,15 +225,71 @@ public class BewoelkungSatzDescriber {
             // Die Bewölkung hat sich nur um eine Stufe verändert
             // ("Bewölkungswechsel").
 
+            @Nullable final ImmutableSet<AdvAngabeSkopusSatz> altWann =
+                    auchZeitwechselreferenzen ?
+                            tageszeitAdvAngabeWannDescriber
+                                    .altWannDraussen(lastTime, time.getTime()) :
+                            null;
+
+            @Nullable final ImmutableSet<Konditionalsatz> altWannSaetze =
+                    auchZeitwechselreferenzen ?
+                            tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
+                                    lastTime, time.getTime()) :
+                            null;
+
             if (change.getVorher().hasNachfolger(change.getNachher())) {
                 // Die Temperatur ist um eine Stufe angestiegen
 
                 alt.addAll(altWechselAnstiegUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()));
+                        time.getTageszeit(), change.getNachher()
+                ));
+
+                if (auchZeitwechselreferenzen) {
+                    alt.addAll(altWann.stream()
+                            .flatMap(gegenMitternacht ->
+                                    altWechselAnstiegUnterOffenemHimmel(
+                                            time.getTageszeit(), change.getNachher())
+                                            .stream()
+                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                            .collect(toSet()));
+                    alt.addAll(altWannSaetze.stream()
+                            .flatMap(alsDerTagAngebrochenIst ->
+                                    altWechselAnstiegUnterOffenemHimmel(
+                                            time.getTageszeit(), change.getNachher())
+                                            .stream()
+                                            .filter(s -> !s.hatAngabensatz())
+                                            .map(s -> s
+                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                            .collect(toSet()));
+                }
             } else {
                 // Die Temperatur ist um eine Stufe gesunken
+
                 alt.addAll(altWechselAbfallUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()));
+                        time.getTageszeit(), change.getNachher(),
+                        false));
+
+                if (auchZeitwechselreferenzen) {
+                    alt.addAll(altWann.stream()
+                            .flatMap(gegenMitternacht ->
+                                    altWechselAbfallUnterOffenemHimmel(
+                                            time.getTageszeit(), change.getNachher(),
+                                            true)
+                                            .stream()
+                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                            .collect(toSet()));
+                    alt.addAll(altWannSaetze.stream()
+                            .flatMap(alsDerTagAngebrochenIst ->
+                                    altWechselAbfallUnterOffenemHimmel(
+                                            time.getTageszeit(), change.getNachher(),
+                                            true)
+                                            .stream()
+                                            .filter(s -> !s.hatAngabensatz())
+                                            .map(s -> s
+                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                            .collect(toSet()));
+
+                }
             }
         } else {
             // Es gab weitere Bewölkungsstufen dazwischen ("Bewölkungssprung")
@@ -247,11 +310,13 @@ public class BewoelkungSatzDescriber {
                             .alsSatzMitSubjekt(HIMMEL));
                 }
                 alt.addAll(mapToSet(altWechselAnstiegUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()),
+                        time.getTageszeit(), change.getNachher()
+                        ),
                         EinzelnerSatz::perfekt));
             } else {
                 alt.addAll(mapToSet(altWechselAbfallUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()),
+                        time.getTageszeit(), change.getNachher(),
+                        false),
                         Satz::perfekt));
 
                 if (change.getNachher() == BEWOELKT) {
@@ -341,11 +406,19 @@ public class BewoelkungSatzDescriber {
      * Gibt alternative Sätze zurück, die beschreiben, wie die Bewölkung um eine Stufe
      * gesunken ist - unter offenem Himmel erlebt.
      *
-     * @param endBewoelkung Die Bewölkung nach dem Abfall
+     * @param endBewoelkung                                           Die Bewölkung nach dem Abfall
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Gibt nur Sätze
+     *                                                                zurück, die für eine
+     *                                                                zusätztliche
+     *                                                                Adverbiale Angabe mit
+     *                                                                Skopus Sotz
+     *                                                                (z.B. "gegen Mitternacht"
+     *                                                                geeignet sind)
      */
     private ImmutableCollection<Satz> altWechselAbfallUnterOffenemHimmel(
             final Tageszeit tageszeit,
-            final Bewoelkung endBewoelkung) {
+            final Bewoelkung endBewoelkung,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
         switch (endBewoelkung) {
@@ -374,14 +447,16 @@ public class BewoelkungSatzDescriber {
 
                 if (tageszeit == NACHTS) {
                     //  "Die düstere Wolkendecke reißt auf"
-                    alt.add(AUFREISSEN.alsSatzMitSubjekt(WOLKENDECKE.mit(DUESTER)),
-                            new ZweiPraedikateOhneLeerstellen(
-                                    AUFREISSEN.mitAdvAngabe(
-                                            new AdvAngabeSkopusVerbAllg("wieder")),
-                                    FREIGEBEN.mit(BLICK_AUF_DEN_STERNENHIMMEL)
-                                            .mitAdvAngabe(
-                                                    new AdvAngabeSkopusSatz("hier und da")))
-                                    .alsSatzMitSubjekt(WOLKEN));
+                    alt.add(AUFREISSEN.alsSatzMitSubjekt(WOLKENDECKE.mit(DUESTER)));
+                    if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                        alt.add(new ZweiPraedikateOhneLeerstellen(
+                                AUFREISSEN.mitAdvAngabe(
+                                        new AdvAngabeSkopusVerbAllg("wieder")),
+                                FREIGEBEN.mit(BLICK_AUF_DEN_STERNENHIMMEL)
+                                        .mitAdvAngabe(
+                                                new AdvAngabeSkopusSatz("hier und da")))
+                                .alsSatzMitSubjekt(WOLKEN));
+                    }
                 } else {
                     alt.add(AUFREISSEN.alsSatzMitSubjekt(WOLKENDECKE.mit(GRAU)));
                 }
@@ -389,7 +464,6 @@ public class BewoelkungSatzDescriber {
             default:
                 throw new IllegalStateException("Unexpected Bewölkung: " + endBewoelkung);
         }
-
 
         return alt.build();
     }

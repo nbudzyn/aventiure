@@ -578,7 +578,8 @@ public class RapunzelsZauberinReactionsComp
         //  Denkbare Lösungen:
         //  - Durch ein zentrales Konzept beheben (World-Ticks nie zu lang)
         //  - Zeit zwischen Ankunft und now von der Rapunzel-Besuchszeit abziehen
-        //    und irgendwo (wo? hier in der Reactions-Comp?) speichern, wann
+        //    und irgendwo (wo? die Reactions-Comps sind derzeit stateless - vielleich in der
+        //    StateComp?!) speichern, wann
         //    der Besuch vorbei sein soll (besuchsEndeZeit = ankunft + BESUCH_DAUER)
         onTimePassed_AufDemWegZuRapunzel_UntenVorTurmAngekommen(now, wasMovingBefore);
     }

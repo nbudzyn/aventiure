@@ -59,6 +59,9 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
     Satz mitAdvAngabe(
             @Nullable AdvAngabeSkopusVerbWohinWoher advAngabe);
 
+    Satz mitAngabensatz(@Nullable final Konditionalsatz angabensatz,
+                        final boolean angabensatzMoeglichstVorangestellt);
+
     Satz perfekt();
 
     /**
@@ -135,4 +138,6 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
     boolean isSatzreihungMitUnd();
 
     SubstantivischePhrase getErstesSubjekt();
+
+    boolean hatAngabensatz();
 }

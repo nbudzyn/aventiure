@@ -43,11 +43,6 @@ import static java.util.Arrays.asList;
  * Stand, erzeugt Tipps, wenn der Benutzer in einer Story nicht weiterkommt etc.
  */
 public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
-    // IDEA Es könnte einen extra Knopf geben, unter dem der benutzer in einem Baum (oder
-    //  einem Graphen) sieht,
-    //  welche StoryNodes er bisher erreicht hat. Die baumstruktur ordnet sich nach den
-    //  Voraussetzungen der StoryNodes voneinander.
-
     private final AvDatabase db;
     private final World world;
     private final TimeTaker timeTaker;
@@ -136,18 +131,6 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
      * {@link Story}s - erreicht hat.
      */
     private void updatePlanWetter() {
-        // FIXME Die Storycomp wählt das Planwetter bei erreichten StorySteps
-        //  - Wie bei startmovement, ggf. ersten Schritt sofort
-        //  - Geschwindigkeit... automatisch nach einer Vorgabe, wie schnell der Wechsel generell
-        //    passieren soll?? (Es wäre unschön, wenn der Spieler auf das Wetter warten müssten -
-        //    also Geschwindigkeit ggf. daran orientieren, ob das SC noch andere StorySteps
-        //    erreichen
-        //    kann - ansonsten superschneller Weterwechsel?)
-        //  - Wetteränderung sollte schon ein paar StorySteps vorher bevor sie wichtig wird (wenn
-        //    auch nicht bis zum Extrem)
-        //  - Aber: Sollte das Schlossfest auf das Wetter reagieren? Braucht man eine
-        //    IWetterChangedReaction?!
-
         // Diese Bedingungen hier sind Story-übergreifend nach Priorität geordnet!
 
         final Wetter wetterGO = world.loadWetter();

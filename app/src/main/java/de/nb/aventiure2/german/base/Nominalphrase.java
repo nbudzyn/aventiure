@@ -519,18 +519,6 @@ public class Nominalphrase
         return artikellosAkkK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
-    // FIXME BUG: java.lang.StackOverflowError: stack size 1043KB
-    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
-    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
-    //	(EinzelneSubstantivischePhrase.java:24)
-    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
-    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
-    //	(EinzelneSubstantivischePhrase.java:24)
-    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
-    //	at de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase.artikellosAkkK
-    //	(EinzelneSubstantivischePhrase.java:24)
-    //	at de.nb.aventiure2.german.base.Nominalphrase.artikellosAkkStr(Nominalphrase.java:485)
-
     @Override
     public String akkStr() {
         return akkK().joinToSingleKonstituente().toTextOhneKontext();

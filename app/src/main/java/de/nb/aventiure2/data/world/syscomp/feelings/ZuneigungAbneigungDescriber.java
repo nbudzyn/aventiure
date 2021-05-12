@@ -66,7 +66,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                 altFeelingBeiBegegnungPraedikativum(
                         gameObjectSubjekt.getPerson(), gameObjectSubjekt.getNumerusGenus(),
                         targetDesc, feelingIntensity, targetKnown).stream()
-                        .map(praedikativum -> praedikativum.alsPraedikativumPraedikat())
+                        .map(Praedikativum::alsPraedikativumPraedikat)
                         .map(p -> p.alsSatzMitSubjekt(gameObjectSubjekt))
                         .collect(ImmutableList.toImmutableList())
         );
@@ -92,7 +92,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .mitAngabensatz(
                             new Konditionalsatz("als",
                                     v.mit(targetDesc)
-                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                                            .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));
         } else if (feelingIntensity == -FeelingIntensity.DEUTLICH) {
             if (targetKnown) {
@@ -108,7 +108,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .mitAngabensatz(
                             new Konditionalsatz("als",
                                     v.mit(targetDesc)
-                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                                            .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));
             res.add(ENTGEGENBLAFFEN
                     .mitObjekt(targetDesc)
@@ -145,7 +145,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .mitAngabensatz(
                             new Konditionalsatz("als",
                                     v.mit(targetDesc)
-                                            .alsSatzMitSubjekt(gameObjectSubjekt))
+                                            .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));
         }
 

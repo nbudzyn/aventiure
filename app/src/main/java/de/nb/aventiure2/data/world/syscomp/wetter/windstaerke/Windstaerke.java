@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 
 import com.google.common.collect.ImmutableList;
 
+import de.nb.aventiure2.data.world.base.Betweenable;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
@@ -14,7 +15,7 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.UNWETTER;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WINDHAUCH;
 
-public enum Windstaerke {
+public enum Windstaerke implements Betweenable<Windstaerke> {
     // Reihenfolge ist relevant - nicht ändern!
     WINDSTILL(ImmutableList.of(),
             ImmutableList.of(AdjektivOhneErgaenzungen.WINDSTILL)),
@@ -92,5 +93,25 @@ public enum Windstaerke {
 
     public int minus(final Windstaerke other) {
         return ordinal() - other.ordinal();
+    }
+
+    public Windstaerke getLokaleWindstaerkeDraussenGeschuetzt() {
+        if (compareTo(LUEFTCHEN) <= 0) {
+            return this;
+        }
+
+        if (compareTo(KRAEFTIGER_WIND) <= 0) {
+            return getVorgaenger();
+        }
+
+        return getVorgaenger().getVorgaenger();
+    }
+
+    public Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
+        if (unterOffenemHimmel) {
+            return this;
+        }
+
+        return getLokaleWindstaerkeDraussenGeschuetzt();
     }
 }

@@ -4,17 +4,23 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
 
+import java.util.stream.Stream;
+
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
+import de.nb.aventiure2.german.base.Konstituente;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -50,27 +56,31 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic"})
 public class BewoelkungDescDescriber {
+    private final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber;
     private final BewoelkungSatzDescriber satzDescriber;
 
     public BewoelkungDescDescriber(
+            final TageszeitAdvAngabeWannDescriber tageszeitAdvAngabeWannDescriber,
             final BewoelkungSatzDescriber satzDescriber) {
+        this.tageszeitAdvAngabeWannDescriber = tageszeitAdvAngabeWannDescriber;
         this.satzDescriber = satzDescriber;
     }
-
 
     /**
      * Gibt Alternativen zurück, die beschreiben, wie die Bewölkung sich eine Stufe
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.*
      */
     public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussen(
-            final AvDateTime time,
+            final AvTime lastTime, final AvDateTime time,
             final WetterParamChange<Bewoelkung> change,
-            final boolean unterOffenemHimmel) {
+            final boolean unterOffenemHimmel, final boolean auchZeitwechselreferenzen) {
         if (unterOffenemHimmel) {
-            return altSprungOderWechselUnterOffenemHimmel(time, change);
+            return altSprungOderWechselUnterOffenemHimmel(
+                    lastTime, time, change, auchZeitwechselreferenzen);
         }
 
-        return altSprungOderWechselDraussenGeschuetzt(time, change);
+        return altSprungOderWechselDraussenGeschuetzt(
+                time, change);
     }
 
     /**
@@ -79,11 +89,27 @@ public class BewoelkungDescDescriber {
      * unter offenem Himmel
      */
     public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselUnterOffenemHimmel(
-            final AvDateTime time,
-            final WetterParamChange<Bewoelkung> change) {
+            final AvTime lastTime, final AvDateTime time,
+            final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altSprungOderWechselUnterOffenemHimmel(time, change));
+        alt.addAll(satzDescriber.altSprungOderWechselUnterOffenemHimmel(
+                lastTime, time, change, auchZeitwechselreferenzen));
+
+        final Stream<Konstituente> wannStream =
+                auchZeitwechselreferenzen ?
+                        tageszeitAdvAngabeWannDescriber.altWannDraussen(
+                                lastTime, time.getTime()).stream()
+                                .map(gegenMitternacht -> gegenMitternacht
+                                        .getDescription(EXPLETIVES_ES)) :
+                        null;
+
+        final Stream<Konstituentenfolge> wannSaetzeStream =
+                auchZeitwechselreferenzen ?
+                        tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
+                                lastTime, time.getTime()).stream()
+                                .map(Konditionalsatz::getDescription) :
+                        null;
 
         final int delta = change.getNachher().minus(change.getVorher());
 
@@ -93,6 +119,14 @@ public class BewoelkungDescDescriber {
                     if (time.getTageszeit() == NACHTS) {
                         alt.add(neuerSatz(
                                 "Die Sterne leuchten nicht mehr so klar wie zuvor"));
+                        if (auchZeitwechselreferenzen) {
+                            alt.addAll(altNeueSaetze(
+                                    wannStream,
+                                    "leuchten die Sterne nicht mehr so klar wie zuvor"));
+                            alt.addAll(altNeueSaetze(
+                                    wannSaetzeStream,
+                                    ", leuchten die Sterne nicht mehr so klar wie zuvor"));
+                        }
                     } else {
                         alt.add(neuerSatz(
                                 "Hier und da sind jetzt einzelne Schäfchenwolken zu sehen"));
@@ -107,6 +141,14 @@ public class BewoelkungDescDescriber {
                     if (time.getTageszeit() != NACHTS) {
                         alt.add(neuerSatz("Mächtige dunkle Wolken beginnen sich am Himmel",
                                 "aufzutürmen"));
+                        if (auchZeitwechselreferenzen) {
+                            alt.addAll(altNeueSaetze(wannStream,
+                                    "beginnen mächtige dunkle Wolken sich am Himmel aufzutürmen"));
+                            alt.addAll(altNeueSaetze(
+                                    wannSaetzeStream,
+                                    ", beginnen mächtige dunkle Wolken sich am Himmel "
+                                            + "aufzutürmen"));
+                        }
                     } else {
                         alt.add(neuerSatz("Die Nacht wird immer dunkler, Sterne sind",
                                 "keine mehr zu sehen"));
@@ -117,13 +159,42 @@ public class BewoelkungDescDescriber {
                     alt.add(neuerSatz("Die letzten weißen",
                             "Schäfchenwolken haben sich verzogen und der ganze Himmel",
                             "strahlt blau über dir"));
+                    if (auchZeitwechselreferenzen) {
+                        alt.addAll(altNeueSaetze(wannStream,
+                                "haben sich die letzten weißen",
+                                "Schäfchenwolken verzogen und der ganze Himmel",
+                                "strahlt blau über dir"));
+                        alt.addAll(altNeueSaetze(
+                                wannSaetzeStream,
+                                ", haben sich die letzten weißen",
+                                "Schäfchenwolken verzogen und der ganze Himmel",
+                                "strahlt blau über dir"));
+                    }
                 } else if (change.getNachher() == LEICHT_BEWOELKT) {
                     if (time.getTageszeit() != NACHTS) {
                         alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
                                 "den Blick auf den blauen Himmel frei"));
+                        if (auchZeitwechselreferenzen) {
+                            alt.addAll(altNeueSaetze(wannStream,
+                                    "reißen die Wolken wieder auf und geben hier und da",
+                                    "den Blick auf den blauen Himmel frei"));
+                            alt.addAll(altNeueSaetze(
+                                    wannSaetzeStream,
+                                    ", reißen die Wolken wieder auf und geben hier und da",
+                                    "den Blick auf den blauen Himmel frei"));
+                        }
                     } else {
                         alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
                                 "den Blick auf den Sternenhimmel frei"));
+                        if (auchZeitwechselreferenzen) {
+                            alt.addAll(altNeueSaetze(wannStream,
+                                    "reißen die Wolken wieder auf und geben hier und da",
+                                    "den Blick auf den Sternenhimmel frei"));
+                            alt.addAll(altNeueSaetze(
+                                    wannSaetzeStream,
+                                    ", reißen die Wolken wieder auf und geben hier und da",
+                                    "den Blick auf den Sternenhimmel frei"));
+                        }
                     }
                 }
             }
@@ -138,7 +209,8 @@ public class BewoelkungDescDescriber {
     }
 
     private ImmutableCollection<AbstractDescription<?>> altSprungOderWechselDraussenGeschuetzt(
-            final AvDateTime time, final WetterParamChange<Bewoelkung> change) {
+            final AvDateTime time,
+            final WetterParamChange<Bewoelkung> change) {
         if (change.getVorher() == BEDECKT) {
             return altSprungOderWechselDraussenGeschuetztVorherBedeckt(time.getTageszeit());
         }
