@@ -195,6 +195,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
         n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
+                // FIXME rauschen nur bei mindestens leichtem Wind
                 neuerSatz("Die Bäume rauschen in",
                         "der Dunkelheit, die Eulen schnarren,",
                         "und es fängt an, dir angst zu werden"),
@@ -202,6 +203,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                         + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
                         + "nichts "
                         + "erkennen"),
+                // FIXME Rauschen nur bei mindestens leichtem Wind
                 neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
     }
 
@@ -223,10 +225,12 @@ public class RastenAction extends AbstractWartenRastenAction {
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
                         + "Vögel und die Grillen zirpen")
                         .dann(),
-                du(SENTENCE, "streckst", "die Glieder und hörst auf das Rauschen "
-                        + "in den "
-                        + "Ästen über dir. Ein Rabe setzt "
-                        + "sich neben dich und fliegt nach einer Weile wieder fort")
+                du(SENTENCE, "streckst",
+                        // FIXME Rauschen nur bei mindestens leichtem Wind
+                        "die Glieder und hörst auf das Rauschen "
+                                + "in den "
+                                + "Ästen über dir. Ein Rabe setzt "
+                                + "sich neben dich und fliegt nach einer Weile wieder fort")
                         .schonLaenger()
                         .dann(),
                 du(SENTENCE, "ruhst",

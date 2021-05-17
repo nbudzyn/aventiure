@@ -278,6 +278,11 @@ public class WetterData {
                 BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
     }
 
+    // FIXME altSparse(), wenn nicht für eine Kombination von
+    //  Parametern eine leere Collection zurückkommt.
+    //  Überall umstellen (Suchen nach of() und "leer"),
+    //  Unnötige Kommentare entfernen
+
     /**
      * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
      * (nur Temperatur) oder draußen erlebt - oder eine leere Menge.
@@ -1020,14 +1025,16 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Draußen weht ein kühler Wind, der Himmel ist bewölkt"
-        final ImmutableCollection<Satz> altWindUndTemperaturSaetze =
+        final ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze =
                 altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
-                        true).stream()
+                        true);
+        final ImmutableCollection<Satz> altKommtNachDraussenWindUndTemperaturSaetze =
+                altStatischeWindUndTemperaturSaetze.stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
                         .collect(toImmutableSet());
 
         alt.addAll(altNeueSaetze(
-                altWindUndTemperaturSaetze,
+                altKommtNachDraussenWindUndTemperaturSaetze,
                 ",",
                 BEWOELKUNG_SATZ_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
@@ -1041,7 +1048,8 @@ public class WetterData {
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)
                             .stream().filter(s -> !s.isSatzreihungMitUnd()),
                     "und", // FIXME Mehrfaches "und" vermeiden
-                    altWindUndTemperaturSaetze));
+                    // "Verortung" mit "draußen" nur am Anfang
+                    altStatischeWindUndTemperaturSaetze));
         }
 
         switch (windstaerke) {
@@ -1093,7 +1101,7 @@ public class WetterData {
             case KRAEFTIGER_WIND:
                 if (bewoelkung.isBetweenIncluding(LEICHT_BEWOELKT, BEWOELKT)) {
                     alt.addAll(altNeueSaetze(
-                            altWindUndTemperaturSaetze
+                            altKommtNachDraussenWindUndTemperaturSaetze
                                     .stream().filter(s -> !s.isSatzreihungMitUnd()),
                             SENTENCE,
                             "die Wolken ziehen ganz nah über deinem Haupt weg"));
@@ -1116,7 +1124,7 @@ public class WetterData {
             case STURM:
                 if (bewoelkung.compareTo(BEWOELKT) >= 0) {
                     alt.addAll(altNeueSaetze(
-                            altWindUndTemperaturSaetze,
+                            altKommtNachDraussenWindUndTemperaturSaetze,
                             SENTENCE,
                             ImmutableList.of(
                                     "Hoffentlich bleibt es wenigstens trocken!",

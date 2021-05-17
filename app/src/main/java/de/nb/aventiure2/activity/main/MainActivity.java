@@ -36,6 +36,36 @@ import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 
 public class MainActivity extends AppCompatActivity {
+    // FIXME Risiko angehen: Spracherzeugung wie gewünscht technisch nicht (performant)
+    //  realisierbar.
+    //  Lösung1: Nach jedem neuen Schritt kritisch durchspielen, unerfreuliche / inperformante
+    //  Texte korrigieren - ggf. Texte stärker vorgeben und weniger flexibel gestalten,
+    //  unerwünschte Alternativen ausbauen.
+    //  Lösung 2: Play-Testen und Reaktionen auf Sprache ernstnehmen. Ergebnistexte verschicken und
+    //  kritisch nachlesen.
+
+    // FIXME Risiko angehen: Geschichte wird langweilig / seltsam / unangenehm / nicht schlüssig
+    //  Lösung: Texte weit im voraus entwerfen, deutlich vor der aufwendigen Prigeammierarbeit
+
+    // FIXME Risiko angehen: Es gibt kaum geeignete Märchen
+    //  Lösung: 5 geeignete Märchen finden, Umsetzung grob anskizzieren.
+
+    // FIXME Risiko angehen : Entwicklung ausreichend vieler / langer Geschichten dauert viel zu
+    //  lange, weil man
+    //  immer neue FrameworkBestandteile aufwendig schreiben muss.
+    //  Lösung:
+    //  Mit dem bestehenden Framework ein weiteres paralleles Märchen umsetzen, ggf. vereinfachen
+
+    // IDEA Geräuschteppich je nach Raum, z.B.:
+    //  - im wald Frosch eule
+    //
+    // IDEA Bei Verzauberung Zauber lichteffekt - oder Rand ändert sich kurz
+    //
+    // IDEA Was muss man tun, damit die App "Blindenfähig" ist
+    //  (Accessibility...)
+    //
+    // IDEA Anfrage Ei. (Ex-Cons.)
+
     // IDEA "Mein Märchen" "Schneepunzel"? -> Appstore?
     //   Was sollte man in den AppStore schreiben?
     //  - Choose your own Adventure?
