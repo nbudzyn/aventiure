@@ -27,7 +27,8 @@ public interface Praedikativum {
         return alsEsIstSatz(null);
     }
 
-    default EinzelnerSatz alsEsIstSatz(@Nullable final String anschlusswort) {
+    default EinzelnerSatz alsEsIstSatz(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return alsPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
@@ -37,7 +38,8 @@ public interface Praedikativum {
         return alsEsWirdSatz(null);
     }
 
-    default EinzelnerSatz alsEsWirdSatz(@Nullable final String anschlusswort) {
+    default EinzelnerSatz alsEsWirdSatz(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);

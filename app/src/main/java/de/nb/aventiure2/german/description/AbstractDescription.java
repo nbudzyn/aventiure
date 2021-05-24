@@ -243,6 +243,12 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
         return params.copy();
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return toSingleKonstituente().toTextOhneKontext();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

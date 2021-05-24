@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -503,7 +504,7 @@ public class FroschprinzReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+    public void onTimePassed(final Change<AvDateTime> change) {
         switch (stateComp.getState()) {
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
                 if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST))
@@ -513,7 +514,7 @@ public class FroschprinzReactionsComp
                 }
                 return;
             case ZURUECKVERWANDELT_IN_VORHALLE:
-                if (endTime.isEqualOrAfter(stateComp.getStateDateTime()
+                if (change.getNachher().isEqualOrAfter(stateComp.getStateDateTime()
                         // als der Prinz aufgestanden ist
                         .plus(WEGZEIT_PRINZ_TISCH_DURCH_VORHALLE))) {
                     prinzDraussenVorDemSchlossAngekommen();
@@ -521,7 +522,7 @@ public class FroschprinzReactionsComp
                 }
                 return;
             case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
-                if (endTime.isEqualOrAfter(stateComp.getStateDateTime()
+                if (change.getNachher().isEqualOrAfter(stateComp.getStateDateTime()
                         // als der Prinz die Vorhalle verlassen hat
                         .plus(ZEIT_FUER_ABFAHRT_PRINZ_MIT_WAGEN))) {
                     locationComp.narrateAndUnsetLocation();

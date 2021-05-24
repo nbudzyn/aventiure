@@ -767,14 +767,24 @@ public class Konstituentenfolge
 
         return new Konstituentenfolge(
                 ImmutableList.<IKonstituenteOrStructuralElement>builder()
-                        .addAll(subFolge(0, size() - 1))
+                        .addAll(konstituenten.subList(0, size() - 1)) // evtl. leer
                         .add(((Konstituente) get(size() - 1)).withKommaStehtAus())
                         .build());
     }
 
     @CheckReturnValue
     Konstituentenfolge withVorkommaNoetig() {
-        if (konstituenten.get(0) instanceof StructuralElement) {
+        return withVorkommaNoetigMin(true);
+    }
+
+    /**
+     * Gibt eine Kopie der Konstituentenfolge zurück - unverändert, falls
+     * {@code vorkommaNoetigMin} {@code false} ist, sonst mit der Angabe, dass
+     * ein Vorkomma nötig ist.
+     */
+    @NonNull
+    public Konstituentenfolge withVorkommaNoetigMin(final boolean vorkommaNoetigMin) {
+        if (!vorkommaNoetigMin || konstituenten.get(0) instanceof StructuralElement) {
             // WORD kann nicht enthalten sein, mit der Konstituentenfolge beginnt also ein neuer
             // Satz. Kein Komma nötig.
             return this;
@@ -782,8 +792,8 @@ public class Konstituentenfolge
 
         return new Konstituentenfolge(
                 ImmutableList.<IKonstituenteOrStructuralElement>builder()
-                        .add(((Konstituente) get(0)).withVorkommaNoetig(true))
-                        .addAll(subFolge(1, size()))
+                        .add(((Konstituente) get(0)).withVorkommaNoetigMin(true))
+                        .addAll(konstituenten.subList(1, size())) // evtl. leer
                         .build());
     }
 
@@ -805,7 +815,8 @@ public class Konstituentenfolge
         while (i < size()) {
             if (!found
                     && i <= size() - part.size()
-                    && subFolge(i, i + part.size()).equals(part)) {
+                    && new Konstituentenfolge(konstituenten.subList(i, i + part.size()))
+                    .equals(part)) {
                 found = true;
                 i = i + part.size();
 
@@ -840,10 +851,6 @@ public class Konstituentenfolge
 
     public int size() {
         return konstituenten.size();
-    }
-
-    private Konstituentenfolge subFolge(final int fromIndex, final int toIndex) {
-        return new Konstituentenfolge(konstituenten.subList(fromIndex, toIndex));
     }
 
     @NonNull

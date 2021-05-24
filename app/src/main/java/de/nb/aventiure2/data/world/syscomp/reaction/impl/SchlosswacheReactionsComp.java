@@ -8,6 +8,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
@@ -429,8 +430,8 @@ public class SchlosswacheReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(startTime, endTime)) {
+    public void onTimePassed(final Change<AvDateTime> change) {
+        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(change)) {
             schlossfestBeginnt();
         }
     }

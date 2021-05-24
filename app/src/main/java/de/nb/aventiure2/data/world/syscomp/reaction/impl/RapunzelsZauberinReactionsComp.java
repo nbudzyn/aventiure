@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.counter.CounterDao;
@@ -48,6 +49,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.days;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
@@ -495,8 +497,8 @@ public class RapunzelsZauberinReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        checkArgument(!endTime.minus(startTime).longerThan(days(1)),
+    public void onTimePassed(final Change<AvDateTime> change) {
+        checkArgument(!span(change).longerThan(days(1)),
                 "World tick time too long - see AbstractScAction.");
 
         switch (stateComp.getState()) {
@@ -504,19 +506,19 @@ public class RapunzelsZauberinReactionsComp
                 onTimePassed_MachtZurzeitKeineRapunzelbesuche();
                 return;
             case VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH:
-                onTimePassed_VorDemNaechstenRapunzelBesuch(endTime);
+                onTimePassed_VorDemNaechstenRapunzelBesuch(change.getNachher());
                 return;
             case AUF_DEM_WEG_ZU_RAPUNZEL:
-                onTimePassed_AufDemWegZuRapunzel(endTime);
+                onTimePassed_AufDemWegZuRapunzel(change.getNachher());
                 return;
             case BEI_RAPUNZEL_OBEN_IM_TURM:
-                onTimePassed_BeiRapunzelObenImTurm(endTime);
+                onTimePassed_BeiRapunzelObenImTurm(change.getNachher());
                 return;
             case AUF_DEM_RUECKWEG_VON_RAPUNZEL:
-                onTimePassed_AufDemRueckwegVonRapunzel(endTime);
+                onTimePassed_AufDemRueckwegVonRapunzel(change.getNachher());
                 return;
             case WARTEZEIT_NACH_RAPUNZEL_BESUCH:
-                onTimePassed_WartezeitNachRapunzelBesuch(endTime);
+                onTimePassed_WartezeitNachRapunzelBesuch(change.getNachher());
                 return;
             case WEISS_DASS_RAPUNZEL_BEFREIT_WURDE:
                 // STORY Wandert zurück und kommt nie wieder

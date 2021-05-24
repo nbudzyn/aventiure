@@ -1,7 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
-import androidx.annotation.Nullable;
-
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -11,6 +9,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
@@ -25,8 +24,10 @@ import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.satz.ZweiSaetze;
+import de.nb.aventiure2.german.satz.Satzreihe;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -196,7 +197,7 @@ public class BewoelkungSatzDescriber {
                     alt.add(UNTERGEHEN.alsSatzMitSubjekt(SONNE));
                     alt.add(EINBRECHEN.alsSatzMitSubjekt(NACHT));
                     if (unterOffenemHimmel) {
-                        alt.add(new ZweiSaetze(
+                        alt.add(new Satzreihe(
                                 SINKEN.alsSatzMitSubjekt(SONNE),
                                 EINBRECHEN.alsSatzMitSubjekt(NACHT)));
                     }
@@ -216,87 +217,88 @@ public class BewoelkungSatzDescriber {
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.
      */
     public ImmutableCollection<Satz> altSprungOderWechselUnterOffenemHimmel(
-            final AvTime lastTime, final AvDateTime time,
+            final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
-        final int delta = change.getNachher().minus(change.getVorher());
+        final int delta = change.delta();
         if (Math.abs(delta) <= 1) {
             // Die Bewölkung hat sich nur um eine Stufe verändert
             // ("Bewölkungswechsel").
 
-            @Nullable final ImmutableSet<AdvAngabeSkopusSatz> altWann =
-                    auchZeitwechselreferenzen ?
-                            tageszeitAdvAngabeWannDescriber
-                                    .altWannDraussen(lastTime, time.getTime()) :
-                            null;
+            final ImmutableSet<AdvAngabeSkopusSatz> altWann;
+            final ImmutableSet<Konditionalsatz> altWannSaetze;
 
-            @Nullable final ImmutableSet<Konditionalsatz> altWannSaetze =
-                    auchZeitwechselreferenzen ?
-                            tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
-                                    lastTime, time.getTime()) :
-                            null;
+            if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
+                final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
+
+                altWann = tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange);
+                altWannSaetze = tageszeitAdvAngabeWannDescriber
+                        .altWannKonditionalsaetzeDraussen(timeChange);
+            } else {
+                altWann = ImmutableSet.of();
+                altWannSaetze = ImmutableSet.of();
+            }
 
             if (change.getVorher().hasNachfolger(change.getNachher())) {
                 // Die Temperatur ist um eine Stufe angestiegen
 
                 alt.addAll(altWechselAnstiegUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher()
                 ));
 
-                if (auchZeitwechselreferenzen) {
-                    alt.addAll(altWann.stream()
-                            .flatMap(gegenMitternacht ->
-                                    altWechselAnstiegUnterOffenemHimmel(
-                                            time.getTageszeit(), change.getNachher())
-                                            .stream()
-                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
-                            .collect(toSet()));
-                    alt.addAll(altWannSaetze.stream()
-                            .flatMap(alsDerTagAngebrochenIst ->
-                                    altWechselAnstiegUnterOffenemHimmel(
-                                            time.getTageszeit(), change.getNachher())
-                                            .stream()
-                                            .filter(s -> !s.hatAngabensatz())
-                                            .map(s -> s
-                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
-                            .collect(toSet()));
-                }
+                alt.addAll(altWann.stream()
+                        .flatMap(gegenMitternacht ->
+                                altWechselAnstiegUnterOffenemHimmel(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher())
+                                        .stream()
+                                        .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                        .collect(toSet()));
+                alt.addAll(altWannSaetze.stream()
+                        .flatMap(alsDerTagAngebrochenIst ->
+                                altWechselAnstiegUnterOffenemHimmel(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher())
+                                        .stream()
+                                        .filter(s -> !s.hatAngabensatz())
+                                        .map(s -> s
+                                                .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                        .collect(toSet()));
             } else {
                 // Die Temperatur ist um eine Stufe gesunken
 
                 alt.addAll(altWechselAbfallUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher(),
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
                         false));
 
-                if (auchZeitwechselreferenzen) {
-                    alt.addAll(altWann.stream()
-                            .flatMap(gegenMitternacht ->
-                                    altWechselAbfallUnterOffenemHimmel(
-                                            time.getTageszeit(), change.getNachher(),
-                                            true)
-                                            .stream()
-                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
-                            .collect(toSet()));
-                    alt.addAll(altWannSaetze.stream()
-                            .flatMap(alsDerTagAngebrochenIst ->
-                                    altWechselAbfallUnterOffenemHimmel(
-                                            time.getTageszeit(), change.getNachher(),
-                                            true)
-                                            .stream()
-                                            .filter(s -> !s.hatAngabensatz())
-                                            .map(s -> s
-                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
-                            .collect(toSet()));
-
-                }
+                alt.addAll(altWann.stream()
+                        .flatMap(gegenMitternacht ->
+                                altWechselAbfallUnterOffenemHimmel(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher(),
+                                        true)
+                                        .stream()
+                                        .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                        .collect(toSet()));
+                alt.addAll(altWannSaetze.stream()
+                        .flatMap(alsDerTagAngebrochenIst ->
+                                altWechselAbfallUnterOffenemHimmel(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher(),
+                                        true)
+                                        .stream()
+                                        .filter(s -> !s.hatAngabensatz())
+                                        .map(s -> s
+                                                .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                        .collect(toSet()));
             }
         } else {
             // Es gab weitere Bewölkungsstufen dazwischen ("Bewölkungssprung")
 
             // "Jetzt ist der Himmel wieder wolkenlos"
             alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(
-                    change.getNachher(), time.getTageszeit()),
+                    change.getNachher(), dateTimeChange.getNachher().getTageszeit()),
                     a -> a.alsPraedikativumPraedikat()
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
                             .alsSatzMitSubjekt(HIMMEL)
@@ -304,18 +306,18 @@ public class BewoelkungSatzDescriber {
 
             if (delta > 0) {
                 if (change.getNachher() == WOLKENLOS
-                        && time.getTageszeit() != NACHTS) {
+                        && dateTimeChange.getNachher().getTageszeit() != NACHTS) {
                     alt.add(BLAU.mitGraduativerAngabe("vollständig").alsPraedikativumPraedikat()
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
                             .alsSatzMitSubjekt(HIMMEL));
                 }
                 alt.addAll(mapToSet(altWechselAnstiegUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher()
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher()
                         ),
                         EinzelnerSatz::perfekt));
             } else {
                 alt.addAll(mapToSet(altWechselAbfallUnterOffenemHimmel(
-                        time.getTageszeit(), change.getNachher(),
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
                         false),
                         Satz::perfekt));
 

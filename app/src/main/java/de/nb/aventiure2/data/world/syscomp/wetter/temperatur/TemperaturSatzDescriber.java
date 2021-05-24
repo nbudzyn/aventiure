@@ -1,7 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -14,6 +13,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
@@ -32,10 +32,12 @@ import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.satz.ZweiSaetze;
+import de.nb.aventiure2.german.satz.Satzreihe;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -63,6 +65,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNERWART
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WAERMER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WARM;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.ABER;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FROST;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KAELTE;
@@ -197,70 +200,73 @@ public class TemperaturSatzDescriber {
      *               Tag sich wieder abkühlt. Zurzeit berücksichtigen wir diese Fälle
      */
     public ImmutableCollection<Satz> altSprungOderWechsel(
-            final AvTime lastTime, final AvDateTime time,
+            final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Temperatur> change,
             final DrinnenDraussen drinnenDraussen,
             final boolean auchZeitwechselreferenzen) {
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
         final ImmutableCollection<EinzelnerSatz> altStatisch = alt(
-                change.getNachher(), time.getTageszeit(), drinnenDraussen,
+                change.getNachher(), dateTimeChange.getNachher().getTageszeit(), drinnenDraussen,
                 true);
 
-        final int delta = change.getNachher().minus(change.getVorher());
+
+        final int delta = change.delta();
         if (Math.abs(delta) <= 1) {
             // Die Temperatur hat sich nur um eine Stufe verändert
             // ("Temperaturwechsel").
 
-            @Nullable final ImmutableSet<AdvAngabeSkopusSatz> altWann =
-                    (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) ?
-                            tageszeitAdvAngabeWannDescriber
-                                    .altWannDraussen(lastTime, time.getTime()) :
-                            null;
+            final ImmutableSet<AdvAngabeSkopusSatz> altWann;
+            final ImmutableSet<Konditionalsatz> altWannSaetze;
 
-            final ImmutableSet<Konditionalsatz> altWannSaetze =
-                    (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) ?
-                            tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
-                                    lastTime, time.getTime()) :
-                            null;
-
-            if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
-                // "Gegen Mitternacht ist es kalt"
-                alt.addAll(altWann.stream().flatMap(gegenMitternacht -> altStatisch.stream()
-                        .map(s -> s.mitAdvAngabe(gegenMitternacht)))
-                        .collect(toSet()));
-                // "Als der Tag angebrochen ist, ist es kalt"
-                alt.addAll(altWannSaetze.stream()
-                        .flatMap(alsDerTagAngebrochenIst -> altStatisch.stream()
-                                .filter(s -> !s.hatAngabensatz())
-                                .map(s -> s.mitAngabensatz(alsDerTagAngebrochenIst, true)))
-                        .collect(toSet()));
-                // "Gegen Mitternacht wird die Luft kalt"
-                alt.addAll(altWann.stream().flatMap(gegenMitternacht ->
-                        praedikativumDescriber
-                                .altLuftAdjPhr(change.getNachher(), time.getTageszeit())
-                                .stream()
-                                .map(a -> a.alsPraedikativumPraedikat()
-                                        .mitAdvAngabe(gegenMitternacht)
-                                        .alsSatzMitSubjekt(LUFT)))
-                        .collect(toSet()));
-                // "Als der Tag angebrochen ist, wird die Luft kalt"
-                alt.addAll(altWannSaetze.stream().flatMap(alsDerTagAngebrochenIst ->
-                        praedikativumDescriber
-                                .altLuftAdjPhr(change.getNachher(), time.getTageszeit())
-                                .stream()
-                                .map(a -> a.alsPraedikativumPraedikat()
-                                        .alsSatzMitSubjekt(LUFT)
-                                        .mitAngabensatz(alsDerTagAngebrochenIst, true)))
-                        .collect(toSet()));
+            if (span(dateTimeChange).shorterThan(ONE_DAY)
+                    && auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
+                final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
+                altWann = tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange);
+                altWannSaetze = tageszeitAdvAngabeWannDescriber
+                        .altWannKonditionalsaetzeDraussen(timeChange);
+            } else {
+                altWann = ImmutableSet.of();
+                altWannSaetze = ImmutableSet.of();
             }
+
+            // "Gegen Mitternacht ist es kalt"
+            alt.addAll(altWann.stream().flatMap(gegenMitternacht -> altStatisch.stream()
+                    .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                    .collect(toSet()));
+            // "Als der Tag angebrochen ist, ist es kalt"
+            alt.addAll(altWannSaetze.stream()
+                    .flatMap(alsDerTagAngebrochenIst -> altStatisch.stream()
+                            .filter(s -> !s.hatAngabensatz())
+                            .map(s -> s.mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                    .collect(toSet()));
+            // "Gegen Mitternacht wird die Luft kalt"
+            alt.addAll(altWann.stream().flatMap(gegenMitternacht ->
+                    praedikativumDescriber
+                            .altLuftAdjPhr(change.getNachher(),
+                                    dateTimeChange.getNachher().getTageszeit())
+                            .stream()
+                            .map(a -> a.alsPraedikativumPraedikat()
+                                    .mitAdvAngabe(gegenMitternacht)
+                                    .alsSatzMitSubjekt(LUFT)))
+                    .collect(toSet()));
+            // "Als der Tag angebrochen ist, wird die Luft kalt"
+            alt.addAll(altWannSaetze.stream().flatMap(alsDerTagAngebrochenIst ->
+                    praedikativumDescriber
+                            .altLuftAdjPhr(change.getNachher(),
+                                    dateTimeChange.getNachher().getTageszeit())
+                            .stream()
+                            .map(a -> a.alsPraedikativumPraedikat()
+                                    .alsSatzMitSubjekt(LUFT)
+                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                    .collect(toSet()));
 
             if ((delta == -1 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
                     || (delta == 1 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
                 // "es ist ein heißer Tag"
                 alt.addAll(mapToList(
                         praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                change.getNachher(), time.getTageszeit(),
+                                change.getNachher(), dateTimeChange.getNachher().getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         Praedikativum::alsEsWirdSatz));
 
@@ -274,7 +280,8 @@ public class TemperaturSatzDescriber {
                     // "die Luft wird kalt"
                     alt.addAll(mapToList(
                             praedikativumDescriber
-                                    .altLuftAdjPhr(change.getNachher(), time.getTageszeit()),
+                                    .altLuftAdjPhr(change.getNachher(),
+                                            dateTimeChange.getNachher().getTageszeit()),
                             a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(LUFT)));
                 }
 
@@ -291,7 +298,7 @@ public class TemperaturSatzDescriber {
                 // "es ist jetzt wirklich sehr kalt"
                 alt.addAll(mapToList(
                         praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
-                                change.getNachher(), time.getTageszeit(),
+                                change.getNachher(), dateTimeChange.getNachher().getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         praedikativum -> praedikativum.alsEsIstSatz()
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wirklich"))));
@@ -300,37 +307,39 @@ public class TemperaturSatzDescriber {
             if (change.getVorher().hasNachfolger(change.getNachher())) {
                 // Die Temperatur ist um eine Stufe angestiegen
                 alt.addAll(altWechselAnstieg(
-                        time.getTageszeit(), change.getNachher(), drinnenDraussen,
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
+                        drinnenDraussen,
                         false
                 ));
 
-                if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
-                    alt.addAll(altWann.stream()
-                            .flatMap(gegenMitternacht ->
-                                    altWechselAnstieg(
-                                            time.getTageszeit(), change.getNachher(),
-                                            drinnenDraussen,
-                                            true)
-                                            .stream()
-                                            .map(s -> s.mitAdvAngabe(gegenMitternacht)))
-                            .collect(toSet()));
+                alt.addAll(altWann.stream()
+                        .flatMap(gegenMitternacht ->
+                                altWechselAnstieg(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher(),
+                                        drinnenDraussen,
+                                        true)
+                                        .stream()
+                                        .map(s -> s.mitAdvAngabe(gegenMitternacht)))
+                        .collect(toSet()));
 
-                    alt.addAll(altWannSaetze.stream()
-                            .flatMap(alsDerTagAngebrochenIst ->
-                                    altWechselAnstieg(
-                                            time.getTageszeit(), change.getNachher(),
-                                            drinnenDraussen,
-                                            true)
-                                            .stream()
-                                            .filter(s -> !s.hatAngabensatz())
-                                            .map(s -> s
-                                                    .mitAngabensatz(alsDerTagAngebrochenIst, true)))
-                            .collect(toSet()));
-                }
+                alt.addAll(altWannSaetze.stream()
+                        .flatMap(alsDerTagAngebrochenIst ->
+                                altWechselAnstieg(
+                                        dateTimeChange.getNachher().getTageszeit(),
+                                        change.getNachher(),
+                                        drinnenDraussen,
+                                        true)
+                                        .stream()
+                                        .filter(s -> !s.hatAngabensatz())
+                                        .map(s -> s
+                                                .mitAngabensatz(alsDerTagAngebrochenIst, true)))
+                        .collect(toSet()));
             } else {
                 // Die Temperatur ist um eine Stufe gesunken
                 alt.addAll(altWechselAbfall(
-                        time.getTageszeit(), change.getNachher(), drinnenDraussen,
+                        dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
+                        drinnenDraussen,
                         false
                 ));
 
@@ -338,7 +347,8 @@ public class TemperaturSatzDescriber {
                     alt.addAll(altWann.stream()
                             .flatMap(gegenMitternacht ->
                                     altWechselAbfall(
-                                            time.getTageszeit(), change.getNachher(),
+                                            dateTimeChange.getNachher().getTageszeit(),
+                                            change.getNachher(),
                                             drinnenDraussen,
                                             true)
                                             .stream()
@@ -348,7 +358,8 @@ public class TemperaturSatzDescriber {
                     alt.addAll(altWannSaetze.stream()
                             .flatMap(alsDerTagAngebrochenIst ->
                                     altWechselAbfall(
-                                            time.getTageszeit(), change.getNachher(),
+                                            dateTimeChange.getNachher().getTageszeit(),
+                                            change.getNachher(),
                                             drinnenDraussen,
                                             true)
                                             .stream()
@@ -360,7 +371,7 @@ public class TemperaturSatzDescriber {
             }
         } else {
             // Es gab weitere Temperaturen dazwischen ("Temperatursprung")
-            alt.addAll(altSprung(time, change, drinnenDraussen));
+            alt.addAll(altSprung(dateTimeChange.getNachher(), change, drinnenDraussen));
         }
 
         return alt.build();
@@ -369,7 +380,7 @@ public class TemperaturSatzDescriber {
     private ImmutableCollection<Satz> altSprung(final AvDateTime time,
                                                 final WetterParamChange<Temperatur> change,
                                                 final DrinnenDraussen drinnenDraussen) {
-        final int delta = change.getNachher().minus(change.getVorher());
+        final int delta = change.delta();
 
         final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
 
@@ -434,11 +445,11 @@ public class TemperaturSatzDescriber {
                                             change.getNachher(), time.getTageszeit(),
                                             drinnenDraussen.isDraussen()).stream()
                                     .map(ziemlichWarm ->
-                                            new ZweiSaetze(
+                                            new Satzreihe(
                                                     (delta < 0 ? KUEHLER : WAERMER)
                                                             .mitGraduativerAngabe(deutlich)
                                                             .alsEsWirdSatz().perfekt(),
-                                                    ", aber",
+                                                    ABER,
                                                     ziemlichWarm.alsEsIstSatz()
                                                             .mitAdvAngabe(
                                                                     new AdvAngabeSkopusVerbAllg(
@@ -462,10 +473,10 @@ public class TemperaturSatzDescriber {
                                 change.getNachher(), time.getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         ziemlichWarm ->
-                                new ZweiSaetze(
+                                new Satzreihe(
                                         SICH_ABKUEHLEN.perfekt()
                                                 .alsSatzMitSubjekt(EXPLETIVES_ES),
-                                        ", aber",
+                                        ABER,
                                         ziemlichWarm.alsEsIstSatz()
                                                 .mitAdvAngabe(
                                                         new AdvAngabeSkopusVerbAllg(
@@ -485,10 +496,10 @@ public class TemperaturSatzDescriber {
                                 change.getNachher(), time.getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         ziemlichKuehl ->
-                                new ZweiSaetze(
+                                new Satzreihe(
                                         WAERMER.mitGraduativerAngabe("ein gutes Stück")
                                                 .alsEsWirdSatz().perfekt(),
-                                        ", aber",
+                                        ABER,
                                         ziemlichKuehl.alsEsIstSatz()
                                                 .mitAdvAngabe(
                                                         new AdvAngabeSkopusVerbAllg(
@@ -536,9 +547,9 @@ public class TemperaturSatzDescriber {
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichKuehl ->
-                                            new ZweiSaetze(
+                                            new Satzreihe(
                                                     esWirdEtwasWaermer,
-                                                    ", aber",
+                                                    ABER,
                                                     esIstImmerNochZiemlichKuehl)))
                             .collect(toSet()));
         }
@@ -640,9 +651,9 @@ public class TemperaturSatzDescriber {
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichWarm ->
-                                            new ZweiSaetze(
+                                            new Satzreihe(
                                                     esWirdEtwasKuehler,
-                                                    ", aber",
+                                                    ABER,
                                                     esIstImmerNochZiemlichWarm)))
                             .collect(toSet()));
         }
@@ -819,6 +830,11 @@ public class TemperaturSatzDescriber {
         alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen,
                 nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
         if (drinnenDraussen.isDraussen()) {
+            // FIXME Alle Aufrufer prüfen - ist es gewünscht, dass hier die Tageszeit
+            //  beschrieben wird? Manchmal kann es zu unerwünschten Doppelungen kommen:
+            //  "Es ist dunkel und in der Ferne ruft ein Käuzchen. Es schon dunkel; die Luft ist
+            //  warm"
+
             alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                     auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben));
@@ -957,9 +973,9 @@ public class TemperaturSatzDescriber {
                             .flatMap(zweiterSatz ->
                                     altSchonBereitsNochDunkelAdjPhr.stream()
                                             .map(schonDunkel ->
-                                                    new ZweiSaetze(
+                                                    new Satzreihe(
                                                             schonDunkel.alsEsIstSatz(),
-                                                            ";",
+                                                            true,
                                                             zweiterSatz)))
                             .collect(toSet()));
 
@@ -1157,7 +1173,6 @@ public class TemperaturSatzDescriber {
                         .altAdjPhrDeutlicherUnterschiedZuVorLocation(temperatur, delta),
                 adjPhr -> adjPhr.alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(EXPLETIVES_ES)
-                        .mitAdvAngabe(new AdvAngabeSkopusSatz("hier"))
-                        .mitAnschlusswort(null));
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz("hier")));
     }
 }

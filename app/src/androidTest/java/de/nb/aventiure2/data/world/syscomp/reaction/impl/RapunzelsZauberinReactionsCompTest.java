@@ -9,6 +9,7 @@ import org.junit.runners.MethodSorters;
 
 import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
@@ -181,7 +182,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         // WHEN
         final AvDateTime now = timeTaker.now();
         ((ITimePassedReactions) zauberin.reactionsComp()).onTimePassed(
-                now, now.plus(mins(45)));
+                new Change<>(now, now.plus(mins(45))));
 
         // THEN
         // Ist die Zauberin schon wieder losgegangen

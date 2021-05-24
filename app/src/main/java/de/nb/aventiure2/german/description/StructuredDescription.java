@@ -12,7 +12,6 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
@@ -24,6 +23,8 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung;
 
 /**
  * A description based on a structured data structure: A {@link EinzelnerSatz}.
@@ -98,15 +99,19 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         return toSingleKonstituente(startsNew, satz, endsThis).getPhorikKandidat();
     }
 
+    @Override
     @NonNull
     @CheckReturnValue
-    public TextDescription toTextDescriptionsatzanschlussMitUnd() {
-        final Konstituente satzanschlussMitUnd =
-                getSatz().mitAnschlusswortUndSofernNichtSchonEnthalten()
-                        .getSatzanschlussOhneSubjekt().joinToSingleKonstituente();
-        return toTextDescriptionKeepParams(satzanschlussMitUnd)
-                // Noch nicht einmal bei P2 SG soll ein erneuter und-Anschluss erfolgen!
-                .undWartest(false);
+    public TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma() {
+        final Satz satzEvtlMitAnschlusswort =
+                getSatz()
+                        .mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd();
+        final Konstituente satzanschlussMitUndAberOderOderKomma =
+                satzEvtlMitAnschlusswort
+                        .getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma()
+                        .joinToSingleKonstituente();
+        return toTextDescriptionKeepParams(satzanschlussMitUndAberOderOderKomma)
+                .undWartest(satzEvtlMitAnschlusswort.getAnschlusswort() != UND);
     }
 
     @CheckReturnValue
@@ -225,17 +230,22 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Override
     @CheckReturnValue
-    public Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
+    public Konstituente toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma() {
         return joinToKonstituentenfolge(
-                getPraedikat().getVerbzweit(
-                        satz.getErstesSubjekt() != null ? satz.getErstesSubjekt() :
-                                Personalpronomen.EXPLETIVES_ES),
+                satz.getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma(),
                 getEndsThis())
                 .joinToSingleKonstituente();
     }
 
-    public PraedikatOhneLeerstellen getPraedikat() {
-        return satz.getPraedikat();
+    /**
+     * Gibt das Prädikat des Satzes zurück, wenn das
+     * (abgesehen vom Subjekt) ohne Informationsverlust
+     * möglich ist (d.h. wenn das Satz keinen Adverbialsatz enthält, nicht
+     * mir einem Anschlusswort beginnt etc.).
+     */
+    @Nullable
+    public PraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
+        return satz.getPraedikatWennOhneInformationsverlustMoeglich();
     }
 
     public Satz getSatz() {
@@ -263,8 +273,8 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public boolean vorangestelltenSatzanschlussMitUndVermeiden() {
-        return satz.isSatzreihungMitUnd();
+    public boolean hasAnschlusswortDasBedeutungTraegt() {
+        return traegtBedeutung(getSatz().getAnschlusswort());
     }
 
     @Override

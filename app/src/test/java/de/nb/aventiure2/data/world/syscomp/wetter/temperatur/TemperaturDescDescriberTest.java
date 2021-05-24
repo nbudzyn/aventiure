@@ -9,6 +9,7 @@ import java.util.List;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
@@ -42,58 +43,52 @@ public class TemperaturDescDescriberTest {
         final List<AvTime> relevantTimes = relevantTimes();
 
         for (int i = 0; i < relevantTimes.size(); i++) {
-            final AvTime lastTime = relevantTimes.get(i);
+            final AvDateTime lastTime = new AvDateTime(1, relevantTimes.get(i));
             for (int j = 0; j < relevantTimes.size(); j++) {
                 // (Wechsel, Sprung)
 
-                if (i != j) {
-                    final AvDateTime currentTime =
-                            j < i ?
-                                    new AvDateTime(2, relevantTimes.get(j)) :
-                                    new AvDateTime(1, relevantTimes.get(j));
+                final AvDateTime currentTime =
+                        j <= i ?
+                                new AvDateTime(2, relevantTimes.get(j)) :
+                                new AvDateTime(1, relevantTimes.get(j));
 
-                    for (final Temperatur temperaturVorher : Temperatur.values()) {
-                        for (final Temperatur temperaturNachher : Temperatur.values()) {
-                            if (temperaturVorher != temperaturNachher) {
-                                final WetterParamChange<Temperatur> temperaturChange =
-                                        new WetterParamChange<>(temperaturVorher,
-                                                temperaturNachher);
+                final Change<AvDateTime> change = new Change<>(lastTime, currentTime);
 
-                                System.out.println(lastTime + " -> " + currentTime + " "
-                                        + temperaturChange);
+                for (final Temperatur temperaturVorher : Temperatur.values()) {
+                    for (final Temperatur temperaturNachher : Temperatur.values()) {
+                        if (temperaturVorher != temperaturNachher) {
+                            final WetterParamChange<Temperatur> temperaturChange =
+                                    new WetterParamChange<>(temperaturVorher,
+                                            temperaturNachher);
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRINNEN, false)).isNotEmpty();
+                            System.out.println(lastTime + " -> " + currentTime + " "
+                                    + temperaturChange);
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRINNEN, true)).isNotEmpty();
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRINNEN, false)).isNotEmpty();
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRAUSSEN_GESCHUETZT, false)).isNotEmpty();
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRINNEN, true)).isNotEmpty();
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRAUSSEN_GESCHUETZT, false)).isNotEmpty();
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, false))
-                                        .isNotEmpty();
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
 
-                                assertThat(underTest.altSprungOderWechsel(lastTime,
-                                        currentTime,
-                                        temperaturChange,
-                                        DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, true))
-                                        .isNotEmpty();
-                            }
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, false))
+                                    .isNotEmpty();
+
+                            assertThat(underTest.altSprungOderWechsel(change,
+                                    temperaturChange,
+                                    DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, true))
+                                    .isNotEmpty();
                         }
                     }
                 }

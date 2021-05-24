@@ -13,9 +13,12 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 
 /**
  * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
@@ -25,12 +28,28 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 public class ZweiPraedikateOhneLeerstellen
         implements PraedikatOhneLeerstellen {
     private final PraedikatOhneLeerstellen erstes;
+
+    /**
+     * der Konnektor zwischen den beiden Prädikaten:
+     * "und", "aber", "oder" oder "sondern"
+     */
+    @Nullable
+    private final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor;
+
     private final PraedikatOhneLeerstellen zweites;
 
     public ZweiPraedikateOhneLeerstellen(
             final PraedikatOhneLeerstellen erstes,
             final PraedikatOhneLeerstellen zweites) {
+        this(erstes, UND, zweites);
+    }
+
+    public ZweiPraedikateOhneLeerstellen(
+            final PraedikatOhneLeerstellen erstes,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
+            final PraedikatOhneLeerstellen zweites) {
         this.erstes = erstes;
+        this.konnektor = konnektor;
         this.zweites = zweites;
     }
 
@@ -39,6 +58,7 @@ public class ZweiPraedikateOhneLeerstellen
             final Collection<Modalpartikel> modalpartikeln) {
         return new ZweiPraedikateOhneLeerstellen(
                 erstes.mitModalpartikeln(modalpartikeln),
+                konnektor,
                 zweites
         );
     }
@@ -48,6 +68,7 @@ public class ZweiPraedikateOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 erstes.mitAdvAngabe(advAngabe),
+                konnektor,
                 zweites
         );
     }
@@ -57,6 +78,7 @@ public class ZweiPraedikateOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 erstes.mitAdvAngabe(advAngabe),
+                konnektor,
                 zweites
         );
     }
@@ -66,15 +88,30 @@ public class ZweiPraedikateOhneLeerstellen
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new ZweiPraedikateOhneLeerstellen(
                 erstes.mitAdvAngabe(advAngabe),
+                konnektor,
                 zweites
         );
     }
 
     @Override
+    // FIXME Funktioniert, aber das Konzept schließt
+    //  wohl viele Möglichkeiten wie ("... und..., aber..." oder "..., ... und ...."
+    //  aus. Konzept verbessern?
     public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         // Etwas vermeiden wie "Du hebst die Kugel auf und polierst sie und nimmst eine
         // von den Früchten"
-        return false;
+
+        if (!erstes
+                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen()) {
+            return false;
+        }
+
+        if (!zweites
+                .hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen()) {
+            return false;
+        }
+
+        return konnektor == null;
     }
 
     @Override
@@ -82,8 +119,9 @@ public class ZweiPraedikateOhneLeerstellen
         return Konstituentenfolge.joinToKonstituentenfolge(
                 // "hebst die goldene Kugel auf"
                 erstes.getVerbzweit(person, numerus),
-                "und",
+                konnektor,
                 zweites.getVerbzweit(person, numerus)
+                        .withVorkommaNoetigMin(konnektor == null)
                 // "nimmst ein Bad"
         );
     }
@@ -94,8 +132,9 @@ public class ZweiPraedikateOhneLeerstellen
         return Konstituentenfolge.joinToKonstituentenfolge(
                 erstes.getVerbzweitMitSubjektImMittelfeld(subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
-                "und",
+                konnektor,
                 zweites.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+                        .withVorkommaNoetigMin(konnektor == null)
                 // "fällst dann todmüde ins Bett."
         );
     }
@@ -104,8 +143,9 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 erstes.getVerbletzt(person, numerus),
-                "und",
-                zweites.getVerbletzt(person, numerus));
+                konnektor,
+                zweites.getVerbletzt(person, numerus)
+                        .withVorkommaNoetigMin(konnektor == null));
     }
 
     @Override
@@ -114,14 +154,20 @@ public class ZweiPraedikateOhneLeerstellen
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
         PartizipIIPhrase tmp = null;
+        @Nullable NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld tmpKonnektor = UND;
         for (final PartizipIIPhrase partizipIIPhrase :
                 erstes.getPartizipIIPhrasen(person, numerus)) {
-            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(res, tmp, partizipIIPhrase);
+            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
+                    res, tmp, tmpKonnektor, partizipIIPhrase);
+            tmpKonnektor = UND;
         }
 
+        tmpKonnektor = konnektor; // "[, ]aber"
         for (final PartizipIIPhrase partizipIIPhrase :
                 zweites.getPartizipIIPhrasen(person, numerus)) {
-            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(res, tmp, partizipIIPhrase);
+            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
+                    res, tmp, tmpKonnektor, partizipIIPhrase);
+            tmpKonnektor = UND;
         }
 
         return res.build();
@@ -137,7 +183,7 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 erstes.getInfinitiv(person, numerus),
-                "und",
+                konnektor,
                 zweites.getInfinitiv(person, numerus));
     }
 
@@ -145,7 +191,7 @@ public class ZweiPraedikateOhneLeerstellen
     public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 erstes.getZuInfinitiv(person, numerus),
-                "und",
+                konnektor,
                 zweites.getZuInfinitiv(person, numerus));
     }
 
@@ -252,12 +298,13 @@ public class ZweiPraedikateOhneLeerstellen
             return false;
         }
         final ZweiPraedikateOhneLeerstellen that = (ZweiPraedikateOhneLeerstellen) o;
-        return erstes.equals(that.erstes) &&
-                zweites.equals(that.zweites);
+        return Objects.equals(erstes, that.erstes) &&
+                konnektor == that.konnektor &&
+                Objects.equals(zweites, that.zweites);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(erstes, zweites);
+        return Objects.hash(erstes, konnektor, zweites);
     }
 }

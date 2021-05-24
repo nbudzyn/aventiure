@@ -3,7 +3,9 @@ package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
@@ -15,6 +17,8 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.LUEFTCHEN;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
@@ -68,28 +72,33 @@ public class WindstaerkeSatzDescriber {
      * (Windstärkewechsel) oder um mehrere Stufen (Windstärkesprung) verändert hat.*
      */
     public ImmutableCollection<EinzelnerSatz> altSprungOderWechsel(
-            final AvTime lastTime, final AvTime time,
+            final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Windstaerke> change,
             final boolean auchZeitwechselreferenzen) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        final int delta = change.getNachher().minus(change.getVorher());
+        final int delta = change.delta();
 
         final ImmutableCollection<EinzelnerSatz> altStatisch =
-                alt(time, change.getNachher(),
+                alt(dateTimeChange.getNachher().getTime(), change.getNachher(),
                         true);
 
         if (Math.abs(delta) <= 1) {
             alt.addAll(altWechsel(change));
 
-            if (auchZeitwechselreferenzen) {
-                alt.addAll(tageszeitAdvAngabeWannDescriber.altWannDraussen(lastTime, time).stream()
+            if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
+                final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
+
+                alt.addAll(tageszeitAdvAngabeWannDescriber
+                        .altWannDraussen(timeChange).stream()
                         .flatMap(gegenMitternacht ->
                                 altWechsel(change).stream()
                                         .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                         .collect(toSet()));
-                alt.addAll(tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
-                        lastTime, time).stream()
+
+                alt.addAll(tageszeitAdvAngabeWannDescriber
+                        .altWannKonditionalsaetzeDraussen(timeChange)
+                        .stream()
                         .flatMap(alsDerTagAngebrochenIst ->
                                 altWechsel(change).stream()
                                         .filter(s -> !s.hatAngabensatz())

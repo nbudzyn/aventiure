@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -823,9 +824,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     /**
      * Diese Methode muss für jedes Feeling Being aufgerufen werden, wenn Zeit vergeht!
      */
-    public void onTimePassed(final AvDateTime startTime,
-                             final AvDateTime endTime) {
-        timeTaker.setNow(endTime);
+    public void onTimePassed(final Change<AvDateTime> change) {
+        timeTaker.setNow(change.getNachher());
 
         narrateAndUpdateHunger();
         narrateAndUpdateMuedigkeit();

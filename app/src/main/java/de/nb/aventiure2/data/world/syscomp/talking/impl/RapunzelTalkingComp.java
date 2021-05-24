@@ -568,7 +568,8 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet",
                     anaph.nomK(),
                     altEindruckSaetzeAnaphPersPron.stream()
-                            .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
+                            .map(Satz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)
+            ));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
                     alt.addAll(altNeueSaetze(
@@ -608,7 +609,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         "„Oh, wie schön, dasss du wieder da bist“, antwortet",
                         anaph.nomK(), // autom. Phorik-Kandidat!
                         altEindruckSaetzeAnaphPersPron.stream()
-                                .map(s -> s.mitAnschlusswort("und").getSatzanschlussOhneSubjekt()),
+                                .map(s -> s
+                                        .mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd()
+                                        .getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma()),
                         PARAGRAPH));
                 alt.add(neuerSatz("„Schön, dich wiederzusehen!“, freut",
                         anaph.nomK(),
@@ -639,7 +642,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             anaph.nomK(), // autom. Phorik-Kandidat
                             "dir",
                             altEindruckSaetzeAnaphPersPron.stream()
-                                    .map(s -> s.mitAnschlusswort("und").getVerbzweitsatzStandard()),
+                                    .map(s -> s
+                                            .mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd()
+                                            .getVerbzweitsatzStandard()),
                             PARAGRAPH));
                     alt.add(neuerSatz("„Oh, eine Freude, dich wiederzusehen!“"),
                             neuerSatz("„Endlich bist du wieder da! Ich habe dich schon vermisst.“")
@@ -842,14 +847,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         if (counterDao.get(HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT) > 0
                 && scUndRapunzelKoennenEinanderSehen()) {
-            alt.add(du("siehst",
+            alt.add(du(PARAGRAPH, "siehst",
                     "dich um und dein Blick fällt auf die nackte Mauer.",
                     "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
                     "„Der gehört der Zauberin“, sagt",
                     anaph().nomK(),
                     zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
                             && duzen() ?
-                            "Der muss sehr altSubstPhr sein. Und magisch, wenn du mich fragst" :
+                            "Der muss sehr alt sein. Und magisch, wenn du mich fragst" :
                             null,
                     ".“").schonLaenger()
                     .timed(secs(30)));

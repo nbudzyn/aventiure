@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
@@ -65,10 +66,11 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.satz.ZweiSaetze;
+import de.nb.aventiure2.german.satz.Satzreihe;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Temperatur.KUEHL;
@@ -130,6 +132,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STREICHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TREIBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZAUSEN;
 import static de.nb.aventiure2.german.praedikat.Witterungsverb.STUERMEN;
+import static de.nb.aventiure2.german.satz.Satzreihe.altGereihtStandard;
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.stream.Collectors.toSet;
 
@@ -457,12 +460,10 @@ public class WetterData {
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
         if (windstaerke.compareTo(WINDIG) <= 0) {
-            alt.addAll(altNeueSaetze(
+            alt.addAll(altGereihtStandard(
                     BEWOELKUNG_SATZ_DESCRIBER
                             .altUnterOffenemHimmel(bewoelkung, time,
-                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)
-                            .stream().filter(s -> !s.isSatzreihungMitUnd()),
-                    "und", // FIXME Mehrfaches "und" vermeiden
+                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                     altStatischeWindUndTemperaturSaetze));
         }
 
@@ -496,7 +497,6 @@ public class WetterData {
                     alt.addAll(altNeueSaetze(
                             altStatischeWindUndTemperaturSaetze
                                     .stream().filter(s -> !s.isSatzreihungMitUnd()),
-                            "und", // FIXME Mehrfaches "und" vermeiden
                             "und die Wolken ziehen ganz nah über deinem Haupt weg"));
 
                     // "Der kalte Wind treibt Wolkenfetzen über den Sternenhimmel"
@@ -549,6 +549,7 @@ public class WetterData {
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         false),
+                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
                         unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
@@ -559,6 +560,7 @@ public class WetterData {
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         false),
+                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
                         temperatur, false).stream()
@@ -678,7 +680,7 @@ public class WetterData {
                 .flatMap(kalt -> WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete)
                         .stream()
-                        .map(derWindStuermt -> new ZweiSaetze(
+                        .map(derWindStuermt -> new Satzreihe(
                                 kalt.alsPraedikativumPraedikat()
                                         .alsSatzMitSubjekt(EXPLETIVES_ES),
                                 derWindStuermt)))
@@ -803,18 +805,17 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Es ist kühl und der Himmel ist bewölkt"
-        alt.addAll(altNeueSaetze(
+        alt.addAll(altGereihtStandard(
                 TEMPERATUR_SATZ_DESCRIBER.alt(
                         temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
                         false).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
-                        .filter(EinzelnerSatz.class::isInstance),
+                        .filter(EinzelnerSatz.class::isInstance)
+                        .collect(toImmutableSet()),
                 BEWOELKUNG_SATZ_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
-                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
-                        // mehrfaches "und" vermeiden
-                        .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
         final ImmutableCollection<Satz> heuteOderDerTagSaetze =
                 TEMPERATUR_SATZ_DESCRIBER
@@ -829,6 +830,7 @@ public class WetterData {
                     BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmel(
                             bewoelkung, time,
                             auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                    // FIXME Satzreihe verwenden
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -839,6 +841,7 @@ public class WetterData {
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altUnterOffenemHimmel(bewoelkung, time,
                                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                        // FIXME Satzreihe verwenden
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur, ABENDS)));
             }
@@ -1041,13 +1044,11 @@ public class WetterData {
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
         if (windstaerke.compareTo(WINDIG) <= 0) {
-            alt.addAll(altNeueSaetze(
+            alt.addAll(altGereihtStandard(
                     BEWOELKUNG_SATZ_DESCRIBER
                             .altKommtUnterOffenenHimmel(bewoelkung, time,
                                     true,
-                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)
-                            .stream().filter(s -> !s.isSatzreihungMitUnd()),
-                    "und", // FIXME Mehrfaches "und" vermeiden
+                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                     // "Verortung" mit "draußen" nur am Anfang
                     altStatischeWindUndTemperaturSaetze));
         }
@@ -1085,7 +1086,7 @@ public class WetterData {
                                                     .altLuftAdjPhr(temperatur,
                                                             time.getTageszeit()).stream()
                                                     .map(frisch ->
-                                                            new ZweiSaetze(
+                                                            new Satzreihe(
                                                                     blau.alsPraedikativumPraedikat()
                                                                             .alsSatzMitSubjekt(
                                                                                     HIMMEL),
@@ -1101,8 +1102,7 @@ public class WetterData {
             case KRAEFTIGER_WIND:
                 if (bewoelkung.isBetweenIncluding(LEICHT_BEWOELKT, BEWOELKT)) {
                     alt.addAll(altNeueSaetze(
-                            altKommtNachDraussenWindUndTemperaturSaetze
-                                    .stream().filter(s -> !s.isSatzreihungMitUnd()),
+                            altKommtNachDraussenWindUndTemperaturSaetze,
                             SENTENCE,
                             "die Wolken ziehen ganz nah über deinem Haupt weg"));
 
@@ -1167,6 +1167,7 @@ public class WetterData {
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         true).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
+                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
                         unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
@@ -1178,6 +1179,7 @@ public class WetterData {
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         true).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
+                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
                         temperatur, false).stream()
@@ -1276,17 +1278,16 @@ public class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        alt.addAll(altNeueSaetze(
+        alt.addAll(altGereihtStandard(
                 TEMPERATUR_SATZ_DESCRIBER.altKommtNachDraussen(temperatur, time,
                         true
                         , auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
-                        .filter(EinzelnerSatz.class::isInstance),
+                        .filter(EinzelnerSatz.class::isInstance)
+                        .collect(toImmutableSet()),
                 BEWOELKUNG_SATZ_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
-                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)
-                        .stream()
-                        .map(Satz::mitAnschlusswortUndSofernNichtSchonEnthalten)));
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
         final ImmutableCollection<Satz> heuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
                 .altDraussenHeuteDerTagSofernSinnvoll(
@@ -1299,6 +1300,7 @@ public class WetterData {
                     BEWOELKUNG_SATZ_DESCRIBER
                             .altKommtUnterOffenenHimmel(bewoelkung, time, true,
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                    // FIXME Satzreihe verwenden
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -1309,6 +1311,7 @@ public class WetterData {
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altKommtUnterOffenenHimmel(bewoelkung, time, true,
                                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                        // FIXME Satzreihe verwenden
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur, ABENDS)));
             }
@@ -2182,8 +2185,7 @@ public class WetterData {
      *                                        werden soll, sonst {@code null}
      */
     ImmutableCollection<AbstractDescription<?>> altTimePassed(
-            final AvDateTime lastTime,
-            final AvDateTime currentTime,
+            final Change<AvDateTime> change,
             final boolean tageszeitaenderungMussBeschriebenWerden,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
@@ -2199,14 +2201,14 @@ public class WetterData {
 
         if (!tageszeitaenderungMussBeschriebenWerden) {
             // Es soll keine Tageszeitänderung beschrieben werden
-            return altTimePassedTageszeitenaenderungNichtBeschreiben(lastTime, currentTime,
+            return altTimePassedTageszeitenaenderungNichtBeschreiben(change,
                     windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                     bewoelkungChangeSofernRelevant,
                     drinnenDraussen, drinnenDraussen.isDraussen());
         }
 
         // Es soll eine Tageszeitänderung beschrieben werden
-        return altTimePassedTageszeitenaenderung(lastTime, currentTime,
+        return altTimePassedTageszeitenaenderung(change,
                 generelleTemperaturOutsideLocationTemperaturRange,
                 windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant,
@@ -2216,7 +2218,7 @@ public class WetterData {
     @VisibleForTesting
     static ImmutableCollection<AbstractDescription<?>>
     altTimePassedTageszeitenaenderungNichtBeschreiben(
-            final AvDateTime lastTime, final AvDateTime currentTime,
+            final Change<AvDateTime> change,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
@@ -2235,10 +2237,10 @@ public class WetterData {
                 && !temperaturaenderungMussBeschriebenWerden
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nichts beschreiben - außer höchtestens untertägigem Tageszeitenwechsel
-            if (!currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY)
-                    && lastTime.getTageszeit() == currentTime.getTageszeit()) {
+            if (span(change).shorterThan(AvTimeSpan.ONE_DAY)
+                    && change.getVorher().getTageszeit() == change.getNachher().getTageszeit()) {
                 return TAGESZEIT_DESC_DESCRIBER.altZwischentageszeitlicherWechsel(
-                        lastTime.getTime(), currentTime.getTime(),
+                        change.map(AvDateTime::getTime),
                         drinnenDraussen.isDraussen());
             }
 
@@ -2250,8 +2252,7 @@ public class WetterData {
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Temperatur beschreiben
             return TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                    lastTime.getTime(),
-                    currentTime, temperaturChangeSofernRelevant, drinnenDraussen,
+                    change, temperaturChangeSofernRelevant, drinnenDraussen,
                     drinnenDraussen.isDraussen());
             // IDEA  "Die Sonne hat die Erde aufgetaut" (bei (aktuell) unauffälliger Bewölkung)
         }
@@ -2260,8 +2261,7 @@ public class WetterData {
                 && !temperaturaenderungMussBeschriebenWerden) {
             // Nur Bewölkung beschreiben
             return BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                    lastTime.getTime(),
-                    currentTime, bewoelkungChangeSofernRelevant,
+                    change, bewoelkungChangeSofernRelevant,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                     auchZeitwechselreferenzen && drinnenDraussen.isDraussen());
         }
@@ -2271,8 +2271,7 @@ public class WetterData {
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             // Nur Windstärkeänderung beschreiben
             return WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
-                    lastTime.getTime(),
-                    currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                    change, windstaerkeChangeSofernRelevant,
                     auchZeitwechselreferenzen && drinnenDraussen.isDraussen());
         }
 
@@ -2281,41 +2280,38 @@ public class WetterData {
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             return alt()
                     .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
-                            lastTime.getTime(),
-                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            change, windstaerkeChangeSofernRelevant,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen()).stream()
                             .flatMap(windSatz ->
                                     TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                                            lastTime.getTime(),
-                                            currentTime, temperaturChangeSofernRelevant,
+                                            change, temperaturChangeSofernRelevant,
                                             drinnenDraussen,
                                             false)
                                             .stream()
+                                            // Bandwurmsätze vermeiden
                                             .filter(EinzelnerSatz.class::isInstance)
                                             .map(tempSatz ->
-                                                    new ZweiSaetze(
-                                                            (EinzelnerSatz) windSatz,
+                                                    new Satzreihe(
+                                                            windSatz,
                                                             (EinzelnerSatz) tempSatz)))
                             .collect(toImmutableSet()))
                     .addAll(altNeueSaetze(WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
-                            lastTime.getTime(),
-                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            change, windstaerkeChangeSofernRelevant,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen()),
                             SENTENCE,
                             TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                                    lastTime.getTime(),
-                                    currentTime, temperaturChangeSofernRelevant, drinnenDraussen,
+                                    change, temperaturChangeSofernRelevant,
+                                    drinnenDraussen,
                                     false)))
                     .addAll(altNeueSaetze("Das Wetter ändert sich:",
                             SENTENCE,
                             WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
-                                    lastTime.getTime(),
-                                    currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                    change,
+                                    windstaerkeChangeSofernRelevant,
                                     false),
                             SENTENCE,
                             TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                                    lastTime.getTime(),
-                                    currentTime, temperaturChangeSofernRelevant,
+                                    change, temperaturChangeSofernRelevant,
                                     drinnenDraussen,
                                     false)))
                     .build();
@@ -2326,31 +2322,32 @@ public class WetterData {
             // Nur Windstärkeänderung und Bewölungsänderung beschreiben
             return alt()
                     .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
-                            lastTime.getTime(),
-                            currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                            change, windstaerkeChangeSofernRelevant,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
                             .stream()
                             .flatMap(windSatz ->
                                     BEWOELKUNG_SATZ_DESCRIBER
                                             .altSprungOderWechselUnterOffenemHimmel(
-                                                    lastTime.getTime(), currentTime,
+                                                    change,
                                                     bewoelkungChangeSofernRelevant,
                                                     false)
                                             .stream()
+                                            // Bandwurmsätze vermeiden
                                             .filter(EinzelnerSatz.class::isInstance)
                                             .map(bewSatz ->
-                                                    new ZweiSaetze(
-                                                            (EinzelnerSatz) windSatz,
+                                                    new Satzreihe(
+                                                            windSatz,
                                                             (EinzelnerSatz) bewSatz)))
                             .collect(toImmutableSet()))
                     .addAll(altNeueSaetze(
                             WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
-                                    lastTime.getTime(), currentTime.getTime(),
+                                    change,
                                     windstaerkeChangeSofernRelevant,
                                     auchZeitwechselreferenzen && drinnenDraussen.isDraussen()),
                             SENTENCE,
                             BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    change,
+                                    bewoelkungChangeSofernRelevant,
                                     drinnenDraussen ==
                                             DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                                     false)))
@@ -2362,7 +2359,8 @@ public class WetterData {
 
             return alt()
                     .addAll(TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                            lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                            change,
+                            temperaturChangeSofernRelevant,
                             drinnenDraussen,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
                             .stream()
@@ -2370,23 +2368,26 @@ public class WetterData {
                             .flatMap(tempSatz ->
                                     BEWOELKUNG_SATZ_DESCRIBER
                                             .altSprungOderWechselUnterOffenemHimmel(
-                                                    lastTime.getTime(), currentTime,
+                                                    change,
                                                     bewoelkungChangeSofernRelevant,
                                                     false)
                                             .stream()
+                                            // Bandwurmsätze vermeiden
                                             .filter(EinzelnerSatz.class::isInstance)
                                             .map(bewSatz ->
-                                                    new ZweiSaetze(
-                                                            (EinzelnerSatz) tempSatz,
+                                                    new Satzreihe(
+                                                            tempSatz,
                                                             (EinzelnerSatz) bewSatz)))
                             .collect(toImmutableSet()))
                     .addAll(altNeueSaetze(
                             TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
-                                    lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                                    change,
+                                    temperaturChangeSofernRelevant,
                                     drinnenDraussen, true),
                             SENTENCE,
                             BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    change,
+                                    bewoelkungChangeSofernRelevant,
                                     drinnenDraussen ==
                                             DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                                     false)))
@@ -2397,49 +2398,47 @@ public class WetterData {
                 .addAll(altNeueSaetze("Das Wetter ändert sich:",
                         SENTENCE,
                         WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
-                                lastTime.getTime(),
-                                currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                change, windstaerkeChangeSofernRelevant,
                                 false),
                         SENTENCE,
                         TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                                lastTime.getTime(), currentTime, temperaturChangeSofernRelevant,
+                                change,
+                                temperaturChangeSofernRelevant,
                                 drinnenDraussen, false)
                                 .stream()
                                 .filter(EinzelnerSatz.class::isInstance)
                                 .flatMap(tempSatz ->
                                         BEWOELKUNG_SATZ_DESCRIBER
                                                 .altSprungOderWechselUnterOffenemHimmel(
-                                                        lastTime.getTime(), currentTime,
+                                                        change,
                                                         bewoelkungChangeSofernRelevant,
                                                         false)
                                                 .stream()
+                                                // Bandwurmsätze vermeiden
                                                 .filter(EinzelnerSatz.class::isInstance)
                                                 .map(bewSatz ->
-                                                        new ZweiSaetze(
-                                                                (EinzelnerSatz) tempSatz,
+                                                        new Satzreihe(
+                                                                tempSatz,
                                                                 (EinzelnerSatz) bewSatz)))))
                 .addAll(altNeueSaetze("Das Wetter ist umgeschwungen:",
                         SENTENCE,
                         WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
-                                lastTime.getTime(),
-                                currentTime.getTime(), windstaerkeChangeSofernRelevant,
+                                change, windstaerkeChangeSofernRelevant,
                                 false).stream()
                                 .flatMap(windSatz ->
                                         TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                                                lastTime.getTime(),
-                                                currentTime, temperaturChangeSofernRelevant,
+                                                change, temperaturChangeSofernRelevant,
                                                 drinnenDraussen,
                                                 false)
                                                 .stream()
                                                 .filter(EinzelnerSatz.class::isInstance)
                                                 .map(tempSatz ->
-                                                        new ZweiSaetze(
+                                                        new Satzreihe(
                                                                 (EinzelnerSatz) windSatz,
                                                                 (EinzelnerSatz) tempSatz))),
                         SENTENCE,
                         BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                                lastTime.getTime(),
-                                currentTime, bewoelkungChangeSofernRelevant,
+                                change, bewoelkungChangeSofernRelevant,
                                 drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                                 false)))
                 .build();
@@ -2447,7 +2446,7 @@ public class WetterData {
 
     @VisibleForTesting
     ImmutableCollection<AbstractDescription<?>> altTimePassedTageszeitenaenderung(
-            final AvDateTime lastTime, final AvDateTime currentTime,
+            final Change<AvDateTime> change,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
@@ -2466,8 +2465,8 @@ public class WetterData {
                 && !windstaerkeaenderungMussBeschriebenWerden) {
 
             // Nur Tageszeitenänderung und - evtl. - Temperaturänderung beschreiben
-            return altTageszeitenUndEvtlTemperaturaenderung(lastTime.getTageszeit(),
-                    currentTime.getTime(),
+            return altTageszeitenUndEvtlTemperaturaenderung(change.getVorher().getTageszeit(),
+                    change.getNachher().getTime(),
                     generelleTemperaturOutsideLocationTemperaturRange,
                     temperaturChangeSofernRelevant != null ?
                             temperaturChangeSofernRelevant.getNachher() : null,
@@ -2484,8 +2483,8 @@ public class WetterData {
                             //  Es wäre schön, "Jetzt... Jetzt.." zu vermeiden...
                             //  (Vielleicht gibt es dafür auch bessere Ideen....)
                             altTageszeitenUndEvtlTemperaturaenderung(
-                                    lastTime.getTageszeit(),
-                                    currentTime.getTime(),
+                                    change.getVorher().getTageszeit(),
+                                    change.getNachher().getTime(),
                                     generelleTemperaturOutsideLocationTemperaturRange,
                                     temperaturChangeSofernRelevant != null ?
                                             temperaturChangeSofernRelevant.getNachher() :
@@ -2493,7 +2492,8 @@ public class WetterData {
                                     drinnenDraussen),
                             SENTENCE,
                             BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
-                                    lastTime.getTime(), currentTime, bewoelkungChangeSofernRelevant,
+                                    change,
+                                    bewoelkungChangeSofernRelevant,
                                     drinnenDraussen ==
                                             DRAUSSEN_UNTER_OFFENEM_HIMMEL, false)
                     )).build();
@@ -2504,11 +2504,11 @@ public class WetterData {
         return alt()
                 .addAll(altNeueSaetze(
                         TAGESZEIT_DESC_DESCRIBER.altSprungOderWechsel(
-                                lastTime.getTageszeit(), currentTime.getTageszeit(),
+                                change.map(AvDateTime::getTageszeit),
                                 drinnenDraussen.isDraussen()),
                         SENTENCE,
                         altTimePassedTageszeitenaenderungNichtBeschreiben(
-                                lastTime, currentTime,
+                                change,
                                 windstaerkeChangeSofernRelevant,
                                 temperaturChangeSofernRelevant,
                                 bewoelkungChangeSofernRelevant, drinnenDraussen,

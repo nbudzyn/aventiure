@@ -679,12 +679,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final TimedDescription<?> description,
             final AbstractFlexibleDescription<?> fDesc) {
         final TextDescription descriptionSatzanschlussOhneSubjekt =
-                fDesc.toTextDescriptionSatzanschlussOhneSubjekt();
+                fDesc.toTextDescriptionSatzanschlussOhneSubjektOhneAnschlusswort();
 
         final AltTimedDescriptionsBuilder alt = altTimed();
         alt.add(description.withDescription(
-                descriptionSatzanschlussOhneSubjekt.mitPraefix(", besinnst dich aber " +
-                        (fDesc.vorangestelltenSatzanschlussMitUndVermeiden() ? ", " : "und "))));
+                descriptionSatzanschlussOhneSubjekt.mitPraefix(
+                        joinToKonstituentenfolge(
+                                ", besinnst dich aber ",
+                                fDesc.toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma()))));
         alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
         return alt.build();
     }
@@ -703,11 +705,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                             .toTextDescriptionMitVorfeld("dann")
                             .mitPraefix(joinToKonstituentenfolge(
                                     SENTENCE,
-                                    "Du siehst dich nur kurz um, "))));
+                                    "Du siehst dich nur kurz um"))));
         } else {
             alt.addAll(timedDescription.altMitPraefix(joinToKonstituentenfolge(
                     PARAGRAPH,
-                    "Was willst du hier eigentlich? ",
+                    "Was willst du hier eigentlich?",
                     SENTENCE)));
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
         }

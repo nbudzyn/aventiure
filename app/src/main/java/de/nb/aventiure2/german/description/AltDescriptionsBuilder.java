@@ -244,5 +244,4 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
 
         return res.build();
     }
-
 }

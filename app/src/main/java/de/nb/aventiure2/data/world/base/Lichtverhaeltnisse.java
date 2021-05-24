@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.stream.Stream;
 
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
@@ -56,7 +57,9 @@ public enum Lichtverhaeltnisse {
     /**
      * Gibt einen Satz zurück wie "und es wird hell".
      */
-    private EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz esWirdSatz(
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return getAdjektiv().alsEsWirdSatz(anschlusswort);
     }
 
@@ -70,7 +73,9 @@ public enum Lichtverhaeltnisse {
     /**
      * Gibt einen Satz zurück wie "und es ist hell".
      */
-    private EinzelnerSatz esIstSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz esIstSatz(
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return getAdjektiv().alsEsIstSatz(anschlusswort);
     }
 

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.StructuralElement;
@@ -15,6 +16,7 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.praedikat.PartizipIIPhrase;
 import de.nb.aventiure2.german.praedikat.Perfektbildung;
+import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
@@ -35,16 +37,17 @@ class DescriptionCombiner {
         final ImmutableList.Builder<TextDescription>
                 res = ImmutableList.builder();
 
-        if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                first.getStartsNew() == WORD &&
-                first instanceof AbstractFlexibleDescription &&
-                ((AbstractFlexibleDescription<?>) first).hasSubjektDu() &&
-                first.isAllowsAdditionalDuSatzreihengliedOhneSubjekt() &&
-                second.getStartsNew() == WORD &&
-                second instanceof AbstractFlexibleDescription &&
-                ((AbstractFlexibleDescription<?>) second).hasSubjektDu()) {
+        if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()
+                && first.getStartsNew() == WORD
+                && first instanceof AbstractFlexibleDescription
+                && ((AbstractFlexibleDescription<?>) first).hasSubjektDu()
+                && first.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()
+                && second.getStartsNew() == WORD
+                && second instanceof AbstractFlexibleDescription
+                && ((AbstractFlexibleDescription<?>) second).hasSubjektDu()
+                && !((AbstractFlexibleDescription<?>) first).hasAnschlusswortDasBedeutungTraegt()) {
             //  "Du kommst, siehst und siegst"
-            res.addAll(toDuSatzanschlussMitKommaUndUnd(
+            res.addAll(toDuSatzanschlussMitKommaUndAnschlusswort(
                     (AbstractFlexibleDescription<?>) first,
                     (AbstractFlexibleDescription<?>) second
             ));
@@ -65,26 +68,25 @@ class DescriptionCombiner {
     }
 
     /**
-     * Erzeugt einen doppelten Satzanschluss - einmal mit Komma, danach mit und:
-     * "Du kommst, siehst und siegst"
+     * Erzeugt einen doppelten Satzanschluss - einmal mit Komma, danach mit "und"
+     * (oder einem anderen Anschlusswort): "Du kommst, siehst und siegst"
+     * <p>
+     * Diese Methode darf nur aufgerufen werden, wenn die <i>erste Beschreibung</i> kein
+     * Anschlusswort hat oder es zumindest keine Semantik trägt (also nicht "oder", "aber" etc.).
      */
     @CheckReturnValue
-    private static Iterable<TextDescription> toDuSatzanschlussMitKommaUndUnd(
+    private static Iterable<TextDescription> toDuSatzanschlussMitKommaUndAnschlusswort(
             final AbstractFlexibleDescription<?> first,
             final AbstractFlexibleDescription<?> second) {
         checkArgument(first.getStartsNew() == WORD,
                 "Satzanschluss unmöglich für %s", first);
 
-        final TextDescription secondDescriptionSatzanschlussOhneSubjekt =
-                second.toTextDescriptionSatzanschlussOhneSubjekt();
-
         return ImmutableList.of(
-                secondDescriptionSatzanschlussOhneSubjekt.mitPraefix(
-                        joinToKonstituentenfolge(
-                                ",",
-                                first.toTextDescriptionSatzanschlussOhneSubjekt(),
-                                second.vorangestelltenSatzanschlussMitUndVermeiden() ?
-                                        "," : "und"))
+                second.toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma()
+                        .mitPraefix(
+                                joinToKonstituentenfolge(
+                                        ",",
+                                        first.toTextDescriptionSatzanschlussOhneSubjektOhneAnschlusswort()))
                         .undWartest(false));
     }
 
@@ -100,13 +102,17 @@ class DescriptionCombiner {
         //  "Du kommst unten an" + "Du bist ziemlich erschöpft" ->
         //  "Unten angekommen bist du ziemlich erschöpft"
 
-        if (first.getPraedikat().kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() &&
-                !first.getPraedikat().hatAkkusativobjekt() &&
-                first.getPraedikat().isBezugAufNachzustandDesAktantenGegeben() &&
-                first.getPraedikat().umfasstSatzglieder() &&
-                second.getStartsNew() == WORD) {
+        @Nullable final PraedikatOhneLeerstellen firstPraedikat =
+                first.getPraedikatWennOhneInformationsverlustMoeglich();
+        if (firstPraedikat != null
+                && firstPraedikat.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden()
+                && !firstPraedikat.hatAkkusativobjekt()
+                && firstPraedikat.isBezugAufNachzustandDesAktantenGegeben()
+                && firstPraedikat.umfasstSatzglieder()
+                && second.getStartsNew() == WORD) {
             final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                    first.getPraedikat().getPartizipIIPhrasen(P2, SG);
+                    firstPraedikat
+                            .getPartizipIIPhrasen(P2, SG);
             if (partizipIIPhrasen.size() == 1) { // Wenn es mehrere sind, bilden sie
                 // bestimmt nicht alle das Perfekt mit "sein"!
                 // Aber es ist nur eine!

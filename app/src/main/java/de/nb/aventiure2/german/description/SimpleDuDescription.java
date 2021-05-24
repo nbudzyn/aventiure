@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.description;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -17,6 +18,7 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
@@ -83,6 +85,22 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         this.remainder = remainder;
     }
 
+    @NonNull
+    @Override
+    public TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma() {
+        return toTextDescriptionKeepParams(joinToKonstituentenfolge(
+                UND,
+                toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma())
+                .joinToSingleKonstituente())
+                // Es soll keine erneuter und-Anschluss erfolgen!
+                .undWartest(false);
+    }
+
+    @Override
+    public boolean hasAnschlusswortDasBedeutungTraegt() {
+        return false;
+    }
+
     @Override
     public StructuralElement getStartsNew() {
         return startsNew;
@@ -128,7 +146,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
         return joinToKonstituentenfolge(
                 getStartsNew(),
                 "du",
-                toSingleKonstituenteSatzanschlussOhneSubjekt())
+                toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma())
                 .joinToSingleKonstituente();
     }
 
@@ -160,7 +178,7 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
      */
     @Override
     @CheckReturnValue
-    Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt() {
+    Konstituente toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma() {
         return joinToKonstituentenfolge(verb, remainder, getEndsThis())
                 .joinToSingleKonstituente();
     }
@@ -199,11 +217,6 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
         return remainder != null ? remainder.getPhorikKandidat() : null;
-    }
-
-    @Override
-    public boolean vorangestelltenSatzanschlussMitUndVermeiden() {
-        return false;
     }
 
     @SuppressWarnings("ConstantConditions")

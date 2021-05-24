@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -844,8 +845,7 @@ public class RapunzelReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-
+    public void onTimePassed(final Change<AvDateTime> change) {
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                     && talkingComp.scUndRapunzelKoennenEinanderSehen()) {
@@ -857,14 +857,14 @@ public class RapunzelReactionsComp
         }
 
         if (stateComp.hasState(HAARE_VOM_TURM_HERUNTERGELASSEN) &&
-                endTime.isAfter(
+                change.getNachher().isAfter(
                         stateComp.getStateDateTime().plus(
                                 DAUER_WIE_LANGE_DIE_HAARE_MAX_UNTEN_BLEIBEN))) {
             rapunzelZiehtHaareWiederHoch();
             return;
         }
 
-        if (rapunzelMoechteSingen(endTime)) {
+        if (rapunzelMoechteSingen(change.getNachher())) {
             onTimePassed_RapunzelMoechteSingen();
             return;
         }

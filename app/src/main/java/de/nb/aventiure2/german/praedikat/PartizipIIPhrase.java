@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,7 +33,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <i>*er hat um die Ecke gekommen und seinen Freund gesehen</i> zulässig ist.
  */
 @Immutable
-public class PartizipIIPhrase {
+public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
     /**
      * Die eigenliche unflektierte Phrase: "unten angekommen",
      * "die Kugel genommen".
@@ -61,6 +64,7 @@ public class PartizipIIPhrase {
     static PartizipIIPhrase joinBeiGleicherPerfektbildung(
             final ImmutableList.Builder<PartizipIIPhrase> res,
             @Nullable final PartizipIIPhrase tmp,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld tmpKonnektor,
             final PartizipIIPhrase partizipIIPhrase) {
         if (tmp == null) {
             // "unten angekommen (sein)"
@@ -70,8 +74,8 @@ public class PartizipIIPhrase {
             return new PartizipIIPhrase(
                     Konstituentenfolge.joinToKonstituentenfolge(
                             tmp,
-                            "und",
-                            partizipIIPhrase),
+                            tmpKonnektor,
+                            partizipIIPhrase.phrase.withVorkommaNoetigMin(tmpKonnektor == null)),
                     tmp.getPerfektbildung());
         } else {
             // "unten angekommen (sein) und die Kugel genommen (haben)"
@@ -79,6 +83,7 @@ public class PartizipIIPhrase {
             return partizipIIPhrase;
         }
     }
+
 
     Verb getHilfsverb() {
         switch (perfektbildung) {
@@ -91,6 +96,11 @@ public class PartizipIIPhrase {
         }
     }
 
+    @Override
+    public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return getPhrase().toAltKonstituentenfolgen();
+    }
+
     @NonNull
     public Konstituentenfolge getPhrase() {
         return phrase;
@@ -99,6 +109,15 @@ public class PartizipIIPhrase {
     @NonNull
     public Perfektbildung getPerfektbildung() {
         return perfektbildung;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "PartizipIIPhrase{" +
+                "phrase=" + phrase +
+                ", perfektbildung=" + perfektbildung +
+                '}';
     }
 
     @Override

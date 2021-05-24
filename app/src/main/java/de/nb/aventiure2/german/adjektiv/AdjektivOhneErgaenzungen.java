@@ -7,6 +7,7 @@ import androidx.annotation.VisibleForTesting;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
@@ -218,7 +219,9 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public EinzelnerSatz alsEsIstSatz(final @Nullable String anschlusswort) {
+    public EinzelnerSatz alsEsIstSatz(
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toAdjPhr().alsEsIstSatz(anschlusswort);
     }
 
@@ -228,7 +231,9 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public EinzelnerSatz alsEsWirdSatz(final @Nullable String anschlusswort) {
+    public EinzelnerSatz alsEsWirdSatz(
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toAdjPhr().alsEsWirdSatz(anschlusswort);
     }
 

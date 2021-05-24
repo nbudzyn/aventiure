@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
@@ -31,8 +32,8 @@ public class WetterReactionsComp extends AbstractReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        wetterComp.onTimePassed(startTime, endTime);
+    public void onTimePassed(final Change<AvDateTime> change) {
+        wetterComp.onTimePassed(change);
     }
 
     @Override

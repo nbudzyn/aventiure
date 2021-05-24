@@ -313,9 +313,7 @@ public class DescriptionUmformulierer {
         return du(max(desc.getStartsNew(), PARAGRAPH),
                 praefixVerb,
                 praefixRemainder,
-                desc.vorangestelltenSatzanschlussMitUndVermeiden() ?
-                        "," : "und",
-                desc.toTextDescriptionSatzanschlussOhneSubjekt(),
+                desc.toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma(),
                 desc.getEndsThis())
                 .mitVorfeldSatzglied(praefixVorfeldSatzglied)
                 .dann(desc.isDann());

@@ -10,6 +10,8 @@ import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.data.world.base.Change;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTime.HOURS_IN_A_DAY;
 import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
@@ -50,6 +52,12 @@ public class AvTimeSpan {
     @Contract(value = "_ -> new", pure = true)
     public static AvTimeSpan secs(final long secs) {
         return new AvTimeSpan(secs);
+    }
+
+    @NonNull
+    @Contract(pure = true)
+    public static AvTimeSpan span(final Change<AvDateTime> timeChange) {
+        return timeChange.getNachher().minus(timeChange.getVorher());
     }
 
     @NonNull

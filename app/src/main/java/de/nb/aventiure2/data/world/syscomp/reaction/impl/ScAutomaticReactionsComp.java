@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableList;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -184,9 +185,9 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        feelingsComp.onTimePassed(startTime, endTime);
-        waitingComp.ifWaitingDoWaitStep(endTime);
+    public void onTimePassed(final Change<AvDateTime> change) {
+        feelingsComp.onTimePassed(change);
+        waitingComp.ifWaitingDoWaitStep(change.getNachher());
     }
 
     @Override

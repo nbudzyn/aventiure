@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
@@ -31,35 +32,17 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
  */
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class TageszeitAdvAngabeWannDescriber {
-    /**
-     * Erzeugt alternative eine tageszeitliche oder untertageszeitliche temporale Beschreibungen als
-     * adverbiale Angaben (vorausgesetzt der SC ist draußen) - oft leer.
-     *
-     * @param timeVorher Zeitpunkt <i>vor</i> dieser Tageszeit oder untertageszeitlichen Angabe
-     * @param time       Zeitpunkt
-     */
-    // FIXME Einbinden, wenn SC hungrig wird und die Aktion einige Zeit gedauert hat?
-    //  (Dann dafür sorgen, dass nicht derselbe Zeitübergang noch einmal z.B. bei altTimePassed()
-    //  verwendet wird!).
 
-    // FIXME Einbinden, wenn SC müder wird und die Aktion einige Zeit gedauert hat? (Dann dafür
-    //  sorgen, dass nicht derselbe Zeitübergang noch einmal bei z.B. altTimePassed() verwendet
-    //  wird!).
+    public ImmutableSet<AdvAngabeSkopusSatz> altWannDraussen(final Change<AvTime> change) {
 
-    // FIXME Automatisch bei Sätzen einbinden, wenn die Aktion einige Zeit gedauert hat? (Dann
-    //  dafür
-    //  sorgen, dass nicht derselbe Zeitübergang noch einmal bei z.B. altTimePassed() verwendet
-    //  wird!).
-    public ImmutableSet<AdvAngabeSkopusSatz> altWannDraussen(final AvTime timeVorher,
-                                                             final AvTime time) {
         // Untertageszeitliche Angaben (werden bevorzugt)
-        if (!timeVorher.kurzVorSonnenaufgang() && time.kurzVorSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenaufgang)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("vor Sonnenaufgang"),
                     new AdvAngabeSkopusSatz("vor Tagesanbruch"),
                     new AdvAngabeSkopusSatz("früh vor Tag"));
         }
 
-        if (!timeVorher.kurzNachSonnenaufgang() && time.kurzNachSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenaufgang)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("nach Sonnenaufgang"),
                     new AdvAngabeSkopusSatz("frühmorgens"),
                     new AdvAngabeSkopusSatz("bei Anbruch des Tages"),
@@ -74,11 +57,11 @@ public class TageszeitAdvAngabeWannDescriber {
                     new AdvAngabeSkopusSatz("des Morgens früh"));
         }
 
-        if (!timeVorher.vorMittag() && time.vorMittag()) {
+        if (change.wasntBeforeButIsAfter(AvTime::vorMittag)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("vor Mittag"));
         }
 
-        if (!timeVorher.gegenMittag() && time.gegenMittag()) {
+        if (change.wasntBeforeButIsAfter(AvTime::gegenMittag)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("gegen Mittag"),
                     new AdvAngabeSkopusSatz("zu Mittag"),
                     new AdvAngabeSkopusSatz("mittags"),
@@ -86,55 +69,52 @@ public class TageszeitAdvAngabeWannDescriber {
                     new AdvAngabeSkopusSatz("zur Mittagszeit"));
         }
 
-        if (!timeVorher.nachmittags() && time.nachmittags()) {
+        if (change.wasntBeforeButIsAfter(AvTime::nachmittags)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("nachmittags"));
         }
 
-        if (!timeVorher.kurzVorSonnenuntergang() && time.kurzVorSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenuntergang)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("vor Sonnenuntergang"),
                     new AdvAngabeSkopusSatz("vor Einbruch der Nacht"));
         }
 
-        if (!timeVorher.kurzNachSonnenuntergang() && time.kurzNachSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenuntergang)) {
             return ImmutableSet.of(
                     new AdvAngabeSkopusSatz("bei Sonnenuntergang"),
                     new AdvAngabeSkopusSatz("nach Sonnenuntergang"),
                     new AdvAngabeSkopusSatz("bei einbrechender Nacht"));
         }
 
-        if (!timeVorher.spaetInDerNacht() && time.spaetInDerNacht()) {
+        if (change.wasntBeforeButIsAfter(AvTime::spaetInDerNacht)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("spät in der Nacht"));
         }
 
-        if (!timeVorher.umMitternacht() && time.umMitternacht()) {
+        if (change.wasntBeforeButIsAfter(AvTime::umMitternacht)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("um Mitternacht"),
                     new AdvAngabeSkopusSatz("gegen Mitternacht"));
             // IDEA "Geisterstunde"?
         }
 
-        if (!timeVorher.mittenInDerNacht() && time.mittenInDerNacht()) {
+        if (change.wasntBeforeButIsAfter(AvTime::mittenInDerNacht)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("mitten in der Nacht"));
         }
 
         // Tageszeiten
-        if (timeVorher.getTageszeit() != Tageszeit.MORGENS
-                && time.getTageszeit() == Tageszeit.MORGENS) {
+        if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.MORGENS)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("am andern Morgen"),
                     new AdvAngabeSkopusSatz("am Morgen"),
                     new AdvAngabeSkopusSatz("morgens"),
                     new AdvAngabeSkopusSatz("am nächsten Morgen"));
         }
 
-        if (timeVorher.getTageszeit() != Tageszeit.ABENDS
-                && time.getTageszeit() == Tageszeit.ABENDS) {
+        if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.ABENDS)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("abends"),
                     new AdvAngabeSkopusSatz("am Abend"),
                     new AdvAngabeSkopusSatz("gegen Abend"),
                     new AdvAngabeSkopusSatz("zur Abendzeit"));
         }
 
-        if (timeVorher.getTageszeit() != Tageszeit.NACHTS
-                && time.getTageszeit() == Tageszeit.NACHTS) {
+        if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.NACHTS)) {
             return ImmutableSet.of(new AdvAngabeSkopusSatz("nachts"),
                     new AdvAngabeSkopusSatz("in der Nacht"));
         }
@@ -142,30 +122,11 @@ public class TageszeitAdvAngabeWannDescriber {
         return ImmutableSet.of();
     }
 
-    /**
-     * Erzeugt alternative Konditionalsätze, mit einer tageszeitliche oder untertageszeitliche
-     * temporalen Beschreibungen (vorausgesetzt der SC ist draußen), z.B. "als die Mitternacht
-     * kommt"  - oft leer.
-     *
-     * @param timeVorher Zeitpunkt <i>vor</i> dieser Tageszeit oder untertageszeitlichen Angabe
-     * @param time       Zeitpunkt
-     */
-    // FIXME Einbinden, wenn SC hungrig wird und die Aktion einige Zeit gedauert hat?
-    //  (Dann dafür sorgen, dass nicht derselbe Zeitübergang noch einmal z.B. bei altTimePassed()
-    //  verwendet wird!).
+    public ImmutableSet<Konditionalsatz> altWannKonditionalsaetzeDraussen(
+            final Change<AvTime> change) {
 
-    // FIXME Einbinden, wenn SC müder wird und die Aktion einige Zeit gedauert hat? (Dann dafür
-    //  sorgen, dass nicht derselbe Zeitübergang noch einmal bei z.B. altTimePassed() verwendet
-    //  wird!).
-
-    // FIXME Automatisch bei Sätzen einbinden, wenn die Aktion einige Zeit gedauert hat? (Dann
-    //  dafür
-    //  sorgen, dass nicht derselbe Zeitübergang noch einmal bei z.B. altTimePassed() verwendet
-    //  wird!).
-    public ImmutableSet<Konditionalsatz> altWannKonditionalsaetzeDraussen(final AvTime timeVorher,
-                                                                          final AvTime time) {
         // Untertageszeitliche Angaben (werden bevorzugt)
-        if (!timeVorher.kurzVorSonnenaufgang() && time.kurzVorSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenaufgang)) {
             return ImmutableSet.of(
                     // "noch ehe die Sonne aufgegangen ist
                     new Konditionalsatz(
@@ -175,7 +136,7 @@ public class TageszeitAdvAngabeWannDescriber {
                             "bevor", ANBRECHEN.alsSatzMitSubjekt(TAG)));
         }
 
-        if (!timeVorher.kurzNachSonnenaufgang() && time.kurzNachSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenaufgang)) {
             return ImmutableSet.of(
                     // "als die Sonne aufgeht
                     new Konditionalsatz(
@@ -185,7 +146,7 @@ public class TageszeitAdvAngabeWannDescriber {
                             "als", ANBRECHEN.alsSatzMitSubjekt(TAG).perfekt()));
         }
 
-        if (!timeVorher.vorMittag() && time.vorMittag()) {
+        if (change.wasntBeforeButIsAfter(AvTime::vorMittag)) {
             return ImmutableSet.of(
                     // "noch ehe es Mittag ist"
                     new Konditionalsatz("noch ehe", npArtikellos(MITTAG).alsEsIstSatz()),
@@ -197,17 +158,17 @@ public class TageszeitAdvAngabeWannDescriber {
                                     .alsSatzMitSubjekt(EXPLETIVES_ES)));
         }
 
-        if (!timeVorher.gegenMittag() && time.gegenMittag()) {
+        if (change.wasntBeforeButIsAfter(AvTime::gegenMittag)) {
             return ImmutableSet.of(
                     // "als es Mittag ist"
                     new Konditionalsatz(
                             "als", npArtikellos(MITTAG).alsEsIstSatz()));
         }
 
-        // IDEA: timeVorher.nachmittags()
+        // IDEA: ::nachmittags
         // IDEA: Als der Abend herankommt
 
-        if (!timeVorher.kurzVorSonnenuntergang() && time.kurzVorSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenuntergang)) {
             return ImmutableSet.of(
                     // "als die Sonne bald untergehen will"
                     new Konditionalsatz(
@@ -221,7 +182,7 @@ public class TageszeitAdvAngabeWannDescriber {
                     new Konditionalsatz("als", HERANKOMMEN.alsSatzMitSubjekt(NACHT)));
         }
 
-        if (!timeVorher.kurzNachSonnenuntergang() && time.kurzNachSonnenuntergang()) {
+        if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenuntergang)) {
             return ImmutableSet.of(
                     // "als die Sonne untergeht"
                     new Konditionalsatz("als", UNTERGEHEN.alsSatzMitSubjekt(SONNE)),
@@ -230,20 +191,19 @@ public class TageszeitAdvAngabeWannDescriber {
                             "als", EINBRECHEN.alsSatzMitSubjekt(NACHT).perfekt()));
         }
 
-        // IDEA: timeVorher.spaetInDerNacht()
+        // IDEA: ::spaetInDerNacht
 
-        if (!timeVorher.umMitternacht() && time.umMitternacht()) {
+        if (change.wasntBeforeButIsAfter(AvTime::umMitternacht)) {
             return ImmutableSet.of(
                     // "als es Mitternacht ist"
                     new Konditionalsatz("als", npArtikellos(MITTERNACHT).alsEsIstSatz()));
             // IDEA: "wies Mitternacht ist"
         }
 
-        // IDEA: mittenInDerNacht()
+        // IDEA: ::mittenInDerNacht
 
         // Tageszeiten
-        if (timeVorher.getTageszeit() != Tageszeit.MORGENS
-                && time.getTageszeit() == Tageszeit.MORGENS) {
+        if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.MORGENS)) {
             return ImmutableSet.of(
                     // "wie der Morgen anbricht"
                     new Konditionalsatz(
@@ -256,8 +216,7 @@ public class TageszeitAdvAngabeWannDescriber {
                             .alsSatzMitSubjekt(MORGEN)));
         }
 
-        if (timeVorher.getTageszeit() != Tageszeit.ABENDS
-                && time.getTageszeit() == Tageszeit.ABENDS) {
+        if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.ABENDS)) {
             return ImmutableSet.of(
                     // "als es Abend ist"
                     new Konditionalsatz("als", npArtikellos(ABEND).alsEsIstSatz()),

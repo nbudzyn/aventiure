@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -74,7 +75,9 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return alsSatz(null);
     }
 
-    private EinzelnerSatz alsSatz(final @Nullable String anschlusswort) {
+    private EinzelnerSatz alsSatz(
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
     }
 

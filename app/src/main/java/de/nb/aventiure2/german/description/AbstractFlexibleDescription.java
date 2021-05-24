@@ -46,22 +46,22 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
 
     @NonNull
     @CheckReturnValue
-    public final TextDescription toTextDescriptionSatzanschlussOhneSubjekt() {
+    public final TextDescription toTextDescriptionSatzanschlussOhneSubjektOhneAnschlusswort() {
         return toTextDescriptionKeepParams(
-                toSingleKonstituenteSatzanschlussOhneSubjekt());
+                toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma());
     }
 
-    abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjekt();
+    abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma();
+
+    @NonNull
+    @CheckReturnValue
+    public abstract TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma();
 
     public abstract boolean hasSubjektDu();
 
     /**
-     * Ob vermieden werden soll, dass ein Satz mit "und" vorangestellt
-     * werden soll.
-     * <p>
-     * Relevant, wenn ein weiterer Satz vorangestellt werden soll und man
-     * "... und ... und..." vermeiden und statt dessen dann lieber "..., ... und... "
-     * schreiben möchte
+     * Gibt zurück, ob diese Description ein Anschlusswort besitzt, das Semantik trägt
+     * (z.B. "aber", "oder" etc. - im Gegensatz zu "und" oder gar keinem Anschlusswort).
      */
-    public abstract boolean vorangestelltenSatzanschlussMitUndVermeiden();
+    public abstract boolean hasAnschlusswortDasBedeutungTraegt();
 }

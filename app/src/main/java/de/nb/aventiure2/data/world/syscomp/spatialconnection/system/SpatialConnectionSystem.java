@@ -14,7 +14,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 
 /**
- * Functionality concerned with spatial connections that might span several game objects.
+ * Functionality concerned with spatial connections that might delta several game objects.
  */
 public class SpatialConnectionSystem {
     private final AStarPathfinder pathfinder;

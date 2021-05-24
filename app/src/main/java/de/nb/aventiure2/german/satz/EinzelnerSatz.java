@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -39,11 +40,12 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 public class EinzelnerSatz implements Satz {
     /**
-     * Anschlusswörter sind vor allem "und", "denn" und "aber". Sie stehen vor dem
-     * Vorfeld.
+     * Anschlusswort: "und", "aber", "oder", "sondern". Steht vor dem Vorfeld. Bei einer
+     * {@link Satzreihe} aus zwei Sätzen ist der Konnektor genau das Anschlusswort des zweiten
+     * Satzes.
      */
     @Nullable
-    private final String anschlusswort;
+    private final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort;
 
     /**
      * Das Subjekt des Satzes. Darf in seltenen Fällen fehlen ("Mich friert.")
@@ -85,7 +87,7 @@ public class EinzelnerSatz implements Satz {
     }
 
     public static ImmutableList<Satz> altSubjObjSaetze(
-            final SubstantivischePhrase subjekt,
+            @Nullable final SubstantivischePhrase subjekt,
             final Collection<? extends PraedikatMitEinerObjektleerstelle> praedikate,
             final SubstantivischePhrase objekt,
             final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
@@ -102,17 +104,19 @@ public class EinzelnerSatz implements Satz {
         this(null, subjekt, praedikat);
     }
 
-    public EinzelnerSatz(@Nullable final String anschlusswort,
-                         @Nullable final SubstantivischePhrase subjekt,
-                         final PraedikatOhneLeerstellen praedikat) {
+    public EinzelnerSatz(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort,
+            @Nullable final SubstantivischePhrase subjekt,
+            final PraedikatOhneLeerstellen praedikat) {
         this(anschlusswort, subjekt, praedikat, null, false);
     }
 
-    private EinzelnerSatz(@Nullable final String anschlusswort,
-                          @Nullable final SubstantivischePhrase subjekt,
-                          final PraedikatOhneLeerstellen praedikat,
-                          @Nullable final Konditionalsatz angabensatz,
-                          final boolean angabensatzMoeglichstVorangestellt) {
+    private EinzelnerSatz(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort,
+            @Nullable final SubstantivischePhrase subjekt,
+            final PraedikatOhneLeerstellen praedikat,
+            @Nullable final Konditionalsatz angabensatz,
+            final boolean angabensatzMoeglichstVorangestellt) {
         this.angabensatzMoeglichstVorangestellt = angabensatzMoeglichstVorangestellt;
         if (praedikat.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
             if (subjekt != null) {
@@ -130,7 +134,18 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
-    public EinzelnerSatz mitAnschlusswort(@Nullable final String anschlusswort) {
+    public EinzelnerSatz ohneAnschlusswort() {
+        return (EinzelnerSatz) Satz.super.ohneAnschlusswort();
+    }
+
+    @Override
+    public EinzelnerSatz mitAnschlusswortUndFallsKeinAnschlusswort() {
+        return (EinzelnerSatz) Satz.super.mitAnschlusswortUndFallsKeinAnschlusswort();
+    }
+
+    @Override
+    public EinzelnerSatz mitAnschlusswort(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat,
                 angabensatz, angabensatzMoeglichstVorangestellt);
     }
@@ -220,20 +235,25 @@ public class EinzelnerSatz implements Satz {
 
         // "was du zu berichten hast", "wem er was gegeben hat", "wann er kommt"
         return joinToKonstituentenfolge(
+                // FIXME Anschlusswort ist nur bei Reihung zulässig...
+                //  Höchstens "wie aber..."
                 anschlusswort, // "und"
-                erstesInterrogativwortImPraedikat, // "was" / "wem" / "wann"
+                erstesInterrogativwortImPraedikat
+                        .withVorkommaNoetigMin(anschlusswort == null), // "was" / "wem" / "wann"
                 getVerbletztsatz().cutFirst(
                         erstesInterrogativwortImPraedikat
                 ), // "du zu berichten hast", "wer zu berichten hat", "er kommt"
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
-                        null); // "[, ]als er kommt[, ]"
+                        null) // "[, ]als er kommt[, ]"
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     private Konstituentenfolge getIndirekteFrageNachSubjekt() {
         // "wer etwas zu berichten hat", "wer was zu berichten hat", "was er zu berichten hat"
-        return getVerbletztsatz();
+        return getVerbletztsatz()
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     private Konstituentenfolge getObFrage() {
@@ -241,7 +261,7 @@ public class EinzelnerSatz implements Satz {
                 anschlusswort, // "und"
                 "ob",
                 getVerbletztsatz() // "du etwas zu berichten hast"
-        );
+        ).withVorkommaNoetigMin(anschlusswort == null);
     }
 
     @Override
@@ -268,20 +288,25 @@ public class EinzelnerSatz implements Satz {
 
         // "das du zu berichten hast", "dem er was gegeben hat", "der kommt"
         return joinToKonstituentenfolge(
+                // FIXME Anschlusswort beim Relativsatz ist nur bei Reihungen sinnvoll...
+                //  Höchstens "das aber du zu berichten das..."
                 anschlusswort, // "und"
-                relativpronomenImPraedikat, // "das" / "dem"
+                relativpronomenImPraedikat.withVorkommaNoetigMin(anschlusswort == null),
+                // "das" / "dem"
                 getVerbletztsatz().cutFirst(
                         relativpronomenImPraedikat
                 ), // "du zu berichten hast", "er was gegeben hat", "kommt"
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
-                        null); // "[, ]als er kommt[, ]"
+                        null) // "[, ]als er kommt[, ]"
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     private Konstituentenfolge getRelativsatzMitRelativpronomenSubjekt() {
         // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
-        return getVerbletztsatz();
+        return getVerbletztsatz()
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     @Override
@@ -349,17 +374,19 @@ public class EinzelnerSatz implements Satz {
                                     .schliesseInKommaEin(angabensatz.getDescription()) :
                             null, // "[, ]als er kommt[, ]"
                     praedikat.getVerbzweitMitSubjektImMittelfeld(
-                            subjekt != null ? subjekt : Personalpronomen.EXPLETIVES_ES));
+                            subjekt != null ? subjekt : Personalpronomen.EXPLETIVES_ES))
+                    .withVorkommaNoetigMin(anschlusswort == null);
         }
 
         return joinToKonstituentenfolge(
-                anschlusswort, // "und"
+                anschlusswort, // "und" /  "[, ]aber"
                 subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES.nomK(),
                 praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
-                        null);
+                        null)
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     private Konstituente getSpeziellesVorfeldSehrErwuenscht() {
@@ -379,7 +406,7 @@ public class EinzelnerSatz implements Satz {
 
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                vorfeld,
+                vorfeld.withVorkommaNoetigMin(anschlusswort == null),
                 getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig().cutFirst(vorfeld),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
@@ -400,7 +427,8 @@ public class EinzelnerSatz implements Satz {
                 getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig(),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
-                        null);
+                        null)
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     @Override
@@ -423,15 +451,9 @@ public class EinzelnerSatz implements Satz {
         return subjekt.getNumerus();
     }
 
-    /**
-     * Gibt den Satz in Verbzweitform aus, jedoch ohne Subjekt, also beginnend mit
-     * dem Anschlusswort (z.B. "und") und dem Verb. Z.B. "und hast
-     * am Abend etwas zu berichten" oder "und nimmst den Ast"
-     */
     @Override
-    public Konstituentenfolge getSatzanschlussOhneSubjekt() {
+    public Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma() {
         return joinToKonstituentenfolge(
-                anschlusswort, // "und"
                 praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
@@ -439,10 +461,27 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
+    public Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma() {
+        return joinToKonstituentenfolge(
+                anschlusswort, // "und"
+                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
+                angabensatz != null ?
+                        Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
+                        null)
+                .withVorkommaNoetigMin(anschlusswort == null);
+    }
+
+    @Override
     public boolean hasSubjektDu() {
         return subjekt instanceof Personalpronomen
                 && subjekt.getPerson() == P2
                 && subjekt.getNumerus() == SG;
+    }
+
+    @Override
+    @Nullable
+    public NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld getAnschlusswort() {
+        return anschlusswort;
     }
 
     @Override
@@ -456,7 +495,13 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
-    public PraedikatOhneLeerstellen getPraedikat() {
+    @Nullable
+    public PraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
+        if (NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung(anschlusswort)
+                || angabensatz != null) {
+            return null;
+        }
+
         return praedikat;
     }
 
@@ -468,6 +513,12 @@ public class EinzelnerSatz implements Satz {
     @Override
     public boolean hatAngabensatz() {
         return angabensatz != null;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return getVerbzweitsatzStandard().joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override

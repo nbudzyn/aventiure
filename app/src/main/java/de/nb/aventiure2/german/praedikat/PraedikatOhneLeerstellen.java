@@ -13,6 +13,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -102,7 +103,9 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     }
 
     default EinzelnerSatz alsSatzMitSubjekt(
-            final @Nullable String anschlusswort, @Nullable final SubstantivischePhrase subjekt) {
+            final @Nullable
+                    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort,
+            @Nullable final SubstantivischePhrase subjekt) {
         return new EinzelnerSatz(anschlusswort, subjekt, this);
     }
 

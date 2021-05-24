@@ -54,7 +54,12 @@ class TextDescriptionBuilder {
                 desc.getStartsNew() == WORD) {
             if (desc instanceof SimpleDuDescription) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                res.add(toTextDescriptionsatzanschlussMitUnd((SimpleDuDescription) desc));
+                checkArgument(((SimpleDuDescription) desc).getStartsNew() == WORD,
+                        "Satzanschluss unmöglich für %s",
+                        ((SimpleDuDescription) desc).getStartsNew());
+
+                res.add(((SimpleDuDescription) desc)
+                        .toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma());
                 if (initialNarration.dann() && !desc.isSchonLaenger()) {
                     res.add(toTextDescriptionMitKommaDann((SimpleDuDescription) desc));
                 }
@@ -62,7 +67,8 @@ class TextDescriptionBuilder {
             } else if (desc instanceof StructuredDescription
                     && ((StructuredDescription) desc).hasSubjektDu()) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                res.add(((StructuredDescription) desc).toTextDescriptionsatzanschlussMitUnd());
+                res.add(((StructuredDescription) desc)
+                        .toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma());
                 if (initialNarration.dann() && !desc.isSchonLaenger()) {
                     res.add(toTextDescriptionMitKommaDann((StructuredDescription) desc));
                 }
@@ -89,17 +95,6 @@ class TextDescriptionBuilder {
         // die Vorgabe WORD soll dann erhalten bleiben
 
         return desc.altTextDescriptions();
-    }
-
-    @NonNull
-    @CheckReturnValue
-    private static TextDescription toTextDescriptionsatzanschlussMitUnd(
-            final SimpleDuDescription duDesc) {
-        checkArgument(duDesc.getStartsNew() == WORD,
-                "Satzanschluss unmöglich für %s", duDesc.getStartsNew());
-
-        return duDesc.toTextDescriptionSatzanschlussOhneSubjekt().mitPraefix("und ")
-                .undWartest(false);
     }
 
     @NonNull

@@ -25,6 +25,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LASS_DEIN_HAAR_HERUNTER;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -102,7 +103,7 @@ public class RufenAction extends AbstractScAction {
         } else {
             n.narrate(DescriptionBuilder.satz(WORD, ruftyp.getName()
                     .alsSatzMitSubjekt(duSc())
-                    .mitAnschlusswort("und"))
+                    .mitAnschlusswort(UND))
                     .timed(secs(30)));
         }
 

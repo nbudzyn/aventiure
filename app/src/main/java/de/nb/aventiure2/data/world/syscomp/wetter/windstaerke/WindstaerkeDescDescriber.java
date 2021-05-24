@@ -6,7 +6,9 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
 import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -17,7 +19,8 @@ import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
@@ -47,37 +50,38 @@ public class WindstaerkeDescDescriber {
      * (Windstärkewechsel) oder um mehrere Stufen (Windstärkesprung) verändert hat.*
      */
     public ImmutableCollection<AbstractDescription<?>> altSprungOderWechsel(
-            final AvTime lastTime, final AvTime time,
+            final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Windstaerke> change,
             final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         alt.addAll(satzDescriber.altSprungOderWechsel(
-                lastTime, time, change, auchZeitwechselreferenzen));
+                dateTimeChange, change, auchZeitwechselreferenzen));
 
         // IDEA Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
         //  (Blätter)
         //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
         //  Blättchen mehr"
 
-        final ImmutableSet<Konstituente> altWann =
-                auchZeitwechselreferenzen ?
-                        tageszeitAdvAngabeWannDescriber.altWannDraussen(
-                                lastTime, time).stream()
-                                .map(gegenMitternacht -> gegenMitternacht
-                                        .getDescription(EXPLETIVES_ES))
-                                .collect(toImmutableSet()) :
-                        null;
+        final ImmutableSet<Konstituente> altWann;
+        final ImmutableSet<Konstituentenfolge> altWannSaetze;
 
-        final ImmutableSet<Konstituentenfolge> altWannSaetze =
-                auchZeitwechselreferenzen ?
-                        mapToSet(
-                                tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
-                                        lastTime, time),
-                                Konditionalsatz::getDescription) :
-                        null;
+        if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
+            final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
 
-        if (change.getNachher().minus(change.getVorher()) == 1) {
+            altWann = mapToSet(
+                    tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange),
+                    gegenMitternacht -> gegenMitternacht.getDescription(EXPLETIVES_ES));
+
+            altWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
+                            .altWannKonditionalsaetzeDraussen(timeChange),
+                    Konditionalsatz::getDescription);
+        } else {
+            altWann = ImmutableSet.of();
+            altWannSaetze = ImmutableSet.of();
+        }
+
+        if (change.delta() == 1) {
             // "es kommt ein Wind"
             alt.addAll(altNeueSaetze(
                     "es kommt",
@@ -88,8 +92,10 @@ public class WindstaerkeDescDescriber {
         if (change.getVorher() == Windstaerke.WINDIG
                 && change.getNachher() == Windstaerke.KRAEFTIGER_WIND) {
             alt.add(neuerSatz("es kommt ein starker Wind"));
-            if (auchZeitwechselreferenzen) {
+            if (!altWann.isEmpty()) {
                 alt.addAll(altNeueSaetze(altWann, "kommt ein starker Wind"));
+            }
+            if (!altWannSaetze.isEmpty()) {
                 alt.addAll(altNeueSaetze(altWannSaetze, ", kommt ein starker Wind"));
             }
         }

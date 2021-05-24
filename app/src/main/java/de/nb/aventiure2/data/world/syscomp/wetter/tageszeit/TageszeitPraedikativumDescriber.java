@@ -104,7 +104,7 @@ public class TageszeitPraedikativumDescriber {
         if (time.kurzVorSonnenaufgang()) {
             alt.add(AdjektivOhneErgaenzungen.DUNKEL
                     .mitAdvAngabe(new AdvAngabeSkopusSatz("noch")));
-        } else if (time.kurzNachSonnenuntergang()) {
+        } else if (time.kurzNachSonnenaufgang()) {
             alt.add(AdjektivOhneErgaenzungen.HELL
                     .mitAdvAngabe(new AdvAngabeSkopusSatz("bereits")));
             alt.add(AdjektivOhneErgaenzungen.HELL

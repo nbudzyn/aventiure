@@ -31,7 +31,6 @@ public class Modalpartikel implements IAlternativeKonstituentenfolgable {
     @NonNull
     @Override
     public String toString() {
-        // Muss zwingend so bleiben - wird verwendet!
         return text;
     }
 }

@@ -10,6 +10,7 @@ import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
@@ -34,7 +35,7 @@ import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTION
 import static de.nb.aventiure2.data.time.AvDateTime.latest;
 
 /**
- * Functionality concerned with Reactions that might span several game objects.
+ * Functionality concerned with Reactions that might delta several game objects.
  */
 public class ReactionSystem
         implements IMovementReactions, IEssenReactions, IStateChangedReactions,
@@ -196,10 +197,15 @@ public class ReactionSystem
     }
 
     // ITimePassedReactions
-    @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
+    public void onTimePassed(final AvDateTime vorher, final AvDateTime nachher) {
         doReactions(ITimePassedReactions.class,
-                reactions -> reactions.onTimePassed(startTime, endTime));
+                reactions -> reactions.onTimePassed(new Change<>(vorher, nachher)));
+    }
+
+    @Override
+    public void onTimePassed(final Change<AvDateTime> change) {
+        doReactions(ITimePassedReactions.class,
+                reactions -> reactions.onTimePassed(change));
     }
 
     // ISCActionReactions

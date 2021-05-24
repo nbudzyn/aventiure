@@ -105,6 +105,20 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     @Nullable
     private final IBezugsobjekt bezugsobjekt;
 
+    /**
+     * Gibt eine Kopie der Konstituente zurück - unverändert, falls
+     * {@code vorkommaNoetigMin} {@code false} ist, sonst mit der Angabe, dass
+     * ein Vorkomma nötig ist.
+     */
+    @NonNull
+    public Konstituente withVorkommaNoetigMin(final boolean vorkommaNoetigMin) {
+        if (!vorkommaNoetigMin) {
+            return this;
+        }
+
+        return withVorkommaNoetig(true);
+    }
+
     @CheckReturnValue
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
         return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,

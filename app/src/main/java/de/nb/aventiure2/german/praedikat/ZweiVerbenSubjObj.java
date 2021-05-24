@@ -1,5 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -33,9 +36,19 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
     private ZweiPraedikateOhneLeerstellen mit(
             final SubstantivischePhrase ersteSubstantivischePhrase,
             final SubstantivischePhrase zweiteSubstantivischePhrase) {
+        return mit(ersteSubstantivischePhrase,
+                NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND,
+                zweiteSubstantivischePhrase);
+    }
+
+    private ZweiPraedikateOhneLeerstellen mit(
+            final SubstantivischePhrase ersteSubstantivischePhrase,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
+            final SubstantivischePhrase zweiteSubstantivischePhrase) {
         return new ZweiPraedikateOhneLeerstellen(
                 // "die goldene Kugel"
                 erstesVerb.mit(ersteSubstantivischePhrase),
+                konnektor,
                 // "sie"
                 zweitesVerb.mit(zweiteSubstantivischePhrase));
     }

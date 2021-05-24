@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -37,8 +38,8 @@ public class SchlossfestReactionsComp
     }
 
     @Override
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(startTime, endTime)) {
+    public void onTimePassed(final Change<AvDateTime> change) {
+        if (SCHLOSSFEST_BEGINN_DATE_TIME.isWithin(change)) {
             schlossfestBeginnt();
         }
     }

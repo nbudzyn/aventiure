@@ -10,17 +10,18 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Satz;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -56,13 +57,9 @@ public class TageszeitDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
-    altZwischentageszeitlicherWechsel(final AvTime before, final AvTime after,
+    altZwischentageszeitlicherWechsel(final Change<AvTime> change,
                                       final boolean draussen) {
-        checkArgument(before.getTageszeit() == after.getTageszeit(),
-                "Tageszeit verändert: %s zu %s",
-                before.getTageszeit(), after.getTageszeit());
-
-        if (oClock(15).isWithin(before, after)) {
+        if (oClock(15).isWithin(change)) {
             return altNachmittagsWechsel(draussen);
         }
 
@@ -98,19 +95,18 @@ public class TageszeitDescDescriber {
     @NonNull
     @CheckReturnValue
     public AltDescriptionsBuilder altSprungOderWechsel(
-            final Tageszeit lastTageszeit,
-            final Tageszeit currentTageszeit, final boolean draussen) {
-        switch (lastTageszeit) {
+            final Change<Tageszeit> change, final boolean draussen) {
+        switch (change.getVorher()) {
             case NACHTS:
-                return altSprungOderWechselFromNachtsTo(currentTageszeit, draussen);
+                return altSprungOderWechselFromNachtsTo(change.getNachher(), draussen);
             case MORGENS:
-                return altSprungOderWechselFromMorgensTo(currentTageszeit, draussen);
+                return altSprungOderWechselFromMorgensTo(change.getNachher(), draussen);
             case TAGSUEBER:
-                return altSprungOderWechselFromTagsueberTo(currentTageszeit, draussen);
+                return altSprungOderWechselFromTagsueberTo(change.getNachher(), draussen);
             case ABENDS:
-                return altSprungOderWechselFromAbendsTo(currentTageszeit, draussen);
+                return altSprungOderWechselFromAbendsTo(change.getNachher(), draussen);
             default:
-                throw new IllegalStateException("Unerwartete Tageszeit: " + lastTageszeit);
+                throw new IllegalStateException("Unerwartete Tageszeit: " + change.getVorher());
         }
     }
 
@@ -352,8 +348,8 @@ public class TageszeitDescDescriber {
                         PARAGRAPH,
                         "Der Tag neigt sich",
                         // "und allmählich bricht der Abend an"
-                        newTageszeit.altLangsamBeginntSaetze().stream()
-                                .map(s -> s.mitAnschlusswort("und"))));
+                        mapToSet(newTageszeit.altLangsamBeginntSaetze(),
+                                s -> s.mitAnschlusswort(UND))));
                 break;
             case NACHTS:
                 if (draussen) {

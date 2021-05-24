@@ -8,6 +8,8 @@ import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.data.world.base.Change;
+
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
@@ -180,6 +182,10 @@ public class AvTime {
         return ((getSecsSinceMidnight() - start.getSecsSinceMidnight()) %
                 intervalDuration.plus(durationBetweenIntervals).getSecs()) <=
                 intervalDuration.getSecs();
+    }
+
+    public boolean isWithin(final Change<AvTime> change) {
+        return isWithin(change.getVorher(), change.getNachher());
     }
 
     public boolean isWithin(final AvTime startExclusive, final AvTime endInclusive) {

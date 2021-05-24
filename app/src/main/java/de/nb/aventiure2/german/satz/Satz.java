@@ -13,6 +13,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
@@ -20,22 +21,35 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+
 public interface Satz extends IAlternativeKonstituentenfolgable {
-    default Satz mitAnschlusswortUndSofernNichtSchonEnthalten() {
+    default Satz mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd() {
         if (isSatzreihungMitUnd()) {
-            // FIXME In diesem Fall fehlt fast immer ein Komma!
-            //  Die Methode ist kein tragfähiges Konzept!
-            return ohneAnschlusswort();
+            return this;
         }
 
-        return mitAnschlusswort("und");
+        return mitAnschlusswortUndFallsKeinAnschlusswort();
+    }
+
+    default Satz mitAnschlusswortUndFallsKeinAnschlusswort() {
+        if (hasAnschlusswort()) {
+            return this;
+        }
+
+        return mitAnschlusswort(UND);
     }
 
     default Satz ohneAnschlusswort() {
         return mitAnschlusswort(null);
     }
 
-    Satz mitAnschlusswort(@Nullable String anschlusswort);
+    Satz mitAnschlusswort(@Nullable
+                                  NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort);
+
+    default boolean hasAnschlusswort() {
+        return getAnschlusswort() != null;
+    }
 
     /**
      * Fügt dem Subjekt etwas hinzu wie "auch", "allein", "ausgerechnet",
@@ -63,6 +77,8 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
                         final boolean angabensatzMoeglichstVorangestellt);
 
     Satz perfekt();
+
+    NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld getAnschlusswort();
 
     /**
      * Gibt eine indirekte Frage zurück: Etwas wie
@@ -124,7 +140,19 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
 
     Konstituentenfolge getVerbzweitsatzMitVorfeld(String vorfeld);
 
-    Konstituentenfolge getSatzanschlussOhneSubjekt();
+    /**
+     * Gibt den Satz in Verbzweitform aus, jedoch ohne Subjekt und ohne Anschlusswort
+     * (d.h. ohne "und") und ohne Komma, beginnend mit dem Verb. Z.B. "hast
+     * am Abend etwas zu berichten" oder "nimmst den Ast"
+     */
+    Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma();
+
+    /**
+     * Gibt den Satz in Verbzweitform aus, jedoch ohne Subjekt, also beginnend mit
+     * dem Anschlusswort (z.B. "und" - oder aber der Angabe, dass ein Vorkomma nötig ist) und dem
+     * Verb. Z.B. "und hast am Abend etwas zu berichten" oder "[, ]aber nimmst den Ast"
+     */
+    Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma();
 
     /**
      * Gibt den Satz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
@@ -133,7 +161,14 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
 
     boolean hasSubjektDu();
 
-    PraedikatOhneLeerstellen getPraedikat();
+    /**
+     * Gibt das Prädikat des Satzes zurück, wenn das
+     * (abgesehen vom Subjekt) ohne Informationsverlust
+     * möglich ist (d.h. wenn das Satz keinen Adverbialsatz enthält, nicht
+     * mir einem Anschlusswort beginnt etc.).
+     */
+    @Nullable
+    PraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich();
 
     boolean isSatzreihungMitUnd();
 

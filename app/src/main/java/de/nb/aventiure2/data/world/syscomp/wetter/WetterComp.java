@@ -15,6 +15,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
@@ -432,11 +433,11 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return requirePcd().altLichtInDemEtwasLiegt(time, unterOffenemHimmel);
     }
 
-    public void onTimePassed(final AvDateTime startTime, final AvDateTime endTime) {
-        doWetterSteps(endTime);
+    public void onTimePassed(final Change<AvDateTime> change) {
+        doWetterSteps(change.getNachher());
 
         final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().altTimePassed(startTime, endTime, loadScLocation());
+                requirePcd().altTimePassed(change, loadScLocation());
 
         if (!alt.isEmpty()) {
             n.narrateAlt(alt, NO_TIME);

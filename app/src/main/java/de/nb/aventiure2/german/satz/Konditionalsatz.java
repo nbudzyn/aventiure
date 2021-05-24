@@ -31,6 +31,8 @@ public class Konditionalsatz {
     public Konstituentenfolge getDescription() {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 kondition, // "weil"
+                // FIXME Den Fall beachten, dass der Satz ein Anschlusswort haben könnte.
+                //  Idee: "und" weglassen, "weil aber", ...
                 satz.getVerbletztsatz() // "du etwas zu berichten hast"
         );
     }

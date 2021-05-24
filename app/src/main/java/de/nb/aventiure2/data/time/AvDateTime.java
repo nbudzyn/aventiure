@@ -10,6 +10,8 @@ import java.util.Objects;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.data.world.base.Change;
+
 import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
 import static de.nb.aventiure2.data.time.AvTime.SECS_IN_A_DAY;
 import static java.util.Objects.requireNonNull;
@@ -93,6 +95,10 @@ public class AvDateTime {
         }
 
         return new AvDateTime(getDay(), otherTime);
+    }
+
+    public boolean isWithin(final Change<AvDateTime> change) {
+        return isWithin(change.getVorher(), change.getNachher());
     }
 
     public boolean isWithin(final AvDateTime lowerBoundExclusive,

@@ -13,6 +13,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
@@ -27,6 +28,8 @@ import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
@@ -104,11 +107,12 @@ public class TemperaturDescDescriber {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         // Es gab weitere Tageszeiten dazwischen ("Tageszeitensprung")
-
+        final Change<Tageszeit> tageszeitChange =
+                new Change<>(lastTageszeit, currentTime.getTageszeit());
         if (currentTemperaturBeiRelevanterAenderung != null) {
             alt.addAll(altNeueSaetze(
                     tageszeitDescDescriber.altSprungOderWechsel(
-                            lastTageszeit, currentTime.getTageszeit(),
+                            tageszeitChange,
                             drinnenDraussen.isDraussen()),
                     SENTENCE,
                     alt(currentTemperaturBeiRelevanterAenderung,
@@ -117,7 +121,8 @@ public class TemperaturDescDescriber {
                             true)));
         } else {
             alt.addAll(tageszeitDescDescriber.altSprungOderWechsel(
-                    lastTageszeit, currentTime.getTageszeit(), drinnenDraussen.isDraussen()));
+                    tageszeitChange,
+                    drinnenDraussen.isDraussen()));
         }
 
         return alt.schonLaenger();
@@ -169,32 +174,38 @@ public class TemperaturDescDescriber {
      *               Tag sich wieder abkühlt. Zurzeit berücksichtigen wir diese Fälle
      */
     public ImmutableCollection<AbstractDescription<?>> altSprungOderWechsel(
-            final AvTime lastTime, final AvDateTime time,
+            final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Temperatur> change,
             final DrinnenDraussen drinnenDraussen,
             final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         alt.addAll(satzDescriber.altSprungOderWechsel(
-                lastTime, time, change, drinnenDraussen, auchZeitwechselreferenzen));
+                dateTimeChange, change, drinnenDraussen, auchZeitwechselreferenzen));
 
-        final ImmutableSet<Konstituente> altWann =
-                (drinnenDraussen.isDraussen() && auchZeitwechselreferenzen) ?
-                        mapToSet(
-                                tageszeitAdvAngabeWannDescriber.altWannDraussen(
-                                        lastTime, time.getTime()),
-                                gegenMitternacht -> gegenMitternacht
-                                        .getDescription(EXPLETIVES_ES)) :
-                        null;
+        final ImmutableSet<Konstituente> altWann;
+        final ImmutableSet<Konstituentenfolge> altWannSaetze;
+
+        if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
+            final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
+
+            altWann =
+                    drinnenDraussen.isDraussen() ?
+                            mapToSet(
+                                    tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange),
+                                    gegenMitternacht -> gegenMitternacht
+                                            .getDescription(EXPLETIVES_ES)) :
+                            ImmutableSet.of();
 
 
-        final ImmutableSet<Konstituentenfolge> altWannSaetze =
-                auchZeitwechselreferenzen ?
-                        mapToSet(
-                                tageszeitAdvAngabeWannDescriber.altWannKonditionalsaetzeDraussen(
-                                        lastTime, time.getTime()),
-                                Konditionalsatz::getDescription) :
-                        null;
+            altWannSaetze = mapToSet(
+                    tageszeitAdvAngabeWannDescriber
+                            .altWannKonditionalsaetzeDraussen(timeChange),
+                    Konditionalsatz::getDescription);
+        } else {
+            altWann = ImmutableSet.of();
+            altWannSaetze = ImmutableSet.of();
+        }
 
         if (change.getVorher().hasNachfolger(change.getNachher())) {
             // Die Temperatur ist um eine Stufe angestiegen
@@ -211,14 +222,14 @@ public class TemperaturDescDescriber {
                     break;
                 case WARM:
                     alt.add(du("spürst", ", wie es allmählich wärmer wird"));
-                    if (drinnenDraussen.isDraussen() && auchZeitwechselreferenzen) {
-                        alt.addAll(altWann.stream()
-                                .map(gegenMitternacht ->
-                                        du("spürst",
-                                                joinToString(gegenMitternacht),
-                                                ", wie es allmählich wärmer wird")
-                                                .mitVorfeldSatzglied(
-                                                        joinToString(gegenMitternacht))));
+                    alt.addAll(altWann.stream()
+                            .map(gegenMitternacht ->
+                                    du("spürst",
+                                            joinToString(gegenMitternacht),
+                                            ", wie es allmählich wärmer wird")
+                                            .mitVorfeldSatzglied(
+                                                    joinToString(gegenMitternacht))));
+                    if (!altWannSaetze.isEmpty()) {
                         alt.addAll(altNeueSaetze(altWannSaetze,
                                 ", spürst du, wie es allmählich wärmer wird"));
                     }
@@ -243,7 +254,7 @@ public class TemperaturDescDescriber {
                             neuerSatz("es beginnt zu frieren"),
                             neuerSatz("dir beginnt der Atem zu frieren, so kalt ist es",
                                     "geworden"));
-                    if (drinnenDraussen.isDraussen() && auchZeitwechselreferenzen) {
+                    if (!altWann.isEmpty()) {
                         alt.addAll(
                                 altNeueSaetze(
                                         altWann,
@@ -252,6 +263,8 @@ public class TemperaturDescDescriber {
                                                 "beginnt es zu frieren",
                                                 "beginnt dir der Atem zu frieren, so kalt ist es "
                                                         + "geworden")));
+                    }
+                    if (!altWannSaetze.isEmpty()) {
                         alt.addAll(
                                 altNeueSaetze(
                                         altWannSaetze,
@@ -266,8 +279,10 @@ public class TemperaturDescDescriber {
                     break;
                 case KNAPP_UEBER_DEM_GEFRIERPUNKT:
                     alt.add(neuerSatz("die Luft kühlt sich deutlich ab"));
-                    if (drinnenDraussen.isDraussen() && auchZeitwechselreferenzen) {
+                    if (!altWann.isEmpty()) {
                         alt.addAll(altNeueSaetze(altWann, "kühlt die Luft sich deutlich ab"));
+                    }
+                    if (!altWannSaetze.isEmpty()) {
                         alt.addAll(altNeueSaetze(altWannSaetze,
                                 ", kühlt die Luft sich deutlich ab"));
                     }
@@ -276,14 +291,14 @@ public class TemperaturDescDescriber {
                     break;
                 case WARM:
                     alt.add(du("spürst", ", wie es allmählich kühler wird"));
-                    if (drinnenDraussen.isDraussen() && auchZeitwechselreferenzen) {
-                        alt.addAll(altWann.stream()
-                                .map(gegenMitternacht ->
-                                        du("spürst",
-                                                joinToString(gegenMitternacht),
-                                                ", wie es allmählich kühler wird")
-                                                .mitVorfeldSatzglied(
-                                                        joinToString(gegenMitternacht))));
+                    alt.addAll(altWann.stream()
+                            .map(gegenMitternacht ->
+                                    du("spürst",
+                                            joinToString(gegenMitternacht),
+                                            ", wie es allmählich kühler wird")
+                                            .mitVorfeldSatzglied(
+                                                    joinToString(gegenMitternacht))));
+                    if (!altWannSaetze.isEmpty()) {
                         alt.addAll(altNeueSaetze(altWannSaetze,
                                 ", spürst du, wie es allmählich kühler wird"));
                     }

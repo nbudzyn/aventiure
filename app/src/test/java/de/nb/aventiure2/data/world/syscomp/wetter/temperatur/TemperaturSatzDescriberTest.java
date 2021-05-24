@@ -8,6 +8,7 @@ import java.util.List;
 
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
@@ -16,6 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativ
 
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static java.util.Arrays.asList;
 
 public class TemperaturSatzDescriberTest {
@@ -25,14 +27,19 @@ public class TemperaturSatzDescriberTest {
         final List<AvTime> relevantTimes = relevantTimes();
 
         for (int i = 0; i < relevantTimes.size(); i++) {
-            final AvTime lastTime = relevantTimes.get(i);
+            final AvDateTime lastTime = new AvDateTime(1, relevantTimes.get(i));
             for (int j = 0; j < relevantTimes.size(); j++) {
                 // (Wechsel, Sprung)
 
-                final AvDateTime currentTime =
-                        j < i ?
+                AvDateTime currentTime =
+                        j <= i ?
                                 new AvDateTime(2, relevantTimes.get(j)) :
                                 new AvDateTime(1, relevantTimes.get(j));
+                if (currentTime.getTime().equals(lastTime)) {
+                    currentTime = currentTime.plus(secs(1));
+                }
+
+                final Change<AvDateTime> timeChange = new Change<>(lastTime, currentTime);
 
                 for (final Temperatur temperaturVorher : Temperatur.values()) {
                     for (final Temperatur temperaturNachher : Temperatur.values()) {
@@ -41,7 +48,7 @@ public class TemperaturSatzDescriberTest {
                                     new WetterParamChange<>(temperaturVorher,
                                             temperaturNachher);
 
-                            testAltSprungOderWechsel(lastTime, currentTime, temperaturChange);
+                            testAltSprungOderWechsel(timeChange, temperaturChange);
                         }
                     }
                 }
@@ -49,8 +56,7 @@ public class TemperaturSatzDescriberTest {
         }
     }
 
-    private static void testAltSprungOderWechsel(final AvTime lastTime,
-                                                 final AvDateTime currentTime,
+    private static void testAltSprungOderWechsel(final Change<AvDateTime> timeChange,
                                                  final WetterParamChange<Temperatur> temperaturChange) {
         final TemperaturSatzDescriber underTest =
                 new TemperaturSatzDescriber(
@@ -58,36 +64,30 @@ public class TemperaturSatzDescriberTest {
                         new TageszeitAdvAngabeWannDescriber(),
                         new TemperaturPraedikativumDescriber());
 
-        System.out.println(lastTime + " -> " + currentTime + " "
+        System.out.println(timeChange + " "
                 + (temperaturChange != null ? temperaturChange + " " : ""));
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRINNEN, false)).isNotEmpty();
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRINNEN, true)).isNotEmpty();
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRAUSSEN_GESCHUETZT, false)).isNotEmpty();
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, false)).isNotEmpty();
 
-        assertThat(underTest.altSprungOderWechsel(lastTime,
-                currentTime,
+        assertThat(underTest.altSprungOderWechsel(timeChange,
                 temperaturChange,
                 DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL, true)).isNotEmpty();
     }

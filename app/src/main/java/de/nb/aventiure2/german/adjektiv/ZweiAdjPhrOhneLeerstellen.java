@@ -49,6 +49,10 @@ public class ZweiAdjPhrOhneLeerstellen
      */
     @Nullable
     private final String konnektor;
+    // FIXME NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld für den
+    //  Konnektor verwenden?
+    //  Und gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung zu
+    //  gleichrangigAlsoKommaBeiAttributiverVerwendung vereinfachen?
 
     public ZweiAdjPhrOhneLeerstellen(
             final AdjPhrOhneLeerstellen erst,

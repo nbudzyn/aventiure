@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
@@ -32,6 +33,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
@@ -313,8 +315,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @NonNull
     ImmutableCollection<AbstractDescription<?>> altTimePassed(
-            final AvDateTime startTime,
-            final AvDateTime endTime,
+            final Change<AvDateTime> change,
             @Nullable final ILocationGO location) {
         final DrinnenDraussen drinnenDraussen =
                 location != null ? location.storingPlaceComp().getDrinnenDraussen() :
@@ -325,22 +326,23 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         final EnumRange<Temperatur> locationTemperaturRange = getTemperaturRange(location);
 
-        final Temperatur currentGenerelleTemperatur = getCurrentGenerelleTemperatur(endTime);
+        final Temperatur currentGenerelleTemperatur =
+                getCurrentGenerelleTemperatur(change.getNachher());
 
         @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant =
-                handleWindstaerkeChange(startTime, endTime, drinnenDraussen);
+                handleWindstaerkeChange(change, drinnenDraussen);
 
         @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant =
-                handleTemperaturChange(startTime, endTime, drinnenDraussen, locationTemperaturRange,
+                handleTemperaturChange(change, drinnenDraussen, locationTemperaturRange,
                         currentGenerelleTemperatur);
 
         @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant =
-                handleBewoelkungChange(startTime, endTime, drinnenDraussen);
+                handleBewoelkungChange(change, drinnenDraussen);
 
         setGgfSpaeterWetterBeschreibenWegenWind(drinnenDraussen);
 
         final ImmutableCollection<AbstractDescription<?>> alt = altTimePassed(
-                startTime, endTime,
+                change,
                 !locationTemperaturRange.isInRange(currentGenerelleTemperatur),
                 windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant,
@@ -379,7 +381,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @Nullable
     private WetterParamChange<Temperatur> handleTemperaturChange(
-            final AvDateTime startTime, final AvDateTime endTime,
+            final Change<AvDateTime> timeChange,
             final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
             final Temperatur currentGenerelleTemperatur) {
@@ -388,9 +390,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         || currentGenerelleTemperatur == lastGenerelleTemperatur
                         // ...oder die Temperatur ist und war unauffällig...
                         || (
-                        lastGenerelleTemperatur.isUnauffaellig(startTime.getTageszeit())
+                        lastGenerelleTemperatur
+                                .isUnauffaellig(timeChange.getVorher().getTageszeit())
                                 && currentGenerelleTemperatur
-                                .isUnauffaellig(endTime.getTageszeit()))) {
+                                .isUnauffaellig(timeChange.getNachher().getTageszeit()))) {
             return null;
         }
 
@@ -401,7 +404,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         if ( // Der SC hat die Veränderung auch merken können...
                 lastLokaleTemperatur != currentLokaleTemperatur
                         // ...und sie passiert über eine eher kurze Zeit
-                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+                        && span(timeChange).shorterThan(AvTimeSpan.hours(2))) {
             return new WetterParamChange<>(lastLokaleTemperatur, currentLokaleTemperatur);
         }
 
@@ -425,7 +428,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @Nullable
     private WetterParamChange<Bewoelkung> handleBewoelkungChange(
-            final AvDateTime startTime, final AvDateTime endTime,
+            final Change<AvDateTime> timeChange,
             final DrinnenDraussen drinnenDraussen) {
         final Bewoelkung currentBewoelkung = wetter.getBewoelkung();
 
@@ -434,15 +437,16 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         || currentBewoelkung == lastBewoelkung
                         // ...oder die Bewoelkung ist und war unauffällig...
                         || (
-                        lastBewoelkung.isUnauffaellig(startTime.getTageszeit())
-                                && currentBewoelkung.isUnauffaellig(endTime.getTageszeit()))) {
+                        lastBewoelkung.isUnauffaellig(timeChange.getVorher().getTageszeit())
+                                && currentBewoelkung
+                                .isUnauffaellig(timeChange.getNachher().getTageszeit()))) {
             return null;
         }
 
         if ( // Der SC hat die Veränderung auch merken können...
                 drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
                         // ...und sie passiert über eine eher kurze Zeit
-                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+                        && span(timeChange).shorterThan(AvTimeSpan.hours(2))) {
             return new WetterParamChange<>(lastBewoelkung, currentBewoelkung);
         }
 
@@ -451,7 +455,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         && (lastBewoelkung == Bewoelkung.BEDECKT
                         || currentBewoelkung == Bewoelkung.BEDECKT)
                         // ...und sie passiert über eine eher kurze Zeit
-                        && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+                        && span(timeChange).shorterThan(AvTimeSpan.hours(2))) {
             // Wir geben später einen Wetterhinweis
             setWennWiederUnterOffenemHimmelWetterBeschreiben(true);
 
@@ -474,7 +478,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     @Nullable
     private WetterParamChange<Windstaerke> handleWindstaerkeChange(
-            final AvDateTime startTime, final AvDateTime endTime,
+            final Change<AvDateTime> timeChange,
             final DrinnenDraussen drinnenDraussen) {
         final Windstaerke currentWindstaerkeUnterOffenemHimmel =
                 wetter.getWindstaerkeUnterOffenemHimmel();
@@ -503,7 +507,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             if ( // Der SC hat die Veränderung auch merken können...
                     lastLokaleWindstaerke != currentLokaleWindstaerke
                             // ...und sie passiert über eine eher kurze Zeit
-                            && endTime.minus(startTime).shorterThan(AvTimeSpan.hours(2))) {
+                            && span(timeChange).shorterThan(AvTimeSpan.hours(2))) {
                 return new WetterParamChange<>(lastLokaleWindstaerke, currentLokaleWindstaerke);
             }
         }
@@ -548,19 +552,18 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @NonNull
     private ImmutableCollection<AbstractDescription<?>> altTimePassed(
-            final AvDateTime lastTime,
-            final AvDateTime currentTime,
+            final Change<AvDateTime> change,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
             @Nullable final WetterParamChange<Bewoelkung> bewoelkungChangeSofernRelevant,
             final DrinnenDraussen drinnenDraussen) {
         final boolean tageszeitaenderungSollBeschriebenWerden =
-                !currentTime.minus(lastTime).longerThan(AvTimeSpan.ONE_DAY) &&
-                        lastTime.getTageszeit() != currentTime.getTageszeit();
+                !span(change).longerThanOrEqual(AvTimeSpan.ONE_DAY) &&
+                        change.getVorher().getTageszeit() != change.getNachher().getTageszeit();
 
         final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altTimePassed(lastTime, currentTime,
+                wetter.altTimePassed(change,
                         tageszeitaenderungSollBeschriebenWerden,
                         generelleTemperaturOutsideLocationTemperaturRange,
                         windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
@@ -569,8 +572,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 );
 
         if (tageszeitaenderungSollBeschriebenWerden) {
-            if (currentTime.isAfter(timeLetzteBeschriebeneTageszeit)) {
-                setTimeLetzteBeschriebeneTageszeit(currentTime);
+            if (change.getNachher().isAfter(timeLetzteBeschriebeneTageszeit)) {
+                setTimeLetzteBeschriebeneTageszeit(change.getNachher());
                 // Damit befinden wir uns nicht mehr im "schwebenden Tageszeitenwechsel",
                 // sondern können uns bei weiteren Ausgaben auf die aktuelle Tageszeit beziehen.
             }
@@ -880,6 +883,12 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     void setPlanwetter(@Nullable final PlanwetterData planwetterData) {
         if (Objects.equal(plan, planwetterData)) {
+            return;
+        }
+
+        if (plan == null && getWetter().equals(planwetterData.getWetter())) {
+            // Das Wetter ist eh schon das Planwetter - und es ist auch kein
+            // abweichender Plan gespeichert.
             return;
         }
 

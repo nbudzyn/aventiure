@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
@@ -44,5 +46,11 @@ public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
         }
 
         return false;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return woertlicheRedeText;
     }
 }

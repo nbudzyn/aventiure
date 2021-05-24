@@ -64,7 +64,7 @@ public abstract class AbstractAdvAngabe {
                                                    final Numerus numerusSubjekt) {
         return adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt)
                 .joinToSingleKonstituente()
-                .withVorkommaNoetig(
+                .withVorkommaNoetigMin(
                         // So eine adverbiale Angabe muss offenbar durch Komma
                         // abgetrennt sein: *"Sie schaut dich an glücklich, dich zu
                         // sehen.")
