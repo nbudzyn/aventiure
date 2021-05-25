@@ -16,7 +16,6 @@ import static java.util.Objects.requireNonNull;
 /**
  * Static helper methods for the german language.
  */
-@SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class GermanUtil {
     // Not to be called
     private GermanUtil() {
