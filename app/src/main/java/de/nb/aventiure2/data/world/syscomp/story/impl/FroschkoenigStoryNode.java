@@ -269,11 +269,13 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             if (world.loadSC().feelingsComp().isFroehlicherAls(UNTROESTLICH)) {
                 alt.add(paragraph(
                         "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
-                                + "ist? – so fragst du dich auf einmal. Du wirst ganz traurig"));
+                                + "ist? – so fragst du dich auf einmal. Du wirst ganz traurig")
+                        .schonLaenger());
             } else {
                 alt.add(paragraph(
                         "Ob du wohl jemals zurückbekommst, was dir in den Brunnen gefallen "
-                                + "ist? – so fragst du dich auf einmal"));
+                                + "ist? – so fragst du dich auf einmal")
+                        .schonLaenger());
             }
         }
 
@@ -293,9 +295,9 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         }
 
         alt.add(paragraph("Wann sollte eigentlich das Schlossfest sein? Da gibt es sicher",
-                "etwas Gutes zu essen!"));
+                "etwas Gutes zu essen!").schonLaenger());
 
-        alt.add(paragraph("Heute ist viel passiert"));
+        alt.add(paragraph("Heute ist viel passiert").schonLaenger());
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(SchlossfestState.BEGONNEN)) {
@@ -319,7 +321,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Welches Versprechen hattest du dem Frosch noch gegeben? Du kannst",
                 "dich kaum mehr erinnern"));
 
-        n.narrateAlt(alt, NO_TIME);
+        n.narrateAlt(alt.schonLaenger(), NO_TIME);
     }
 
     private static void narrateAndDoHintAction_PrinzIstErloest(
@@ -332,7 +334,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "
                 + "die ganze Zeit in deinem Kopf"));
 
-        n.narrateAlt(alt, NO_TIME);
+        n.narrateAlt(alt.schonLaenger(), NO_TIME);
     }
 
     private static void narrateAndDoHintAction_PrinzIstWeggefahren(
@@ -380,7 +382,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             }
         }
 
-        return alt.build();
+        return alt.schonLaenger().build();
     }
 
     @CheckReturnValue
@@ -388,7 +390,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
-                + "aus dem Schloss… die dir so gut Gesellschaft geleistet hatte?"));
+                + "aus dem Schloss… die dir so gut Gesellschaft geleistet hatte?").schonLaenger());
         alt.add(paragraph("Eigentlich schade – musst du plötzlich denken –, dass "
                 + "du deine goldene Kugel nicht mehr bei dir hast. Sie war doch ein "
                 + "sehr schönes Spielzeug"));
@@ -421,7 +423,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
                 alt.addAll(altParagraphs(altHeuteHeisserTagSaetze,
                         SENTENCE,
-                        "Ein kühler Ort wäre schön"));
+                        "Ein kühler Ort wäre schön").schonLaenger());
             }
         }
 
@@ -431,7 +433,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                     "ja, das stellst du dir sehr meditativ vor!"));
             // FIXME Nicht so klar sagen!
         } else {
-            alt.addIfOtherwiseEmpty(paragraph("Es gibt sicher noch viel zu erleben"));
+            alt.addIfOtherwiseEmpty(
+                    paragraph("Es gibt sicher noch viel zu erleben").schonLaenger());
         }
 
         // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:

@@ -275,7 +275,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                 paragraph("Was gibt es wohl noch alles im Wald zu entdecken, fragst du dich"),
                 paragraph("Dir kommt der geheimnisvolle Turm in den Sinn - du wirst sein "
                         + "Geheimnis bestimmt noch lüften!"));
-        n.narrateAlt(alt, NO_TIME);
+        n.narrateAlt(alt.schonLaenger(), NO_TIME);
     }
 
     private static void narrateAndDoHintAction_RapunzelSingenGehoert(
@@ -292,7 +292,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             + "in den Sinn. Ob der wohl bewohnt ist?"));
         }
 
-        n.narrateAlt(alt, NO_TIME);
+        n.narrateAlt(alt.schonLaenger(), NO_TIME);
     }
 
     private static void narrateAndDoHintAction_ZauberinAufTurmWegGefunden(
@@ -317,12 +317,13 @@ public enum RapunzelStoryNode implements IStoryNode {
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberSichtbarinImRaum(
             final Narrator n) {
         n.narrateAlt(NO_TIME,
-                paragraph("was will die Frau bloß?"),
-                paragraph("was will die Frau wohl?"),
-                paragraph("was mag die Frau wollen?"),
-                paragraph("es wäre spannend, die Frau einmal heimlich zu beobachten"),
+                paragraph("was will die Frau bloß?").schonLaenger(),
+                paragraph("was will die Frau wohl?").schonLaenger(),
+                paragraph("was mag die Frau wollen?").schonLaenger(),
+                paragraph("es wäre spannend, die Frau einmal heimlich zu beobachten")
+                        .schonLaenger(),
                 paragraph("ist es nicht seltsam, dass die Frau so kurz angebunden ist "
-                        + "und nicht erzählen mag, wohin sie eigentlich möchte?"));
+                        + "und nicht erzählen mag, wohin sie eigentlich möchte?").schonLaenger());
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtSichtbarImRaum(
@@ -346,12 +347,12 @@ public enum RapunzelStoryNode implements IStoryNode {
                         + " wohl?").schonLaenger()
                 ,
                 paragraph("dir fällt auf: Nachts ist dir die magere Frau noch nie "
-                        + "begegnet"),
+                        + "begegnet").schonLaenger(),
                 paragraph("des Nachts scheint hier kaum jemand auf den Beinen zu sein - "
                         + "außer dir").schonLaenger()
                 ,
                 paragraph("Es scheint, ein jeder liegt nachts in seinem Bettchen. Und "
-                        + "du?"));
+                        + "du?").schonLaenger());
     }
 
     private static void narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet_ZauberinNichtImRaum_Tagsueber(
@@ -359,7 +360,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("unvermittelt kommt dir die magere Frau in den Sinn, die "
-                + "so geschäftig umherläuft. Wohin will die bloß?"));
+                + "so geschäftig umherläuft. Wohin will die bloß?").schonLaenger());
 
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
@@ -385,7 +386,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM) &&
                 rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-            alt.add(paragraph("Ob es wohl gefährlich ist, die Haare hinaufsteigen?"));
+            alt.add(paragraph("Ob es wohl gefährlich ist, die Haare hinaufsteigen?")
+                    .schonLaenger());
         } else if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             alt.add(paragraph(
                     "Du bist dir plötzlich sicher: Wenn dich jemand in dieser Welt braucht, "
@@ -414,7 +416,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     paragraph("Du musst kurz innehalten. Dein Herz zieht dich zum alten Turm "
                             + "auf der Hügelkuppe. Und du kannst nicht sagen, warum!"),
                     paragraph("Die Leute sagen ja: Wenn man etwas vergessen hat, soll man noch "
-                            + "einmal an dieselbe Stelle zurückgehen"));
+                            + "einmal an dieselbe Stelle zurückgehen").schonLaenger());
         }
 
         alt.add(paragraph(
@@ -426,7 +428,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                                 + "haben! Aber was bloß?"),
                 paragraph("Ist es nicht immer ein Glück, wenn einem das Leben",
                         "eine zweite Chance schenkt? Und wie kommst du",
-                        "eigentlich gerade darauf?"));
+                        "eigentlich gerade darauf?").schonLaenger());
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
         return alt.build();
@@ -440,12 +442,12 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             if (world.loadSC().talkingComp().isTalkingTo(RAPUNZEL)) {
-                alt.add(neuerSatz("Ein gutes Gespräch!"),
+                alt.add(neuerSatz("Ein gutes Gespräch!").schonLaenger(),
                         du(SENTENCE, "unterhältst", "dich gern mit",
                                 world.anaph(RAPUNZEL).datK(), SENTENCE).schonLaenger(),
                         neuerSatz("Schön, sich mit",
                                 world.anaph(RAPUNZEL).datK(),
-                                "zu unterhalten"));
+                                "zu unterhalten").schonLaenger());
             } else {
                 alt.add(duParagraph("hast", "noch so viele Fragen an",
                         world.anaph(RAPUNZEL).akkK()).schonLaenger(),
@@ -459,9 +461,10 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.addAll(altHintsAllesVergessenNichtObenImTurm(world));
         } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
-                alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?"));
+                alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?")
+                        .schonLaenger());
             } else {
-                alt.add(paragraph("Warum nicht oben im Turm einmal Hallo sagen?"),
+                alt.add(paragraph("Warum nicht oben im Turm einmal Hallo sagen?").schonLaenger(),
                         duParagraph("hättest",
                                 "Lust, wieder einmal bei der jungen Frau",
                                 "oben im Turm vorbeizuschauen").schonLaenger()
@@ -479,7 +482,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(duParagraph("fühlst", "dich etwas einsam").schonLaenger());
             alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
                     ImmutableList.of("netten", ""),
-                    "jungen Frau oben im Turm vorbeischauen?"));
+                    "jungen Frau oben im Turm vorbeischauen?").schonLaenger());
             alt.add(duParagraph("musst",
                     "an die junge Frau oben im Turm denken. Freut die sich wohl,",
                     "wenn du noch einmal bei ihr vorbeischaust?").schonLaenger());
@@ -495,15 +498,16 @@ public enum RapunzelStoryNode implements IStoryNode {
         if (loadZauberin(world).locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             alt.add(paragraph(
                     "Hoffentlich ist die alte Schachtel bald weg, dass du endlich los",
-                    "kommst!")
+                    "kommst!").schonLaenger()
                             .phorikKandidat(F, RAPUNZELS_ZAUBERIN),
-                    paragraph("Nun heißt es wohl geduldig sein"));
+                    paragraph("Nun heißt es wohl geduldig sein").schonLaenger());
         } else {
             alt.add(paragraph(
-                    "Zeit, dich auf den Weg zu machen!"),
-                    paragraph("So nett es hier oben ist – du solltest allmählich gehen!"),
+                    "Zeit, dich auf den Weg zu machen!").schonLaenger(),
+                    paragraph("So nett es hier oben ist – du solltest allmählich gehen!")
+                            .schonLaenger(),
                     paragraph("Oh, eigentlich hättest du schon längst los gewollt! Wie",
-                            "leicht man sich doch verplaudert!"));
+                            "leicht man sich doch verplaudert!").schonLaenger());
         }
 
         n.narrateAlt(alt, NO_TIME);
@@ -516,8 +520,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(paragraph("Wenn im Turm jemand wohnt – wie kommt er herein "
-                    + "oder hinaus?"));
-            alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?"));
+                    + "oder hinaus?").schonLaenger());
+            alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?").schonLaenger());
         } else {
             alt.add(du(PARAGRAPH, "musst",
                     "wieder an den alten Turm denken… wenn dort jemand wohnt, "
@@ -526,7 +530,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             );
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
-                            + "Wer wird darinnen wohl wohnen?"));
+                            + "Wer wird darinnen wohl wohnen?").schonLaenger());
         }
 
         return alt.build();
