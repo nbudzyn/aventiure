@@ -18,8 +18,8 @@ import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.string.GermanStringUtil.appendBreak;
 import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
-import static de.nb.aventiure2.german.string.GermanStringUtil.breakToString;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
 import static de.nb.aventiure2.german.string.GermanStringUtil.schliesseWoertlicheRede;
 
@@ -219,9 +219,7 @@ public class Narration {
                 resText.append(" ");
             }
         } else {
-            resText.append(breakToString(resText.toString(),
-                    brreak,
-                    addition));
+            appendBreak(resText, brreak, addition);
 
             if (brreak != WORD) {
                 capitalize = true;

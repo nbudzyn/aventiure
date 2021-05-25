@@ -210,7 +210,7 @@ public class NominalphraseTest {
         final Konstituente actual = konstituentenfolge.joinToSingleKonstituente();
 
         // THEN
-        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vorkommaNoetig()).isTrue();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
         assertThat(actual.getText()).isEqualTo(
                 "du diskutierst mit Rapunzel, die glücklich ist, dich zu sehen");
@@ -239,7 +239,7 @@ public class NominalphraseTest {
         final Konstituente actual = konstituentenfolge.joinToSingleKonstituente();
 
         // THEN
-        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vorkommaNoetig()).isTrue();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
         assertThat(actual.getText()).isEqualTo(
                 "Rapunzel, glücklich, dich zu sehen, schaut dich an");
@@ -296,10 +296,10 @@ public class NominalphraseTest {
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(World.duSc())),
                 true, AdjektivMitIndirektemFragesatz.GESPANNT
-                        .mitIndirektemFragesatz(
-                                BERICHTEN.mit(Interrogativpronomen.WAS)
-                                        .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc()))
+                .mitIndirektemFragesatz(
+                        BERICHTEN.mit(Interrogativpronomen.WAS)
+                                .zuHabenPraedikat()
+                                .alsSatzMitSubjekt(duSc()))
         ));
 
         // WHEN
@@ -322,10 +322,10 @@ public class NominalphraseTest {
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 JUNG,
                 true, AdjektivMitIndirektemFragesatz.GESPANNT
-                        .mitIndirektemFragesatz(
-                                BERICHTEN.mit(Interrogativpronomen.WAS)
-                                        .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc()))
+                .mitIndirektemFragesatz(
+                        BERICHTEN.mit(Interrogativpronomen.WAS)
+                                .zuHabenPraedikat()
+                                .alsSatzMitSubjekt(duSc()))
         ));
 
         // WHEN
@@ -348,10 +348,10 @@ public class NominalphraseTest {
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 JUNG,
                 true, AdjektivMitIndirektemFragesatz.GESPANNT
-                        .mitIndirektemFragesatz(
-                                BERICHTEN.mit(Interrogativpronomen.WAS)
-                                        .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc()))
+                .mitIndirektemFragesatz(
+                        BERICHTEN.mit(Interrogativpronomen.WAS)
+                                .zuHabenPraedikat()
+                                .alsSatzMitSubjekt(duSc()))
         ));
 
         // WHEN
@@ -374,10 +374,10 @@ public class NominalphraseTest {
         final Nominalphrase np = FRAU.mit(new ZweiAdjPhrOhneLeerstellen(
                 GLUECKLICH.mitLexikalischerKern(SEHEN.mit(World.duSc())),
                 true, AdjektivMitIndirektemFragesatz.GESPANNT
-                        .mitIndirektemFragesatz(
-                                BERICHTEN.mit(Interrogativpronomen.WAS)
-                                        .zuHabenPraedikat()
-                                        .alsSatzMitSubjekt(duSc()))
+                .mitIndirektemFragesatz(
+                        BERICHTEN.mit(Interrogativpronomen.WAS)
+                                .zuHabenPraedikat()
+                                .alsSatzMitSubjekt(duSc()))
         ));
 
         // WHEN

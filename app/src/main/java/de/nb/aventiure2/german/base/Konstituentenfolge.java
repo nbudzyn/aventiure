@@ -25,6 +25,7 @@ import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -34,8 +35,8 @@ import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.string.GermanStringUtil.appendBreak;
 import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
-import static de.nb.aventiure2.german.string.GermanStringUtil.breakToString;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
@@ -637,7 +638,7 @@ public class Konstituentenfolge
 
                 if (woertlicheRedeNochOffen) {
                     resTextBuilder.append(woertlicheRedeabschlussToString(
-                            resTextBuilder.toString(), konstituente.getText()));
+                            resTextBuilder, konstituente.getText()));
                 }
 
                 if (bislangNurStructuralElements) {
@@ -692,13 +693,13 @@ public class Konstituentenfolge
 
         // Vorkomma ist in neuem Satz, Absatz, ... nicht nötig
         if (kommaStehtAus && brreak == WORD
-                || (!firstKonstituente && brreak == WORD && konstituente.vorkommaNoetig())) {
+                || (!firstKonstituente && brreak == WORD && konstituente.vorkommaNoetig()
+                && !endeDecktKommaAb(stringBuilder))) {
             stringBuilder.append(satzzeichenToString(",", konstituente.getText()));
             return false; // Danach Kleinschreibung
         }
 
-        stringBuilder.append(breakToString(
-                stringBuilder.toString(), brreak, konstituente.getText()));
+        appendBreak(stringBuilder, brreak, konstituente.getText());
         return !firstKonstituente && brreak != WORD; // Danach Großschreibung, wenn mindestens
         // ein Satz beginnt, außer bei der ersten Konstituente
     }
@@ -722,10 +723,22 @@ public class Konstituentenfolge
         return konstituente.getEndsThis();
     }
 
-    private static String woertlicheRedeabschlussToString(final String base,
+    private static String woertlicheRedeabschlussToString(final CharSequence base,
                                                           final String addition) {
-        if (base.trim().endsWith(".")) {
-            return "“";
+        if (base.length() > 0) {
+            final CharSequence lastCharBase = base.subSequence(base.length() - 1, base.length());
+            if (".".contentEquals(lastCharBase)) {
+                return "“";
+            }
+
+            if (base.length() > 1) {
+                final CharSequence twoLastCharsBase =
+                        base.subSequence(base.length() - 2, base.length());
+
+                if (". ".contentEquals(twoLastCharsBase)) {
+                    return "“";
+                }
+            }
         }
 
         if (!addition.trim().startsWith(".“")
@@ -740,7 +753,8 @@ public class Konstituentenfolge
         return "";
     }
 
-    private static String satzzeichenToString(final String satzzeichen, final String addition) {
+    private static String satzzeichenToString(final String satzzeichen,
+                                              final String addition) {
         if (spaceNeeded(satzzeichen, addition)) {
             return satzzeichen + " ";
         }
@@ -766,7 +780,8 @@ public class Konstituentenfolge
     }
 
     @NonNull
-    private Konstituente buildKonstituente(final String text, final boolean vorkommaNoetig,
+    private Konstituente buildKonstituente(final String text,
+                                           final boolean vorkommaNoetig,
                                            final boolean vordoppelpunktNoetig,
                                            final StructuralElement startsNew,
                                            final boolean woertlicheRedeNochOffen,
@@ -790,7 +805,8 @@ public class Konstituentenfolge
 
     /**
      * Entfernt das letzte Vorkommen dieser Konstituentenfolge - wobei auch die enthaltenen
-     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die Vorkommata etc.
+     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die
+     * Vorkommata etc.
      */
     @Nullable
     public Konstituentenfolge cutLast(
@@ -810,7 +826,8 @@ public class Konstituentenfolge
 
     private Konstituentenfolge withKommaStehtAus() {
         if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
-            // WORD kann nicht enthalten sein, am Ende der Konstituentenfolge endet also der Satz.
+            // WORD kann nicht enthalten sein, am Ende der Konstituentenfolge endet also
+            // der Satz.
             // Kein Komma nötig.
             return this;
         }
@@ -835,7 +852,8 @@ public class Konstituentenfolge
     @NonNull
     public Konstituentenfolge withVorkommaNoetigMin(final boolean vorkommaNoetigMin) {
         if (!vorkommaNoetigMin || konstituenten.get(0) instanceof StructuralElement) {
-            // WORD kann nicht enthalten sein, mit der Konstituentenfolge beginnt also ein neuer
+            // WORD kann nicht enthalten sein, mit der Konstituentenfolge beginnt also
+            // ein neuer
             // Satz. Kein Komma nötig.
             return this;
         }
@@ -849,7 +867,8 @@ public class Konstituentenfolge
 
     /**
      * Entfernt das erste Vorkommen dieser Konstituentenfolge - wobei auch die enthaltenen
-     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die Vorkommata etc.
+     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die
+     * Vorkommata etc.
      */
     @SuppressWarnings("UnstableApiUsage")
     @Nullable

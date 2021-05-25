@@ -26,7 +26,7 @@ public class SatzTest {
         final Konstituente actual = satz.getVerbzweitsatzStandard().joinToSingleKonstituente();
 
         // THEN
-        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vorkommaNoetig()).isTrue();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
         assertThat(actual.getText())
                 .isEqualTo("sie blafft dir entgegen: „Vergiss es! Nie wieder!");
@@ -47,7 +47,7 @@ public class SatzTest {
         final Konstituente actual = satz.getVerbzweitsatzStandard().joinToSingleKonstituente();
 
         // THEN
-        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vorkommaNoetig()).isTrue();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
         assertThat(actual.getText()).isEqualTo("„Du schon wieder!“, ruft sie dir entgegen");
         assertThat(actual.kommaStehtAus()).isFalse();

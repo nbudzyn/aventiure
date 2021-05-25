@@ -1176,6 +1176,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     du(PARAGRAPH, "bist", "müde und möchtest gern schlafen",
                             PARAGRAPH).schonLaenger()
                     ,
+                    // FIXME Dies hier nicht, wenn der SC in der Hütte vor dem Bett steht :-)
                     du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in dass du dich "
                             + "legen und schlafen kannst?", PARAGRAPH).schonLaenger()
                     ,

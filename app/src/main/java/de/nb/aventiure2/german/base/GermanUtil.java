@@ -210,14 +210,13 @@ public class GermanUtil {
             return false;
         }
 
-        if (" ,;.:!?…\n„".contains(lastCharBase)) {
+        if (" ,;.:!?…\n„–".contains(lastCharBase)) {
             return false;
         }
 
         if (addition == null || addition.length() == 0) {
             return true;
         }
-
 
         final CharSequence firstCharAddition = addition.subSequence(0, 1);
         return !".:!?…".contains(firstCharAddition);
@@ -246,7 +245,17 @@ public class GermanUtil {
 
         final CharSequence lastChar =
                 charSequence.subSequence(charSequence.length() - 1, charSequence.length());
-        return charDecktKommaAb(lastChar);
+        if (!" ".contentEquals(lastChar)) {
+            return charDecktKommaAb(lastChar);
+        }
+
+        if (charSequence.length() == 1) {
+            return false;
+        }
+
+        final CharSequence preLastChar =
+                charSequence.subSequence(charSequence.length() - 2, charSequence.length() - 1);
+        return charDecktKommaAb(preLastChar);
     }
 
     public static boolean beginnDecktKommaAb(final CharSequence charSequence) {

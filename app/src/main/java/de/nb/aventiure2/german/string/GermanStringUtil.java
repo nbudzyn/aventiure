@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import java.util.Locale;
 
+import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.base.StructuralElement;
 
 import static de.nb.aventiure2.german.base.GermanUtil.getWhatsNeededToStartNewChapter;
@@ -143,43 +144,23 @@ public class GermanStringUtil {
         // Das Komma sollte ohnehin durch kommaStehtAus gefordert sein
     }
 
-    private static boolean periodNeededToStartNewSentence(
-            final String base, final String addition) {
-        if (base.isEmpty()) {
-            return false;
-        }
-
-        final String lastRelevantCharBase =
-                base.substring(base.length() - 1);
-        if ("….!?:\"„“–\n".contains(lastRelevantCharBase)) {
-            return false;
-        }
-
-        final String firstCharAddition = addition.trim().substring(0, 1);
-        return !".!?".contains(firstCharAddition);
-    }
-
-    public static String breakToString(final String base,
-                                       final StructuralElement brreak,
-                                       final String addition) {
-        final StringBuilder res = new StringBuilder(5);
-
+    public static void appendBreak(final StringBuilder stringBuilder,
+                                   final StructuralElement brreak,
+                                   final String addition) {
         if (brreak != WORD) {
-            if (periodNeededToStartNewSentence(base + res, addition)) {
-                res.append(".");
+            if (GermanUtil.periodNeededToStartNewSentence(stringBuilder, addition)) {
+                stringBuilder.append(".");
             }
         }
 
         if (brreak == CHAPTER) {
-            res.append(getWhatsNeededToStartNewChapter(base + res, addition));
+            stringBuilder.append(getWhatsNeededToStartNewChapter(stringBuilder, addition));
         } else if (brreak == PARAGRAPH) {
-            if (newLineNeededToStartNewParagraph(base + res, addition)) {
-                res.append("\n");
+            if (newLineNeededToStartNewParagraph(stringBuilder, addition)) {
+                stringBuilder.append("\n");
             }
-        } else if (spaceNeeded(base + res, addition)) {
-            res.append(" ");
+        } else if (spaceNeeded(stringBuilder, addition)) {
+            stringBuilder.append(" ");
         }
-
-        return res.toString();
     }
 }

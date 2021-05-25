@@ -104,7 +104,7 @@ class RapunzelJahreszeitenFrageMitAntworten extends AbstractFrageMitAntworten {
         n.narrate(neuerSatz(
                 "„Ich wache auf und sofort weiß ich – die Krokusse sind aufgeblüht!",
                 "Dann freue ich mich schon auf die Schwalben, die in der Mauer über",
-                "dem Fenster brüten“")
+                "dem Fenster brüten.“")
                 .timed(secs(20))
                 .withCounterIdIncrementedIfTextIsNarrated(FRAGE_BEANTWORTET));
 

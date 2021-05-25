@@ -230,6 +230,8 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
         if (world.hasSameOuterMostLocationAsSC(goldeneKugel)) {
+            // FIXME Nicht, wenn man (wann auch immer) müde ist. (Das wird wohl viele
+            //  der Tipps betreffen!)
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "
