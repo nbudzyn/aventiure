@@ -1161,7 +1161,6 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
-
     /**
      * Gibt Sätze zurück wie "hier ist es angenehm kühl".
      */

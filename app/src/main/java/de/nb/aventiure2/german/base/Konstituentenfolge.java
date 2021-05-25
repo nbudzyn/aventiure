@@ -613,125 +613,175 @@ public class Konstituentenfolge
     @CheckReturnValue
     public IKonstituenteOrStructuralElement joinToSingleKonstituenteOrStructuralElement() {
         final StringBuilder resTextBuilder = new StringBuilder(size() * 25);
-        boolean firstAbgesehenVonWORD = true;
-        boolean firstKonstituente = true;
-        boolean resVorkommaNoetig = false;
-        boolean resVordoppelpunktNoetig = false;
-        StructuralElement resStartsNew = WORD;
+        boolean bislangNurStructuralElements = true;
+        boolean vorkommaNoetig = false;
+        boolean vordoppelpunktNoetig = false;
+        StructuralElement startsNew = WORD;
         StructuralElement brreak = WORD;
         boolean woertlicheRedeNochOffen = false;
         boolean kommaStehtAus = false;
         for (final IKonstituenteOrStructuralElement konst : this) {
             if (konst instanceof StructuralElement) {
-                brreak =
-                        StructuralElement
-                                .max(brreak, (StructuralElement) konst);
-
-                if (firstAbgesehenVonWORD) {
-                    resStartsNew = brreak;
+                // this enthält (vgl. Konstruktor!) keine WORDs!
+                if (konst == WORD) {
+                    throw new IllegalStateException("StructuralElement.WORD found in  " + this);
                 }
 
-                if (konst != WORD) {
-                    // Vorkomma und Vordoppelpunkt sind in neuem Satz, Absatz, ... nicht nötig
-                    firstAbgesehenVonWORD = false;
+                brreak = StructuralElement.max(brreak, (StructuralElement) konst);
+
+                if (bislangNurStructuralElements) {
+                    startsNew = brreak;
                 }
             } else if (konst instanceof Konstituente) {
                 final Konstituente konstituente = (Konstituente) konst;
 
-                final String konstituentenText = konstituente.getText();
                 if (woertlicheRedeNochOffen) {
-                    if (resTextBuilder.toString().trim().endsWith(".")) {
-                        resTextBuilder.append("“");
-                    } else if (!konstituentenText.trim().startsWith(".“")
-                            && !konstituentenText.trim().startsWith("!“")
-                            && !konstituentenText.trim().startsWith("?“")
-                            && !konstituentenText.trim().startsWith("…“")
-                            // Kein Satzende
-                            && !konstituentenText.trim().startsWith("“")) {
-                        resTextBuilder.append("“");
-                    }
+                    resTextBuilder.append(woertlicheRedeabschlussToString(
+                            resTextBuilder.toString(), konstituente.getText()));
                 }
 
-                if (firstKonstituente) {
-                    resStartsNew =
-                            StructuralElement.max(resStartsNew, konstituente.getStartsNew());
-                    firstKonstituente = false;
+                if (bislangNurStructuralElements) {
+                    startsNew = StructuralElement.max(startsNew, konstituente.getStartsNew());
                 }
 
-                if (firstAbgesehenVonWORD) {
-                    resVorkommaNoetig =
-                            konstituente.vorkommaNoetig() && resStartsNew == WORD;
-                    resVordoppelpunktNoetig = konstituente.vordoppelpunktNoetig();
+                if (bislangNurStructuralElements) {
+                    vorkommaNoetig = konstituente.vorkommaNoetig() && startsNew == WORD;
+                    vordoppelpunktNoetig = konstituente.vordoppelpunktNoetig()
+                            && startsNew != CHAPTER && startsNew != PARAGRAPH;
                 }
 
-                boolean capitalize = false;
-
-                if (!firstAbgesehenVonWORD && brreak != CHAPTER
-                        && brreak != PARAGRAPH
-                        && konstituente.vordoppelpunktNoetig()) {
-                    resTextBuilder.append(":");
-                    if (spaceNeeded(":", konstituentenText)) {
-                        resTextBuilder.append(" ");
-                    }
-
-                    if (brreak != WORD) {
-                        capitalize = true;
-                    }
-                } else if (kommaStehtAus && brreak == WORD
-                        || (!firstAbgesehenVonWORD && konstituente.vorkommaNoetig())) {
-                    resTextBuilder.append(",");
-                    if (spaceNeeded(",", konstituentenText)) {
-                        resTextBuilder.append(" ");
-                    }
-                } else {
-                    if (!firstAbgesehenVonWORD && brreak != WORD) {
-                        capitalize = true;
-                    }
-
-                    resTextBuilder.append(breakToString(
-                            resTextBuilder.toString(), brreak,
-                            konstituentenText));
-                }
-
-                if (capitalize && beginnStehtCapitalizeNichtImWeg(konstituentenText)) {
-                    try {
-                        resTextBuilder.append(konstituente.capitalizeFirstLetter().getText());
-                        brreak = konstituente.getEndsThis();
-                    } catch (final NoLetterException e) {
-                        // Diese Konstituente war nur etwas wie "„".
-                        // Der Text der folgenden Konstituente muss großgeschrieben werden.
-                        resTextBuilder.append(konstituente.getText());
-                        brreak = StructuralElement.max(SENTENCE, konstituente.getEndsThis());
-                    }
-                } else {
-                    resTextBuilder.append(konstituentenText);
-                    brreak = konstituente.getEndsThis();
-                }
-
+                brreak = appendKonstituente(resTextBuilder, bislangNurStructuralElements, brreak,
+                        kommaStehtAus, konstituente);
                 kommaStehtAus = konstituente.kommaStehtAus();
                 woertlicheRedeNochOffen = konstituente.woertlicheRedeNochOffen();
-                firstAbgesehenVonWORD = false;
+                bislangNurStructuralElements = false;
             } else {
                 throw new IllegalArgumentException("Unexpected konst: " + konst);
             }
         }
 
+        return buildKonstituenteOrStructuralElement(resTextBuilder.toString().trim(),
+                vorkommaNoetig, vordoppelpunktNoetig,
+                startsNew, woertlicheRedeNochOffen, kommaStehtAus, brreak);
+    }
+
+    private static StructuralElement appendKonstituente(final StringBuilder stringBuilder,
+                                                        final boolean firstKonstituente,
+                                                        final StructuralElement brreak,
+                                                        final boolean kommaStehtAus,
+                                                        final Konstituente konstituente) {
+        final boolean capitalize =
+                appendVorsatzzeichen(stringBuilder, firstKonstituente, brreak, kommaStehtAus,
+                        konstituente);
+
+        return appendKonstituente(stringBuilder, konstituente, capitalize);
+    }
+
+    private static boolean appendVorsatzzeichen(final StringBuilder stringBuilder,
+                                                final boolean firstKonstituente,
+                                                final StructuralElement brreak,
+                                                final boolean kommaStehtAus,
+                                                final Konstituente konstituente) {
+        // Vordoppelpunkt ist in neuem Satz, Absatz, ... nicht nötig
+        if (!firstKonstituente && brreak != CHAPTER && brreak != PARAGRAPH
+                && konstituente.vordoppelpunktNoetig()) {
+            stringBuilder.append(satzzeichenToString(":", konstituente.getText()));
+
+            return brreak != WORD; // Danach Großschreibung, wenn mindestens ein Satz beginnt
+        }
+
+        // Vorkomma ist in neuem Satz, Absatz, ... nicht nötig
+        if (kommaStehtAus && brreak == WORD
+                || (!firstKonstituente && brreak == WORD && konstituente.vorkommaNoetig())) {
+            stringBuilder.append(satzzeichenToString(",", konstituente.getText()));
+            return false; // Danach Kleinschreibung
+        }
+
+        stringBuilder.append(breakToString(
+                stringBuilder.toString(), brreak, konstituente.getText()));
+        return !firstKonstituente && brreak != WORD; // Danach Großschreibung, wenn mindestens
+        // ein Satz beginnt, außer bei der ersten Konstituente
+    }
+
+    private static StructuralElement appendKonstituente(final StringBuilder stringBuilder,
+                                                        final Konstituente konstituente,
+                                                        final boolean capitalize) {
+        if (capitalize && beginnStehtCapitalizeNichtImWeg(konstituente.getText())) {
+            try {
+                stringBuilder.append(konstituente.capitalizeFirstLetter().getText());
+                return konstituente.getEndsThis();
+            } catch (final NoLetterException e) {
+                // Diese Konstituente war nur etwas wie "„".
+                // Der Text der folgenden Konstituente muss großgeschrieben werden.
+                stringBuilder.append(konstituente.getText());
+                return StructuralElement.max(SENTENCE, konstituente.getEndsThis());
+            }
+        }
+
+        stringBuilder.append(konstituente.getText());
+        return konstituente.getEndsThis();
+    }
+
+    private static String woertlicheRedeabschlussToString(final String base,
+                                                          final String addition) {
+        if (base.trim().endsWith(".")) {
+            return "“";
+        }
+
+        if (!addition.trim().startsWith(".“")
+                && !addition.trim().startsWith("!“")
+                && !addition.trim().startsWith("?“")
+                && !addition.trim().startsWith("…“")
+                // Kein Satzende
+                && !addition.trim().startsWith("“")) {
+            return "“";
+        }
+
+        return "";
+    }
+
+    private static String satzzeichenToString(final String satzzeichen, final String addition) {
+        if (spaceNeeded(satzzeichen, addition)) {
+            return satzzeichen + " ";
+        }
+
+        return satzzeichen;
+    }
+
+    @NonNull
+    public IKonstituenteOrStructuralElement buildKonstituenteOrStructuralElement(
+            final String text,
+            final boolean vorkommaNoetig,
+            final boolean vordoppelpunktNoetig,
+            final StructuralElement startsNew,
+            final boolean woertlicheRedeNochOffen,
+            final boolean kommaStehtAus,
+            final StructuralElement brreak) {
+        if (text.isEmpty()) {
+            return StructuralElement.max(startsNew, brreak);
+        }
+
+        return buildKonstituente(text, vorkommaNoetig, vordoppelpunktNoetig, startsNew,
+                woertlicheRedeNochOffen, kommaStehtAus, brreak);
+    }
+
+    @NonNull
+    private Konstituente buildKonstituente(final String text, final boolean vorkommaNoetig,
+                                           final boolean vordoppelpunktNoetig,
+                                           final StructuralElement startsNew,
+                                           final boolean woertlicheRedeNochOffen,
+                                           final boolean kommaStehtAus,
+                                           final StructuralElement brreak) {
         final PhorikKandidat resPhorikKandidat = findPhorikKandidat();
         final NumerusGenus resKannAlsBezugsobjektVerstandenWerdenFuer =
                 resPhorikKandidat != null ?
                         resPhorikKandidat.getNumerusGenus() :
                         calcKannAlsBezugsobjektVerstandenWerdenFuer();
 
-        final String resText = resTextBuilder.toString().trim();
-
-        if (resText.isEmpty()) {
-            return StructuralElement.max(resStartsNew, brreak);
-        }
-
         return new Konstituente(
-                resText,
-                resVorkommaNoetig,
-                resVordoppelpunktNoetig, resStartsNew, woertlicheRedeNochOffen,
+                text,
+                vorkommaNoetig,
+                vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
                 brreak, resKannAlsBezugsobjektVerstandenWerdenFuer,
                 resPhorikKandidat != null ? resPhorikKandidat.getBezugsobjekt() : null

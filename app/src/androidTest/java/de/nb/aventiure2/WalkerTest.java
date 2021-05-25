@@ -36,8 +36,8 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest extends AndroidTestBase {
-    private static final int STEP_SIZE = 1;
-    private static final int NUM_RANDOM_STEPS = 50;
+    private static final int STEP_SIZE = 10; // 1;
+    private static final int NUM_RANDOM_STEPS = 20; // 50;
 
     private static final Logger LOGGER = Logger.getLogger();
 
@@ -53,14 +53,15 @@ public class WalkerTest extends AndroidTestBase {
         assertThat(scoreService.getScore())
                 .isEqualTo(94 // FIXME  100 wenn Sturm Holz von den Bäumen gefegt hat
                 );
-        assertNoVerbiddenContentInNarration();
+
+        assertNoForbiddenContentInNarration();
     }
 
     @Test
     public void baa_doStrictWalkthrough_separat_nur_rapunzel() {
         doWalkthrough(Walkthrough.SEP_1_NUR_RAPUNZEL);
 
-        assertNoVerbiddenContentInNarration();
+        assertNoForbiddenContentInNarration();
     }
 
     @Test
@@ -80,7 +81,7 @@ public class WalkerTest extends AndroidTestBase {
 
             doWalkthrough(walkthrough.truncate(maxSteps));
             walkRandomly();
-            assertNoVerbiddenContentInNarration();
+            assertNoForbiddenContentInNarration();
 
             resetDatabase();
 
@@ -88,10 +89,11 @@ public class WalkerTest extends AndroidTestBase {
         }
     }
 
-    public void assertNoVerbiddenContentInNarration() {
+    public void assertNoForbiddenContentInNarration() {
         final String narrationText = db.narrationDao().requireNarration().getText();
         assertThatDoesNotContainAnyOf(narrationText,
                 "@", "  ", " \n", "\n ", "\n\n\n", ".!", "!.", "?.", ".?", "–.",
+                ". ,", ",.",
                 "\"", // Falsche Anführungszeichen
                 "„.", "„!", "„ ", "„?", ".„", "!„", "?„", "„,",
                 "“.", "“!", "“?", ",“", ", “",

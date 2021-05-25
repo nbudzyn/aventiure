@@ -54,10 +54,6 @@ class TextDescriptionBuilder {
                 desc.getStartsNew() == WORD) {
             if (desc instanceof SimpleDuDescription) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
-                checkArgument(((SimpleDuDescription) desc).getStartsNew() == WORD,
-                        "Satzanschluss unmöglich für %s",
-                        ((SimpleDuDescription) desc).getStartsNew());
-
                 res.add(((SimpleDuDescription) desc)
                         .toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma());
                 if (initialNarration.dann() && !desc.isSchonLaenger()) {
