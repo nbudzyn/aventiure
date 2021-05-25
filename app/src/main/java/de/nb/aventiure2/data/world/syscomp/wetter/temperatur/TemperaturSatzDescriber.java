@@ -263,7 +263,7 @@ public class TemperaturSatzDescriber {
 
             if ((delta == -1 && change.getNachher().compareTo(Temperatur.KUEHL) <= 0)
                     || (delta == 1 && change.getNachher().compareTo(Temperatur.WARM) >= 0)) {
-                // "es ist ein heißer Tag"
+                // "es wird ein heißer Tag"
                 alt.addAll(mapToList(
                         praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
                                 change.getNachher(), dateTimeChange.getNachher().getTageszeit(),
@@ -543,7 +543,7 @@ public class TemperaturSatzDescriber {
                                             endTemperatur, tageszeit,
                                             drinnenDraussen.isDraussen()).stream()
                                     .map(praedikativum ->
-                                            praedikativum.alsEsWirdSatz()
+                                            praedikativum.alsEsIstSatz()
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichKuehl ->
@@ -647,7 +647,7 @@ public class TemperaturSatzDescriber {
                                             endTemperatur, tageszeit,
                                             drinnenDraussen.isDraussen()).stream()
                                     .map(praedikativum ->
-                                            praedikativum.alsEsWirdSatz()
+                                            praedikativum.alsEsIstSatz()
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichWarm ->
