@@ -266,12 +266,8 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        if (isDefinitivFortsetzung() && n.lastNarrationWasFromReaction()) {
-            // Der Spieler rastet weiter, obwohl andere Dinge passiert sind...
-            return true;
-        }
-
-        return false;
+        // Rastet der Spieler weiter, obwohl andere Dinge passiert sind?
+        return isDefinitivFortsetzung() && n.lastNarrationWasFromReaction();
     }
 
     @NonNull
