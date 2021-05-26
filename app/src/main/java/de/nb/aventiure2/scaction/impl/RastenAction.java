@@ -254,6 +254,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         n.narrateAlt(alt, mins(10), WARTEN_ODER_RASTEN_IN_FOLGE);
     }
 
+    
     @Override
     protected boolean isDefinitivWiederholung() {
         return false;
