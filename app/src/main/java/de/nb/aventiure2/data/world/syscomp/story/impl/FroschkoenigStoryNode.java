@@ -429,16 +429,19 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         if (world.loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
             alt.addIfOtherwiseEmpty(paragraph("Dir kommt ein Gedanke:",
-                    "Auf dem Brunnenrand sitzen und ein wenig mit der goldenen Kugel spielen –",
-                    "ja, das stellst du dir sehr meditativ vor!"));
-            // FIXME Nicht so klar sagen!
+                    "Wäre es nicht schön, irgendwo gemütlich zu sitzen und ein wenig mit der",
+                    "goldenen Kugel zu spielen?"));
+            alt.addIfOtherwiseEmpty(paragraph("Soviel ist passiert die letzte Zeit!",
+                    "Irgendwo in Ruhe sitzen, mit deiner goldenen Kugel spielen –",
+                    "das würde dir sicher gut tun."));
+            alt.addIfOtherwiseEmpty(
+                    paragraph("Braucht nicht ein jeder auch einmal Zeit für sich selbst?",
+                            "An einem ruhigen Ort sitzen, ein wenig mit deiner goldenen Kugel",
+                            "spielen – ja, das stellst du dir sehr meditativ vor!"));
         } else {
             alt.addIfOtherwiseEmpty(
                     paragraph("Es gibt sicher noch viel zu erleben").schonLaenger());
         }
-
-        // FIXME ab dem zb 3. Mal deutlichere Hinweise, noch zum Brunnen zu gehen:
-        //  Heiß vielleicht irgendwo am wasser...
 
         return alt.build();
     }

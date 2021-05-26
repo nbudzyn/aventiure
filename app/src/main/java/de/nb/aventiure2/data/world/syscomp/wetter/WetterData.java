@@ -1412,12 +1412,7 @@ public class WetterData {
         return alt.schonLaenger().build();
     }
 
-    // FIXME Bei extremen / dramtischen Wetterlagen regelmäßig "Erinnerungen", ähnlich dem
-    //  Müdigkeits-Konzept?
-    //  - "es weht beständig ein Wind"
-    //  - "es weht beständig ein harter Wind"?
-    //  - Erinnerung mit Tageszeit?! "Um Mitternacht geht der Wind so kalt, dass dir nicht warm
-    //    werden will"
+    // FIXME Regelmäßig sollte es blitzen / donnern, ähnlich dem Müdigkeits-Konzept
 
     /**
      * Gibt alternative {@link AbstractDescription}s zurück, die sich auf "heute", "den Tag"
