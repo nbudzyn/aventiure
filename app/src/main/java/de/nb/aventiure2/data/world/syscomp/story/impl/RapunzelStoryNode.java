@@ -112,7 +112,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
     //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
 
-    // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen. Überall liegt
+    // FIXME "Hier hat der Sturm hat viele Äste von den Bäumen gebrochen / gefegt. Überall liegt
     //  Holz herum, kleine und große Äste.
     //  - Du klaubst Holz auf
     //  - Holz in armlange Stücke brechen
