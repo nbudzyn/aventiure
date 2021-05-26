@@ -403,7 +403,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (world.loadWetter().wetterComp().getTemperaturFuerAktuellenZeitpunktAmOrtDesSC()
+        if (world.loadWetter().wetterComp().getTemperaturFuerAktuellenZeitpunktAmOrtDesSc()
                 .compareTo(Temperatur.RECHT_HEISS)
                 >= 0) {
             if (!scIsDraussen(world)) {

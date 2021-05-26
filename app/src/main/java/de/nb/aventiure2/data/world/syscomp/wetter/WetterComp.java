@@ -446,6 +446,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
+     * Gibt die Windstärke zurück - für den Ort erzeugt, an dem sich der SC gerade befindet.
+     * Die Methode ist also <i>nicht</i> geeignet, wenn der SC
+     * gerade noch nicht das Ziel einer aktuellen Bewegung erreicht hat.
+     */
+    @NonNull
+    public Windstaerke getWindstaerkeAmOrtDesSc() {
+        return getLokaleWindstaerke(loadScLocation());
+    }
+
+    /**
      * Gibt die lokale Windstärke zurück.
      */
     @Nullable
@@ -465,7 +475,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * er gerade eine längere Aktion durchführt, deren Zeit noch nicht verstrichen ist.
      */
     @NonNull
-    public Temperatur getTemperaturFuerAktuellenZeitpunktAmOrtDesSC() {
+    public Temperatur getTemperaturFuerAktuellenZeitpunktAmOrtDesSc() {
         return getLokaleTemperatur(timeTaker.now(), loadScLocation());
     }
 

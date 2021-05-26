@@ -2016,11 +2016,9 @@ public class WetterData {
                 .calcTemperatur(tageshoechsttemperatur, tagestiefsttemperatur, time);
     }
 
-
     // FIXME Donner / Blitz
     //  In der Ferne hörst du Donnergrollen
     //  Hat es eben geblitzt?
-
 
     // FIXME Automatisch generieren: "Das Wetter ist soundso und es passiert dies und das"
     //  -- "Die Sonne geht auf, und ..."

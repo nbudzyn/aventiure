@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -194,17 +195,26 @@ public class RastenAction extends AbstractWartenRastenAction {
     private void narrateAndDoSchattenDerBaeumeDunkel() {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
-        n.narrateAlt(mins(3), WARTEN_ODER_RASTEN_IN_FOLGE,
-                // FIXME rauschen nur bei mindestens leichtem Wind
-                neuerSatz("Die Bäume rauschen in",
-                        "der Dunkelheit, die Eulen schnarren,",
-                        "und es fängt an, dir angst zu werden"),
-                neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
-                        + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
-                        + "nichts "
-                        + "erkennen"),
-                // FIXME Rauschen nur bei mindestens leichtem Wind
-                neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
+        final Windstaerke windstaerke =
+                world.loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
+
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.add(neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
+                + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
+                + "nichts erkennen"));
+
+        if (windstaerke.compareTo(Windstaerke.LUEFTCHEN) >= 0) {
+            alt.add(neuerSatz("Die Bäume rauschen in",
+                    "der Dunkelheit, die Eulen schnarren,",
+                    "und es fängt an, dir angst zu werden"),
+                    neuerSatz("In den Ästen über dir knittert und rauscht es. Dich friert"));
+        } else {
+            alt.add(neuerSatz("In der Stille des Waldes erschrickst du bei jedem Knacken,",
+                    "jedem unbestimmbaren Laut aufs Neue"));
+        }
+
+        n.narrateAlt(alt.schonLaenger(), mins(3), WARTEN_ODER_RASTEN_IN_FOLGE);
     }
 
     private void narrateAndDoSchattenDerBaeumeHell() {
@@ -213,6 +223,9 @@ public class RastenAction extends AbstractWartenRastenAction {
         // IDEA "Dann" maximal dann verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
         //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
         //  der dritten Person verwenden!)
+
+        final Windstaerke windstaerke =
+                world.loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -224,23 +237,23 @@ public class RastenAction extends AbstractWartenRastenAction {
                         .dann(),
                 neuerSatz("Es tut gut, eine Weile zu rasten. Über dir zwitschern die "
                         + "Vögel und die Grillen zirpen")
-                        .dann(),
-                du(SENTENCE, "streckst",
-                        // FIXME Rauschen nur bei mindestens leichtem Wind
-                        "die Glieder und hörst auf das Rauschen "
-                                + "in den "
-                                + "Ästen über dir. Ein Rabe setzt "
-                                + "sich neben dich und fliegt nach einer Weile wieder fort")
-                        .schonLaenger()
-                        .dann(),
-                du(SENTENCE, "ruhst",
-                        "noch eine Weile aus und lauschst, wie die Insekten",
-                        "zirpen und der Wind saust")
-                        // FIXME Wind nur bei Wind!!
-                        .schonLaenger()
-                        .mitVorfeldSatzglied("eine Weile")
-                        .dann()
-        );
+                        .dann());
+        if (windstaerke.compareTo(Windstaerke.LUEFTCHEN) >= 0) {
+            alt.add(
+                    du(SENTENCE, "streckst",
+                            "die Glieder und hörst auf das Rauschen "
+                                    + "in den "
+                                    + "Ästen über dir. Ein Rabe setzt "
+                                    + "sich neben dich und fliegt nach einer Weile wieder fort")
+                            .schonLaenger()
+                            .dann(),
+                    du(SENTENCE, "ruhst",
+                            "noch eine Weile aus und lauschst, wie die Insekten",
+                            "zirpen und der Wind saust")
+                            .schonLaenger()
+                            .mitVorfeldSatzglied("eine Weile")
+                            .dann());
+        }
 
         if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
             neuerSatz("Deine müden Glieder brauchen Erholung. Du bist ganz "
