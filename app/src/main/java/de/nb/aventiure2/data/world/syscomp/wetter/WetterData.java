@@ -748,7 +748,7 @@ public class WetterData {
         return alt.build();
     }
 
-    // FIXME Man könnte (wo? / wie?) spezielle Beschreibungen dafür einauen, dass sich das SC
+    // IDEA Man könnte (wo? / wie?) spezielle Beschreibungen dafür einauen, dass sich das SC
     //  im Wald befindet (oder allgemein in einer Landschaftsform???):
     //  - "als du siehst, wie die Sonnenstrahlen durch die Bäume hin- und hertanzen"
     //  - "durch die dichtbelaubten Äste dringt kein Sonnenstrahl"
@@ -2538,7 +2538,7 @@ public class WetterData {
     // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
     //  (Rapunzel zuckt zusammmen und bekommt Angst)
     // FIXME Bei starkem Wind geht die Zauberin nicht mehr spazieren (außer es wäre für die
-    //  Geschichte notwendig)
+    //  Geschichte notwendig) - ließe sich durch Pollen wohl ebenso realisieren.
     // FIXME Schlossfest reagiert auf Unwetter?
     // FIXME Gehen bei Sturm kostet einige Mühe -> Zeit, Müdigkeit
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
@@ -2547,6 +2547,6 @@ public class WetterData {
     //  "du bist von der Sonnenhitze müde"
     //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
     //  "du bist von der Sonnenhitze müde"
-    //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
-    //  Laub, und du bist voll Freude und Lust."
+    //  "Die Sonne scheint hell, ein ... kühles Lüftchen streicht.. und du bist voll Freude und
+    //  Lust."
 }
