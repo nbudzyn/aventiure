@@ -29,6 +29,8 @@ import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
@@ -52,6 +54,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConne
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
@@ -80,6 +83,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.util.StreamUtil.*;
+import static java.lang.Math.max;
 
 /**
  * The world contains and manages all game objects.
@@ -458,6 +462,53 @@ public class World {
         }
     }
 
+    /**
+     * Die minimale Müdigkeit, die der SC verspüren muss, um an einem Ort einzuschlafen.
+     * Hängt z.B. davon ab, ob ein Sturm um ihn herum tobt oder wie gemütlich es an dem Ort ist.
+     * <p>
+     * Natürlich schläft der SC generell nur ein, wenn er es versucht oder sehr langweilige,
+     * einschläfernde Dinge tut etc. Dies hier ist nur eine minimale Schwelle.
+     */
+    public int getMinimaleMuedigkeitZumEinschlafenSc(
+            final boolean gemuetlich) {
+        return getMinimaleMuedigkeitZumEinschlafenMensch(
+                loadSC().locationComp().getLocation(),
+                gemuetlich,
+                loadSC().feelingsComp().getHunger());
+    }
+
+    /**
+     * Die minimale Müdigkeit, die ein Mensch verspüren muss, um an einem Ort einzuschlafen.
+     * Hängt z.B. davon ab, ob ein Sturm um ihn herum tobt oder wie gemütlich es an dem Ort ist.
+     * <p>
+     * Natürlich schläft ein Mensch generell nur ein, wenn er es versucht oder sehr langweilige,
+     * einschläfernde Dinge tut etc. Dies hier ist nur eine minimale Schwelle.
+     */
+    private int getMinimaleMuedigkeitZumEinschlafenMensch(
+            @Nullable final ILocationGO location,
+            final boolean gemuetlich, final Hunger hunger) {
+        int res = gemuetlich ? FeelingIntensity.NUR_LEICHT : FeelingIntensity.MERKLICH;
+
+        @Nullable final Windstaerke lokaleWindstaerke =
+                loadWetter().wetterComp().getLokaleWindstaerke(location);
+        if (lokaleWindstaerke != null) {
+            if (lokaleWindstaerke.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
+                // Bei kräftigem Wind wird man nicht gut einschlafen
+                res = max(res, FeelingIntensity.SEHR_STARK);
+            }
+
+            if (lokaleWindstaerke.compareTo(Windstaerke.WINDIG) >= 0) {
+                // Bei  Wind wird man nicht gut einschlafen
+                res = max(res, FeelingIntensity.MERKLICH);
+            }
+        }
+
+        if (hunger == Hunger.HUNGRIG) {
+            res = max(res, FeelingIntensity.DEUTLICH);
+        }
+
+        return res;
+    }
 
     /**
      * Gibt <code>true</code> zurück falls das Game Object eines dieser anderen ist oder

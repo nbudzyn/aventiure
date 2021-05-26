@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -445,7 +446,19 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
-     * Gibt die Temperatur</i> zurück - für den Ort erzeugt, an dem sich der SC gerade befindet, und
+     * Gibt die lokale Windstärke zurück.
+     */
+    @Nullable
+    public Windstaerke getLokaleWindstaerke(@Nullable final ILocationGO location) {
+        if (location == null) {
+            return null;
+        }
+
+        return requirePcd().getLokaleWindstaerke(location.storingPlaceComp().getDrinnenDraussen());
+    }
+
+    /**
+     * Gibt die Temperatur zurück - für den Ort erzeugt, an dem sich der SC gerade befindet, und
      * für den aktuellen
      * Zeitpunkt / Tag. Die Methode ist also <i>nicht</i> geeignet, wenn der SC
      * gerade noch nicht das Ziel einer aktuellen Bewegung erreicht hat - oder wenn

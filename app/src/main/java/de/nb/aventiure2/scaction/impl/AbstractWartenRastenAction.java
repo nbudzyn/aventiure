@@ -42,11 +42,21 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
     }
 
     boolean automatischesEinschlafen() {
-        if (counterDao.get(WARTEN_ODER_RASTEN_IN_FOLGE) >= 3) {
-            return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH;
-        }
+        return sc.feelingsComp().getMuedigkeit() >=
+                getMinimaleMuedigkeitZumAutomatischenEinschlafen();
+    }
 
-        return sc.feelingsComp().getMuedigkeit() >= FeelingIntensity.STARK;
+    private int getMinimaleMuedigkeitZumAutomatischenEinschlafen() {
+        int res = world.getMinimaleMuedigkeitZumEinschlafenSc(
+                // Es ist nicht besonders gemütlich.
+                false);
+
+        res = Math.max(res,
+                counterDao.get(WARTEN_ODER_RASTEN_IN_FOLGE) < 3 ?
+                        FeelingIntensity.STARK :
+                        FeelingIntensity.MERKLICH);
+
+        return res;
     }
 
     void narrateAndDoSchlafen() {

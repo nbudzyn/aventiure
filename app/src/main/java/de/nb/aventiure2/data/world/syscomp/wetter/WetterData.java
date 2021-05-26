@@ -757,7 +757,7 @@ public class WetterData {
     //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt
     //  weg"
 
-    // FIXME Statisch Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
+    // IDEE: Statische Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
     //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)?
     //  WINDSTILL:
     //   "...und kein Lüftchen streicht durch das Laub"
@@ -781,7 +781,7 @@ public class WetterData {
     //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
     //  wäre schön.
 
-    // FIXME Bewölkung, Wind und Temperatur unter Bezug auf Features der Umwelt:
+    // IDEE Bewölkung, Wind und Temperatur unter Bezug auf Features der Umwelt:
     //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streicht durch das
     //   Laub..."
 
@@ -2549,5 +2549,4 @@ public class WetterData {
     //  "du bist von der Sonnenhitze müde"
     //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streichts durch das
     //  Laub, und du bist voll Freude und Lust."
-    //  SC kann bei Wind oder bei Sturm draußen nicht einschlafen
 }

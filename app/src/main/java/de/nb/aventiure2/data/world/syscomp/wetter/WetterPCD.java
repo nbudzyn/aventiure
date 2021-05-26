@@ -769,6 +769,20 @@ public class WetterPCD extends AbstractPersistentComponentData {
         return wetter.getLokaleTemperatur(time.getTime(), locationTemperaturRange);
     }
 
+
+    /**
+     * Gibt die lokale Windstärke zurück - oder {@code null}, wenn nicht draußen
+     */
+    @Nullable
+    Windstaerke getLokaleWindstaerke(final DrinnenDraussen drinnenDraussen) {
+        if (!drinnenDraussen.isDraussen()) {
+            return null;
+        }
+
+        return getLokaleWindstaerkeDraussen(
+                drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL);
+    }
+
     @NonNull
     private Windstaerke getLokaleWindstaerkeDraussen(final boolean unterOffenemHimmel) {
         // Nur weil die Windstärke abgefragt wird, gehen wir nicht davon aus, dass ein
