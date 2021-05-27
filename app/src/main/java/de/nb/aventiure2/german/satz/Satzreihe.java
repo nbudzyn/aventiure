@@ -12,13 +12,13 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.StructuredDescription;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
@@ -207,17 +207,17 @@ public class Satzreihe implements Satz {
     }
 
     @Override
-    public Satzreihe mitAdvAngabe(@Nullable final AdvAngabeSkopusSatz advAngabe) {
+    public Satzreihe mitAdvAngabe(@Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return mapFirst(s -> s.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public Satzreihe mitAdvAngabe(@Nullable final AdvAngabeSkopusVerbAllg advAngabe) {
+    public Satzreihe mitAdvAngabe(@Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return mapFirst(s -> s.mitAdvAngabe(advAngabe));
     }
 
     @Override
-    public Satzreihe mitAdvAngabe(@Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+    public Satzreihe mitAdvAngabe(@Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return mapFirst(s -> s.mitAdvAngabe(advAngabe));
     }
 
@@ -249,12 +249,69 @@ public class Satzreihe implements Satz {
 
     @Override
     public Konstituentenfolge getIndirekteFrage() {
+        @Nullable final Konstituentenfolge zusammengefassteIndirekteFrageWennMoeglich =
+                getZusammengefassteIndirekteFrageWennMoeglich();
+
+        if (zusammengefassteIndirekteFrageWennMoeglich != null) {
+            return zusammengefassteIndirekteFrageWennMoeglich;
+        }
+
+        // "wie die Grillen zirpen und ob und der Wind rauscht"
         return mitKonnektorUndFallsKeinKonnektor()
                 .mapJoinToKonstituentenfolge(Satz::getIndirekteFrage, false);
     }
 
+    @Nullable
+    private Konstituentenfolge getZusammengefassteIndirekteFrageWennMoeglich() {
+        @Nullable final PraedikatOhneLeerstellen
+                erstesPraedikatWennOhneInformationsverlustMoeglich =
+                ersterSatz.getPraedikatWennOhneInformationsverlustMoeglich();
+        if (erstesPraedikatWennOhneInformationsverlustMoeglich == null) {
+            return null;
+        }
+
+        @Nullable final PraedikatOhneLeerstellen
+                zweitesPraedikatWennOhneInformationsverlustMoeglich =
+                ersterSatz.getPraedikatWennOhneInformationsverlustMoeglich();
+        if (zweitesPraedikatWennOhneInformationsverlustMoeglich == null) {
+            return null;
+        }
+
+        @Nullable final Konstituentenfolge erstesInterrogativwortErsterSatz =
+                erstesPraedikatWennOhneInformationsverlustMoeglich
+                        .getErstesInterrogativwort();
+        @Nullable final Konstituentenfolge erstesInterrogativwortZweiterSatz =
+                zweitesPraedikatWennOhneInformationsverlustMoeglich
+                        .getErstesInterrogativwort();
+
+        if (!Objects.equals(erstesInterrogativwortErsterSatz, erstesInterrogativwortZweiterSatz)) {
+            return null;
+        }
+
+        // IDEA: Vielleicht nur bis zu einer gewissen Länge zusammenfassen?
+
+        if (erstesInterrogativwortErsterSatz == null) {
+            // "ob die Grillen zirpen und der Wind rauscht"
+            return joinToKonstituentenfolge(
+                    ersterSatz.getIndirekteFrage(), // "ob die Grillen zirpen"
+                    zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort()
+                            .getVerbletztsatz()); // "und der Wind rauscht"
+        }
+
+        // "wie die Grillen zirpen und der Wind rauscht"
+        return joinToKonstituentenfolge(
+                ersterSatz.getIndirekteFrage(), // "wie die Grillen zirpen"
+                zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort()
+                        .getVerbletztsatz()
+                        .cutFirst(
+                                erstesInterrogativwortErsterSatz)); // "und der Wind rauscht"
+    }
+
     @Override
     public Konstituentenfolge getRelativsatz() {
+        // IDEA: Zusammengefasste Relativsätze wie bei zusammengefassten indirekten Fragen:
+        //  "den du mir geschenkt und im Garten versteckt hast"
+
         return mitKonnektorUndFallsKeinKonnektor()
                 .mapJoinToKonstituentenfolge(Satz::getRelativsatz, false);
     }

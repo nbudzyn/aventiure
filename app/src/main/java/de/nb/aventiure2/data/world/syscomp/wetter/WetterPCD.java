@@ -32,6 +32,7 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
@@ -266,6 +267,14 @@ public class WetterPCD extends AbstractPersistentComponentData {
         }
 
         return alt;
+    }
+
+    /**
+     * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
+     */
+    public ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+            final AvTime time, final boolean unterOffenemHimmel) {
+        return wetter.altWindgeraeuscheSaetze(time, unterOffenemHimmel);
     }
 
     /**

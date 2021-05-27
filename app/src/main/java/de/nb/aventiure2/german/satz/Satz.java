@@ -11,13 +11,13 @@ import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
@@ -65,13 +65,11 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
 
     Satz mitModalpartikeln(Collection<Modalpartikel> modalpartikeln);
 
-    Satz mitAdvAngabe(@Nullable AdvAngabeSkopusSatz advAngabe);
+    Satz mitAdvAngabe(@Nullable IAdvAngabeOderInterrogativSkopusSatz advAngabe);
 
-    Satz mitAdvAngabe(
-            @Nullable AdvAngabeSkopusVerbAllg advAngabe);
+    Satz mitAdvAngabe(@Nullable IAdvAngabeOderInterrogativVerbAllg advAngabe);
 
-    Satz mitAdvAngabe(
-            @Nullable AdvAngabeSkopusVerbWohinWoher advAngabe);
+    Satz mitAdvAngabe(@Nullable IAdvAngabeOderInterrogativWohinWoher advAngabe);
 
     Satz mitAngabensatz(@Nullable final Konditionalsatz angabensatz,
                         final boolean angabensatzMoeglichstVorangestellt);

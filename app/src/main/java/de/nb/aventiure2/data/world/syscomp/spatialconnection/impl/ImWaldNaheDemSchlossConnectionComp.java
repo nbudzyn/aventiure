@@ -180,6 +180,53 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     getDescTo_DraussenVorDemSchloss_FestBegonnen(final AvTimeSpan timeSpan) {
         if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
             world.loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
+            // FIXME Schlossfest sollte (Hier und an anderen Stellen - auf den Sturm reagieren.
+            //  Schwierigkeiten dabei:
+            //  - Es müsste zwei initial-Texte geben, je nachdem, ob der SC das Schlossfest
+            //   zuerst bei normalem Wetter oder zuerst bei Sturm sieht
+            //   "Du bist betroffen, als du aus dem Wald heraustrittst. Das
+            //   Schlossfest hat begonnen, doch die kleinen farbigen Pagoden überall im
+            //   Schlossgarten
+            //   machen einen traurigen Eindruck --- viele hat der Sturm umgeworfen
+            //   oder ihr Dach abgerissen. Einige geschlossene Marktstände sind ausgeräumt oder
+            //   stehen
+            //   aufwendig verzurrt an windgeschützten Plätzen. ---
+            //   Aus dem Schloss allerdings klingt Gelächter und es duftet verführerisch nach
+            //   Gebratenem"
+            //  - Die App müsste berücksichtigen, welchen Stand der SC kennt - der SC müsste
+            //   ein Mental Model des Schlossfest-States haben (ähnlich wie den AssumedLocations -
+            //   allerdings kennt der SC im Allgemeinen gar nicht den State z.B. der Zauberin oder
+            //   von Rapunzel - oder er hat ein anderes internes Modell als die Dinge selbst.
+            //   Vielleicht könnte man für jede GameObjectId einen State als Enum oder
+            //   String speichern - ungetypt - und der Aufrufer - z.B. die Comp - hätte die
+            //   Verantwortung, den State selbst zu pflegen?).
+            //  - Die App müsste prüfen, ob es eine Veränderung gegenüber dem Mental Model des SC
+            //  gab:
+            //   -- SC kennt normales Schlossfest, aber jetzt Sturm.
+            //   "Als du aus dem Wald heraustrittst bietet sich dir ein trauriges Bild. Der Sturm
+            //   hat im Schlossgarten heftig gewütet, viele der Pagoden sind umgeworfen oder ihre
+            //   Dächer sind abgerissen."
+            //   -- SC kennt Schlossfest im Sturm, aber jetzt Sturm beendet.
+            //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
+            //   gerichtet und es herscht wieder reges Treiben"
+            //   -- SC kennt Schlossfest im Sturm, weiterhin Sturm.
+            //   "Du erreichst bald den von Sturm verwüsteten Schlossgarten"
+            //   -- SC kennt normales Schlossfest, weiterhin kein Sturm.
+            //  - Die App müsste speichern, welchen Stand der SC kennt.
+            //  - Dasselbe für den Fall, dass der SC aus dem Schloss tritt
+            //  (SchlossVorhalleConnectionComp)
+            //  - Außerdem leichte Anpassungen im der DraussenVorDemSchlossConnectionComp
+            //
+            //  if (world.loadWetter().wetterComp().getLokaleWindstaerke(DRAUSSEN_VOR_DEM_SCHLOSS)
+            // .compareTo(Windstaerke.STURM)) {
+            // "Du bist überrascht und betroffen, als du aus dem Wald heraustrittst. Ganz
+            // offenbar hat das Schlossfest begonnen.",
+            // "Überall im Schlossgarten sind kleine Pagoden aufgebaut, "
+            // "...machen nur noch einen traurigen Eindruck"
+            // "Dächer sind abgerissen"
+            // "umgeworfen"
+            // "aus dem Schloss hörst du Lachen und Tumult"
+
             return du("bist", "von dem Lärm überrascht, der dir "
                     + "schon von weitem "
                     + "entgegenschallt. Als du aus dem Wald heraustrittst, "
@@ -188,6 +235,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
                     + "gestakt und aus dem Schloss duftet es verführerisch nach "
                     + "Gebratenem").timed(timeSpan);
+
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange")

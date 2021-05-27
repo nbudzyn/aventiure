@@ -12,6 +12,9 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -21,9 +24,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
@@ -174,21 +175,22 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
-    public EinzelnerSatz mitAdvAngabe(@Nullable final AdvAngabeSkopusSatz advAngabe) {
+    public EinzelnerSatz mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitAdvAngabe(
-            @Nullable final AdvAngabeSkopusVerbAllg advAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz, angabensatzMoeglichstVorangestellt);
     }
 
     @Override
     public EinzelnerSatz mitAdvAngabe(
-            @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
+            @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabe) {
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat.mitAdvAngabe(advAngabe),
                 angabensatz, angabensatzMoeglichstVorangestellt);
     }
@@ -242,11 +244,7 @@ public class EinzelnerSatz implements Satz {
                         .withVorkommaNoetigMin(anschlusswort == null), // "was" / "wem" / "wann"
                 getVerbletztsatz().cutFirst(
                         erstesInterrogativwortImPraedikat
-                ), // "du zu berichten hast", "wer zu berichten hat", "er kommt"
-                angabensatz != null ?
-                        Konstituentenfolge
-                                .schliesseInKommaEin(angabensatz.getDescription()) :
-                        null) // "[, ]als er kommt[, ]"
+                )) // "du zu berichten hast", "wer zu berichten hat", "er kommt"
                 .withVorkommaNoetigMin(anschlusswort == null);
     }
 
@@ -260,8 +258,8 @@ public class EinzelnerSatz implements Satz {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 "ob",
-                getVerbletztsatz() // "du etwas zu berichten hast"
-        ).withVorkommaNoetigMin(anschlusswort == null);
+                getVerbletztsatz()) // "du etwas zu berichten hast"
+                .withVorkommaNoetigMin(anschlusswort == null);
     }
 
     @Override
@@ -295,11 +293,7 @@ public class EinzelnerSatz implements Satz {
                 // "das" / "dem"
                 getVerbletztsatz().cutFirst(
                         relativpronomenImPraedikat
-                ), // "du zu berichten hast", "er was gegeben hat", "kommt"
-                angabensatz != null ?
-                        Konstituentenfolge
-                                .schliesseInKommaEin(angabensatz.getDescription()) :
-                        null) // "[, ]als er kommt[, ]"
+                ))// "du zu berichten hast", "er was gegeben hat", "kommt"
                 .withVorkommaNoetigMin(anschlusswort == null);
     }
 

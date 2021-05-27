@@ -93,6 +93,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     ZIEHEN("ziehen",
             "ziehe", "ziehst", "zieht", "zieht",
             Perfektbildung.SEIN, "gezogen"),
+    ZIRPEN("zirpen",
+            "zirpe", "zirpst", "zirpt", "zirpt",
+            Perfektbildung.HABEN, "gezirpt"),
 
     // Partikelverben
     ABFLAUEN("abflauen", "flaue", "flaust", "flaut", "flaut",

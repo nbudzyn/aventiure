@@ -214,7 +214,7 @@ public class WindstaerkeDescDescriber {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         final ImmutableCollection<EinzelnerSatz> altSaetze = satzDescriber.alt(time, windstaerke,
-                false);
+                false, false);
         alt.addAll(altSaetze);
 
         switch (windstaerke) {

@@ -66,6 +66,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     HITZE(F, "Hitze"),
     HOEHE(F, "Höhe"),
     HORIZONT(M, "Horizont"),
+    INSEKTEN(PL_MFN, "Insekten"),
     KAELTE(F, "Kälte"),
     KINN(N, "Kinn"),
     KOENIGSSOHN(M, "Königssohn"),

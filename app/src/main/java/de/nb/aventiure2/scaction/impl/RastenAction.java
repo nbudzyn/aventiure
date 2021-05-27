@@ -17,9 +17,11 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
+import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -27,13 +29,18 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.german.base.InterrogativadverbVerbAllg.WIE;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.INSEKTEN;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIRPEN;
 import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
 import static de.nb.aventiure2.scaction.impl.RastenAction.Counter.RASTEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
@@ -200,6 +207,11 @@ public class RastenAction extends AbstractWartenRastenAction {
 
         final AltDescriptionsBuilder alt = alt();
 
+        // FIXME Waldgeräusche bei Wind:
+        //  - expletives es: "es knittert und rauscht"
+        //  - echtes Subjekt: "die Bäume rauschen (in der Dunkelheit)"
+        //  - "das Rauschen in den Ästen über dir"
+
         alt.add(neuerSatz("Es ist dunkel und ungemütlich. Krabbelt da etwas auf "
                 + "deinem rechten Bein? Du schlägst mit der Hand zu, kannst aber "
                 + "nichts erkennen"));
@@ -221,7 +233,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
 
         // IDEA "Dann" maximal dann verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
-        //  Satz gleich war. (Nach der Logik kann man dann auch für Beschreibungen in
+        //  Satz gleich war. (Nach dieser Logik kann man "dann" auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
         final Windstaerke windstaerke =
@@ -246,13 +258,22 @@ public class RastenAction extends AbstractWartenRastenAction {
                                     + "Ästen über dir. Ein Rabe setzt "
                                     + "sich neben dich und fliegt nach einer Weile wieder fort")
                             .schonLaenger()
-                            .dann(),
-                    du(SENTENCE, "ruhst",
-                            "noch eine Weile aus und lauschst, wie die Insekten",
-                            "zirpen und der Wind saust")
-                            .schonLaenger()
-                            .mitVorfeldSatzglied("eine Weile")
                             .dann());
+            alt.addAll(mapToSet(
+                    world.loadWetter().wetterComp()
+                            .altWindgeraeuscheSaetze(isUnterOffenemHimmel()),
+                    derWindSaust ->
+                            du(SENTENCE, "ruhst",
+                                    "noch eine Weile aus und lauschst",
+                                    schliesseInKommaEin(
+                                            new Satzreihe(
+                                                    ZIRPEN.alsSatzMitSubjekt(INSEKTEN)
+                                                            .mitAdvAngabe(WIE),
+                                                    derWindSaust.mitAdvAngabe(WIE))
+                                                    .getIndirekteFrage()))
+                                    .schonLaenger()
+                                    .mitVorfeldSatzglied("eine Weile")
+                                    .dann()));
         }
 
         if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.MERKLICH) {
@@ -260,11 +281,17 @@ public class RastenAction extends AbstractWartenRastenAction {
                     + "still und die Vögel setzen sich "
                     + "auf die Äste über dir "
                     + "und singen, was sie nur wissen")
+                    .komma()
                     .schonLaenger()
                     .dann();
         }
 
         n.narrateAlt(alt, mins(10), WARTEN_ODER_RASTEN_IN_FOLGE);
+    }
+
+    private boolean isUnterOffenemHimmel() {
+        return location.storingPlaceComp().getDrinnenDraussen() ==
+                DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
     }
 
     @Override

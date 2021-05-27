@@ -30,7 +30,7 @@ public enum InterrogativadverbWohinWoher
 
     @Override
     public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
-        return IInterrogativadverb.super.getDescription(personSubjekt, numerusSubjekt);
+        return IInterrogativadverb.super.getDescription();
     }
 
     @Override

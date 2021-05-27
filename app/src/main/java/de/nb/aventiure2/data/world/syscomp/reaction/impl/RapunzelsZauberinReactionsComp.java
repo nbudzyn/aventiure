@@ -37,6 +37,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
@@ -221,8 +222,7 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
                 && stateComp.hasState(MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE,
                 VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH)
-                && RapunzelsZauberinReactionsComp
-                .liegtImZeitfensterFuerRapunzelbesuch(timeTaker.now())) {
+                && umstaendeGeeignetFuerRapunzelbesuch(timeTaker.now())) {
             // Automatisch die Zauberin loslaufen lassen,
             //  sodass der SC die Zauberin auf jeden Fall
             //  auf der Kreuzung trifft
@@ -532,7 +532,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void onTimePassed_VorDemNaechstenRapunzelBesuch(final AvDateTime now) {
-        if (!liegtImZeitfensterFuerRapunzelbesuch(now)) {
+        if (!umstaendeGeeignetFuerRapunzelbesuch(now)) {
             // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie (wieder) losgeht.
             return;
         }
@@ -543,6 +543,19 @@ public class RapunzelsZauberinReactionsComp
         // IDEA Wenn der World-Tick ungewöhnlich lang war, geht die Zauberin
         //  recht spät oder gar nicht mehr los.
         //  Am besten durch ein zentrales Konzept beheben!
+    }
+
+    /**
+     * Ob die Umstände geeignet sind, dass die Zauberin sich auf den Weg zu Rapunzel macht.
+     */
+    private boolean umstaendeGeeignetFuerRapunzelbesuch(final AvDateTime now) {
+        return liegtImZeitfensterFuerRapunzelbesuch(now)
+                &&
+                // Bei kräftigem Wind geht die Zauberin nicht mehr los
+                (world.loadWetter().wetterComp().getWindstaerkeUnterOffenemHimmel()
+                        .compareTo(Windstaerke.KRAEFTIGER_WIND) < 0
+                        //  (außer es wäre für die Geschichte notwendig)
+                        || !world.loadSC().memoryComp().isKnown(RAPUNZELRUF));
     }
 
     public static boolean liegtImZeitfensterFuerRapunzelbesuch(final AvDateTime now) {
@@ -746,7 +759,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        if (!liegtImZeitfensterFuerRapunzelbesuch(now)) {
+        if (!umstaendeGeeignetFuerRapunzelbesuch(now)) {
             // Kein Zustandswechsel. Die Zauberin soll noch warten, bevor sie (wieder) losgeht.
             return;
         }

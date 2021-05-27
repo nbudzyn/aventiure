@@ -81,7 +81,7 @@ public class WindstaerkeSatzDescriber {
 
         final ImmutableCollection<EinzelnerSatz> altStatisch =
                 alt(dateTimeChange.getNachher().getTime(), change.getNachher(),
-                        true);
+                        true, false);
 
         if (Math.abs(delta) <= 1) {
             alt.addAll(altWechsel(change));
@@ -273,11 +273,11 @@ public class WindstaerkeSatzDescriber {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
         alt.addAll(
-                mapToList(alt(time, windstaerke, true),
+                mapToList(alt(time, windstaerke, true, false),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (windstaerke.compareTo(Windstaerke.WINDIG) > 0) {
-            alt.addAll(alt(time, windstaerke, false));
+            alt.addAll(alt(time, windstaerke, false, false));
         }
 
 
@@ -285,28 +285,37 @@ public class WindstaerkeSatzDescriber {
     }
 
     /**
-     * Gibt alternative Sätze zur Windstärke zurück
+     * Gibt alternative Sätze zur Windstärke zurück - kann leer sein, falls
+     * {@code ausschliesslichHoerbares true} ist.
+     *
+     * @param ausschliesslichHoerbares Ob nur Sätze zurückgegeben werden, die ausschließlich
+     *                                 Dinge beschreiben, die hörbar sind.
      */
     public ImmutableCollection<EinzelnerSatz> alt(
             final AvTime time, final Windstaerke windstaerke,
-            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete,
+            final boolean ausschliesslichHoerbares) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
-        if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-            // "der Morgen ist windig"
-            alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),
-                    windig -> windig.alsPraedikativumPraedikat()
-                            .alsSatzMitSubjekt(time.getTageszeit().getNomenFlexionsspalte())));
-        }
+        if (!ausschliesslichHoerbares) {
+            if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+                // "der Morgen ist windig"
+                alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),
+                        windig -> windig.alsPraedikativumPraedikat()
+                                .alsSatzMitSubjekt(time.getTageszeit().getNomenFlexionsspalte())));
+            }
 
-        // "es ist windig"
-        alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),
-                windig -> windig.alsPraedikativumPraedikat().alsSatzMitSubjekt(EXPLETIVES_ES)));
+            // "es ist windig"
+            alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),
+                    windig -> windig.alsPraedikativumPraedikat().alsSatzMitSubjekt(EXPLETIVES_ES)));
+        }
 
         switch (windstaerke) {
             case WINDSTILL:
-                alt.add(STEHEN.alsSatzMitSubjekt(LUFT),
-                        WEHEN.alsSatzMitSubjekt(KEIN_WIND));
+                if (!ausschliesslichHoerbares) {
+                    alt.add(STEHEN.alsSatzMitSubjekt(LUFT),
+                            WEHEN.alsSatzMitSubjekt(KEIN_WIND));
+                }
                 break;
             case LUEFTCHEN:
                 break;
@@ -314,18 +323,22 @@ public class WindstaerkeSatzDescriber {
                 alt.add(SAUSEN.alsSatzMitSubjekt(WIND));
                 break;
             case KRAEFTIGER_WIND:
-                alt.add(PFEIFEN.mit(duSc())
-                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ums Gesicht"))
-                                .alsSatzMitSubjekt(WIND),
-                        PFEIFEN.mit(duSc())
-                                .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ums Gesicht"))
-                                .mitAdvAngabe(new AdvAngabeSkopusSatz(KRAEFTIG))
-                                .alsSatzMitSubjekt(WIND),
-                        ZAUSEN.mit(DEIN_HAAR).alsSatzMitSubjekt(WIND),
-                        new ZweiAdjPhrOhneLeerstellen(KRAEFTIG.mitGraduativerAngabe("sehr"),
-                                true,
-                                UNANGENEHM).alsPraedikativumPraedikat().alsSatzMitSubjekt(WIND),
-                        RAUSCHEN.alsSatzMitSubjekt(WIND));
+                if (!ausschliesslichHoerbares) {
+                    alt.add(PFEIFEN.mit(duSc())
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ums Gesicht"))
+                                    .alsSatzMitSubjekt(WIND),
+                            PFEIFEN.mit(duSc())
+                                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ums Gesicht"))
+                                    .mitAdvAngabe(new AdvAngabeSkopusSatz(KRAEFTIG))
+                                    .alsSatzMitSubjekt(WIND),
+                            ZAUSEN.mit(DEIN_HAAR).alsSatzMitSubjekt(WIND),
+                            new ZweiAdjPhrOhneLeerstellen(KRAEFTIG.mitGraduativerAngabe("sehr"),
+                                    true,
+                                    UNANGENEHM).alsPraedikativumPraedikat()
+                                    .alsSatzMitSubjekt(WIND));
+                }
+
+                alt.add(RAUSCHEN.alsSatzMitSubjekt(WIND));
                 break;
             case STURM:
                 alt.add(STUERMEN.alsSatz(),

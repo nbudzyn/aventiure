@@ -7,14 +7,14 @@ import javax.annotation.CheckReturnValue;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
 public interface IInterrogativadverb extends IAlternativeKonstituentenfolgable, IInterrogativwort {
-    @CheckReturnValue
-    default Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
-        return k(getString());
-    }
-
     @Override
     default ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(k(getString())));
+        return ImmutableList.of(new Konstituentenfolge(getDescription()));
+    }
+
+    @CheckReturnValue
+    default Konstituente getDescription() {
+        return k(getString());
     }
 
     String getString();

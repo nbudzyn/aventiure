@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
@@ -446,6 +447,14 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
+     * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
+     */
+    public ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+            final boolean unterOffenemHimmel) {
+        return requirePcd().altWindgeraeuscheSaetze(timeTaker.now().getTime(), unterOffenemHimmel);
+    }
+
+    /**
      * Gibt die Windstärke zurück - für den Ort erzeugt, an dem sich der SC gerade befindet.
      * Die Methode ist also <i>nicht</i> geeignet, wenn der SC
      * gerade noch nicht das Ziel einer aktuellen Bewegung erreicht hat.
@@ -465,6 +474,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         }
 
         return requirePcd().getLokaleWindstaerke(location.storingPlaceComp().getDrinnenDraussen());
+    }
+
+    /**
+     * Gibt die Windstaerke unter offenem Himmel zurück.
+     *
+     * @see #getLokaleWindstaerke(ILocationGO)
+     * @see #getWindstaerkeAmOrtDesSc()
+     */
+    public Windstaerke getWindstaerkeUnterOffenemHimmel() {
+        return requirePcd().getWetter().getWindstaerkeUnterOffenemHimmel();
     }
 
     /**

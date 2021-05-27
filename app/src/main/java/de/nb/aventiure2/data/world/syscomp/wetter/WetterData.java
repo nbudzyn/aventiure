@@ -548,7 +548,7 @@ public class WetterData {
         // "Der Wind saust; die Luft ist kalt"
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
-                        false),
+                        false, false),
                 // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
@@ -559,7 +559,7 @@ public class WetterData {
         // "Der Wind saust; kalt ist es"
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
-                        false),
+                        false, false),
                 // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
@@ -678,7 +678,7 @@ public class WetterData {
         // "Es ist kalt und der Wind stürmt"
         alt.addAll(tempAltAdjPhrPraedikativ.stream()
                 .flatMap(kalt -> WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
-                        nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete)
+                        nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete, false)
                         .stream()
                         .map(derWindStuermt -> new Satzreihe(
                                 kalt.alsPraedikativumPraedikat()
@@ -757,7 +757,20 @@ public class WetterData {
     //  - "der Wind raschelt in den Bäumen, und die Wolken ziehen ganz nah über deinem Haupt
     //  weg"
 
-    // IDEE: Statische Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
+    /**
+     * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
+     */
+    ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+            final AvTime time, final boolean unterOffenemHimmel) {
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+
+        return WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                false,
+                true);
+    }
+
+    // IDEA: Statische Beschreibungen von Wind / Sturm unter Bezug auf Features der Umwelt
     //  (Laub, Blätter, Bäume, Äste, Wald; etwas, das Schutz bietet)?
     //  WINDSTILL:
     //   "...und kein Lüftchen streicht durch das Laub"
@@ -781,7 +794,7 @@ public class WetterData {
     //  Der Sturm peitscht die Äste über dir und es ist ziemlich dunkel. Ein geschützter Platz
     //  wäre schön.
 
-    // IDEE Bewölkung, Wind und Temperatur unter Bezug auf Features der Umwelt:
+    // IDEA Bewölkung, Wind und Temperatur unter Bezug auf Features der Umwelt:
     //  "Die Sonne scheint hell, die Vögel singen, und ein kühles Lüftchen streicht durch das
     //   Laub..."
 
@@ -1165,7 +1178,7 @@ public class WetterData {
         // "Draußen saust der Wind; die Luft ist kalt"
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
-                        true).stream()
+                        true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
                 // FIXME Satzreihe verwenden
                 ";",
@@ -1177,7 +1190,7 @@ public class WetterData {
         // "Draußen saust der Wind; kalt ist es"
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
-                        true).stream()
+                        true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
                 // FIXME Satzreihe verwenden
                 ";",
@@ -2532,15 +2545,12 @@ public class WetterData {
                 blitzUndDonner);
     }
 
-    // FIXME WetterReactions.onChange()
     // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
     //  (Rapunzel zuckt zusammmen und bekommt Angst)
-    // FIXME Bei starkem Wind geht die Zauberin nicht mehr spazieren (außer es wäre für die
-    //  Geschichte notwendig) - ließe sich durch Pollen wohl ebenso realisieren.
     // FIXME Schlossfest reagiert auf Unwetter?
     // FIXME Gehen bei Sturm kostet einige Mühe -> Zeit, Müdigkeit
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
-    //  onWetterwechsel()? onTemperaturWechsel()?)
+    //  onWetterwechsel()? onTemperaturWechsel()? WetterReactions.onChange()?)
     //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)
     //  "du bist von der Sonnenhitze müde"
     //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
