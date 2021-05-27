@@ -765,8 +765,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
-        // FIXME Gehen des SC bei Sturm kostet einige Mühe -> Müdigkeit
-
         boolean alternativeDescriptionAllowed = false;
         if (oldLocation instanceof ISpatiallyConnectedGO &&
                 world.load(spatialConnection.getTo()) instanceof ISpatiallyConnectedGO) {

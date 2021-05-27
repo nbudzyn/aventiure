@@ -199,7 +199,8 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             //   von Rapunzel - oder er hat ein anderes internes Modell als die Dinge selbst.
             //   Vielleicht könnte man für jede GameObjectId einen State als Enum oder
             //   String speichern - ungetypt - und der Aufrufer - z.B. die Comp - hätte die
-            //   Verantwortung, den State selbst zu pflegen?).
+            //   Verantwortung, den State selbst zu pflegen? Oder der State wird automatisch
+            //   gepflegt.)
             //  - Die App müsste prüfen, ob es eine Veränderung gegenüber dem Mental Model des SC
             //  gab:
             //   -- SC kennt normales Schlossfest, aber jetzt Sturm.
@@ -216,7 +217,12 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             //  - Dasselbe für den Fall, dass der SC aus dem Schloss tritt
             //  (SchlossVorhalleConnectionComp)
             //  - Außerdem leichte Anpassungen im der DraussenVorDemSchlossConnectionComp
-            //
+
+            // FIXME Das Schossfest könnte allerdings auch nebenläufig verwüstet werden...
+            //  Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
+            //  reagieren können? Dann könnte das Schlossfest einen State VERWUESTET erhalten -
+            //  oder einen State WIEDER_AUFGEBAUT.
+
             //  if (world.loadWetter().wetterComp().getLokaleWindstaerke(DRAUSSEN_VOR_DEM_SCHLOSS)
             // .compareTo(Windstaerke.STURM)) {
             // "Du bist überrascht und betroffen, als du aus dem Wald heraustrittst. Ganz

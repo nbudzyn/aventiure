@@ -549,7 +549,6 @@ public class WetterData {
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         false, false),
-                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
                         unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
@@ -560,7 +559,6 @@ public class WetterData {
         alt.addAll(altNeueSaetze(
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         false, false),
-                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
                         temperatur, false).stream()
@@ -843,7 +841,6 @@ public class WetterData {
                     BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmel(
                             bewoelkung, time,
                             auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
-                    // FIXME Satzreihe verwenden
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -854,7 +851,6 @@ public class WetterData {
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altUnterOffenemHimmel(bewoelkung, time,
                                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
-                        // FIXME Satzreihe verwenden
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur, ABENDS)));
             }
@@ -1180,7 +1176,6 @@ public class WetterData {
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
-                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
                         unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
@@ -1192,7 +1187,6 @@ public class WetterData {
                 WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
                         true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
-                // FIXME Satzreihe verwenden
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
                         temperatur, false).stream()
@@ -1313,7 +1307,6 @@ public class WetterData {
                     BEWOELKUNG_SATZ_DESCRIBER
                             .altKommtUnterOffenenHimmel(bewoelkung, time, true,
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
-                    // FIXME Satzreihe verwenden
                     ";",
                     heuteOderDerTagSaetze));
         }
@@ -1324,7 +1317,6 @@ public class WetterData {
                         BEWOELKUNG_SATZ_DESCRIBER
                                 .altKommtUnterOffenenHimmel(bewoelkung, time, true,
                                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
-                        // FIXME Satzreihe verwenden
                         ";",
                         TEMPERATUR_SATZ_DESCRIBER.altDraussenNoch(temperatur, ABENDS)));
             }
@@ -2547,13 +2539,15 @@ public class WetterData {
 
     // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
     //  (Rapunzel zuckt zusammmen und bekommt Angst)
-    // FIXME Gehen des NSCs bei Sturm kostet einige Mühe -> Zeit, evtl. Müdigkeit
-    // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
+
+    // IDEA Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
     //  onWetterwechsel()? onTemperaturWechsel()? WetterReactions.onChange()?)
-    //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)
-    //  "du bist von der Sonnenhitze müde"
-    //  "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
-    //  "du bist von der Sonnenhitze müde"
-    //  "Die Sonne scheint hell, ein ... kühles Lüftchen streicht.. und du bist voll Freude und
-    //  Lust."
+    //  - Müde von der Hitze werden:
+    //    "von der Hitze des Tages ermüdet"
+    //    "du bist von der Sonnenhitze müde"
+    //   "Wie nun zu Mittag die Sonne heiß brennt, wird dir so warm und verdrießlich zumut"
+    //   "du bist von der Sonnenhitze müde"
+    //  - Gutes Wetter -> gute Laune:
+    //    "Die Sonne scheint hell, ein ... kühles Lüftchen streicht.. und du bist voll Freude und
+    //    Lust."
 }
