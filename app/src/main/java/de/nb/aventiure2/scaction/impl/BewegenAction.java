@@ -40,6 +40,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
@@ -86,6 +87,10 @@ import static java.util.Objects.requireNonNull;
  */
 public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         extends AbstractScAction {
+    @SuppressWarnings({"unused", "RedundantSuppression"})
+    enum Counter {
+        GEHEN_BEI_STURM
+    }
 
     private final ILocationGO oldLocation;
 
@@ -602,17 +607,30 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 && spatialConnection.getTo().equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 && sc.feelingsComp().hasMood(Mood.ANGESPANNT)) {
             sc.feelingsComp().requestMood(Mood.NEUTRAL);
-        } else if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
+        }
+
+        if (spatialConnection.getTo().equals(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 counterDao.get(BaumFactory.Counter.HOCHKLETTERN) > 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
                     FeelingIntensity.NUR_LEICHT, mins(15)
             );
-        } else if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
+        }
+
+        if (oldLocation.is(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD) &&
                 counterDao.get(BaumFactory.Counter.HINABKLETTERN) != 2) {
             sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
-                    FeelingIntensity.MERKLICH, mins(45)
-            );
-        } else if (sc.feelingsComp().hasMood(Mood.ETWAS_GEKNICKT)) {
+                    FeelingIntensity.MERKLICH, mins(45));
+        }
+
+        if (loadWetter().wetterComp().getLokaleWindstaerke(loadTo())
+                .compareTo(Windstaerke.STURM) >= 0) {
+            if (counterDao.incAndGet(Counter.GEHEN_BEI_STURM) % 3 == 0) {
+                sc.feelingsComp().narrateAndUpgradeTemporaereMinimalmuedigkeit(
+                        FeelingIntensity.MERKLICH, mins(90));
+            }
+        }
+
+        if (sc.feelingsComp().hasMood(Mood.ETWAS_GEKNICKT)) {
             sc.feelingsComp().requestMood(Mood.NEUTRAL);
         }
     }

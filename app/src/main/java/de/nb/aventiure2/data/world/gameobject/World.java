@@ -489,18 +489,16 @@ public class World {
             final boolean gemuetlich, final Hunger hunger) {
         int res = gemuetlich ? FeelingIntensity.NUR_LEICHT : FeelingIntensity.MERKLICH;
 
-        @Nullable final Windstaerke lokaleWindstaerke =
+        final Windstaerke lokaleWindstaerke =
                 loadWetter().wetterComp().getLokaleWindstaerke(location);
-        if (lokaleWindstaerke != null) {
-            if (lokaleWindstaerke.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
-                // Bei kräftigem Wind wird man nicht gut einschlafen
-                res = max(res, FeelingIntensity.SEHR_STARK);
-            }
+        if (lokaleWindstaerke.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
+            // Bei kräftigem Wind wird man nicht gut einschlafen
+            res = max(res, FeelingIntensity.SEHR_STARK);
+        }
 
-            if (lokaleWindstaerke.compareTo(Windstaerke.WINDIG) >= 0) {
-                // Bei  Wind wird man nicht gut einschlafen
-                res = max(res, FeelingIntensity.MERKLICH);
-            }
+        if (lokaleWindstaerke.compareTo(Windstaerke.WINDIG) >= 0) {
+            // Bei  Wind wird man nicht gut einschlafen
+            res = max(res, FeelingIntensity.MERKLICH);
         }
 
         if (hunger == Hunger.HUNGRIG) {

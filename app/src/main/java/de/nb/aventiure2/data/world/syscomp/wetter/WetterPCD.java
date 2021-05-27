@@ -272,7 +272,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    public ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+    ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
             final AvTime time, final boolean unterOffenemHimmel) {
         return wetter.altWindgeraeuscheSaetze(time, unterOffenemHimmel);
     }
@@ -780,12 +780,11 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
 
     /**
-     * Gibt die lokale Windstärke zurück - oder {@code null}, wenn nicht draußen
+     * Gibt die "lokale Windstärke" zurück - drinnen {@link Windstaerke#WINDSTILL}.
      */
-    @Nullable
     Windstaerke getLokaleWindstaerke(final DrinnenDraussen drinnenDraussen) {
         if (!drinnenDraussen.isDraussen()) {
-            return null;
+            return Windstaerke.WINDSTILL;
         }
 
         return getLokaleWindstaerkeDraussen(

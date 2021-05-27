@@ -35,6 +35,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Wetter
@@ -75,8 +76,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
      *                             Wetteränderung beginnt also sofort.
      */
-    private void setPlanwetter(@Nullable final WetterData planwetter,
-                               final boolean firstStepTakesNoTime) {
+    public void setPlanwetter(@Nullable final WetterData planwetter,
+                              final boolean firstStepTakesNoTime) {
         setPlanwetter(planwetter, firstStepTakesNoTime, null);
     }
 
@@ -126,9 +127,11 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     private void doWetterSteps(final AvDateTime now) {
         while (requirePcd().getCurrentWetterStep() != null
-                && now.isEqualOrAfter(requirePcd().getCurrentWetterStep().getExpDoneTime())) {
+                && now.isEqualOrAfter(
+                requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime())) {
             doWetterStep();
-            setupNextWetterStepIfNecessary(requirePcd().getCurrentWetterStep().getExpDoneTime(),
+            setupNextWetterStepIfNecessary(
+                    requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime(),
                     false);
         }
     }
@@ -139,7 +142,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private void doWetterStep() {
         checkNotNull(requirePcd().getCurrentWetterStep(), "No current weather step");
 
-        requirePcd().setWetter(requirePcd().getCurrentWetterStep().getWetterTo());
+        requirePcd().setWetter(
+                requireNonNull(requirePcd().getCurrentWetterStep()).getWetterTo());
     }
 
     /**
@@ -455,11 +459,11 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     /**
-     * Gibt die Windstärke zurück - für den Ort erzeugt, an dem sich der SC gerade befindet.
+     * Gibt die Windstärke zurück - für den Ort erzeugt, an dem sich der SC gerade befindet
+     * (drinnen {@link Windstaerke#WINDSTILL}).
      * Die Methode ist also <i>nicht</i> geeignet, wenn der SC
      * gerade noch nicht das Ziel einer aktuellen Bewegung erreicht hat.
      */
-    @NonNull
     public Windstaerke getWindstaerkeAmOrtDesSc() {
         return getLokaleWindstaerke(loadScLocation());
     }
@@ -470,22 +474,16 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public double getMovementSpeedFactor(@Nullable final ILocationGO location) {
-        @Nullable final Windstaerke windstaerke = getLokaleWindstaerke(location);
-
-        if (windstaerke == null) {
-            return 1.0;
-        }
-
-        return windstaerke.getMovementSpeedFactor();
+        return getLokaleWindstaerke(location).getMovementSpeedFactor();
     }
 
     /**
-     * Gibt die lokale Windstärke zurück.
+     * Gibt die lokale "Windstärke" zurück - drinnen (oder bei Location
+     * {@code null}) {@link Windstaerke#WINDSTILL}.
      */
-    @Nullable
     public Windstaerke getLokaleWindstaerke(@Nullable final ILocationGO location) {
         if (location == null) {
-            return null;
+            return Windstaerke.WINDSTILL;
         }
 
         return requirePcd().getLokaleWindstaerke(location.storingPlaceComp().getDrinnenDraussen());
