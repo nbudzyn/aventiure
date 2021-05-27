@@ -293,7 +293,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final GameObject to = world.load(toId);
 
         final boolean toIsEqualOrInsideOldLocation =
-                world.isOrHasRecursiveLocation(to, oldLocation);
+                isOrHasRecursiveLocation(to, oldLocation);
 
         final boolean inSublocationInDieManNichtHineinsehenKonnte =
                 toIsEqualOrInsideOldLocation
@@ -656,8 +656,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     .flatMap(td -> toDiskontinuitaet(td).stream()));
         }
 
-        alt.addAllIfOtherwiseEmtpy(timedDescriptions.stream()
-                .map(this::tweakForLastActionBewegen));
+        alt.addAllIfOtherwiseEmtpy(timedDescriptions.stream().map(this::tweakForLastActionBewegen));
 
         n.narrateAlt(alt);
     }
@@ -748,6 +747,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         final Known newLocationKnown = sc.memoryComp().getKnown(spatialConnection.getTo());
 
+        // FIXME Gehen des SC bei Sturm kostet einige Mühe -> Müdigkeit
+
         boolean alternativeDescriptionAllowed = false;
         if (oldLocation instanceof ISpatiallyConnectedGO &&
                 world.load(spatialConnection.getTo()) instanceof ISpatiallyConnectedGO) {
@@ -824,7 +825,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private double calcSpeedFactor() {
-        return world.loadSC().feelingsComp().getMovementSpeedFactor();
+        return world.loadSC().feelingsComp().getMovementSpeedFactor()
+                * loadWetter().wetterComp().getMovementSpeedFactor(oldLocation, loadTo());
     }
 
     @NonNull

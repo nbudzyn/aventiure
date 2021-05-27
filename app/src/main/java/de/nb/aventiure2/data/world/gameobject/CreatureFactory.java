@@ -246,6 +246,7 @@ class CreatureFactory {
                 new MovementComp(RAPUNZELS_ZAUBERIN, db, world,
                         world.getSpatialConnectionSystem(),
                         new RapunzelsZauberinMovementNarrator(n, world),
+                        feelingsComp,
                         locationComp,
                         1,
                         // Muss zum Zustand der Zauberin passen!

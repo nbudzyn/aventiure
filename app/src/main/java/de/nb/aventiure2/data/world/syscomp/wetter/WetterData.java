@@ -2547,8 +2547,7 @@ public class WetterData {
 
     // FIXME WetterRections.onBlitzOderDonner(IN_DER_FERNE / MIT_BLITZ)
     //  (Rapunzel zuckt zusammmen und bekommt Angst)
-    // FIXME Schlossfest reagiert auf Unwetter?
-    // FIXME Gehen bei Sturm kostet einige Mühe -> Zeit, Müdigkeit
+    // FIXME Gehen des NSCs bei Sturm kostet einige Mühe -> Zeit, evtl. Müdigkeit
     // FIXME Wetter beeinflusst Stimmung von SC, Rapunzel, Zauberin (Listener-Konzept:
     //  onWetterwechsel()? onTemperaturWechsel()? WetterReactions.onChange()?)
     //  "von der Hitze des Tages ermüdet" (SC wird im Wind oder in Hitze schneller müde)

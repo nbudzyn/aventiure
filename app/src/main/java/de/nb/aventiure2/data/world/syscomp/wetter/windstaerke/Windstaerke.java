@@ -29,13 +29,15 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
     //  Gutes Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
     //  reagieren können?
     KRAEFTIGER_WIND(ImmutableList.of(),
-            ImmutableList.of(AdjektivOhneErgaenzungen.WINDIG.mitGraduativerAngabe("sehr"))),
+            ImmutableList.of(AdjektivOhneErgaenzungen.WINDIG.mitGraduativerAngabe("sehr")),
+            1.2),
     // FIXME Kann der SC bei STURM oder schwerem Sturm auf einen Baum klettern?
     //  Zu Rapunzeln hinauf oder hinabsteigen?
     STURM(ImmutableList.of(NomenFlexionsspalte.STURM, STURMWIND),
-            ImmutableList.of(STUERMISCH)),
+            ImmutableList.of(STUERMISCH), 1.4),
     SCHWERER_STURM(ImmutableList.of(UNWETTER),
-            ImmutableList.of(STUERMISCH.mitAdvAngabe(new AdvAngabeSkopusSatz(BEAENGSTIGEND))));
+            ImmutableList.of(STUERMISCH.mitAdvAngabe(new AdvAngabeSkopusSatz(BEAENGSTIGEND))),
+            1.7);
     // IDEA ORKAN (müsste dann zu starken Reaktionen der Umwelt und der NSCs führen,
     //  würde Schäden anrichten und dem SC massiv z.B. beim Gehen oder Klettern
     //  behindern)
@@ -50,10 +52,23 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
      */
     private final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter;
 
+    /**
+     * Faktor, mit dem die übliche Bewegungsgeschwindigkeit bei dieser Windstärke multipliziert
+     * wird (nie unter 1).
+     */
+    private final double movementSpeedFactor;
+
     Windstaerke(final ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte,
                 final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter) {
+        this(altNomenFlexionsspalte, altAdjPhrWetter, 1.0);
+    }
+
+    Windstaerke(final ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte,
+                final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter,
+                final double movementSpeedFactor) {
         this.altNomenFlexionsspalte = altNomenFlexionsspalte;
         this.altAdjPhrWetter = altAdjPhrWetter;
+        this.movementSpeedFactor = movementSpeedFactor;
     }
 
     /**
@@ -113,5 +128,9 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
         }
 
         return getLokaleWindstaerkeDraussenGeschuetzt();
+    }
+
+    public double getMovementSpeedFactor() {
+        return movementSpeedFactor;
     }
 }

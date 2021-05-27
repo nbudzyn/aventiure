@@ -464,6 +464,21 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return getLokaleWindstaerke(loadScLocation());
     }
 
+    public double getMovementSpeedFactor(@Nullable final ILocationGO from,
+                                         @Nullable final ILocationGO to) {
+        return (getMovementSpeedFactor(from) + getMovementSpeedFactor(to)) / 2;
+    }
+
+    public double getMovementSpeedFactor(@Nullable final ILocationGO location) {
+        @Nullable final Windstaerke windstaerke = getLokaleWindstaerke(location);
+
+        if (windstaerke == null) {
+            return 1.0;
+        }
+
+        return windstaerke.getMovementSpeedFactor();
+    }
+
     /**
      * Gibt die lokale Windstärke zurück.
      */
@@ -538,4 +553,5 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private PlanwetterData getPlanwetter() {
         return requirePcd().getPlan();
     }
+
 }

@@ -203,7 +203,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         sc.feelingsComp().requestMoodMax(Mood.VERUNSICHERT);
 
         final Windstaerke windstaerke =
-                world.loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
+                loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -237,7 +237,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         //  der dritten Person verwenden!)
 
         final Windstaerke windstaerke =
-                world.loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
+                loadWetter().wetterComp().getWindstaerkeAmOrtDesSc();
 
         final AltDescriptionsBuilder alt = alt();
 

@@ -12,6 +12,7 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
+import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -182,6 +183,11 @@ public abstract class AbstractScAction implements IPlayerAction {
      * um eine Diskontinuität handelt - oder das sich das System unsicher ist.
      */
     abstract protected boolean isDefinitivDiskontinuitaet();
+
+    @NonNull
+    protected Wetter loadWetter() {
+        return world.loadWetter();
+    }
 
     @NonNull
     @Override

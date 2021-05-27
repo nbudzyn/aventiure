@@ -17,6 +17,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.ISCActionDoneListenerComponent;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
@@ -72,6 +73,10 @@ public class MovementComp
     private final SpatialConnectionSystem spatialConnectionSystem;
 
     private final IMovementNarrator movementNarrator;
+
+    @Nullable
+    private final FeelingsComp feelingsComp;
+
     private final LocationComp locationComp;
 
     /**
@@ -88,14 +93,12 @@ public class MovementComp
      */
     private final float relativeVelocity;
 
-    /**
-     * Constructor for a {@link MovementComp}.
-     */
     public MovementComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final World world,
                         final SpatialConnectionSystem spatialConnectionSystem,
                         final IMovementNarrator movementNarrator,
+                        @Nullable final FeelingsComp feelingsComp,
                         final LocationComp locationComp,
                         final float relativeVelocity,
                         @Nullable final GameObjectId initialTargetLocationId) {
@@ -103,6 +106,7 @@ public class MovementComp
         this.world = world;
         this.spatialConnectionSystem = spatialConnectionSystem;
         this.movementNarrator = movementNarrator;
+        this.feelingsComp = feelingsComp;
         this.locationComp = locationComp;
         this.relativeVelocity = relativeVelocity;
         this.initialTargetLocationId = initialTargetLocationId;
@@ -314,11 +318,7 @@ public class MovementComp
                                 .getNumberOfWaysOut() :
                         NumberOfWays.NO_WAY;
 
-        movementNarrator.narrateAndDoEnters(
-                from,
-                to,
-                spatialConnection,
-                numberOfWaysIn);
+        movementNarrator.narrateAndDoEnters(from, to, spatialConnection, numberOfWaysIn);
     }
 
     /**
@@ -391,7 +391,9 @@ public class MovementComp
                 from.getId(),
                 spatialStandardStep.getTo(),
                 startTime,
-                calcExpectedDuration(spatialStandardStep.getStandardDuration(), takesNoTime));
+                calcExpectedDuration(
+                        from, (ILocationGO) world.load(spatialStandardStep.getTo()),
+                        spatialStandardStep.getStandardDuration(), takesNoTime));
     }
 
     /**
@@ -400,15 +402,25 @@ public class MovementComp
      *
      * @param takesNoTime Bei <code>false</code> wird die Dauer
      *                    ganz normal berechnet - bei <code>true</code> werden
-     *                    0 Sekunden eingeplant. Der NPC wird also sofort ankommen.
      */
-    private AvTimeSpan calcExpectedDuration(final AvTimeSpan standardDuration,
-                                            final boolean takesNoTime) {
+    private AvTimeSpan calcExpectedDuration(
+            final ILocationGO from,
+            final ILocationGO to, final AvTimeSpan standardDuration,
+            final boolean takesNoTime) {
         if (takesNoTime) {
             return NO_TIME;
         }
 
-        return standardDuration.times(relativeVelocity);
+        return standardDuration.times(calcSpeedFactor(from, to));
+    }
+
+    private double calcSpeedFactor(final ILocationGO from, final ILocationGO to) {
+        final double feelingsFactor =
+                feelingsComp != null ? feelingsComp.getMovementSpeedFactor() : 1.0;
+
+        return relativeVelocity
+                * feelingsFactor
+                * world.loadWetter().wetterComp().getMovementSpeedFactor(from, to);
     }
 
     private void narrateAndDoMovementLeaves() {
