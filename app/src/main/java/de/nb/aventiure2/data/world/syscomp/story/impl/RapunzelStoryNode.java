@@ -158,7 +158,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Blume löst sich auf nach erlösung rapunzel
 
     // FIXME Rabe mit Sinn HINTERlegen!
-    // FIXME Begrenzte Tragkraft?!
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {

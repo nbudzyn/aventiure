@@ -41,7 +41,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
 
 public class BaumFactory {
     public enum Counter {
-        HOCHKLETTERN, HINABKLETTERN;
+        HOCHKLETTERN, HINABKLETTERN
     }
 
     private final AvDatabase db;
@@ -84,7 +84,7 @@ public class BaumFactory {
                 conDataAltDesc("im Geäst",
                         "Auf den Baum klettern",
                         mins(6),
-                        this::altDescIn),
+                        (newLocationKnown, lichtverhaeltnisseInNewLocation) -> altDescIn()),
                 conDataAltDesc("im Geäst",
                         "Zum Boden hinabklettern",
                         mins(4),
@@ -97,8 +97,7 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private ImmutableCollection<TimedDescription<?>> altDescIn(
-            final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+    private ImmutableCollection<TimedDescription<?>> altDescIn() {
         final int count = db.counterDao().get(HOCHKLETTERN);
         switch (count) {
             case 0:
@@ -106,7 +105,7 @@ public class BaumFactory {
             case 1:
                 return ImmutableList.of(getDescInZweitesMal());
             default:
-                return altDescInNtesMal(lichtverhaeltnisse);
+                return altDescInNtesMal();
         }
     }
 
@@ -141,8 +140,7 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static ImmutableCollection<TimedDescription<?>> altDescInNtesMal(
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
+    private static ImmutableCollection<TimedDescription<?>> altDescInNtesMal() {
         return ImmutableList.of(
                 // FIXME Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
                 //  ausgedrückt wird.
@@ -171,7 +169,7 @@ public class BaumFactory {
             case 1:
                 return ImmutableList.of(getDescOutZweitesMal());
             default:
-                return altDescOutNtesMal(lichtverhaeltnisse);
+                return altDescOutNtesMal();
         }
     }
 
@@ -197,8 +195,7 @@ public class BaumFactory {
     }
 
     @CheckReturnValue
-    private static ImmutableCollection<TimedDescription<?>> altDescOutNtesMal(
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
+    private static ImmutableCollection<TimedDescription<?>> altDescOutNtesMal() {
         return altTimed()
                 .add(
                         // "Dann kommst du wieder unten an"

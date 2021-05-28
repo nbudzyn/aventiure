@@ -27,9 +27,6 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
     KRAEFTIGER_WIND(ImmutableList.of(),
             ImmutableList.of(AdjektivOhneErgaenzungen.WINDIG.mitGraduativerAngabe("sehr")),
             1.2),
-    // FIXME Kann der SC bei STURM oder schwerem Sturm auf einen Baum klettern?
-    //  Zu Rapunzeln hinauf oder hinabsteigen?
-    // FIXME Wird die Zauberin beim KRAEFTIGEM WIND o.Ä. zu Rapunzel hinaufsteigen?
     STURM(ImmutableList.of(NomenFlexionsspalte.STURM, STURMWIND),
             ImmutableList.of(STUERMISCH), 1.4),
     SCHWERER_STURM(ImmutableList.of(UNWETTER),
