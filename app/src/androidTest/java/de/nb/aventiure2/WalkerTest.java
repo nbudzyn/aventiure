@@ -36,7 +36,7 @@ import static junit.framework.TestCase.fail;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class WalkerTest extends AndroidTestBase {
-    private static final int STEP_SIZE = 1; // 1;
+    private static final int STEP_SIZE = 2; // 1;
     private static final int NUM_RANDOM_STEPS = 5; // 50;
 
     private static final Logger LOGGER = Logger.getLogger();

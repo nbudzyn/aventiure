@@ -115,7 +115,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     private void onStoryNodeReached(final IStoryNode storyNode) {
-        updatePlanWetter();
+        narrateAndUpdatePlanWetter();
 
         // IDEA Wenn eine Story beendet wurde, könnte der Narrator eine neue
         //  (möglichst abstrakte) Überschrift setzen und damit ein neues Kapitel beginnen.
@@ -130,7 +130,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
      * des {@link IStoryNode}s, den der SC - insgesamt über alle
      * {@link Story}s - erreicht hat.
      */
-    private void updatePlanWetter() {
+    private void narrateAndUpdatePlanWetter() {
         // Diese Bedingungen hier sind Story-übergreifend nach Priorität geordnet!
 
         final Wetter wetterGO = world.loadWetter();
@@ -141,7 +141,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             // Es wird schnell recht heiß, so dass der SC motiviert ist, zum
             // kühlen Brunnen zu gehen und dort mit der Kugel zu spielen.
 
-            wetterGO.wetterComp().setPlanwetter(
+            wetterGO.wetterComp().narrateAndSetPlanwetter(
                     new WetterData(
                             Temperatur.RECHT_HEISS, Temperatur.KUEHL,
                             Windstaerke.WINDSTILL,
@@ -165,7 +165,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                     // sollte schnell gehen
                     mins(30);
 
-            wetterGO.wetterComp().setPlanwetter(
+            wetterGO.wetterComp().narrateAndSetPlanwetter(
                     new WetterData(
                             Temperatur.KUEHL, Temperatur.KUEHL,
                             Windstaerke.SCHWERER_STURM,
@@ -181,7 +181,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 && !requirePcd().isReachedOrStoryBeendet(
                 RapunzelStoryNode.TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN)) {
             // Das Wetter wird langsam schlechter
-            wetterGO.wetterComp().setPlanwetter(new WetterData(
+            wetterGO.wetterComp().narrateAndSetPlanwetter(new WetterData(
                     Temperatur.KUEHL, Temperatur.KUEHL,
                     Windstaerke.WINDIG,
                     Bewoelkung.BEDECKT,
@@ -194,7 +194,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 && !requirePcd().isReachedOrStoryBeendet(
                 FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN)) {
             // Die Hitze lässt langsam nach
-            wetterGO.wetterComp().setPlanwetter(new WetterData(
+            wetterGO.wetterComp().narrateAndSetPlanwetter(new WetterData(
                     Temperatur.WARM, Temperatur.KUEHL,
                     Windstaerke.LUEFTCHEN,
                     Bewoelkung.LEICHT_BEWOELKT,
@@ -204,7 +204,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
         // In allen anderen Fällen ändert sich das Wetter langsam wieder zum
         // Default-Wetter
-        wetterGO.wetterComp().setPlanwetter(WetterData.getDefault());
+        wetterGO.wetterComp().narrateAndSetPlanwetter(WetterData.getDefault());
     }
 
     public void narrateAndDoHintActionIfAny() {

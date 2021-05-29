@@ -11,8 +11,10 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IWetterChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -27,7 +29,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  */
 public class SchlossfestReactionsComp
         extends AbstractReactionsComp
-        implements ITimePassedReactions {
+        implements IWetterChangedReactions, ITimePassedReactions {
     private final AbstractStateComp<SchlossfestState> stateComp;
 
     public SchlossfestReactionsComp(final AvDatabase db, final Narrator n,
@@ -35,6 +37,11 @@ public class SchlossfestReactionsComp
                                     final AbstractStateComp<SchlossfestState> stateComp) {
         super(SCHLOSSFEST, n, world);
         this.stateComp = stateComp;
+    }
+
+    @Override
+    public void onWetterChanged(final WetterData oldWetter, final WetterData newWetter) {
+        // FIXME Reagieren, wenn Sturm ausbricht
     }
 
     @Override

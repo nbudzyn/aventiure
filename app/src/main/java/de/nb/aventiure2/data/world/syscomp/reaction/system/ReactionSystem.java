@@ -27,9 +27,11 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IWetterChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.time.AvDateTime.latest;
@@ -38,9 +40,11 @@ import static de.nb.aventiure2.data.time.AvDateTime.latest;
  * Functionality concerned with Reactions that might delta several game objects.
  */
 public class ReactionSystem
-        implements IMovementReactions, IEssenReactions, IStateChangedReactions,
+        implements
+        IMovementReactions, IEssenReactions, IStateChangedReactions,
         IKnownChangedReactions,
         IRufReactions,
+        IWetterChangedReactions,
         ITimePassedReactions,
         ISCActionReactions {
     private final World world;
@@ -195,6 +199,13 @@ public class ReactionSystem
                 ((Predicate<IResponder>) rufer::equals).negate(),
                 reactions -> reactions.onRuf(
                         rufer, ruftyp));
+    }
+
+    // onWetterChanged
+    @Override
+    public void onWetterChanged(final WetterData oldWetter, final WetterData newWetter) {
+        doReactions(IWetterChangedReactions.class,
+                reactions -> reactions.onWetterChanged(oldWetter, newWetter));
     }
 
     // ITimePassedReactions

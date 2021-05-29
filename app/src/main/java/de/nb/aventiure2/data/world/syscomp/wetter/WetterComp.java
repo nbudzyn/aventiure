@@ -64,8 +64,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Setzt das Planwetter.
      */
-    public void setPlanwetter(@Nullable final WetterData planwetter) {
-        setPlanwetter(planwetter, false);
+    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter) {
+        narrateAndSetPlanwetter(planwetter, false);
     }
 
     /**
@@ -76,9 +76,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
      *                             Wetteränderung beginnt also sofort.
      */
-    public void setPlanwetter(@Nullable final WetterData planwetter,
-                              final boolean firstStepTakesNoTime) {
-        setPlanwetter(planwetter, firstStepTakesNoTime, null);
+    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter,
+                                        final boolean firstStepTakesNoTime) {
+        narrateAndSetPlanwetter(planwetter, firstStepTakesNoTime, null);
     }
 
     /**
@@ -91,9 +91,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * @param maxDuration          Die Zeit bis das Planwetter spätestens eingetreten sein soll
      *                             (circa).
      */
-    public void setPlanwetter(@Nullable final WetterData planwetter,
-                              final boolean firstStepTakesNoTime,
-                              @Nullable final AvTimeSpan maxDuration) {
+    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter,
+                                        final boolean firstStepTakesNoTime,
+                                        @Nullable final AvTimeSpan maxDuration) {
         if (planwetter == null) {
             requirePcd().setPlanwetter(null);
             return;
@@ -118,18 +118,18 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
         setupNextWetterStepIfNecessary(now, firstStepTakesNoTime);
 
-        doWetterSteps(now);
+        narrateAndDoWetterSteps(now);
     }
 
     /**
      * Wenn ausreichend Zeit bis <code>now</code> vergangen ist, führt diese Methode einen
      * oder mehrere Wetter-Schritt aus.
      */
-    private void doWetterSteps(final AvDateTime now) {
+    private void narrateAndDoWetterSteps(final AvDateTime now) {
         while (requirePcd().getCurrentWetterStep() != null
                 && now.isEqualOrAfter(
                 requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime())) {
-            doWetterStep();
+            narrateAndDoWetterStep();
             setupNextWetterStepIfNecessary(
                     requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime(),
                     false);
@@ -139,10 +139,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Führt einen Wetter-Schritt aus, es findet also ein Wetterwechsel statt.
      */
-    private void doWetterStep() {
+    private void narrateAndDoWetterStep() {
         checkNotNull(requirePcd().getCurrentWetterStep(), "No current weather step");
 
-        requirePcd().setWetter(
+        narrateAndSetWetter(
                 requireNonNull(requirePcd().getCurrentWetterStep()).getWetterTo());
     }
 
@@ -157,7 +157,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private void setupNextWetterStepIfNecessary(
             final AvDateTime startTime, final boolean stepTakesNoTime) {
         if (getPlanwetter() == null || getPlanwetter().getWetter().equals(getWetter())) {
-            setPlanwetter(null);
+            narrateAndSetPlanwetter(null);
             return;
         }
 
@@ -440,7 +440,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onTimePassed(final Change<AvDateTime> change) {
-        doWetterSteps(change.getNachher());
+        narrateAndDoWetterSteps(change.getNachher());
 
         final ImmutableCollection<AbstractDescription<?>> alt =
                 requirePcd().altTimePassed(change, loadScLocation());
@@ -540,6 +540,18 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @Nullable
     private ILocationGO loadScLocation() {
         return world.loadSC().locationComp().getLocation();
+    }
+
+    private void narrateAndSetWetter(final WetterData wetter) {
+        if (wetter.equals(getWetter())) {
+            return;
+        }
+
+        final WetterData oldWetter = getWetter();
+
+        requirePcd().setWetter(wetter);
+
+        world.narrateAndDoReactions().onWetterChanged(oldWetter, wetter);
     }
 
     @NonNull
