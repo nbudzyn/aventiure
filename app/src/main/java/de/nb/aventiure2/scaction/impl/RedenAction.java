@@ -227,7 +227,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         // zumindest, wenn SC und X im selben Raum sind.
         // Es könnte Ausnahmen geben.
         ((IHasMentalModelGO) talker).mentalModelComp()
-                .setAssumedLocationToActual(SPIELER_CHARAKTER);
+                .setAssumptionsToActual(SPIELER_CHARAKTER);
     }
 
     @Override

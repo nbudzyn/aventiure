@@ -51,6 +51,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConn
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteImWaldConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ZwischenDenHeckenVorDemSchlossExternConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
@@ -187,7 +188,6 @@ public class World {
     public static final GameObjectId RAPUNZELS_FREIHEITSWUNSCH = new GameObjectId(40_016);
     public static final GameObjectId SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT =
             new GameObjectId(40_020);
-
 
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
@@ -484,6 +484,7 @@ public class World {
      * Natürlich schläft ein Mensch generell nur ein, wenn er es versucht oder sehr langweilige,
      * einschläfernde Dinge tut etc. Dies hier ist nur eine minimale Schwelle.
      */
+    @SuppressWarnings("ConstantConditions")
     private int getMinimaleMuedigkeitZumEinschlafenMensch(
             @Nullable final ILocationGO location,
             final boolean gemuetlich, final Hunger hunger) {
@@ -1313,6 +1314,24 @@ public class World {
         return loadSC().locationComp().hasSameVisibleOuterMostLocationAs(gameObject);
     }
 
+    public void narrateAndUpgradeScKnownAndAssumedState(
+            final Iterable<? extends IGameObject> objects) {
+        for (final IGameObject object : objects) {
+            narrateAndUpgradeScKnownAndAssumedState(object);
+        }
+    }
+
+    public final void narrateAndUpgradeScKnownAndAssumedState(final GameObjectId gameObjectId) {
+        narrateAndUpgradeScKnownAndAssumedState(load(gameObjectId));
+    }
+
+    public final void narrateAndUpgradeScKnownAndAssumedState(final IGameObject gameObject) {
+        loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
+
+        if (gameObject instanceof IHasStateGO<?>) {
+            loadSC().mentalModelComp().setAssumedStateToActual((IHasStateGO<?>) gameObject);
+        }
+    }
 
     /**
      * Lädt (sofern nicht schon geschehen) den Spieler-Charakter und gibt ihn zurück.

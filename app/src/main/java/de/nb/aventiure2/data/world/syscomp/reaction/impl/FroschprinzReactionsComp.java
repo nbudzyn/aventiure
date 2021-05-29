@@ -141,7 +141,7 @@ public class FroschprinzReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         final FroschprinzState state = stateComp.getState();
         return state.equals(UNAUFFAELLIG)
                 || state.equals(WARTET_AUF_SC_BEIM_SCHLOSSFEST);
@@ -484,7 +484,7 @@ public class FroschprinzReactionsComp
     private void narrateAndDoFroschHatHochhebenGefordert() {
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         stateComp.narrateAndSetState(HAT_HOCHHEBEN_GEFORDERT);
-        loadSC().mentalModelComp().setAssumedLocationToActual(FROSCHPRINZ);
+        loadSC().mentalModelComp().setAssumptionsToActual(FROSCHPRINZ);
     }
 
     private void froschprinzHatHochhebenGefordertUndWillMitessen() {

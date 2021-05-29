@@ -90,7 +90,7 @@ public class StoryWebReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         return false;
     }
 
@@ -211,8 +211,9 @@ public class StoryWebReactionsComp
     }
 
     @Override
-    public void onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
-                               final Enum<?> newState) {
+    public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
+                                                   final S oldState,
+                                                   final S newState) {
         if (gameObject.is(FROSCHPRINZ)) {
             onFroschprinzStateChanged(
                     (FroschprinzState) newState

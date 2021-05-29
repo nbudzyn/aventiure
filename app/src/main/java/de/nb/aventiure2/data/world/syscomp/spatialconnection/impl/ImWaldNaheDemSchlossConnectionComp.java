@@ -79,7 +79,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return !to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
                 || !((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
                 .hasState(BEGONNEN)
-                || world.loadSC().memoryComp().isKnown(SCHLOSSFEST);
+                || world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN);
     }
 
     @NonNull
@@ -178,9 +178,13 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     @NonNull
     private TimedDescription<?>
     getDescTo_DraussenVorDemSchloss_FestBegonnen(final AvTimeSpan timeSpan) {
-        if (!world.loadSC().memoryComp().isKnown(SCHLOSSFEST)) {
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
+        if (!world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN)) {
+            world.loadSC().mentalModelComp().setAssumedState(SCHLOSSFEST, BEGONNEN);
             // FIXME Schlossfest sollte (Hier und an anderen Stellen - auf den Sturm reagieren.
+            //  Das Schossfest könnte insbesondere nebenläufig verwüstet werden...
+            //  Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
+            //  reagieren können! Dann könnte das Schlossfest einen State VERWUESTET erhalten -
+            //  oder einen State WIEDER_AUFGEBAUT.
             //  Schwierigkeiten dabei:
             //  - Es müsste zwei initial-Texte geben, je nachdem, ob der SC das Schlossfest
             //   zuerst bei normalem Wetter oder zuerst bei Sturm sieht
@@ -193,14 +197,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             //   aufwendig verzurrt an windgeschützten Plätzen. ---
             //   Aus dem Schloss allerdings klingt Gelächter und es duftet verführerisch nach
             //   Gebratenem"
-            //  - Die App müsste berücksichtigen, welchen Stand der SC kennt - der SC müsste
-            //   ein Mental Model des Schlossfest-States haben (ähnlich wie den AssumedLocations -
-            //   allerdings kennt der SC im Allgemeinen gar nicht den State z.B. der Zauberin oder
-            //   von Rapunzel - oder er hat ein anderes internes Modell als die Dinge selbst.
-            //   Vielleicht könnte man für jede GameObjectId einen State als Enum oder
-            //   String speichern - ungetypt - und der Aufrufer - z.B. die Comp - hätte die
-            //   Verantwortung, den State selbst zu pflegen? Oder der State wird automatisch
-            //   gepflegt.)
+            //  - Die App müsste berücksichtigen, welchen Stand der SC kennt (Mental Model / State)
             //  - Die App müsste prüfen, ob es eine Veränderung gegenüber dem Mental Model des SC
             //  gab:
             //   -- SC kennt normales Schlossfest, aber jetzt Sturm.
@@ -216,13 +213,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             //  - Die App müsste speichern, welchen Stand der SC kennt.
             //  - Dasselbe für den Fall, dass der SC aus dem Schloss tritt
             //  (SchlossVorhalleConnectionComp)
-            //  - Außerdem leichte Anpassungen im der DraussenVorDemSchlossConnectionComp
-
-            // FIXME Das Schossfest könnte allerdings auch nebenläufig verwüstet werden...
-            //  Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
-            //  reagieren können? Dann könnte das Schlossfest einen State VERWUESTET erhalten -
-            //  oder einen State WIEDER_AUFGEBAUT.
-
+            //  - Außerdem leichte Anpassungen im der DraussenVorDemSchlossConnectionComp?
             //  if (world.loadWetter().wetterComp().getLokaleWindstaerke(DRAUSSEN_VOR_DEM_SCHLOSS)
             // .compareTo(Windstaerke.STURM)) {
             // "Du bist überrascht und betroffen, als du aus dem Wald heraustrittst. Ganz
@@ -241,7 +232,6 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
                     + "gestakt und aus dem Schloss duftet es verführerisch nach "
                     + "Gebratenem").timed(timeSpan);
-
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange")

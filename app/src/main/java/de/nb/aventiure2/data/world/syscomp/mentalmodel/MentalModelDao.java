@@ -5,7 +5,6 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,7 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
         insertInternal(pcd);
 
         insertAssumedLocations(pcd);
+        insertAssumedStates(pcd);
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -35,13 +35,24 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
 
         for (final Map.Entry<GameObjectId, GameObjectId> entry :
                 pcd.getAssumedLocations().entrySet()) {
-            insert(pcd.getGameObjectId(), entry.getKey(), entry.getValue());
+            insert(new AssumedLocationInfo(pcd.getGameObjectId(), entry.getKey(),
+                    entry.getValue()));
         }
     }
 
-    private void insert(final GameObjectId assumer, final GameObjectId assumee,
-                        final GameObjectId assumedLocation) {
-        insert(new AssumedLocationInfo(assumer, assumee, assumedLocation));
+
+    /**
+     * Speicher alle angenommenen States in die Datenbank, das hier aufruft, muss auch lokale
+     * Informationen verwerfen!
+     */
+    private void insertAssumedStates(final MentalModelPCD pcd) {
+        deleteAllStatesHeAssumes(pcd.getGameObjectId());
+
+        for (final Map.Entry<GameObjectId, String> entry :
+                pcd.getAssumedStateStrings().entrySet()) {
+            insert(new AssumedStateInfo(pcd.getGameObjectId(), entry.getKey(),
+                    entry.getValue()));
+        }
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -50,8 +61,17 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     /**
      * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
      */
-    @Query("DELETE FROM AssumedLocationInfo WHERE :assumer = assumer" )
+    @Query("DELETE FROM AssumedLocationInfo WHERE :assumer = assumer")
     abstract void deleteAllLocationsHeAssumes(GameObjectId assumer);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insert(AssumedStateInfo assumedStateInfo);
+
+    /**
+     * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
+     */
+    @Query("DELETE FROM AssumedStateInfo WHERE :assumer = assumer")
+    abstract void deleteAllStatesHeAssumes(GameObjectId assumer);
 
     /**
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an
@@ -60,30 +80,27 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     @Override
     public MentalModelPCD get(final GameObjectId assumer) {
         final MentalModelPCD res = getInternal(assumer);
-        res.initAssumedLocations(toMap(getAssumedLocationInfos(assumer)));
+        res.initAssumedLocations(AssumedLocationInfo.toMap(getAssumedLocationInfos(assumer)));
+        res.initAssumedStateStrings(AssumedStateInfo.toMap(getAssumedStateInfos(assumer)));
 
         return res;
     }
 
-    @Query("SELECT * from MentalModelPCD where :assumer = gameObjectId" )
+    @Query("SELECT * from MentalModelPCD where :assumer = gameObjectId")
     public abstract MentalModelPCD getInternal(final GameObjectId assumer);
-
-    private static Map<GameObjectId, GameObjectId> toMap(
-            final List<AssumedLocationInfo> assumedLocationInfos) {
-        final HashMap<GameObjectId, GameObjectId> res =
-                new HashMap<>(assumedLocationInfos.size());
-
-        for (final AssumedLocationInfo assumedLocationInfo : assumedLocationInfos) {
-            res.put(assumedLocationInfo.getAssumee(), assumedLocationInfo.getAssumedLocationId());
-        }
-
-        return res;
-    }
 
     /**
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
      * gespeichert sind!
      */
-    @Query("SELECT * from AssumedLocationInfo where :assumer = assumer" )
+    @Query("SELECT * from AssumedLocationInfo where :assumer = assumer")
     abstract List<AssumedLocationInfo> getAssumedLocationInfos(GameObjectId assumer);
+
+
+    /**
+     * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
+     * gespeichert sind!
+     */
+    @Query("SELECT * from AssumedStateInfo where :assumer = assumer")
+    abstract List<AssumedStateInfo> getAssumedStateInfos(GameObjectId assumer);
 }

@@ -47,6 +47,7 @@ import de.nb.aventiure2.data.world.syscomp.memory.KnownInfo;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryDao;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryPCD;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.AssumedLocationInfo;
+import de.nb.aventiure2.data.world.syscomp.mentalmodel.AssumedStateInfo;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelDao;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelPCD;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementDao;
@@ -94,6 +95,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
         KnownInfo.class,
         MentalModelPCD.class,
         AssumedLocationInfo.class,
+        AssumedStateInfo.class,
         TalkingPCD.class,
         StoryWebPCD.class,
         InternalStoryData.class,

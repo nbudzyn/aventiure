@@ -42,7 +42,7 @@ public class WetterReactionsComp extends AbstractReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         return false;
     }
 

@@ -456,7 +456,7 @@ public class MovementComp
             final ILocationGO scTo) {
         narrateScTrifftMovingGOImDazwischen(scFrom, scTo);
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(getGameObjectId());
+        world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
     }
 
 
@@ -468,7 +468,7 @@ public class MovementComp
     public void narrateAndDoScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {
         narrateScTrifftStehendesMovingGOInTo(scTo);
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(getGameObjectId());
+        world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
     }
 
     private void narrateScTrifftStehendesMovingGOInTo(final ILocationGO scTo) {

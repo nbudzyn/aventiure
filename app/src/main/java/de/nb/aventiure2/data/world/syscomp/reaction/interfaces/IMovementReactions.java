@@ -2,8 +2,10 @@ package de.nb.aventiure2.data.world.syscomp.reaction.interfaces;
 
 import androidx.annotation.Nullable;
 
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
@@ -29,41 +31,56 @@ public interface IMovementReactions extends IReactions {
     void onLeave(ILocatableGO locatable,
                  ILocationGO from, @Nullable ILocationGO to);
 
+    /**
+     * Gibt zurück, ob der SC dieses GameObject bemerkt.
+     */
+    static boolean scBemerkt(final IGameObject gameObject) {
+        if (!(gameObject instanceof IResponder)) {
+            return true;
+        }
+
+        final IResponder responder = (IResponder) gameObject;
+        if (!(responder.reactionsComp() instanceof IMovementReactions)) {
+            return true;
+        }
+
+        return !((IMovementReactions) responder.reactionsComp()).isVorScVerborgen();
+    }
 
     /**
-     * Gibt zurück, ob sich dieser
-     * {@link de.nb.aventiure2.data.world.syscomp.reaction.IResponder} vor einem
-     * SC, der an seiner Location eintrifft, verbirgt ({@code true})
-     * oder nicht ({@code false}).
+     * Gibt zurück, ob dieser {@link IResponder} vor dem
+     * SC vorborgen ist ({@code true}) oder nicht ({@code false}).
      * <p>
-     * Das Ergebnis muss konsistent sein mit
+     * Zum Zeitpunkt, wenn der SC an der Location dieses {@link IResponder}s
+     * eintrifft, muss der Rückgabewert dieser Methode konsistent sein mit
      * {@link #onEnter(ILocatableGO, ILocationGO, ILocationGO)}:
      * <ul>
      * <li>Wenn {@code onEnter()} keine Beschreibung liefert (also den
-     * {@code IResponder} nicht erwähnt, muss diese Methode ({@code true})
+     * {@code IResponder} nicht erwähnt), muss diese Methode ({@code true})
      * liefern.
      * <li>Wenn {@code onEnter()} allerdings eine Beschreibung liefert (also den
      * {@code IResponder} erwähnt, muss diese Methode ({@code false}) liefern.
      * </ul>
      * <p>
      * (Diese Methode ist eine Basis für Ausgaben wir "Der Frosch ist hier
-     * nirgendwo mehr zu sehen")
+     * nirgendwo mehr zu sehen". Sie beeinflusst außerdem, ob der Sc
+     * den Statuswechsel dieses {@link IResponder}s mitbekommt.)
      */
-    boolean verbirgtSichVorEintreffendemSC();
+    boolean isVorScVerborgen();
 
     /**
      * The <code>locatable</code> enters a place (after having left some other place).
      * (This is called at the end of the movement.)
      * <p>
      * Das Verhalten muss konsistent sein mit
-     * {@link #verbirgtSichVorEintreffendemSC()}:
+     * {@link #isVorScVerborgen()}:
      * <ul>
      * <li>Wenn {@code onEnter()} keine Beschreibung liefert (also den
      * {@code IResponder} nicht erwähnt, muss
-     * {@code verbirgtSichVorEintreffendemSC()} ({@code true}) liefern.
+     * {@code isVorScVerborgen()} ({@code true}) liefern.
      * <li>Wenn {@code onEnter()} allerdings eine Beschreibung liefert (also den
      * {@code IResponder} erwähnt, muss
-     * {@code verbirgtSichVorEintreffendemSC()} ({@code false}) liefern.
+     * {@code isVorScVerborgen()} ({@code false}) liefern.
      * </ul>
      */
     void onEnter(ILocatableGO locatable,

@@ -85,7 +85,7 @@ public class SchlosswacheReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         if (!loadSC().locationComp().hasLocation(SCHLOSS_VORHALLE)) {
             return true;
         }
@@ -262,8 +262,8 @@ public class SchlosswacheReactionsComp
                         .timed(secs(20)));
 
         stateComp.narrateAndSetState(AUFMERKSAM);
-        loadSC().memoryComp().narrateAndUpgradeKnown(SCHLOSSWACHE);
-        loadSC().mentalModelComp().setAssumedLocationToActual(SCHLOSSWACHE);
+        world.narrateAndUpgradeScKnownAndAssumedState(SCHLOSSWACHE);
+        loadSC().mentalModelComp().setAssumptionsToActual(SCHLOSSFEST);
         sc.feelingsComp().requestMood(ANGESPANNT);
     }
 
@@ -475,7 +475,7 @@ public class SchlosswacheReactionsComp
                     sc.feelingsComp().requestMood(NEUTRAL);
 
                     // Der Spieler weiß jetzt, dass das Schlossfest läuft
-                    sc.memoryComp().narrateAndUpgradeKnown(SCHLOSSFEST);
+                    sc.mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
                 });
     }
 }

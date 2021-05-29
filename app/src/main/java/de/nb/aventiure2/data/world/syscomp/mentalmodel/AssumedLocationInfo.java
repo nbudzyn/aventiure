@@ -3,6 +3,10 @@ package de.nb.aventiure2.data.world.syscomp.mentalmodel;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.nb.aventiure2.data.world.base.GameObjectId;
 
 @Entity(primaryKeys = {"assumer", "assumee"})
@@ -22,6 +26,18 @@ public class AssumedLocationInfo {
         this.assumer = assumer;
         this.assumee = assumee;
         this.assumedLocationId = assumedLocationId;
+    }
+
+    static Map<GameObjectId, GameObjectId> toMap(
+            final List<AssumedLocationInfo> assumedLocationInfos) {
+        final HashMap<GameObjectId, GameObjectId> res =
+                new HashMap<>(assumedLocationInfos.size());
+
+        for (final AssumedLocationInfo assumedLocationInfo : assumedLocationInfos) {
+            res.put(assumedLocationInfo.getAssumee(), assumedLocationInfo.getAssumedLocationId());
+        }
+
+        return res;
     }
 
     @NonNull

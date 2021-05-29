@@ -279,7 +279,7 @@ public class AblegenAction
     }
 
     private void narrateUpgradeKnownAndSetLocationAndAction() {
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
+        world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
         gameObject.locationComp().narrateAndSetLocation(location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }

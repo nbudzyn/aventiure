@@ -76,7 +76,7 @@ public class SpielerCharakterFactory {
                 createDefaultFeelingsTowards(),
                 createInitialFeelingsTowards());
         final MentalModelComp mentalModelComp =
-                new MentalModelComp(id, db, world, ImmutableMap.of());
+                new MentalModelComp(id, db, world, ImmutableMap.of(), ImmutableMap.of());
         return new SpielerCharakter(id,
                 locationComp,
                 mentalModelComp,

@@ -271,7 +271,7 @@ public class NehmenAction
         gameObject.locationComp()
                 .narrateAndSetLocation(targetLocation,
                         () -> {
-                            world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
+                            world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
                             sc.feelingsComp().requestMood(NEUTRAL);
 
                             final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
@@ -321,7 +321,7 @@ public class NehmenAction
                 .narrateAndSetLocation(
                         targetLocation,
                         () -> {
-                            world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
+                            world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
                             sc.feelingsComp().requestMood(ANGESPANNT);
                         }
                 );
@@ -374,7 +374,7 @@ public class NehmenAction
     }
 
     private void narrateAndDoObject() {
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(gameObject);
+        world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
 
         narrateObject();
 

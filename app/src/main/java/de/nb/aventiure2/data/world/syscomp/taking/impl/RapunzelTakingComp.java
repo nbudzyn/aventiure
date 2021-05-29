@@ -107,7 +107,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                                 "liebenswürdig" : "schnippisch"),
                         "an")
         );
-        memoryComp.narrateAndUpgradeKnown(given);
+        world.narrateAndUpgradeScKnownAndAssumedState(given);
 
         // Das Gespräch wird nicht beendet!
     }
@@ -173,7 +173,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
         n.narrateAlt(alt, secs(30));
 
-        memoryComp.narrateAndUpgradeKnown(given);
+        world.narrateAndUpgradeScKnownAndAssumedState(given);
 
         world.loadSC().feelingsComp().upgradeFeelingsTowards(
                 RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);

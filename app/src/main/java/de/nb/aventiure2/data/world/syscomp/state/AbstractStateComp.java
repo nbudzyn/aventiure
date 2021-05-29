@@ -76,8 +76,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
 
         setState(state);
 
-        world.narrateAndDoReactions()
-                .onStateChanged(getGameObjectId(), oldState, state);
+        world.narrateAndDoReactions().onStateChanged(getGameObjectId(), oldState, state);
     }
 
     public void setState(final S state) {
@@ -99,5 +98,9 @@ public abstract class AbstractStateComp<S extends Enum<S>>
 
     private static <S extends Enum<S>> String toString(@NonNull final S state) {
         return state.name();
+    }
+
+    public Class<S> getStateEnumClass() {
+        return stateEnumClass;
     }
 }

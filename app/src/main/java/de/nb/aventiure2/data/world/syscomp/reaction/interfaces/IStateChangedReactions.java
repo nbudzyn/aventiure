@@ -8,7 +8,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
  * changing his state.
  */
 public interface IStateChangedReactions extends IReactions {
-    void onStateChanged(IHasStateGO<?> gameObject,
-                        Enum<?> oldState,
-                        Enum<?> newState);
+    <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject, final S oldState,
+                                            final S newState);
 }

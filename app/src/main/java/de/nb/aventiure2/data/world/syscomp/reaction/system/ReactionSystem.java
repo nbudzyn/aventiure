@@ -88,9 +88,9 @@ public class ReactionSystem
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         throw new IllegalStateException(
-                "ReactionSystem#verbirgtSichVorEintreffendemSC() wurde aufgerufen."
+                "ReactionSystem#isVorScVerborgen() wurde aufgerufen."
                         + " Das ist ziemlich sinnlos, denn jeder IResponder "
                         + "erzeugt ja seinen eigenen Rückgabewert.");
     }
@@ -137,21 +137,22 @@ public class ReactionSystem
     }
 
     // IStateChangedReactions
-    public void onStateChanged(final GameObjectId gameObjectId,
-                               final Enum<?> oldState,
-                               final Enum<?> newState) {
+    @SuppressWarnings("unchecked")
+    public <S extends Enum<S>> void onStateChanged(final GameObjectId gameObjectId,
+                                                   final S oldState,
+                                                   final S newState) {
         final IGameObject gameObject = world.load(gameObjectId);
         if (!(gameObject instanceof IHasStateGO<?>)) {
             return;
         }
 
-        onStateChanged((IHasStateGO<?>) gameObject, oldState, newState);
+        onStateChanged((IHasStateGO<S>) gameObject, oldState, newState);
     }
 
     @Override
-    public void onStateChanged(final IHasStateGO<?> gameObject,
-                               final Enum<?> oldState,
-                               final Enum<?> newState) {
+    public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
+                                                   final S oldState,
+                                                   final S newState) {
         doReactions(IStateChangedReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onStateChanged(

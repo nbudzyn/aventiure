@@ -140,7 +140,7 @@ public class RapunzelReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         return false;
     }
 
@@ -367,7 +367,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber() {
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
+        world.narrateAndUpgradeScKnownAndAssumedState(RAPUNZEL);
         final EinzelneSubstantivischePhrase desc = getDescription();
 
         // "zu ihr"
@@ -391,8 +391,7 @@ public class RapunzelReactionsComp
                 "dich an")
                 .timed(secs(20)));
 
-        stateComp
-                .setState(NORMAL);
+        stateComp.setState(NORMAL);
         memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
         // Rapunzel ist erst einmal verschreckt.
@@ -410,7 +409,7 @@ public class RapunzelReactionsComp
     }
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
+        world.narrateAndUpgradeScKnownAndAssumedState(RAPUNZEL);
         final EinzelneSubstantivischePhrase desc = getDescription();
 
         n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
@@ -459,7 +458,7 @@ public class RapunzelReactionsComp
 
         memoryComp.narrateAndUpgradeKnown(SPIELER_CHARAKTER);
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZEL);
+        world.narrateAndUpgradeScKnownAndAssumedState(RAPUNZEL);
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber() {
@@ -618,7 +617,7 @@ public class RapunzelReactionsComp
                 "einmal?“, fragt", anaph.persPron().nomK(), "dich")
                 .timed(secs(30)));
 
-        memoryComp.narrateAndUpgradeKnown(GOLDENE_KUGEL);
+        world.narrateAndUpgradeScKnownAndAssumedState(GOLDENE_KUGEL);
 
         talkingComp.setTalkingTo(SPIELER_CHARAKTER);
         stateComp.narrateAndSetState(HAT_NACH_KUGEL_GEFRAGT);
@@ -809,8 +808,9 @@ public class RapunzelReactionsComp
     }
 
     @Override
-    public void onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
-                               final Enum<?> newState) {
+    public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
+                                                   final S oldState,
+                                                   final S newState) {
         if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
             onZauberinStateChanged((RapunzelsZauberinState) newState);
             return;

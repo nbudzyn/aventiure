@@ -32,7 +32,6 @@ import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
-import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
@@ -243,7 +242,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     public void narrateAndDo() {
         narrateLocationOnly(loadTo());
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(spatialConnection.getTo());
+        world.narrateAndUpgradeScKnownAndAssumedState(spatialConnection.getTo());
 
         // Die nicht-movable Objekte sollten in der Location-beschreibung
         // alle enthalten gewesen sein (mindestens implizit), auch rekursiv.
@@ -275,7 +274,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             @NonNull final ILocationGO location) {
         final ImmutableList<LOC_DESC> directlyContainedNonLivingNonMovables =
                 world.loadDescribableNonLivingNonMovableInventory(location.getId());
-        sc.memoryComp().narrateAndUpgradeKnown(directlyContainedNonLivingNonMovables);
+
+        world.narrateAndUpgradeScKnownAndAssumedState(directlyContainedNonLivingNonMovables);
         sc.mentalModelComp().setAssumedLocations(
                 directlyContainedNonLivingNonMovables, location);
 
@@ -399,9 +399,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     //  der SC sie erwartet hätte, aber nicht bemerkt.
                     || (
                     expected instanceof ILivingBeingGO
-                            && !scBemerkt((IDescribableGO & ILivingBeingGO) expected)
-            )
-            ) {
+                            && !IMovementReactions.scBemerkt(expected))) {
                 missing.add(expected);
             }
         }
@@ -413,7 +411,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         for (final IDescribableGO actual : actualVisibleDescribableInventory) {
             // Den Frosch oder die Schlosswache bemerkt der SC vielleicht gar nicht.
             if ((!(actual instanceof ILivingBeingGO)
-                    || scBemerkt((IDescribableGO & ILivingBeingGO) actual))
+                    || IMovementReactions.scBemerkt((IDescribableGO & ILivingBeingGO) actual))
                     && !expectedDescribableInventory.contains(actual)) {
                 // Actual ("der Käfig") war nicht erwartet!
                 if (actual instanceof ILocationGO
@@ -428,20 +426,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         }
 
         return missing.build();
-    }
-
-    private static <LIV extends IDescribableGO & ILivingBeingGO>
-    boolean scBemerkt(final LIV describableLivingBeing) {
-        if (!(describableLivingBeing instanceof IResponder)) {
-            return true;
-        }
-
-        final IResponder responder = (IResponder) describableLivingBeing;
-        if (!(responder.reactionsComp() instanceof IMovementReactions)) {
-            return true;
-        }
-
-        return !((IMovementReactions) responder.reactionsComp()).verbirgtSichVorEintreffendemSC();
     }
 
     private void narrateAndDoMissingObjects(final List<LOC_DESC> missingObjects) {
@@ -488,7 +472,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final Pair<ILocationGO, ? extends List<? extends LOC_DESC>> locationAndDescribables) {
         requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
-        sc.memoryComp().narrateAndUpgradeKnown(locationAndDescribables.second);
+        world.narrateAndUpgradeScKnownAndAssumedState(locationAndDescribables.second);
         sc.mentalModelComp().setAssumedLocations(
                 locationAndDescribables.second, locationAndDescribables.first);
 

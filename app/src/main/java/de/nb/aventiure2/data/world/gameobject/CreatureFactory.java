@@ -227,7 +227,7 @@ class CreatureFactory {
         final MentalModelComp mentalModelComp =
                 new MentalModelComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!
-                        ImmutableMap.of());
+                        ImmutableMap.of(), ImmutableMap.of());
         final MenschlicherMuedigkeitsBiorhythmus muedigkeitsBiorhythmus =
                 new MenschlicherMuedigkeitsBiorhythmus();
         final FeelingsComp feelingsComp =

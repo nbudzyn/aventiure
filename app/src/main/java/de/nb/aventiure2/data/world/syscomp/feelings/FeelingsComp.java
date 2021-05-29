@@ -234,7 +234,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         return requirePcd().getMovementSpeedFactor();
     }
 
-    // IDEA Man könnte also die Möglichkeit anbieten, jederzeit den Status eines bestimmten
+    // IDEA Wir haben bereits ein spezialisiertes Konzept, assumed Locations und
+    //  assumed States zu speichern. Man könnte (zusätzlich / alternativ) eine
+    //  die Möglichkeit anbieten, jederzeit den Status eines bestimmten
     //  Game Objects unter einem "Label" zu persistieren (inkl. Zeitpunkt), so dass
     //  man ihn später wieder laden kann. Alternativ auch mehrere Game Objects,
     //  denn nur so kann man prüfen, was sich nach dem Schlafen an einem Ort verändert hat.
@@ -246,7 +248,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  kommen wie... ist verschwunden.
     //  - Für die Tageszeit haben wir ein gutes Konzept.
     //  - Für das Bewegen (Frosch weg, Kugel weg) funktioniert es gut über die AssumedLocations.
-    //  - Für andere Statusänderungen scheint es nicht zu funktionieren? Wenn
+    //  - Für State-Änderungen kann man die Assumed States verwenden. (Man muss allerdings
+    //   im Allgemeinen alle vorher-nacher-Kombinationen als Einzelfälle programmieren - das
+    //   wird schnell mühevoll.)
+    //  - Für sonst Statusänderungen haben wir kein funktionieres Konzept. Wenn
     //    man die Zeit mittendrin weiterlaufen lässt, funktioniert das mit den Tageszeiten
     //    nicht mehr!
     // IDEA Wenn man schläft, "verpasst" man Reactions, die man dann später
@@ -254,7 +259,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  am besten den Stand VOR dem Einschlafen und vergleicht mit dem Stand NACH dem
     //  Einschlafen. Vielleicht beim Aufwachen dasselbe Konzept wie beim Bewegen
     //  verwenden! (Setzt voraus, dass der SC Änderungen während des Schlafens
-    //  weder erzählt bekommt noch sie in den assumedLocations registriert werden.)
+    //  weder erzählt bekommt noch sie in den assumedLocations und assumedStates registriert
+    //  werden.)
     //  Man könnte sagen: Schlafen ist wie Bewegen: Es gibt eine neue Beschreibung der
     //  äußeren Umstände, zumindest soweit sie sich verändert haben. Dazu muss der Unterschied
     //  (vorher / nachher) ermittelt werden. Und die Zeit muss zwischendrin vergehen -
@@ -264,24 +270,14 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     //  letzter Zeitpunkt, letzter WACHER Zeitpunkt und aktueller Zeitpunkt
     //  Entsprechend kann dann der Text gestaltet werden, z.B. "Der Gesang hat aufgehört."
 
-    // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
-    //  - Benutzer schläft ein, während Rapunzel singt, aufhört und wieder anfängt
-    //  - Benutzer schläft ein, während Rapunzel singt und wacht auf und Rapunzel hat
-    //    zwischenzeitlich aufgehört zu singen
-
     // IDEA Idee: Jede Reaktion speichert den letzten Zustand (PCD), auf Basis dessen sie einen
-    //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, ein Text zu
+    //  Text gerendert hat sowie den Zeitpunkt dazu. Wenn wieder Gelegenheit ist, einen Text zu
     //  rendern, wird geprüft, ob sich der Status gegenüber dem Zeitpunkt geändert hat,
     //  außerdem wird geprüft, ob der Zeitpunkt Benutzer etwas versäumt hat oder die ganze
-    //  Zeit anwesend und aufnahmefähig war - entsprechend etwas wie "Plötzlich endet der
-    //  Gesang"
-    //  oder "Es ist kein Gesang mehr zu hören" gerendert.
-
-    // IDEA Zum Beispiel wäre der Benutzer über alle Statusänderungen zu unterrichten,
-    //  Die zwischenzeitlich passiert sind ("der Frosch ist verschwunden").
+    //  Zeit anwesend und aufnahmefähig war.
 
     // IDEA Der Benutzer (oder auch andere Game Objects) könnte auch über
-    //  die Assumed Locations hinaus ein Mental Model haben, wo
+    //  die Assumed Locations und Assumed States hinaus ein Mental Model haben, wo
     //  der Stand der Welt, wie der Benutzer ihn sich vorstellt, gespeichert ist
     //  (z.B. die Welt, oder der Raum bevor der Benutzer eingeschlafen ist...)
     //  Dann könnte man beim Erzählen (z.B. beim Aufwachen) vergleichen...
@@ -289,9 +285,6 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     // IDEA Der Frosch läuft während des Schlafens davon - nicht beim Aufwachen.
     //  Alternativ könnte der Spieler durch das Weglaufen aufgeweckt werden
     //  (so ähnlich, wie das Warten unterbrochen wird).
-
-    // IDEA Konzept dafür entwickeln, dass der Benutzer einen  Ort verlässt, während XYZ
-    //  passiert und zurückkehrt, wenn XYZ nicht mehr passiert
 
     // IDEA Konzept entwickeln, dass diese "Statusübergänge" realisiert:
     //  - Benutzer schläft an einem Ort, Rapunzel beginnt dort zu singen und hört wieder auf

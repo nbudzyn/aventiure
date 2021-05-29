@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.mentalmodel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.room.Ignore;
 
 import com.google.common.collect.ImmutableList;
 
@@ -14,11 +15,14 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
+import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -33,19 +37,53 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     @NonNull
     private final Map<GameObjectId, GameObjectId> initiallyAssumedLocations;
 
+    /**
+     * Map der initial angenommenen States.
+     * <ul>
+     * <li>Key (nie {{@code null}}) ist die IDs des
+     * {@link de.nb.aventiure2.data.world.syscomp.state.IHasStateGO}s
+     * <li>Value (auch nie {{@code null}}) der String des State-Enums, in dem sich das
+     *  {@link de.nb.aventiure2.data.world.syscomp.state.IHasStateGO} (laut Annahme) befindet
+     * </ul>
+     * Es ist klar, dass das {@link IHasMentalModelGO} vermutlich den State des
+     * {@link de.nb.aventiure2.data.world.syscomp.state.IHasStateGO} nicht im Detail kennt.
+     */
+    @NonNull
+    @Ignore
+    private final Map<GameObjectId, Enum<?>> initiallyAssumedStates;
+
     public MentalModelComp(final GameObjectId gameObjectId,
                            final AvDatabase db,
                            final World world,
-                           final Map<GameObjectId, GameObjectId> initiallyAssumedLocations) {
+                           final Map<GameObjectId, GameObjectId> initiallyAssumedLocations,
+                           final Map<GameObjectId, Enum<?>> initiallyAssumedStates) {
         super(gameObjectId, db.mentalModelDao());
         this.world = world;
         this.initiallyAssumedLocations = initiallyAssumedLocations;
+        this.initiallyAssumedStates = initiallyAssumedStates;
     }
 
     @Override
     @NonNull
     protected MentalModelPCD createInitialState() {
-        return new MentalModelPCD(getGameObjectId(), initiallyAssumedLocations);
+        return new MentalModelPCD(getGameObjectId(), initiallyAssumedLocations,
+                initiallyAssumedStates);
+    }
+
+    /**
+     * Speichert die aktuellen Werte (Ort, Zustand) des Game Objects als angenommene
+     * Werte.
+     */
+    public void setAssumptionsToActual(final GameObjectId gameObjectId) {
+        final GameObject gameObject = world.load(gameObjectId);
+
+        if (gameObject instanceof ILocatableGO) {
+            setAssumedLocation(gameObjectId,
+                    getActualLocationId((ILocatableGO) gameObject));
+        }
+        if (gameObject instanceof IHasStateGO<?>) {
+            setAssumedState(gameObjectId, getActualState((IHasStateGO<?>) gameObject));
+        }
     }
 
     /**
@@ -169,10 +207,6 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         setAssumedLocation(locatable.getId(), location);
     }
 
-    public void setAssumedLocationToActual(final GameObjectId locatableId) {
-        setAssumedLocation(locatableId, getActualLocationId(locatableId));
-    }
-
     public void setAssumedLocation(final GameObjectId locatableId,
                                    @Nullable final ILocationGO location) {
         setAssumedLocation(locatableId,
@@ -192,12 +226,105 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         requirePcd().setAssumedLocation(locatableId, locationId);
     }
 
-    private GameObjectId getActualLocationId(final ILocatableGO locatable) {
-        return getAssumedLocationId(locatable.getId());
+    private static GameObjectId getActualLocationId(final ILocatableGO locatable) {
+        return locatable.locationComp().getLocationId();
     }
 
-    private GameObjectId getActualLocationId(final GameObjectId locatableId) {
-        return ((ILocatableGO) world.load(locatableId)).locationComp().getLocationId();
+    /**
+     * Gibt zurück, ob im mentalen Modell gespeichert ist, dass sich das
+     * {@code IHasStateGO} in einem dieser Zustände befindet.
+     */
+    @CheckReturnValue
+    public boolean hasAssumedState(final GameObjectId gameObjectId, final Enum<?>... states) {
+        for (@Nullable final Enum<?> state : states) {
+            if (hasAssumedState(gameObjectId, state)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt zurück, ob im mentalen Modell gespeichert ist, dass sich das
+     * {@code IHasStateGO} in diesem State befindet.
+     */
+    @CheckReturnValue
+    private boolean hasAssumedState(final GameObjectId gameObjectId,
+                                    final @Nullable Enum<?> state) {
+        return Objects.equals(getAssumedStateString(gameObjectId),
+                state != null ? state.name() : null);
+    }
+
+    @Nullable
+    @CheckReturnValue
+    @SuppressWarnings("unchecked")
+    private <S extends Enum<S>> Enum<?> getAssumedState(final GameObjectId gameObjectId) {
+        @Nullable final String assumedStateString = getAssumedStateString(gameObjectId);
+        if (assumedStateString == null) {
+            return null;
+        }
+
+        final GameObject gameObject = world.load(gameObjectId);
+        checkArgument(gameObject instanceof IHasStateGO<?>,
+                "No IHasStateGO: " + gameObject);
+
+        final Class<S> stateEnumClass =
+                ((IHasStateGO<S>) gameObject).stateComp().getStateEnumClass();
+        return Enum.valueOf(stateEnumClass, assumedStateString);
+    }
+
+    @Nullable
+    @CheckReturnValue
+    private <S extends Enum<S>> S getAssumedState(final IHasStateGO<S> gameObject) {
+        @Nullable final String assumedStateString = getAssumedStateString(gameObject.getId());
+        if (assumedStateString == null) {
+            return null;
+        }
+
+        final Class<S> stateEnumClass = gameObject.stateComp().getStateEnumClass();
+        return Enum.valueOf(stateEnumClass, assumedStateString);
+    }
+
+    @Nullable
+    @CheckReturnValue
+    private String getAssumedStateString(final GameObjectId gameObjectId) {
+        return requirePcd().getAssumedStateString(gameObjectId);
+    }
+
+    public void unsetAssumedState(final IHasStateGO<?> gameObject) {
+        unsetAssumedState(gameObject.getId());
+    }
+
+    private <S extends Enum<S>> void unsetAssumedState(final GameObjectId gameObjectId) {
+        setAssumedState(gameObjectId, (S) null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <S extends Enum<S>> void setAssumedStateToActual(final GameObjectId gameObjectId) {
+        setAssumedStateToActual((IHasStateGO<S>) world.load(gameObjectId));
+    }
+
+    public <S extends Enum<S>> void setAssumedStateToActual(final IHasStateGO<S> gameObject) {
+        setAssumedState(gameObject.getId(), getActualState(gameObject));
+    }
+
+    public <S extends Enum<S>> void setAssumedState(final IHasStateGO<S> gameObject,
+                                                    @Nullable final S state) {
+        setAssumedState(gameObject.getId(), state);
+    }
+
+    public <S extends Enum<S>> void setAssumedState(final GameObjectId gameObjectId,
+                                                    @Nullable final S state) {
+        requirePcd().setAssumedState(gameObjectId, state);
+    }
+
+    private Enum<?> getActualState(final GameObjectId gameObjectId) {
+        return getActualState((IHasStateGO<?>) world.load(gameObjectId));
+    }
+
+    private static <S extends Enum<S>> S getActualState(final IHasStateGO<S> gameObject) {
+        return (S) gameObject.stateComp().getState();
     }
 }
 

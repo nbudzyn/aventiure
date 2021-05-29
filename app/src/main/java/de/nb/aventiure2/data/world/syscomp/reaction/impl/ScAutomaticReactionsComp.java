@@ -19,7 +19,6 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IEssenReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IRufReactions;
@@ -110,7 +109,7 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
-    public boolean verbirgtSichVorEintreffendemSC() {
+    public boolean isVorScVerborgen() {
         return false;
     }
 
@@ -125,29 +124,24 @@ public class ScAutomaticReactionsComp
         }
 
         if (locationComp.hasSameVisibleOuterMostLocationAs(to)) {
-            onEnterScOuterMostLocation(locatable, to);
+            onEnterLocationVisibleToSc(locatable, to);
         }
     }
 
-    private void onEnterScOuterMostLocation(
+    /**
+     * Wird aufgerufen, wenn ein Locatable eine Location betritt,
+     * die für den SC sichtbar ist.
+     */
+    private void onEnterLocationVisibleToSc(
             final ILocatableGO locatable, final ILocationGO to) {
-        if (scBemerktOnEnter(locatable)) {
-            // Der SC hat den Wechsel auf den neuen Ort miterlebt.
+        if (IMovementReactions.scBemerkt(locatable)) {
+            // Der SC hat den Wechsel auf den neuen Ort miterlebt...
             mentalModelComp.setAssumedLocation(locatable, to);
+            // ...sowie den Status des locatables.
+            if (locatable instanceof IHasStateGO<?>) {
+                mentalModelComp.setAssumedStateToActual((IHasStateGO<?>) locatable);
+            }
         }
-    }
-
-    private static boolean scBemerktOnEnter(final ILocatableGO locatable) {
-        if (!(locatable instanceof IResponder)) {
-            return true;
-        }
-
-        final IResponder responder = (IResponder) locatable;
-        if (!(responder.reactionsComp() instanceof IMovementReactions)) {
-            return true;
-        }
-
-        return !((IMovementReactions) responder.reactionsComp()).verbirgtSichVorEintreffendemSC();
     }
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
@@ -159,8 +153,16 @@ public class ScAutomaticReactionsComp
     }
 
     @Override
-    public void onStateChanged(final IHasStateGO<?> gameObject, final Enum<?> oldState,
-                               final Enum<?> newState) {
+    public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
+                                                   final S oldState,
+                                                   final S newState) {
+        if (gameObject instanceof ILocatableGO
+                && ((ILocatableGO) gameObject).locationComp().hasSameVisibleOuterMostLocationAs(
+                SPIELER_CHARAKTER)
+                && IMovementReactions.scBemerkt(gameObject)) {
+            mentalModelComp.setAssumedState(gameObject, newState);
+        }
+
         if (loadSC().locationComp().hasLocation(
                 SCHLOSS_VORHALLE, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 DRAUSSEN_VOR_DEM_SCHLOSS) &&
