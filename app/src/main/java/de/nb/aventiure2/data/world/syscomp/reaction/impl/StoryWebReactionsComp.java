@@ -160,7 +160,8 @@ public class StoryWebReactionsComp
                 SCHLOSS_VORHALLE,
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                        .hasState(SchlossfestState.BEGONNEN)) {
+                        .hasState(SchlossfestState.BEGONNEN,
+                                SchlossfestState.VERWUESTET)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
         }
 
@@ -273,10 +274,10 @@ public class StoryWebReactionsComp
     }
 
     private void onSchlossfestStateChanged(final SchlossfestState newState) {
-        if (newState == SchlossfestState.BEGONNEN &&
-                loadSC().locationComp().hasRecursiveLocation(
-                        DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
-                        SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+        if ((newState == SchlossfestState.BEGONNEN || newState == SchlossfestState.VERWUESTET)
+                && loadSC().locationComp().hasRecursiveLocation(
+                DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
+                SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
             return;
         }

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.system;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -33,6 +35,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
 import static de.nb.aventiure2.data.time.AvDateTime.latest;
 
@@ -203,9 +206,12 @@ public class ReactionSystem
 
     // onWetterChanged
     @Override
-    public void onWetterChanged(final WetterData oldWetter, final WetterData newWetter) {
+    public void onWetterChanged(final ImmutableList<WetterData> wetterSteps) {
+        checkArgument(wetterSteps.size() >= 2,
+                "At least to wetter steps necessary: old and new");
+
         doReactions(IWetterChangedReactions.class,
-                reactions -> reactions.onWetterChanged(oldWetter, newWetter));
+                reactions -> reactions.onWetterChanged(wetterSteps));
     }
 
     // ITimePassedReactions

@@ -2165,7 +2165,7 @@ public class WetterData {
 
     @NonNull
     @CheckReturnValue
-    Windstaerke getWindstaerkeUnterOffenemHimmel() {
+    public Windstaerke getWindstaerkeUnterOffenemHimmel() {
         return windstaerkeUnterOffenemHimmel;
     }
 

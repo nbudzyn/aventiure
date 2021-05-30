@@ -30,6 +30,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -300,7 +301,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         alt.add(paragraph("Heute ist viel passiert").schonLaenger());
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                .hasState(SchlossfestState.BEGONNEN)) {
+                .hasState(SchlossfestState.BEGONNEN, VERWUESTET)) {
             alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
                     + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "
                     + "versprochen? Nur weil er eine hässliche, eklige und glibschige "

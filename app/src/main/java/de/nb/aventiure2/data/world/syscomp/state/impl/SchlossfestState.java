@@ -5,5 +5,6 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
  */
 public enum SchlossfestState {
     NOCH_NICHT_BEGONNEN,
-    BEGONNEN
+    BEGONNEN,
+    VERWUESTET
 }

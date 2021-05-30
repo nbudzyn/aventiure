@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -38,11 +39,14 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp.Counter.NACH_DRAUSSEN_KEIN_FEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
@@ -71,15 +75,19 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         super(IM_WALD_NAHE_DEM_SCHLOSS, db, timeTaker, n, world);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
-                || !((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                .hasState(BEGONNEN)
-                || world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN);
+                || (
+                world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, NOCH_NICHT_BEGONNEN)
+                        && !loadSchlossfest().stateComp().hasState(NOCH_NICHT_BEGONNEN));
+    }
+
+    @NonNull
+    public IHasStateGO<SchlossfestState> loadSchlossfest() {
+        return (IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST);
     }
 
     @NonNull
@@ -114,12 +122,29 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()
-                == BEGONNEN) {
-            return ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen(mins(10)));
+        final ImmutableCollection<TimedDescription<?>> res;
+
+        switch (loadSchlossfest().stateComp().getState()) {
+            case NOCH_NICHT_BEGONNEN:
+                res = altDescTo_DraussenVorDemSchloss_KeinFest();
+                break;
+            case BEGONNEN:
+                res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen());
+                break;
+            case VERWUESTET:
+                res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
+                break;
+            // FIXME SC kennt Schlossfest im Sturm, aber jetzt Sturm beendet.
+            //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
+            //   gerichtet und es herscht wieder reges Treiben"
+            default:
+                throw new IllegalStateException("Unexpected state: "
+                        + loadSchlossfest().stateComp().getState());
         }
 
-        return altDescTo_DraussenVorDemSchloss_KeinFest();
+        world.loadSC().mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
+
+        return res;
     }
 
     @NonNull
@@ -169,61 +194,14 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 .mitVorfeldSatzglied("bald")
                 .timed(wegzeit)
                 .withCounterIdIncrementedIfTextIsNarrated(NACH_DRAUSSEN_KEIN_FEST)
-                .undWartest()
-                .komma());
+                .undWartest());
 
         return alt.build();
     }
 
     @NonNull
-    private TimedDescription<?>
-    getDescTo_DraussenVorDemSchloss_FestBegonnen(final AvTimeSpan timeSpan) {
+    private TimedDescription<?> getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (!world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN)) {
-            world.loadSC().mentalModelComp().setAssumedState(SCHLOSSFEST, BEGONNEN);
-            // FIXME Schlossfest sollte (Hier und an anderen Stellen - auf den Sturm reagieren.
-            //  Das Schossfest könnte insbesondere nebenläufig verwüstet werden...
-            //  Konzept bauen, das alle ReactionComps auf Wetter(änderungen)
-            //  reagieren können! Dann könnte das Schlossfest einen State VERWUESTET erhalten -
-            //  oder einen State WIEDER_AUFGEBAUT.
-            //  Schwierigkeiten dabei:
-            //  - Es müsste zwei initial-Texte geben, je nachdem, ob der SC das Schlossfest
-            //   zuerst bei normalem Wetter oder zuerst bei Sturm sieht
-            //   "Du bist betroffen, als du aus dem Wald heraustrittst. Das
-            //   Schlossfest hat begonnen, doch die kleinen farbigen Pagoden überall im
-            //   Schlossgarten
-            //   machen einen traurigen Eindruck --- viele hat der Sturm umgeworfen
-            //   oder ihr Dach abgerissen. Einige geschlossene Marktstände sind ausgeräumt oder
-            //   stehen
-            //   aufwendig verzurrt an windgeschützten Plätzen. ---
-            //   Aus dem Schloss allerdings klingt Gelächter und es duftet verführerisch nach
-            //   Gebratenem"
-            //  - Die App müsste berücksichtigen, welchen Stand der SC kennt (Mental Model / State)
-            //  - Die App müsste prüfen, ob es eine Veränderung gegenüber dem Mental Model des SC
-            //  gab:
-            //   -- SC kennt normales Schlossfest, aber jetzt Sturm.
-            //   "Als du aus dem Wald heraustrittst bietet sich dir ein trauriges Bild. Der Sturm
-            //   hat im Schlossgarten heftig gewütet, viele der Pagoden sind umgeworfen oder ihre
-            //   Dächer sind abgerissen."
-            //   -- SC kennt Schlossfest im Sturm, aber jetzt Sturm beendet.
-            //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
-            //   gerichtet und es herscht wieder reges Treiben"
-            //   -- SC kennt Schlossfest im Sturm, weiterhin Sturm.
-            //   "Du erreichst bald den von Sturm verwüsteten Schlossgarten"
-            //   -- SC kennt normales Schlossfest, weiterhin kein Sturm.
-            //  - Die App müsste speichern, welchen Stand der SC kennt.
-            //  - Dasselbe für den Fall, dass der SC aus dem Schloss tritt
-            //  (SchlossVorhalleConnectionComp)
-            //  - Außerdem leichte Anpassungen im der DraussenVorDemSchlossConnectionComp?
-            //  if (world.loadWetter().wetterComp().getLokaleWindstaerke(DRAUSSEN_VOR_DEM_SCHLOSS)
-            // .compareTo(Windstaerke.STURM)) {
-            // "Du bist überrascht und betroffen, als du aus dem Wald heraustrittst. Ganz
-            // offenbar hat das Schlossfest begonnen.",
-            // "Überall im Schlossgarten sind kleine Pagoden aufgebaut, "
-            // "...machen nur noch einen traurigen Eindruck"
-            // "Dächer sind abgerissen"
-            // "umgeworfen"
-            // "aus dem Schloss hörst du Lachen und Tumult"
-
             return du("bist", "von dem Lärm überrascht, der dir "
                     + "schon von weitem "
                     + "entgegenschallt. Als du aus dem Wald heraustrittst, "
@@ -231,11 +209,53 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     + "Überall im Schlossgarten stehen kleine Pagoden "
                     + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
                     + "gestakt und aus dem Schloss duftet es verführerisch nach "
-                    + "Gebratenem").timed(timeSpan);
+                    + "Gebratenem").schonLaenger().timed(mins(10));
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange")
-                .timed(timeSpan);
+                .schonLaenger()
+                .timed(mins(10));
+    }
+
+    private TimedDescription<?> getDescTo_DraussenVorDemSchloss_FestVerwuestet() {
+        @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();
+
+        if (assumedSchlossfestState == null || assumedSchlossfestState == NOCH_NICHT_BEGONNEN) {
+            world.loadSC().feelingsComp().requestMoodMax(BETRUEBT);
+
+            return du("bist",
+                    "betroffen, als du aus dem Wald heraustrittst.",
+                    "Das Schlossfest hat begonnen, aber der Sturm hat heftig gewütet:",
+                    "Viele der kleinen farbigen Pagoden überall im Schlossgarten sind umgeworfen",
+                    "oder ihr Dach ist abgerissen. Einige Marktstände sind ausgeräumt oder",
+                    "stehen aufwendig verzurrt an windgeschützten Plätzen. –",
+                    "Aus dem Schloss allerdings hört man die Menschenmenge und es duftet",
+                    "verführerisch nach Gebratenem")
+                    .schonLaenger().timed(mins(10));
+        } else if (assumedSchlossfestState == BEGONNEN) {
+            world.loadSC().feelingsComp().requestMoodMax(BETRUEBT);
+
+            return neuerSatz(
+                    "Als du aus dem Wald heraustrittst, bietet sich dir ein trauriges Bild.",
+                    "Der Sturm hat im Schlossgarten heftig gewütet, viele der Pagoden sind",
+                    "umgeworfen oder ihre Dächer abgerissen. Einzelne Marktstände sind",
+                    "ausgeräumt oder stehen aufwendig verzurrt an windgeschützten Plätzen. –",
+                    "Aus dem Schloss aber hört man immer noch die Menschenmenge")
+                    .schonLaenger().timed(mins(10));
+        } else {
+            world.loadSC().feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
+
+            return du("erreichst", "bald den vom Sturm verwüsteten Schlossgarten")
+                    .schonLaenger()
+                    .mitVorfeldSatzglied("bald")
+                    .timed(mins(10))
+                    .undWartest();
+        }
+    }
+
+    @Nullable
+    private SchlossfestState getAssumedSchlossfestState() {
+        return (SchlossfestState) world.loadSC().mentalModelComp().getAssumedState(SCHLOSSFEST);
     }
 
     private String getActionNameTo_VorDemAltenTurm() {

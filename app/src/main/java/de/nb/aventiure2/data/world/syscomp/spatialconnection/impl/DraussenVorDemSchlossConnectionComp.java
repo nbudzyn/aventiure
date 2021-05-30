@@ -28,7 +28,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -41,7 +41,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
-        SCHLOSS_VORHALLE_FEST_BEGONNEN
+        SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN
     }
 
     public DraussenVorDemSchlossConnectionComp(
@@ -102,12 +102,18 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     @SuppressWarnings("unchecked")
     private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        switch (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp().getState()) {
+        final IHasStateGO<SchlossfestState> schlossfest =
+                (IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST);
+        switch (schlossfest.stateComp().getState()) {
+            case NOCH_NICHT_BEGONNEN:
+                return getDescTo_SchlossVorhalle_KeinFest();
             case BEGONNEN:
                 return getDescTo_SchlossVorhalle_FestBegonnen();
-
+            case VERWUESTET:
+                return getDescTo_SchlossVorhalle_FestVerwuestet();
             default:
-                return getDescTo_SchlossVorhalle_KeinFest();
+                throw new IllegalStateException("Unexpected Schlossfest state: "
+                        + schlossfest.stateComp().getState());
         }
     }
 
@@ -119,19 +125,36 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                 .dann();
     }
 
-    private TimedDescription<?>
-    getDescTo_SchlossVorhalle_FestBegonnen() {
-        if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_BEGONNEN) == 0) {
+    private TimedDescription<?> getDescTo_SchlossVorhalle_FestBegonnen() {
+        if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN) == 0) {
             return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
                     + "eine Weile, bis "
                     + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
                     + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
                     .timed(mins(7))
                     .withCounterIdIncrementedIfTextIsNarrated(
-                            SCHLOSS_VORHALLE_FEST_BEGONNEN)
+                            SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN)
                     .komma();
         }
 
+        return getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung();
+    }
+
+    private TimedDescription<?> getDescTo_SchlossVorhalle_FestVerwuestet() {
+        if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN) == 0) {
+            return du("gehst", "die Treppe zum Schloss hinauf;",
+                    "drinnen empfängt dich großes Gedränge. Die prächtige Vorhalle steht voller",
+                    "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
+                    .timed(mins(3))
+                    .withCounterIdIncrementedIfTextIsNarrated(
+                            SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN)
+                    .komma();
+        }
+
+        return getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung();
+    }
+
+    private static TimedDescription<?> getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung() {
         return du("betrittst", "wieder das Schloss")
                 .mitVorfeldSatzglied("wieder")
                 .timed(mins(2))

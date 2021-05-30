@@ -134,18 +134,6 @@ public class AvDateTime {
         return secsSinceBeginning > other.secsSinceBeginning;
     }
 
-    int getSec() {
-        return getTime().getSec();
-    }
-
-    int getMin() {
-        return getTime().getMin();
-    }
-
-    int getHour() {
-        return getTime().getHour();
-    }
-
     private long getDay() {
         return secsSinceBeginning / SECS_IN_A_DAY;
     }

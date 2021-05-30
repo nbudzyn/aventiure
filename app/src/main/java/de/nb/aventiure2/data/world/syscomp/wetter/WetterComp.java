@@ -64,8 +64,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Setzt das Planwetter.
      */
-    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter) {
-        narrateAndSetPlanwetter(planwetter, false);
+    public void setPlanwetter(@Nullable final WetterData planwetter) {
+        setPlanwetter(planwetter, false);
     }
 
     /**
@@ -74,11 +74,12 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
      *                             (Wetterwechsel) ganz normal ausgeführt - bei <code>true</code>
      *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
-     *                             Wetteränderung beginnt also sofort.
+     *                             Wetteränderung beginnt also sofort (beim nächsten
+     *                             {@link #onTimePassed(Change)})
      */
-    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter,
-                                        final boolean firstStepTakesNoTime) {
-        narrateAndSetPlanwetter(planwetter, firstStepTakesNoTime, null);
+    public void setPlanwetter(@Nullable final WetterData planwetter,
+                              final boolean firstStepTakesNoTime) {
+        setPlanwetter(planwetter, firstStepTakesNoTime, null);
     }
 
     /**
@@ -87,13 +88,14 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
      *                             (Wetterwechsel) ganz normal ausgeführt - bei <code>true</code>
      *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
-     *                             Wetteränderung beginnt also sofort.
+     *                             Wetteränderung beginnt also sofort (beim nächsten
+     *                             {@link #onTimePassed(Change)}).
      * @param maxDuration          Die Zeit bis das Planwetter spätestens eingetreten sein soll
      *                             (circa).
      */
-    public void narrateAndSetPlanwetter(@Nullable final WetterData planwetter,
-                                        final boolean firstStepTakesNoTime,
-                                        @Nullable final AvTimeSpan maxDuration) {
+    public void setPlanwetter(@Nullable final WetterData planwetter,
+                              final boolean firstStepTakesNoTime,
+                              @Nullable final AvTimeSpan maxDuration) {
         if (planwetter == null) {
             requirePcd().setPlanwetter(null);
             return;
@@ -118,22 +120,41 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
         setupNextWetterStepIfNecessary(now, firstStepTakesNoTime);
 
-        narrateAndDoWetterSteps(now);
+        // Die Wetteränderung beginnt beim nächsten onTimePassed(). Dort werden dann auch
+        // sowohl die Wetteränderung als auch die Listener-Texte erzählt.
     }
 
     /**
      * Wenn ausreichend Zeit bis <code>now</code> vergangen ist, führt diese Methode einen
      * oder mehrere Wetter-Schritt aus.
+     *
+     * @return
      */
-    private void narrateAndDoWetterSteps(final AvDateTime now) {
+    private ImmutableList<WetterData> narrateAndDoWetterSteps(final AvDateTime now) {
+        final ImmutableList.Builder<WetterData> wetterChangesBuilder = ImmutableList.builder();
+
         while (requirePcd().getCurrentWetterStep() != null
                 && now.isEqualOrAfter(
                 requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime())) {
+
+            final WetterData oldWetter = getWetter();
+
             narrateAndDoWetterStep();
+
+            if (!oldWetter.equals(getWetter())) {
+                if (wetterChangesBuilder.build().isEmpty()) {
+                    wetterChangesBuilder.add(oldWetter);
+                }
+
+                wetterChangesBuilder.add(getWetter());
+            }
+
             setupNextWetterStepIfNecessary(
                     requireNonNull(requirePcd().getCurrentWetterStep()).getExpDoneTime(),
                     false);
         }
+
+        return wetterChangesBuilder.build();
     }
 
     /**
@@ -142,8 +163,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private void narrateAndDoWetterStep() {
         checkNotNull(requirePcd().getCurrentWetterStep(), "No current weather step");
 
-        narrateAndSetWetter(
-                requireNonNull(requirePcd().getCurrentWetterStep()).getWetterTo());
+        final WetterData wetter = requireNonNull(requirePcd().getCurrentWetterStep()).getWetterTo();
+
+        requirePcd().setWetter(wetter);
     }
 
     /**
@@ -157,7 +179,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     private void setupNextWetterStepIfNecessary(
             final AvDateTime startTime, final boolean stepTakesNoTime) {
         if (getPlanwetter() == null || getPlanwetter().getWetter().equals(getWetter())) {
-            narrateAndSetPlanwetter(null);
+            setPlanwetter(null);
             return;
         }
 
@@ -440,13 +462,17 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onTimePassed(final Change<AvDateTime> change) {
-        narrateAndDoWetterSteps(change.getNachher());
+        final ImmutableList<WetterData> wetterSteps = narrateAndDoWetterSteps(change.getNachher());
 
         final ImmutableCollection<AbstractDescription<?>> alt =
                 requirePcd().altTimePassed(change, loadScLocation());
 
         if (!alt.isEmpty()) {
             n.narrateAlt(alt, NO_TIME);
+        }
+
+        if (!wetterSteps.isEmpty()) {
+            world.narrateAndDoReactions().onWetterChanged(wetterSteps);
         }
     }
 
@@ -540,18 +566,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @Nullable
     private ILocationGO loadScLocation() {
         return world.loadSC().locationComp().getLocation();
-    }
-
-    private void narrateAndSetWetter(final WetterData wetter) {
-        if (wetter.equals(getWetter())) {
-            return;
-        }
-
-        final WetterData oldWetter = getWetter();
-
-        requirePcd().setWetter(wetter);
-
-        world.narrateAndDoReactions().onWetterChanged(oldWetter, wetter);
     }
 
     @NonNull

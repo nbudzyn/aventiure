@@ -62,6 +62,7 @@ import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
@@ -555,9 +556,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final GameObject newLocation = world.load(spatialConnection.getTo());
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                .hasState(BEGONNEN)) {
-            if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS) &&
-                    newLocation.is(SCHLOSS_VORHALLE)) {
+                .hasState(BEGONNEN, VERWUESTET)) {
+            if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS)
+                    && newLocation.is(SCHLOSS_VORHALLE)) {
                 return true;
             }
             if (newLocation.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {

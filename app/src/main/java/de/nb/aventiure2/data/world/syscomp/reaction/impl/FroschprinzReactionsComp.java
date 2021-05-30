@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.annotations.VisibleForTesting;
 
 import javax.annotation.Nullable;
@@ -44,6 +46,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -90,7 +93,7 @@ public class FroschprinzReactionsComp
                            @Nullable final ILocationGO to) {
         if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER)) {
             // Spieler nimmt den Frosch mit
-            onSCLeaveMitFroschprinz(from, to);
+            onSCLeaveMitFroschprinz(from);
             return;
         }
 
@@ -119,8 +122,7 @@ public class FroschprinzReactionsComp
         }
     }
 
-    private void onSCLeaveMitFroschprinz(final ILocationGO from,
-                                         @Nullable final ILocationGO to) {
+    private void onSCLeaveMitFroschprinz(final ILocationGO from) {
         if (!from.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             return;
         }
@@ -259,8 +261,6 @@ public class FroschprinzReactionsComp
             prinzFaehrtMitWagenDavon();
             return;
         }
-
-        final EinzelneSubstantivischePhrase desc = getDescription();
 
         // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
         //  dann genauer beschreiben (vgl. BewegenAction)
@@ -507,8 +507,7 @@ public class FroschprinzReactionsComp
     public void onTimePassed(final Change<AvDateTime> change) {
         switch (stateComp.getState()) {
             case ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS:
-                if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST))
-                        .stateComp().hasState(BEGONNEN)) {
+                if (schlossfestHatBegonnen()) {
                     froschprinzLaueftZumSchlossfestLos();
                     return;
                 }
@@ -555,7 +554,13 @@ public class FroschprinzReactionsComp
 
 
     private boolean schlossfestHatBegonnen() {
-        return ((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST))
-                .stateComp().hasState(BEGONNEN);
+        return loadSchlossfest()
+                .stateComp().hasState(BEGONNEN, VERWUESTET);
+    }
+
+    @SuppressWarnings("unchecked")
+    @NonNull
+    private IHasStateGO<SchlossfestState> loadSchlossfest() {
+        return (IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST);
     }
 }

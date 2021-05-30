@@ -259,7 +259,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     @Nullable
     @CheckReturnValue
     @SuppressWarnings("unchecked")
-    private <S extends Enum<S>> Enum<?> getAssumedState(final GameObjectId gameObjectId) {
+    public <S extends Enum<S>> Enum<?> getAssumedState(final GameObjectId gameObjectId) {
         @Nullable final String assumedStateString = getAssumedStateString(gameObjectId);
         if (assumedStateString == null) {
             return null;
@@ -276,28 +276,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     @Nullable
     @CheckReturnValue
-    private <S extends Enum<S>> S getAssumedState(final IHasStateGO<S> gameObject) {
-        @Nullable final String assumedStateString = getAssumedStateString(gameObject.getId());
-        if (assumedStateString == null) {
-            return null;
-        }
-
-        final Class<S> stateEnumClass = gameObject.stateComp().getStateEnumClass();
-        return Enum.valueOf(stateEnumClass, assumedStateString);
-    }
-
-    @Nullable
-    @CheckReturnValue
     private String getAssumedStateString(final GameObjectId gameObjectId) {
         return requirePcd().getAssumedStateString(gameObjectId);
-    }
-
-    public void unsetAssumedState(final IHasStateGO<?> gameObject) {
-        unsetAssumedState(gameObject.getId());
-    }
-
-    private <S extends Enum<S>> void unsetAssumedState(final GameObjectId gameObjectId) {
-        setAssumedState(gameObjectId, (S) null);
     }
 
     @SuppressWarnings("unchecked")
@@ -317,10 +297,6 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     public <S extends Enum<S>> void setAssumedState(final GameObjectId gameObjectId,
                                                     @Nullable final S state) {
         requirePcd().setAssumedState(gameObjectId, state);
-    }
-
-    private Enum<?> getActualState(final GameObjectId gameObjectId) {
-        return getActualState((IHasStateGO<?>) world.load(gameObjectId));
     }
 
     private static <S extends Enum<S>> S getActualState(final IHasStateGO<S> gameObject) {

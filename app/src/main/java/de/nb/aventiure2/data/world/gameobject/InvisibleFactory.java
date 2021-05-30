@@ -58,7 +58,7 @@ public class InvisibleFactory {
 
             stateComp = addComponent(new SchlossfestStateComp(db, timeTaker, n, world));
             reactionsComp = addComponent(
-                    new SchlossfestReactionsComp(db, n, world, stateComp));
+                    new SchlossfestReactionsComp(n, world, stateComp));
         }
 
         @Nonnull

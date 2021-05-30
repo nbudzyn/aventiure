@@ -36,6 +36,7 @@ import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReac
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -60,7 +61,7 @@ public class SchlosswacheReactionsComp
         SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE,
         SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM,
         SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM,
-        SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
+        SC_MUSS_SCLOSS_WIEDER_VERLASSEN
     }
 
     private final TimeTaker timeTaker;
@@ -229,7 +230,7 @@ public class SchlosswacheReactionsComp
         }
 
         if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
-                .hasState(BEGONNEN)) {
+                .hasState(BEGONNEN, VERWUESTET)) {
             // Schlosswache hat andere Dinge zu tun
             return;
         }
