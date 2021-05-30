@@ -65,9 +65,7 @@ public class ReactionSystem
     public void onLeave(final GameObjectId locatableId,
                         final ILocationGO from,
                         @Nullable final GameObjectId toId) {
-        onLeave(
-                (ILocatableGO) world.load(locatableId),
-                from, toId);
+        onLeave((ILocatableGO) world.load(locatableId), from, toId);
     }
 
     private void onLeave(final ILocatableGO locatable,

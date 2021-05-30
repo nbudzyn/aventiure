@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
             ITalkerGO<FroschprinzTalkingComp> &
             ILivingBeingGO>
     void narrateAndDoWiederholungFortsetzung() {
-        final F froschprinz = (F) world.load(FROSCHPRINZ);
+        final F froschprinz = world.load(FROSCHPRINZ);
 
         if (froschprinz.locationComp().hasRecursiveLocation(
                 world.loadSC().locationComp().getLocation()) &&

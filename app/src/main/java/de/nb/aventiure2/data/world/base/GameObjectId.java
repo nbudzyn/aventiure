@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.base.IBezugsobjekt;
  * ID of an {@link GameObject}
  */
 @Immutable
-public class GameObjectId implements IBezugsobjekt {
+public final class GameObjectId implements IBezugsobjekt {
     private final long value;
 
     public GameObjectId(final long value) {

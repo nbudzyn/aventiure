@@ -256,7 +256,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         // FIXME Wieder entfernen, wenn Problem behoben!
         if (gameObjectId == World.RAPUNZELS_ZAUBERIN
-                && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
+                && (world.<ITalkerGO<?>>load(World.RAPUNZELS_ZAUBERIN)
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
                 || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
             throw new IllegalStateException("Darf nicht passieren! Bewegung während des Redens!");
@@ -321,7 +321,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
 
         // FIXME Wieder entfernen, wenn Problem behoben!
         if (gameObjectId == World.RAPUNZELS_ZAUBERIN
-                && (((ITalkerGO<?>) world.load(World.RAPUNZELS_ZAUBERIN))
+                && (world.<ITalkerGO<?>>load(World.RAPUNZELS_ZAUBERIN)
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
                 || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
             throw new IllegalStateException("Darf nicht passieren! Bewegung während des Redens!");
@@ -577,7 +577,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        final IDescribableGO describableGO = (IDescribableGO) world.load(getGameObjectId());
+        final IDescribableGO describableGO = world.load(getGameObjectId());
 
         return world.anaph(describableGO, descShortIfKnown);
     }

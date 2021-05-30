@@ -282,7 +282,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     @SuppressWarnings("unchecked")
     public <S extends Enum<S>> void setAssumedStateToActual(final GameObjectId gameObjectId) {
-        setAssumedStateToActual((IHasStateGO<S>) world.load(gameObjectId));
+        setAssumedStateToActual(world.<IHasStateGO<S>>load(gameObjectId));
     }
 
     public <S extends Enum<S>> void setAssumedStateToActual(final IHasStateGO<S> gameObject) {

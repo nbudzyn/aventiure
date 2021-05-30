@@ -97,7 +97,7 @@ class BankAmTischBeimSchlossfestFactory {
         // konkreter Tisch ausgewählt ist).
         // Das Problem gibt es nur, weil es ja eigentlich ganz viele
         // Tische beim Schlossfest gibt.
-        ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
+        world.<ILocatableGO>load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
                 .locationComp().setLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
         if (db.counterDao().get(BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN) == 0) {
@@ -124,7 +124,7 @@ class BankAmTischBeimSchlossfestFactory {
     private StructuredDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird wieder entfernt, s.o.
-        ((ILocatableGO) world.load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
+        world.<ILocatableGO>load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
                 .locationComp().unsetLocation();
         // Wir müssen auch die Erinnerung des SCs an den Tisch löschen!
         // Sonst erhalten wir beim Aufstehen einen Text in der Art

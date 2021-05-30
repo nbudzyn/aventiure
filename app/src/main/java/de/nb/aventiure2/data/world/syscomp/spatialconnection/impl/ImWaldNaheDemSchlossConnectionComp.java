@@ -59,7 +59,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  * for the {@link World#IM_WALD_NAHE_DEM_SCHLOSS}
  * room.
  */
-@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectionComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -87,7 +86,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     @NonNull
     public IHasStateGO<SchlossfestState> loadSchlossfest() {
-        return (IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST);
+        return world.load(SCHLOSSFEST);
     }
 
     @NonNull
@@ -134,7 +133,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             case VERWUESTET:
                 res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
                 break;
-            // FIXME SC kennt Schlossfest im Sturm, aber jetzt Sturm beendet.
+            // FIXME SC kennt Schlossfest im Sturm, aber jetzt wieder aufgebaut:
             //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
             //   gerichtet und es herscht wieder reges Treiben"
             default:
@@ -304,20 +303,19 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 .timed(mins(25)));
     }
 
-    @SuppressWarnings("unchecked")
     private <FROSCHPRINZ extends ILocatableGO & IHasStateGO<FroschprinzState>>
     boolean alleinAufDemPfadZumTurm() {
-        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+        if (world.<ILocatableGO>load(RAPUNZELS_ZAUBERIN).locationComp()
                 .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        if (((ILocatableGO) world.load(RAPUNZEL)).locationComp()
+        if (world.<ILocatableGO>load(RAPUNZEL).locationComp()
                 .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        final FROSCHPRINZ froschprinz = (FROSCHPRINZ) world.load(FROSCHPRINZ);
+        final FROSCHPRINZ froschprinz = world.load(FROSCHPRINZ);
         return !froschprinz.stateComp().getState().hasGestalt(FroschprinzState.Gestalt.MENSCH) ||
                 !froschprinz.locationComp()
                         .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM);

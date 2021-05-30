@@ -287,7 +287,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return NO_TIME;
         }
 
-        final ILocationGO storyNodeLocation = (ILocationGO) world.load(storyNodeLocationId);
+        final ILocationGO storyNodeLocation = world.load(storyNodeLocationId);
 
         final ILocationGO outerMostStoryNodeLocation =
                 LocationSystem.getOuterMostLocation(storyNodeLocation);

@@ -132,7 +132,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
 
         if (oldTalkingToId != null) {
-            ((ITalkerGO<?>) world.load(oldTalkingToId)).talkingComp()
+            world.<ITalkerGO<?>>load(oldTalkingToId).talkingComp()
                     .unsetTalkingTo(false);
         }
 
@@ -199,7 +199,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return null;
         }
 
-        return (ITalkerGO<?>) world.load(talkingToId);
+        return world.load(talkingToId);
     }
 
     @Nullable

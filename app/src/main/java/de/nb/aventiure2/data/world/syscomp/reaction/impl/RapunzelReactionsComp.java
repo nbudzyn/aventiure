@@ -884,12 +884,12 @@ public class RapunzelReactionsComp
             return false;
         }
 
-        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN))
+        if (world.<ILocatableGO>load(RAPUNZELS_ZAUBERIN)
                 .locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        if (((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+        if (world.<ILocatableGO>load(RAPUNZELS_ZAUBERIN).locationComp()
                 .hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Während Rapunzel von der Zauberin Besuch hat, singt sie nicht
             return false;
@@ -1054,7 +1054,7 @@ public class RapunzelReactionsComp
     @NonNull
     private <Z extends ILocatableGO & IResponder & ITalkerGO<RapunzelsZauberinTalkingComp>>
     Z loadZauberin() {
-        return (Z) world.load(RAPUNZELS_ZAUBERIN);
+        return world.load(RAPUNZELS_ZAUBERIN);
     }
 
     public void forgetAll() {

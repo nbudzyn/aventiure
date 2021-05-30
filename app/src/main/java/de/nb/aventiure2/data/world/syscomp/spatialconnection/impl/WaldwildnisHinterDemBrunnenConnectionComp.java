@@ -44,7 +44,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(IM_WALD_BEIM_BRUNNEN) ||
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
-                !((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ))
+                !world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
                 !world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
     }
@@ -64,7 +64,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
                                                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
-                ((IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ))
+                world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return getDescTo_ImWaldBeimBrunnenWirdTraurig();

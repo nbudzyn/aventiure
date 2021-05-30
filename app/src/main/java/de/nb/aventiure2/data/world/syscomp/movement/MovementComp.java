@@ -392,7 +392,7 @@ public class MovementComp
                 spatialStandardStep.getTo(),
                 startTime,
                 calcExpectedDuration(
-                        from, (ILocationGO) world.load(spatialStandardStep.getTo()),
+                        from, world.load(spatialStandardStep.getTo()),
                         spatialStandardStep.getStandardDuration(), takesNoTime));
     }
 
@@ -504,7 +504,7 @@ public class MovementComp
             return null;
         }
 
-        return (ILocationGO) world.load(targetLocationId);
+        return world.load(targetLocationId);
     }
 
     @Nullable
@@ -525,14 +525,14 @@ public class MovementComp
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM getCurrentStepFrom() {
         @Nullable final GameObjectId currentStepFromId = getCurrentStepFromId();
 
-        return currentStepFromId != null ? (FROM) world.load(currentStepFromId) : null;
+        return currentStepFromId != null ? world.load(currentStepFromId) : null;
     }
 
     @Nullable
     public ILocationGO getCurrentStepTo() {
         @Nullable final GameObjectId currentStepToId = getCurrentStepToId();
 
-        return currentStepToId != null ? (ILocationGO) world.load(currentStepToId) : null;
+        return currentStepToId != null ? world.load(currentStepToId) : null;
     }
 
     @Nullable

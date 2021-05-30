@@ -89,7 +89,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                         .undWartest()
         ));
 
-        if (((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+        if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp()
                 .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             res.add(con(OBEN_IM_ALTEN_TURM,
                     "an den Zöpfen",

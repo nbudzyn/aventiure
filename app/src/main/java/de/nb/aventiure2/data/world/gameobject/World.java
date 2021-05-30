@@ -536,7 +536,7 @@ public class World {
     public boolean isOrHasRecursiveLocation(
             final GameObjectId gameObjectId, final GameObjectId... locationIds) {
         for (final GameObjectId locationId : locationIds) {
-            if (isOrHasRecursiveLocation(load(gameObjectId), locationId)) {
+            if (isOrHasRecursiveLocation((IGameObject) load(gameObjectId), locationId)) {
                 return true;
             }
         }
@@ -550,7 +550,7 @@ public class World {
      */
     public boolean isOrHasRecursiveLocation(final GameObjectId gameObjectId,
                                             final GameObjectId locationId) {
-        return isOrHasRecursiveLocation(load(gameObjectId), locationId);
+        return isOrHasRecursiveLocation((IGameObject) load(gameObjectId), locationId);
     }
 
     /**
@@ -588,7 +588,7 @@ public class World {
             return false;
         }
 
-        return isOrHasRecursiveLocation(load(oneId), other);
+        return isOrHasRecursiveLocation((IGameObject) load(oneId), other);
     }
 
     /**
@@ -988,7 +988,7 @@ public class World {
             return null;
         }
 
-        return (IMovingGO) load(id);
+        return load(id);
     }
 
     /**
@@ -1254,7 +1254,7 @@ public class World {
     EinzelneSubstantivischePhrase getPOVDescription(final GameObjectId observerId,
                                                     final IDescribableGO describable,
                                                     final boolean shortIfKnown) {
-        return getPOVDescription(load(observerId), describable, shortIfKnown);
+        return getPOVDescription((IGameObject) load(observerId), describable, shortIfKnown);
     }
 
     /**
@@ -1285,7 +1285,7 @@ public class World {
             return false;
         }
 
-        return hasSameOuterMostLocationAsSC(load(gameObjectId));
+        return hasSameOuterMostLocationAsSC((IGameObject) load(gameObjectId));
     }
 
     public final boolean hasSameVisibleOuterMostLocationAsSC(
@@ -1294,7 +1294,7 @@ public class World {
             return false;
         }
 
-        return hasSameVisibleOuterMostLocationAsSC(load(gameObjectId));
+        return hasSameVisibleOuterMostLocationAsSC((IGameObject) load(gameObjectId));
     }
 
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final IGameObject gameObject) {
@@ -1322,7 +1322,7 @@ public class World {
     }
 
     public final void narrateAndUpgradeScKnownAndAssumedState(final GameObjectId gameObjectId) {
-        narrateAndUpgradeScKnownAndAssumedState(load(gameObjectId));
+        narrateAndUpgradeScKnownAndAssumedState((IGameObject) load(gameObjectId));
     }
 
     public final void narrateAndUpgradeScKnownAndAssumedState(final IGameObject gameObject) {
@@ -1340,7 +1340,7 @@ public class World {
     SpielerCharakter loadSC() {
         prepare();
 
-        return (SpielerCharakter) load(SPIELER_CHARAKTER);
+        return load(SPIELER_CHARAKTER);
     }
 
     /**
@@ -1350,7 +1350,7 @@ public class World {
     Wetter loadWetter() {
         prepare();
 
-        return (Wetter) load(WETTER);
+        return load(WETTER);
     }
 
     /**
@@ -1378,12 +1378,10 @@ public class World {
      * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
      */
     @Nonnull
-    // FIXME Methode ein <T extends IGameObject> zurückgeben lassen?
-    //  Und so casts sparen?
-    public GameObject load(final GameObjectId id) {
+    public <T extends IGameObject> T load(final GameObjectId id) {
         final GameObject gameObject = get(id);
         gameObject.load();
-        return gameObject;
+        return (T) gameObject;
     }
 
     /**

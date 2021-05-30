@@ -96,7 +96,7 @@ public class BettFactory {
     @CheckReturnValue
     private TimedDescription<?> getDescDrunter(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp().hasState(
+        if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp().hasState(
                 PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             if (db.counterDao().get(BETT_DRUNTERKRIECHEN_VERSTECKEN) == 0) {
                 return du(SENTENCE, "schaust",

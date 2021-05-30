@@ -76,8 +76,7 @@ public class SchlossfestReactionsComp
             case VERWUESTET:
                 // FIXME Das Schlossfest könnte auch einen State WIEDER_AUFGEBAUT
                 //  erhalten.
-                // FIXME Wenn der SC eine miterlebt,
-                //  muss die App das speichern!
+                // FIXME Wenn der SC den State-Wechsel miterlebt, muss die App das speichern!
                 break;
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());
@@ -114,7 +113,7 @@ public class SchlossfestReactionsComp
         }
 
         stateComp.narrateAndSetState(BEGONNEN);
-        ((ILocatableGO) world.load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST))
+        world.<ILocatableGO>load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)
                 .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
     }
 

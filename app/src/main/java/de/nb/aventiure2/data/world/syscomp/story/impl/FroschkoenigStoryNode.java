@@ -203,7 +203,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
 
         if (!world.hasSameOuterMostLocationAsSC(goldeneKugel)) {
             alt.addAll(altKugelVermissen());
@@ -229,7 +229,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
         if (world.hasSameOuterMostLocationAsSC(goldeneKugel)) {
             // FIXME Nicht, wenn man (wann auch immer) müde ist. (Das wird wohl viele
             //  der Tipps betreffen!)
@@ -300,7 +300,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(paragraph("Heute ist viel passiert").schonLaenger());
 
-        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+        if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
                 .hasState(SchlossfestState.BEGONNEN, VERWUESTET)) {
             alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
                     + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "

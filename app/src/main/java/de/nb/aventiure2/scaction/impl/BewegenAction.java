@@ -497,7 +497,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @NonNull
     private ILocationGO loadTo() {
-        return (ILocationGO) world.load(spatialConnection.getTo());
+        return world.load(spatialConnection.getTo());
     }
 
     @NonNull
@@ -551,11 +551,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 world.getDescriptionSingleOrReihung(movableObjectsInLocation).nomK());
     }
 
-    @SuppressWarnings({"unchecked", "RedundantIfStatement"})
+    @SuppressWarnings({"RedundantIfStatement"})
     private boolean scWirdMitEssenKonfrontiert() {
         final GameObject newLocation = world.load(spatialConnection.getTo());
 
-        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+        if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
                 .hasState(BEGONNEN, VERWUESTET)) {
             if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS)
                     && newLocation.is(SCHLOSS_VORHALLE)) {

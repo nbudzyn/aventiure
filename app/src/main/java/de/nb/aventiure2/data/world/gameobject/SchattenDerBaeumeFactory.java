@@ -131,7 +131,7 @@ class SchattenDerBaeumeFactory {
                         || world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
         )
                 && !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)
-                && !((ILocatableGO) world.load(RAPUNZELS_ZAUBERIN)).locationComp()
+                && !world.<ILocatableGO>load(RAPUNZELS_ZAUBERIN).locationComp()
                 .hasRecursiveLocation(VOR_DEM_ALTEN_TURM);
     }
 

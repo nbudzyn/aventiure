@@ -130,7 +130,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        final ILocatableGO goldeneKugel = (ILocatableGO) world.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE) > 1) {
@@ -229,7 +229,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        if (((IHasStateGO<SchlossfestState>) world.load(SCHLOSSFEST)).stateComp()
+        if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
                 .hasState(BEGONNEN, VERWUESTET)) {
             // Schlosswache hat andere Dinge zu tun
             return;

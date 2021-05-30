@@ -133,8 +133,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @SuppressWarnings("unchecked")
     private void narrateAndDoErstesMal() {
-        final IHasStateGO<FroschprinzState> froschprinz =
-                (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
 
         if (location.is(IM_WALD_BEIM_BRUNNEN) &&
                 !froschprinz.stateComp().hasState(FroschprinzState.UNAUFFAELLIG)) {
@@ -262,8 +261,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoWiederholung() {
-        final IHasStateGO<FroschprinzState> froschprinz =
-                (IHasStateGO<FroschprinzState>) world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
 
         if (counterDao.get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()

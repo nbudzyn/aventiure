@@ -30,7 +30,7 @@ public class ScoreService {
     }
 
     public int getScore() {
-        final IStoryWebGO storyWeb = (IStoryWebGO) world.load(STORY_WEB);
+        final IStoryWebGO storyWeb = world.load(STORY_WEB);
         return storyWeb.storyWebComp().getScore();
     }
 }

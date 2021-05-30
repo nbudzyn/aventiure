@@ -125,7 +125,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return false;
         }
 
-        return hasSameOuterMostLocationAs(world.load(otherId));
+        return hasSameOuterMostLocationAs((IGameObject) world.load(otherId));
     }
 
 
@@ -140,7 +140,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return false;
         }
 
-        return hasSameVisibleOuterMostLocationAs(world.load(otherId));
+        return hasSameVisibleOuterMostLocationAs((IGameObject) world.load(otherId));
     }
 
 
@@ -343,7 +343,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return null;
         }
 
-        return (ILocationGO) world.load(locationId);
+        return world.load(locationId);
     }
 
     @Nullable
@@ -389,7 +389,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return null;
         }
 
-        return (ILocationGO) world.load(lastLocationId);
+        return world.load(lastLocationId);
     }
 
     @Nullable

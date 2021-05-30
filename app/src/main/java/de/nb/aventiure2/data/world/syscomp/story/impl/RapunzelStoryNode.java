@@ -117,6 +117,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  - Du klaubst Holz auf
     //  - Holz in armlange Stücke brechen
     //  - "du sammelst Holz"
+    //  (Als WetterReactions?)
 
     // FIXME Beinahe krank werden (draußen beim schlechtem Wetter - man kann nicht klettern -
     //  und Kraut dagegen finden (o.Ä. vgl. Märchen! "Fieber", "krank"...) Aber Spielerlebnis
@@ -538,13 +539,13 @@ public enum RapunzelStoryNode implements IStoryNode {
     @SuppressWarnings("unchecked")
     @NonNull
     private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
-        return (IHasStateGO<RapunzelState>) world.load(RAPUNZEL);
+        return world.load(RAPUNZEL);
     }
 
     @SuppressWarnings("unchecked")
     @NonNull
     private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
     Z loadZauberin(final World world) {
-        return (Z) world.load(RAPUNZELS_ZAUBERIN);
+        return world.load(RAPUNZELS_ZAUBERIN);
     }
 }

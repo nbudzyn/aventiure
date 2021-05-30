@@ -51,7 +51,7 @@ public class RufenAction extends AbstractScAction {
 
         if (world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             if (world.isOrHasRecursiveLocation(location, VOR_DEM_ALTEN_TURM) &&
-                    !((IHasStateGO<RapunzelState>) world.load(RAPUNZEL)).stateComp()
+                    !world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp()
                             .hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 res.add(new RufenAction(scActionStepCountDao, timeTaker, n, world, location,
                         LASS_DEIN_HAAR_HERUNTER));

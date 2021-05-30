@@ -207,7 +207,7 @@ public class RastenAction extends AbstractWartenRastenAction {
 
         final AltDescriptionsBuilder alt = alt();
 
-        // FIXME Waldgeräusche bei Wind:
+        // IDEA Waldgeräusche bei Wind:
         //  - expletives es: "es knittert und rauscht"
         //  - echtes Subjekt: "die Bäume rauschen (in der Dunkelheit)"
         //  - "das Rauschen in den Ästen über dir"
@@ -315,9 +315,8 @@ public class RastenAction extends AbstractWartenRastenAction {
         return new Action(Action.Type.RASTEN);
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private IHasStateGO<RapunzelState> loadRapunzel() {
-        return (IHasStateGO<RapunzelState>) world.load(RAPUNZEL);
+        return world.load(RAPUNZEL);
     }
 }
