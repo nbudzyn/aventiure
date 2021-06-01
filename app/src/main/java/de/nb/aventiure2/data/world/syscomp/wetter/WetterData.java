@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -279,6 +280,13 @@ public class WetterData {
                 Windstaerke.LUEFTCHEN,
                 LEICHT_BEWOELKT,
                 BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
+    }
+
+    public static boolean contains(final Collection<WetterData> wetterData, final Windstaerke windstaerke) {
+        return wetterData.stream().anyMatch(
+                w -> {
+                    return w.getWindstaerkeUnterOffenemHimmel().compareTo(windstaerke) >= 0;
+                });
     }
 
     // FIXME altSparse(), wenn nicht für eine Kombination von

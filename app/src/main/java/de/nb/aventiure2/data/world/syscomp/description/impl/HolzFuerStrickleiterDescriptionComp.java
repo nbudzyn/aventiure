@@ -7,12 +7,13 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterStateComp;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.GEBROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.NOCH_NICHT_GEBROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.NOCH_NICHT_GESAMMELT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AM_BAUM;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AUF_DEM_BODEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GESAMMELT;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.AESTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOLZ;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KLAUBHOLZ;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RUNDHOELZER;
@@ -30,7 +31,12 @@ public class HolzFuerStrickleiterDescriptionComp
     public HolzFuerStrickleiterDescriptionComp(final HolzFuerStrickleiterStateComp stateComp) {
         super(HOLZ_FUER_STRICKLEITER, stateComp,
                 ImmutableMap.of(
-                        NOCH_NICHT_GESAMMELT, new DescriptionTriple(
+                        AM_BAUM, new DescriptionTriple(
+                                np(INDEF, AESTE, HOLZ_FUER_STRICKLEITER),
+                                np(DEF, AESTE, HOLZ_FUER_STRICKLEITER)),
+                        // FIXME Funktionieren alle Beschreibungen (z.B. nehmen...)
+                        //  mit Nominalphrasen im Plural?
+                        AUF_DEM_BODEN, new DescriptionTriple(
                                 np(PL_MFN, INDEF,
                                         "dünne und kräftige von den Bäumen gebrochene Äste",
                                         "dünnen und kräftigen von den Bäumen gebrochenen Ästen",
@@ -39,11 +45,11 @@ public class HolzFuerStrickleiterDescriptionComp
                                 np(N, DEF, "vom Sturm abgebrochene Holz",
                                         "vom Sturm abgebrochenen Holz", HOLZ_FUER_STRICKLEITER),
                                 np(HOLZ, HOLZ_FUER_STRICKLEITER)),
-                        NOCH_NICHT_GEBROCHEN, new DescriptionTriple(
+                        HolzFuerStrickleiterState.GESAMMELT, new DescriptionTriple(
                                 np(null, GESAMMELT, HOLZ, HOLZ_FUER_STRICKLEITER),
                                 np(DEF, GESAMMELT, HOLZ, HOLZ_FUER_STRICKLEITER),
                                 np(KLAUBHOLZ, HOLZ_FUER_STRICKLEITER)),
-                        GEBROCHEN, new DescriptionTriple(
+                        IN_STUECKE_GEBROCHEN, new DescriptionTriple(
                                 np(PL_MFN, INDEF, "in handliche Stücke gebrochene Äste",
                                         "in handliche Stücke gebrochenen Ästen",
                                         "in handliche Stücke gebrochene Äste",

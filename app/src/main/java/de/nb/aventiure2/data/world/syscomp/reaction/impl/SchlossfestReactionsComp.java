@@ -2,8 +2,6 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.Collection;
-
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.world.base.Change;
@@ -26,6 +24,7 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -55,7 +54,8 @@ public class SchlossfestReactionsComp
             case NOCH_NICHT_BEGONNEN:
                 break;
             case BEGONNEN:
-                if (containsSturm(wetterSteps)) {
+
+                if (WetterData.contains(wetterSteps, STURM)) {
                     stateComp.narrateAndSetState(VERWUESTET);
 
                     if (loadSC().locationComp()
@@ -81,11 +81,6 @@ public class SchlossfestReactionsComp
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());
         }
-    }
-
-    private static boolean containsSturm(final Collection<WetterData> wetterData) {
-        return wetterData.stream().anyMatch(
-                w -> w.getWindstaerkeUnterOffenemHimmel().compareTo(Windstaerke.STURM) >= 0);
     }
 
     @Override
