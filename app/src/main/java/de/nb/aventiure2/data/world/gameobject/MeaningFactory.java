@@ -19,21 +19,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * Factory für sehr abstrakte {@link GameObject}s, die damit zu tun haben, dass die
  * Welt einen Sinn erhält.
  */
-class MeaningFactory {
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final Narrator n;
-    private final World world;
+class MeaningFactory extends AbstractNarratorGameObjectFactory {
     private final SpatialConnectionSystem spatialConnectionSystem;
 
     MeaningFactory(final AvDatabase db,
                    final TimeTaker timeTaker, final Narrator n,
                    final World world,
                    final SpatialConnectionSystem spatialConnectionSystem) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.n = n;
-        this.world = world;
+        super(db, timeTaker, n, world);
         this.spatialConnectionSystem = spatialConnectionSystem;
     }
 

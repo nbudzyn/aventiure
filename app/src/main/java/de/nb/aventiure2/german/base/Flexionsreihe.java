@@ -6,8 +6,10 @@ import java.util.Objects;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
+import static java.util.Objects.requireNonNull;
 
 public class Flexionsreihe {
+
     /**
      * Erzeugt eine Flexionsriehe - Nominativ, Dativ und Akkusativ müssen
      * angegeben sein.
@@ -34,9 +36,9 @@ public class Flexionsreihe {
     }
 
     private Flexionsreihe(final String nominativ, final String dativ, final String akkusativ) {
-        this.nominativ = Objects.requireNonNull(nominativ, "nominativ");
-        this.dativ = Objects.requireNonNull(dativ, "dativ");
-        this.akkusativ = Objects.requireNonNull(akkusativ, "akkusativ");
+        this.nominativ = requireNonNull(nominativ, "nominativ");
+        this.dativ = requireNonNull(dativ, "dativ");
+        this.akkusativ = requireNonNull(akkusativ, "akkusativ");
     }
 
     private final String nominativ;

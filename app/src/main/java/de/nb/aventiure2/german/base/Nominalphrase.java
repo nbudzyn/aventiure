@@ -37,6 +37,7 @@ public class Nominalphrase
 
     private final Flexionsreihe flexionsreiheArtikellos;
 
+
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
     public static final Nominalphrase BLICK_AUF_DEN_STERNENHIMMEL =
             np(M, DEF, "Blick auf den Sternenhimmel");
@@ -130,6 +131,7 @@ public class Nominalphrase
                 bezugsobjekt);
     }
 
+
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
@@ -153,6 +155,7 @@ public class Nominalphrase
         return np(numerusGenus, artikelTyp,
                 fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
     }
+
 
     /**
      * Erzeugt eine Nominalphrase mit definitem Artikel - oder ohne Artikel,

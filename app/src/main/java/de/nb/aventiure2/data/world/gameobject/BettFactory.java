@@ -31,7 +31,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-public class BettFactory {
+public class BettFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public
     enum Counter {
@@ -39,16 +39,10 @@ public class BettFactory {
         BETT_DRUNTERKRIECHEN_OHNE_SINN
     }
 
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
     BettFactory(final AvDatabase db,
                 final TimeTaker timeTaker,
                 final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     GameObject createObenImAltenTurm() {

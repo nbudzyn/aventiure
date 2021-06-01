@@ -30,22 +30,16 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-class BankAmTischBeimSchlossfestFactory {
+class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN
     }
 
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
     BankAmTischBeimSchlossfestFactory(final AvDatabase db,
                                       final TimeTaker timeTaker,
                                       final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     GameObject create() {

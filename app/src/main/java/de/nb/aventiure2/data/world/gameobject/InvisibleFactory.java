@@ -22,20 +22,12 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * A factory for special {@link GameObject}s: Invisible concepts, ideas, event or the like, that
  * have a state
  */
-public class InvisibleFactory {
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final Narrator n;
-    private final World world;
-
+public class InvisibleFactory extends AbstractNarratorGameObjectFactory {
     InvisibleFactory(final AvDatabase db,
                      final TimeTaker timeTaker,
                      final Narrator n,
                      final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.n = n;
-        this.world = world;
+        super(db, timeTaker, n, world);
     }
 
     GameObject createSchlossfest() {

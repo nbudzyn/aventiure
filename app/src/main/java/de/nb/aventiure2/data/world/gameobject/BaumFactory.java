@@ -39,21 +39,15 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANKOMMEN;
 
-public class BaumFactory {
+public class BaumFactory extends AbstractGameObjectFactory {
     public enum Counter {
         HOCHKLETTERN, HINABKLETTERN
     }
 
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
     BaumFactory(final AvDatabase db,
                 final TimeTaker timeTaker,
                 final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     GameObject createImGartenHinterDerHuetteImWald() {

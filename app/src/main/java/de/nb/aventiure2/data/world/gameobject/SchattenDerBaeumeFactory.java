@@ -38,21 +38,15 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-class SchattenDerBaeumeFactory {
+class SchattenDerBaeumeFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         DESC_TO_SCHATTEN_DER_BAEUME__SC_SETZT_SICH_TAGSUEBER_IN_DEN_SCHATTEN_DER_BAEUME
     }
 
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
     SchattenDerBaeumeFactory(final AvDatabase db,
                              final TimeTaker timeTaker, final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     GameObject createVorDemAltenTurm() {

@@ -30,22 +30,16 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
-class BettgestellFactory {
+class BettgestellFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         BETTGESTELL__DESC_IN
     }
 
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
     BettgestellFactory(final AvDatabase db,
                        final TimeTaker timeTaker,
                        final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     GameObject createInDerHuetteImWald() {

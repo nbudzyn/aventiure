@@ -49,7 +49,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinMoveme
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
@@ -76,18 +75,11 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 /**
  * A factory for special {@link GameObject}s: Creatures.
  */
-class CreatureFactory {
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final Narrator n;
-    private final World world;
+class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     CreatureFactory(final AvDatabase db, final TimeTaker timeTaker,
                     final Narrator n, final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.n = n;
-        this.world = world;
+        super(db, timeTaker, n, world);
     }
 
     GameObject createSchlosswache() {
@@ -291,41 +283,17 @@ class CreatureFactory {
     }
 
 
-    private static class BasicCreature<S extends Enum<S>> extends GameObject
-            implements IDescribableGO, IHasStateGO<S>, ILocatableGO, ILivingBeingGO {
-        private final AbstractDescriptionComp descriptionComp;
-        private final LocationComp locationComp;
-        private final AbstractStateComp<S> stateComp;
+    private static class BasicCreature<S extends Enum<S>> extends StateObject<S>
+            implements IDescribableGO, ILocatableGO, ILivingBeingGO {
         private final AliveComp alive;
 
         private BasicCreature(final GameObjectId id,
                               final AbstractDescriptionComp descriptionComp,
                               final LocationComp locationComp,
                               final AbstractStateComp<S> stateComp) {
-            super(id);
+            super(id, descriptionComp, locationComp, stateComp);
             // Jede Komponente muss registiert werden!
-            this.descriptionComp = addComponent(descriptionComp);
-            this.locationComp = addComponent(locationComp);
-            this.stateComp = addComponent(stateComp);
             alive = addComponent(new AliveComp(id));
-        }
-
-        @NonNull
-        @Override
-        public AbstractDescriptionComp descriptionComp() {
-            return descriptionComp;
-        }
-
-        @Nonnull
-        @Override
-        public LocationComp locationComp() {
-            return locationComp;
-        }
-
-        @NonNull
-        @Override
-        public AbstractStateComp<S> stateComp() {
-            return stateComp;
         }
 
         @Nonnull

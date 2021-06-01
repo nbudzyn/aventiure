@@ -110,7 +110,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObjIndirekterFragesatz.F
  * Component for {@link World#RAPUNZEL}: Der Spieler
  * kann mit Rapunzel im Gespräch sein (dann auch umgekehrt).
  */
-@SuppressWarnings({"DuplicateBranchesInSwitch", "unchecked"})
+@SuppressWarnings({"DuplicateBranchesInSwitch"})
 public class RapunzelTalkingComp extends AbstractTalkingComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public

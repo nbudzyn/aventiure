@@ -153,7 +153,7 @@ public class World {
 
     // - Movable
     public static final GameObjectId GOLDENE_KUGEL = new GameObjectId(11_000);
-
+    public static final GameObjectId HOLZ_FUER_STRICKLEITER = new GameObjectId(11_001);
 
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
@@ -272,6 +272,8 @@ public class World {
 
         final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, timeTaker, n, this);
         final GeneralObjectFactory object = new GeneralObjectFactory(db, timeTaker, this);
+        final HolzFuerStrickleiterFactory holzFuerStrickleiter =
+                new HolzFuerStrickleiterFactory(db, timeTaker, n, this);
         final BankAmTischBeimSchlossfestFactory bankAmTischBeimSchlossfest =
                 new BankAmTischBeimSchlossfestFactory(db, timeTaker, this);
         final SchattenDerBaeumeFactory schattenDerBaeume =
@@ -400,6 +402,7 @@ public class World {
                         np(KUGEL, GOLDENE_KUGEL),
                         SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                         true),
+                holzFuerStrickleiter.createDraussenVorDemSchloss(),
                 // IDEA Die goldene Kugel kann verloren gehen, zum Beispiel wenn man sie im
                 //  Sumpf ablegt. Dann gibt es eine art Reset und eine ähnliche goldene
                 //  Kugel erscheint wieder im Schloss. Der Text dort sagt so dann etwas wie

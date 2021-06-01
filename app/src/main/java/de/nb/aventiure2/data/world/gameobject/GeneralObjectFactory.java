@@ -24,16 +24,10 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.
 /**
  * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
  */
-class GeneralObjectFactory {
-    private final AvDatabase db;
-    private final TimeTaker timeTaker;
-    private final World world;
-
+class GeneralObjectFactory extends AbstractGameObjectFactory {
     GeneralObjectFactory(final AvDatabase db, final TimeTaker timeTaker,
                          final World world) {
-        this.db = db;
-        this.timeTaker = timeTaker;
-        this.world = world;
+        super(db, timeTaker, world);
     }
 
     @NonNull
