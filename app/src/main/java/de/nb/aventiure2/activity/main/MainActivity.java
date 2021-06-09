@@ -33,7 +33,8 @@ import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
 import de.nb.aventiure2.databinding.MainActivityBinding;
 import de.nb.aventiure2.logger.Logger;
-import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.FullWalkthrough;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.NurRapunzelWalkthrough;
 
 public class MainActivity extends AppCompatActivity {
     // FIXME Risiko angehen: Spracherzeugung wie gewünscht technisch nicht (performant)
@@ -254,31 +255,32 @@ public class MainActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.walk_anfang_bis_froschversprechen:
-                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_FROSCHVERSPRECHEN);
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_FROSCHVERSPRECHEN);
                 return true;
             case R.id.walk_anfang_bis_schlossfest_schloss_betreten:
-                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN);
                 return true;
             case R.id.walk_anfang_bis_prinzabfahrt:
-                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_PRINZABFAHRT);
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_PRINZABFAHRT);
                 return true;
             case R.id.walk_anfang_bis_rapunzelruf:
-                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG);
                 return true;
             case R.id.walk_anfang_bis_oben_bei_rapunzel:
-                mainViewModel.walkActions(Walkthrough.ANFANG_BIS_OBEN_BEI_RAPUNZEL);
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_OBEN_BEI_RAPUNZEL);
                 return true;
             case R.id.walk_full:
-                mainViewModel.walkActions(Walkthrough.FULL);
+                mainViewModel.walkActions(FullWalkthrough.FULL);
                 return true;
             case R.id.walk_sep_1_rapunzel_hoeren_und_in_den_wald:
-                mainViewModel.walkActions(Walkthrough.SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD);
+                mainViewModel
+                        .walkActions(NurRapunzelWalkthrough.SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD);
                 return true;
             case R.id.walk_sep_1_bis_oben_bei_rapunzel:
-                mainViewModel.walkActions(Walkthrough.SEP_1_BIS_OBEN_BEI_RAPUNZEL);
+                mainViewModel.walkActions(NurRapunzelWalkthrough.SEP_1_BIS_OBEN_BEI_RAPUNZEL);
                 return true;
             case R.id.walk_sep_1_nur_rapunzel:
-                mainViewModel.walkActions(Walkthrough.SEP_1_NUR_RAPUNZEL);
+                mainViewModel.walkActions(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

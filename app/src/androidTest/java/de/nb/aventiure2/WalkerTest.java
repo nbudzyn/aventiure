@@ -24,6 +24,8 @@ import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
 import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundException;
 import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.FullWalkthrough;
+import de.nb.aventiure2.scaction.devhelper.chooser.impl.NurRapunzelWalkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.RandomActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
@@ -48,30 +50,28 @@ public class WalkerTest extends AndroidTestBase {
     public void aaa_doStrictWalkthrough() {
         // Will be executed first for a fast feedback whether
         // the basic walkthrough still works
-        doWalkthrough(Walkthrough.FULL);
+        doWalkthrough(FullWalkthrough.FULL);
 
-        assertThat(scoreService.getScore())
-                .isEqualTo(94 // FIXME  100 wenn Sturm Holz von den Bäumen gefegt hat
-                );
+        assertThat(scoreService.getScore()).isEqualTo(100);
 
         assertNoForbiddenContentInNarration();
     }
 
     @Test
     public void baa_doStrictWalkthrough_separat_nur_rapunzel() {
-        doWalkthrough(Walkthrough.SEP_1_NUR_RAPUNZEL);
+        doWalkthrough(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
 
         assertNoForbiddenContentInNarration();
     }
 
     @Test
     public void walkActionsWithRandomAdditions() {
-        walkActionsWithRandomAdditions(Walkthrough.FULL);
+        walkActionsWithRandomAdditions(FullWalkthrough.FULL);
     }
 
     @Test
     public void walkActions_separat_nur_rapunzel_WithRandomAdditions() {
-        walkActionsWithRandomAdditions(Walkthrough.SEP_1_NUR_RAPUNZEL);
+        walkActionsWithRandomAdditions(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
     }
 
     public void walkActionsWithRandomAdditions(final Walkthrough walkthrough) {
@@ -148,7 +148,7 @@ public class WalkerTest extends AndroidTestBase {
             if (playerActions.isEmpty()) {
                 final SpielerCharakter spielerCharakter = world.loadSC();
 
-                final ITalkerGO<?> zauberin = (ITalkerGO<?>) world.load(RAPUNZELS_ZAUBERIN);
+                final ITalkerGO<?> zauberin = world.load(RAPUNZELS_ZAUBERIN);
 
                 final ImmutableList<? extends ILivingBeingGO> livingBeings =
                         world.loadDescribableLocatableLivingBeings();

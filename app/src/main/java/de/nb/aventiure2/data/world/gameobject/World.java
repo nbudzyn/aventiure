@@ -29,6 +29,7 @@ import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.feelings.EinschlafhindernisSc;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -83,8 +84,11 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.lang.Math.max;
 
 /**
  * The world contains and manages all game objects.
@@ -466,47 +470,82 @@ public class World {
     }
 
     /**
-     * Die minimale Müdigkeit, die der SC verspüren muss, um an einem Ort einzuschlafen.
+     * Ermittelt die minimale Müdigkeit, die der SC verspüren muss, um an einem Ort einzuschlafen,
+     * sowie alternative Beschreibungen, warum der SC ggf. nicht einschlafen kann.
      * Hängt z.B. davon ab, ob ein Sturm um ihn herum tobt oder wie gemütlich es an dem Ort ist.
      * <p>
      * Natürlich schläft der SC generell nur ein, wenn er es versucht oder sehr langweilige,
      * einschläfernde Dinge tut etc. Dies hier ist nur eine minimale Schwelle.
      */
-    public int getMinimaleMuedigkeitZumEinschlafenSc(
+    public EinschlafhindernisSc getEinschlafhindernisSc(
             final boolean gemuetlich) {
-        return getMinimaleMuedigkeitZumEinschlafenMensch(
-                loadSC().locationComp().getLocation(),
-                gemuetlich,
-                loadSC().feelingsComp().getHunger());
-    }
-
-    /**
-     * Die minimale Müdigkeit, die ein Mensch verspüren muss, um an einem Ort einzuschlafen.
-     * Hängt z.B. davon ab, ob ein Sturm um ihn herum tobt oder wie gemütlich es an dem Ort ist.
-     * <p>
-     * Natürlich schläft ein Mensch generell nur ein, wenn er es versucht oder sehr langweilige,
-     * einschläfernde Dinge tut etc. Dies hier ist nur eine minimale Schwelle.
-     */
-    @SuppressWarnings("ConstantConditions")
-    private int getMinimaleMuedigkeitZumEinschlafenMensch(
-            @Nullable final ILocationGO location,
-            final boolean gemuetlich, final Hunger hunger) {
-        int res = gemuetlich ? FeelingIntensity.NUR_LEICHT : FeelingIntensity.MERKLICH;
-
         final Windstaerke lokaleWindstaerke =
-                loadWetter().wetterComp().getLokaleWindstaerke(location);
-        if (lokaleWindstaerke.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
-            // Bei kräftigem Wind wird man nicht gut einschlafen
-            res = max(res, FeelingIntensity.SEHR_STARK);
+                loadWetter().wetterComp().getLokaleWindstaerke(
+                        loadSC().locationComp().getLocation());
+
+        final Hunger hunger = loadSC().feelingsComp().getHunger();
+
+        // Achtung, Intensity-Schranken in aufsteigender Reihenfolge aufführen, damit
+        // diese Logik funktioniert
+        EinschlafhindernisSc res =
+                new EinschlafhindernisSc(FeelingIntensity.NUR_LEICHT,
+                        alt().add(
+                                neuerSatz("Die Aufregung der letzten Stunden",
+                                        "steckt dir noch in den Knochen – an Einschlafen ist",
+                                        "nicht zu denken"),
+                                du(SENTENCE, "bist", "noch nicht müde")
+                                        .mitVorfeldSatzglied("müde"),
+                                du(SENTENCE, "bist", "nicht müde")
+                                        .mitVorfeldSatzglied("müde"),
+                                du("fühlst", "dich wach")
+                        ).schonLaenger().dann());
+
+        if (!gemuetlich) {
+            res =
+                    new EinschlafhindernisSc(FeelingIntensity.MERKLICH,
+                            alt().add(
+                                    neuerSatz("hier ist es sehr ungemütlich"),
+                                    neuerSatz("wie ungemütlich es hier ist!"),
+                                    du(SENTENCE, "bist", "so müde nun auch wieder nicht")
+                                            .mitVorfeldSatzglied("so müde")
+                            ).schonLaenger().dann());
         }
 
         if (lokaleWindstaerke.compareTo(Windstaerke.WINDIG) >= 0) {
-            // Bei  Wind wird man nicht gut einschlafen
-            res = max(res, FeelingIntensity.MERKLICH);
+            res =
+                    new EinschlafhindernisSc(FeelingIntensity.MERKLICH,
+                            alt().add(
+                                    neuerSatz("der Wind hält dich wach"),
+                                    neuerSatz("der Wind rauscht"),
+                                    du("kannst", "nicht einschlafen –",
+                                            "bei diesem Wind")
+                            ).schonLaenger().dann());
         }
 
+
         if (hunger == Hunger.HUNGRIG) {
-            res = max(res, FeelingIntensity.DEUTLICH);
+            res =
+                    new EinschlafhindernisSc(FeelingIntensity.DEUTLICH,
+                            alt().add(
+                                    du(SENTENCE, "kannst", "vor Hunger nicht einschlafen")
+                                            .mitVorfeldSatzglied("vor Hunger"),
+                                    neuerSatz("wie dir der Magen knurrt, ist an",
+                                            "Einschlafen nicht zu denken"),
+                                    neuerSatz("dir knurrt der Magen")
+                            ).schonLaenger().dann());
+        }
+
+
+        if (lokaleWindstaerke.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
+            res =
+                    new EinschlafhindernisSc(FeelingIntensity.MERKLICH,
+                            alt().add(
+                                    neuerSatz("es weht zu stark, als dass du",
+                                            "einschlafen könntest"),
+                                    neuerSatz("der Wind ist zu stark – du kannst nicht",
+                                            "einschlafen"),
+                                    neuerSatz("Einschlafen bei diesem Wind? – Keine Chance")
+                            ).schonLaenger().dann());
         }
 
         return res;

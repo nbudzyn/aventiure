@@ -95,8 +95,10 @@ public class BewoelkungDescDescriber {
             final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altSprungOderWechselUnterOffenemHimmel(dateTimeChange,
-                change, auchZeitwechselreferenzen));
+        alt.addAll(altNeueSaetze(
+                PARAGRAPH,
+                satzDescriber.altSprungOderWechselUnterOffenemHimmel(dateTimeChange,
+                        change, auchZeitwechselreferenzen)));
 
         final ImmutableSet<Konstituente> altWann;
         final ImmutableSet<Konstituentenfolge> altWannSaetze;
@@ -129,6 +131,7 @@ public class BewoelkungDescDescriber {
                         }
                         if (!altWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
+                                    PARAGRAPH,
                                     altWannSaetze,
                                     ", leuchten die Sterne nicht mehr so klar wie zuvor"));
                         }
@@ -152,6 +155,7 @@ public class BewoelkungDescDescriber {
                         }
                         if (!altWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
+                                    PARAGRAPH,
                                     altWannSaetze,
                                     ", beginnen mächtige dunkle Wolken sich am Himmel "
                                             + "aufzutürmen"));
@@ -175,6 +179,7 @@ public class BewoelkungDescDescriber {
                     }
                     if (!altWannSaetze.isEmpty()) {
                         alt.addAll(altNeueSaetze(
+                                PARAGRAPH,
                                 altWannSaetze,
                                 ", haben sich die letzten weißen",
                                 "Schäfchenwolken verzogen und der ganze Himmel",
@@ -191,6 +196,7 @@ public class BewoelkungDescDescriber {
                         }
                         if (!altWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
+                                    PARAGRAPH,
                                     altWannSaetze,
                                     ", reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den blauen Himmel frei"));
@@ -205,6 +211,7 @@ public class BewoelkungDescDescriber {
                         }
                         if (!altWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
+                                    PARAGRAPH,
                                     altWannSaetze,
                                     ", reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den Sternenhimmel frei"));

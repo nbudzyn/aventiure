@@ -122,6 +122,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.DURCH;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.UEBER_AKK;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
@@ -282,11 +283,10 @@ public class WetterData {
                 BlitzUndDonner.KEIN_BLITZ_ODER_DONNER);
     }
 
-    public static boolean contains(final Collection<WetterData> wetterData, final Windstaerke windstaerke) {
+    public static boolean contains(final Collection<WetterData> wetterData,
+                                   final Windstaerke windstaerke) {
         return wetterData.stream().anyMatch(
-                w -> {
-                    return w.getWindstaerkeUnterOffenemHimmel().compareTo(windstaerke) >= 0;
-                });
+                w -> w.getWindstaerkeUnterOffenemHimmel().compareTo(windstaerke) >= 0);
     }
 
     // FIXME altSparse(), wenn nicht für eine Kombination von
@@ -2285,22 +2285,25 @@ public class WetterData {
                 && temperaturaenderungMussBeschriebenWerden
                 && !bewoelkungsaenderungMussBeschriebenWerden) {
             return alt()
-                    .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
-                            change, windstaerkeChangeSofernRelevant,
-                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen()).stream()
-                            .flatMap(windSatz ->
-                                    TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
-                                            change, temperaturChangeSofernRelevant,
-                                            drinnenDraussen,
-                                            false)
-                                            .stream()
-                                            // Bandwurmsätze vermeiden
-                                            .filter(EinzelnerSatz.class::isInstance)
-                                            .map(tempSatz ->
-                                                    new Satzreihe(
-                                                            windSatz,
-                                                            (EinzelnerSatz) tempSatz)))
-                            .collect(toImmutableSet()))
+                    .addAll(altNeueSaetze(
+                            PARAGRAPH,
+                            WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
+                                    change, windstaerkeChangeSofernRelevant,
+                                    auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
+                                    .stream()
+                                    .flatMap(windSatz ->
+                                            TEMPERATUR_SATZ_DESCRIBER.altSprungOderWechsel(
+                                                    change, temperaturChangeSofernRelevant,
+                                                    drinnenDraussen,
+                                                    false)
+                                                    .stream()
+                                                    // Bandwurmsätze vermeiden
+                                                    .filter(EinzelnerSatz.class::isInstance)
+                                                    .map(tempSatz ->
+                                                            new Satzreihe(
+                                                                    windSatz,
+                                                                    (EinzelnerSatz) tempSatz)))
+                                    .collect(toImmutableSet())))
                     .addAll(altNeueSaetze(WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
                             change, windstaerkeChangeSofernRelevant,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen()),
@@ -2327,24 +2330,26 @@ public class WetterData {
                 && !temperaturaenderungMussBeschriebenWerden) {
             // Nur Windstärkeänderung und Bewölungsänderung beschreiben
             return alt()
-                    .addAll(WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
-                            change, windstaerkeChangeSofernRelevant,
-                            auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
-                            .stream()
-                            .flatMap(windSatz ->
-                                    BEWOELKUNG_SATZ_DESCRIBER
-                                            .altSprungOderWechselUnterOffenemHimmel(
-                                                    change,
-                                                    bewoelkungChangeSofernRelevant,
-                                                    false)
-                                            .stream()
-                                            // Bandwurmsätze vermeiden
-                                            .filter(EinzelnerSatz.class::isInstance)
-                                            .map(bewSatz ->
-                                                    new Satzreihe(
-                                                            windSatz,
-                                                            (EinzelnerSatz) bewSatz)))
-                            .collect(toImmutableSet()))
+                    .addAll(altNeueSaetze(
+                            PARAGRAPH,
+                            WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
+                                    change, windstaerkeChangeSofernRelevant,
+                                    auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
+                                    .stream()
+                                    .flatMap(windSatz ->
+                                            BEWOELKUNG_SATZ_DESCRIBER
+                                                    .altSprungOderWechselUnterOffenemHimmel(
+                                                            change,
+                                                            bewoelkungChangeSofernRelevant,
+                                                            false)
+                                                    .stream()
+                                                    // Bandwurmsätze vermeiden
+                                                    .filter(EinzelnerSatz.class::isInstance)
+                                                    .map(bewSatz ->
+                                                            new Satzreihe(
+                                                                    windSatz,
+                                                                    (EinzelnerSatz) bewSatz)))
+                                    .collect(toImmutableSet())))
                     .addAll(altNeueSaetze(
                             WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
                                     change,

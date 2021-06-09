@@ -114,7 +114,14 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
             relativeVelocity = 1f;
         }
 
-        requirePcd().setPlanwetter(new PlanwetterData(relativeVelocity, planwetter));
+        final PlanwetterData newPlanwetterData = new PlanwetterData(relativeVelocity, planwetter);
+
+        if (!firstStepTakesNoTime && newPlanwetterData.equals(requirePcd().getPlan())) {
+            // Plan ändert sich nicht - einfach Plan fortsetzen!
+            return;
+        }
+
+        requirePcd().setPlanwetter(newPlanwetterData);
 
         final AvDateTime now = timeTaker.now();
 
@@ -127,8 +134,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Wenn ausreichend Zeit bis <code>now</code> vergangen ist, führt diese Methode einen
      * oder mehrere Wetter-Schritt aus.
-     *
-     * @return
      */
     private ImmutableList<WetterData> narrateAndDoWetterSteps(final AvDateTime now) {
         final ImmutableList.Builder<WetterData> wetterChangesBuilder = ImmutableList.builder();

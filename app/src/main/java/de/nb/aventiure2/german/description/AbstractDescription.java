@@ -234,7 +234,7 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     @CanIgnoreReturnValue
-    protected abstract SELF phorikKandidat(PhorikKandidat phorikKandidat);
+    protected abstract SELF phorikKandidat(@Nullable PhorikKandidat phorikKandidat);
 
     @Nullable
     public abstract PhorikKandidat getPhorikKandidat();

@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ISCActionReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IStateChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
@@ -39,7 +40,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
  * <li>(Es passiert nichts.)
  * </ul>
  */
-@SuppressWarnings({"UnnecessaryReturnStatement", "unchecked"})
+@SuppressWarnings({"UnnecessaryReturnStatement"})
 public class StoryWebReactionsComp
         extends AbstractReactionsComp
         implements IMovementReactions, IStateChangedReactions,
@@ -214,31 +215,40 @@ public class StoryWebReactionsComp
     public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
                                                    final S oldState,
                                                    final S newState) {
+        if (gameObject.is(HOLZ_FUER_STRICKLEITER)) {
+            onHolzFuerStrickleiterStateChanged(
+                    (HolzFuerStrickleiterState) oldState,
+                    (HolzFuerStrickleiterState) newState);
+            return;
+        }
+
         if (gameObject.is(FROSCHPRINZ)) {
-            onFroschprinzStateChanged(
-                    (FroschprinzState) newState
-            );
+            onFroschprinzStateChanged((FroschprinzState) newState);
             return;
         }
 
         if (gameObject.is(SCHLOSSFEST)) {
-            onSchlossfestStateChanged(
-                    (SchlossfestState) newState);
+            onSchlossfestStateChanged((SchlossfestState) newState);
             return;
         }
 
         if (gameObject.is(RAPUNZEL)) {
-            onRapunzelStateChanged(
-                    (RapunzelState) newState
-            );
+            onRapunzelStateChanged((RapunzelState) newState);
             return;
         }
 
         if (gameObject.is(RAPUNZELS_ZAUBERIN)) {
-            onRapunzelsZauberinStateChanged(
-                    (RapunzelsZauberinState) newState
-            );
+            onRapunzelsZauberinStateChanged((RapunzelsZauberinState) newState);
             return;
+        }
+    }
+
+    private void onHolzFuerStrickleiterStateChanged(
+            final HolzFuerStrickleiterState oldState,
+            final HolzFuerStrickleiterState newState) {
+        if (oldState == HolzFuerStrickleiterState.AM_BAUM
+                && newState != HolzFuerStrickleiterState.AM_BAUM) {
+            reachStoryNode(RapunzelStoryNode.STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN);
         }
     }
 

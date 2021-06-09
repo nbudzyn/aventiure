@@ -255,6 +255,16 @@ public class TimedDescription<D extends AbstractDescription<?>> {
         return counterIdIncrementedIfTextIsNarrated;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "\"" + description + "\" (" + timeElapsed
+                + (counterIdIncrementedIfTextIsNarrated != null ?
+                ", counterIdIncrementedIfTextIsNarrated=" + counterIdIncrementedIfTextIsNarrated :
+                "")
+                + ")";
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

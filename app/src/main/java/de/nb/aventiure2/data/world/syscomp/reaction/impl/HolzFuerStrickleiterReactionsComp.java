@@ -69,9 +69,7 @@ public class HolzFuerStrickleiterReactionsComp
             }
         }
 
-        // FIXME Damit sollte ein Story Beat erfüllt sein! Dann auch Walkthroughs ergänzen!
-        //  Test -> 100%
-        //  Außerdem sollte sich ab dann auch das Wetter wieder normalisieren
+        // FIXME Danach sollte sich das Wetter wieder normalisieren
         //  (Planwetter -> null).
     }
 

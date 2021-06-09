@@ -47,9 +47,9 @@ public abstract class AbstractWartenRastenAction extends AbstractScAction {
     }
 
     private int getMinimaleMuedigkeitZumAutomatischenEinschlafen() {
-        int res = world.getMinimaleMuedigkeitZumEinschlafenSc(
+        int res = world.getEinschlafhindernisSc(
                 // Es ist nicht besonders gemütlich.
-                false);
+                false).getMinimaleMuedigkeit();
 
         res = Math.max(res,
                 counterDao.get(WARTEN_ODER_RASTEN_IN_FOLGE) < 3 ?

@@ -99,23 +99,18 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
             RAPUNZEL_RETTUNG_VERSPROCHEN),
 
-    //  Dies wird automatisch freigeschaltet, wenn der Sturm die Äste von den Bäumen
-    //  gebrochen hat. Tipps dafür wären nicht sinnvoll
-
-    STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN;
-
-    // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
-    // dass der SC alles vergessen hat
-
     // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
     //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
 
-    // FIXME Beinahe krank werden (draußen beim schlechtem Wetter - man kann nicht klettern -
-    //  und Kraut dagegen finden (o.Ä. vgl. Märchen! "Fieber", "krank"...) Aber Spielerlebnis
-    //  nicht unangenehm machen!!
-    // FIXME Zwerge könnten helfen, kraut zu finden.
+    //  Dies wird automatisch freigeschaltet, wenn der Sturm die Äste von den Bäumen
+    //  gebrochen hat. Tipps dafür wären nicht sinnvoll
+    STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN;
+
+    // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
+    // dass der SC alles vergessen hat
+
     // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
     //  Welt o.ä.).
 

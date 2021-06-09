@@ -3,6 +3,7 @@ package de.nb.aventiure2.scaction.impl;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -12,9 +13,11 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.EinschlafhindernisSc;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
+import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -28,6 +31,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 /**
  * Der Spielercharakter legt sich schlafen.
@@ -72,43 +76,45 @@ public class SchlafenAction extends AbstractScAction {
 
     @Override
     public void narrateAndDo() {
-        if (sc.feelingsComp().getMuedigkeit() >=
-                world.getMinimaleMuedigkeitZumEinschlafenSc(
-                        // Es ist nicht besonders gemütlich.
-                        false)) {
+        final EinschlafhindernisSc einschlafhindernis = world.getEinschlafhindernisSc(
+                // Es ist nicht sehr gemütlich.
+                false);
+
+        if (sc.feelingsComp().getMuedigkeit() >= einschlafhindernis.getMinimaleMuedigkeit()) {
             narrateAndDoSchlafen();
             return;
         }
 
-        narrateAndDoSchlaeftNichtEin();
+        narrateAndDoSchlaeftNichtEin(einschlafhindernis.altDescriptions());
     }
 
-    private void narrateAndDoSchlaeftNichtEin() {
+    private void narrateAndDoSchlaeftNichtEin(
+            ImmutableCollection<AbstractDescription<?>> altEinschlafhindernisDescriptions) {
         sc.memoryComp().setLastAction(buildMemorizedAction());
 
         final AltTimedDescriptionsBuilder alt = altTimed();
         if (!isDefinitivWiederholung()) {
-            alt.add(du("schließt",
-                    "kurz die Augen. Die Aufregung der letzten Stunden "
-                            + "steckt dir noch in den Knochen – an Einschlafen ist "
-                            + "nicht zu denken").mitVorfeldSatzglied("kurz")
+            alt.addAll(altEinschlafhindernisDescriptions.stream()
+                    .map(d -> du("schließt",
+                            "kurz die Augen", SENTENCE, d)
+                            .mitVorfeldSatzglied("kurz")
+                            .timed(mins(1))));
+        }
+
+        alt.addAll(toTimed(altEinschlafhindernisDescriptions, mins(1)));
+
+        if (isDefinitivWiederholung()) {
+            // Wenn es eine Wiederholung ist, brauchen wir das Einschlafhindernis nicht
+            // unbedingt mehr zu beschreiben.
+
+            alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?")
+                    .timed(mins(1)));
+
+            alt.add(du("drehst", "dich von einer Seite auf die andere")
+                    .mitVorfeldSatzglied("von einer Seite")
                     .schonLaenger()
                     .timed(mins(1)));
         }
-
-        alt.add(du(SENTENCE, "bist", "noch nicht müde")
-                .mitVorfeldSatzglied("müde")
-                .schonLaenger()
-                .timed(mins(1))
-                .dann());
-
-        alt.add(neuerSatz("Gibt es hier eigentlich Spinnen?")
-                .timed(mins(1)));
-
-        alt.add(du("drehst", "dich von einer Seite auf die andere")
-                .mitVorfeldSatzglied("von einer Seite")
-                .schonLaenger()
-                .timed(mins(1)));
 
         n.narrateAlt(alt);
     }

@@ -34,6 +34,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.D
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -180,8 +181,10 @@ public class TemperaturDescDescriber {
             final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altSprungOderWechsel(
-                dateTimeChange, change, drinnenDraussen, auchZeitwechselreferenzen));
+        alt.addAll(altNeueSaetze(
+                PARAGRAPH,
+                satzDescriber.altSprungOderWechsel(
+                        dateTimeChange, change, drinnenDraussen, auchZeitwechselreferenzen)));
 
         final ImmutableSet<Konstituente> altWann;
         final ImmutableSet<Konstituentenfolge> altWannSaetze;
@@ -230,7 +233,9 @@ public class TemperaturDescDescriber {
                                             .mitVorfeldSatzglied(
                                                     joinToString(gegenMitternacht))));
                     if (!altWannSaetze.isEmpty()) {
-                        alt.addAll(altNeueSaetze(altWannSaetze,
+                        alt.addAll(altNeueSaetze(
+                                PARAGRAPH,
+                                altWannSaetze,
                                 ", spürst du, wie es allmählich wärmer wird"));
                     }
                     break;
@@ -267,6 +272,7 @@ public class TemperaturDescDescriber {
                     if (!altWannSaetze.isEmpty()) {
                         alt.addAll(
                                 altNeueSaetze(
+                                        PARAGRAPH,
                                         altWannSaetze,
                                         ",",
                                         ImmutableList.of(
@@ -283,7 +289,9 @@ public class TemperaturDescDescriber {
                         alt.addAll(altNeueSaetze(altWann, "kühlt die Luft sich deutlich ab"));
                     }
                     if (!altWannSaetze.isEmpty()) {
-                        alt.addAll(altNeueSaetze(altWannSaetze,
+                        alt.addAll(altNeueSaetze(
+                                PARAGRAPH,
+                                altWannSaetze,
                                 ", kühlt die Luft sich deutlich ab"));
                     }
                     break;
@@ -299,7 +307,9 @@ public class TemperaturDescDescriber {
                                             .mitVorfeldSatzglied(
                                                     joinToString(gegenMitternacht))));
                     if (!altWannSaetze.isEmpty()) {
-                        alt.addAll(altNeueSaetze(altWannSaetze,
+                        alt.addAll(altNeueSaetze(
+                                PARAGRAPH,
+                                altWannSaetze,
                                 ", spürst du, wie es allmählich kühler wird"));
                     }
                     break;

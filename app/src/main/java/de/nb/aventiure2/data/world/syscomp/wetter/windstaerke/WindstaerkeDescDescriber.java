@@ -24,6 +24,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -55,8 +56,10 @@ public class WindstaerkeDescDescriber {
             final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altSprungOderWechsel(
-                dateTimeChange, change, auchZeitwechselreferenzen));
+        alt.addAll(altNeueSaetze(
+                PARAGRAPH,
+                satzDescriber.altSprungOderWechsel(
+                        dateTimeChange, change, auchZeitwechselreferenzen)));
 
         // IDEA Wind / Sturm - dynamisch, unter Bezug auf Features des Umwelt
         //  (Blätter)

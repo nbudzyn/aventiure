@@ -15,9 +15,9 @@ public class Flexionsreihe {
      * angegeben sein.
      */
     static Flexionsreihe fr(final Map<Kasus, String> wortformen) {
-        return fr(wortformen.get(NOM),
-                wortformen.get(DAT),
-                wortformen.get(AKK));
+        return fr(requireNonNull(wortformen.get(NOM)),
+                requireNonNull(wortformen.get(DAT)),
+                requireNonNull(wortformen.get(AKK)));
     }
 
     static Flexionsreihe fr(

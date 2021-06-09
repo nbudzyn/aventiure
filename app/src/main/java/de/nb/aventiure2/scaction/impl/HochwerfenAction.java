@@ -59,7 +59,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
  */
-@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         extends AbstractScAction {
@@ -122,6 +121,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @Override
     public void narrateAndDo() {
+        // FIXME Holz (viele kleine Teile) kann man nicht auffangen...
+
         if (isDefinitivWiederholung()) {
             narrateAndDoWiederholung();
         } else {
@@ -131,7 +132,6 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    @SuppressWarnings("unchecked")
     private void narrateAndDoErstesMal() {
         final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
 
