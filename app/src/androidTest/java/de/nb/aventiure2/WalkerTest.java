@@ -59,7 +59,7 @@ public class WalkerTest extends AndroidTestBase {
 
     @Test
     public void baa_doStrictWalkthrough_separat_nur_rapunzel() {
-        doWalkthrough(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
+        doWalkthrough(NurRapunzelWalkthrough.NUR_RAPUNZEL);
 
         assertNoForbiddenContentInNarration();
     }
@@ -71,7 +71,7 @@ public class WalkerTest extends AndroidTestBase {
 
     @Test
     public void walkActions_separat_nur_rapunzel_WithRandomAdditions() {
-        walkActionsWithRandomAdditions(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
+        walkActionsWithRandomAdditions(NurRapunzelWalkthrough.NUR_RAPUNZEL);
     }
 
     public void walkActionsWithRandomAdditions(final Walkthrough walkthrough) {

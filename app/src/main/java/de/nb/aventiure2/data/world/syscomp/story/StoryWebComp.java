@@ -163,15 +163,14 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                     hours(4) :
                     // Der Spieler hat alle anderen Ziele erreicht - die Wetteränderung
                     // sollte schnell gehen
-                    mins(30);
+                    mins(90);
 
             wetterGO.wetterComp().setPlanwetter(
                     new WetterData(
-                            Temperatur.KUEHL, Temperatur.KUEHL,
+                            Temperatur.KUEHL,
                             Windstaerke.SCHWERER_STURM,
                             Bewoelkung.BEDECKT,
                             BlitzUndDonner.BLITZ_UND_DONNER_NICHT_DIREKT_UEBER_EINEM),
-                    true, // Sofort mit der Änderung anfangen
                     duration);
             return;
         }
@@ -182,7 +181,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 RapunzelStoryNode.TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN)) {
             // Das Wetter wird langsam schlechter
             wetterGO.wetterComp().setPlanwetter(new WetterData(
-                    Temperatur.KUEHL, Temperatur.KUEHL,
+                    Temperatur.KUEHL,
                     Windstaerke.WINDIG,
                     Bewoelkung.BEDECKT,
                     BlitzUndDonner.KEIN_BLITZ_ODER_DONNER));

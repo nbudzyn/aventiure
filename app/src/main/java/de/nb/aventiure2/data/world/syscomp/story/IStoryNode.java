@@ -47,6 +47,9 @@ public interface IStoryNode {
     // IDEA "Fronten" ("Fronts") angelehnt an Dungeon World: Wenn der Spieler nicht
     //  interagiert, kommt es mehrstufig zu Eskalationen
 
+    // IDEA: Auf gleichwertige Entscheidungen Wert legen - Vor allem in demselbeb Märchen! -
+    //  Nicht nur tun vs. Nicht tun.
+
     @FunctionalInterface
     interface IHinter {
         void narrateAndDoHintAction(final AvDatabase db,

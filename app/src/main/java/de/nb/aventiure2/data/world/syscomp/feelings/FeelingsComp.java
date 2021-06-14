@@ -930,13 +930,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
         n.narrateAlt(NO_TIME,
                 neuerSatz("Mmh!", PARAGRAPH),
                 neuerSatz("Dir läuft das Wasser im Munde zusammen"),
-                du(SENTENCE, "hast", "Hunger")
+                du(SENTENCE, "hast", "Hunger", PARAGRAPH)
                         .schonLaenger()
                         .undWartest(),
                 du(SENTENCE, "bist", "hungrig")
                         .schonLaenger()
                         .undWartest(),
-                neuerSatz("Dir fällt auf, wie hungrig du bist")
+                neuerSatz("Dir fällt auf, wie hungrig du bist", PARAGRAPH)
                         .komma()
         );
     }

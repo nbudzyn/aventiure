@@ -380,7 +380,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     anaph().nomK(),
                     ":",
                     "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
-                    "langatmig von Hasen und Raben").schonLaenger()
+                    "langatmig von Hasen und Raben")
+                    // FIXME "Hasen und Raben" kann als "sie" verstanden werden!
+                    .schonLaenger()
                     .timed(mins(2)));
         }
 
@@ -905,7 +907,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 && counterDao.get(SCHON_IMMER_GEWUENSCHT_GEFRAGT) == 0) {
             alt.add(
                     neuerSatz(
-                            "„Was hat du dir eigentlich schon immer gewünscht?“ –",
+                            "„Was hast du dir eigentlich schon immer gewünscht?“ –",
                             SENTENCE,
                             anaph.nomK(),
                             "denkt kurz nach. „Soll ich ehrlich sein?“",

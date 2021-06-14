@@ -201,14 +201,14 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     @NonNull
     private TimedDescription<?> getDescTo_DraussenVorDemSchloss_FestBegonnen() {
         if (!world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN)) {
-            return du("bist", "von dem Lärm überrascht, der dir "
-                    + "schon von weitem "
-                    + "entgegenschallt. Als du aus dem Wald heraustrittst, "
-                    + "ist der Anblick überwältigend: "
-                    + "Überall im Schlossgarten stehen kleine Pagoden "
-                    + "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle "
-                    + "gestakt und aus dem Schloss duftet es verführerisch nach "
-                    + "Gebratenem").schonLaenger().timed(mins(10));
+            return du("bist", "von dem Lärm überrascht, der dir",
+                    "schon von weitem",
+                    "entgegenschallt. Als du aus dem Wald heraustrittst,",
+                    "ist der Anblick überwältigend:",
+                    "Überall im Schlossgarten stehen kleine Pagoden",
+                    "in lustigen Farben. Kinder werden auf Kähnen durch Kanäle",
+                    "gestakt und aus dem Schloss duftet es verführerisch nach",
+                    "Gebratenem", PARAGRAPH).schonLaenger().timed(mins(10));
         }
 
         return neuerSatz("Das Schlossfest ist immer noch in vollem Gange")

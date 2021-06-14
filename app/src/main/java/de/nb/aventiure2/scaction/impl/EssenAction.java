@@ -317,7 +317,6 @@ public class EssenAction extends AbstractScAction {
         n.narrateAlt(
                 du(SENTENCE, "hast",
                         "nur wenig Hunger und beißt lustlos in eine der Früchte")
-                        .mitVorfeldSatzglied("Hunger")
                         .timed(mins(3))
                         .schonLaenger()
                         .dann());

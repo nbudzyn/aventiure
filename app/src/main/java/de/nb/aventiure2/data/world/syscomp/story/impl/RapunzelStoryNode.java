@@ -416,7 +416,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                                 + "haben! Aber was bloß?"),
                 paragraph("Ist es nicht immer ein Glück, wenn einem das Leben",
                         "eine zweite Chance schenkt? Und wie kommst du",
-                        "eigentlich gerade darauf?").schonLaenger());
+                        "eigentlich gerade darauf?").schonLaenger()
+                // FIXME Weitere Alternativen
+        );
         alt.addAll(altTurmWohnenHineinHeraus(world));
 
         return alt.build();

@@ -327,7 +327,9 @@ public class World {
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_NIE, EnumRange.of(Temperatur.KUEHL, Temperatur.WARM),
+                        LEUCHTET_NIE,
+                        // FIXME Rapunzels Höhle ist immer beleuchtet
+                        EnumRange.of(Temperatur.KUEHL, Temperatur.WARM),
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,

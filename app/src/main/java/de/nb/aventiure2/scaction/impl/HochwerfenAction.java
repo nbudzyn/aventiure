@@ -217,6 +217,10 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 neuerSatz(praefix + " kein Frosch zu sehen… Das war vielleicht etwas "
                         + "ungeschickt, oder?")
                         .timed(NO_TIME));
+
+        // FIXME Wenn das Holz in den Brunnen gefallen ist: Holz regenerieren
+        //  (in der ReactionsComp, neuer Status REGENERATED, "hier liegt noch weiteres Holz..."
+        //  - wieder auf UNBEKANNT setzen?!
     }
 
     private void narrateAndDoHochwerfenAuffangen(final TimedDescription<?> desc) {

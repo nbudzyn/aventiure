@@ -188,9 +188,11 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
 
-                // TODO Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
-                //  in einer Schale auf der Bank, dann hier prüfen und ggf. beschreiben
-                //  (vgl. AblegenAction)
+                // FIXME Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
+                //  in einer unauffälligen Ecke im Bettgestellt, dann hier prüfen und ggf.
+                //  beschreiben. Vermeiden unter gewissen Umständen, z.B. wenn der
+                //  SC sich gerade aus dem Bettgestell erhoben hat! (vgl. BewegenAction,
+                //  AblegenAction)
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Plötzlich sitzt",
                                 desc.nomStr(), // Gerät in Vergessenheit...
@@ -297,18 +299,29 @@ public class FroschprinzReactionsComp
                         .schonLaenger()
                         .timed(mins(2)));
 
-        // STORY Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
-        //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
-        //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
-        //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
-        //  und einen Tipp!
-        //  "Vor dem Schloss sind viele Leute zzsammengekimmen.
+        // FIXME Ein bäuerlichü gekleideter Mann neben dir spricht dich an:
+        //  "7 Jahr,! sagt er. 7 Jahre hat ihn keiner gesehen! - Verzaubert, haben sie gesagt.!
+        //  Ich glaub sowas ja nicht. Aber sein Vater, der wird Augen machen!"
+        //  -> Dem Mann antworten
+        //  -> Bevor du etwas sagen kannst, ist der Mann im Gedränge verschwunden. Was bleibt ist
+        //  ein
+        //  wohliges Gefühl. CHAPTER
+        //  -> Nicht reagieren
+        //  Schon ist der Mann im Gedränge verschwunden. Was bleibt ist ein wohliges Gefühl. CHAPTER
+        //  Oder:  "Vor dem Schloss sind viele Leute zzsammengekimmen.
         //   Ein einfach gekleideter Mann spricht dich von der Seite an: Ein Prinz azs einen
         //   fernen Land!
         //  Ich habe erzählen hören, er sei verzaubert gewesen. Ein Unfug, wenn Ihr mich fragt!
         //  Aber sein Vatwr wird überglücklich sein, dass er wieder aufgetaucht ist!
         //  Du bist kurz in Gedanken. Als du dich ihm zuwwnden Willsr, ist der Mann schon in der
         //  Menge verscgwunden.
+
+
+        // STORY Nach der Prinzabfahrt. Klares Lob, aber auch Hinweis auf einsame Stimme
+        //  auf Turm oder so (wenn man sie schon kennt und Rapunzel noch im Turm ist....)
+        //  Einfaches allgemeines Konzept: Immer wenn man eine Geschichte abgeschlossen
+        //  hat, erhält man zwingend ein Lob ("Du bist sehr zufrieden mit dir, dass du..."
+        //  und einen Tipp!
 
         locationComp.narrateAndUnsetLocation();
     }

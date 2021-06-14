@@ -269,18 +269,21 @@ public class MainActivity extends AppCompatActivity {
             case R.id.walk_anfang_bis_oben_bei_rapunzel:
                 mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_OBEN_BEI_RAPUNZEL);
                 return true;
+            case R.id.walk_anfang_bis_rapunzel_rettung_zusagen:
+                mainViewModel.walkActions(FullWalkthrough.ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN);
+                return true;
             case R.id.walk_full:
                 mainViewModel.walkActions(FullWalkthrough.FULL);
                 return true;
             case R.id.walk_sep_1_rapunzel_hoeren_und_in_den_wald:
                 mainViewModel
-                        .walkActions(NurRapunzelWalkthrough.SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD);
+                        .walkActions(NurRapunzelWalkthrough.RAPUNZEL_HOEREN_UND_IN_DEN_WALD);
                 return true;
             case R.id.walk_sep_1_bis_oben_bei_rapunzel:
-                mainViewModel.walkActions(NurRapunzelWalkthrough.SEP_1_BIS_OBEN_BEI_RAPUNZEL);
+                mainViewModel.walkActions(NurRapunzelWalkthrough.BIS_OBEN_BEI_RAPUNZEL);
                 return true;
             case R.id.walk_sep_1_nur_rapunzel:
-                mainViewModel.walkActions(NurRapunzelWalkthrough.SEP_1_NUR_RAPUNZEL);
+                mainViewModel.walkActions(NurRapunzelWalkthrough.NUR_RAPUNZEL);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

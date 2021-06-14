@@ -38,6 +38,7 @@ import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
 import static de.nb.aventiure2.german.base.Nominalphrase.KEIN_WIND;
 import static de.nb.aventiure2.german.base.Nominalphrase.SCHUTZ_VOR_DEM_AERGSTEN_STURM;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ABFLAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.AUFZIEHEN;
@@ -228,7 +229,7 @@ public class WindstaerkeSatzDescriber {
             if (change.getVorher().compareTo(WINDIG) >= 0) {
                 //  "Der Wind verliert an Kraft"
                 alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
-                        wind -> VERLIEREN_AN.mit(KRAFT).alsSatzMitSubjekt(wind)));
+                        wind -> VERLIEREN_AN.mit(npArtikellos(KRAFT)).alsSatzMitSubjekt(wind)));
             }
         }
 

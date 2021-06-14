@@ -109,6 +109,10 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
             return this;
         }
 
+        // FIXME Auch im Wald sollte es stürmen (sonst versteht man "der Sturm hat..." nicht.
+        //  Nicht um 2 Stufen reduzieren - evtl. Reduktion
+        //  erst später?
+
         if (compareTo(KRAEFTIGER_WIND) <= 0) {
             return getVorgaenger();
         }

@@ -262,6 +262,18 @@ public class WetterData {
     private final BlitzUndDonner blitzUndDonner;
 
     @SuppressWarnings("WeakerAccess")
+    public WetterData(final Temperatur tageshoechstUndTiefstTemperatur,
+                      final Windstaerke windstaerkeUnterOffenemHimmel,
+                      final Bewoelkung bewoelkung,
+                      final BlitzUndDonner blitzUndDonner) {
+        this(tageshoechstUndTiefstTemperatur,
+                tageshoechstUndTiefstTemperatur,
+                windstaerkeUnterOffenemHimmel,
+                bewoelkung,
+                blitzUndDonner);
+    }
+
+    @SuppressWarnings("WeakerAccess")
     public WetterData(final Temperatur tageshoechsttemperatur,
                       final Temperatur tagestiefsttemperatur,
                       final Windstaerke windstaerkeUnterOffenemHimmel,

@@ -105,7 +105,7 @@ public class FullWalkthrough {
     public static final Walkthrough ANFANG_BIS_OBEN_BEI_RAPUNZEL =
             ANFANG_BIS_ERSTE_RAPUNZELRUF_BEOBACHTUNG
                     .append(ERSTE_RAPUNZELRUF_BEOBACHTUNG_BIS_OBEN_BEI_RAPUNZEL);
-    private static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE =
+    private static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_RAPUNZEL_RETTUNG_ZUSAGEN =
             new Walkthrough(
                     "Ein Gespräch mit der jungen Frau beginnen",
                     "Die junge Frau nach ihrem Namen fragen",
@@ -125,16 +125,25 @@ public class FullWalkthrough {
                     "Der jungen Frau dein Herz ausschütten",
                     "Die junge Frau nach ihrem Namen fragen",
                     "Rapunzel fragen, wie du ihr helfen kannst",
-                    "Rapunzel Rettung zusagen",
+                    "Rapunzel Rettung zusagen"
+            );
+    public static final Walkthrough ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN =
+            ANFANG_BIS_OBEN_BEI_RAPUNZEL
+                    .append(OBEN_BEI_RAPUNZEL_BIS_RAPUNZEL_RETTUNG_ZUSAGEN);
+
+    private static final Walkthrough RAPUNZEL_RETTUNG_ZUSAGEN_BIS_ENDE =
+            new Walkthrough(
                     "Rapunzel bitten ihre Haare wieder hinunterzulassen",
                     "An den Haaren hinabsteigen",
                     "Den Pfad zurückgehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
+                    "In den Wald gehen",
+                    "Den Wald verlassen und in den Schlossgarten gehen",
                     "Das Holz nehmen"
             );
     public static final Walkthrough FULL =
-            ANFANG_BIS_OBEN_BEI_RAPUNZEL
-                    .append(OBEN_BEI_RAPUNZEL_BIS_ENDE);
+            ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN
+                    .append(RAPUNZEL_RETTUNG_ZUSAGEN_BIS_ENDE);
 
     private FullWalkthrough() {
     }

@@ -29,6 +29,7 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
@@ -126,10 +127,11 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     private TimedDescription<?> getDescTo_SchlossVorhalle_FestBegonnen() {
         if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN) == 0) {
-            return neuerSatz("Vor dem Schloss gibt es ein großes Gedränge und es dauert "
-                    + "eine Weile, bis "
-                    + "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller "
-                    + "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
+            return neuerSatz(PARAGRAPH,
+                    "Vor dem Schloss gibt es ein großes Gedränge und es dauert",
+                    "eine Weile, bis",
+                    "die Menge dich hineinschiebt. Die prächtige Vorhalle steht voller",
+                    "Tische, auf denen in großen Schüsseln Eintöpfe dampfen")
                     .timed(mins(7))
                     .withCounterIdIncrementedIfTextIsNarrated(
                             SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN)

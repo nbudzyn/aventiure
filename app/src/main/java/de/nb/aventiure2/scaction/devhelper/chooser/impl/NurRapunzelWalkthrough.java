@@ -1,8 +1,7 @@
 package de.nb.aventiure2.scaction.devhelper.chooser.impl;
 
 public class NurRapunzelWalkthrough {
-    //  -- separate Walkthroughs --
-    public static final Walkthrough SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD =
+    public static final Walkthrough RAPUNZEL_HOEREN_UND_IN_DEN_WALD =
             new Walkthrough(
                     "Die Kugel nehmen",
                     "Das Schloss verlassen",
@@ -13,7 +12,7 @@ public class NurRapunzelWalkthrough {
                     "Den Pfad zurückgehen",
                     "Tiefer in den Wald hineingehen"
             );
-    private static final Walkthrough SEP_1_IM_WALD_BIS_OBEN_BEI_RAPUNZEL =
+    private static final Walkthrough IM_WALD_BIS_OBEN_BEI_RAPUNZEL =
             new Walkthrough(
                     "In Richtung Schloss gehen",
                     "Die Frau ansprechen",
@@ -41,10 +40,10 @@ public class NurRapunzelWalkthrough {
                     "Rufen: „Lass dein Haar herunter“",
                     "An den Haaren hinaufsteigen"
             );
-    public static final Walkthrough SEP_1_BIS_OBEN_BEI_RAPUNZEL =
-            SEP_1_RAPUNZEL_HOEREN_UND_IN_DEN_WALD
-                    .append(SEP_1_IM_WALD_BIS_OBEN_BEI_RAPUNZEL);
-    private static final Walkthrough SEP_1_OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL =
+    public static final Walkthrough BIS_OBEN_BEI_RAPUNZEL =
+            RAPUNZEL_HOEREN_UND_IN_DEN_WALD
+                    .append(IM_WALD_BIS_OBEN_BEI_RAPUNZEL);
+    private static final Walkthrough OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL =
             new Walkthrough(
                     "Die goldene Kugel hochwerfen",
                     "Der jungen Frau die goldene Kugel geben",
@@ -106,9 +105,9 @@ public class NurRapunzelWalkthrough {
                     "Das Holz nehmen"
             );
 
-    public static final Walkthrough SEP_1_NUR_RAPUNZEL =
-            SEP_1_BIS_OBEN_BEI_RAPUNZEL
-                    .append(SEP_1_OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL);
+    public static final Walkthrough NUR_RAPUNZEL =
+            BIS_OBEN_BEI_RAPUNZEL
+                    .append(OBEN_BEI_RAPUNZEL_BIS_ENDE_RAPUNZEL);
 
     private NurRapunzelWalkthrough() {
     }

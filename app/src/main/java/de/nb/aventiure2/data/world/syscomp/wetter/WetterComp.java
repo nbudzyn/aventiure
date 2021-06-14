@@ -85,8 +85,20 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Setzt das Planwetter.
      *
+     * @param maxDuration Die Zeit bis das Planwetter spätestens eingetreten sein soll
+     *                    (circa).
+     */
+    public void setPlanwetter(@Nullable final WetterData planwetter,
+                              @Nullable final AvTimeSpan maxDuration) {
+        setPlanwetter(planwetter, false, maxDuration);
+    }
+
+    /**
+     * Setzt das Planwetter.
+     *
      * @param firstStepTakesNoTime Bei <code>false</code> wird der erste Schritt
-     *                             (Wetterwechsel) ganz normal ausgeführt - bei <code>true</code>
+     *                             (Wetterwechsel) ganz normal ausgeführt - bei
+     *                             <code>true</code>
      *                             wird der erste Schritt in 0 Sekunden ausgeführt - die
      *                             Wetteränderung beginnt also sofort (beim nächsten
      *                             {@link #onTimePassed(Change)}).
@@ -281,6 +293,9 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public void narrateWetterhinweisWennNoetig() {
         // Ggf. scActionStepCountDao verwenden,
         // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
+
+        // FIXME Wenn gerade (z.B.) beschrieben wurde, dass sich der Wind geändert hat,
+        //  sollte jetzt nicht erneut beschrieben werden, dass kräftiger Wind herrscht o.Ä.
 
         @Nullable final ILocationGO location = loadScLocation();
 
