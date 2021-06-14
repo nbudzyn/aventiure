@@ -54,7 +54,7 @@ public class WetterDataTest {
                                                 time, drinnenDraussen,
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
-                                                true)
+                                                true, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
@@ -62,14 +62,14 @@ public class WetterDataTest {
                                                 EnumRange
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                                 Temperatur.KUEHL),
-                                                true)
+                                                true, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
-                                                false)
+                                                false, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
                                         assertThat(underTest.altWetterhinweise(
@@ -77,7 +77,7 @@ public class WetterDataTest {
                                                 EnumRange
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
                                                                 Temperatur.KUEHL),
-                                                false)
+                                                false, WetterParamFlags.keine())
                                         ).isNotEmpty();
                                     }
                                 }

@@ -77,6 +77,14 @@ public class WetterPCD extends AbstractPersistentComponentData {
     private AvDateTime timeLetzteBeschriebeneTageszeit;
 
     /**
+     * Wenn die Veränderung eines Wetterparameters erzählt wurde, wird das hier "angekreuzt".
+     * Das verhindert, dass unmittelbar nach einer Änderung ("der Wind wird stärker") derselbe
+     * Wetterparameter noch einmal beschrieben wird ("der Wind ist stark").
+     */
+    @Embedded(prefix = "changeGeradeErzaehlt")
+    private WetterParamFlags wetterChangeGeradeErzaehlt;
+
+    /**
      * Wenn der SC wieder draußen ist, soll das Wetter beschrieben werden - und zwar auch
      * Erlebnisse, die nach einem Tageszeitenwechsel <i>draußen</i> nur einmalig auftreten (z.B.
      * "Der erste Strahl der aufgehenden Sonne dringt gerade am Himmel herauf" o.Ä.).
@@ -105,6 +113,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 null, null,
                 null, null,
                 timeLetzteBeschriebeneTageszeit,
+                WetterParamFlags.keine(),
                 true,
                 true,
                 null);
@@ -118,6 +127,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                      @Nullable final Bewoelkung lastBewoelkung,
                      @Nullable final Windstaerke lastWindstaerkeUnterOffenemHimmel,
                      final AvDateTime timeLetzteBeschriebeneTageszeit,
+                     final WetterParamFlags wetterChangeGeradeErzaehlt,
                      final boolean wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
                      final boolean wennWiederUnterOffenemHimmelWetterBeschreiben,
                      @Nullable final PlanwetterData plan) {
@@ -129,6 +139,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         this.lastWindstaerkeUnterOffenemHimmel = lastWindstaerkeUnterOffenemHimmel;
         this.timeLetzteBeschriebeneTageszeit =
                 timeLetzteBeschriebeneTageszeit;
+        this.wetterChangeGeradeErzaehlt = wetterChangeGeradeErzaehlt;
         this.wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel =
                 wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel;
         this.wennWiederUnterOffenemHimmelWetterBeschreiben =
@@ -229,9 +240,6 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
 
-            // FIXME Wenn gerade (z.B.) beschrieben wurde, dass sich der Wind geändert hat,
-            //  sollte jetzt nicht erneut beschrieben werden, dass kräftiger Wind herrscht o.Ä.
-
             return altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
         }
 
@@ -264,7 +272,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 wetter.altWetterhinweise(time.getTime(),
                         drinnenDraussen,
                         locationTemperaturRange,
-                        wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel);
+                        wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
+                        wetterChangeGeradeErzaehlt);
+
+        resetWetterChangeGeradeErzaehlt();
 
         if (!alt.isEmpty()) {
             saveWetterhinweisGegeben(drinnenDraussen);
@@ -364,6 +375,14 @@ public class WetterPCD extends AbstractPersistentComponentData {
         setLastGenerelleTemperatur(currentGenerelleTemperatur);
         setLastBewoelkung(wetter.getBewoelkung());
         setLastWindstaerkeUnterOffenemHimmel(wetter.getWindstaerkeUnterOffenemHimmel());
+
+        setWetterChangeGeradeErzaehlt(
+                new WetterParamFlags(temperaturChangeSofernRelevant != null,
+                        windstaerkeChangeSofernRelevant != null,
+                        bewoelkungChangeSofernRelevant != null,
+                        // FIXME Blitz-und-Donner-Änderung erzählen. Oder alternativ es
+                        //  immer mal wieder blitzen und donnern lassen.
+                        false));
 
         return alt;
     }
@@ -928,7 +947,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     private void setTimeLetzteBeschriebeneTageszeit(
             final AvDateTime timeLetzteBeschriebeneTageszeit) {
-        if (this.timeLetzteBeschriebeneTageszeit == timeLetzteBeschriebeneTageszeit) {
+        if (this.timeLetzteBeschriebeneTageszeit.equals(timeLetzteBeschriebeneTageszeit)) {
             return;
         }
 
@@ -992,5 +1011,24 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
     boolean isWennWiederUnterOffenemHimmelWetterBeschreiben() {
         return wennWiederUnterOffenemHimmelWetterBeschreiben;
+    }
+
+    private void setWetterChangeGeradeErzaehlt(
+            final WetterParamFlags wetterChangeGeradeErzaehlt) {
+        if (this.wetterChangeGeradeErzaehlt.equals(wetterChangeGeradeErzaehlt)) {
+            return;
+        }
+
+        setChanged();
+
+        this.wetterChangeGeradeErzaehlt = wetterChangeGeradeErzaehlt;
+    }
+
+    private void resetWetterChangeGeradeErzaehlt() {
+        setWetterChangeGeradeErzaehlt(WetterParamFlags.keine());
+    }
+
+    WetterParamFlags getWetterChangeGeradeErzaehlt() {
+        return wetterChangeGeradeErzaehlt;
     }
 }

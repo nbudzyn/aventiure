@@ -317,39 +317,50 @@ public class WetterData {
      *                                                                         Tageszeitenwechsel
      *                                                                         nur einmalig
      *                                                                         auftreten
+     * @param beschreibungUnerwuenscht
      */
     ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
             final AvTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
-            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben) {
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+            final WetterParamFlags beschreibungUnerwuenscht) {
         if (drinnenDraussen.isDraussen()) {
             return altWetterHinweiseFuerDraussen(time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                     locationTemperaturRange,
-                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+                    beschreibungUnerwuenscht);
         }
 
         // drinnen!
-        return TEMPERATUR_DESC_DESCRIBER.alt(getLokaleTemperatur(time, locationTemperaturRange),
-                !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
-                time, drinnenDraussen,
-                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+        if (!beschreibungUnerwuenscht.isTemperatur()) {
+            return TEMPERATUR_DESC_DESCRIBER.alt(getLokaleTemperatur(time, locationTemperaturRange),
+                    !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
+                    time, drinnenDraussen,
+                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+        }
+
+        return ImmutableList.of();
     }
 
     /**
      * Gibt alternative Beschreibungen des Wetters zurück, wie man es draußen erlebt -
-     * oder eine leere Menge.
+     * oder eine leere Collection.
      *
      * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
      *                                                                 beschrieben werden sollen,
      *                                                                 die nach einem
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
+     * @param beschreibungUnerwuenscht                                 Welche Wetterparameter
+     *                                                                 nicht beschrieben werden
+     *                                                                 sollen
      */
     private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
             final AvTime time, final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
-            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+            final WetterParamFlags beschreibungUnerwuenscht) {
         // FIXME Blitz und Donner berücksichtigen
 
         final AltDescriptionsBuilder alt = alt();
@@ -363,12 +374,18 @@ public class WetterData {
         final boolean generelleTemperaturOutsideLocationTemperaturRange =
                 !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time));
 
-        final boolean windMussBeschriebenWerden = windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean windMussBeschriebenWerden =
+                !beschreibungUnerwuenscht.isWindstaerke()
+                        && windMussDraussenBeschriebenWerden(windstaerke);
         final boolean temperaturMussBeschriebenWerden =
-                temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel, temperatur,
+                !beschreibungUnerwuenscht.isTemperatur()
+                        && temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel,
+                        temperatur,
                         windstaerke);
         final boolean bewoelkungMussBeschriebenWerden =
-                bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel, windstaerke);
+                !beschreibungUnerwuenscht.isBewoelkung()
+                        && bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel,
+                        windstaerke);
 
         if (!windMussBeschriebenWerden
                 && !temperaturMussBeschriebenWerden
@@ -378,7 +395,8 @@ public class WetterData {
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
-        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isTemperatur()) {
             // "Es ist kühl"
             alt.addAll(TEMPERATUR_DESC_DESCRIBER.alt(temperatur,
                     generelleTemperaturOutsideLocationTemperaturRange,
@@ -394,11 +412,13 @@ public class WetterData {
             }
         }
 
-        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden) {
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
             alt.addAll(WINDSTAERKE_DESC_DESCRIBER.alt(time, windstaerke));
         }
 
-        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden) {
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isBewoelkung()) {
             if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
                 alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
@@ -414,13 +434,17 @@ public class WetterData {
             }
         }
 
-        if (!bewoelkungMussBeschriebenWerden) {
+        if (!bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
             alt.addAll(altStatischWindUndTemperatur(time, unterOffenemHimmel,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
                     windstaerke, temperatur));
         }
 
-        if (!windMussBeschriebenWerden && unterOffenemHimmel) {
+        if (!windMussBeschriebenWerden && unterOffenemHimmel
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isBewoelkung()) {
             // Temperatur und Bewölkung werden beide erwähnt
             alt.addAll(altStatischBewoelkungUndTemperaturUnterOffenemHimmel(
                     time,
@@ -433,7 +457,10 @@ public class WetterData {
         //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
         //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
 
-        if (unterOffenemHimmel) {
+        if (unterOffenemHimmel
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isBewoelkung()
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
             // Wind, Temperatur und Bewölkung werden alle erwähnt
             alt.addAll(altStatischWindBewoelkungUndTemperaturUnterOffenemHimmel(
                     time,
