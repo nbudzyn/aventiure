@@ -294,9 +294,6 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         // Ggf. scActionStepCountDao verwenden,
         // vgl. FeelingsComp#narrateScMuedigkeitIfNecessary.
 
-        // FIXME Wenn gerade (z.B.) beschrieben wurde, dass sich der Wind geändert hat,
-        //  sollte jetzt nicht erneut beschrieben werden, dass kräftiger Wind herrscht o.Ä.
-
         @Nullable final ILocationGO location = loadScLocation();
 
         final ImmutableCollection<AbstractDescription<?>>

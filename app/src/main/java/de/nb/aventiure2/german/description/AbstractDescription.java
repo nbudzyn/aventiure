@@ -24,6 +24,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
@@ -140,7 +141,12 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
 
     @NonNull
     TextDescription toTextDescriptionKeepParams(final Konstituente konstituente) {
-        return new TextDescription(params.copy(), konstituente);
+        final DescriptionParams paramsCopy = params.copy();
+        if (konstituente.getEndsThis() != WORD) {
+            paramsCopy.undWartest(false);
+        }
+
+        return new TextDescription(paramsCopy, konstituente);
     }
 
     @SuppressWarnings("unchecked")

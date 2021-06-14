@@ -228,6 +228,10 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 && wennWiederUnterOffenemHimmelWetterBeschreiben)
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
+
+            // FIXME Wenn gerade (z.B.) beschrieben wurde, dass sich der Wind geändert hat,
+            //  sollte jetzt nicht erneut beschrieben werden, dass kräftiger Wind herrscht o.Ä.
+
             return altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
         }
 

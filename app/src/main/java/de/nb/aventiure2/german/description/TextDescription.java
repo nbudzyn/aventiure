@@ -15,6 +15,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
@@ -43,13 +44,18 @@ public class TextDescription extends AbstractDescription<TextDescription> {
     //  Prädikat: "und weiter in Richtung Schloss".
 
     public TextDescription(final Konstituente konstituente) {
-        super(new DescriptionParams());
-        this.konstituente = konstituente;
+        this(new DescriptionParams(), konstituente);
     }
 
     public TextDescription(final DescriptionParams descriptionParams,
                            final Konstituente konstituente) {
         super(descriptionParams);
+
+        checkArgument(!descriptionParams.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()
+                        || konstituente.getEndsThis() == WORD,
+                "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
+                        + "|| endsThis == StructuralElement.WORD verletzt");
+
         this.konstituente = konstituente;
     }
 
