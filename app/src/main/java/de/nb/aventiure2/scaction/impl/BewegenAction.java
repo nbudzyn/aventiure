@@ -76,6 +76,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
 import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static de.nb.aventiure2.util.StreamUtil.*;
 import static java.util.Objects.requireNonNull;
@@ -507,7 +508,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
         return buildObjectsInLocationDescription(
-                locationAndDescribables.first,
+                requireNonNull(locationAndDescribables.first),
                 locationAndDescribables.second);
     }
 
@@ -544,11 +545,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private String buildObjectsInLocationDescription(
             final ILocationGO location,
             @NonNull final List<? extends IDescribableGO> movableObjectsInLocation) {
+        final SubstantivischePhrase descriptionSingleOrReihung =
+                world.getDescriptionSingleOrReihung(movableObjectsInLocation);
         return buildObjectInLocationDescriptionPrefix(location,
-                movableObjectsInLocation.size())
+                descriptionSingleOrReihung)
                 + " "
                 + joinToString(
-                world.getDescriptionSingleOrReihung(movableObjectsInLocation).nomK());
+                descriptionSingleOrReihung.nomK());
     }
 
     @SuppressWarnings({"RedundantIfStatement"})
@@ -833,17 +836,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     @NonNull
     private static String buildObjectInLocationDescriptionPrefix(
             @NonNull final ILocationGO location,
-            final int numberOfObjects) {
-        final String res = location.storingPlaceComp().getLocationMode().getWo(false);
-
-        if (numberOfObjects == 1) {
-            // FIXME Denkfehler! Auch ein einzelnes Objekt kann Plural sein ("Äste")!
-            //  Vgl.  world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-
-            return res + " liegt";
-        }
-
-        return res + " liegen";
+            final SubstantivischePhrase descriptionSingleOrReihung) {
+        final String wo = location.storingPlaceComp().getLocationMode().getWo(false);
+        return wo + " " + LIEGEN.getPraesensOhnePartikel(descriptionSingleOrReihung);
     }
 
     @Override

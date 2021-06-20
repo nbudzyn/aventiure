@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.storingplace;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
@@ -102,6 +103,10 @@ public enum StoringPlaceType {
         this.wohin = wohin;
         this.mitnehmenPraedikat = mitnehmenPraedikat;
         this.forBelebtUndEherGross = forBelebtUndEherGross;
+    }
+
+    public AdvAngabeSkopusVerbAllg getWoAdvAngabe(final boolean forBelebtUndEherGross) {
+        return new AdvAngabeSkopusVerbAllg(getWo(forBelebtUndEherGross));
     }
 
     public String getWo(final boolean forBelebtUndEherGross) {
