@@ -72,10 +72,6 @@ public class NehmenAction
 
     private final TARGET_LOC targetLocation;
 
-    // FIXME Holz (viele kleine Teile, vgl. vielteilig!) nehmen:
-    //  - "du sammelst..."
-    //  - "Du klaubst (das) Holz auf"
-
     public static <GO extends IDescribableGO & ILocatableGO,
             TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
     Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
@@ -389,7 +385,8 @@ public class NehmenAction
 
     private void narrateObject() {
         final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
-                requireNonNull(gameObject.locationComp().getMitnehmenPraedikat());
+                requireNonNull(gameObject.locationComp().getMitnehmenPraedikat(
+                        gameObject.locationComp().isVielteilig()));
 
         if (isDefinitivDiskontinuitaet()) {
             narrateObjectDiskontinuitaet(mitnehmenPraedikat);

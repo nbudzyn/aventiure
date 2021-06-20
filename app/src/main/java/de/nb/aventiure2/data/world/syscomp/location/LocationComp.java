@@ -346,13 +346,19 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         return getLocation() != null && getLocation().storingPlaceComp().isNiedrig();
     }
 
+    /**
+     * Gibt ein Prädikat für das Mitnehmen von der Location zurück.
+     *
+     * @param vielteilig Ob das Objekt, das mitgenommen wird, vielteilig ist
+     *                   (z.B. viele Äste)
+     */
     @Nullable
-    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat() {
+    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat(final boolean vielteilig) {
         if (getLocation() == null) {
             return null;
         }
 
-        return getLocation().storingPlaceComp().getLocationMode().getMitnehmenPraedikat();
+        return getLocation().storingPlaceComp().getLocationMode().getMitnehmenPraedikat(vielteilig);
     }
 
     @Nullable
