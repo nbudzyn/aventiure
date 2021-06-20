@@ -878,8 +878,7 @@ public class World {
     public <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> loadDescribableNonLivingRecursiveInventory(
             final GameObjectId locationId) {
-        return AliveSystem
-                .filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
+        return AliveSystem.filterNoLivingBeing(loadDescribableRecursiveInventory(locationId));
     }
 
     /**

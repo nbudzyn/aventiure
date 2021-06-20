@@ -23,11 +23,14 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -48,9 +51,15 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOEHE;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.FALLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.LANDEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ROLLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.VERSCHWINDEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
 import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
@@ -121,15 +130,59 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     @Override
     public void narrateAndDo() {
-        // FIXME Holz (viele kleine Teile) kann man nicht auffangen...
-
-        if (isDefinitivWiederholung()) {
+        if (object.locationComp().isVielteilig()) {
+            narrateAndDoVielteilig();
+        } else if (isDefinitivWiederholung()) {
             narrateAndDoWiederholung();
         } else {
             narrateAndDoErstesMal();
         }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
+    }
+
+    private void narrateAndDoVielteilig() {
+        final EinzelneSubstantivischePhrase objectDescLong = world.getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDescShort = world.getDescription(object, true);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.addAll(altNeueSaetze(
+                WERFEN.mit(objectDescLong)
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("in die Höhe"))
+                        .alsSatzMitSubjekt(duSc()),
+                "–",
+                FALLEN.mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher(
+                        "überall " +
+                                location.storingPlaceComp().getLocationMode()
+                                        .getWohin(false)))
+                        .alsSatzMitSubjekt(objectDescShort)
+        ));
+
+        alt.addAll(altNeueSaetze(
+                WERFEN.mit(objectDescLong)
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("in die Höhe"))
+                        .alsSatzMitSubjekt(duSc()),
+                "–",
+                LANDEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                        "überall " +
+                                location.storingPlaceComp().getLocationMode()
+                                        .getWo(false)))
+                        .alsSatzMitSubjekt(objectDescShort)
+        ));
+
+        alt.add(new Satzreihe(
+                WERFEN.mit(objectDescShort)
+                        .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("hoch"))
+                        .alsSatzMitSubjekt(duSc()),
+                FALLEN.mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("überallhin"))
+                        .alsSatzMitSubjekt(objectDescShort.persPron())));
+
+        n.narrateAlt(alt, secs(10));
+
+        sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
+
+        object.locationComp().narrateAndSetLocation(location);
     }
 
     private void narrateAndDoErstesMal() {
@@ -251,7 +304,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 du(PARAGRAPH, "wirfst",
                         objectDesc.akkK(),
                         "nur ein einziges Mal in die Höhe,",
-                        "aber wie das Unglück es will, fällt",
+                        "aber wie das Unglück es will,",
+                        FALLEN.getPraesensOhnePartikel(objectDesc.persPron()),
                         objectDesc.persPron().akkK(),
                         "sofort in den Brunnen:",
                         "Platsch! – weg",
@@ -266,6 +320,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     private void narrateAndDoWiederholung() {
         final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
+        final EinzelneSubstantivischePhrase objectDescShort = world.getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDescLong = world.getDescription(object, true);
 
         if (counterDao.get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
@@ -288,12 +344,18 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             n.narrate(du("wirfst",
                     world.getDescription(object).akkK(),
                     "noch einmal in die Höhe… doch o nein,",
-                    world.getDescription(object, true).nomK(),
-                    "fällt dir nicht in die Hände, sondern schlägt vorbei",
-                    "auf den Brunnenrand und rollt geradezu ins Wasser hinein.",
-                    "Du folgst ihr mit den Augen nach, aber",
-                    world.getDescription(object, true).nomK(),
-                    "verschwindet, und der Brunnen ist tief, so tief, dass",
+                    objectDescShort.nomK(),
+                    FALLEN.getPraesensOhnePartikel(objectDescShort),
+                    "dir nicht in die Hände, sondern schlägt vorbei",
+                    "auf den Brunnenrand und",
+                    ROLLEN.getPraesensOhnePartikel(objectDescShort),
+                    "geradezu ins Wasser hinein.",
+                    "Du folgst",
+                    objectDescShort.persPron().datK(),
+                    "mit den Augen nach, aber",
+                    objectDescLong.nomK(),
+                    VERSCHWINDEN.getPraesensOhnePartikel(objectDescLong),
+                    ", und der Brunnen ist tief, so tief, dass",
                     "man keinen Grund sieht",
                     dunkelheitNachsatz, PARAGRAPH).mitVorfeldSatzglied("noch einmal")
                     .timed(secs(10)));
@@ -305,13 +367,16 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         n.narrate(du("schleuderst",
-                world.getDescription(object).akkK(),
-                "übermütig noch einmal in die Luft, aber sie wieder aufzufangen will dir",
+                objectDescShort.akkK(),
+                "übermütig noch einmal in die Luft, aber ",
+                objectDescShort.persPron().akkK(),
+                "wieder aufzufangen will dir",
                 "dieses Mal nicht gelingen",
                 SENTENCE,
-                world.getDescription(object, true).nomK(),
-                "landet",
-                location.storingPlaceComp().getLocationMode().getWo(false))
+                LANDEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                        location.storingPlaceComp().getLocationMode()
+                                .getWo(false)))
+                        .alsSatzMitSubjekt(world.getDescription(object, true)))
                 .mitVorfeldSatzglied("übermütig")
                 .timed(secs(5)));
 

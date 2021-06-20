@@ -44,7 +44,6 @@ class HolzFuerStrickleiterFactory extends AbstractNarratorGameObjectFactory {
         final HolzFuerStrickleiterDescriptionComp descriptionComp =
                 new HolzFuerStrickleiterDescriptionComp(stateComp);
 
-        // FIXME "Du klaubst (das) Holz auf" / "du sammelst Holz"
         // FIXME Holz in handliche Stücke brechen
 
         // Location
@@ -52,7 +51,7 @@ class HolzFuerStrickleiterFactory extends AbstractNarratorGameObjectFactory {
                 new LocationComp(HOLZ_FUER_STRICKLEITER,
                         db, world,
                         // Erst der Sturm bricht das Holz von den Bäumen
-                        null, null, true);
+                        null, null, true, true);
 
         final HolzFuerStrickleiterReactionsComp reactionsComp =
                 new HolzFuerStrickleiterReactionsComp(n, world, stateComp, locationComp);

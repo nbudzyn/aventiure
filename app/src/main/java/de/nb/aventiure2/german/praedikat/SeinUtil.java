@@ -34,6 +34,9 @@ public class SeinUtil {
     }
 
     private static String istSind(final Numerus numerus) {
+        // FIXME Denkfehler: Auch bei nur einem Objekt kann es Pural sein ("die Äste")!
+        //  Vgl.  world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+
         return requireNonNull(VERB.getPraesensOhnePartikel(P3, numerus));
     }
 }

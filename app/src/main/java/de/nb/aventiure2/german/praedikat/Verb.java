@@ -219,7 +219,7 @@ public class Verb {
     }
 
     @Nullable
-    String getPraesensOhnePartikel(final SubstantivischePhrase subjekt) {
+    public String getPraesensOhnePartikel(final SubstantivischePhrase subjekt) {
         return getPraesensOhnePartikel(subjekt.getPerson(), subjekt.getNumerus());
     }
 

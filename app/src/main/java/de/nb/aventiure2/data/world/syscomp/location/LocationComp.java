@@ -35,7 +35,12 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     private final boolean movable;
 
     /**
-     * Constructor for a {@link LocationComp}.
+     * Ob das Game Object aus vielen unverbunden Einzelteilen besteht (z.B. viele Äste).
+     */
+    private final boolean vielteilig;
+
+    /**
+     * Konstruktor für {@link LocationComp}, bei dem das Objekt <i>nicht vielteilig</i> ist.
      */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
@@ -43,11 +48,25 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
                         @Nullable final GameObjectId initialLocationId,
                         @Nullable final GameObjectId initialLastLocationId,
                         final boolean movable) {
+        this(gameObjectId, db, world, initialLocationId, initialLastLocationId, movable, false);
+    }
+
+    /**
+     * Constructor for a {@link LocationComp}.
+     */
+    public LocationComp(final GameObjectId gameObjectId,
+                        final AvDatabase db,
+                        final World world,
+                        @Nullable final GameObjectId initialLocationId,
+                        @Nullable final GameObjectId initialLastLocationId,
+                        final boolean movable,
+                        final boolean vielteilig) {
         super(gameObjectId, db.locationDao());
         this.world = world;
         this.initialLocationId = initialLocationId;
         this.initialLastLocationId = initialLastLocationId;
         this.movable = movable;
+        this.vielteilig = vielteilig;
     }
 
     @Override
@@ -399,5 +418,9 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     public boolean isMovable() {
         return movable;
+    }
+
+    public boolean isVielteilig() {
+        return vielteilig;
     }
 }

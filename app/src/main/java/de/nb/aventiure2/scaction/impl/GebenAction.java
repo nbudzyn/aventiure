@@ -73,11 +73,9 @@ public class GebenAction<
                 ImmutableList.builder();
 
         for (final GIVEN givenCandidate : givenCandidates) {
-            if (givenCandidate.locationComp().isMovable() &&
-                    !givenCandidate.is(taker)) {
-                res.add(
-                        new GebenAction<>(scActionStepCountDao, timeTaker, n, world, taker,
-                                givenCandidate));
+            if (givenCandidate.locationComp().isMovable() && !givenCandidate.is(taker)) {
+                res.add(new GebenAction<>(scActionStepCountDao, timeTaker, n, world, taker,
+                        givenCandidate));
             }
         }
 

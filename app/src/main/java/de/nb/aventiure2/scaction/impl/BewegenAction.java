@@ -837,6 +837,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final String res = location.storingPlaceComp().getLocationMode().getWo(false);
 
         if (numberOfObjects == 1) {
+            // FIXME Denkfehler! Auch ein einzelnes Objekt kann Plural sein ("Äste")!
+            //  Vgl.  world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+
             return res + " liegt";
         }
 
