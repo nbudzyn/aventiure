@@ -1,7 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import java.util.Collection;
-
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
@@ -25,18 +23,7 @@ public class SeinUtil {
         return istSind(numerusGenus.getNumerus());
     }
 
-    public static String istSind(final Collection<?> subjektEntitaeten) {
-        return istSind(subjektEntitaeten.size());
-    }
-
-    private static String istSind(final int number) {
-        return istSind(Numerus.forNumber(number));
-    }
-
     private static String istSind(final Numerus numerus) {
-        // FIXME Denkfehler: Auch bei nur einem Objekt kann es Pural sein ("die Äste")!
-        //  Vgl.  world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
-
         return requireNonNull(VERB.getPraesensOhnePartikel(P3, numerus));
     }
 }

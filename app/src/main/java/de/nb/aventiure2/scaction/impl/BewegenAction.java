@@ -48,6 +48,7 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -75,7 +76,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static de.nb.aventiure2.german.praedikat.SeinUtil.istSind;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -444,7 +444,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final List<? extends IDescribableGO> missingObjects) {
         final SubstantivischePhrase aufzaehlung =
                 world.getDescriptionSingleOrReihung(missingObjects);
-        final String istSind = istSind(missingObjects);
+        final String istSind = SeinUtil.VERB.getPraesensOhnePartikel(aufzaehlung);
 
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(aufzaehlung.nomK(), istSind, "nicht mehr da"),
