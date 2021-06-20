@@ -38,7 +38,7 @@ public class WindstaerkePraedikativumDescriber {
         final ImmutableSet.Builder<SubstantivischePhrase> alt = ImmutableSet.builder();
 
         // "der Wind" (evtl. leer)
-        alt.addAll(windstaerke.altNomenFlexionsspalte());
+        alt.addAll(windstaerke.altSpNomenFlexionsspalte());
 
         // "der windige Morgen"
         alt.addAll(mapToSet(windstaerke.altAdjPhrWetter(),

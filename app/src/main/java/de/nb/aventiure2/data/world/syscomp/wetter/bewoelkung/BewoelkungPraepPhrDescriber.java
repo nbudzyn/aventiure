@@ -77,7 +77,7 @@ public class BewoelkungPraepPhrDescriber {
 
         // "in den grauen Morgen"
         alt.addAll(mapToSet(praedikativumDescriber
-                        .altStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung,
+                        .altSpStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung,
                                 time.getTageszeit(), DEF),
                 IN_AKK::mit));
 
@@ -113,7 +113,7 @@ public class BewoelkungPraepPhrDescriber {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         alt.addAll(
-                mapToSet(praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit),
+                mapToSet(praedikativumDescriber.altSpOffenerHimmel(bewoelkung, tageszeit),
                         UNTER_DAT::mit));
         alt.addAll(mapToSet(praedikativumDescriber
                         .altLichtInDemEtwasLiegt(bewoelkung, tageszeit,
@@ -192,15 +192,15 @@ public class BewoelkungPraepPhrDescriber {
     }
 
     /**
-     * Gibt etwas zurück wie "unter den nachtschwarzen Himmel".
+     * Gibt ggf. etwas zurück wie "unter den nachtschwarzen Himmel".
      */
-    public ImmutableSet<Praepositionalphrase> altUnterOffenenHimmelAkk(
+    public ImmutableSet<Praepositionalphrase> altSpUnterOffenenHimmelAkk(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<Praepositionalphrase> alt = ImmutableSet.builder();
 
         // "unter den nachtschwarzen Himmel"
-        alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(bewoelkung, tageszeit),
+        alt.addAll(mapToSet(praedikativumDescriber.altSpHimmelAdjPhr(bewoelkung, tageszeit),
                 a -> UNTER_AKK.mit(HIMMEL.mit(a))));
 
         switch (bewoelkung) {

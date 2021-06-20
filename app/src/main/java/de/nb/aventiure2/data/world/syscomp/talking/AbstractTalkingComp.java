@@ -217,7 +217,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected ImmutableList<String> altBegruessungen() {
         return ImmutableList.<String>builder()
-                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeBegruessungen())
+                .addAll(timeTaker.now().getTageszeit().altSpTagezeitabhaengigeBegruessungen())
                 .addAll(TAGESZEITUNABHAENGIE_BEGRUESSUNGEN)
                 .build();
     }
@@ -243,7 +243,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      */
     protected ImmutableList<String> altVerabschiedungen() {
         return ImmutableList.<String>builder()
-                .addAll(timeTaker.now().getTageszeit().altTagezeitabhaengigeVerabschiedungen())
+                .addAll(timeTaker.now().getTageszeit().altSpTagezeitabhaengigeVerabschiedungen())
                 .addAll(TAGESZEITUNABHAENGIE_VERABSCHIEDUNGEN)
                 .build();
     }

@@ -50,14 +50,14 @@ public class WetterDataTest {
                                                         + blitzUndDonner + " "
                                                         + drinnenDraussen + " "
                                                         + time);
-                                        assertThat(underTest.altWetterhinweise(
+                                        assertThat(underTest.altSpWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
                                                 true, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
-                                        assertThat(underTest.altWetterhinweise(
+                                        assertThat(underTest.altSpWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -65,14 +65,14 @@ public class WetterDataTest {
                                                 true, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
-                                        assertThat(underTest.altWetterhinweise(
+                                        assertThat(underTest.altSpWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange.of(tagestiefsttemperatur,
                                                         tageshoechsttemperatur),
                                                 false, WetterParamFlags.keine())
                                         ).isNotEmpty();
 
-                                        assertThat(underTest.altWetterhinweise(
+                                        assertThat(underTest.altSpWetterhinweise(
                                                 time, drinnenDraussen,
                                                 EnumRange
                                                         .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -114,14 +114,14 @@ public class WetterDataTest {
                                                     + blitzUndDonner + " "
                                                     + time);
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             true)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, true,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -129,14 +129,14 @@ public class WetterDataTest {
                                             true)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, true,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, true,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -144,7 +144,7 @@ public class WetterDataTest {
                                             false)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
@@ -152,7 +152,7 @@ public class WetterDataTest {
                                             .build().isEmpty())
                                             .isFalse();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, false,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -160,14 +160,14 @@ public class WetterDataTest {
                                             true)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, false,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
                                             false)
                                             .build()).isNotEmpty();
 
-                                    assertThat(underTest.altKommtNachDraussen(
+                                    assertThat(underTest.altSpKommtNachDraussen(
                                             time, false,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -203,7 +203,7 @@ public class WetterDataTest {
                                             + time);
 
                             assertThat(underTest
-                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                    .altSpAngenehmereTemperaturOderWindAlsVorLocation(
                                             time,
                                             EnumRange.of(tagestiefsttemperatur,
                                                     tageshoechsttemperatur),
@@ -211,7 +211,7 @@ public class WetterDataTest {
                             ).isNotEmpty();
 
                             assertThat(underTest
-                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                    .altSpAngenehmereTemperaturOderWindAlsVorLocation(
                                             time,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -220,7 +220,7 @@ public class WetterDataTest {
                             ).isNotEmpty();
 
                             assertThat(underTest
-                                    .altAngenehmereTemperaturOderWindAlsVorLocation(
+                                    .altSpAngenehmereTemperaturOderWindAlsVorLocation(
                                             time,
                                             EnumRange
                                                     .of(Temperatur.KNAPP_UNTER_DEM_GEFRIERPUNKT,
@@ -412,7 +412,7 @@ public class WetterDataTest {
     }
 
     @Test
-    public void altTimePassedTageszeitenaenderungNichtBeschreiben() {
+    public void altSpTimePassedTageszeitenaenderungNichtBeschreiben() {
         // GIVEN, WHEN, THEN
         final List<AvTime> relevantTimes = relevantTimes();
 
@@ -443,7 +443,7 @@ public class WetterDataTest {
                                             bewoelkungVorher,
                                             bewoelkungNachher);
 
-                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                            testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                                     null, null,
                                     bewoelkungChange);
                         }
@@ -454,7 +454,7 @@ public class WetterDataTest {
                         new WetterParamChange<>(Temperatur.WARM,
                                 Temperatur.RECHT_HEISS);
 
-                testAltTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                         null, temperaturChange, null);
 
                 for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -468,7 +468,7 @@ public class WetterDataTest {
                                             bewoelkungVorher,
                                             bewoelkungNachher);
 
-                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                            testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(
                                     timeChange,
                                     null, temperaturChange,
                                     bewoelkungChange);
@@ -481,7 +481,7 @@ public class WetterDataTest {
                             final WetterParamChange<Windstaerke> windstaerkeChange =
                                     new WetterParamChange<>(windstaerkeVorher, windstaerkeNachher);
 
-                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                            testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                                     windstaerkeChange, null, null);
 
                             for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -495,7 +495,7 @@ public class WetterDataTest {
                                                         bewoelkungVorher,
                                                         bewoelkungNachher);
 
-                                        testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                        testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(
                                                 timeChange,
                                                 windstaerkeChange, null,
                                                 bewoelkungChange);
@@ -503,7 +503,7 @@ public class WetterDataTest {
                                 }
                             }
 
-                            testAltTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                            testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                                     windstaerkeChange, temperaturChange, null);
 
                             for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -517,7 +517,7 @@ public class WetterDataTest {
                                                         bewoelkungVorher,
                                                         bewoelkungNachher);
 
-                                        testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+                                        testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(
                                                 timeChange,
                                                 windstaerkeChange, temperaturChange,
                                                 bewoelkungChange);
@@ -552,7 +552,7 @@ public class WetterDataTest {
 
                 final Change<AvDateTime> timeChange = new Change<>(lastTime, currentTime);
 
-                testAltTimePassedTageszeitenaenderung(timeChange,
+                testAltSpTimePassedTageszeitenaenderung(timeChange,
                         null, null, null);
 
                 for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -566,7 +566,7 @@ public class WetterDataTest {
                                             bewoelkungVorher,
                                             bewoelkungNachher);
 
-                            testAltTimePassedTageszeitenaenderung(timeChange,
+                            testAltSpTimePassedTageszeitenaenderung(timeChange,
                                     null, null,
                                     bewoelkungChange);
                         }
@@ -576,7 +576,7 @@ public class WetterDataTest {
                 final WetterParamChange<Temperatur> temperaturChange =
                         new WetterParamChange<>(Temperatur.WARM, Temperatur.KUEHL);
 
-                testAltTimePassedTageszeitenaenderung(timeChange,
+                testAltSpTimePassedTageszeitenaenderung(timeChange,
                         null, temperaturChange, null);
 
                 for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -590,7 +590,7 @@ public class WetterDataTest {
                                             bewoelkungVorher,
                                             bewoelkungNachher);
 
-                            testAltTimePassedTageszeitenaenderung(timeChange,
+                            testAltSpTimePassedTageszeitenaenderung(timeChange,
                                     null, temperaturChange,
                                     bewoelkungChange);
                         }
@@ -602,7 +602,7 @@ public class WetterDataTest {
                             final WetterParamChange<Windstaerke> windstaerkeChange =
                                     new WetterParamChange<>(windstaerkeVorher, windstaerkeNachher);
 
-                            testAltTimePassedTageszeitenaenderung(timeChange,
+                            testAltSpTimePassedTageszeitenaenderung(timeChange,
                                     windstaerkeChange, null, null);
 
                             for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -616,14 +616,14 @@ public class WetterDataTest {
                                                         bewoelkungVorher,
                                                         bewoelkungNachher);
 
-                                        testAltTimePassedTageszeitenaenderung(timeChange,
+                                        testAltSpTimePassedTageszeitenaenderung(timeChange,
                                                 windstaerkeChange, null,
                                                 bewoelkungChange);
                                     }
                                 }
                             }
 
-                            testAltTimePassedTageszeitenaenderung(timeChange,
+                            testAltSpTimePassedTageszeitenaenderung(timeChange,
                                     windstaerkeChange, temperaturChange, null);
 
                             for (final Bewoelkung bewoelkungVorher : Bewoelkung
@@ -637,7 +637,7 @@ public class WetterDataTest {
                                                         bewoelkungVorher,
                                                         bewoelkungNachher);
 
-                                        testAltTimePassedTageszeitenaenderung(timeChange,
+                                        testAltSpTimePassedTageszeitenaenderung(timeChange,
                                                 windstaerkeChange, temperaturChange,
                                                 bewoelkungChange);
                                     }
@@ -651,7 +651,7 @@ public class WetterDataTest {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void testAltTimePassedTageszeitenaenderungNichtBeschreiben(
+    private static void testAltSpTimePassedTageszeitenaenderungNichtBeschreiben(
             final Change<AvDateTime> timeChange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChange,
             @Nullable final WetterParamChange<Temperatur> temperaturChange,
@@ -665,11 +665,12 @@ public class WetterDataTest {
                 || temperaturChange != null
                 || bewoelkungChange != null) {
             if (bewoelkungChange == null && windstaerkeChange == null) {
-                assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
-                        windstaerkeChange,
-                        temperaturChange,
-                        bewoelkungChange,
-                        DrinnenDraussen.DRINNEN, false)).isNotEmpty();
+                assertThat(
+                        WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                                windstaerkeChange,
+                                temperaturChange,
+                                bewoelkungChange,
+                                DrinnenDraussen.DRINNEN, false)).isNotEmpty();
             }
 
             if ((windstaerkeChange != null
@@ -677,21 +678,22 @@ public class WetterDataTest {
                     windstaerkeChange.getNachher().getLokaleWindstaerkeDraussenGeschuetzt())
                     || temperaturChange != null
                     || bewoelkungChange != null) {
-                assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
-                        windstaerkeChange,
-                        temperaturChange,
-                        bewoelkungChange,
-                        DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
+                assertThat(
+                        WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                                windstaerkeChange,
+                                temperaturChange,
+                                bewoelkungChange,
+                                DrinnenDraussen.DRAUSSEN_GESCHUETZT, true)).isNotEmpty();
             } else {
                 // Es soll nicht abstürzen
-                WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+                WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                         windstaerkeChange,
                         temperaturChange,
                         bewoelkungChange,
                         DrinnenDraussen.DRAUSSEN_GESCHUETZT, true);
             }
 
-            assertThat(WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+            assertThat(WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                     windstaerkeChange,
                     temperaturChange,
                     bewoelkungChange,
@@ -699,19 +701,19 @@ public class WetterDataTest {
                     true)).isNotEmpty();
         } else {
             // Es soll nicht abstürzen
-            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+            WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                     null,
                     null,
                     null,
                     DrinnenDraussen.DRINNEN, false);
 
-            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+            WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                     null,
                     null,
                     null,
                     DrinnenDraussen.DRAUSSEN_GESCHUETZT, true);
 
-            WetterData.altTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
+            WetterData.altSpTimePassedTageszeitenaenderungNichtBeschreiben(timeChange,
                     null,
                     null,
                     null,
@@ -719,13 +721,13 @@ public class WetterDataTest {
         }
     }
 
-    private static void testAltTimePassedTageszeitenaenderung(final Change<AvDateTime> timeChange,
-                                                              @Nullable
-                                                              final WetterParamChange<Windstaerke> windstaerkeChange,
-                                                              @Nullable
-                                                              final WetterParamChange<Temperatur> temperaturChange,
-                                                              @Nullable
-                                                              final WetterParamChange<Bewoelkung> bewoelkungChange) {
+    private static void testAltSpTimePassedTageszeitenaenderung(final Change<AvDateTime> timeChange,
+                                                                @Nullable
+                                                                final WetterParamChange<Windstaerke> windstaerkeChange,
+                                                                @Nullable
+                                                                final WetterParamChange<Temperatur> temperaturChange,
+                                                                @Nullable
+                                                                final WetterParamChange<Bewoelkung> bewoelkungChange) {
         final WetterData underTest = new WetterData(Temperatur.SEHR_HEISS,
                 Temperatur.KLIRREND_KALT,
                 windstaerkeChange != null ? windstaerkeChange.getNachher() :
@@ -740,7 +742,7 @@ public class WetterDataTest {
                 + (bewoelkungChange != null ? bewoelkungChange + " " : ""));
 
         if (bewoelkungChange == null && windstaerkeChange == null) {
-            assertThat(underTest.altTimePassedTageszeitenaenderung(timeChange,
+            assertThat(underTest.altSpTimePassedTageszeitenaenderung(timeChange,
                     false,
                     windstaerkeChange,
                     temperaturChange,
@@ -748,14 +750,14 @@ public class WetterDataTest {
                     DrinnenDraussen.DRINNEN)).isNotEmpty();
         }
 
-        assertThat(underTest.altTimePassedTageszeitenaenderung(timeChange,
+        assertThat(underTest.altSpTimePassedTageszeitenaenderung(timeChange,
                 false,
                 windstaerkeChange,
                 temperaturChange,
                 bewoelkungChange,
                 DrinnenDraussen.DRAUSSEN_GESCHUETZT)).isNotEmpty();
 
-        assertThat(underTest.altTimePassedTageszeitenaenderung(timeChange,
+        assertThat(underTest.altSpTimePassedTageszeitenaenderung(timeChange,
                 false,
                 windstaerkeChange,
                 temperaturChange,

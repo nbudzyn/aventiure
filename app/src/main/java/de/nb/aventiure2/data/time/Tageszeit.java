@@ -122,36 +122,36 @@ public enum Tageszeit {
      * <p>
      * Kann leer sein, aber nicht in Kombination mit {@link #altAdjPhrWolkenloserHimmel}.
      */
-    private final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen;
+    private final ImmutableList<EinzelneSubstantivischePhrase> altSpWolkenloserHimmelErgaenzungen;
 
     /**
      * Ggf. alternative tageszeitspezifische Begrüßungen, jeweils beginnend mit Kleinbuchstaben und
      * ohne Satzschlusszeichen
      */
-    private final ImmutableList<String> begruessungen;
+    private final ImmutableList<String> altSpBegruessungen;
 
     /**
      * Ggf. alternative tageszeitspezifische Verabschiedungen, jeweils beginnend mit
      * Kleinbuchstaben und ohne Satzschlusszeichen
      */
-    private final ImmutableList<String> verabschiedungen;
+    private final ImmutableList<String> altSpVerabschiedungen;
 
     Tageszeit(final NomenFlexionsspalte nomenFlexionsspalte,
               final Lichtverhaeltnisse lichtverhaeltnisseDraussen,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirn,
               final ImmutableList<EinzelneSubstantivischePhrase> altGestirnschein,
               final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWolkenloserHimmel,
-              final ImmutableList<EinzelneSubstantivischePhrase> altWolkenloserHimmelErgaenzungen,
-              final Collection<String> begruessungen,
-              final Collection<String> verabschiedungen) {
+              final ImmutableList<EinzelneSubstantivischePhrase> altSpWolkenloserHimmelErgaenzungen,
+              final Collection<String> altSpBegruessungen,
+              final Collection<String> altSpVerabschiedungen) {
         this.nomenFlexionsspalte = nomenFlexionsspalte;
         this.lichtverhaeltnisseDraussen = lichtverhaeltnisseDraussen;
         this.altGestirn = altGestirn;
         this.altGestirnschein = altGestirnschein;
         this.altAdjPhrWolkenloserHimmel = altAdjPhrWolkenloserHimmel;
-        this.altWolkenloserHimmelErgaenzungen = altWolkenloserHimmelErgaenzungen;
-        this.begruessungen = ImmutableList.copyOf(begruessungen);
-        this.verabschiedungen = ImmutableList.copyOf(verabschiedungen);
+        this.altSpWolkenloserHimmelErgaenzungen = altSpWolkenloserHimmelErgaenzungen;
+        this.altSpBegruessungen = ImmutableList.copyOf(altSpBegruessungen);
+        this.altSpVerabschiedungen = ImmutableList.copyOf(altSpVerabschiedungen);
     }
 
     /**
@@ -216,7 +216,7 @@ public enum Tageszeit {
     public ImmutableCollection<EinzelneSubstantivischePhrase> altWolkenloserHimmel() {
         return ImmutableSet.<EinzelneSubstantivischePhrase>builder()
                 .addAll(mapToSet(altAdjPhrWolkenloserHimmel, HIMMEL::mit))
-                .addAll(altWolkenloserHimmelErgaenzungen)
+                .addAll(altSpWolkenloserHimmelErgaenzungen)
                 .build();
     }
 
@@ -236,16 +236,16 @@ public enum Tageszeit {
      * Gibt evtl. alternative tageszeitspezifische Begruessungen zurück, jeweils beginnend mit
      * Kleinbuchstaben und ohne Satzschlusszeichen - könnte leer sein!
      */
-    public ImmutableList<String> altTagezeitabhaengigeBegruessungen() {
-        return begruessungen;
+    public ImmutableList<String> altSpTagezeitabhaengigeBegruessungen() {
+        return altSpBegruessungen;
     }
 
     /**
      * Gibt evtl. alternative tageszeitspezifische Verabschiedungen zurück, jeweils beginnend mit
      * Kleinbuchstaben und ohne Satzschlusszeichen - könnte leer sein!
      */
-    public ImmutableList<String> altTagezeitabhaengigeVerabschiedungen() {
-        return verabschiedungen;
+    public ImmutableList<String> altSpTagezeitabhaengigeVerabschiedungen() {
+        return altSpVerabschiedungen;
     }
 
     public NomenFlexionsspalte getNomenFlexionsspalte() {

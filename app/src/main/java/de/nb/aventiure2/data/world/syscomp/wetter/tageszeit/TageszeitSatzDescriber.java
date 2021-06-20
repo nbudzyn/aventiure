@@ -58,7 +58,7 @@ public class TageszeitSatzDescriber {
      * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    ImmutableCollection<EinzelnerSatz> altDraussen(
+    ImmutableCollection<EinzelnerSatz> altSpDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
@@ -70,7 +70,7 @@ public class TageszeitSatzDescriber {
         }
 
         // "es ist schon hell"
-        alt.addAll(altSchonBereitsNochDunkelHellDraussen(time,
+        alt.addAll(altSpSchonBereitsNochDunkelHellDraussen(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt.build();
@@ -80,10 +80,10 @@ public class TageszeitSatzDescriber {
      * Gibt Alternativen zurück wie "es ist schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    ImmutableCollection<EinzelnerSatz> altSchonBereitsNochDunkelHellDraussen(
+    ImmutableCollection<EinzelnerSatz> altSpSchonBereitsNochDunkelHellDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        return mapToSet(praedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(time,
+        return mapToSet(praedikativumDescriber.altSpSchonBereitsNochDunkelHellAdjPhr(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 Praedikativum::alsEsIstSatz);
     }

@@ -216,32 +216,32 @@ public class TemperaturSatzDescriber {
             // Die Temperatur hat sich nur um eine Stufe verändert
             // ("Temperaturwechsel").
 
-            final ImmutableSet<AdvAngabeSkopusSatz> altWann;
-            final ImmutableSet<Konditionalsatz> altWannSaetze;
+            final ImmutableSet<AdvAngabeSkopusSatz> altSpWann;
+            final ImmutableSet<Konditionalsatz> altSpWannSaetze;
 
             if (span(dateTimeChange).shorterThan(ONE_DAY)
                     && auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
                 final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
-                altWann = tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange);
-                altWannSaetze = tageszeitAdvAngabeWannDescriber
-                        .altWannKonditionalsaetzeDraussen(timeChange);
+                altSpWann = tageszeitAdvAngabeWannDescriber.altSpWannDraussen(timeChange);
+                altSpWannSaetze = tageszeitAdvAngabeWannDescriber
+                        .altSpWannKonditionalsaetzeDraussen(timeChange);
             } else {
-                altWann = ImmutableSet.of();
-                altWannSaetze = ImmutableSet.of();
+                altSpWann = ImmutableSet.of();
+                altSpWannSaetze = ImmutableSet.of();
             }
 
             // "Gegen Mitternacht ist es kalt"
-            alt.addAll(altWann.stream().flatMap(gegenMitternacht -> altStatisch.stream()
+            alt.addAll(altSpWann.stream().flatMap(gegenMitternacht -> altStatisch.stream()
                     .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                     .collect(toSet()));
             // "Als der Tag angebrochen ist, ist es kalt"
-            alt.addAll(altWannSaetze.stream()
+            alt.addAll(altSpWannSaetze.stream()
                     .flatMap(alsDerTagAngebrochenIst -> altStatisch.stream()
                             .filter(s -> !s.hatAngabensatz())
                             .map(s -> s.mitAngabensatz(alsDerTagAngebrochenIst, true)))
                     .collect(toSet()));
             // "Gegen Mitternacht wird die Luft kalt"
-            alt.addAll(altWann.stream().flatMap(gegenMitternacht ->
+            alt.addAll(altSpWann.stream().flatMap(gegenMitternacht ->
                     praedikativumDescriber
                             .altLuftAdjPhr(change.getNachher(),
                                     dateTimeChange.getNachher().getTageszeit())
@@ -251,7 +251,7 @@ public class TemperaturSatzDescriber {
                                     .alsSatzMitSubjekt(LUFT)))
                     .collect(toSet()));
             // "Als der Tag angebrochen ist, wird die Luft kalt"
-            alt.addAll(altWannSaetze.stream().flatMap(alsDerTagAngebrochenIst ->
+            alt.addAll(altSpWannSaetze.stream().flatMap(alsDerTagAngebrochenIst ->
                     praedikativumDescriber
                             .altLuftAdjPhr(change.getNachher(),
                                     dateTimeChange.getNachher().getTageszeit())
@@ -312,7 +312,7 @@ public class TemperaturSatzDescriber {
                         false
                 ));
 
-                alt.addAll(altWann.stream()
+                alt.addAll(altSpWann.stream()
                         .flatMap(gegenMitternacht ->
                                 altWechselAnstieg(
                                         dateTimeChange.getNachher().getTageszeit(),
@@ -323,7 +323,7 @@ public class TemperaturSatzDescriber {
                                         .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                         .collect(toSet()));
 
-                alt.addAll(altWannSaetze.stream()
+                alt.addAll(altSpWannSaetze.stream()
                         .flatMap(alsDerTagAngebrochenIst ->
                                 altWechselAnstieg(
                                         dateTimeChange.getNachher().getTageszeit(),
@@ -344,7 +344,7 @@ public class TemperaturSatzDescriber {
                 ));
 
                 if (auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
-                    alt.addAll(altWann.stream()
+                    alt.addAll(altSpWann.stream()
                             .flatMap(gegenMitternacht ->
                                     altWechselAbfall(
                                             dateTimeChange.getNachher().getTageszeit(),
@@ -355,7 +355,7 @@ public class TemperaturSatzDescriber {
                                             .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                             .collect(toSet()));
 
-                    alt.addAll(altWannSaetze.stream()
+                    alt.addAll(altSpWannSaetze.stream()
                             .flatMap(alsDerTagAngebrochenIst ->
                                     altWechselAbfall(
                                             dateTimeChange.getNachher().getTageszeit(),
@@ -835,7 +835,7 @@ public class TemperaturSatzDescriber {
             //  "Es ist dunkel und in der Ferne ruft ein Käuzchen. Es schon dunkel; die Luft ist
             //  warm"
 
-            alt.addAll(altMitTageszeitLichtverhaeltnissen(temperatur, time,
+            alt.addAll(altSpMitTageszeitLichtverhaeltnissen(temperatur, time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                     auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben));
         }
@@ -947,7 +947,7 @@ public class TemperaturSatzDescriber {
      * Gibt Alternativen zurück wie "es ist schon dunkel und ziemlich kühl" - oder eine leere
      * {@link java.util.Collection}.
      */
-    private ImmutableCollection<Satz> altMitTageszeitLichtverhaeltnissen(
+    private ImmutableCollection<Satz> altSpMitTageszeitLichtverhaeltnissen(
             final Temperatur temperatur,
             final AvTime time,
             final boolean unterOffenemHimmel,
@@ -955,15 +955,15 @@ public class TemperaturSatzDescriber {
         final ImmutableCollection.Builder<Satz> alt = ImmutableSet.builder();
 
         // "schon dunkel" / "dunkel"
-        final ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelAdjPhr =
-                tageszeitPraedikativumDescriber.altSchonBereitsNochDunkelHellAdjPhr(
+        final ImmutableCollection<AdjPhrOhneLeerstellen> altSpSchonBereitsNochDunkelAdjPhr =
+                tageszeitPraedikativumDescriber.altSpSchonBereitsNochDunkelHellAdjPhr(
                         time,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben
                                 && (time.getTageszeit() == MORGENS
                                 || time.getTageszeit() == NACHTS)
                 );
 
-        if (!altSchonBereitsNochDunkelAdjPhr.isEmpty()) {
+        if (!altSpSchonBereitsNochDunkelAdjPhr.isEmpty()) {
             alt.addAll(
                     alt(temperatur, time.getTageszeit(),
                             unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
@@ -971,7 +971,7 @@ public class TemperaturSatzDescriber {
                             false)
                             .stream()
                             .flatMap(zweiterSatz ->
-                                    altSchonBereitsNochDunkelAdjPhr.stream()
+                                    altSpSchonBereitsNochDunkelAdjPhr.stream()
                                             .map(schonDunkel ->
                                                     new Satzreihe(
                                                             schonDunkel.alsEsIstSatz(),
@@ -983,7 +983,7 @@ public class TemperaturSatzDescriber {
             alt.addAll(praedikativumDescriber.altSofernExpletivesEsHoechstensImVorfeldSteht(
                     temperatur, time.getTageszeit(), true).stream()
                     .flatMap(tempAdjPhr ->
-                            altSchonBereitsNochDunkelAdjPhr.stream()
+                            altSpSchonBereitsNochDunkelAdjPhr.stream()
                                     .map(schonDunkel ->
                                             new ZweiPraedikativa<>(
                                                     schonDunkel, tempAdjPhr)
@@ -1004,7 +1004,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> altDraussenHeuteDerTagSofernSinnvoll(
+    public ImmutableCollection<Satz> altSpDraussenHeuteDerTagSofernSinnvoll(
             final Temperatur temperatur,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             final AvTime time,
@@ -1030,7 +1030,7 @@ public class TemperaturSatzDescriber {
         alt.addAll(altDerTag(temperatur));
 
         if (!sonneNichtErwaehnen) {
-            alt.addAll(mapToList(altSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
+            alt.addAll(mapToList(altSpSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
                     false),
                     s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("heute"))));
         }
@@ -1125,7 +1125,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<Satz> altSonnenhitzeWennHeissUndNichtNachts(
+    ImmutableCollection<Satz> altSpSonnenhitzeWennHeissUndNichtNachts(
             final Temperatur temperatur,
             final AvTime time, final boolean auchMitBezugAufKonkreteTageszeit) {
         if (time.getTageszeit() == NACHTS) {

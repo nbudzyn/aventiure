@@ -138,9 +138,15 @@ public class BewoelkungSatzDescriber {
      * Tageszeit gewechselt hat: "Die Sonne geht auf" o.Ä.
      */
     @CheckReturnValue
-    ImmutableCollection<Satz> altTageszeitenwechsel(
+    ImmutableCollection<Satz> altSpTageszeitenwechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
+        // Leere Menge als Ergebnis bei:
+        // - MORGENS und bewölkung > BEWOELKT
+        // - TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht unter offenem Himmel)
+        // - ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+        // - NACHTS und BEDECKT
+
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         if (neueTageszeit == MORGENS) {
@@ -216,9 +222,12 @@ public class BewoelkungSatzDescriber {
      * Gibt Alternativen zurück, die beschreiben, wie die Bewölkung sich eine Stufe
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.
      */
-    public ImmutableCollection<Satz> altSprungOderWechselUnterOffenemHimmel(
+    public ImmutableCollection<Satz> altSpSprungOderWechselUnterOffenemHimmel(
             final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
+        // Leeres Ergebnis zumindest bei
+        // - delta (0 oder 1) und endBewoelkung <= LEICHT_BEWOELKT und NACHTS in einigen Fällen
+
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         final int delta = change.delta();
@@ -226,38 +235,39 @@ public class BewoelkungSatzDescriber {
             // Die Bewölkung hat sich nur um eine Stufe verändert
             // ("Bewölkungswechsel").
 
-            final ImmutableSet<AdvAngabeSkopusSatz> altWann;
-            final ImmutableSet<Konditionalsatz> altWannSaetze;
+            final ImmutableSet<AdvAngabeSkopusSatz> altSpWann;
+            final ImmutableSet<Konditionalsatz> altSpWannSaetze;
 
             if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
                 final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
 
-                altWann = tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange);
-                altWannSaetze = tageszeitAdvAngabeWannDescriber
-                        .altWannKonditionalsaetzeDraussen(timeChange);
+                altSpWann = tageszeitAdvAngabeWannDescriber.altSpWannDraussen(timeChange);
+                altSpWannSaetze = tageszeitAdvAngabeWannDescriber
+                        .altSpWannKonditionalsaetzeDraussen(timeChange);
             } else {
-                altWann = ImmutableSet.of();
-                altWannSaetze = ImmutableSet.of();
+                altSpWann = ImmutableSet.of();
+                altSpWannSaetze = ImmutableSet.of();
             }
 
             if (change.getVorher().hasNachfolger(change.getNachher())) {
                 // Die Temperatur ist um eine Stufe angestiegen
 
-                alt.addAll(altWechselAnstiegUnterOffenemHimmel(
+                // Leer bei endBewoelkung <= BEWOELKT und NACHTS
+                alt.addAll(altSpWechselAnstiegUnterOffenemHimmel(
                         dateTimeChange.getNachher().getTageszeit(), change.getNachher()
                 ));
 
-                alt.addAll(altWann.stream()
+                alt.addAll(altSpWann.stream()
                         .flatMap(gegenMitternacht ->
-                                altWechselAnstiegUnterOffenemHimmel(
+                                altSpWechselAnstiegUnterOffenemHimmel(
                                         dateTimeChange.getNachher().getTageszeit(),
                                         change.getNachher())
                                         .stream()
                                         .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                         .collect(toSet()));
-                alt.addAll(altWannSaetze.stream()
+                alt.addAll(altSpWannSaetze.stream()
                         .flatMap(alsDerTagAngebrochenIst ->
-                                altWechselAnstiegUnterOffenemHimmel(
+                                altSpWechselAnstiegUnterOffenemHimmel(
                                         dateTimeChange.getNachher().getTageszeit(),
                                         change.getNachher())
                                         .stream()
@@ -272,7 +282,7 @@ public class BewoelkungSatzDescriber {
                         dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
                         false));
 
-                alt.addAll(altWann.stream()
+                alt.addAll(altSpWann.stream()
                         .flatMap(gegenMitternacht ->
                                 altWechselAbfallUnterOffenemHimmel(
                                         dateTimeChange.getNachher().getTageszeit(),
@@ -281,7 +291,7 @@ public class BewoelkungSatzDescriber {
                                         .stream()
                                         .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                         .collect(toSet()));
-                alt.addAll(altWannSaetze.stream()
+                alt.addAll(altSpWannSaetze.stream()
                         .flatMap(alsDerTagAngebrochenIst ->
                                 altWechselAbfallUnterOffenemHimmel(
                                         dateTimeChange.getNachher().getTageszeit(),
@@ -297,7 +307,7 @@ public class BewoelkungSatzDescriber {
             // Es gab weitere Bewölkungsstufen dazwischen ("Bewölkungssprung")
 
             // "Jetzt ist der Himmel wieder wolkenlos"
-            alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(
+            alt.addAll(mapToSet(praedikativumDescriber.altSpHimmelAdjPhr(
                     change.getNachher(), dateTimeChange.getNachher().getTageszeit()),
                     a -> a.alsPraedikativumPraedikat()
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
@@ -311,7 +321,7 @@ public class BewoelkungSatzDescriber {
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
                             .alsSatzMitSubjekt(HIMMEL));
                 }
-                alt.addAll(mapToSet(altWechselAnstiegUnterOffenemHimmel(
+                alt.addAll(mapToSet(altSpWechselAnstiegUnterOffenemHimmel(
                         dateTimeChange.getNachher().getTageszeit(), change.getNachher()
                         ),
                         EinzelnerSatz::perfekt));
@@ -346,9 +356,11 @@ public class BewoelkungSatzDescriber {
      *
      * @param endBewoelkung Die Bewölkung nach dem Anstieg
      */
-    private ImmutableCollection<EinzelnerSatz> altWechselAnstiegUnterOffenemHimmel(
+    private ImmutableCollection<EinzelnerSatz> altSpWechselAnstiegUnterOffenemHimmel(
             final Tageszeit tageszeit,
             final Bewoelkung endBewoelkung) {
+        // Leeres Ergebnis bei endBewoelkung <=LEICHT_BEWOELKT und NACHTS
+
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
         switch (endBewoelkung) {
             case WOLKENLOS: // Kann gar nicht sein
@@ -649,13 +661,13 @@ public class BewoelkungSatzDescriber {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "der Himmel ist wolkenlos"
-        alt.addAll(mapToSet(praedikativumDescriber.altHimmelAdjPhr(bewoelkung, tageszeit),
+        alt.addAll(mapToSet(praedikativumDescriber.altSpHimmelAdjPhr(bewoelkung, tageszeit),
                 a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(HIMMEL)));
 
         // "es ist ein grauer Morgen"
         // "ein schummriger Morgen"
         alt.addAll(mapToSet(praedikativumDescriber
-                        .altStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit,
+                        .altSpStatischTageszeitUnterOffenenHimmelMitAdj(bewoelkung, tageszeit,
                                 INDEF),
                 Praedikativum::alsEsIstSatz));
 
@@ -666,7 +678,7 @@ public class BewoelkungSatzDescriber {
             alt.add(TAG.mit(HELLICHT).alsEsIstSatz());
             alt.addAll(tageszeit.altGestirn().stream()
                     .flatMap(gestirn ->
-                            praedikativumDescriber.altOffenerHimmel(bewoelkung, tageszeit)
+                            praedikativumDescriber.altSpOffenerHimmel(bewoelkung, tageszeit)
                                     .stream()
                                     .map(himmel ->
                                             // "die Sonne scheint von blauen Himmel herab"
@@ -760,7 +772,6 @@ public class BewoelkungSatzDescriber {
                 }
 
                 break;
-
             case BEWOELKT:
                 alt.add(AdjektivOhneErgaenzungen.BEWOELKT.alsPraedikativumPraedikat()
                         .alsSatzMitSubjekt(HIMMEL));

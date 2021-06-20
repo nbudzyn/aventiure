@@ -40,7 +40,7 @@ public class BewoelkungAdvAngabeWohinDescriber {
         final ImmutableSet.Builder<AdvAngabeSkopusVerbWohinWoher> alt = ImmutableSet.builder();
 
         // "unter den nachtschwarzen Himmel"
-        alt.addAll(mapToSet(praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung,
+        alt.addAll(mapToSet(praepPhrDescriber.altSpUnterOffenenHimmelAkk(bewoelkung,
                 time.getTageszeit()),
                 AdvAngabeSkopusVerbWohinWoher::new));
 
@@ -54,7 +54,7 @@ public class BewoelkungAdvAngabeWohinDescriber {
             if (time.getTageszeit() != NACHTS) {
                 alt.addAll(time.getTageszeit().altGestirn().stream()
                         .flatMap(gestirn ->
-                                praepPhrDescriber.altUnterOffenenHimmelAkk(bewoelkung,
+                                praepPhrDescriber.altSpUnterOffenenHimmelAkk(bewoelkung,
                                         time.getTageszeit())
                                         .stream()
                                         .filter(unterHimmel -> !unterHimmel.getDescription()

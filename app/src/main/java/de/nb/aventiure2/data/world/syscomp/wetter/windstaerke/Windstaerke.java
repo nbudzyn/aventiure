@@ -39,10 +39,10 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
     /**
      * Beschreibung als {@link de.nb.aventiure2.german.base.NomenFlexionsspalte} - evtl. leer.
      */
-    private final ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte;
+    private final ImmutableList<NomenFlexionsspalte> altSpNomenFlexionsspalte;
 
     /**
-     * Alternative Adjektivphrasen für das Wetter, evtl. leer.
+     * Alternative Adjektivphrasen für das Wetter.
      */
     private final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter;
 
@@ -52,15 +52,15 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
      */
     private final double movementSpeedFactor;
 
-    Windstaerke(final ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte,
+    Windstaerke(final ImmutableList<NomenFlexionsspalte> altSpNomenFlexionsspalte,
                 final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter) {
-        this(altNomenFlexionsspalte, altAdjPhrWetter, 1.0);
+        this(altSpNomenFlexionsspalte, altAdjPhrWetter, 1.0);
     }
 
-    Windstaerke(final ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte,
+    Windstaerke(final ImmutableList<NomenFlexionsspalte> altSpNomenFlexionsspalte,
                 final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhrWetter,
                 final double movementSpeedFactor) {
-        this.altNomenFlexionsspalte = altNomenFlexionsspalte;
+        this.altSpNomenFlexionsspalte = altSpNomenFlexionsspalte;
         this.altAdjPhrWetter = altAdjPhrWetter;
         this.movementSpeedFactor = movementSpeedFactor;
     }
@@ -69,8 +69,8 @@ public enum Windstaerke implements Betweenable<Windstaerke> {
      * Gibt alternative Beschreibungen als {@link NomenFlexionsspalte}-Objekt zurück,
      * evtl. leer.
      */
-    public ImmutableList<NomenFlexionsspalte> altNomenFlexionsspalte() {
-        return altNomenFlexionsspalte;
+    public ImmutableList<NomenFlexionsspalte> altSpNomenFlexionsspalte() {
+        return altSpNomenFlexionsspalte;
     }
 
     /**

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import com.google.common.collect.ImmutableList;
+
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -9,7 +11,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 /**
  * Eine Präpositionalphrase, also eine Präposition mit einer davon abhängigen Phrase
  */
-public class Praepositionalphrase implements Praedikativum {
+public class Praepositionalphrase implements Praedikativum, IAlternativeKonstituentenfolgable {
     /**
      * Ein Adverb oder Adjektiv, dass die Phrase modifiziert:
      * "schräg über der Tür".
@@ -17,8 +19,8 @@ public class Praepositionalphrase implements Praedikativum {
      * Hierzu zählen wir auch vorangestellte "Lokalkombinatoren"
      * wie "rings (um den Teich)", "mitten (in der Stadt)" und
      * "quer (zur Straße)". Vgl. zu denen
-     * {@link http://sprachwissenschaft.fau.de/personen/daten/breindl/breindl_2006_quer-durch-die
-     * -wortarten-rings-um-die-phrasensyntax-mitten-in-die-semantik.pdf}
+     * http://sprachwissenschaft.fau.de/personen/daten/breindl/breindl_2006_quer-durch-die
+     * -wortarten-rings-um-die-phrasensyntax-mitten-in-die-semantik.pdf
      */
     // Es gibt auch noch nachgestellte Lokalkombinatoren wie "am Haus (entlang)" und
     // "an der Straße (längs)". Die sind derzeit nicht abgedeckt.
@@ -71,6 +73,11 @@ public class Praepositionalphrase implements Praedikativum {
     public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
                                                                        final Numerus numerus) {
         return null;
+    }
+
+    @Override
+    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return getDescription().toAltKonstituentenfolgen();
     }
 
     public Konstituentenfolge getDescription() {

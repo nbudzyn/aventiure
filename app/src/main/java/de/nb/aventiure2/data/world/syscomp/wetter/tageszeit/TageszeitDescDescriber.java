@@ -57,8 +57,8 @@ public class TageszeitDescDescriber {
     @NonNull
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
-    altZwischentageszeitlicherWechsel(final Change<AvTime> change,
-                                      final boolean draussen) {
+    altSpZwischentageszeitlicherWechsel(final Change<AvTime> change,
+                                        final boolean draussen) {
         if (oClock(15).isWithin(change)) {
             return altNachmittagsWechsel(draussen);
         }
@@ -369,7 +369,7 @@ public class TageszeitDescDescriber {
      * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    public ImmutableCollection<AbstractDescription<?>> altKommtNachDraussen(
+    public ImmutableCollection<AbstractDescription<?>> altSpKommtNachDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
@@ -383,7 +383,7 @@ public class TageszeitDescDescriber {
         }
 
         // "draußen ist es schon dunkel"
-        alt.addAll(mapToSet(satzDescriber.altSchonBereitsNochDunkelHellDraussen(time,
+        alt.addAll(mapToSet(satzDescriber.altSpSchonBereitsNochDunkelHellDraussen(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
@@ -398,13 +398,13 @@ public class TageszeitDescDescriber {
      * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    public ImmutableCollection<AbstractDescription<?>> altDraussen(
+    public ImmutableCollection<AbstractDescription<?>> altSpDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final AltDescriptionsBuilder alt = alt();
 
         // "es ist schon dunkel", "es ist Abend"
-        alt.addAll(satzDescriber.altDraussen(time,
+        alt.addAll(satzDescriber.altSpDraussen(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         if (time.getTageszeit() == NACHTS) {

@@ -153,7 +153,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Texte zurück in der Art "hier ist es angenehm kühl" - oder eine leere
      * {@link java.util.Collection}.
      */
-    ImmutableCollection<AbstractDescription<?>> altOnScEnter(
+    ImmutableCollection<AbstractDescription<?>> altSpOnScEnter(
             final AvDateTime time,
             final DrinnenDraussen drinnenDraussenFrom,
             final DrinnenDraussen drinnenDraussenTo,
@@ -201,7 +201,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 || windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom) {
             // Die Temperatur oder Windverhältnisse sind auffällig angenehmer als an der Location
             // zuvor.
-            return wetter.altAngenehmereTemperaturOderWindAlsVorLocation(
+            return wetter.altSpAngenehmereTemperaturOderWindAlsVorLocation(
                     time.getTime(), locationTemperaturRangeTo,
                     temperaturAuffaelligAngenehmerInToAlsInFrom ? deltaTemperatur : 0,
                     windverhaeltnisseAuffaelligAngenehmerInToAlsInFrom ?
@@ -232,7 +232,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
-    ImmutableCollection<AbstractDescription<?>> altWetterhinweiseWennNoetig(
+    ImmutableCollection<AbstractDescription<?>> altSpWetterhinweiseWennNoetig(
             final AvDateTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange) {
         if ((drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL
@@ -240,7 +240,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 || (drinnenDraussen.isDraussen()
                 && wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel)) {
 
-            return altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
+            return altSpWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
         }
 
         return ImmutableSet.of();
@@ -256,7 +256,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
+    ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise(
             final AvDateTime time,
             final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange) {
@@ -269,7 +269,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
         }
 
         final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altWetterhinweise(time.getTime(),
+                wetter.altSpWetterhinweise(time.getTime(),
                         drinnenDraussen,
                         locationTemperaturRange,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
@@ -287,9 +287,9 @@ public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+    ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
             final AvTime time, final boolean unterOffenemHimmel) {
-        return wetter.altWindgeraeuscheSaetze(time, unterOffenemHimmel);
+        return wetter.altSpWindgeraeuscheSaetze(time, unterOffenemHimmel);
     }
 
     /**
@@ -303,7 +303,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @CheckReturnValue
     @NonNull
-    ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
+    ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseKommtNachDraussen(
             final AvDateTime time,
             final boolean unterOffenenHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
@@ -315,7 +315,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             return ImmutableSet.of();
         }
 
-        final ImmutableSet<AbstractDescription<?>> alt = wetter.altKommtNachDraussen(
+        final ImmutableSet<AbstractDescription<?>> alt = wetter.altSpKommtNachDraussen(
                 time.getTime(),
                 unterOffenenHimmel,
                 locationTemperaturRange,
@@ -338,7 +338,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Tageszeitensprung oder -wechsel nicht mehr beschrieben werden.
      */
     @NonNull
-    ImmutableCollection<AbstractDescription<?>> altTimePassed(
+    ImmutableCollection<AbstractDescription<?>> altSpTimePassed(
             final Change<AvDateTime> change,
             @Nullable final ILocationGO location) {
         final DrinnenDraussen drinnenDraussen =
@@ -365,7 +365,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
 
         setGgfSpaeterWetterBeschreibenWegenWind(drinnenDraussen);
 
-        final ImmutableCollection<AbstractDescription<?>> alt = altTimePassed(
+        final ImmutableCollection<AbstractDescription<?>> altSp = altSpTimePassed(
                 change,
                 !locationTemperaturRange.isInRange(currentGenerelleTemperatur),
                 windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
@@ -384,7 +384,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         //  immer mal wieder blitzen und donnern lassen.
                         false));
 
-        return alt;
+        return altSp;
     }
 
     private void setGgfSpaeterWetterBeschreibenWegenWind(final DrinnenDraussen drinnenDraussen) {
@@ -583,7 +583,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      *                                        werden soll, sonst {@code null}
      */
     @NonNull
-    private ImmutableCollection<AbstractDescription<?>> altTimePassed(
+    private ImmutableCollection<AbstractDescription<?>> altSpTimePassed(
             final Change<AvDateTime> change,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
@@ -594,8 +594,8 @@ public class WetterPCD extends AbstractPersistentComponentData {
                 !span(change).longerThanOrEqual(AvTimeSpan.ONE_DAY) &&
                         change.getVorher().getTageszeit() != change.getNachher().getTageszeit();
 
-        final ImmutableCollection<AbstractDescription<?>> alt =
-                wetter.altTimePassed(change,
+        final ImmutableCollection<AbstractDescription<?>> altSp =
+                wetter.altSpTimePassed(change,
                         tageszeitaenderungSollBeschriebenWerden,
                         generelleTemperaturOutsideLocationTemperaturRange,
                         windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
@@ -613,7 +613,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             setGgfSpaeterWetterBeschreiben(drinnenDraussen);
         }
 
-        return alt;
+        return altSp;
     }
 
     private void setGgfSpaeterWetterBeschreiben(final DrinnenDraussen drinnenDraussen) {
@@ -642,7 +642,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      */
     @NonNull
     ImmutableCollection<AbstractDescription<?>>
-    altDescUeberHeuteOderDenTagWennDraussenSinnvoll(
+    altSpDescUeberHeuteOderDenTagWennDraussenSinnvoll(
             final AvTime time,
             final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
@@ -655,7 +655,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             return ImmutableSet.of();
         }
 
-        return wetter.altHeuteDerTagWennDraussenSinnvoll(
+        return wetter.altSpHeuteDerTagWennDraussenSinnvoll(
                 time, unterOffenemHimmel, locationTemperaturRange);
 
         // Kein "vollwertiger Wetterhinweis" - Flags bleiben unverändert.

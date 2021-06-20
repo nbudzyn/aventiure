@@ -23,11 +23,11 @@ public class TageszeitAdvAngabeWoDescriber {
     /**
      * Gibt Alternativen zurück wie "in der nächtlichen Dunkelheit" - evtl. leer.
      */
-    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWoDraussen(
+    public ImmutableCollection<AdvAngabeSkopusVerbAllg> altSpWoDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         // "im Hellen", "in der Dunkelheit", "im nächtlichen Dunkel"
-        return mapToSet(praepPhrDescriber.altWoDraussen(time,
+        return mapToSet(praepPhrDescriber.altSpWoDraussen(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                 AdvAngabeSkopusVerbAllg::new);
     }

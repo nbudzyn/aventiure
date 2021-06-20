@@ -44,7 +44,7 @@ public enum Mood {
     /**
      * Adjektive zur Beschreibung dieses "Moods", <i>möglicherweise leer</i>.
      */
-    private final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr;
+    private final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr;
 
     /**
      * Adverbiale Angabe zur Beschreibung dieses "Moods".
@@ -61,10 +61,10 @@ public enum Mood {
     }
 
     Mood(final int gradDerFreude,
-         final AdjektivOhneErgaenzungen... altAdjPhr) {
+         final AdjektivOhneErgaenzungen... altSpAdjPhr) {
         this(gradDerFreude,
-                ImmutableList.copyOf(altAdjPhr),
-                stream(altAdjPhr)
+                ImmutableList.copyOf(altSpAdjPhr),
+                stream(altSpAdjPhr)
                         .map(a -> new AdvAngabeSkopusSatz(
                                 a.getPraedikativ(
                                         // irrelevant für AdjektivOhneErgaenzungen
@@ -78,24 +78,24 @@ public enum Mood {
     }
 
     Mood(final int gradDerFreude,
-         final AdjPhrOhneLeerstellen altAdjPhr,
+         final AdjPhrOhneLeerstellen altSpAdjPhr,
          final AdvAngabeSkopusSatz altAdvAngabe) {
-        this(gradDerFreude, ImmutableList.of(altAdjPhr), ImmutableList.of(altAdvAngabe));
+        this(gradDerFreude, ImmutableList.of(altSpAdjPhr), ImmutableList.of(altAdvAngabe));
     }
 
     Mood(final int gradDerFreude,
-         final AdjPhrOhneLeerstellen[] altAdjPhr,
+         final AdjPhrOhneLeerstellen[] altSpAdjPhr,
          final AdvAngabeSkopusSatz[] altAdvAngaben) {
-        this(gradDerFreude, asList(altAdjPhr), asList(altAdvAngaben));
+        this(gradDerFreude, asList(altSpAdjPhr), asList(altAdvAngaben));
     }
 
     Mood(final int gradDerFreude,
-         final Collection<AdjPhrOhneLeerstellen> altAdjPhr,
+         final Collection<AdjPhrOhneLeerstellen> altSpAdjPhr,
          final Collection<AdvAngabeSkopusSatz> altAdvAngaben) {
         FeelingIntensity.checkValuePositive(Math.abs(gradDerFreude));
 
         this.gradDerFreude = gradDerFreude;
-        this.altAdjPhr = ImmutableList.copyOf(altAdjPhr);
+        this.altSpAdjPhr = ImmutableList.copyOf(altSpAdjPhr);
         this.altAdvAngaben = ImmutableList.copyOf(altAdvAngaben);
     }
 
@@ -118,8 +118,8 @@ public enum Mood {
     /**
      * Eventuell Adjektive zur Beschreibung dieses "Moods", <i>möglicherweise leer</i>.
      */
-    public ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr() {
-        return altAdjPhr;
+    public ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr() {
+        return altSpAdjPhr;
     }
 
     /**

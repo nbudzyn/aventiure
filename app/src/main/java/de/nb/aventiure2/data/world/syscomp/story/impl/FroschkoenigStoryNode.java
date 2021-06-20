@@ -408,23 +408,25 @@ public enum FroschkoenigStoryNode implements IStoryNode {
                 .compareTo(Temperatur.RECHT_HEISS)
                 >= 0) {
             if (!scIsDraussen(world)) {
-                final ImmutableCollection<AbstractDescription<?>> altWetterhinweise =
+                final ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise =
                         world.loadWetter().wetterComp()
-                                .altWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC();
-                if (!altWetterhinweise.isEmpty()) {
-                    return altWetterhinweise;
+                                .altSpWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC();
+                if (!altSpWetterhinweise.isEmpty()) {
+                    return altSpWetterhinweise;
                     // Von denen muss auf jeden Fall einer ausgegeben werden.
                 }
             }
 
             if (scIsDraussen(world)) {
-                final ImmutableCollection<AbstractDescription<?>> altHeuteHeisserTagSaetze =
+                final ImmutableCollection<AbstractDescription<?>> altSpHeuteHeisserTagSaetze =
                         world.loadWetter().wetterComp()
-                                .altDescUeberHeuteOderDenTagWennDraussenSinnvoll();
-                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze));
-                alt.addAll(altParagraphs(altHeuteHeisserTagSaetze,
-                        SENTENCE,
-                        "Ein kühler Ort wäre schön").schonLaenger());
+                                .altSpDescUeberHeuteOderDenTagWennDraussenSinnvoll();
+                if (!altSpHeuteHeisserTagSaetze.isEmpty()) {
+                    alt.addAll(altParagraphs(altSpHeuteHeisserTagSaetze));
+                    alt.addAll(altParagraphs(altSpHeuteHeisserTagSaetze,
+                            SENTENCE,
+                            "Ein kühler Ort wäre schön").schonLaenger());
+                }
             }
         }
 

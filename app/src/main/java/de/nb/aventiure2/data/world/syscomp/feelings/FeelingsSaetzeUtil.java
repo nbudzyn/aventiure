@@ -62,13 +62,13 @@ public class FeelingsSaetzeUtil {
 
     /**
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - und diese adverbialen
-     * Angaben in Sätze um.
+     * Angaben in Sätze um - das Ergebnis kann leer sein!
      */
     static ImmutableList<Satz> toReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
             final boolean subjektUndFeelingTargetKoennenEinanderSehen,
-            final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr,
+            final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr,
             final ImmutableList<AdvAngabeSkopusVerbAllg> eindruckAdvAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
@@ -77,10 +77,13 @@ public class FeelingsSaetzeUtil {
                     subjekt, feelingTargetDesc, eindruckAdvAngaben));
         }
 
-        res.addAll(altEindrueckSaetze(subjekt, subjektUndFeelingTargetKoennenEinanderSehen,
-                eindruckAdjPhr));
+        // FIXME Kann zu einem leeren Ergebnis führen, wenn altSpAdjPhr leer ist und
+        //  !subjektUndFeelingTargetKoennenEinanderSehen!
 
-        res.addAll(eindruckAdjPhr.stream()
+        res.addAll(altEindrueckSaetze(subjekt, subjektUndFeelingTargetKoennenEinanderSehen,
+                altSpAdjPhr));
+
+        res.addAll(altSpAdjPhr.stream()
                 .flatMap(adjPhr ->
                         altEindruckAdverbien(subjektUndFeelingTargetKoennenEinanderSehen).stream()
                                 .map(

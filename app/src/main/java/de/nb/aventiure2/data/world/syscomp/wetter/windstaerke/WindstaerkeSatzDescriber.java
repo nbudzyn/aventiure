@@ -80,8 +80,9 @@ public class WindstaerkeSatzDescriber {
 
         final int delta = change.delta();
 
+        // (nicht leer)
         final ImmutableCollection<EinzelnerSatz> altStatisch =
-                alt(dateTimeChange.getNachher().getTime(), change.getNachher(),
+                altSp(dateTimeChange.getNachher().getTime(), change.getNachher(),
                         true, false);
 
         if (Math.abs(delta) <= 1) {
@@ -91,14 +92,14 @@ public class WindstaerkeSatzDescriber {
                 final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
 
                 alt.addAll(tageszeitAdvAngabeWannDescriber
-                        .altWannDraussen(timeChange).stream()
+                        .altSpWannDraussen(timeChange).stream()
                         .flatMap(gegenMitternacht ->
                                 altWechsel(change).stream()
                                         .map(s -> s.mitAdvAngabe(gegenMitternacht)))
                         .collect(toSet()));
 
                 alt.addAll(tageszeitAdvAngabeWannDescriber
-                        .altWannKonditionalsaetzeDraussen(timeChange)
+                        .altSpWannKonditionalsaetzeDraussen(timeChange)
                         .stream()
                         .flatMap(alsDerTagAngebrochenIst ->
                                 altWechsel(change).stream()
@@ -127,18 +128,18 @@ public class WindstaerkeSatzDescriber {
                 }
             } else {
                 //  "Der Wind hat deutlich nachgelassen"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         subjekt -> NACHLASSEN
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("deutlich"))
                                 .alsSatzMitSubjekt(subjekt).perfekt()));
                 //  "Endlich hat der Wind nachgelassen"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         wind -> NACHLASSEN
                                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("endlich"))
                                 .alsSatzMitSubjekt(wind).perfekt()));
                 if (change.getVorher().compareTo(Windstaerke.STURM) >= 0
                         && change.getNachher().compareTo(LUEFTCHEN) >= 0) {
-                    alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                    alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                             wind -> ABFLAUEN
                                     .mitAdvAngabe(new AdvAngabeSkopusSatz("allmählich"))
                                     .alsSatzMitSubjekt(wind)));
@@ -175,20 +176,20 @@ public class WindstaerkeSatzDescriber {
             }
             if (change.getVorher().compareTo(Windstaerke.LUEFTCHEN) >= 0) {
                 //  "Der Wind wird stärker"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         wind -> STAERKER.alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(wind)));
             }
             if (change.getVorher().compareTo(Windstaerke.STURM) >= 0) {
                 //  "Der Sturm wird sogar noch stärker"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         wind -> STAERKER.mitGraduativerAngabe("sogar noch")
                                 .alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(wind)));
             }
             if (change.getVorher().compareTo(Windstaerke.LUEFTCHEN) >= 0) {
                 //  "Der Wind nimmt zu"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         ZUNEHMEN::alsSatzMitSubjekt));
 
             }
@@ -197,6 +198,8 @@ public class WindstaerkeSatzDescriber {
                     stuermisch -> stuermisch.alsEsWirdSatz()
                             .mitAdvAngabe(new AdvAngabeSkopusSatz("jetzt"))));
         } else if (delta == -1) {
+            // FIXME Kann es hier einen Fall mit leerem Ergebnis geben?
+
             // "Es wird windstill"
             if (change.getNachher() == WINDSTILL) {
                 alt.add(AdjektivOhneErgaenzungen.WINDSTILL.alsEsWirdSatz());
@@ -204,31 +207,31 @@ public class WindstaerkeSatzDescriber {
 
             if (change.getNachher() == WINDIG || change.getNachher() == Windstaerke.STURM) {
                 //  "Der kräftige Wind lässt etwas nach"
-                alt.addAll(mapToSet(change.getNachher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getNachher().altSpNomenFlexionsspalte(),
                         wind -> NACHLASSEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("etwas"))
                                 .alsSatzMitSubjekt(wind.mit(KRAEFTIG))));
 
                 //  "Der kräftige Wind lässt ein wenig nach"
-                alt.addAll(mapToSet(change.getNachher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getNachher().altSpNomenFlexionsspalte(),
                         wind -> NACHLASSEN.mitAdvAngabe(
                                 new AdvAngabeSkopusVerbAllg("ein wenig"))
                                 .alsSatzMitSubjekt(wind.mit(KRAEFTIG))));
             }
 
             //  "Der Wind lässt nach"
-            alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+            alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                     NACHLASSEN::alsSatzMitSubjekt));
 
             if (change.getVorher().isBetweenIncluding(WINDIG, Windstaerke.STURM)) {
                 //  "Der Wind wird schwächer"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         wind -> SCHWAECHER.alsWerdenPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(wind)));
             }
 
             if (change.getVorher().compareTo(WINDIG) >= 0) {
                 //  "Der Wind verliert an Kraft"
-                alt.addAll(mapToSet(change.getVorher().altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(change.getVorher().altSpNomenFlexionsspalte(),
                         wind -> VERLIEREN_AN.mit(npArtikellos(KRAFT)).alsSatzMitSubjekt(wind)));
             }
         }
@@ -240,7 +243,7 @@ public class WindstaerkeSatzDescriber {
      * Gibt Sätze zurück, wenn der SC in einen windgeschützteren Bereich kommt -
      * je nach Windstärke oft leer.
      */
-    public ImmutableCollection<EinzelnerSatz> altAngenehmerAlsVorLocation(
+    ImmutableCollection<EinzelnerSatz> altSpAngenehmerAlsVorLocation(
             final Windstaerke windstaerkeFrom,
             final Windstaerke windstaerkeTo) {
         checkArgument(windstaerkeFrom.compareTo(windstaerkeTo) > 0);
@@ -273,12 +276,13 @@ public class WindstaerkeSatzDescriber {
             final AvTime time, final Windstaerke windstaerke) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
+        // (nicht leer)
         alt.addAll(
-                mapToList(alt(time, windstaerke, true, false),
+                mapToList(altSp(time, windstaerke, true, false),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (windstaerke.compareTo(Windstaerke.WINDIG) > 0) {
-            alt.addAll(alt(time, windstaerke, false, false));
+            alt.addAll(altSp(time, windstaerke, false, false));
         }
 
 
@@ -290,9 +294,9 @@ public class WindstaerkeSatzDescriber {
      * {@code ausschliesslichHoerbares true} ist.
      *
      * @param ausschliesslichHoerbares Ob nur Sätze zurückgegeben werden, die ausschließlich
-     *                                 Dinge beschreiben, die hörbar sind.
+     *                                 Dinge beschreiben, die hörbar sind (dann evtl. leer)
      */
-    public ImmutableCollection<EinzelnerSatz> alt(
+    public ImmutableCollection<EinzelnerSatz> altSp(
             final AvTime time, final Windstaerke windstaerke,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete,
             final boolean ausschliesslichHoerbares) {
@@ -344,7 +348,7 @@ public class WindstaerkeSatzDescriber {
             case STURM:
                 alt.add(STUERMEN.alsSatz(),
                         VerbSubj.STUERMEN.alsSatzMitSubjekt(WIND));
-                alt.addAll(mapToSet(windstaerke.altNomenFlexionsspalte(),
+                alt.addAll(mapToSet(windstaerke.altSpNomenFlexionsspalte(),
                         BRAUSEN::alsSatzMitSubjekt));
                 break;
             case SCHWERER_STURM:

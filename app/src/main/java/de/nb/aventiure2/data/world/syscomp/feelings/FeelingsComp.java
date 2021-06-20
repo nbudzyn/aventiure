@@ -168,7 +168,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      * Eventuell Adjektive zur Beschreibung des Gefühls, <i>möglicherweise leer</i>.
      */
     @NonNull
-    private ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr() {
+    private ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr() {
         if (getMuedigkeit() > Math.abs(getMood().getGradDerFreude())) {
             // Häufig wird diese Phrase wohl verwendet werden - daher setzen
             // wir den Counter neu.
@@ -176,7 +176,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             return altMuedigkeitAdjPhr();
         }
 
-        return getMood().altAdjPhr();
+        return getMood().altSpAdjPhr();
     }
 
     public ImmutableList<AdjPhrOhneLeerstellen> altMuedigkeitAdjPhr() {
@@ -430,13 +430,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 SPIELER_CHARAKTER,
                 1,
                 () -> {
-                    final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
+                    final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr = altSpAdjPhr();
                     final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                             altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
                             gameObjectSubjekt, duSc(),
-                            true, altAdjPhr,
+                            true, altSpAdjPhr,
                             advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
@@ -456,13 +456,13 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                 SPIELER_CHARAKTER,
                 3,
                 () -> {
-                    final ImmutableList<AdjPhrOhneLeerstellen> altAdjPhr = altAdjPhr();
+                    final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr = altSpAdjPhr();
                     final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                             altAdvAngabenSkopusVerbAllg();
 
                     return FeelingsSaetzeUtil.toReaktionSaetze(
                             gameObjectSubjekt, duSc(),
-                            true, altAdjPhr,
+                            true, altSpAdjPhr,
                             advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionWennSCGehenMoechteSaetze(
@@ -542,17 +542,17 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<Satz> altEindruckAufScBeiBegegnungSaetze(
+    public ImmutableList<Satz> altSpEindruckAufScBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final boolean scKannGameObjectSubjektSehen) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
                 1,
                 () -> {
-                    final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen = altAdjPhr();
+                    final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr = altSpAdjPhr();
                     return FeelingsSaetzeUtil
                             .altEindrueckSaetze(gameObjectSubjekt, scKannGameObjectSubjektSehen,
-                                    adjektivPhrasen);
+                                    altSpAdjPhr);
                 },
                 (feelingTowardsType) -> altEindruckBeiBegegnungSaetze(
                         gameObjectSubjekt,
@@ -958,10 +958,8 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     @CheckReturnValue
     private Collection<AbstractDescription<?>> altScWirdMuede() {
-        checkArgument(
-                getMuedigkeit() > FeelingIntensity.NEUTRAL,
-                "Wird müde, aber FeelingIntensity ist NEUTRAL?"
-        );
+        checkArgument(getMuedigkeit() > FeelingIntensity.NEUTRAL,
+                "Wird müde, aber FeelingIntensity ist NEUTRAL?");
 
         final ImmutableList.Builder<AbstractDescription<?>> res = ImmutableList.builder();
 

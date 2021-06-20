@@ -146,12 +146,12 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
         final AvTimeSpan wegZeit = mins(1);
         if ((known == KNOWN_FROM_DARKNESS && lichtverhaeltnisseDraussen == HELL)
                 || lichtverhaeltnisseDraussen == DUNKEL) {
-            final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
-                    world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
+            final ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseDraussen =
+                    world.loadWetter().wetterComp().altSpWetterhinweiseKommtNachDraussen(
                             timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS);
-            if (!altWetterhinweiseDraussen.isEmpty()) {
+            if (!altSpWetterhinweiseDraussen.isEmpty()) {
                 return mapToSet(
-                        altWetterhinweiseDraussen,
+                        altSpWetterhinweiseDraussen,
                         wetterDesc ->
                                 du("verlässt", "das Schloss",
                                         SENTENCE,
@@ -196,11 +196,11 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     altDescTo_DraussenVorDemSchlosss_KeinFest_Unknown(
             final Lichtverhaeltnisse lichtverhaeltnisseDraussen) {
         final AvTimeSpan wegZeit = mins(1);
-        final ImmutableSet<AbstractDescription<?>> altWetterhinweiseDraussen =
-                world.loadWetter().wetterComp().altWetterhinweiseKommtNachDraussen(
+        final ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseDraussen =
+                world.loadWetter().wetterComp().altSpWetterhinweiseKommtNachDraussen(
                         timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS);
-        if (!altWetterhinweiseDraussen.isEmpty()) {
-            return mapToSet(altWetterhinweiseDraussen, wetterDesc ->
+        if (!altSpWetterhinweiseDraussen.isEmpty()) {
+            return mapToSet(altSpWetterhinweiseDraussen, wetterDesc ->
                     du("gehst",
                             "über eine Marmortreppe hinaus in die Gärten vor dem",
                             "Schloss", CHAPTER,

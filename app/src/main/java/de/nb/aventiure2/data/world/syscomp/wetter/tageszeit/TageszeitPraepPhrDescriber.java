@@ -31,8 +31,8 @@ public class TageszeitPraepPhrDescriber {
     ImmutableSet<Praepositionalphrase> altWohinHinaus(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        // "in die beginnende Nacht", "ins Helle"
-        return mapToSet(praedikativumDescriber.altSubstPhr(time,
+        // "in die beginnende Nacht", "ins Helle", nie leer
+        return mapToSet(praedikativumDescriber.altSpSubstPhr(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, true),
                 IN_AKK::mit);
     }
@@ -41,11 +41,11 @@ public class TageszeitPraepPhrDescriber {
      * Gibt Alternativen zurück wie "im Hellen", "in der Dunkelheit", "im nächtlichen Dunkel" -
      * eventuell leer.
      */
-    ImmutableSet<Praepositionalphrase> altWoDraussen(
+    ImmutableSet<Praepositionalphrase> altSpWoDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         // "im Hellen", "in der Dunkelheit", "im nächtlichen Dunkel"
-        return mapToSet(praedikativumDescriber.altSubstPhr(time,
+        return mapToSet(praedikativumDescriber.altSpSubstPhr(time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, false),
                 IN_DAT::mit);
     }

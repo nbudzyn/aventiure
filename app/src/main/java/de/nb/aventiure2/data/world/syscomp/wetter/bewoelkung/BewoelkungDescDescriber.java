@@ -97,23 +97,26 @@ public class BewoelkungDescDescriber {
 
         alt.addAll(altNeueSaetze(
                 PARAGRAPH,
-                satzDescriber.altSprungOderWechselUnterOffenemHimmel(dateTimeChange,
+                // Leer zumindest bei
+                // - delta (0 oder 1) und endBewoelkung <= LEICHT_BEWOELKT und NACHTS in einigen
+                // Fällen
+                satzDescriber.altSpSprungOderWechselUnterOffenemHimmel(dateTimeChange,
                         change, auchZeitwechselreferenzen)));
 
-        final ImmutableSet<Konstituente> altWann;
-        final ImmutableSet<Konstituentenfolge> altWannSaetze;
+        final ImmutableSet<Konstituente> altSpWann;
+        final ImmutableSet<Konstituentenfolge> altSpWannSaetze;
 
         if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
             final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
 
-            altWann = mapToSet(tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange),
+            altSpWann = mapToSet(tageszeitAdvAngabeWannDescriber.altSpWannDraussen(timeChange),
                     gegenMitternacht -> gegenMitternacht.getDescription(EXPLETIVES_ES));
-            altWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
-                            .altWannKonditionalsaetzeDraussen(timeChange),
+            altSpWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
+                            .altSpWannKonditionalsaetzeDraussen(timeChange),
                     Konditionalsatz::getDescription);
         } else {
-            altWann = ImmutableSet.of();
-            altWannSaetze = ImmutableSet.of();
+            altSpWann = ImmutableSet.of();
+            altSpWannSaetze = ImmutableSet.of();
         }
 
         final int delta = change.delta();
@@ -124,15 +127,15 @@ public class BewoelkungDescDescriber {
                     if (dateTimeChange.getNachher().getTageszeit() == NACHTS) {
                         alt.add(neuerSatz(
                                 "Die Sterne leuchten nicht mehr so klar wie zuvor"));
-                        if (!altWann.isEmpty()) {
+                        if (!altSpWann.isEmpty()) {
                             alt.addAll(altNeueSaetze(
-                                    altWann,
+                                    altSpWann,
                                     "leuchten die Sterne nicht mehr so klar wie zuvor"));
                         }
-                        if (!altWannSaetze.isEmpty()) {
+                        if (!altSpWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
                                     PARAGRAPH,
-                                    altWannSaetze,
+                                    altSpWannSaetze,
                                     ", leuchten die Sterne nicht mehr so klar wie zuvor"));
                         }
                     } else {
@@ -149,14 +152,14 @@ public class BewoelkungDescDescriber {
                     if (dateTimeChange.getNachher().getTageszeit() != NACHTS) {
                         alt.add(neuerSatz("Mächtige dunkle Wolken beginnen sich am Himmel",
                                 "aufzutürmen"));
-                        if (!altWann.isEmpty()) {
-                            alt.addAll(altNeueSaetze(altWann,
+                        if (!altSpWann.isEmpty()) {
+                            alt.addAll(altNeueSaetze(altSpWann,
                                     "beginnen mächtige dunkle Wolken sich am Himmel aufzutürmen"));
                         }
-                        if (!altWannSaetze.isEmpty()) {
+                        if (!altSpWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
                                     PARAGRAPH,
-                                    altWannSaetze,
+                                    altSpWannSaetze,
                                     ", beginnen mächtige dunkle Wolken sich am Himmel "
                                             + "aufzutürmen"));
                         }
@@ -171,16 +174,16 @@ public class BewoelkungDescDescriber {
                     alt.add(neuerSatz("Die letzten weißen",
                             "Schäfchenwolken haben sich verzogen und der ganze Himmel",
                             "strahlt blau über dir"));
-                    if (!altWann.isEmpty()) {
-                        alt.addAll(altNeueSaetze(altWann,
+                    if (!altSpWann.isEmpty()) {
+                        alt.addAll(altNeueSaetze(altSpWann,
                                 "haben sich die letzten weißen",
                                 "Schäfchenwolken verzogen und der ganze Himmel",
                                 "strahlt blau über dir"));
                     }
-                    if (!altWannSaetze.isEmpty()) {
+                    if (!altSpWannSaetze.isEmpty()) {
                         alt.addAll(altNeueSaetze(
                                 PARAGRAPH,
-                                altWannSaetze,
+                                altSpWannSaetze,
                                 ", haben sich die letzten weißen",
                                 "Schäfchenwolken verzogen und der ganze Himmel",
                                 "strahlt blau über dir"));
@@ -189,30 +192,30 @@ public class BewoelkungDescDescriber {
                     if (dateTimeChange.getNachher().getTageszeit() != NACHTS) {
                         alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
                                 "den Blick auf den blauen Himmel frei"));
-                        if (!altWann.isEmpty()) {
-                            alt.addAll(altNeueSaetze(altWann,
+                        if (!altSpWann.isEmpty()) {
+                            alt.addAll(altNeueSaetze(altSpWann,
                                     "reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den blauen Himmel frei"));
                         }
-                        if (!altWannSaetze.isEmpty()) {
+                        if (!altSpWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
                                     PARAGRAPH,
-                                    altWannSaetze,
+                                    altSpWannSaetze,
                                     ", reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den blauen Himmel frei"));
                         }
                     } else {
                         alt.add(neuerSatz("Die Wolken reißen wieder auf und geben hier und da",
                                 "den Blick auf den Sternenhimmel frei"));
-                        if (!altWann.isEmpty()) {
-                            alt.addAll(altNeueSaetze(altWann,
+                        if (!altSpWann.isEmpty()) {
+                            alt.addAll(altNeueSaetze(altSpWann,
                                     "reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den Sternenhimmel frei"));
                         }
-                        if (!altWannSaetze.isEmpty()) {
+                        if (!altSpWannSaetze.isEmpty()) {
                             alt.addAll(altNeueSaetze(
                                     PARAGRAPH,
-                                    altWannSaetze,
+                                    altSpWannSaetze,
                                     ", reißen die Wolken wieder auf und geben hier und da",
                                     "den Blick auf den Sternenhimmel frei"));
                         }
@@ -292,51 +295,117 @@ public class BewoelkungDescDescriber {
     @NonNull
     @CheckReturnValue
     public AltDescriptionsBuilder
-    altTageszeitensprungOderWechsel(
+    altSpTageszeitensprungOderWechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit lastTageszeit,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
+        // Leeres Ergebnis bei
+        // - lastTageszeit = NACHTS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+        // - lastTageszeit = NACHTS, currentTageszeit= MORGENS und bewölkung > BEWOELKT
+        // - lastTageszeit = NACHTS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // - lastTageszeit = MORGENS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // - lastTageszeit = MORGENS, currentTageszeit= TAGSUEBER und (bewölkung > LEICHT_BEWOELKT
+        // oder nicht unter
+        // offenem Himmel)
+        // - lastTageszeit = TAGSUEBER, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+        // - lastTageszeit = TAGSUEBER, currentTageszeit= ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // - lastTageszeit = ABENDS, currentTageszeit =   MORGENS und bewölkung > BEWOELKT
+        // - lastTageszeit = ABENDS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+
         checkArgument(lastTageszeit != currentTageszeit,
                 "Kein Tageszeitensprung oder -Wechsel: %s", lastTageszeit);
 
         if (lastTageszeit.hasNachfolger(currentTageszeit)) {
             // Es gab keine weiteren Tageszeiten dazwischen ("Tageszeitenwechsel")
-            return altTageszeitenwechsel(bewoelkung, currentTageszeit, unterOffenemHimmel);
+            // Leere Menge als Ergebnis bei:
+            // - currentTageszeit= MORGENS und bewölkung > BEWOELKT
+            // - currentTageszeit= TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht unter
+            // offenem Himmel)
+            // - currentTageszeit= ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+            return altSpTageszeitenwechsel(bewoelkung, currentTageszeit, unterOffenemHimmel);
         }
 
         // Es gab weitere Tageszeiten dazwischen ("Tageszeitensprung")
-        return altTageszeitensprung(bewoelkung, lastTageszeit, currentTageszeit,
+
+        // Leer bei
+        // lastTageszeit = NACHTS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+        // lastTageszeit = NACHTS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // lastTageszeit = MORGENS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // lastTageszeit = TAGSUEBER, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+        // lastTageszeit = ABENDS, currentTageszeit =   MORGENS und bewölkung > BEWOELKT
+        // lastTageszeit = ABENDS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+        return altSpTageszeitensprung(bewoelkung, lastTageszeit, currentTageszeit,
                 unterOffenemHimmel);
     }
 
-    private AltDescriptionsBuilder altTageszeitensprung(final Bewoelkung bewoelkung,
-                                                        final Tageszeit lastTageszeit,
-                                                        final Tageszeit currentTageszeit,
-                                                        final boolean unterOffenemHimmel) {
+    private AltDescriptionsBuilder altSpTageszeitensprung(final Bewoelkung bewoelkung,
+                                                          final Tageszeit lastTageszeit,
+                                                          final Tageszeit currentTageszeit,
+                                                          final boolean unterOffenemHimmel) {
+        // Leeres Ergebnis bei
+        // lastTageszeit = NACHTS, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+        // lastTageszeit = NACHTS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+        // lastTageszeit = NACHTS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // lastTageszeit = MORGENS, currentTageszeit = TAGSUEBER und (bewölkung > LEICHT_BEWOELKT
+        // oder nicht unter offenem Himmel)
+        // lastTageszeit = MORGENS, currentTageszeit = ABENDS und nicht unter offenem Himmel und
+        // bewölkung > BEWOELKT
+        // lastTageszeit = TAGSUEBER, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+        // lastTageszeit = TAGSUEBER, currentTageszeit = ABENDS und nicht unter offenem Himmel
+        // und bewölkung > BEWOELKT
+        // lastTageszeit = ABENDS, currentTageszeit =   MORGENS und bewölkung > BEWOELKT
+        // lastTageszeit = ABENDS, currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
         final AltDescriptionsBuilder alt = alt();
 
         // "Die Sonne geht gerade auf"
+        // Leer bei
+        // - currentTageszeit = MORGENS und bewölkung > BEWOELKT
+        // - currentTageszeit = TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht unter
+        // offenem Himmel)
+        // - currentTageszeit = ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+        // - currentTageszeit = NACHTS und BEDECKT
         alt.addAll(mapToSet(
-                satzDescriber
-                        .altTageszeitenwechsel(
-                                bewoelkung, currentTageszeit, unterOffenemHimmel),
+                satzDescriber.altSpTageszeitenwechsel(
+                        bewoelkung, currentTageszeit, unterOffenemHimmel),
                 s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("gerade"))));
 
         switch (lastTageszeit) {
             case NACHTS:
-                alt.addAll(altTageszeitensprungOderWechselFromNachtsTo(
+                // Leere Menge bei:
+                // - currentTageszeit = MORGENS und bewölkung > BEWOELKT
+                // - currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+                // - currentTageszeit = ABENDS
+                alt.addAll(altSpTageszeitensprungOderWechselFromNachtsTo(
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case MORGENS:
-                alt.addAll(altTageszeitensprungOderWechselFromMorgensTo(
+                // Leere Menge bei:
+                // - currentTageszeit = TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht
+                // unter offenem Himmel)
+                // - currentTageszeit = ABENDS und ((nicht unter offenem Himmel und bewölkung >
+                // BEWOELKT) oder
+                //  (unter offenem Himmel und bewölkung <= LEICHT_BEWOELKT))
+                alt.addAll(altSpTageszeitensprungOderWechselFromMorgensTo(
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case TAGSUEBER:
-                alt.addAll(altTageszeitensprungOderWechselFromTagsueberTo(
+                // Leere Menge als Ergebnis bei:
+                // - MORGENS
+                // - ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+                alt.addAll(altSpTageszeitensprungOderWechselFromTagsueberTo(
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             case ABENDS:
-                alt.addAll(altTageszeitensprungOderWechselFromAbendsTo(
+                // Leere Menge bei:
+                // - currentTageszeit = MORGENS
+                // - currentTageszeit = TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+                alt.addAll(altSpTageszeitensprungOderWechselFromAbendsTo(
                         bewoelkung, currentTageszeit, unterOffenemHimmel));
                 break;
             default:
@@ -348,14 +417,22 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromNachtsTo(
+    private AltDescriptionsBuilder altSpTageszeitensprungOderWechselFromNachtsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
+        // Leere Menge als Ergebnis bei:
+        // - MORGENS und bewölkung > BEWOELKT
+        // - TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+        // - ABENDS
+
+        checkArgument(currentTageszeit != NACHTS, "Sprung / Wechsel from NACHTS to NACHTS?!");
+
         final AltDescriptionsBuilder alt = alt();
 
         switch (currentTageszeit) {
             case MORGENS:
-                alt.addAll(altTageszeitenwechsel(bewoelkung, MORGENS, unterOffenemHimmel));
+                // Leere Menge bei bewölkung > BEWOELKT
+                alt.addAll(altSpTageszeitenwechsel(bewoelkung, MORGENS, unterOffenemHimmel));
                 break;
             case TAGSUEBER:
                 if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
@@ -377,27 +454,35 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromMorgensTo(
+    private AltDescriptionsBuilder altSpTageszeitensprungOderWechselFromMorgensTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit, final boolean unterOffenemHimmel) {
+        checkArgument(currentTageszeit != MORGENS, "Sprung / Wechsel from MORGENS to MORGENS?!");
+
+        // Leere Menge als Ergebnis bei:
+        // - TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht unter offenem Himmel)
+        // - ABENDS und ((nicht unter offenem Himmel und bewölkung > BEWOELKT) oder
+        //  (unter offenem Himmel und bewölkung <= LEICHT_BEWOELKT))
+
         final AltDescriptionsBuilder alt = alt();
 
         switch (currentTageszeit) {
             case TAGSUEBER:
-                alt.addAll(altTageszeitenwechsel(bewoelkung, TAGSUEBER, unterOffenemHimmel));
+                // Leere Menge bei bewölkung > LEICHT_BEWOELKT oder nicht unter offenem Himmel
+                alt.addAll(altSpTageszeitenwechsel(bewoelkung, TAGSUEBER, unterOffenemHimmel));
                 break;
             case ABENDS:
+                // Leere Collection bei nicht unter offenem Himmel und bewölkung > BEWOELKT
                 final ImmutableCollection<Satz>
-                        altTageszeitenwechsel =
-                        satzDescriber.altTageszeitenwechsel(
-                                bewoelkung, currentTageszeit, unterOffenemHimmel);
+                        altTageszeitenwechsel = satzDescriber.altSpTageszeitenwechsel(
+                        bewoelkung, ABENDS, unterOffenemHimmel);
+
                 if (!altTageszeitenwechsel.isEmpty()) {
                     alt.addAll(altNeueSaetze("währenddessen ist der Tag vergangen",
                             altTageszeitenwechsel.stream()
                                     .map(Satz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)));
                 }
-                if (unterOffenemHimmel
-                        && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
+                if (unterOffenemHimmel && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz("Die Sonne ist schon wieder am Untergehen"));
                 }
                 break;
@@ -432,14 +517,22 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromTagsueberTo(
+    private AltDescriptionsBuilder altSpTageszeitensprungOderWechselFromTagsueberTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {
+        // Leere Menge als Ergebnis bei:
+        // - MORGENS
+        // - ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+
+        checkArgument(currentTageszeit != TAGSUEBER,
+                "Sprung / Wechsel from TAGSUEBER to TAGSUEBER?!");
+
         final AltDescriptionsBuilder alt = alt();
         switch (currentTageszeit) {
             case ABENDS:
-                alt.addAll(altTageszeitenwechsel(bewoelkung, ABENDS, unterOffenemHimmel));
+                // Leere Menge bei nicht unter offenem Himmel und bewölkung > BEWOELKT
+                alt.addAll(altSpTageszeitenwechsel(bewoelkung, ABENDS, unterOffenemHimmel));
                 break;
             case NACHTS:
                 if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
@@ -470,15 +563,22 @@ public class BewoelkungDescDescriber {
 
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitensprungOderWechselFromAbendsTo(
+    private AltDescriptionsBuilder altSpTageszeitensprungOderWechselFromAbendsTo(
             final Bewoelkung bewoelkung,
             final Tageszeit currentTageszeit,
             final boolean unterOffenemHimmel) {
+        // Leere Menge als Ergebnis bei:
+        // - MORGENS
+        // - TAGSUEBER und bewölkung > LEICHT_BEWOELKT
+
+        checkArgument(currentTageszeit != ABENDS, "Sprung / Wechsel from ABENDS to ABENDS?!");
+
         final AltDescriptionsBuilder alt = alt();
 
         switch (currentTageszeit) {
             case NACHTS:
-                alt.addAll(altTageszeitenwechsel(bewoelkung, NACHTS, unterOffenemHimmel));
+                // Nie leere Menge
+                alt.addAll(altSpTageszeitenwechsel(bewoelkung, NACHTS, unterOffenemHimmel));
                 break;
             case MORGENS:
                 break;
@@ -506,15 +606,20 @@ public class BewoelkungDescDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private AltDescriptionsBuilder altTageszeitenwechsel(
+    private AltDescriptionsBuilder altSpTageszeitenwechsel(
             final Bewoelkung bewoelkung, final Tageszeit newTageszeit,
             final boolean unterOffenemHimmel) {
+        // Leere Menge als Ergebnis bei:
+        // - MORGENS und bewölkung > BEWOELKT
+        // - TAGSUEBER und (bewölkung > LEICHT_BEWOELKT oder nicht unter offenem Himmel)
+        // - ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
+
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altNeueSaetze(
                 PARAGRAPH,
                 satzDescriber
-                        .altTageszeitenwechsel(bewoelkung, newTageszeit, unterOffenemHimmel)));
+                        .altSpTageszeitenwechsel(bewoelkung, newTageszeit, unterOffenemHimmel)));
 
         switch (newTageszeit) {
             case MORGENS:
@@ -592,7 +697,7 @@ public class BewoelkungDescDescriber {
         alt.addAll(satzDescriber.altKommtUnterOffenenHimmel(bewoelkung, time, warVorherDrinnen,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
-        alt.addAll(altSpezGestirnUnterOffenemHimmel(bewoelkung, time,
+        alt.addAll(altSpSpezGestirnUnterOffenemHimmel(bewoelkung, time,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt;
@@ -618,7 +723,7 @@ public class BewoelkungDescDescriber {
         alt.addAll(satzDescriber.altUnterOffenemHimmel(
                 bewoelkung, time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
-        alt.addAll(altSpezGestirnUnterOffenemHimmel(
+        alt.addAll(altSpSpezGestirnUnterOffenemHimmel(
                 bewoelkung, time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         return alt;
@@ -637,7 +742,7 @@ public class BewoelkungDescDescriber {
      *                                                                 einmalig
      *                                                                 auftreten
      */
-    private AltDescriptionsBuilder altSpezGestirnUnterOffenemHimmel(
+    private AltDescriptionsBuilder altSpSpezGestirnUnterOffenemHimmel(
             final Bewoelkung bewoelkung,
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -649,7 +754,7 @@ public class BewoelkungDescDescriber {
 
         if (time.kurzVorSonnenaufgang() && bewoelkung.isUnauffaellig(NACHTS)) {
             alt.addAll(mapToSet(
-                    satzDescriber.altTageszeitenwechsel
+                    satzDescriber.altSpTageszeitenwechsel
                             (bewoelkung, Tageszeit.MORGENS, true),
                     sonneGehtAuf -> sonneGehtAuf.mitAdvAngabe(
                             new AdvAngabeSkopusVerbAllg("bald"))));

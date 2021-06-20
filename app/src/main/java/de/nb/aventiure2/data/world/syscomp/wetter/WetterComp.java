@@ -269,8 +269,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     }
 
     public void onScEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().altOnScEnter(
+        final ImmutableCollection<AbstractDescription<?>> altSp =
+                requirePcd().altSpOnScEnter(
                         timeTaker.now(),
                         from != null ?
                                 from.storingPlaceComp().getDrinnenDraussen() :
@@ -281,8 +281,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
                                 null,
                         to.storingPlaceComp().getEffectiveTemperaturRange());
 
-        if (!alt.isEmpty()) {
-            n.narrateAlt(alt, NO_TIME);
+        if (!altSp.isEmpty()) {
+            n.narrateAlt(altSp, NO_TIME);
         }
     }
 
@@ -297,7 +297,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         @Nullable final ILocationGO location = loadScLocation();
 
         final ImmutableCollection<AbstractDescription<?>>
-                altHinweise = requirePcd().altWetterhinweiseWennNoetig(
+                altSpHinweise = requirePcd().altSpWetterhinweiseWennNoetig(
                 timeTaker.now(),
                 location != null ? location.storingPlaceComp().getDrinnenDraussen() :
                         // Der SC hat die Welt verlassen? - Dann ist kann er wohl gerade nicht den
@@ -306,8 +306,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
                 location != null ? location.storingPlaceComp().getEffectiveTemperaturRange() :
                         EnumRange.all(Temperatur.class));
 
-        if (!altHinweise.isEmpty()) {
-            n.narrateAlt(altHinweise, NO_TIME);
+        if (!altSpHinweise.isEmpty()) {
+            n.narrateAlt(altSpHinweise, NO_TIME);
         }
     }
 
@@ -324,13 +324,13 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      *
-     * @see #altWetterhinweise(AvDateTime, DrinnenDraussen, EnumRange)
+     * @see #altSpWetterhinweise(AvDateTime, DrinnenDraussen, EnumRange)
      */
     @CheckReturnValue
     public ImmutableCollection<AbstractDescription<?>>
-    altWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
+    altSpWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
         @Nullable final ILocationGO location = loadScLocation();
-        return altWetterhinweise(
+        return altSpWetterhinweise(
                 timeTaker.now(),
                 location != null ?
                         location.storingPlaceComp().getDrinnenDraussen() : DRINNEN,
@@ -349,10 +349,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    private ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
+    private ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise(
             final AvDateTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange) {
-        return requirePcd().altWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
+        return requirePcd().altSpWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
     }
 
     /**
@@ -367,10 +367,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * @param time Die Zeit, zu der der SC draußen angekommen ist
      */
     @NonNull
-    public ImmutableSet<AbstractDescription<?>> altWetterhinweiseKommtNachDraussen(
+    public ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseKommtNachDraussen(
             final AvDateTime time, final GameObjectId locationId) {
         @Nullable final ILocationGO location = world.load(locationId);
-        return requirePcd().altWetterhinweiseKommtNachDraussen(
+        return requirePcd().altSpWetterhinweiseKommtNachDraussen(
                 time,
                 location.storingPlaceComp().getDrinnenDraussen() ==
                         DRAUSSEN_UNTER_OFFENEM_HIMMEL,
@@ -389,7 +389,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     @NonNull
     public ImmutableCollection<AbstractDescription<?>>
-    altDescUeberHeuteOderDenTagWennDraussenSinnvoll() {
+    altSpDescUeberHeuteOderDenTagWennDraussenSinnvoll() {
         if (!isScDraussen()) {
             return ImmutableList.of();
         }
@@ -399,7 +399,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         // Der SC hat die Welt verlassen? - Dann ist kann er wohl gerade nicht den
         // irdischen Himmel sehen.
         return requirePcd()
-                .altDescUeberHeuteOderDenTagWennDraussenSinnvoll(timeTaker.now().getTime(),
+                .altSpDescUeberHeuteOderDenTagWennDraussenSinnvoll(timeTaker.now().getTime(),
                         location != null
                                 && location.storingPlaceComp().getDrinnenDraussen()
                                 == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
@@ -481,11 +481,11 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public void onTimePassed(final Change<AvDateTime> change) {
         final ImmutableList<WetterData> wetterSteps = narrateAndDoWetterSteps(change.getNachher());
 
-        final ImmutableCollection<AbstractDescription<?>> alt =
-                requirePcd().altTimePassed(change, loadScLocation());
+        final ImmutableCollection<AbstractDescription<?>> altSp =
+                requirePcd().altSpTimePassed(change, loadScLocation());
 
-        if (!alt.isEmpty()) {
-            n.narrateAlt(alt, NO_TIME);
+        if (!altSp.isEmpty()) {
+            n.narrateAlt(altSp, NO_TIME);
         }
 
         if (!wetterSteps.isEmpty()) {
@@ -496,9 +496,10 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    public ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+    public ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
             final boolean unterOffenemHimmel) {
-        return requirePcd().altWindgeraeuscheSaetze(timeTaker.now().getTime(), unterOffenemHimmel);
+        return requirePcd()
+                .altSpWindgeraeuscheSaetze(timeTaker.now().getTime(), unterOffenemHimmel);
     }
 
     /**

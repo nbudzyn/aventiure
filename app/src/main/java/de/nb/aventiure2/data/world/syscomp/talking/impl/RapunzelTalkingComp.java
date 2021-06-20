@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -30,6 +31,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.SimpleDuDescription;
+import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
@@ -76,6 +80,7 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
+import static de.nb.aventiure2.german.base.Nominalphrase.HASEN_UND_RABEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
 import static de.nb.aventiure2.german.base.Nominalphrase.IHR_NAME;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
@@ -84,6 +89,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -344,59 +350,20 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         if (zuneigungSCTowardsRapunzel <= FeelingIntensity.MERKLICH) {
-            alt.add(paragraph("„Die letzen Tage waren ziemlich warm“, sagst du")
-                            .timed(secs(10)),
-                    paragraph("„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du",
-                            "in den Raum")
-                            .timed(secs(10)));
+            alt.addAll(altGespraechsbeginnOhneBegruessungZuneigungMaxMerklich());
         }
 
         if (zuneigungSCTowardsRapunzel >= -FeelingIntensity.NUR_LEICHT) {
-            alt.add(neuerSatz(PARAGRAPH,
-                    "„Ist ja doch ein wenig eng hier oben, oder?“, bemerkst du. „",
-                    zuneigungRapunzelTowardsSC <= FeelingIntensity.MERKLICH ?
-                            "Meinst du?" : "Stimmt schon",
-                    "“, gibt",
-                    anaph().nomK(),
-                    "zurück").timed(secs(15)));
-
-            if (loadSC().memoryComp().isKnown(RAPUNZELS_NAME)
-                    && counterDao.get(GEFRAGT_NACH_RAPUNZELN) == 0
-                    && duzen()) {
-                alt.add(paragraph(
-                        "„Du magst also Rapunzeln?“ – Sie strahlt übers",
-                        "ganze Gesicht. „Und wie! Manchmal bringt",
-                        "mir die Alte welche aus ihrem Garten mit.",
-                        "Frisch gezupft – die sind großartig, sag ich dir!“")
-                        .timed(secs(20))
-                        .withCounterIdIncrementedIfTextIsNarrated(GEFRAGT_NACH_RAPUNZELN));
-            }
+            alt.addAll(altGespraechsbeginnOhneBegruessungAbneigungMaxNurLeicht(
+                    zuneigungRapunzelTowardsSC));
         }
 
-        if (duzen() &&
-                zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
-            alt.add(duParagraph("willst",
-                    "gerade anfangen, zu sprechen, da fragt",
-                    anaph().nomK(),
-                    ":",
-                    "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
-                    "langatmig von Hasen und Raben")
-                    // FIXME "Hasen und Raben" kann als "sie" verstanden werden!
-                    .schonLaenger()
-                    .timed(mins(2)));
+        if (duzen() && zuneigungRapunzelTowardsSC >= FeelingIntensity.DEUTLICH) {
+            alt.addAll(altGespraechsbeginnOhneBegruessungZuneigungMinDeutlich());
         }
 
         if (counterDao.get(GESPRAECH_BEGONNEN_ODER_UNMITTELBAR_FORTGESETZT) >= 3) {
-            alt.addAll(altParagraphs("„Nachts ist es kälter als draußen“, sagst du",
-                    SENTENCE,
-                    anaph().nomK(),
-                    scUndRapunzelKoennenEinanderSehen() ?
-                            joinToAltKonstituentenfolgen(
-                                    "schaut dich",
-                                    ImmutableList.of("verständlos", "verwirrt", "irritiert"),
-                                    "an") :
-                            "– Keine Reaktion zu hören"
-            ).timed(secs(10)));
+            alt.addAll(altGespraechsbeginnOhneBegruessungNonsense());
         }
 
         n.narrateAlt(alt);
@@ -407,6 +374,72 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 0.3f, FeelingIntensity.STARK);
 
         setTalkingTo(SPIELER_CHARAKTER);
+    }
+
+    private static ImmutableList<TimedDescription<TextDescription>> altGespraechsbeginnOhneBegruessungZuneigungMaxMerklich() {
+        return ImmutableList.of(
+                paragraph("„Die letzen Tage waren ziemlich warm“, sagst du")
+                        .timed(secs(10)),
+                paragraph("„Nachts war es in letzter Zeit ziemlich kalt“, wirfst du",
+                        "in den Raum")
+                        .timed(secs(10)));
+    }
+
+    private AltTimedDescriptionsBuilder altGespraechsbeginnOhneBegruessungAbneigungMaxNurLeicht(
+            final int zuneigungRapunzelTowardsSC) {
+        final AltTimedDescriptionsBuilder alt = altTimed();
+
+        alt.add(neuerSatz(PARAGRAPH,
+                "„Ist ja doch ein wenig eng hier oben, oder?“, bemerkst du. „",
+                zuneigungRapunzelTowardsSC <= FeelingIntensity.MERKLICH ?
+                        "Meinst du?" : "Stimmt schon",
+                "“, gibt",
+                anaph().nomK(),
+                "zurück").timed(secs(15)));
+
+        if (loadSC().memoryComp().isKnown(RAPUNZELS_NAME)
+                && counterDao.get(GEFRAGT_NACH_RAPUNZELN) == 0
+                && duzen()) {
+            alt.add(paragraph(
+                    "„Du magst also Rapunzeln?“ – Sie strahlt übers",
+                    "ganze Gesicht. „Und wie! Manchmal bringt",
+                    "mir die Alte welche aus ihrem Garten mit.",
+                    "Frisch gezupft – die sind großartig, sag ich dir!“")
+                    .timed(secs(20))
+                    .withCounterIdIncrementedIfTextIsNarrated(GEFRAGT_NACH_RAPUNZELN));
+        }
+
+        return alt;
+    }
+
+    @NonNull
+    @VisibleForTesting
+    ImmutableList<TimedDescription<SimpleDuDescription>> altGespraechsbeginnOhneBegruessungZuneigungMinDeutlich() {
+        return ImmutableList.of(duParagraph("willst",
+                "gerade anfangen, zu sprechen, da fragt",
+                anaph().nomK(),
+                ":",
+                "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
+                "langatmig",
+                VON.mit(HASEN_UND_RABEN))
+                // .phorikKandidat(
+                //        null) // Missverständnis "sie (Rapunzel)" = "Hasen und Raben" vermeiden
+                .schonLaenger()
+                .timed(mins(2)));
+    }
+
+    @NonNull
+    private AltTimedDescriptionsBuilder altGespraechsbeginnOhneBegruessungNonsense() {
+        return altParagraphs("„Nachts ist es kälter als draußen“, sagst du",
+                SENTENCE,
+                anaph().nomK(),
+                scUndRapunzelKoennenEinanderSehen() ?
+                        joinToAltKonstituentenfolgen(
+                                "schaut dich",
+                                ImmutableList.of("verständlos", "verwirrt", "irritiert"),
+                                "an") :
+                        "– Keine Reaktion zu hören"
+        ).timed(secs(10));
     }
 
     private void begruessen_EntryReEntry() {
@@ -469,7 +502,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         // Könnte leer sein
         final ImmutableList<Satz> altEindruckSaetzeAnaphPersPron =
-                feelingsComp.altEindruckAufScBeiBegegnungSaetze(anaph.persPron(),
+                feelingsComp.altSpEindruckAufScBeiBegegnungSaetze(anaph.persPron(),
                         true);
 
         // Könnte ebenfalls leer sein

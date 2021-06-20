@@ -33,7 +33,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class TageszeitAdvAngabeWannDescriber {
 
-    public ImmutableSet<AdvAngabeSkopusSatz> altWannDraussen(final Change<AvTime> change) {
+    public ImmutableSet<AdvAngabeSkopusSatz> altSpWannDraussen(final Change<AvTime> change) {
 
         // Untertageszeitliche Angaben (werden bevorzugt)
         if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenaufgang)) {
@@ -122,7 +122,7 @@ public class TageszeitAdvAngabeWannDescriber {
         return ImmutableSet.of();
     }
 
-    public ImmutableSet<Konditionalsatz> altWannKonditionalsaetzeDraussen(
+    public ImmutableSet<Konditionalsatz> altSpWannKonditionalsaetzeDraussen(
             final Change<AvTime> change) {
 
         // Untertageszeitliche Angaben (werden bevorzugt)

@@ -66,40 +66,40 @@ public class WindstaerkeDescDescriber {
         //  WINDIG -> WINDSTILL "Der Wind legt sich, und auf den Bäumen vor [...] regt sich kein
         //  Blättchen mehr"
 
-        final ImmutableSet<Konstituente> altWann;
-        final ImmutableSet<Konstituentenfolge> altWannSaetze;
+        final ImmutableSet<Konstituente> altSpWann;
+        final ImmutableSet<Konstituentenfolge> altSpWannSaetze;
 
         if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
             final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);
 
-            altWann = mapToSet(
-                    tageszeitAdvAngabeWannDescriber.altWannDraussen(timeChange),
+            altSpWann = mapToSet(
+                    tageszeitAdvAngabeWannDescriber.altSpWannDraussen(timeChange),
                     gegenMitternacht -> gegenMitternacht.getDescription(EXPLETIVES_ES));
 
-            altWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
-                            .altWannKonditionalsaetzeDraussen(timeChange),
+            altSpWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
+                            .altSpWannKonditionalsaetzeDraussen(timeChange),
                     Konditionalsatz::getDescription);
         } else {
-            altWann = ImmutableSet.of();
-            altWannSaetze = ImmutableSet.of();
+            altSpWann = ImmutableSet.of();
+            altSpWannSaetze = ImmutableSet.of();
         }
 
         if (change.delta() == 1) {
             // "es kommt ein Wind"
             alt.addAll(altNeueSaetze(
                     "es kommt",
-                    change.getNachher().altNomenFlexionsspalte().stream()
+                    change.getNachher().altSpNomenFlexionsspalte().stream()
                             .map(wind -> np(INDEF, wind).nomK())));
         }
 
         if (change.getVorher() == Windstaerke.WINDIG
                 && change.getNachher() == Windstaerke.KRAEFTIGER_WIND) {
             alt.add(neuerSatz("es kommt ein starker Wind"));
-            if (!altWann.isEmpty()) {
-                alt.addAll(altNeueSaetze(altWann, "kommt ein starker Wind"));
+            if (!altSpWann.isEmpty()) {
+                alt.addAll(altNeueSaetze(altSpWann, "kommt ein starker Wind"));
             }
-            if (!altWannSaetze.isEmpty()) {
-                alt.addAll(altNeueSaetze(altWannSaetze, ", kommt ein starker Wind"));
+            if (!altSpWannSaetze.isEmpty()) {
+                alt.addAll(altNeueSaetze(altSpWannSaetze, ", kommt ein starker Wind"));
             }
         }
 
@@ -110,24 +110,24 @@ public class WindstaerkeDescDescriber {
      * Gibt Beschreibungen zurück, wenn der SC aus dem Wind nach drinnen kommt -
      * je nach Windstärke oft leer.
      */
-    public ImmutableCollection<AbstractDescription<?>> altKommtNachDrinnen(
+    public ImmutableCollection<AbstractDescription<?>> altSpKommtNachDrinnen(
             final AvTime time,
             final Windstaerke windstaerkeFrom) {
-        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+        final AltDescriptionsBuilder altSp = AltDescriptionsBuilder.alt();
         if (windstaerkeFrom.compareTo(Windstaerke.KRAEFTIGER_WIND) >= 0) {
-            alt.addAll(mapToSet(
+            altSp.addAll(mapToSet(
                     praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
                     windUndWetter ->
                             du("bist",
                                     "hier vor", windUndWetter.datK(),
                                     "geschützt").mitVorfeldSatzglied("hier")));
-            alt.addAll(mapToSet(
+            altSp.addAll(mapToSet(
                     praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
                     windUndWetter ->
                             du("findest",
                                     "hier Zuflucht vor", windUndWetter.datK())
                                     .mitVorfeldSatzglied("hier")));
-            alt.addAll(mapToSet(
+            altSp.addAll(mapToSet(
                     praedikativumDescriber.altDraussenSubstPhr(windstaerkeFrom, time),
                     windUndWetter ->
                             du("findest",
@@ -135,28 +135,28 @@ public class WindstaerkeDescDescriber {
                                     .mitVorfeldSatzglied("hier")));
         }
 
-        return alt.build();
+        return altSp.build();
     }
 
     /**
      * Gibt Beschreibungen zurück, wenn der SC in einen windgeschützteren Bereich kommt -
      * je nach Windstärke oft leer.
      */
-    public ImmutableCollection<AbstractDescription<?>> altAngenehmerAlsVorLocation(
+    public ImmutableCollection<AbstractDescription<?>> altSpAngenehmerAlsVorLocation(
             final Windstaerke windstaerkeFrom,
             final Windstaerke windstaerkeTo) {
         checkArgument(windstaerkeFrom.compareTo(windstaerkeTo) > 0);
 
-        final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
+        final AltDescriptionsBuilder altSp = AltDescriptionsBuilder.alt();
 
-        alt.addAll(satzDescriber.altAngenehmerAlsVorLocation(windstaerkeFrom, windstaerkeTo));
+        altSp.addAll(satzDescriber.altSpAngenehmerAlsVorLocation(windstaerkeFrom, windstaerkeTo));
 
         if (windstaerkeFrom.compareTo(Windstaerke.WINDIG) >= 0) {
-            alt.add(du("suchst", "so ein wenig Schutz vor dem Wetter")
+            altSp.add(du("suchst", "so ein wenig Schutz vor dem Wetter")
                     .mitVorfeldSatzglied("so"));
         }
 
-        return alt.schonLaenger().build();
+        return altSp.schonLaenger().build();
     }
 
     /**
@@ -216,7 +216,8 @@ public class WindstaerkeDescDescriber {
                                                            final Windstaerke windstaerke) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        final ImmutableCollection<EinzelnerSatz> altSaetze = satzDescriber.alt(time, windstaerke,
+        // (nicht leer)
+        final ImmutableCollection<EinzelnerSatz> altSaetze = satzDescriber.altSp(time, windstaerke,
                 false, false);
         alt.addAll(altSaetze);
 

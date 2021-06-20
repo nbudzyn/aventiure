@@ -11,6 +11,7 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
@@ -70,6 +71,8 @@ public class Nominalphrase
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
             np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
+    public static final Nominalphrase HASEN_UND_RABEN =
+            np(PL_MFN, INDEF, "Hasen und Raben");
     public static final Nominalphrase IHRE_HAARE =
             np(PL_MFN, null, "ihre Haare",
                     "ihren Haaren");
@@ -563,7 +566,7 @@ public class Nominalphrase
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

@@ -319,13 +319,13 @@ public class WetterData {
      *                                                                         auftreten
      * @param beschreibungUnerwuenscht
      */
-    ImmutableCollection<AbstractDescription<?>> altWetterhinweise(
+    ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise(
             final AvTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
             final WetterParamFlags beschreibungUnerwuenscht) {
         if (drinnenDraussen.isDraussen()) {
-            return altWetterHinweiseFuerDraussen(time,
+            return altSpWetterHinweiseFuerDraussen(time,
                     drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
                     locationTemperaturRange,
                     auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
@@ -356,7 +356,7 @@ public class WetterData {
      *                                                                 nicht beschrieben werden
      *                                                                 sollen
      */
-    private ImmutableCollection<AbstractDescription<?>> altWetterHinweiseFuerDraussen(
+    private ImmutableCollection<AbstractDescription<?>> altSpWetterHinweiseFuerDraussen(
             final AvTime time, final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
@@ -391,7 +391,7 @@ public class WetterData {
                 && !temperaturMussBeschriebenWerden
                 && !bewoelkungMussBeschriebenWerden) {
             // "es ist schon dunkel", "es ist Abend"
-            alt.addAll(TAGESZEIT_DESC_DESCRIBER.altDraussen(time,
+            alt.addAll(TAGESZEIT_DESC_DESCRIBER.altSpDraussen(time,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
@@ -549,7 +549,7 @@ public class WetterData {
                     // "Der kalte Wind treibt Wolkenfetzen über den Sternenhimmel"
                     alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER
                             .altLuftAdjPhr(temperatur, time.getTageszeit()).stream()
-                            .flatMap(kalt -> windstaerke.altNomenFlexionsspalte().stream()
+                            .flatMap(kalt -> windstaerke.altSpNomenFlexionsspalte().stream()
                                     .flatMap(wind ->
                                             time.getTageszeit()
                                                     .altWolkenloserHimmel().stream()
@@ -592,9 +592,9 @@ public class WetterData {
         alt.addAll(altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
                 false));
 
-        // "Der Wind saust; die Luft ist kalt"
+        // "Der Wind saust; die Luft ist kalt" (nicht leer)
         alt.addAll(altNeueSaetze(
-                WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         false, false),
                 ";",
                 TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
@@ -604,7 +604,7 @@ public class WetterData {
 
         // "Der Wind saust; kalt ist es"
         alt.addAll(altNeueSaetze(
-                WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         false, false),
                 ";",
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
@@ -720,9 +720,9 @@ public class WetterData {
                                         .alsSatzMitSubjekt(EXPLETIVES_ES)))
                 .collect(toImmutableSet()));
 
-        // "Es ist kalt und der Wind stürmt"
+        // "Es ist kalt und der Wind stürmt" (nicht leer)
         alt.addAll(tempAltAdjPhrPraedikativ.stream()
-                .flatMap(kalt -> WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                .flatMap(kalt -> WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete, false)
                         .stream()
                         .map(derWindStuermt -> new Satzreihe(
@@ -805,12 +805,12 @@ public class WetterData {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    ImmutableCollection<EinzelnerSatz> altWindgeraeuscheSaetze(
+    ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
             final AvTime time, final boolean unterOffenemHimmel) {
         final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
                 .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
 
-        return WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+        return WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                 false,
                 true);
     }
@@ -877,7 +877,7 @@ public class WetterData {
 
         final ImmutableCollection<Satz> heuteOderDerTagSaetze =
                 TEMPERATUR_SATZ_DESCRIBER
-                        .altDraussenHeuteDerTagSofernSinnvoll(
+                        .altSpDraussenHeuteDerTagSofernSinnvoll(
                                 temperatur,
                                 !locationTemperaturRange
                                         .isInRange(getAktuelleGenerelleTemperatur(time)),
@@ -961,7 +961,7 @@ public class WetterData {
      *                                                                 einmalig auftreten
      */
     @CheckReturnValue
-    AltDescriptionsBuilder altKommtNachDraussen(
+    AltDescriptionsBuilder altSpKommtNachDraussen(
             final AvTime time, final boolean unterOffenenHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -986,7 +986,7 @@ public class WetterData {
                 && !bewoelkungMussBeschriebenWerden) {
             // "draußen ist es schon dunkel"
             alt.addAll(
-                    TAGESZEIT_DESC_DESCRIBER.altKommtNachDraussen(time,
+                    TAGESZEIT_DESC_DESCRIBER.altSpKommtNachDraussen(time,
                             auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
@@ -1165,7 +1165,7 @@ public class WetterData {
                     // "Der kalte Wind treibt Wolkenfetzen über den Sternenhimmel"
                     alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER
                             .altLuftAdjPhr(temperatur, time.getTageszeit()).stream()
-                            .flatMap(kalt -> windstaerke.altNomenFlexionsspalte().stream()
+                            .flatMap(kalt -> windstaerke.altSpNomenFlexionsspalte().stream()
                                     .flatMap(wind ->
                                             time.getTageszeit()
                                                     .altWolkenloserHimmel().stream()
@@ -1218,9 +1218,9 @@ public class WetterData {
                     false));
         }
 
-        // "Draußen saust der Wind; die Luft ist kalt"
+        // "Draußen saust der Wind; die Luft ist kalt" (nicht leer)
         alt.addAll(altNeueSaetze(
-                WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
                 ";",
@@ -1229,9 +1229,9 @@ public class WetterData {
                         auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
                         false)));
 
-        // "Draußen saust der Wind; kalt ist es"
+        // "Draußen saust der Wind; kalt ist es" (nicht leer)
         alt.addAll(altNeueSaetze(
-                WINDSTAERKE_SATZ_DESCRIBER.alt(time, windstaerke,
+                WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
                 ";",
@@ -1343,19 +1343,19 @@ public class WetterData {
                         .altUnterOffenemHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
-        final ImmutableCollection<Satz> heuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
-                .altDraussenHeuteDerTagSofernSinnvoll(
+        final ImmutableCollection<Satz> altSpHeuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
+                .altSpDraussenHeuteDerTagSofernSinnvoll(
                         temperatur,
                         !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                         time,
                         true);
-        if (!heuteOderDerTagSaetze.isEmpty()) {
+        if (!altSpHeuteOderDerTagSaetze.isEmpty()) {
             alt.addAll(altNeueSaetze(
                     BEWOELKUNG_SATZ_DESCRIBER
                             .altKommtUnterOffenenHimmel(bewoelkung, time, true,
                                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
                     ";",
-                    heuteOderDerTagSaetze));
+                    altSpHeuteOderDerTagSaetze));
         }
 
         if (time.getTageszeit() == ABENDS) {
@@ -1403,14 +1403,36 @@ public class WetterData {
 
         if (drinnenDraussen.isDraussen()) {
             if (currentLokaleTemperaturBeiRelevanterAenderung != null) {
-                alt.addAll(altTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
+                alt.addAll(altSpTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
                         lastTageszeit, currentTime,
                         generelleTemperaturOutsideLocationTemperaturRange,
                         currentLokaleTemperaturBeiRelevanterAenderung,
                         drinnenDraussen));
             } else {
                 // "Die Sterne verblassen und die Sonne ist am Horizont zu sehen"
-                alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
+
+                // Leer bei
+                // - lastTageszeit = NACHTS, currentTageszeit = TAGSUEBER und bewölkung >
+                // LEICHT_BEWOELKT
+                // - lastTageszeit = NACHTS, currentTageszeit= MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = NACHTS, currentTageszeit = ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = MORGENS, currentTageszeit = ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = MORGENS, currentTageszeit= TAGSUEBER und (bewölkung >
+                // LEICHT_BEWOELKT
+                // oder nicht unter
+                // offenem Himmel)
+                // - lastTageszeit = TAGSUEBER, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = TAGSUEBER, currentTageszeit= ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = ABENDS, currentTageszeit =   MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = ABENDS, currentTageszeit = TAGSUEBER und bewölkung >
+                // LEICHT_BEWOELKT
+                alt.addAll(BEWOELKUNG_DESC_DESCRIBER.altSpTageszeitensprungOderWechsel(
                         getBewoelkung(),
                         lastTageszeit, currentTime.getTageszeit(),
                         drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL));
@@ -1439,7 +1461,7 @@ public class WetterData {
     @NonNull
     @CheckReturnValue
     private ImmutableCollection<AbstractDescription<?>>
-    altTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
+    altSpTageszeitenUndTemperaturaenderungMitBewoelkungDraussen(
             final Tageszeit lastTageszeit,
             final AvTime currentTime,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
@@ -1451,7 +1473,28 @@ public class WetterData {
         final AltDescriptionsBuilder alt = alt();
 
         alt.addAll(altNeueSaetze(
-                BEWOELKUNG_DESC_DESCRIBER.altTageszeitensprungOderWechsel(
+                // Leer bei
+                // - lastTageszeit = NACHTS, currentTageszeit = TAGSUEBER und bewölkung >
+                // LEICHT_BEWOELKT
+                // - lastTageszeit = NACHTS, currentTageszeit= MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = NACHTS, currentTageszeit = ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = MORGENS, currentTageszeit = ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = MORGENS, currentTageszeit= TAGSUEBER und (bewölkung >
+                // LEICHT_BEWOELKT
+                // oder nicht unter
+                // offenem Himmel)
+                // - lastTageszeit = TAGSUEBER, currentTageszeit = MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = TAGSUEBER, currentTageszeit= ABENDS und nicht unter offenem
+                // Himmel und
+                // bewölkung > BEWOELKT
+                // - lastTageszeit = ABENDS, currentTageszeit =   MORGENS und bewölkung > BEWOELKT
+                // - lastTageszeit = ABENDS, currentTageszeit = TAGSUEBER und bewölkung >
+                // LEICHT_BEWOELKT
+                BEWOELKUNG_DESC_DESCRIBER.altSpTageszeitensprungOderWechsel(
                         bewoelkung,
                         lastTageszeit, currentTime.getTageszeit(),
                         drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL),
@@ -1473,7 +1516,7 @@ public class WetterData {
     @NonNull
     @CheckReturnValue
     ImmutableCollection<AbstractDescription<?>>
-    altHeuteDerTagWennDraussenSinnvoll(
+    altSpHeuteDerTagWennDraussenSinnvoll(
             final AvTime time,
             final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange) {
@@ -1495,7 +1538,7 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // Bewoelkung muss nicht erwähnt werden
-        return TEMPERATUR_DESC_DESCRIBER.altHeuteDerTagWennDraussenSinnvoll(
+        return TEMPERATUR_DESC_DESCRIBER.altSpHeuteDerTagWennDraussenSinnvoll(
                 temperatur,
                 !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                 time, unterOffenemHimmel);
@@ -1504,7 +1547,7 @@ public class WetterData {
     @NonNull
     @CheckReturnValue
     ImmutableCollection<AbstractDescription<?>>
-    altAngenehmereTemperaturOderWindAlsVorLocation(
+    altSpAngenehmereTemperaturOderWindAlsVorLocation(
             final AvTime time, final EnumRange<Temperatur> locationTemperaturRange,
             final int deltaTemperatur,
             @Nullable final Windstaerke windstaerkeFromSofernRelevant,
@@ -1519,11 +1562,11 @@ public class WetterData {
             // Lässt der Wind nach, merkt man eine gleichzeitig nachlassende
             // Temperatur gar nicht.
             if (windstaerkeTo == null) {
-                return WINDSTAERKE_DESC_DESCRIBER.altKommtNachDrinnen(
+                return WINDSTAERKE_DESC_DESCRIBER.altSpKommtNachDrinnen(
                         time, windstaerkeFromSofernRelevant);
             }
 
-            return WINDSTAERKE_DESC_DESCRIBER.altAngenehmerAlsVorLocation(
+            return WINDSTAERKE_DESC_DESCRIBER.altSpAngenehmerAlsVorLocation(
                     windstaerkeFromSofernRelevant, windstaerkeTo);
         }
 
@@ -1649,13 +1692,13 @@ public class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        alt.addAll(mapToSet(altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+        alt.addAll(mapToSet(altSpWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
                 time, windstaerke, locationTemperaturRange),
                 np -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(np))));
 
         alt.addAll(altWohinInWindUndTemperaturHinausPraepPhr(time, windstaerke, temperatur).stream()
                 .flatMap(inDieKaelte ->
-                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenenHimmelAkk(
+                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altSpUnterOffenenHimmelAkk(
                                 bewoelkung, time.getTageszeit()).stream()
                                 .filter(unterHimmel -> !unterHimmel.getDescription()
                                         .kommaStehtAus())
@@ -1696,13 +1739,13 @@ public class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        alt.addAll(mapToSet(altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+        alt.addAll(mapToSet(altSpBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
                 time, locationTemperaturRange),
                 np -> new AdvAngabeSkopusVerbWohinWoher(IN_AKK.mit(np))));
 
         alt.addAll(TEMPERATUR_PRAEP_PHR_DESCRIBER.altWohinHinaus(temperatur, time).stream()
                 .flatMap(inDieKaelte ->
-                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenenHimmelAkk(
+                        BEWOELKUNG_PRAEP_PHR_DESCRIBER.altSpUnterOffenenHimmelAkk(
                                 bewoelkung, time.getTageszeit()).stream()
                                 .filter(unterHimmel -> !unterHimmel.getDescription()
                                         .kommaStehtAus())
@@ -1718,33 +1761,33 @@ public class WetterData {
     }
 
     private ImmutableSet<EinzelneSubstantivischePhrase>
-    altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+    altSpBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
             final AvTime time, final EnumRange<Temperatur> locationTemperaturRange) {
-        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelneSubstantivischePhrase> altSp = ImmutableSet.builder();
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
             if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
-                alt.add(SONNENSCHEIN.mit(HEISS));
+                altSp.add(SONNENSCHEIN.mit(HEISS));
             }
 
             if (temperatur.compareTo(Temperatur.SEHR_HEISS) == 0) {
-                alt.add(SONNENHITZE);
-                alt.add(SONNE.mit(SENGEND));
+                altSp.add(SONNENHITZE);
+                altSp.add(SONNE.mit(SENGEND));
 
                 if (time.gegenMittag()) {
-                    alt.add(MITTAGSSONNE);
+                    altSp.add(MITTAGSSONNE);
                 }
             }
         }
 
-        return alt.build();
+        return altSp.build();
     }
 
 
     private ImmutableSet<EinzelneSubstantivischePhrase>
-    altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+    altSpWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
             final AvTime time, final Windstaerke windstaerke,
             final EnumRange<Temperatur> locationTemperaturRange) {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
@@ -1796,7 +1839,7 @@ public class WetterData {
         if (!windMussBeschriebenWerden
                 && !temperaturMussBeschriebenWerden
                 && !bewoelkungMussBeschriebenWerden) {
-            alt.addAll(TAGESZEIT_ADV_ANGABE_WO_DESCRIBER.altWoDraussen(
+            alt.addAll(TAGESZEIT_ADV_ANGABE_WO_DESCRIBER.altSpWoDraussen(
                     time, auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
         }
 
@@ -1867,11 +1910,11 @@ public class WetterData {
         alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER
                 .altLuftAdjPhr(temperatur, time.getTageszeit())
                 .stream()
-                .flatMap(kalt -> windstaerke.altNomenFlexionsspalte().stream()
+                .flatMap(kalt -> windstaerke.altSpNomenFlexionsspalte().stream()
                         .map(wind -> wind.mit(kalt)))
                 .collect(toSet()));
 
-        // "der windige, kalte Morgen" (evtl. leer)
+        // "der windige, kalte Morgen"
         alt.addAll(
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(temperatur, true)
                         .stream()
@@ -1947,12 +1990,12 @@ public class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        final ImmutableSet<EinzelneSubstantivischePhrase> altSonnenhitzeWennSinnvoll =
-                altBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+        final ImmutableSet<EinzelneSubstantivischePhrase> altSpSonnenhitzeWennSinnvoll =
+                altSpBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
                         time, locationTemperaturRange);
-        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
+        alt.addAll(mapToSet(altSpSonnenhitzeWennSinnvoll,
                 np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
-        alt.addAll(mapToSet(altSonnenhitzeWennSinnvoll,
+        alt.addAll(mapToSet(altSpSonnenhitzeWennSinnvoll,
                 substPhr -> new AdvAngabeSkopusVerbAllg(
                         IN_DAT.mit(substPhr)
                                 .mitModAdverbOderAdjektiv("mitten"))));
@@ -1983,7 +2026,7 @@ public class WetterData {
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
-        alt.addAll(mapToSet(altWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
+        alt.addAll(mapToSet(altSpWindBewoelkungUndTemperaturNominalphrasenUnterOffenemHimmel(
                 time, windstaerke, locationTemperaturRange),
                 np -> new AdvAngabeSkopusVerbAllg(IN_DAT.mit(np))));
 
@@ -2229,7 +2272,7 @@ public class WetterData {
      * @param bewoelkungChangeSofernRelevant  Änderung der Bewölkung, falls eine beschrieben
      *                                        werden soll, sonst {@code null}
      */
-    ImmutableCollection<AbstractDescription<?>> altTimePassed(
+    ImmutableCollection<AbstractDescription<?>> altSpTimePassed(
             final Change<AvDateTime> change,
             final boolean tageszeitaenderungMussBeschriebenWerden,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
@@ -2246,14 +2289,14 @@ public class WetterData {
 
         if (!tageszeitaenderungMussBeschriebenWerden) {
             // Es soll keine Tageszeitänderung beschrieben werden
-            return altTimePassedTageszeitenaenderungNichtBeschreiben(change,
+            return altSpTimePassedTageszeitenaenderungNichtBeschreiben(change,
                     windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                     bewoelkungChangeSofernRelevant,
                     drinnenDraussen, drinnenDraussen.isDraussen());
         }
 
         // Es soll eine Tageszeitänderung beschrieben werden
-        return altTimePassedTageszeitenaenderung(change,
+        return altSpTimePassedTageszeitenaenderung(change,
                 generelleTemperaturOutsideLocationTemperaturRange,
                 windstaerkeChangeSofernRelevant, temperaturChangeSofernRelevant,
                 bewoelkungChangeSofernRelevant,
@@ -2262,7 +2305,7 @@ public class WetterData {
 
     @VisibleForTesting
     static ImmutableCollection<AbstractDescription<?>>
-    altTimePassedTageszeitenaenderungNichtBeschreiben(
+    altSpTimePassedTageszeitenaenderungNichtBeschreiben(
             final Change<AvDateTime> change,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
             @Nullable final WetterParamChange<Temperatur> temperaturChangeSofernRelevant,
@@ -2284,7 +2327,7 @@ public class WetterData {
             // Nichts beschreiben - außer höchtestens untertägigem Tageszeitenwechsel
             if (span(change).shorterThan(AvTimeSpan.ONE_DAY)
                     && change.getVorher().getTageszeit() == change.getNachher().getTageszeit()) {
-                return TAGESZEIT_DESC_DESCRIBER.altZwischentageszeitlicherWechsel(
+                return TAGESZEIT_DESC_DESCRIBER.altSpZwischentageszeitlicherWechsel(
                         change.map(AvDateTime::getTime),
                         drinnenDraussen.isDraussen());
             }
@@ -2367,7 +2410,7 @@ public class WetterData {
 
         if (windstaerkeaenderungMussBeschriebenWerden
                 && !temperaturaenderungMussBeschriebenWerden) {
-            // Nur Windstärkeänderung und Bewölungsänderung beschreiben
+            // Nur Windstärkeänderung und Bewölkungsänderung beschreiben
             return alt()
                     .addAll(altNeueSaetze(
                             PARAGRAPH,
@@ -2377,7 +2420,7 @@ public class WetterData {
                                     .stream()
                                     .flatMap(windSatz ->
                                             BEWOELKUNG_SATZ_DESCRIBER
-                                                    .altSprungOderWechselUnterOffenemHimmel(
+                                                    .altSpSprungOderWechselUnterOffenemHimmel(
                                                             change,
                                                             bewoelkungChangeSofernRelevant,
                                                             false)
@@ -2417,7 +2460,7 @@ public class WetterData {
                             .filter(EinzelnerSatz.class::isInstance)
                             .flatMap(tempSatz ->
                                     BEWOELKUNG_SATZ_DESCRIBER
-                                            .altSprungOderWechselUnterOffenemHimmel(
+                                            .altSpSprungOderWechselUnterOffenemHimmel(
                                                     change,
                                                     bewoelkungChangeSofernRelevant,
                                                     false)
@@ -2459,7 +2502,7 @@ public class WetterData {
                                 .filter(EinzelnerSatz.class::isInstance)
                                 .flatMap(tempSatz ->
                                         BEWOELKUNG_SATZ_DESCRIBER
-                                                .altSprungOderWechselUnterOffenemHimmel(
+                                                .altSpSprungOderWechselUnterOffenemHimmel(
                                                         change,
                                                         bewoelkungChangeSofernRelevant,
                                                         false)
@@ -2495,7 +2538,7 @@ public class WetterData {
     }
 
     @VisibleForTesting
-    ImmutableCollection<AbstractDescription<?>> altTimePassedTageszeitenaenderung(
+    ImmutableCollection<AbstractDescription<?>> altSpTimePassedTageszeitenaenderung(
             final Change<AvDateTime> change,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             @Nullable final WetterParamChange<Windstaerke> windstaerkeChangeSofernRelevant,
@@ -2557,7 +2600,7 @@ public class WetterData {
                                 change.map(AvDateTime::getTageszeit),
                                 drinnenDraussen.isDraussen()),
                         SENTENCE,
-                        altTimePassedTageszeitenaenderungNichtBeschreiben(
+                        altSpTimePassedTageszeitenaenderungNichtBeschreiben(
                                 change,
                                 windstaerkeChangeSofernRelevant,
                                 temperaturChangeSofernRelevant,

@@ -62,37 +62,37 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "ein schummriger Morgen" zurück, immer mit Adjektiv, ggf. leer.
      */
-    ImmutableCollection<SubstantivischePhrase> altStatischTageszeitUnterOffenenHimmelMitAdj(
+    ImmutableCollection<SubstantivischePhrase> altSpStatischTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
             final Artikel.Typ artikelTyp) {
         // "ein schummriger Morgen"
-        return mapToSet(altStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
+        return mapToSet(altSpStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
                 np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));
     }
 
     /**
      * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
      */
-    private ImmutableCollection<AdjektivOhneErgaenzungen> altStatischTageszeitUnterOffenemHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altSpStatischTageszeitUnterOffenemHimmelAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         switch (tageszeit) {
             case MORGENS:
                 return altMorgenUnterOffenenHimmelAdj(bewoelkung);
             case TAGSUEBER:
-                return altTagUnterOffenenHimmelAdj(bewoelkung);
+                return altSpTagUnterOffenenHimmelAdj(bewoelkung);
             case ABENDS:
-                return altAbendUnterOffenenHimmelAdj(bewoelkung);
+                return altSpAbendUnterOffenenHimmelAdj(bewoelkung);
             case NACHTS:
-                return altNachtUnterOffenenHimmelAdj(bewoelkung);
+                return altSpNachtUnterOffenenHimmelAdj(bewoelkung);
             default:
                 throw new IllegalStateException("Unexpected Tageszeit: " + bewoelkung);
         }
     }
 
     /**
-     * Gibt Alternativen wie "schummeriger Morgen" zurück (immer mit Adjektivphrase), evtl. leer.
+     * Gibt Alternativen wie "schummeriger Morgen" zurück (immer mit Adjektivphrase).
      */
     private ImmutableCollection<AdjektivOhneErgaenzungen> altMorgenUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung) {
@@ -121,7 +121,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "trüb" zurück - ggf. eine leere Collection.
      */
-    private ImmutableCollection<AdjektivOhneErgaenzungen> altTagUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altSpTagUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
@@ -146,7 +146,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "schummerige" zurück, ggf. leer.
      */
-    private ImmutableCollection<AdjektivOhneErgaenzungen> altAbendUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altSpAbendUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung
     ) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
@@ -172,7 +172,7 @@ public class BewoelkungPraedikativumDescriber {
     /**
      * Gibt Alternativen wie "stockdunkel" zurück, evtl. leer.
      */
-    private ImmutableCollection<AdjektivOhneErgaenzungen> altNachtUnterOffenenHimmelAdj(
+    private ImmutableCollection<AdjektivOhneErgaenzungen> altSpNachtUnterOffenenHimmelAdj(
             final Bewoelkung bewoelkung) {
         final ImmutableList.Builder<AdjektivOhneErgaenzungen> alt =
                 ImmutableList.builder();
@@ -198,12 +198,12 @@ public class BewoelkungPraedikativumDescriber {
      * Gibt alternative substantivische Phrasen zurück, die den (offenen) Himmel
      * beschreiben - <i>Ergebnis kann leer sein</i>.
      */
-    ImmutableSet<EinzelneSubstantivischePhrase> altOffenerHimmel(
+    ImmutableSet<EinzelneSubstantivischePhrase> altSpOffenerHimmel(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<EinzelneSubstantivischePhrase> alt = ImmutableSet.builder();
 
-        alt.addAll(mapToSet(altHimmelAdjPhr(bewoelkung, tageszeit), HIMMEL::mit));
+        alt.addAll(mapToSet(altSpHimmelAdjPhr(bewoelkung, tageszeit), HIMMEL::mit));
 
         if (bewoelkung == WOLKENLOS) {
             alt.addAll(tageszeit.altWolkenloserHimmel());
@@ -217,7 +217,7 @@ public class BewoelkungPraedikativumDescriber {
      * Gibt alternative Adjektivphrasen zurück, die den (offenen) Himmel
      * beschreiben - <i>Ergebnis kann leer sein</i>.
      */
-    ImmutableSet<AdjPhrOhneLeerstellen> altHimmelAdjPhr(
+    ImmutableSet<AdjPhrOhneLeerstellen> altSpHimmelAdjPhr(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         final ImmutableSet.Builder<AdjPhrOhneLeerstellen> alt = ImmutableSet.builder();

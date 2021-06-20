@@ -394,16 +394,20 @@ public class Konstituentenfolge
         throw new IllegalStateException("Unexpected konst: " + konst);
     }
 
-    private boolean calcKannAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {
-        // In findPhorikKandidatAndSicherheit() bevorzugen wir Bezugsobjekte leicht gegenüber
-        // anderen Nominalphrasen. Deshalb behandeln wir hier den Sonderfall, dass die
+    private Integer lastIndexKannAlsBezugsobjektVerstandenWerdenFuer(
+            final NumerusGenus numerusGenus) {
+        // Optimierung: Sonderfall, dass die
         // Konstituentenfolge nur genau eine Konstituente enthält
         if (size() == 1) {
             final IKonstituenteOrStructuralElement konst = get(0);
             if (konst instanceof Konstituente) {
-                return ((Konstituente) konst)
-                        .koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus);
+                if (((Konstituente) konst)
+                        .koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)) {
+                    return 0;
+                }
             }
+
+            return null;
         }
 
         final Pair<Integer, Boolean> phorikKandidatAndSicherheit =
@@ -412,21 +416,47 @@ public class Konstituentenfolge
         requireNonNull(phorikKandidatAndSicherheit.second,
                 "phorikKandidatAndSicherheit.second null");
 
-        if (phorikKandidatAndSicherheit.first != null) {
-            return true;
+        if (phorikKandidatAndSicherheit.first == null) {
+            // Es wurde nichts gefunden. Es kann auch keine Missverständnisse geben.
+            // ->  kann nicht AlsBezugsobjektVerstandenWerdenFuer
+            return null;
         }
 
-        return !phorikKandidatAndSicherheit.second;
+        // Es wurde etwas gefunden - aber nichts eindeutiges.
+        // Oder etwas anderes (bei dem kein Bezugsobjekt angegeben wurde) könnte
+        // als Bezugsobjekt verstanden werden.
+        // Oder es wurde ein eindeutiger Kandidat gefunden
+        // ->  kannAlsBezugsobjektVerstandenWerden
+        return phorikKandidatAndSicherheit.first;
     }
 
     @Nullable
     private NumerusGenus calcKannAlsBezugsobjektVerstandenWerdenFuer() {
         // Dies ist eine grobe Näherung - natürlich könnten in der Konstituentenfolge
         // leicht alle möglichen Genera / Numeri als mögliche Bezugsobjekte vorkommen.
-        return Stream.of(M, F, PL_MFN, N)
-                .filter(this::calcKannAlsBezugsobjektVerstandenWerdenFuer)
-                .findFirst()
-                .orElse(null);
+        // Wir nehmen das letzte - bei "Gleichstand" haben wir eine Priorisierung.
+
+        Integer bestIndex = null;
+        NumerusGenus res = null;
+
+        for (final NumerusGenus numerusGenus : asList(M, F, PL_MFN, N)) {
+            final Integer lastIndexKannAlsBezugsobjektVerstandenWerdenFuer =
+                    lastIndexKannAlsBezugsobjektVerstandenWerdenFuer(numerusGenus);
+
+            if (lastIndexKannAlsBezugsobjektVerstandenWerdenFuer != null
+                    && (bestIndex == null
+                    || lastIndexKannAlsBezugsobjektVerstandenWerdenFuer > bestIndex)) {
+                bestIndex = lastIndexKannAlsBezugsobjektVerstandenWerdenFuer;
+                res = numerusGenus;
+            }
+
+            if (bestIndex != null && bestIndex == size() - 1) {
+                // Optimierung
+                return res;
+            }
+        }
+
+        return res;
     }
 
     /**
@@ -434,12 +464,9 @@ public class Konstituentenfolge
      * sich ist) und eine Angabe, wie sicher ein solcher Kandidat für diese Numerus und Genua
      * erscheint.
      * <p>
-     * Bezugsobjekte werden dabei gegenüber anderen Nominalphrasen ganz leicht
-     * bevorzugt: Gab es noch kein Bezugsobjekt mit diesem Numerus und Genus,
-     * "stellt die Methode erst einmal auf Durchzug". Erst nach dem ersten Bezugsobekt
-     * wird geprüft, wie eindeutig es ist. Deshalb möchte man vermutlich in ganz eindeutigen
-     * Fällen (Konstituentenfolge mit nur einem Element) erst diese eindeutigen Fälle abhandeln,
-     * bevor man diese Methode verwendet.
+     * Bezugsobjekte werden dabei gegenüber anderen Nominalphrasen etwas stärker
+     * gewichtet - die Methode geht davon aus, dass vorherige Nominalphrasen in den Hintergrund
+     * treten, wenn ein Bezugsobjekt erscheint.
      */
     private Pair<Integer, Boolean> findPhorikKandidatAndSicherheit(
             final NumerusGenus numerusGenus) {
@@ -458,24 +485,23 @@ public class Konstituentenfolge
                             ((Konstituente) get(indexKandidat)).getPhorikKandidat())
                             .getBezugsobjekt().equals(
                                     konstituente.getPhorikKandidat().getBezugsobjekt())) {
-                        // Es gab bereits ein Bezugsobjekt, und zwar ein anderes!
-                        indexVorigerAbweichenderKandidat = indexKandidat;
+                        if (((Konstituente) get(indexKandidat)).getPhorikKandidat() != null) {
+                            // Es gab bereits ein Bezugsobjekt, und zwar ein anderes!
+                            indexVorigerAbweichenderKandidat = indexKandidat;
+                        } else {
+                            // Es gab bereits eine Konstituente, die als Bezugsobjekt
+                            // verstanden werden könnte. In diesem Fall gehen wir davon aus,
+                            // das das Bezugsobjekt für den Leser klar im Vordergrund steht
+                            // und es zu keiner Doppeldeutigkeit kommen kann.
+                            // Beispiel: "Die SONNE (kein
+                            // Bezugsobjekt) steht hoch. Rapunzel (Bezugsobjekt) kommt daher. Sie
+                            // (eindeutig Rapunzel!) lächelt dich an."
+                            indexVorigerAbweichenderKandidat = null;
+                        }
                     }
 
                     indexKandidat = i;
-                } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)
-                        // Die folgende Zeile bewirkt, dass
-                        // "koennteAlsBezugsobjektVerstandenWerdenFuer()"
-                        // erst dann berücksichtigt wird, nachdem das erste Bezugsobjekt
-                        // gefunden wurde. Damit werden Dinge möglich wie
-                        // "Die SONNE (kein Bezugsobjekt, nicht gemerkt) steht hoch.
-                        // Rapunzel (Bezugsobjekt) kommt daher. Sie (eindeutig Rapunzel!) lächelt
-                        // dich an."
-                        // Bezugsobjekte werden also leicht bevorzugt gegenüber anderen
-                        // Nominalphrasen.
-                        // Bisher habe ich damit keine schlechten Erfahrungen gemacht.
-                        && indexKandidat != null
-                ) {
+                } else if (konstituente.koennteAlsBezugsobjektVerstandenWerdenFuer(numerusGenus)) {
                     //  Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst
                     //  ihn in die Luft."
                     indexVorigerAbweichenderKandidat = indexKandidat;
@@ -496,22 +522,19 @@ public class Konstituentenfolge
             }
         }
 
-        if (indexVorigerAbweichenderKandidat != null) {
-            // Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst ihn
-            // in die Luft." -> Es wurde etwas gefunden - aber nichts eindeutiges.
-            // Diese Numerus/Genus-Kombination kann zu Missverständnissenn führen.
-            return new Pair<>(null, false);
-        }
-
         if (indexKandidat == null) {
             // Es wurde nichts gefunden. Es kann auch keine Missverständnisse geben.
             return new Pair<>(null, true);
         }
 
-        if (((Konstituente) get(indexKandidat)).getPhorikKandidat() == null) {
-            // Etwas anderes (bei dem kein Bezugsobjekt angegeben wurde) könnte
+        if (indexVorigerAbweichenderKandidat != null
+                // Doppeldeutigkeit verhindern: "Du nimmst den Ball und den Schuh und wirfst ihn
+                // in die Luft." -> Es wurde etwas gefunden - aber nichts eindeutiges.
+                // Diese Numerus/Genus-Kombination kann zu Missverständnissenn führen.
+                || ((Konstituente) get(indexKandidat)).getPhorikKandidat() == null) {
+            // Oder etwas  anderes (bei dem kein Bezugsobjekt angegeben wurde) könnte
             // als Bezugsobjekt verstanden werden.
-            return new Pair<>(null, false);
+            return new Pair<>(indexKandidat, false);
         }
 
         // Es wurde ein eindeutiger Kandidat gefunden
@@ -535,8 +558,7 @@ public class Konstituentenfolge
     }
 
     private PhorikKandidat findPhorikKandidat() {
-        // In findPhorikKandidatAndSicherheit() bevorzugen wir Bezugsobjekte leicht gegenüber
-        // anderen Nominalphrasen. Deshalb behandeln wir hier den Sonderfall, dass die
+        // Optimierung: Sonderfall, dass die
         // Konstituentenfolge nur genau eine Konstituente enthält
         if (size() == 1) {
             final IKonstituenteOrStructuralElement konst = get(0);
@@ -545,21 +567,45 @@ public class Konstituentenfolge
             }
         }
 
+        final Pair<Integer, Boolean> phorikKandidatAndSicherheitF =
+                findPhorikKandidatAndSicherheit(F);
+        final Pair<Integer, Boolean> phorikKandidatAndSicherheitPL =
+                findPhorikKandidatAndSicherheit(PL_MFN);
 
-        final Integer indexKandidatM = interpretPair(
-                findPhorikKandidatAndSicherheit(M));
-        final Integer indexKandidatF = interpretPair(
-                findPhorikKandidatAndSicherheit(F));
-        final Integer indexKandidatN = interpretPair(
-                findPhorikKandidatAndSicherheit(N));
-        final Integer indexKandidatPL = interpretPair(
-                findPhorikKandidatAndSicherheit(PL_MFN));
+        requireNonNull(phorikKandidatAndSicherheitF.second);
+        requireNonNull(phorikKandidatAndSicherheitPL.second);
+
+        if (phorikKandidatAndSicherheitF.first != null && phorikKandidatAndSicherheitF.second
+                && phorikKandidatAndSicherheitPL.first != null
+                && !phorikKandidatAndSicherheitPL.second
+                && phorikKandidatAndSicherheitF.first < phorikKandidatAndSicherheitPL.first) {
+            // Es trat ein sicheres F-Bezugsobjekt auf - aber danach kam noch etwas,
+            // das ein PL sein könnte. Hier könnte es zu Doppeldeutigkeiten kommen:
+            //  "Die Frau füttert die Vögel. Du beobachtest sie." (Die Frau? Die Vögel?)
+            return null;
+        }
+
+        if (phorikKandidatAndSicherheitPL.first != null && phorikKandidatAndSicherheitPL.second
+                && phorikKandidatAndSicherheitF.first != null
+                && !phorikKandidatAndSicherheitF.second
+                && phorikKandidatAndSicherheitPL.first < phorikKandidatAndSicherheitF.first) {
+            // Es trat ein sicheres PL-Bezugsobjekt auf - aber danach kam noch etwas,
+            // das ein F sein könnte. Hier könnte es zu Doppeldeutigkeiten kommen:
+            //  "Die Frauen füttern die Taube. Du beobachtest sie." (Die Frauen? Die Taube?)
+            return null;
+        }
+
+        final Integer indexKandidatF = interpretPair(phorikKandidatAndSicherheitF);
+        final Integer indexKandidatPL = interpretPair(phorikKandidatAndSicherheitPL);
 
         if (indexKandidatF != null && indexKandidatPL != null) {
             // Hier könnte es zu Doppeldeutigkeiten kommen:
             // "Die Frau füttert die Vögel. Du beobachtest sie." (Die Frau? Die Vögel?)
             return null;
         }
+
+        final Integer indexKandidatM = interpretPair(findPhorikKandidatAndSicherheit(M));
+        final Integer indexKandidatN = interpretPair(findPhorikKandidatAndSicherheit(N));
 
         final int bestIndex =
                 Stream.of(indexKandidatM, indexKandidatF, indexKandidatN, indexKandidatPL)

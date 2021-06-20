@@ -35,7 +35,7 @@ public class TageszeitPraedikativumDescriber {
      * Gibt Alternativen zurück wie "der Tag", "die einbrechende Nacht" - eventuell leer, wenn
      * nicht auch reine Tageszeiten zurückgegeben werden sollen.
      */
-    ImmutableCollection<EinzelneSubstantivischePhrase> altSubstPhr(
+    ImmutableCollection<EinzelneSubstantivischePhrase> altSpSubstPhr(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
             final boolean auchReineTageszeiten) {
@@ -43,7 +43,7 @@ public class TageszeitPraedikativumDescriber {
                 ImmutableList.builder();
 
         // "der Tag", "das Helle"
-        alt.addAll(altSubstPhr(time.getTageszeit(),
+        alt.addAll(altSpSubstPhr(time.getTageszeit(),
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben, auchReineTageszeiten));
 
         if (time.kurzNachSonnenuntergang()) {
@@ -58,7 +58,7 @@ public class TageszeitPraedikativumDescriber {
      * Gibt Alternativen zurück wie "der Tag", "das Helle" - eventuell leer, wenn
      * nicht auch reine Tageszeiten zurückgegeben werden sollen.
      */
-    private ImmutableCollection<EinzelneSubstantivischePhrase> altSubstPhr(
+    private ImmutableCollection<EinzelneSubstantivischePhrase> altSpSubstPhr(
             final Tageszeit tageszeit,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
             final boolean auchReineTageszeiten) {
@@ -95,7 +95,7 @@ public class TageszeitPraedikativumDescriber {
      * auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben}
      * - oder sonst eine leere {@link java.util.Collection}.
      */
-    public ImmutableCollection<AdjPhrOhneLeerstellen> altSchonBereitsNochDunkelHellAdjPhr(
+    public ImmutableCollection<AdjPhrOhneLeerstellen> altSpSchonBereitsNochDunkelHellAdjPhr(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableList.Builder<AdjPhrOhneLeerstellen> alt =

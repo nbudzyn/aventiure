@@ -126,7 +126,7 @@ public class GebenAction<
     private void narrateAnbietenBzwGeben(final SCTakeAction<GIVEN> action) {
         final ImmutableList<PraedikatOhneLeerstellen> praedikatAlt =
                 action.wirdZunaechstAngenommen() ?
-                        getGebenPraedikatAlt() : getAnbietenPraedikatAlt();
+                        altGebenPraedikate() : altAnbietenPraedikate();
 
         final ImmutableList<StructuredDescription> descAlt =
                 mapToList(praedikatAlt, GebenAction::toAnbietenGebenDuDescription);
@@ -135,7 +135,7 @@ public class GebenAction<
                 secs(20));
     }
 
-    private ImmutableList<PraedikatOhneLeerstellen> getAnbietenPraedikatAlt() {
+    private ImmutableList<PraedikatOhneLeerstellen> altAnbietenPraedikate() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = world.anaph(taker);
@@ -164,7 +164,7 @@ public class GebenAction<
         return alt.build();
     }
 
-    private ImmutableList<PraedikatOhneLeerstellen> getGebenPraedikatAlt() {
+    private ImmutableList<PraedikatOhneLeerstellen> altGebenPraedikate() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = world.anaph(taker);

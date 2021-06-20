@@ -261,7 +261,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                             .dann());
             alt.addAll(mapToSet(
                     world.loadWetter().wetterComp()
-                            .altWindgeraeuscheSaetze(isUnterOffenemHimmel()),
+                            .altSpWindgeraeuscheSaetze(isUnterOffenemHimmel()),
                     derWindSaust ->
                             du(SENTENCE, "ruhst",
                                     "noch eine Weile aus und lauschst",
