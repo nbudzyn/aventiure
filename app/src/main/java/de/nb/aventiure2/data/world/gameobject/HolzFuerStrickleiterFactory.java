@@ -45,6 +45,8 @@ class HolzFuerStrickleiterFactory extends AbstractNarratorGameObjectFactory {
                 new HolzFuerStrickleiterDescriptionComp(stateComp);
 
         // FIXME Holz in handliche Stücke brechen
+        //  "Das Holz in handliche Stücke brechen"
+        //  "Du brichst das Holz in handliche Stücke"
 
         // Location
         final LocationComp locationComp =

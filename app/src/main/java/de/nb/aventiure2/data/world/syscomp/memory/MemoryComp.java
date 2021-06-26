@@ -195,7 +195,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
 
     private void narrateAndSetKnown(final GameObjectId otherGameObjectId,
                                     final Known known) {
-        if (known.equals(getKnown(otherGameObjectId))) {
+        if (known == getKnown(otherGameObjectId)) {
             return;
         }
 

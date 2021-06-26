@@ -33,6 +33,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.EinschlafhindernisSc;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
@@ -53,6 +54,7 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteIm
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ZwischenDenHeckenVorDemSchlossExternConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ICanHaveOuterMostLocation;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
@@ -554,25 +556,6 @@ public class World {
     }
 
     /**
-     * Gibt <code>true</code> zurück falls das Game Object eines dieser anderen ist oder
-     * sich (ggf. rekusiv) an einer dieser Locations befindet.
-     */
-    public static boolean isOrHasRecursiveLocation(
-            @Nullable final IGameObject one, final GameObject... others) {
-        if (one == null) {
-            return false;
-        }
-
-        for (final GameObject other : others) {
-            if (isOrHasRecursiveLocation(one, other)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
      * <code>locationIds</code> hat oder
      * sich (ggf. rekusiv) an einer dieser Locations befindet.
@@ -649,23 +632,16 @@ public class World {
             return other == null;
         }
 
-        if (other == null) {
-            return false;
-        }
-
         if (one.equals(other)) {
             return true;
         }
 
-        if (!(one instanceof ILocatableGO)) {
+        if (!(one instanceof ICanHaveOuterMostLocation)) {
             return false;
         }
 
-        if (!(other instanceof ILocationGO)) {
-            return false;
-        }
 
-        return ((ILocatableGO) one).locationComp().hasRecursiveLocation((ILocationGO) other);
+        return ((ICanHaveOuterMostLocation) one).isOrHasRecursiveLocation(other);
     }
 
 
@@ -743,7 +719,7 @@ public class World {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    public <LOCATABLE_DESC_LOCATION extends ILocatableLocationGO & IDescribableGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationVisiblyRecursiveInventory(
             final ILocationGO inventoryHolder) {
         return loadDescribableNonLivingLocationVisiblyRecursiveInventory(inventoryHolder.getId());
@@ -756,7 +732,7 @@ public class World {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    private <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    private <LOCATABLE_DESC_LOCATION extends ILocatableLocationGO & IDescribableGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationVisiblyRecursiveInventory(
             final GameObjectId inventoryHolderId) {
         return filterLocation(
@@ -770,7 +746,7 @@ public class World {
      * und gibt sie zurück -
      * nur Gegenstände, die eine Beschreibung haben.
      */
-    public <LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+    public <LOCATABLE_DESC_LOCATION extends ILocatableLocationGO & IDescribableGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> loadDescribableNonLivingLocationInventory(
             final ILocationGO inventoryHolder) {
         return filterLocation(
@@ -778,7 +754,7 @@ public class World {
     }
 
     private static <LOC_DESC extends ILocatableGO & IDescribableGO,
-            LOCATABLE_DESC_LOCATION extends ILocatableGO & IDescribableGO & ILocationGO>
+            LOCATABLE_DESC_LOCATION extends ILocatableLocationGO & IDescribableGO>
     ImmutableList<LOCATABLE_DESC_LOCATION> filterLocation(
             final List<LOC_DESC> gameObjects) {
         return (ImmutableList<LOCATABLE_DESC_LOCATION>) gameObjects.stream()

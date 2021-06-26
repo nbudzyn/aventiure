@@ -17,11 +17,11 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
-import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
@@ -65,7 +65,7 @@ import static java.util.Objects.requireNonNull;
 @ParametersAreNonnullByDefault
 public class NehmenAction
         <GO extends IDescribableGO & ILocatableGO,
-                TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+                TARGET_LOC extends IDescribableGO & ILocatableLocationGO>
         extends AbstractScAction {
     @NonNull
     private final GO gameObject;
@@ -73,7 +73,7 @@ public class NehmenAction
     private final TARGET_LOC targetLocation;
 
     public static <GO extends IDescribableGO & ILocatableGO,
-            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+            TARGET_LOC extends IDescribableGO & ILocatableLocationGO>
     Collection<NehmenAction<GO, TARGET_LOC>> buildObjectActions(final AvDatabase db,
                                                                 final TimeTaker timeTaker,
                                                                 final Narrator n,
@@ -90,7 +90,7 @@ public class NehmenAction
     }
 
     public static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
-            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+            TARGET_LOC extends IDescribableGO & ILocatableLocationGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildCreatureActions(
             final AvDatabase db,
             final TimeTaker timeTaker, final Narrator n, final World world,
@@ -113,7 +113,7 @@ public class NehmenAction
 
     @SuppressWarnings("unchecked")
     private static <LIVGO extends IDescribableGO & ILocatableGO & ILivingBeingGO,
-            TARGET_LOC extends IDescribableGO & ILocationGO & ILocatableGO>
+            TARGET_LOC extends IDescribableGO & ILocatableLocationGO>
     Collection<NehmenAction<LIVGO, TARGET_LOC>> buildFroschprinzActions(
             final AvDatabase db,
             final TimeTaker timeTaker, final Narrator n,

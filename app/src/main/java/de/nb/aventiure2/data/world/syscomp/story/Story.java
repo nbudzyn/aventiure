@@ -103,6 +103,18 @@ public enum Story {
     //  anderes Tier, andere Hintergrundgeschichte, andere Erlösung...). Dann
     //  automatisch wählen lassen?
 
+    // IDEA Märchen Nummer 6 ("Der treue Johannes") umsetzen
+    //  - Der Königssohne ist der Froschkönig (er ruft z.B. den SC zu sich o.Ä.)
+    //  - Der SC ist der dreue Johannes
+    //  - Der SC geht mit der Goldenen Kugel zur Prinzessin
+    //  - Er wird versteinert (entweder teilweise, wenn er Teilinformationen gibt,
+    //   oder ganz am Ende auf dem Schaffot).
+    //  - Er wacht wieder auf und sieht z.B. an einer verwelkten Blume, dass er
+    //   wiedererweckt worden ist.
+
+    // FIXME Risiko angehen: Es gibt kaum geeignete Märchen
+    //  Lösung: 4 weitere geeignete Märchen finden (ab Nummer 22),
+    //  Umsetzung grob anskizzieren.
 
     @FunctionalInterface
     interface IStoryAdvancer {

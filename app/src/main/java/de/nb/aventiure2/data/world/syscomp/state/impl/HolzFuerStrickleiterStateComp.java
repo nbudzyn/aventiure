@@ -13,7 +13,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
     public HolzFuerStrickleiterStateComp(final AvDatabase db,
                                          final TimeTaker timeTaker, final Narrator n,
                                          final World world) {
-        super(HOLZ_FUER_STRICKLEITER, db, timeTaker, n, world, HolzFuerStrickleiterState.class,
+        super(HOLZ_FUER_STRICKLEITER, db, timeTaker, world, HolzFuerStrickleiterState.class,
                 AM_BAUM);
     }
 }

@@ -10,7 +10,7 @@ import de.nb.aventiure2.data.world.syscomp.alive.AliveComp;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
-import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.ScAutomaticReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.NoSCTalkActionsTalkingComp;
@@ -26,7 +25,7 @@ import de.nb.aventiure2.data.world.syscomp.waiting.IWaitingGO;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingComp;
 
 public class SpielerCharakter extends GameObject
-        implements ILocatableGO, ILocationGO,
+        implements ILocatableLocationGO,
         IHasMentalModelGO, IWaitingGO, IFeelingBeingGO,
         ITalkerGO<NoSCTalkActionsTalkingComp>, IHasMemoryGO, ILivingBeingGO, IResponder {
     private final LocationComp locationComp;

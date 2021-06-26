@@ -413,7 +413,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         for (final IDescribableGO actual : actualVisibleDescribableInventory) {
             // Den Frosch oder die Schlosswache bemerkt der SC vielleicht gar nicht.
             if ((!(actual instanceof ILivingBeingGO)
-                    || IMovementReactions.scBemerkt((IDescribableGO & ILivingBeingGO) actual))
+                    || IMovementReactions.scBemerkt(actual))
                     && !expectedDescribableInventory.contains(actual)) {
                 // Actual ("der Käfig") war nicht erwartet!
                 if (actual instanceof ILocationGO

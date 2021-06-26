@@ -15,6 +15,6 @@ public class SchlosswacheStateComp extends AbstractStateComp<SchlosswacheState> 
                                  final TimeTaker timeTaker,
                                  final Narrator n,
                                  final World world) {
-        super(gameObjectId, db, timeTaker, n, world, SchlosswacheState.class, UNAUFFAELLIG);
+        super(gameObjectId, db, timeTaker, world, SchlosswacheState.class, UNAUFFAELLIG);
     }
 }

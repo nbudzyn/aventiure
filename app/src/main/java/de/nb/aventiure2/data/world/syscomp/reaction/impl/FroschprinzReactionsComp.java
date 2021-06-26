@@ -571,7 +571,6 @@ public class FroschprinzReactionsComp
                 .stateComp().hasState(BEGONNEN, VERWUESTET);
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private IHasStateGO<SchlossfestState> loadSchlossfest() {
         return world.load(SCHLOSSFEST);

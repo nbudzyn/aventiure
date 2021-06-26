@@ -13,6 +13,6 @@ public class SchlossfestStateComp extends AbstractStateComp<SchlossfestState> {
     public SchlossfestStateComp(final AvDatabase db,
                                 final TimeTaker timeTaker, final Narrator n,
                                 final World world) {
-        super(SCHLOSSFEST, db, timeTaker, n, world, SchlossfestState.class, NOCH_NICHT_BEGONNEN);
+        super(SCHLOSSFEST, db, timeTaker, world, SchlossfestState.class, NOCH_NICHT_BEGONNEN);
     }
 }

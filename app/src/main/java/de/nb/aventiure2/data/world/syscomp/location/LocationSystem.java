@@ -68,14 +68,7 @@ public class LocationSystem {
             return false;
         }
 
-        return getOuterMostLocation(one).is(getOuterMostLocation(other));
+        return one.getOuterMostLocation().is(other.getOuterMostLocation());
     }
 
-    public static ILocationGO getOuterMostLocation(final ILocationGO location) {
-        if (location instanceof ILocatableGO) {
-            return ((ILocatableGO) location).locationComp().getOuterMostLocation();
-        }
-
-        return location;
-    }
 }

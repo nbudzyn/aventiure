@@ -71,6 +71,10 @@ public class ReactionSystem
     private void onLeave(final ILocatableGO locatable,
                          final ILocationGO from,
                          @Nullable final GameObjectId toId) {
+        // In Ausnahmefällen ist es hier wohl möglich, dass from.getId() == toId()
+        // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
+        // Wieder-Auffangen.)
+
         if (toId == null) {
             onLeave(locatable, from, (ILocationGO) null);
             return;
@@ -88,6 +92,10 @@ public class ReactionSystem
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        // In Ausnahmefällen ist es hier wohl möglich, dass from.getId() == toId()
+        // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
+        // Wieder-Auffangen.)
+
         doReactions(IMovementReactions.class,
                 reactions -> reactions.onLeave(locatable, from, to));
     }
@@ -117,6 +125,10 @@ public class ReactionSystem
     public void onEnter(final ILocatableGO locatable,
                         @Nullable final ILocationGO from,
                         final GameObjectId toId) {
+        // In Ausnahmefällen ist es hier wohl möglich, dass from.getId() == toId()
+        // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
+        // Wieder-Auffangen.)
+
         final GameObject to = world.load(toId);
         if (!(to instanceof ILocationGO)) {
             return;
@@ -129,6 +141,10 @@ public class ReactionSystem
     public void onEnter(final ILocatableGO locatable,
                         @Nullable final ILocationGO from,
                         final ILocationGO to) {
+        // In Ausnahmefällen ist es hier wohl möglich, dass from.getId() == toId()
+        // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
+        // Wieder-Auffangen.)
+
         doReactions(IMovementReactions.class,
                 reactions -> reactions.onEnter(locatable, from, to));
     }
@@ -158,6 +174,8 @@ public class ReactionSystem
     public <S extends Enum<S>> void onStateChanged(final IHasStateGO<S> gameObject,
                                                    final S oldState,
                                                    final S newState) {
+        checkArgument(oldState != newState, "State unverändert: " + oldState);
+
         doReactions(IStateChangedReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onStateChanged(
@@ -167,6 +185,8 @@ public class ReactionSystem
     // IKnownChangedReactions
     public void onKnownChanged(final GameObjectId knowerId, final GameObjectId knowee,
                                final Known oldKnown, final Known newKnown) {
+        checkArgument(oldKnown != newKnown, "Known unverändert: " + oldKnown);
+
         final IGameObject knower = world.load(knowerId);
         if (!(knower instanceof IHasMemoryGO)) {
             return;
@@ -178,6 +198,8 @@ public class ReactionSystem
     @Override
     public void onKnownChanged(final IHasMemoryGO knower, final GameObjectId knowee,
                                final Known oldKnown, final Known newKnown) {
+        checkArgument(oldKnown != newKnown, "Known unverändert: " + oldKnown);
+
         doReactions(IKnownChangedReactions.class,
                 reactions -> reactions.onKnownChanged(
                         knower, knowee, oldKnown, newKnown));
@@ -214,8 +236,7 @@ public class ReactionSystem
 
     // ITimePassedReactions
     public void onTimePassed(final AvDateTime vorher, final AvDateTime nachher) {
-        doReactions(ITimePassedReactions.class,
-                reactions -> reactions.onTimePassed(new Change<>(vorher, nachher)));
+        onTimePassed(new Change<>(vorher, nachher));
     }
 
     @Override

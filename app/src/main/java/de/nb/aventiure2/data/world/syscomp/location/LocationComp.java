@@ -11,6 +11,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ICanHaveOuterMostLocation;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 
@@ -170,12 +171,8 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      */
     public boolean hasSameOuterMostLocationAs(@Nullable final IGameObject other) {
         ILocationGO otherOuterMostLocation = null;
-        if (other instanceof ILocationGO) {
-            otherOuterMostLocation = (ILocationGO) other;
-        }
-
-        if (other instanceof ILocatableGO) {
-            otherOuterMostLocation = ((ILocatableGO) other).locationComp().getOuterMostLocation();
+        if (other instanceof ICanHaveOuterMostLocation) {
+            otherOuterMostLocation = ((ICanHaveOuterMostLocation) other).getOuterMostLocation();
         }
 
         if (otherOuterMostLocation == null) {
@@ -197,21 +194,18 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     //                                || !((ILocationGO) to).storingPlaceComp()
     //                                .manKannHineinsehenUndLichtScheintHineinUndHinaus()
     public boolean hasSameVisibleOuterMostLocationAs(@Nullable final IGameObject other) {
-        ILocationGO otherOuterMostLocation = null;
-        if (other instanceof ILocationGO) {
-            otherOuterMostLocation = (ILocationGO) other;
-        }
-
-        if (other instanceof ILocatableGO) {
-            otherOuterMostLocation =
-                    ((ILocatableGO) other).locationComp().getVisibleOuterMostLocation();
-        }
-
-        if (otherOuterMostLocation == null) {
+        if (!(other instanceof ICanHaveOuterMostLocation)) {
             return false;
         }
 
-        return otherOuterMostLocation.equals(getVisibleOuterMostLocation());
+        @Nullable final ILocationGO otherVisibleOuterMostLocation =
+                ((ICanHaveOuterMostLocation) other).getVisibleOuterMostLocation();
+
+        if (otherVisibleOuterMostLocation == null) {
+            return false;
+        }
+
+        return otherVisibleOuterMostLocation.equals(getVisibleOuterMostLocation());
     }
 
     /**
@@ -281,36 +275,31 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
             return false;
         }
 
-        if (myLocation.equals(location)) {
-            return true;
-        }
-
-        if (!(myLocation instanceof ILocatableGO)) {
-            return false;
-        }
-
-        return ((ILocatableGO) myLocation).locationComp().hasRecursiveLocation(location);
+        return myLocation.isOrHasRecursiveLocation(location);
     }
 
     public @Nullable
     ILocationGO getOuterMostLocation() {
-        @Nullable final ILocationGO res = getLocation();
-        if (res instanceof ILocatableGO) {
-            return ((ILocatableGO) res).locationComp().getOuterMostLocation();
+        @Nullable final ILocationGO location = getLocation();
+
+        if (location == null) {
+            return null;
         }
 
-        return res;
+        return location.getOuterMostLocation();
     }
 
     @Nullable
-    private ILocationGO getVisibleOuterMostLocation() {
-        @Nullable final ILocationGO res = getLocation();
-        if (res instanceof ILocatableGO
-                && res.storingPlaceComp().manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
-            return ((ILocatableGO) res).locationComp().getOuterMostLocation();
+    ILocationGO getVisibleOuterMostLocation() {
+        @Nullable final ILocationGO location = getLocation();
+
+        if (location == null
+                || !location.storingPlaceComp()
+                .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+            return location;
         }
 
-        return res;
+        return location.getVisibleOuterMostLocation();
     }
 
     /**

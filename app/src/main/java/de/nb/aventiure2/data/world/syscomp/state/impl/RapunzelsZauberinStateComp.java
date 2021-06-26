@@ -12,7 +12,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 public class RapunzelsZauberinStateComp extends AbstractStateComp<RapunzelsZauberinState> {
     public RapunzelsZauberinStateComp(final AvDatabase db, final TimeTaker timeTaker,
                                       final Narrator n, final World world) {
-        super(RAPUNZELS_ZAUBERIN, db, timeTaker, n, world, RapunzelsZauberinState.class,
+        super(RAPUNZELS_ZAUBERIN, db, timeTaker, world, RapunzelsZauberinState.class,
                 MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE);
     }
 }

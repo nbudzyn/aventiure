@@ -37,7 +37,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.FullWalkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.NurRapunzelWalkthrough;
 
 public class MainActivity extends AppCompatActivity {
-    // FIXME Risiko angehen: Spracherzeugung wie gewünscht technisch nicht (performant)
+    // IDEA Risiko angehen: Spracherzeugung wie gewünscht technisch nicht (performant)
     //  realisierbar.
     //  Lösung1: Nach jedem neuen Schritt kritisch durchspielen, unerfreuliche / inperformante
     //  Texte korrigieren - ggf. Texte stärker vorgeben und weniger flexibel gestalten,
@@ -45,13 +45,10 @@ public class MainActivity extends AppCompatActivity {
     //  Lösung 2: Play-Testen und Reaktionen auf Sprache ernstnehmen. Ergebnistexte verschicken und
     //  kritisch nachlesen.
 
-    // FIXME Risiko angehen: Geschichte wird langweilig / seltsam / unangenehm / nicht schlüssig
+    // IDEA Risiko angehen: Geschichte wird langweilig / seltsam / unangenehm / nicht schlüssig
     //  Lösung: Texte weit im voraus entwerfen, deutlich vor der aufwendigen Prigeammierarbeit
 
-    // FIXME Risiko angehen: Es gibt kaum geeignete Märchen
-    //  Lösung: 5 geeignete Märchen finden, Umsetzung grob anskizzieren.
-
-    // FIXME Risiko angehen : Entwicklung ausreichend vieler / langer Geschichten dauert viel zu
+    // TODO Risiko angehen : Entwicklung ausreichend vieler / langer Geschichten dauert viel zu
     //  lange, weil man
     //  immer neue FrameworkBestandteile aufwendig schreiben muss.
     //  Lösung:
@@ -95,10 +92,10 @@ public class MainActivity extends AppCompatActivity {
     private GuiActionsAdapter guiActionsAdapter;
     // TODO Text der Geschichte teilen (share)?
 
-    // FIXME internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
+    // IDEA internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
     //  Möglichkeit dieses Log - inkl. dem erzeugten Story Text - jederzeit
     //  zu sharen, d.h. zb per E-Mail zu versenden
-    // FIXME Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
+    // IDEA Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
     //  hat - inkl. der Differenz zur vorgesehenen Schrittzahl.
     //  Klug einberechnen, dass mehrere Story Steps gleichzeit offen sind!
     //  (Also addieren o.Ä.)

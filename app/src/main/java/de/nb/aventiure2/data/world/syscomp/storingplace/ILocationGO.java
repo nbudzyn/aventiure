@@ -1,15 +1,40 @@
 package de.nb.aventiure2.data.world.syscomp.storingplace;
 
+import androidx.annotation.Nullable;
+
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
 
 /**
- * Game Object (z.B. ein Raum) das die Möglichkeit bietet, etwas abzulegen / zu platzieren - und zwar
+ * Game Object (z.B. ein Raum) das die Möglichkeit bietet, etwas abzulegen / zu platzieren - und
+ * zwar
  * an einem bestimmten Platz (z.B. "auf dem Boden" oder "auf einem Tisch"). Die Dinge, die man dort
- * platziert, müssen {@link de.nb.aventiure2.data.world.syscomp.location.ILocatableGO}s sein.
+ * platziert, müssen {@link ILocatableGO}s sein.
+ * <p>
+ * Game Objects, die gleichzeitig auch {@link ILocatableGO implementieren,
+ * sollen {@link ILocatableLocationGO} implementieren!
  */
-public interface ILocationGO extends IGameObject {
+public interface ILocationGO extends ICanHaveOuterMostLocation {
     @Nonnull
     StoringPlaceComp storingPlaceComp();
+
+    @Nullable
+    @Override
+    default ILocationGO getOuterMostLocation() {
+        return this;
+    }
+
+    @Nullable
+    @Override
+    default ILocationGO getVisibleOuterMostLocation() {
+        return this;
+    }
+
+    @Override
+    default boolean isOrHasRecursiveLocation(@Nullable final IGameObject location) {
+        return equals(location);
+    }
 }

@@ -33,7 +33,6 @@ import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.MenschlicherMuedigkeitsBiorhythmus;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
-import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
@@ -284,7 +283,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
 
     private static class BasicCreature<S extends Enum<S>> extends StateObject<S>
-            implements IDescribableGO, ILocatableGO, ILivingBeingGO {
+            implements IDescribableGO, ILivingBeingGO {
         private final AliveComp alive;
 
         private BasicCreature(final GameObjectId id,

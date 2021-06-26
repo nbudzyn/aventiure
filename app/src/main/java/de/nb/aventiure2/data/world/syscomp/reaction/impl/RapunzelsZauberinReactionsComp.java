@@ -283,8 +283,7 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        if (isOrHasRecursiveLocation(scTo, scFrom) ||
-                isOrHasRecursiveLocation(scFrom, scTo)) {
+        if (isOrHasRecursiveLocation(scTo, scFrom) || isOrHasRecursiveLocation(scFrom, scTo)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
             // wieder vom Tisch herabgestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
@@ -784,7 +783,6 @@ public class RapunzelsZauberinReactionsComp
                 });
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private <R extends
             IHasMemoryGO &

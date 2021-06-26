@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.wetter.*;
-import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -289,7 +288,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
         final ILocationGO storyNodeLocation = world.load(storyNodeLocationId);
 
         final ILocationGO outerMostStoryNodeLocation =
-                LocationSystem.getOuterMostLocation(storyNodeLocation);
+                storyNodeLocation.getOuterMostLocation();
         @Nullable final ILocationGO outerMostSCLocation =
                 world.loadSC().locationComp().getOuterMostLocation();
 

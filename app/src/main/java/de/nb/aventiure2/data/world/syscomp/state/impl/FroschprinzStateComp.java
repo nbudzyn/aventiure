@@ -12,6 +12,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 public class FroschprinzStateComp extends AbstractStateComp<FroschprinzState> {
     public FroschprinzStateComp(final AvDatabase db, final TimeTaker timeTaker,
                                 final Narrator n, final World world) {
-        super(FROSCHPRINZ, db, timeTaker, n, world, FroschprinzState.class, UNAUFFAELLIG);
+        super(FROSCHPRINZ, db, timeTaker, world, FroschprinzState.class, UNAUFFAELLIG);
     }
 }

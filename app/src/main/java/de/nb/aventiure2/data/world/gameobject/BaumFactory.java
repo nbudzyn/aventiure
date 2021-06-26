@@ -51,26 +51,30 @@ public class BaumFactory extends AbstractGameObjectFactory {
     }
 
     GameObject createImGartenHinterDerHuetteImWald() {
-        return create(BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD, HINTER_DER_HUETTE);
+        return create(HINTER_DER_HUETTE);
     }
 
     @NonNull
-    private GameObject create(final GameObjectId id, final GameObjectId locationId) {
+    private GameObject create(
+            @SuppressWarnings("SameParameterValue") final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(id,
+                new SimpleDescriptionComp(World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD,
                         np(M, INDEF, "einzelner Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
-                                "einzelnen Baum in der Mitte des Gartens", id),
+                                "einzelnen Baum in der Mitte des Gartens",
+                                World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD),
                         np(M, DEF, "einzelne Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
-                                "einzelnen Baum in der Mitte des Gartens", id),
-                        np(BAUM, id));
+                                "einzelnen Baum in der Mitte des Gartens",
+                                World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD),
+                        np(BAUM, World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD));
 
         final LocationComp locationComp = new LocationComp(
-                id, db, world, locationId,
+                World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD, db, world, locationId,
                 null, false);
 
-        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(id, timeTaker, world,
+        final StoringPlaceComp storingPlaceComp = new StoringPlaceComp(
+                World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD, timeTaker, world,
                 locationComp,
                 ASTGABEL,
                 false,
@@ -84,7 +88,7 @@ public class BaumFactory extends AbstractGameObjectFactory {
                         mins(4),
                         this::altDescOut));
 
-        return new StoringPlaceObject(id,
+        return new StoringPlaceObject(World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD,
                 descriptionComp,
                 locationComp,
                 storingPlaceComp);
@@ -136,8 +140,6 @@ public class BaumFactory extends AbstractGameObjectFactory {
     @CheckReturnValue
     private static ImmutableCollection<TimedDescription<?>> altDescInNtesMal() {
         return ImmutableList.of(
-                // FIXME Dazu noch einmal prüfen, dass die "Wiederholung" nicht doppelt
-                //  ausgedrückt wird.
                 du(PARAGRAPH, "kletterst",
                         "noch einmal auf den Baum. Neues gibt es hier oben",
                         "nicht zu erleben")
