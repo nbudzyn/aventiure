@@ -126,6 +126,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 praedikatOhneLeerstellen);
     }
 
+    @SuppressWarnings("ChainOfInstanceofChecks")
     private static PraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
             final World worldervice,
             final Praedikat praedikat,
@@ -137,7 +138,6 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
             final EinzelneSubstantivischePhrase creatureDesc =
                     worldervice.getPOVDescription(SPIELER_CHARAKTER, talker, true);
-
 
             return ((PraedikatMitEinerObjektleerstelle) praedikat).mit(creatureDesc);
         }

@@ -102,22 +102,22 @@ public class StoryWebReactionsComp
             return;
         }
 
-        if (!(locatable instanceof ILivingBeingGO) &&
-                !world.isOrHasRecursiveLocation(from, UNTEN_IM_BRUNNEN) &&
-                world.isOrHasRecursiveLocation(to, UNTEN_IM_BRUNNEN)) {
-            reachStoryNode(FroschkoenigStoryNode.ETWAS_IM_BRUNNEN_VERLOREN);
-            return;
-        }
+        if (!(locatable instanceof ILivingBeingGO)) {
+            if (!world.isOrHasRecursiveLocation(from, UNTEN_IM_BRUNNEN) &&
+                    world.isOrHasRecursiveLocation(to, UNTEN_IM_BRUNNEN)) {
+                reachStoryNode(FroschkoenigStoryNode.ETWAS_IM_BRUNNEN_VERLOREN);
+                return;
+            }
 
-        if (!(locatable instanceof ILivingBeingGO) &&
-                world.isOrHasRecursiveLocation(from, UNTEN_IM_BRUNNEN) &&
-                world.isOrHasRecursiveLocation(to, IM_WALD_BEIM_BRUNNEN)) {
-            reachStoryNode(FroschkoenigStoryNode.FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT);
-            // Für den nächsten Schritt in der Geschichte muss man die Nacht durchbringen
-            // und das kann eine Zeitlang dauern. Daher "advancen" wir hier die
-            // Rapunzel-Story (sofern nicht ohnehin schon geschehen).
-            RapunzelStoryNode.ensureAdvancedToZauberinMachtRapunzelbesuche(counterDao, world);
-            return;
+            if (world.isOrHasRecursiveLocation(from, UNTEN_IM_BRUNNEN) &&
+                    world.isOrHasRecursiveLocation(to, IM_WALD_BEIM_BRUNNEN)) {
+                reachStoryNode(FroschkoenigStoryNode.FROSCH_HAT_ETWAS_AUS_BRUNNEN_GEHOLT);
+                // Für den nächsten Schritt in der Geschichte muss man die Nacht durchbringen
+                // und das kann eine Zeitlang dauern. Daher "advancen" wir hier die
+                // Rapunzel-Story (sofern nicht ohnehin schon geschehen).
+                RapunzelStoryNode.ensureAdvancedToZauberinMachtRapunzelbesuche(counterDao, world);
+                return;
+            }
         }
 
         // Rapuzels Zauberin hat einen anderen Ort erreicht -

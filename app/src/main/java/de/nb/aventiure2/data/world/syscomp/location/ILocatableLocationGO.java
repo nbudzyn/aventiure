@@ -2,32 +2,36 @@ package de.nb.aventiure2.data.world.syscomp.location;
 
 import androidx.annotation.Nullable;
 
+import javax.annotation.Nonnull;
+
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Game Object, das die Möglichkeit bietet, etwas abzulegen / zu platzieren und zugleich auch
  * selbst an einem gewissen Ort platziert werden kann (z.B. eine Kiste).
  */
 public interface ILocatableLocationGO extends ILocatableGO, ILocationGO {
-    @Nullable
     @Override
+    @Nonnull
     default ILocationGO getOuterMostLocation() {
         if (locationComp().getLocation() == null) {
             return this;
         }
 
-        return ILocatableGO.super.getOuterMostLocation();
+        return requireNonNull(ILocatableGO.super.getOuterMostLocation());
     }
 
-    @Nullable
     @Override
+    @Nonnull
     default ILocationGO getVisibleOuterMostLocation() {
         if (locationComp().getLocation() == null) {
             return this;
         }
 
-        return ILocatableGO.super.getVisibleOuterMostLocation();
+        return requireNonNull(ILocatableGO.super.getVisibleOuterMostLocation());
     }
 
     @Override

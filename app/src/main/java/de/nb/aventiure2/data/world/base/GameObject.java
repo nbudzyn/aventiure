@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.base;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -92,12 +93,12 @@ public class GameObject implements IGameObject {
     }
 
     @Override
-    public boolean is(final IGameObject... someAlternatives) {
+    public boolean is(@Nullable final IGameObject... someAlternatives) {
         return Arrays.asList(someAlternatives).contains(this);
     }
 
     @Override
-    public boolean is(final GameObjectId... someIdAlternatives) {
+    public boolean is(@Nullable final GameObjectId... someIdAlternatives) {
         return Arrays.asList(someIdAlternatives).contains(getId());
     }
 

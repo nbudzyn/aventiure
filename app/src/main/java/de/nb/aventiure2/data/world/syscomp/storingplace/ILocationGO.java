@@ -21,14 +21,14 @@ public interface ILocationGO extends ICanHaveOuterMostLocation {
     @Nonnull
     StoringPlaceComp storingPlaceComp();
 
-    @Nullable
     @Override
+    @Nonnull
     default ILocationGO getOuterMostLocation() {
         return this;
     }
 
-    @Nullable
     @Override
+    @Nonnull
     default ILocationGO getVisibleOuterMostLocation() {
         return this;
     }
