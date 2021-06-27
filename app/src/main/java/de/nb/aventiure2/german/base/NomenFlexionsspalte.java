@@ -3,9 +3,13 @@ package de.nb.aventiure2.german.base;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nonnull;
+
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.string.NoLetterException;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
@@ -15,6 +19,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
 
 /**
  * Die Flexionsspalte eines Nomens, d.h. die verschiedenen Kasus-Formen für ein Nomen
@@ -24,121 +29,122 @@ import static de.nb.aventiure2.german.base.Person.P3;
 public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     // Flexionsspalten allgemeines Nomen ohne Bezugsobjekt
 
-    ABEND(M, "Abend"),
+    ABEND(M),
     ABENDDAEMMERUNG(F, "Abenddämmerung"),
-    ABENDHIMMEL(M, "Abendhimmel"),
-    ABENDHITZE(F, "Abendhitze"),
-    ABENDLICHT(N, "Abendlicht"),
-    ABENDSONNE(F, "Abendsonne"),
-    ABENDSONNENSCHEIN(M, "Abendsonnenschein"),
-    ABRISS(M, "Abriss"),
+    ABENDHIMMEL(M),
+    ABENDHITZE(F),
+    ABENDLICHT(N),
+    ABENDSONNE(F),
+    ABENDSONNENSCHEIN(M),
+    ABRISS(M),
     AESTE(PL_MFN, "Aste", "Ästen"),
     ANGEBOTE(PL_MFN, "Angebote", "Angeboten"),
-    ASTGABEL(F, "Astgabel"),
-    BANK(F, "Bank"),
-    BAUM(M, "Baum"),
+    ASTGABEL(F),
+    BANK(F),
+    BAUM(M),
     BAEUME(PL_MFN, "Bäume", "Bäumen"),
-    BETT(N, "Bett"),
-    BETTGESTELL(N, "Bettgestell"),
-    BRETTERTISCH(M, "Brettertisch"),
+    BETT(N),
+    BETTGESTELL(N),
+    BRETTERTISCH(M),
     DINGE(PL_MFN, "Dinge", "Dingen"),
     DAEMMERLICHT(N, "Dämmerlicht"),
     DUESTERNIS(F, "Düsternis"),
-    DUNKEL(N, "Dunkel"),
-    DUNKELHEIT(F, "Dunkelheit"),
-    ELEFANTEN(PL_MFN, "Elefanten"),
+    DUNKEL(N),
+    DUNKELHEIT(F),
+    ELEFANTEN(PL_MFN),
     EISESKAELTE(F, "Eiseskälte"),
-    FIRMAMENT(N, "Firmament"),
-    FRAU(F, "Frau"),
-    FREUDE(F, "Freude"),
-    FROSCH(M, "Frosch"),
-    FROST(M, "Frost"),
+    FIRMAMENT(N),
+    FRAU(F),
+    FREUDE(F),
+    FROSCH(M),
+    FROST(M),
     FUSS(M, "Fuß"),
-    GARTEN(M, "Garten"),
+    GARTEN(M),
     GESPRAECH(N, "Gespräch"),
-    HAAR(N, "Haar"),
+    HAAR(N),
     HAARE(PL_MFN, "Haare", "Haaren"),
     HAENDE(PL_MFN, "Hände", "Händen"),
-    HALBDUNKEL(N, "Halbdunkel"),
+    HALBDUNKEL(N),
     HELLE(N, "Helle", "Hellen"),
-    HERZ(N, "Herz"),
-    HELLEBARDE(F, "Hellebarde"),
-    HIMMEL(M, "Himmel"),
-    HITZE(F, "Hitze"),
+    HERZ(N),
+    HELLEBARDE(F),
+    HIMMEL(M),
+    HITZE(F),
     HOEHE(F, "Höhe"),
-    HOLZ(N, "Holz"),
-    HORIZONT(M, "Horizont"),
-    INSEKTEN(PL_MFN, "Insekten"),
+    HOLZ(N),
+    HORIZONT(M),
+    INSEKTEN(PL_MFN),
     KAELTE(F, "Kälte"),
-    KINN(N, "Kinn"),
-    KLAUBHOLZ(N, "Klaubholz"),
+    KINN(N),
+    KLAUBHOLZ(N),
     KOENIGSSOHN(M, "Königssohn"),
-    KRAFT(F, "Kraft"),
+    KRAFT(F),
     KUEHLE(N, "Kühle", "Kühlen"),
-    KUGEL(F, "Kugel"),
+    KUGEL(F),
     LEIB(M, "Leib", "Leibe"),
-    LICHT(N, "Licht"),
-    LUFT(F, "Luft"),
-    LUFTHAUCH(M, "Lufthauch"),
-    LUFTZUG(M, "Luftzug"),
-    MITTAG(M, "Mittag"),
-    MITTAGSHITZE(F, "Mittagshitze"),
-    MITTAGSSONNE(F, "Mittagssonne"),
-    MITTE(F, "Mitte"),
-    MITTERNACHT(F, "Mitternacht"),
-    MARMORTREPPE(F, "Marmortreppe"),
-    MOND(M, "Mond"),
-    MONDLICHT(N, "Mondlicht"),
-    MONDSCHEIN(M, "Mondschein"),
-    MONDSCHIMMER(M, "Mondschimmer"),
-    MORGEN(M, "Morgen"),
-    MORGENLICHT(N, "Morgenlicht"),
-    MORGENSONNE(F, "Morgensonne"),
-    NACHT(F, "Nacht"),
-    NACHTHIMMEL(M, "Nachthimmel"),
+    LICHT(N),
+    LUFT(F),
+    LUFTHAUCH(M),
+    LUFTZUG(M),
+    MITTAG(M),
+    MITTAGSHITZE(F),
+    MITTAGSSONNE(F),
+    MITTE(F),
+    MITTERNACHT(F),
+    MARMORTREPPE(F),
+    MOND(M),
+    MONDLICHT(N),
+    MONDSCHEIN(M),
+    MONDSCHIMMER(M),
+    MORGEN(M),
+    MORGENLICHT(N),
+    MORGENSONNE(F),
+    NACHT(F),
+    NACHTHIMMEL(M),
     NAME(M, "Name", "Namen", "Namen"),
-    NASE(F, "Nase"),
+    NASE(F),
     NOTLUEGE(F, "Notlüge"),
-    OSTEN(M, "Osten"),
-    PLATZ(M, "Platz"),
-    RAPUNZEL(F, true, "Rapunzel"),
-    RETTUNG(F, "Rettung"),
+    OSTEN(M),
+    PLATZ(M),
+    RAPUNZEL(F, true),
+    RETTUNG(F),
     ROTWEINE(PL_MFN, "Rotweine", "Rotweinen"),
     RUNDHOELZER(PL_MFN, "Rundhölzer", "Rundhölzern"),
-    SCHATTEN(M, "Schatten"),
-    SCHLOSSWACHE(F, "Schlosswache"),
-    SCHUMMERLICHT(N, "Schummerlicht"),
-    SONNE(F, "Sonne"),
-    SONNENHITZE(F, "Sonnenhitze"),
-    SONNENSCHEIN(M, "Sonnenschein"),
-    SONNENSTRAHLEN(PL_MFN, "Sonnenstrahlen"),
-    SONNENUNTERGANG(M, "Sonnenuntergang"),
-    TISCH(M, "Tisch"),
-    STERNENHIMMEL(M, "Sternenhimmel"),
-    STERNENLICHT(N, "Sternenlicht"),
-    STERNENZELT(N, "Sternenzelt"),
-    STURM(M, "Sturm"),
-    STURMWIND(M, "Sturmwind"),
-    TAG(M, "Tag"),
-    TAGESLICHT(N, "Tageslicht"),
-    TASCHE(F, "Tasche"),
-    TUPFEN(PL_MFN, "Tupfen"),
-    VOLLMOND(M, "Vollmond"),
-    UNWETTER(M, "Unwetter"),
+    SCHATTEN(M),
+    SCHLOSSWACHE(F),
+    SCHUMMERLICHT(N),
+    SONNE(F),
+    SONNENHITZE(F),
+    SONNENSCHEIN(M),
+    SONNENSTRAHLEN(PL_MFN),
+    SONNENUNTERGANG(M),
+    STUECKE(PL_MFN, "Stücke", "Stücken"),
+    TISCH(M),
+    STERNENHIMMEL(M),
+    STERNENLICHT(N),
+    STERNENZELT(N),
+    STURM(M),
+    STURMWIND(M),
+    TAG(M),
+    TAGESLICHT(N),
+    TASCHE(F),
+    TUPFEN(PL_MFN),
+    VOLLMOND(M),
+    UNWETTER(M),
     WAERME(F, "Wärme"),
-    WAHRHEIT(F, "Wahrheit"),
-    WETTER(N, "Wetter"),
-    WIND(M, "Wind"),
-    WINDHAUCH(M, "Windhauch"),
-    WOLKE(F, "Wolke"),
-    WOLKEN(PL_MFN, "Wolken"),
-    WOLKENFETZEN(PL_MFN, "Wolkenfetzen"),
-    WOLKENDECKE(F, "Wolkendecke"),
-    WOLKENFRONT(F, "Wolkenfront"),
-    WUT(F, "Wut"),
-    ZAUBERIN(F, "Zauberin"),
-    ZIEL(N, "Ziel"),
-    ZWIELICHT(N, "Zwielicht");
+    WAHRHEIT(F),
+    WETTER(N),
+    WIND(M),
+    WINDHAUCH(M),
+    WOLKE(F),
+    WOLKEN(PL_MFN),
+    WOLKENFETZEN(PL_MFN),
+    WOLKENDECKE(F),
+    WOLKENFRONT(F),
+    WUT(F),
+    ZAUBERIN(F),
+    ZIEL(N),
+    ZWIELICHT(N);
 
     private final NumerusGenus numerusGenus;
 
@@ -159,7 +165,19 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     // Im einfachen Fall eines definiten oder indefinitiven Artikels scheint immer
     // die volle Deklination zulässig zu sein - vielleicht sogar in jedem Fall.
 
+    /**
+     * Die Flexionsreihe, artikellos, - Achtung, kann auch {@code null}
+     * sein - dann wird sie on the fly berechnet, vgl. {@link #getFlexionsreiheArtikellos()}.
+     */
+    @Nullable
     private final Flexionsreihe flexionsreiheArtikellos;
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus) {
+        this(numerusGenus, false);
+    }
 
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
@@ -169,9 +187,19 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         this(numerusGenus, nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
     }
 
+
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final boolean grundsaetzlichArtikellos) {
+        this(numerusGenus, grundsaetzlichArtikellos, (Flexionsreihe) null);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    @SuppressWarnings("unused")
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final boolean grundsaetzlichArtikellos,
                         final String nominalNominativDativUndAkkusativ) {
@@ -238,7 +266,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final boolean grundsaetzlichArtikellos,
-                        final Flexionsreihe flexionsreiheArtikellos) {
+                        @Nullable final Flexionsreihe flexionsreiheArtikellos) {
         this.numerusGenus = numerusGenus;
         this.grundsaetzlichArtikellos = grundsaetzlichArtikellos;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
@@ -328,8 +356,21 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
         return grundsaetzlichArtikellos;
     }
 
+    @Nonnull
     public Flexionsreihe getFlexionsreiheArtikellos() {
-        return flexionsreiheArtikellos;
+        if (flexionsreiheArtikellos != null) {
+            return flexionsreiheArtikellos;
+        }
+
+        try {
+            final String nominalNominativDativUndAkkusativ =
+                    checkNoWhitespace(
+                            capitalizeFirstLetter(
+                                    name().toLowerCase(Locale.GERMANY)));
+            return fr(nominalNominativDativUndAkkusativ);
+        } catch (final NoLetterException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override

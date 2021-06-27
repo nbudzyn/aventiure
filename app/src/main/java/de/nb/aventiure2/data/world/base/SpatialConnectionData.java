@@ -59,6 +59,7 @@ public class SpatialConnectionData {
                 newLocationDescription);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
@@ -89,6 +90,7 @@ public class SpatialConnectionData {
         return conData(wo, null, actionName, standardDuration, scMoveDescriptionProvider);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static SpatialConnectionData conData(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
@@ -129,6 +131,7 @@ public class SpatialConnectionData {
                 scMoveTimedDescriptionProvider);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static SpatialConnectionData conDataAltDesc(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,

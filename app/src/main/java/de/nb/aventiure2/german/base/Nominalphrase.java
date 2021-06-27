@@ -71,6 +71,8 @@ public class Nominalphrase
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
             np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
+    public static final Nominalphrase ETWAS_ZEIT =
+            np(F, null, "etwas Zeit");
     public static final Nominalphrase HASEN_UND_RABEN =
             np(PL_MFN, INDEF, "Hasen und Raben");
     public static final Nominalphrase IHRE_HAARE =

@@ -1,14 +1,19 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import androidx.annotation.Nullable;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IWetterChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -16,6 +21,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AM_BAUM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AUF_DEM_BODEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.GESAMMELT;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.SCHWERER_STURM;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
@@ -26,7 +32,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
  */
 public class HolzFuerStrickleiterReactionsComp
         extends AbstractReactionsComp
-        implements IWetterChangedReactions {
+        implements IWetterChangedReactions, IMovementReactions {
     private final AbstractStateComp<HolzFuerStrickleiterState> stateComp;
     private final LocationComp locationComp;
 
@@ -89,6 +95,35 @@ public class HolzFuerStrickleiterReactionsComp
                 .timed(NO_TIME));
 
         setScKnownAndAssumedStateToActual();
+    }
+
+
+    @Override
+    public void onLeave(final ILocatableGO locatable, final ILocationGO from,
+                        @Nullable final ILocationGO to) {
+    }
+
+    @Override
+    public boolean isVorScVerborgen() {
+        return false;
+    }
+
+    @Override
+    public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
+                        final ILocationGO to) {
+        if (locatable.is(getGameObjectId())) {
+            onHolzEnter(to);
+        }
+    }
+
+    private void onHolzEnter(final ILocationGO to) {
+        if (!stateComp.hasState(AUF_DEM_BODEN)) {
+            return;
+        }
+
+        if (to.isOrHasRecursiveLocation(world.loadSC())) {
+            stateComp.narrateAndSetState(GESAMMELT);
+        }
     }
 
     private void setScKnownAndAssumedStateToActual() {

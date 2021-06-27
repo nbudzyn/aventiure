@@ -399,7 +399,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                 .timed(secs(15)));
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private <R extends
             IHasMemoryGO &

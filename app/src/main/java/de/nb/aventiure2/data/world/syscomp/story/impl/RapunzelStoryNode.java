@@ -7,6 +7,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Function;
 
 import javax.annotation.CheckReturnValue;
 
@@ -14,6 +16,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -23,8 +26,10 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -32,8 +37,10 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -73,9 +80,12 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
+    // Dramatische Frage: Was hat es mit dem Turm auf sich?
     RAPUNZEL_SINGEN_GEHOERT(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelSingenGehoert,
             TURM_GEFUNDEN),
+
+    // Dramatische Frage: Wer singt da im Turm so schön, und wie kann man Kontakt aufnehmen?
 
     //  Dies wird durch checkAndAdvanceIfAppropriate() automatisch freigeschaltet.
     //  Tipps dafür wären nicht sinnvoll
@@ -84,35 +94,50 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZAUBERIN_AUF_TURM_WEG_GETROFFEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinAufTurmWegGefunden,
             TURM_GEFUNDEN),
+    // Dramatische Fragen: Wer singt da im Turm so schön, und wie kann man Kontakt aufnehmen?
+    //  Und was hat es mit der Frau auf sich?
+
     // Ab hier muss bei allen Tipps auch der Sonderfall berücksichtigt
     //  werden, dass der SC alles vergessen hat
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN),
+    // Dramatische Frage: Schafft es der SC, auch in den Turm zu kommen, indem er selbst  ruft?
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET),
+    // Dramatische Frage: Kann der SC die junge Frau irgendwie unterstützen?
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN),
+    // Dramatische Frage ab hier: Schafft es der SC, Rapunzel zu befreien?
     TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN(10, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
             RAPUNZEL_RETTUNG_VERSPROCHEN),
 
-    // FIXME "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
+    // IDEA "An der Wand lehnt ein alter Rucksack / ... Kiepe...,
     //  wie man sie zum Holzsammeln verwenden würde"
     //  Du setzt... auf. Ziemlich schwer. (Man wird schneller müde.)
     //  Du setzt... ab. Du stellst.... auf den Boden / Waldboden...
 
     //  Dies wird automatisch freigeschaltet, wenn der Sturm die Äste von den Bäumen
     //  gebrochen hat. Tipps dafür wären nicht sinnvoll
-    STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN;
+    STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN,
+
+    AESTE_GENOMMEN(10, DRAUSSEN_VOR_DEM_SCHLOSS,
+            // Auch hier muss bei den Tipps der Sonderfall eingearbeitet werden,
+            // dass der SC alles vergessen hat
+            RapunzelStoryNode::narrateAndDoHintAction_AesteGenommen,
+            STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN),
+    AESTE_IN_STUECK_GEBROCHEN(10,
+            RapunzelStoryNode::getVisibibleOuterMostLocationIdForHolz,
+            // Auch hier muss bei den Tipps der Sonderfall eingearbeitet werden,
+            // dass der SC alles vergessen hat
+            RapunzelStoryNode::narrateAndDoHintAction_AesteInStueckGebrochen,
+            AESTE_GENOMMEN);
 
     // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
     // dass der SC alles vergessen hat
-
-    // FIXME Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
-    //  Welt o.ä.).
 
     // FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
     //  - Seilerin?
@@ -123,8 +148,10 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  - Man könnte sie auch fragen - sie hat kein Seil mehr, das lang genug ist?!
 
     // FIXME Binsen, Seil flechten...
-    //  - "du rupfst Binsen und flichst ein weiches Seil daraus"
+    //  - "du rupfst Binsen und flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
     //  - "Binsenseil"
+    //  - KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
+    //   restlichen müssen auch alle vorhanden sein)
     //  - "Sprossen"
 
     // FIXME Jedes "Puzzle" sollte möglichst nur "Verbs" (Aktionen) verwenden, die der Spieler
@@ -146,6 +173,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Blume löst sich auf nach erlösung rapunzel
 
+    // FIXME Vielleicht kann man auch den Raben erlösen (wenn man ihr schon vorher gesehen hat?)
+
     // FIXME Rabe mit Sinn HINTERlegen!
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -159,7 +188,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     private final Integer expAchievementSteps;
 
     @Nullable
-    private final GameObjectId locationId;
+    private final Function<World, GameObjectId> locationIdProducer;
 
     @Nullable
     private final IHinter hinter;
@@ -169,7 +198,7 @@ public enum RapunzelStoryNode implements IStoryNode {
      * es also keine Tipps geben soll.
      */
     RapunzelStoryNode() {
-        this(null, null, null);
+        this(null, (GameObjectId) null, null);
     }
 
     RapunzelStoryNode(@Nullable final Integer expAchievementSteps,
@@ -179,12 +208,29 @@ public enum RapunzelStoryNode implements IStoryNode {
         this(asList(preconditions), expAchievementSteps, locationId, hinter);
     }
 
+    RapunzelStoryNode(@Nullable final Integer expAchievementSteps,
+                      @Nullable final Function<World, GameObjectId> locationIdProducer,
+                      @Nullable final IHinter hinter,
+                      final RapunzelStoryNode... preconditions) {
+        this(asList(preconditions), expAchievementSteps, locationIdProducer, hinter);
+    }
+
     RapunzelStoryNode(final Collection<RapunzelStoryNode> preconditions,
                       @Nullable final Integer expAchievementSteps,
                       @Nullable final GameObjectId locationId,
                       @Nullable final IHinter hinter) {
         this.preconditions = ImmutableSet.copyOf(preconditions);
-        this.locationId = locationId;
+        locationIdProducer = w -> locationId;
+        this.expAchievementSteps = expAchievementSteps;
+        this.hinter = hinter;
+    }
+
+    RapunzelStoryNode(final Collection<RapunzelStoryNode> preconditions,
+                      @Nullable final Integer expAchievementSteps,
+                      @Nullable final Function<World, GameObjectId> locationIdProducer,
+                      @Nullable final IHinter hinter) {
+        this.preconditions = ImmutableSet.copyOf(preconditions);
+        this.locationIdProducer = locationIdProducer;
         this.expAchievementSteps = expAchievementSteps;
         this.hinter = hinter;
     }
@@ -207,8 +253,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     @Nullable
     @Override
-    public GameObjectId getLocationId() {
-        return locationId;
+    public GameObjectId getLocationId(final World world) {
+        return locationIdProducer.apply(world);
     }
 
     @Override
@@ -468,7 +514,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                     ImmutableList.of("mehr", ""),
                     "aus dem Kopf gehen").schonLaenger());
             alt.add(paragraph("Deine Gedanken kreisen immer wieder um",
-                    world.getDescription(RAPUNZEL).akkK()).schonLaenger());
+                    getDescription(world).akkK()).schonLaenger());
             alt.add(duParagraph("fühlst", "dich etwas einsam").schonLaenger());
             alt.addAll(altParagraphs("Warum nicht mal wieder bei der",
                     ImmutableList.of("netten", ""),
@@ -503,6 +549,106 @@ public enum RapunzelStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
+    private static void narrateAndDoHintAction_AesteGenommen(
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER).locationComp().hasRecursiveLocation(
+                world.loadSC().locationComp().getLocation())) {
+            alt.add(paragraph("Holz hat schon vielen Menschen als guter Rohstoff",
+                    "für allerlei nützliche Dinge gedient, jaja!").schonLaenger());
+        } else {
+            if (world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, VERWUESTET)) {
+                alt.add(paragraph("Manchmal haben Durcheinander und Katastrophen auch",
+                        "ihr Gutes und schaffen neue Möglichkeiten"),
+                        paragraph("Der Sturm hat die Welt wieder einmal kräftig",
+                                "durchgeschüttelt!"),
+                        neuerSatz(PARAGRAPH, "Was gibt es wohl nach diesem Sturm noch",
+                                "neues zu entdecken?"));
+            } else {
+                alt.add(paragraph("Manchmal muss man sich einfach gut in der Welt umsehen,",
+                        "dann fallen einem die Möglichkeiten vor die Füße!"),
+                        paragraph("Das Gold liegt nicht auf der Straße. Aber andere Dinge",
+                                "liegen vielleicht schon… irgendwo… – puh, du bist total",
+                                "durcheinander!"));
+            }
+        }
+
+        final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(world);
+        if (world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
+            alt.add(paragraph("Wie kannst du bloß", rapunzelDesc.akkK(),
+                    "in die Freiheit bringen…").schonLaenger());
+
+            if (!world.hasSameVisibleOuterMostLocationAsSC(RAPUNZEL)) {
+                alt.add(du(PARAGRAPH, "musst", "immerzu an",
+                        rapunzelDesc.akkK(),
+                        "in",
+                        rapunzelDesc.possArt().vor(M).datStr(),
+                        "Turm denken: Wie kannst du",
+                        rapunzelDesc.persPron().akkK(), "nur befreien? –")
+                        .mitVorfeldSatzglied("immerzu")
+                        .schonLaenger());
+            }
+        }
+
+        if (world.loadSC().memoryComp().isKnown(RAPUNZELS_NAME)) {
+            alt.add(paragraph("Rapunzel, Rapunzel, Rapunzel – immerzu geht dir ihr Name",
+                    "durch den Kopf. Du wirst ihre Rettung sein, da bist du ganz sicher!")
+                    .schonLaenger());
+        }
+
+        n.narrateAlt(alt, NO_TIME);
+    }
+
+    private static void narrateAndDoHintAction_AesteInStueckGebrochen(
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
+        final AltDescriptionsBuilder alt = alt();
+
+        if (world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER).locationComp()
+                .hasRecursiveLocation(SPIELER_CHARAKTER)) {
+            alt.add(neuerSatz("Diese langen Äste, die du da bei dir trägst, sind",
+                    "ziemlich unpraktisch").schonLaenger(),
+                    neuerSatz(PARAGRAPH, "Haben Dinge erst die richtigen Maße, kann man oft viele",
+                            "praktische Dinge daraus machen – fällt dir gerade auf", SENTENCE));
+        }
+
+        final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(world);
+        if (world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
+            alt.add(neuerSatz("Wie mag es nur",
+                    rapunzelDesc.datK(),
+                    "gehen,",
+                    rapunzelDesc.relPron().nomK(), // "die"
+                    "oben im Turm gefangen",
+                    SeinUtil.istSind(rapunzelDesc), // "ist"
+                    "?").schonLaenger());
+        }
+
+        final EinzelneSubstantivischePhrase descHolz =
+                world.getDescription(HOLZ_FUER_STRICKLEITER);
+        if (!world.hasSameVisibleOuterMostLocationAsSC(HOLZ_FUER_STRICKLEITER)) {
+            alt.add(neuerSatz("Da kommt dir eine Idee", SENTENCE),
+                    neuerSatz("Ein Gedanke schießt dir durch den Kopf", SENTENCE));
+        } else {
+            alt.add(paragraph("Wo hattest du eigentlich",
+                    descHolz.akkK(),
+                    "abgelegt – wäre doch schade, wenn",
+                    descHolz.persPron().akkK(), "jemand…",
+                    "einfach so mitgehen ließe!"),
+                    paragraph("Wo hast du eigentlich dein Klaubholz? Nicht dass es jemand",
+                            "verfeuert!"),
+                    paragraph("Wo war eigentlich",
+                            descHolz.nomK(), ",", descHolz.relPron().akkK(),
+                            "du mit Mühe gesammelt hast?"));
+        }
+
+        n.narrateAlt(alt, NO_TIME);
+    }
+
+    // FIXME Wenn man das Seil hat und sich noch an Rapunzel erinnert:
+    //  "In dir reift ein Plan, wie die Rapunzel retten kannst!"
+    //  "Du warst schon immer der Bastler-Typ!"
+
+
     @CheckReturnValue
     private static ImmutableSet<AbstractDescription<?>> altTurmWohnenHineinHeraus(
             final World world) {
@@ -526,6 +672,12 @@ public enum RapunzelStoryNode implements IStoryNode {
         return alt.build();
     }
 
+    @Nullable
+    private static GameObjectId getVisibibleOuterMostLocationIdForHolz(final World world) {
+        return Optional.ofNullable(world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER)
+                .getVisibleOuterMostLocation()).map(IGameObject::getId).orElse(null);
+    }
+
     @SuppressWarnings("unchecked")
     @NonNull
     private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
@@ -537,5 +689,9 @@ public enum RapunzelStoryNode implements IStoryNode {
     private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
     Z loadZauberin(final World world) {
         return world.load(RAPUNZELS_ZAUBERIN);
+    }
+
+    private static EinzelneSubstantivischePhrase getDescription(final World world) {
+        return world.getDescription(RAPUNZEL);
     }
 }

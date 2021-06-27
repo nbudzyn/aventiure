@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.state;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -12,7 +14,8 @@ import de.nb.aventiure2.data.world.gameobject.*;
 
 /**
  * Component für ein {@link GameObject}: Das Game Object hat einen Zustand (der sich
- * über die Zeit ändern kann).
+ * über die Zeit ändern kann). Möglicherweise kann auch der SC den Zustand des Objekts
+ * direkt ändern.
  */
 public abstract class AbstractStateComp<S extends Enum<S>>
         extends AbstractStatefulComponent<StatePCD> {
@@ -100,4 +103,6 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     public Class<S> getStateEnumClass() {
         return stateEnumClass;
     }
+
+    public abstract ImmutableList<StateModification<S>> getScStateModificationData();
 }

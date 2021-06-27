@@ -58,7 +58,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     // Dramatische Frage (vor diesem Story Node):
     // Schafft es der Spieler, etwas die App richtig zu bedienen, so dass er Spaß hat und
-    // nicht kaputt geht oder er nicht stirbt?
+    // nichts kaputt geht oder er nicht stirbt?
     KUGEL_GENOMMEN(20, SCHLOSS_VORHALLE,
             FroschkoenigStoryNode::narrateAndDoHintAction_KugelGenommen),
     // Dramatische Frage: Schafft es der SC, die goldene Kugel zu nehmen, ohne dass er ins
@@ -139,7 +139,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @Nullable
     @Override
-    public GameObjectId getLocationId() {
+    public GameObjectId getLocationId(final World world) {
         return locationId;
     }
 

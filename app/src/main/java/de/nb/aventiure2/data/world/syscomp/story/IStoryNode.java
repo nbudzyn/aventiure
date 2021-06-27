@@ -73,7 +73,7 @@ public interface IStoryNode {
     Story getStory();
 
     @Nullable
-    GameObjectId getLocationId();
+    GameObjectId getLocationId(World world);
 
     Set<? extends IStoryNode> getPreconditions();
 

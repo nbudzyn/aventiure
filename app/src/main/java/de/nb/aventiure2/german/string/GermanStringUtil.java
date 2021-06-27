@@ -60,15 +60,6 @@ public class GermanStringUtil {
         return str.substring(0, 1).toUpperCase(Locale.GERMAN) + str.substring(1);
     }
 
-    public static boolean newlineNeededToStartNewParagraph(
-            final String base, final String addition) {
-        if (base.endsWith("\n")) {
-            return false;
-        }
-
-        return !addition.startsWith("\n");
-    }
-
     /**
      * Gibt den String zurück, mit dem die noch offene wörtliche Rede abgeschlossen wird.
      * Dies können ein Leerstring, "“" oder ".“" sein.

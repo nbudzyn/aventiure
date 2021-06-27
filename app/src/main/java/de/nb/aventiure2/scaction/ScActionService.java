@@ -21,6 +21,7 @@ import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
@@ -36,6 +37,7 @@ import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
 import de.nb.aventiure2.scaction.impl.WartenAction;
+import de.nb.aventiure2.scaction.impl.ZustandVeraendernAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -282,7 +284,7 @@ public class ScActionService {
         return false;
     }
 
-    private <DESC_OBJ extends IDescribableGO & ILocatableGO>
+    private <S extends Enum<S>, DESC_OBJ extends IDescribableGO & ILocatableGO>
     ImmutableList<AbstractScAction> buildInventoryActions(
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker,
@@ -292,9 +294,12 @@ public class ScActionService {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final DESC_OBJ inventoryObject : inventory) {
-            if (location != null) {
-                if (scHatHoechstensInDenHaenden(wasSCVisiblyInDenHaendenHat, inventoryObject) &&
-                        inventoryObject.locationComp().isMovable()) {
+            if (scHatHoechstensInDenHaenden(wasSCVisiblyInDenHaendenHat, inventoryObject)) {
+                if (inventoryObject instanceof IHasStateGO<?>) {
+                    res.addAll(ZustandVeraendernAction.buildActions(scActionStepCountDao, timeTaker,
+                            n, world, (IDescribableGO & IHasStateGO<S>) inventoryObject));
+                }
+                if (location != null && inventoryObject.locationComp().isMovable()) {
                     // Das inventoryObject könnte auch ein ILivingBeing sein!
                     res.addAll(HochwerfenAction
                             .buildActions(

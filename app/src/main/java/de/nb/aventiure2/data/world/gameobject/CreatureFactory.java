@@ -83,7 +83,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createSchlosswache() {
         final SchlosswacheStateComp stateComp =
-                new SchlosswacheStateComp(SCHLOSSWACHE, db, timeTaker, n, world);
+                new SchlosswacheStateComp(SCHLOSSWACHE, db, timeTaker, world);
         final AbstractDescriptionComp descriptionComp =
                 new SimpleDescriptionComp(SCHLOSSWACHE,
                         np(F, INDEF,
@@ -107,7 +107,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
     }
 
     GameObject createFroschprinz() {
-        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, timeTaker, n, world);
+        final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, timeTaker, world);
         final MultiDescriptionComp descriptionComp =
                 new FroschprinzDescriptionComp(stateComp);
         final LocationComp locationComp =
@@ -125,7 +125,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
     }
 
     GameObject createRapunzel() {
-        final RapunzelStateComp stateComp = new RapunzelStateComp(db, timeTaker, n, world);
+        final RapunzelStateComp stateComp = new RapunzelStateComp(db, timeTaker, world);
         final AbstractDescriptionComp descriptionComp = new RapunzeDescriptionComp(world);
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
@@ -157,7 +157,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                         locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
-                new RapunzelTakingComp(db, n, world, stateComp, memoryComp, feelingsComp);
+                new RapunzelTakingComp(db, n, world, stateComp, feelingsComp);
         return new TalkingMemoryFeelingsTakingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,
@@ -207,7 +207,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createRapunzelsZauberin() {
         final RapunzelsZauberinStateComp stateComp =
-                new RapunzelsZauberinStateComp(db, timeTaker, n, world);
+                new RapunzelsZauberinStateComp(db, timeTaker, world);
         final AbstractDescriptionComp descriptionComp =
                 new RapunzelsZauberinDescriptionComp(world);
         final LocationComp locationComp =

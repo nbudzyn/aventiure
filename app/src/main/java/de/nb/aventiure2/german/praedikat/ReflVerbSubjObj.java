@@ -26,6 +26,7 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
             "erlaube", "erlaubst", "erlaubt",
             "erlaubt",
             Perfektbildung.HABEN, "erlaubt"),
+    SICH_NEHMEN(VerbSubjObj.NEHMEN, DAT, AKK, Perfektbildung.HABEN),
     SICH_UNTERHALTEN("unterhalten", AKK, PraepositionMitKasus.MIT_DAT,
             "unterhalte", "unterhältst", "unterhält",
             "unterhaltet",
@@ -67,11 +68,29 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
             final String ihrForm,
             final Perfektbildung perfektbildung,
             final String partizipII) {
-        verb = new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm,
-                perfektbildung, partizipII);
+        this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm,
+                        perfektbildung, partizipII),
+                reflKasusOderPraepositionalKasus,
+                objektKasusOderPraepositionalkasus);
+    }
+
+    ReflVerbSubjObj(final VerbMitValenz verb,
+                    final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
+                    final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
+                    final Perfektbildung perfektbildung) {
+        this(verb.getVerb().mitPerfektbildung(perfektbildung), reflKasusOderPraepositionalKasus,
+                objektKasusOderPraepositionalkasus);
+    }
+
+    ReflVerbSubjObj(
+            final Verb verb,
+            final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
+            final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus) {
+        this.verb = verb;
         this.reflKasusOderPraepositionalKasus = reflKasusOderPraepositionalKasus;
         this.objektKasusOderPraepositionalkasus = objektKasusOderPraepositionalkasus;
     }
+
 
     @Override
     public PraedikatReflSubjObjOhneLeerstellen mit(

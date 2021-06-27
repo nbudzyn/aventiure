@@ -54,7 +54,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.LEGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 
 /**
- * Der Benutzer legt einen Gegenstand ab - z.B. direkt in einen Raum (d.h. auf den Boden o.Ä.)
+ * Der SC legt einen Gegenstand ab - z.B. direkt in einen Raum (d.h. auf den Boden o.Ä.)
  * oder auf / in einen Gegenstand, der sich (direkt oder indirekt) in dem Raum befindet.
  */
 @SuppressWarnings("unchecked")

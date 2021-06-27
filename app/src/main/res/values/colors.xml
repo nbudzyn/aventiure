@@ -12,6 +12,7 @@
     <color name="actionAblegen">#AFBF0C</color>
     <color name="actionGeben">#AFBF0C</color>
     <color name="actionHochwerfen">#F0FC6D</color>
+    <color name="actionZustandVeraendern">#F0FC6D</color>
     <color name="actionHeulen">#E9F84B</color>
     <color name="actionSchlafen">#5BD26A</color>
     <color name="actionRastenWarten">#5BD26A</color>

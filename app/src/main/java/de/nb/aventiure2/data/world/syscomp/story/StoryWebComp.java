@@ -278,7 +278,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
 
     @Nullable
     private AvTimeSpan movementTimeFromSCToNodeLocation(final IStoryNode storyNode) {
-        @Nullable final GameObjectId storyNodeLocationId = storyNode.getLocationId();
+        @Nullable final GameObjectId storyNodeLocationId = storyNode.getLocationId(world);
         if (storyNodeLocationId == null) {
             // Das Ereignis kann an verschiedenen Orten oder "praktisch überall"
             // auftreten.

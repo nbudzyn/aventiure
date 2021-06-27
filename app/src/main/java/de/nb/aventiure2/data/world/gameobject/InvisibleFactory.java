@@ -48,7 +48,7 @@ public class InvisibleFactory extends AbstractNarratorGameObjectFactory {
                     final Narrator n, final World world) {
             super(SCHLOSSFEST);
 
-            stateComp = addComponent(new SchlossfestStateComp(db, timeTaker, n, world));
+            stateComp = addComponent(new SchlossfestStateComp(db, timeTaker, world));
             reactionsComp = addComponent(
                     new SchlossfestReactionsComp(n, world, stateComp));
         }

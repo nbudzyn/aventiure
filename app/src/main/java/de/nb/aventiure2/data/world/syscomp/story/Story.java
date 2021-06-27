@@ -54,6 +54,9 @@ public enum Story {
     //  Tipp-Mechanismus freischalten!!
     //  Verschwindet automatisch
 
+    // IDEA Man könnte gewisse Spezialfertigkeiten erhalten. (Ähnlichr 6e kommen durch die ganze
+    //  Welt o.ä.).
+
     // IDEA Ein NSC könnte den SC darauf ansprechen, was er Tolles getan hat.
     //  Die Achievements des Spielers könnte GameObjects sein, die ein NSC
     //  wissen kann. Die NSC könnten dieses Wissen zu bestimmten Zeitpunkten

@@ -24,6 +24,8 @@ import de.nb.aventiure2.german.description.TimedDescription;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conNichtSC;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
@@ -63,17 +65,17 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     @CheckReturnValue
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
-                SpatialConnection.con(SCHLOSS_VORHALLE,
+                con(SCHLOSS_VORHALLE,
                         "auf der Treppe",
                         WEST, "Das Schloss betreten",
                         secs(90),
                         this::getDescTo_SchlossVorhalle),
-                SpatialConnection.conNichtSC(
+                conNichtSC(
                         ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         "zwischen den Buchsbaumhecken",
                         NORTH,
                         secs(90)),
-                SpatialConnection.con(IM_WALD_NAHE_DEM_SCHLOSS,
+                con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg",
                         EAST,
                         "In den Wald gehen",
@@ -100,7 +102,6 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                                 .dann()));
     }
 
-    @SuppressWarnings("unchecked")
     private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         final IHasStateGO<SchlossfestState> schlossfest = world.load(SCHLOSSFEST);

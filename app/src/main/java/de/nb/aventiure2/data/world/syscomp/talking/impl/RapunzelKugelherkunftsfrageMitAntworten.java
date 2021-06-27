@@ -55,7 +55,6 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
                 anaph.possArt().vor(M).nomStr(), // "Ihr"
                 "Blick fällt auf",
                 world.getDescription(GOLDENE_KUGEL, true).akkK(),
-                // FIXME Eigabe Anführungszeichen, Gedankenstrich, Auslassungspunkte erleichern?
                 "„Woher hast du die?“, fragt",
                 anaph.nomK(),
                 "dich")

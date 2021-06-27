@@ -139,7 +139,8 @@ public class FullWalkthrough {
                     "Den Wald verlassen und in den Schlossgarten gehen",
                     "In den Wald gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
-                    "Das Holz nehmen"
+                    "Das Holz nehmen",
+                    "Das Klaubholz in Stücke brechen"
             );
     public static final Walkthrough FULL =
             ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN

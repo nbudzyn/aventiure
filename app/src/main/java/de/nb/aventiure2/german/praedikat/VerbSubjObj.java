@@ -34,6 +34,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             "begrüßt", Perfektbildung.HABEN, "begrüßt"),
     BEKOMMEN("bekommen", AKK, "bekomme", "bekommst", "bekommt",
             "bekommt", Perfektbildung.HABEN, "bekommen"),
+    BRECHEN("brechen", AKK, "breche", "brichst", "bricht",
+            "brecht", Perfektbildung.HABEN, "gebrochen"),
     BIETEN("bieten", DAT,
             "biete", "bietest", "bietet", "bietet",
             Perfektbildung.HABEN, "geboten"),
@@ -243,12 +245,24 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
         this(verbMitValenz.getVerb(), kasusOderPraepositionalkasus, partikel, perfektbildung);
     }
 
+    VerbSubjObj(final VerbMitValenz verbMitValenz,
+                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb(), kasusOderPraepositionalkasus, perfektbildung);
+    }
+
     VerbSubjObj(final Verb verbOhnePartikel,
                 final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
                 final String partikel,
                 final Perfektbildung perfektbildung) {
         this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung),
                 kasusOderPraepositionalkasus);
+    }
+
+    VerbSubjObj(final Verb verb,
+                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
+                final Perfektbildung perfektbildung) {
+        this(verb.mitPerfektbildung(perfektbildung), kasusOderPraepositionalkasus);
     }
 
     VerbSubjObj(final Verb verb,

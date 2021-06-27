@@ -246,9 +246,16 @@ public class StoryWebReactionsComp
     private void onHolzFuerStrickleiterStateChanged(
             final HolzFuerStrickleiterState oldState,
             final HolzFuerStrickleiterState newState) {
-        if (oldState == HolzFuerStrickleiterState.AM_BAUM
-                && newState != HolzFuerStrickleiterState.AM_BAUM) {
+        if (newState == HolzFuerStrickleiterState.AUF_DEM_BODEN) {
             reachStoryNode(RapunzelStoryNode.STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN);
+        }
+
+        if (newState == HolzFuerStrickleiterState.GESAMMELT) {
+            reachStoryNode(RapunzelStoryNode.AESTE_GENOMMEN);
+        }
+
+        if (newState == HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN) {
+            reachStoryNode(RapunzelStoryNode.AESTE_IN_STUECK_GEBROCHEN);
         }
     }
 

@@ -335,6 +335,7 @@ public class SpatialConnection {
                 newLocationDescriptionOther);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static SpatialConnection con(final GameObjectId to,
                                          final String wo,
                                          @Nullable final CardinalDirection cardinalDirection,

@@ -7,7 +7,6 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.taking.AbstractTakingComp;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
@@ -29,17 +28,14 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
-    private final MemoryComp memoryComp;
 
     private final FeelingsComp feelingsComp;
 
     public RapunzelTakingComp(final AvDatabase db, final Narrator n, final World world,
                               final RapunzelStateComp stateComp,
-                              final MemoryComp memoryComp,
                               final FeelingsComp feelingsComp) {
-        super(RAPUNZEL, db, n, world);
+        super(RAPUNZEL, n, world);
         this.stateComp = stateComp;
-        this.memoryComp = memoryComp;
         this.feelingsComp = feelingsComp;
     }
 
@@ -125,7 +121,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
         final EinzelneSubstantivischePhrase givenDescShort = world.getDescription(given, true);
 
-        upgradeZuneigungAbneigung(0.3f, FeelingIntensity.DEUTLICH);
+        feelingsComp.upgradeFeelingsTowards(
+                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.DEUTLICH);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -180,10 +177,5 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         world.loadSC().feelingsComp().requestMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!
-    }
-
-    private void upgradeZuneigungAbneigung(final float increment, final int bound) {
-        feelingsComp.upgradeFeelingsTowards(
-                SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, increment, bound);
     }
 }

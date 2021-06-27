@@ -102,7 +102,8 @@ public class NurRapunzelWalkthrough {
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
-                    "Das Holz nehmen"
+                    "Das Holz nehmen",
+                    "Das Klaubholz in Stücke brechen"
             );
 
     public static final Walkthrough NUR_RAPUNZEL =

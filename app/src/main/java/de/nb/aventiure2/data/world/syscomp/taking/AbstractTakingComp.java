@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.taking;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -14,16 +13,14 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
  * or at least react to an offer.
  */
 public abstract class AbstractTakingComp extends AbstractStatelessComponent {
-    private final AvDatabase db;
     protected Narrator n;
     protected final World world;
 
     protected AbstractTakingComp(
             final GameObjectId id,
-            final AvDatabase db, final Narrator n, final World world) {
+            final Narrator n, final World world) {
         super(id);
 
-        this.db = db;
         this.n = n;
         this.world = world;
     }
