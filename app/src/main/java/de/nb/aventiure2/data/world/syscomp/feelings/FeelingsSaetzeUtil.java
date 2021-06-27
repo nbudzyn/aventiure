@@ -70,10 +70,8 @@ public class FeelingsSaetzeUtil {
             final ImmutableList<AdvAngabeSkopusVerbAllg> eindruckAdvAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        if (true) {
-            res.addAll(altAnsehenSaetze(
-                    subjekt, feelingTargetDesc, eindruckAdvAngaben));
-        }
+        res.addAll(altAnsehenSaetze(
+                subjekt, feelingTargetDesc, eindruckAdvAngaben));
 
         res.addAll(altEindrueckSaetze(subjekt, true,
                 altSpAdjPhr));
@@ -92,6 +90,7 @@ public class FeelingsSaetzeUtil {
         return res.build();
     }
 
+    @SuppressWarnings("SameParameterValue")
     private static ImmutableList<String> altEindruckAdverbien(final boolean istZuSehen) {
         final ImmutableList.Builder<String> res = ImmutableList.builder();
 
