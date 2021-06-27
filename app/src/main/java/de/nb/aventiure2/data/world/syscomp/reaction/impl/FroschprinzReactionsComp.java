@@ -97,8 +97,8 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        if (!locationComp.hasSameOuterMostLocationAs(from)
-                || locationComp.hasSameOuterMostLocationAs(to)) {
+        if (!locationComp.hasSameVisibleOuterMostLocationAs(from)
+                || locationComp.hasSameVisibleOuterMostLocationAs(to)) {
             // Spieler lässt den Frosch nicht zurück
 
             return;

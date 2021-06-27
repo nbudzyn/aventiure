@@ -257,7 +257,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
         narrateAndDoObjectFaelltSofortInDenBrunnen();
-        if (world.hasSameOuterMostLocationAsSC(froschprinz)) {
+        if (world.hasSameVisibleOuterMostLocationAsSC(froschprinz)) {
             return;
         }
 

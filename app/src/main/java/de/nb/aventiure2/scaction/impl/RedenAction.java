@@ -208,7 +208,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
     }
 
     private void updateMentalModels() {
-        if (!world.hasSameOuterMostLocationAsSC(talker)) {
+        if (!world.hasSameVisibleOuterMostLocationAsSC(talker)) {
             return;
         }
 

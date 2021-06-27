@@ -169,11 +169,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * (z.B. denselben Raum). Wenn <code>other</code> <code>null</code> ist, gibt
      * diese Methode immer <code>null</code> zurück.
      */
-    // FIXME Alle Aufrufe prüfen, ob vielleicht eher eine Variante mit VisiblyRecursive
-    //  sinnvoller wäre.
-    //  Ggf. to instanceof ILocationGO) ergänzen um
-    //                                || !((ILocationGO) to).storingPlaceComp()
-    //                                .manKannHineinsehenUndLichtScheintHineinUndHinaus()
     public boolean hasSameOuterMostLocationAs(@Nullable final IGameObject other) {
         ILocationGO otherOuterMostLocation = null;
         if (other instanceof ICanHaveOuterMostLocation) {

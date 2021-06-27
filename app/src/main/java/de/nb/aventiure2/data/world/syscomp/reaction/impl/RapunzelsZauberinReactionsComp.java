@@ -169,10 +169,10 @@ public class RapunzelsZauberinReactionsComp
 
         narrateAndDoScTrifftEvtlZauberinImDazwischen(scFrom, scTo);
 
-        if (locationComp.hasSameOuterMostLocationAs(scFrom)) {
+        if (locationComp.hasSameVisibleOuterMostLocationAs(scFrom)) {
             // Wenn die Zauberin sieht, wie der Spieler weggeht,
             // weiß sie nicht mehr, wo er ist
-            if (!locationComp.hasSameOuterMostLocationAs(scTo)) {
+            if (!locationComp.hasSameVisibleOuterMostLocationAs(scTo)) {
                 mentalModelComp.unsetAssumedLocation(SPIELER_CHARAKTER);
             }
             return;

@@ -16,14 +16,14 @@ import de.nb.aventiure2.german.description.TimedDescription;
  */
 interface IMovementNarrator {
     // IDEA MovementSystem fasst alle Movement-Beschreibungen
-    //     FIXME internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
-    //      Möglichkeit dieses Log - inkl. dem erzeugten Story Text - jederzeit
-    //      zu sharen, d.h. zb per E-Mail zu versenden
-    //     FIXME Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
-    //      hat - inkl. der Differenz zur vorgesehenen Schrittzahl.
-    //      Klug einberechnen, dass mehrere Story Steps gleichzeit offen sind!
-    //      (Also addieren o.Ä.) zusammen, auch bei mehreren NPCs am selben Ort. (VOR den
-    //      Reactions.)
+    // IDEA internes Logging (in die Datenbank?! in Datenbank und evtl. Console?!) mit der
+    //  Möglichkeit dieses Log - inkl. dem erzeugten Story Text - jederzeit
+    //  zu sharen, d.h. zb per E-Mail zu versenden
+    // IDEA Loggen, wie lange der SC für die einzelnen Story-Steps gebraucht
+    //  hat - inkl. der Differenz zur vorgesehenen Schrittzahl.
+    //  Klug einberechnen, dass mehrere Story Steps gleichzeit offen sind!
+    //  (Also addieren o.Ä.) zusammen, auch bei mehreren NPCs am selben Ort. (VOR den
+    //  Reactions.)
 
     void narrateScTrifftStehendesMovingGO(ILocationGO location);
 

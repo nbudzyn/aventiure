@@ -159,7 +159,7 @@ public class RapunzelReactionsComp
         }
 
         if (talkingComp.scUndRapunzelKoennenEinanderSehen()
-                && locationComp.hasSameOuterMostLocationAs(to)
+                && locationComp.hasSameVisibleOuterMostLocationAs(to)
                 && world.isOrHasRecursiveLocation(to, SPIELER_CHARAKTER)
                 && locatable.is(GOLDENE_KUGEL)
                 // Der Spieler hat die goldene Kugel genommen, aufgefangen o.Ä.
