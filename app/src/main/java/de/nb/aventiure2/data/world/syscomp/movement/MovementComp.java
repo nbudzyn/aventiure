@@ -42,7 +42,7 @@ import static java.util.Objects.requireNonNull;
  * Das Konzept ist in etwa so:
  * <ul>
  * <li>Game Objects (Wesen) mit einer MovementComp können eine <i>Target Location</i> haben -
- * ein Ziel, auf dass sie sich zubewegen. Haben sie <i>keine</i> Target Location, stehen sie
+ * ein Ziel, auf das sie sich zubewegen. Haben sie <i>keine</i> Target Location, stehen sie
  * still.
  * <li>Die Wesen gehen Schritt für Schritt in Richtung Target Location. Der aktuelle Schritt
  * ist ein {@link MovementStep}.

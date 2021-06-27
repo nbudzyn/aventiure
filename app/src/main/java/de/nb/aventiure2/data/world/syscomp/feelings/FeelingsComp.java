@@ -1156,29 +1156,25 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
             //  DEUTLICH: "müde"
             res.add(
                     du(PARAGRAPH, "musst", "ein wenig schlafen")
-                            .schonLaenger()
-                    ,
+                            .schonLaenger(),
                     du(PARAGRAPH, "würdest", "gern ein wenig schlafen")
-                            .schonLaenger()
-                    ,
+                            .schonLaenger(),
                     du(PARAGRAPH, "möchtest", "dich schlafen legen")
-                            .schonLaenger()
-                    ,
+                            .schonLaenger(),
                     du(PARAGRAPH, "bist", "müde und möchtest gern schlafen",
-                            PARAGRAPH).schonLaenger()
-                    ,
-                    // FIXME Dies hier nicht, wenn der SC in der Hütte vor dem Bett steht :-)
-                    du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in dass du dich "
-                            + "legen und schlafen kannst?", PARAGRAPH).schonLaenger()
-                    ,
+                            PARAGRAPH).schonLaenger(),
                     du(PARAGRAPH, "bist", "matt und müde").schonLaenger()
-
                             .mitVorfeldSatzglied("matt"),
                     neuerSatz(PARAGRAPH, "all die Erlebnisse haben dich müde gemacht"),
                     du(PARAGRAPH, "möchtest", "gern ein Auge zutun", PARAGRAPH)
                             .mitVorfeldSatzglied("gern").schonLaenger()
-
             );
+
+            if (!world.hasSameVisibleOuterMostLocationAsSC(BETTGESTELL_IN_DER_HUETTE_IM_WALD)
+                    && !world.hasSameVisibleOuterMostLocationAsSC(BETT_OBEN_IM_ALTEN_TURM)) {
+                res.add(du(PARAGRAPH, "bist", "müde – wo ist ein Bett, in das",
+                        "du dich legen und schlafen kannst?", PARAGRAPH).schonLaenger());
+            }
 
             if (timeTaker.now().getTageszeit() == Tageszeit.NACHTS) {
                 res.add(neuerSatz("es ist Schlafenszeit"));
