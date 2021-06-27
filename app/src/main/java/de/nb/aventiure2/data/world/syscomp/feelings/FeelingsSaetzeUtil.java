@@ -46,17 +46,16 @@ public class FeelingsSaetzeUtil {
     /**
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - in Sätze um.
      */
-    static ImmutableList<Satz> toReaktionSaetze(
+    static ImmutableList<Satz> toSichtbareReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
-            final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
         final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                 AdjPhrOhneLeerstellen
                         .toAdvAngabenSkopusVerbAllg(subjekt, eindruckAdjPhr);
 
-        return toReaktionSaetze(subjekt, feelingTargetDesc,
-                subjektUndFeelingTargetKoennenEinanderSehen, eindruckAdjPhr,
+        return toSichtbareReaktionSaetze(subjekt, feelingTargetDesc,
+                eindruckAdjPhr,
                 advAngaben);
     }
 
@@ -64,28 +63,24 @@ public class FeelingsSaetzeUtil {
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - und diese adverbialen
      * Angaben in Sätze um - das Ergebnis kann leer sein!
      */
-    static ImmutableList<Satz> toReaktionSaetze(
+    static ImmutableList<Satz> toSichtbareReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
-            final boolean subjektUndFeelingTargetKoennenEinanderSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr,
             final ImmutableList<AdvAngabeSkopusVerbAllg> eindruckAdvAngaben) {
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
 
-        if (subjektUndFeelingTargetKoennenEinanderSehen) {
+        if (true) {
             res.addAll(altAnsehenSaetze(
                     subjekt, feelingTargetDesc, eindruckAdvAngaben));
         }
 
-        // FIXME Kann zu einem leeren Ergebnis führen, wenn altSpAdjPhr leer ist und
-        //  !subjektUndFeelingTargetKoennenEinanderSehen!
-
-        res.addAll(altEindrueckSaetze(subjekt, subjektUndFeelingTargetKoennenEinanderSehen,
+        res.addAll(altEindrueckSaetze(subjekt, true,
                 altSpAdjPhr));
 
         res.addAll(altSpAdjPhr.stream()
                 .flatMap(adjPhr ->
-                        altEindruckAdverbien(subjektUndFeelingTargetKoennenEinanderSehen).stream()
+                        altEindruckAdverbien(true).stream()
                                 .map(
                                         advAng -> adjPhr.alsPraedikativumPraedikat()
                                                 .mitAdvAngabe(

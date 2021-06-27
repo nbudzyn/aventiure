@@ -434,9 +434,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                             altAdvAngabenSkopusVerbAllg();
 
-                    return FeelingsSaetzeUtil.toReaktionSaetze(
+                    return FeelingsSaetzeUtil.toSichtbareReaktionSaetze(
                             gameObjectSubjekt, duSc(),
-                            true, altSpAdjPhr,
+                            altSpAdjPhr,
                             advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionBeiBegegnungMitScSaetze(
@@ -460,9 +460,9 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
                     final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben =
                             altAdvAngabenSkopusVerbAllg();
 
-                    return FeelingsSaetzeUtil.toReaktionSaetze(
+                    return FeelingsSaetzeUtil.toSichtbareReaktionSaetze(
                             gameObjectSubjekt, duSc(),
-                            true, altSpAdjPhr,
+                            altSpAdjPhr,
                             advAngaben);
                 },
                 (feelingTowardsType) -> altReaktionWennSCGehenMoechteSaetze(

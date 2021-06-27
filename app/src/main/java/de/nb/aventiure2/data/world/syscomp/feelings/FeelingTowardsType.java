@@ -54,8 +54,8 @@ public enum FeelingTowardsType {
 
         final ImmutableList.Builder<Satz> res = ImmutableList.builder();
         res.addAll(FeelingsSaetzeUtil.
-                toReaktionSaetze(gameObjectSubjekt, targetDesc,
-                        true, altEindruckAdjPhr,
+                toSichtbareReaktionSaetze(gameObjectSubjekt, targetDesc,
+                        altEindruckAdjPhr,
                         advAngaben));
 
         res.addAll(feelingsDescriber.altReaktionBeiBegegnungSaetze(
@@ -86,8 +86,8 @@ public enum FeelingTowardsType {
                         targetDesc, feelingIntensity, targetKnown
                 );
 
-        final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toReaktionSaetze(
-                gameObjectSubjekt, targetDesc, true,
+        final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toSichtbareReaktionSaetze(
+                gameObjectSubjekt, targetDesc,
                 altEindruckAdjPhr);
 
         res.addAll(saetze);
