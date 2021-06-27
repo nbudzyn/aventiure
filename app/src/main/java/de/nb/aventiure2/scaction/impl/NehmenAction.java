@@ -32,6 +32,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -54,6 +55,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
 import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_ANFASSEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
 import static java.util.Objects.requireNonNull;
@@ -278,11 +280,11 @@ public class NehmenAction
 
                             n.narrateAlt(
                                     neuerSatz(anaph.nomK(),// "Er"
-                                            "ist glibschig und",
+                                            SeinUtil.istSind(anaph),
+                                            "glibschig und",
                                             "schleimig – pfui-bäh! – schnell lässt du",
                                             anaph.persPron().akkK(),
-                                            "in",
-                                            "eine Tasche gleiten",
+                                            "in eine Tasche gleiten",
                                             SENTENCE,
                                             anaph.possArt().vor(NumerusGenus.N).nomStr(),
                                             "gedämpftes Quaken könnte",
@@ -302,7 +304,7 @@ public class NehmenAction
                                             "in deine Tasche",
                                             SENTENCE,
                                             froschDesc.persPron().nomK(),
-                                            "fasst",
+                                            SICH_ANFASSEN.getPraesensOhnePartikel(anaph),
                                             "sich sehr eklig an und du bist",
                                             "glücklich, als die Prozedur",
                                             "vorbei ist.").timed(secs(10))

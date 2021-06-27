@@ -41,7 +41,6 @@ import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN_SE
 /**
  * Der SC möchte etwas essen.
  */
-@SuppressWarnings("unchecked")
 public class EssenAction extends AbstractScAction {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public

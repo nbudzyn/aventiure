@@ -27,6 +27,9 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
  */
 public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     // Verben ohne Partikel
+    SICH_ANFASSEN("anfassen", AKK,
+            "fasse", "fasst", "fasst", "fasst",
+            Perfektbildung.HABEN, "angefasst"),
     SICH_BEWOELKEN("bewölken", AKK,
             "bewölke", "bewölkst", "bewölkt", "bewölkt",
             Perfektbildung.HABEN, "bewölkt"),

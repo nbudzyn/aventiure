@@ -77,6 +77,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     SCHEINEN("scheinen",
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
+    SCHLAGEN("schlagen", "schlage", "schlägst", "schlägt",
+            "schlagt", Perfektbildung.HABEN,
+            "geschlagen"),
     SINKEN("sinken",
             "sinke", "sinkst", "sinkt", "sinkt",
             Perfektbildung.SEIN, "gesunken"),
@@ -141,6 +144,7 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     NACHLASSEN("nachlassen", "lasse", "lässt", "lässt", "lasst",
             "nach", Perfektbildung.HABEN, "nachgelassen"),
     UNTERGEHEN(GEHEN, "unter", Perfektbildung.SEIN),
+    VORBEISCHLAGEN(SCHLAGEN, "vorbei", Perfektbildung.HABEN),
     ZUNEHMEN(NEHMEN, "zu", Perfektbildung.HABEN);
 
     /**

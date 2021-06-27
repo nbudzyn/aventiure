@@ -59,6 +59,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 import static de.nb.aventiure2.german.praedikat.VerbSubj.FALLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.LANDEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ROLLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHLAGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.VERSCHWINDEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
@@ -346,7 +347,9 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                     "noch einmal in die Höhe… doch o nein,",
                     objectDescShort.nomK(),
                     FALLEN.getPraesensOhnePartikel(objectDescShort),
-                    "dir nicht in die Hände, sondern schlägt vorbei",
+                    "dir nicht in die Hände, sondern",
+                    SCHLAGEN.getPraesensOhnePartikel(objectDescShort),
+                    "vorbei",
                     "auf den Brunnenrand und",
                     ROLLEN.getPraesensOhnePartikel(objectDescShort),
                     "geradezu ins Wasser hinein.",

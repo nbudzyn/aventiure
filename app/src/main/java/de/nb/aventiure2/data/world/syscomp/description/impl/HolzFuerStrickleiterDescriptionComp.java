@@ -34,8 +34,6 @@ public class HolzFuerStrickleiterDescriptionComp
                         AM_BAUM, new DescriptionTriple(
                                 np(INDEF, AESTE, HOLZ_FUER_STRICKLEITER),
                                 np(DEF, AESTE, HOLZ_FUER_STRICKLEITER)),
-                        // FIXME Funktionieren alle Beschreibungen (z.B. nehmen...)
-                        //  mit Nominalphrasen im Plural?
                         AUF_DEM_BODEN, new DescriptionTriple(
                                 np(PL_MFN, INDEF,
                                         "dünne und kräftige von den Bäumen gebrochene Äste",
