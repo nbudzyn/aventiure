@@ -285,7 +285,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         n.narrateAlt(alt, NO_TIME);
     }
 
-    @SuppressWarnings("unchecked")
     private static void narrateAndDoHintAction_ZumSchlossfestGegangen(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n,
             final World world) {

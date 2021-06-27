@@ -187,7 +187,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     @Nullable
     private final Integer expAchievementSteps;
 
-    @Nullable
     private final Function<World, GameObjectId> locationIdProducer;
 
     @Nullable
@@ -268,6 +267,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         return hinter;
     }
 
+    @SuppressWarnings("unused")
     public static boolean checkAndAdvanceIfAppropriate(
             final AvDatabase db,
             final TimeTaker timeTaker, final Narrator n,
@@ -678,13 +678,11 @@ public enum RapunzelStoryNode implements IStoryNode {
                 .getVisibleOuterMostLocation()).map(IGameObject::getId).orElse(null);
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
         return world.load(RAPUNZEL);
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
     Z loadZauberin(final World world) {

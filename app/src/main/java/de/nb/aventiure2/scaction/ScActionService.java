@@ -129,6 +129,7 @@ public class ScActionService {
         return res;
     }
 
+    @SuppressWarnings("unchecked")
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
             TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
@@ -208,6 +209,7 @@ public class ScActionService {
         return res.build();
     }
 
+    @SuppressWarnings("unchecked")
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
             TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,

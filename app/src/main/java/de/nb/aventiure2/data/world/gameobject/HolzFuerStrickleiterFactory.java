@@ -35,6 +35,7 @@ class HolzFuerStrickleiterFactory extends AbstractNarratorGameObjectFactory {
         return create(HOLZ_FUER_STRICKLEITER);
     }
 
+    @SuppressWarnings("SameParameterValue")
     private GameObject create(final GameObjectId id) {
         // State
         final HolzFuerStrickleiterStateComp stateComp =

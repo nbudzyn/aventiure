@@ -1050,7 +1050,6 @@ public class RapunzelReactionsComp
         }
     }
 
-    @SuppressWarnings("unchecked")
     @NonNull
     private <Z extends ILocatableGO & IResponder & ITalkerGO<RapunzelsZauberinTalkingComp>>
     Z loadZauberin() {

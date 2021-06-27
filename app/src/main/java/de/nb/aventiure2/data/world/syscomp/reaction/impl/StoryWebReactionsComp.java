@@ -217,7 +217,6 @@ public class StoryWebReactionsComp
                                                    final S newState) {
         if (gameObject.is(HOLZ_FUER_STRICKLEITER)) {
             onHolzFuerStrickleiterStateChanged(
-                    (HolzFuerStrickleiterState) oldState,
                     (HolzFuerStrickleiterState) newState);
             return;
         }
@@ -244,7 +243,6 @@ public class StoryWebReactionsComp
     }
 
     private void onHolzFuerStrickleiterStateChanged(
-            final HolzFuerStrickleiterState oldState,
             final HolzFuerStrickleiterState newState) {
         if (newState == HolzFuerStrickleiterState.AUF_DEM_BODEN) {
             reachStoryNode(RapunzelStoryNode.STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN);

@@ -97,7 +97,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  */
 @SuppressWarnings("unchecked")
 public class World {
-    // FIXME: Code klarer und strenger in Module schneiden:
+    // IDEA: Code klarer und strenger in Module schneiden:
     //  - Jedes Modul ist nur für eine fachliche Sache zuständig und hab die Hoheit über
     //   Daten und Logik für diese Sache. Jede Datenbanktabelle gehört nur einem einzigen Modul?
     //   (Problem: Counter!)
@@ -329,8 +329,9 @@ public class World {
                         StoringPlaceType.HOLZDIELEN_OBEN_IM_TURM,
                         false,
                         MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS,
-                        LEUCHTET_NIE,
-                        // FIXME Rapunzels Höhle ist immer beleuchtet
+                        LEUCHTET_IMMER, // Rapunzel macht immer das Licht an, bevor sie
+                        // die Haare herunterlässt - und sie macht das Licht nicht aus, solange
+                        // der SC noch bei ihr ist.
                         EnumRange.of(Temperatur.KUEHL, Temperatur.WARM),
                         new ObenImTurmConnectionComp(db, timeTaker, n, this)),
                 room.create(ABZWEIG_IM_WALD, StoringPlaceType.WEG,
