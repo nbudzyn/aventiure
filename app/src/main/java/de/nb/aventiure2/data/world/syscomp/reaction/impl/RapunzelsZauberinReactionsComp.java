@@ -283,7 +283,8 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        if (isOrHasRecursiveLocation(scTo, scFrom) || isOrHasRecursiveLocation(scFrom, scTo)) {
+        if (LocationSystem.isOrHasRecursiveLocation(scTo, scFrom) || LocationSystem
+                .isOrHasRecursiveLocation(scFrom, scTo)) {
             // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
             // wieder vom Tisch herabgestiegen o.Ä.,
             // die Zauberin wurde bereits beschrieben.
@@ -301,11 +302,15 @@ public class RapunzelsZauberinReactionsComp
                 talkingComp.zauberinZaubertVergessenszauber();
                 return;
             }
-
-            return;
         }
 
         if (!movementComp.isMoving()) {
+            if (isVorScVerborgen()
+                    || !locationComp.hasVisiblyRecursiveLocation(scTo.getId())
+                    || !world.shouldBeDescribedAfterScMovement(scFrom, scTo, getGameObjectId())) {
+                return;
+            }
+
             movementComp.narrateAndDoScTrifftStehendesMovingGOInTo(scTo);
         }
     }

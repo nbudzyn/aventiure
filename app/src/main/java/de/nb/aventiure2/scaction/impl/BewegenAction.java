@@ -30,6 +30,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
@@ -283,9 +284,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         for (final IGameObject directlyContainedNonLivingNonMovable :
                 directlyContainedNonLivingNonMovables) {
-            if (directlyContainedNonLivingNonMovable instanceof ILocationGO
-                    && ((ILocationGO) directlyContainedNonLivingNonMovable).storingPlaceComp()
-                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+            if (LocationSystem.manKannHinsehenUndLichtScheintHineinUndHinaus(
+                    directlyContainedNonLivingNonMovable)) {
                 upgradeNonLivingNonMovableVisiblyRecursiveInventoryKnownMentalModel(
                         (ILocationGO) directlyContainedNonLivingNonMovable);
             }
@@ -296,31 +296,29 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden,
         // nicht hier! (Das betrifft auch indirekt enthaltene unbewegliche Objekte.)
 
+        // Diese Methode sollte dieselbe Logik haben wie
+        // World#shouldBeDescribedAfterScMovement - nur etwas optimiert.
+
         final GameObjectId toId = spatialConnection.getTo();
         final GameObject to = world.load(toId);
 
         final boolean toIsEqualOrInsideOldLocation =
-                isOrHasRecursiveLocation(to, oldLocation);
+                LocationSystem.isOrHasRecursiveLocation(to, oldLocation);
 
         final boolean inSublocationInDieManNichtHineinsehenKonnte =
                 toIsEqualOrInsideOldLocation
-                        && !oldLocation.is(to)
-                        && (
-                        !(to instanceof ILocationGO)
-                                || !((ILocationGO) to).storingPlaceComp()
-                                .manKannHineinsehenUndLichtScheintHineinUndHinaus());
+                        && LocationSystem.isBewegungUeberSichtschranke(oldLocation, to);
         if (// Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
-            // beschreiben, was sonst noch auf dem Tisch steht!
+            // beschreiben, was sonst auf dem Tisch steht!
                 !toIsEqualOrInsideOldLocation
                         // Ausnahme: Man kriecht unter das Bett, unter das man bisher nicht hat
                         //  sehen können:
-                        || inSublocationInDieManNichtHineinsehenKonnte
-        ) {
+                        || inSublocationInDieManNichtHineinsehenKonnte) {
             narrateNonLivingMovableObjectsAndUpgradeKnownMentalModel(
                     // Wenn man z.B. von einem Tisch heruntersteigt oder
-                    // einmal um einen Turm herumgeht, dann noch noch einmal
+                    // einmal um einen Turm herumgeht, dann nicht noch einmal
                     // beschreiben, was sich auf dem Tisch oder vor dem Turm
-                    // befindet
+                    // befindet!
                     inSublocationInDieManNichtHineinsehenKonnte ? null : oldLocation);
             narrateAndDoMissingObjects(toId);
         }
@@ -338,7 +336,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
             if (excludedLocation == null ||
-                    !isOrHasRecursiveLocation(
+                    !LocationSystem.isOrHasRecursiveLocation(
                             locationAndDescribables.first, excludedLocation)) {
                 descriptionsPerLocation.add(
                         //  "auf dem Boden liegen A und B"
@@ -416,9 +414,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     || IMovementReactions.scBemerkt(actual))
                     && !expectedDescribableInventory.contains(actual)) {
                 // Actual ("der Käfig") war nicht erwartet!
-                if (actual instanceof ILocationGO
-                        && ((ILocationGO) actual).storingPlaceComp()
-                        .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+                if (LocationSystem.manKannHinsehenUndLichtScheintHineinUndHinaus(actual)) {
                     // Aber wenn schon "der Käfig" da ist, dann wäre vielleicht
                     // auch "der Vogel" erwartet, den der SC zuletzt im Käfig
                     // gesehen hat!

@@ -42,6 +42,7 @@ import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.IReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.system.ReactionSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.AbzweigImWaldConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
@@ -54,7 +55,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDerHuetteIm
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ZwischenDenHeckenVorDemSchlossExternConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.storingplace.ICanHaveOuterMostLocation;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
@@ -557,6 +557,173 @@ public class World {
     }
 
     /**
+     * Gibt zurück, ob dieses <code>movable</code> Game Object in der Beschreibung erwähnt werden
+     * soll, wenn der SC sich von <code>from</code> nach <code>to</code> bewegt hat. Das
+     * Movable Game Object muss sich bereits an seiner neuen Location befinden.
+     * <p
+     * Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden!
+     * Das betrifft auch <code>unbewegliche Objekte</code>, die in (z.B. beweglichen Objekten)
+     * direkt oder
+     * rekursiv enthalten sind.
+     */
+    public boolean shouldBeDescribedAfterScMovement(
+            final @Nullable ILocationGO from,
+            final IGameObject to,
+            final GameObjectId movableGameObjectId) {
+        return shouldBeDescribedAfterScMovement(from, to,
+                this.<ILocatableGO>load(movableGameObjectId));
+    }
+
+    /**
+     * Gibt zurück, ob dieses <code>movable</code> Game Object in der Beschreibung erwähnt werden
+     * soll, wenn der SC sich von <code>from</code> nach <code>to</code> bewegt hat. Das
+     * Movable Game Object muss sich bereits an seiner neuen Location befinden.
+     * <p
+     * Unbewegliche Objekte sollen bereits in der Location-Beschreibung mitgenannt werden!
+     * Das betrifft auch <code>unbewegliche Objekte</code>, die in (z.B. beweglichen Objekten)
+     * direkt oder
+     * rekursiv enthalten sind.
+     */
+    public boolean shouldBeDescribedAfterScMovement(
+            final @Nullable ILocationGO from,
+            final IGameObject to,
+            final ILocatableGO movableGameObject) {
+        @Nullable final GameObjectId perceivedGOLocationId;
+        // Ermitteln: (Wo) nimmt der SC das Game Object wahr?
+        if (movableGameObject instanceof ILivingBeingGO
+                && !IMovementReactions.scBemerkt(movableGameObject)) {
+            perceivedGOLocationId = null;
+        } else {
+            perceivedGOLocationId = movableGameObject.locationComp().getLocationId();
+        }
+
+        // Ermitteln: (Wo) hat der SC das Game Object erwartet?
+        @Nullable final GameObjectId assumedGOLocationId = loadSC().mentalModelComp()
+                .getAssumedLocationId(movableGameObject.getId());
+
+        if (assumedGOLocationId == null) {
+            // Der SC hat das Game Object nirgendwo erwartet!
+            if (perceivedGOLocationId == null) {
+                // Und es ist auch nirgendwo! -> Nicht erwähnen!
+                return false;
+            }
+
+            // Der SC hat das Game Object nirgendwo erwartet, und irgendwo ist es. Dann erwähnen,
+            // falls es in to ist (oder sichtbar rekursiv innerhalb von to).
+            return isOrHasVisiblyRecursiveLocation(perceivedGOLocationId, to);
+        }
+
+        // Der SC hat das Game Object irgendwo erwartet!
+
+        if (perceivedGOLocationId == null) {
+            // Aber das Game Object ist nirgendwo. Dann erwähnen,
+            // falls der SC es in to erwartet hat (oder sichtbar rekursiv innerhalb von to).
+            return isOrHasVisiblyRecursiveLocation(assumedGOLocationId, to);
+        }
+
+        // Der SC hat das Game Object irgendwo erwartet - und irgendwo sieht er es auch.
+
+        if (!isOrHasVisiblyRecursiveLocation(perceivedGOLocationId, to)
+                && !isOrHasVisiblyRecursiveLocation(assumedGOLocationId, to)) {
+            // Weder der erwartete noch der wahrgenommene Ort liegen in to (auch nicht
+            // sichtbar rekursiv). Dann nicht erwähnen!
+            return false;
+        }
+
+        // Der wahrgenommene oder der erwartete Ort liegen innerhalb von to (ggf.
+        // sichtbar rekursiv).
+
+        if (!assumedGOLocationId.equals(perceivedGOLocationId)) {
+            // Das movableGameObject ist an einem anderen Ort (innerhalb von to) als
+            // erwartet -> erwähnen!
+            return true;
+        }
+
+        if ( // Der SC hat das Game Object mitgebracht...
+                isOrHasRecursiveLocation(movableGameObject, SPIELER_CHARAKTER)) {
+            // Dann nicht erwaehnen
+            return false;
+        }
+
+        // Der wahrgenommene und der erwartete Ort sind gleich - der Ort liegt innerhalb von to
+        // (ggf. sichtbar rekursiv).
+
+        if (// Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
+            // beschreiben, was sonst auf dem Tisch steht!
+                LocationSystem.isOrHasRecursiveLocation(to, from)) {
+            // Nur, wenn man unter das Bett kriecht, unter das man bisher nicht hat
+            //  sehen können
+            return LocationSystem.isBewegungUeberSichtschranke(from, to);
+        }
+
+        // Ansonsten: Game Object soll beschrieben werden.
+        return true;
+    }
+
+    /**
+     * Gibt <code>true</code> zurück falls
+     * <ul>
+     * <li>das Game Object mit der ID <code>oneId</code>  <code>other</code> ist
+     * <li>oder sich das Game Object mit der ID <code>oneId</code>
+     * an der Location <code>other</code> befindet
+     * (ggf. rekusiv) - soweit die Sichtbarkeit reicht.
+     * </ul>
+     */
+    public boolean isOrHasVisiblyRecursiveLocation(final GameObjectId oneId,
+                                                   @Nullable final IGameObject other) {
+        if (other == null) {
+            return false;
+        }
+
+        return LocationSystem.isOrHasVisiblyRecursiveLocation(load(oneId), other);
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
+     * oder sich (ggf. rekusiv) an dieser Location befindet (soweit die Sichtbarkeit reicht).
+     */
+    public boolean isOrHasVisiblyRecursiveLocation(final GameObjectId gameObjectId,
+                                                   final GameObjectId locationId) {
+        return isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId), locationId);
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
+     * <code>locationIds</code> hat oder
+     * sich (ggf. rekusiv) an einer dieser Locations befindet (soweit die Sichtbarkeit reicht).
+     */
+    public boolean isOrHasVisiblyRecursiveLocation(
+            final GameObjectId gameObjectId, final GameObjectId... locationIds) {
+        for (final GameObjectId locationId : locationIds) {
+            if (isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId), locationId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
+     * oder sich (ggf. rekusiv) an dieser Location befindet - soweit die Sichtbarkeit reicht.
+     */
+    public boolean isOrHasVisiblyRecursiveLocation(@Nullable final IGameObject gameObject,
+                                                   final GameObjectId locationId) {
+        if (gameObject == null) {
+            return false;
+        }
+
+        if (gameObject.getId().equals(locationId)) {
+            return true;
+        }
+
+        final GameObject location = load(locationId);
+
+        return LocationSystem.isOrHasVisiblyRecursiveLocation(gameObject, location);
+    }
+
+
+    /**
      * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
      * <code>locationIds</code> hat oder
      * sich (ggf. rekusiv) an einer dieser Locations befindet.
@@ -597,7 +764,7 @@ public class World {
 
         final GameObject location = load(locationId);
 
-        return isOrHasRecursiveLocation(gameObject, location);
+        return LocationSystem.isOrHasRecursiveLocation(gameObject, location);
     }
 
 
@@ -616,33 +783,7 @@ public class World {
             return false;
         }
 
-        return isOrHasRecursiveLocation((IGameObject) load(oneId), other);
-    }
-
-    /**
-     * Gibt <code>true</code> zurück falls
-     * <ul>
-     * <li><code>one</code>  <code>other</code> ist
-     * <li>oder sich <code>one</code> an der Location <code>other</code> befindet
-     * (ggf. rekusiv).
-     * </ul>
-     */
-    public static boolean isOrHasRecursiveLocation(@Nullable final IGameObject one,
-                                                   @Nullable final IGameObject other) {
-        if (one == null) {
-            return other == null;
-        }
-
-        if (one.equals(other)) {
-            return true;
-        }
-
-        if (!(one instanceof ICanHaveOuterMostLocation)) {
-            return false;
-        }
-
-
-        return ((ICanHaveOuterMostLocation) one).isOrHasRecursiveLocation(other);
+        return LocationSystem.isOrHasRecursiveLocation(load(oneId), other);
     }
 
 
@@ -923,9 +1064,7 @@ public class World {
         res.addAll(directlyContainedList);
 
         for (final LOC_DESC directlyContained : directlyContainedList) {
-            if (directlyContained instanceof ILocationGO
-                    && ((ILocationGO) directlyContained).storingPlaceComp()
-                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+            if (LocationSystem.manKannHinsehenUndLichtScheintHineinUndHinaus(directlyContained)) {
                 res.addAll(
                         loadDescribableVisiblyRecursiveInventory((ILocationGO) directlyContained));
             }

@@ -28,4 +28,6 @@ public interface ICanHaveOuterMostLocation extends IGameObject {
      * </ul>
      */
     boolean isOrHasRecursiveLocation(@Nullable final IGameObject location);
+
+    boolean isOrHasVisiblyRecursiveLocation(@Nullable IGameObject other);
 }

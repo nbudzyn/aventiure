@@ -117,7 +117,8 @@ public class SchlosswacheReactionsComp
 
     private void onSCEnter(@Nullable final ILocationGO from,
                            final ILocationGO to) {
-        if (!to.is(SCHLOSS_VORHALLE)) {
+        if (!locationComp.hasVisiblyRecursiveLocation(to.getId())
+                || isVorScVerborgen()) {
             return;
         }
 
@@ -126,7 +127,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        if (stateComp.hasState(UNAUFFAELLIG)) {
+        if (!world.shouldBeDescribedAfterScMovement(from, to, getGameObjectId())) {
             return;
         }
 
@@ -216,7 +217,6 @@ public class SchlosswacheReactionsComp
      * Gegenstand also genommen, als Geschenk erhalten, heimlich zugesteckt bekommen,
      * in seiner Hand materialisiert o.Ä.
      */
-    @SuppressWarnings("unchecked")
     private void onRelocationToSC(final ILocatableGO locatable,
                                   @Nullable final ILocationGO from) {
         if (from == null || !locationComp.hasRecursiveLocation(from)) {

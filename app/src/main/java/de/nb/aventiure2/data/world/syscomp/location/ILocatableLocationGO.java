@@ -38,4 +38,9 @@ public interface ILocatableLocationGO extends ILocatableGO, ILocationGO {
     default boolean isOrHasRecursiveLocation(@Nullable final IGameObject location) {
         return ILocatableGO.super.isOrHasRecursiveLocation(location);
     }
+
+    @Override
+    default boolean isOrHasVisiblyRecursiveLocation(@Nullable final IGameObject location) {
+        return ILocatableGO.super.isOrHasVisiblyRecursiveLocation(location);
+    }
 }

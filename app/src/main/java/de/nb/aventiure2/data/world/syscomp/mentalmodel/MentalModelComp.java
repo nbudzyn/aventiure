@@ -19,6 +19,7 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
@@ -104,9 +105,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         res.addAll(directlyAssumedList);
 
         for (final ILocatableGO directlyAssumed : directlyAssumedList) {
-            if (directlyAssumed instanceof ILocationGO
-                    && ((ILocationGO) directlyAssumed).storingPlaceComp()
-                    .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
+            if (LocationSystem.manKannHinsehenUndLichtScheintHineinUndHinaus(directlyAssumed)) {
                 res.addAll(getAssumedVisiblyRecursiveInventory(directlyAssumed.getId()));
             }
         }
@@ -154,7 +153,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     @Nullable
     @CheckReturnValue
-    private GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
+    public GameObjectId getAssumedLocationId(final GameObjectId locatableId) {
         if (getGameObjectId().equals(locatableId)) {
             throw new IllegalArgumentException("No assumptions about yourself!");
         }
@@ -280,7 +279,6 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         return requirePcd().getAssumedStateString(gameObjectId);
     }
 
-    @SuppressWarnings("unchecked")
     public <S extends Enum<S>> void setAssumedStateToActual(final GameObjectId gameObjectId) {
         setAssumedStateToActual(world.<IHasStateGO<S>>load(gameObjectId));
     }
@@ -300,7 +298,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     private static <S extends Enum<S>> S getActualState(final IHasStateGO<S> gameObject) {
-        return (S) gameObject.stateComp().getState();
+        return gameObject.stateComp().getState();
     }
 }
 

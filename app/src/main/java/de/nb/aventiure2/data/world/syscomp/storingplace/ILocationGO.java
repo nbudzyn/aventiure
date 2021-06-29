@@ -37,4 +37,9 @@ public interface ILocationGO extends ICanHaveOuterMostLocation {
     default boolean isOrHasRecursiveLocation(@Nullable final IGameObject location) {
         return equals(location);
     }
+
+    @Override
+    default boolean isOrHasVisiblyRecursiveLocation(@Nullable final IGameObject location) {
+        return equals(location);
+    }
 }

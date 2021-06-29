@@ -247,9 +247,6 @@ public class MovementComp
         if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(getCurrentStepToId())) {
             narrateAndDoEnters();
         }
-        // FIXME Prüfen: Ein Moving Being neu in den Raum gekommen ist, während der SC z.B.
-        //  gerade unter einem Bett liegt, müsste der SC beim Herauskriechen eine Info
-        //  bekommen - in der Art ... steht im Raum (sonst nicht üblich bei Movables!)
 
         locationComp.narrateAndDoEnterReactions(
                 getCurrentStepFromId(), getCurrentStepToId()
@@ -432,6 +429,7 @@ public class MovementComp
         // FIXME Prüfen: Wenn das Moving Being der Raum verlässt, während der SC z.B.
         //  gerade unter einem Bett liegt, müsste der SC beim Herauskriechen eine Info
         //  bekommen - in der Art ... ist nicht mehr da (sonst nicht üblich bei Movables!)
+        //  (Evtl. World#shouldBeDescribedAfterScMovement() verwenden?)
 
         locationComp.narrateAndDoLeaveReactions(getCurrentStepToId());
         locationComp.unsetLocation();

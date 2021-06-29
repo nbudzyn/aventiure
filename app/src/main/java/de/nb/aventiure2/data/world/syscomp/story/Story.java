@@ -115,9 +115,17 @@ public enum Story {
     //  - Er wacht wieder auf und sieht z.B. an einer verwelkten Blume, dass er
     //   wiedererweckt worden ist.
 
+    // IDEA Märchen Nummer 29 ("Der Teufel mit den drei Goldenen Haaren"), aber nur
+    //  die ersten 2 Rätsel, evtl die Wachen
+
+    // IDEA Märchen Nummer 40: Schatz wurde geraubt, Alte gibt einem Tipps, hinterher wird
+    //  der Räuberhauptmann irgendwo mit ser Geschichzhte enttarnt..
+    //  Wenn man doch entdeckt wird: "Nur ein Dreikäaehoch, der ist es nicht wert, dass man
+    //  ihn in den Suppentopf wirft", man wird laufen gelassen
+
     // FIXME Risiko angehen: Es gibt kaum geeignete Märchen
-    //  Lösung: 4 weitere geeignete Märchen finden (ab Nummer 22),
-    //  Umsetzung grob anskizzieren.
+    //  Lösung: 2 weitere geeignete Märchen finden (ab Nummer 46),
+    //  Umsetzung hier grob anskizzieren.
 
     @FunctionalInterface
     interface IStoryAdvancer {

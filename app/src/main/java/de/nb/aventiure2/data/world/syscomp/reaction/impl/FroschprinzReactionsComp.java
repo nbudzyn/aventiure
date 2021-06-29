@@ -30,6 +30,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -38,6 +39,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.Gestalt;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
@@ -50,6 +52,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VE
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
@@ -172,13 +175,14 @@ public class FroschprinzReactionsComp
         }
     }
 
-    private void onSCEnter(@Nullable final ILocationGO from,
-                           final ILocationGO to) {
-        if (locationComp.hasRecursiveLocation(SPIELER_CHARAKTER) ||
-                !locationComp.hasLocation(to)) {
-            // Spieler hat nicht die Location betreten, in dem sich der Froschprinz befindet
+    private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        if (!locationComp.hasVisiblyRecursiveLocation(to.getId())
+                || !world.shouldBeDescribedAfterScMovement(from, to, getGameObjectId())) {
             return;
         }
+
+        final String woFroschprinz =
+                locationComp.hasLocation(to) ? "hier" : getWoFroschprinz();
 
         final EinzelneSubstantivischePhrase desc = getDescription();
         switch (stateComp.getState()) {
@@ -188,31 +192,39 @@ public class FroschprinzReactionsComp
             case HAT_HOCHHEBEN_GEFORDERT:
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
 
-                // FIXME Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt
-                //  in einer unauffälligen Ecke im Bettgestellt, dann hier prüfen und ggf.
-                //  beschreiben. Vermeiden unter gewissen Umständen, z.B. wenn der
-                //  SC sich gerade aus dem Bettgestell erhoben hat! (vgl. BewegenAction,
-                //  AblegenAction)
-                n.narrateAlt(
-                        neuerSatz(PARAGRAPH, "Plötzlich sitzt",
-                                desc.nomStr(), // Gerät in Vergessenheit...
-                                "neben dir auf der Bank. „Denk an dein",
-                                "Versprechen“, quakt",
-                                desc.persPron().nomStr(), // Gerät in Vergessenheit...
-                                "dir zu,",
-                                "„Lass uns aus einem Tellerlein essen!“ Du bist ganz",
-                                "erschrocken – was für eine",
-                                "abstoßende Vorstellung!")
-                                .timed(secs(30)),
-                        neuerSatz("Da stößt es schon von der Seite an dein Bein.",
-                                "Du drehst dich",
-                                "hastig weg und dein Herz klopft vor schlechtem",
-                                "Gewissen, als",
-                                "der Frosch „Heb mich herauf, heb mich herauf!“ quakt", PARAGRAPH)
-                                .timed(secs(20)));
+                final AltTimedDescriptionsBuilder alt = altTimed();
+
+                alt.add(neuerSatz(PARAGRAPH, "Plötzlich sitzt",
+                        desc.nomStr(), // Gerät in Vergessenheit...
+                        locationComp.hasLocation(to) ?
+                                "neben dir auf der Bank" : woFroschprinz,
+                        ". „Denk an dein",
+                        "Versprechen“, quakt",
+                        desc.persPron().nomStr(), // Gerät in Vergessenheit...
+                        "dir zu,",
+                        "„Lass uns aus einem Tellerlein essen!“ Du bist ganz",
+                        "erschrocken – was für eine",
+                        "abstoßende Vorstellung!")
+                        .timed(secs(30)));
+                if (locationComp.hasLocation(to)) {
+                    alt.add(neuerSatz("Da stößt es schon von der Seite an dein Bein.",
+                            "Du drehst dich",
+                            "hastig weg und dein Herz klopft vor schlechtem",
+                            "Gewissen, als",
+                            "der Frosch „Heb mich herauf, heb mich herauf!“ quakt",
+                            PARAGRAPH)
+                            .timed(secs(20)));
+                }
+
+                n.narrateAlt(alt);
+
                 return;
             case BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN:
                 loadSC().feelingsComp().requestMood(ANGESPANNT);
+
+                if (!locationComp.hasLocation(to)) {
+                    locationComp.narrateAndSetLocation(to);
+                }
 
                 n.narrateAlt(
                         neuerSatz(PARAGRAPH, "Auf einmal sitzt",
@@ -235,23 +247,31 @@ public class FroschprinzReactionsComp
                                 desc.persPron().nomK(),
                                 "fordert: „Nicht länger gezögert – nun lass uns zusammen",
                                 "essen!“", PARAGRAPH)
-                                .timed(secs(10))
-                );
+                                .timed(secs(10)));
                 return;
             case ZURUECKVERWANDELT_IN_VORHALLE:
+                // fall-through!
             case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
                 onSCEnterPrinzLocation(from, to);
                 return;
             default:
-                // STORY Wenn der Frosch nur rekursiv enthalten ist (Frosch sitzt auf dem Tisch),
-                //  dann beschreiben (vgl. BewegenAction)
-                n.narrate(neuerSatz("Hier sitzt", desc.nomK()).timed(NO_TIME));
+                if (isVorScVerborgen()) {
+                    return;
+                }
+
+                n.narrate(neuerSatz(woFroschprinz, "sitzt", desc.nomK())
+                        .schonLaenger().timed(NO_TIME));
+
                 return;
         }
     }
 
     private void onSCEnterPrinzLocation(
             @Nullable final ILocationGO from, final ILocationGO toAndPrinzLocation) {
+        if (isVorScVerborgen()) {
+            return;
+        }
+
         if (world.isOrHasRecursiveLocation(from, SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 toAndPrinzLocation.is(SCHLOSS_VORHALLE)) {
             prinzVerlaesstSchlossVorhalle();
@@ -264,9 +284,9 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        // TODO Wenn der Prinz nur rekursiv enthalten ist (Prinz sitzt auf einem Stuhl),
-        //  dann genauer beschreiben (vgl. BewegenAction)
-        n.narrate(du("siehst", getDescription().akkK()).schonLaenger()
+        n.narrate(du("siehst", getDescription().akkK(),
+                locationComp.hasLocation(toAndPrinzLocation) ? null : getWoFroschprinz())
+                .schonLaenger()
                 .timed(NO_TIME));
     }
 
@@ -303,11 +323,13 @@ public class FroschprinzReactionsComp
         //  "7 Jahr,! sagt er. 7 Jahre hat ihn keiner gesehen! - Verzaubert, haben sie gesagt.!
         //  Ich glaub sowas ja nicht. Aber sein Vater, der wird Augen machen!"
         //  -> Dem Mann antworten
-        //  -> Bevor du etwas sagen kannst, ist der Mann im Gedränge verschwunden. Was bleibt ist
+        //  -> Bevor du etwas sagen kannst, ist der Mann im Gedränge verschwunden. Was bleibt
+        //  ist
         //  ein
         //  wohliges Gefühl. CHAPTER
         //  -> Nicht reagieren
-        //  Schon ist der Mann im Gedränge verschwunden. Was bleibt ist ein wohliges Gefühl. CHAPTER
+        //  Schon ist der Mann im Gedränge verschwunden. Was bleibt ist ein wohliges Gefühl.
+        //  CHAPTER
         //  Oder:  "Vor dem Schloss sind viele Leute zzsammengekimmen.
         //   Ein einfach gekleideter Mann spricht dich von der Seite an: Ein Prinz azs einen
         //   fernen Land!
@@ -430,7 +452,8 @@ public class FroschprinzReactionsComp
     }
 
     private void onSCEssen() {
-        if (!loadSC().locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
+        if (!loadSC().locationComp()
+                .hasRecursiveLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {
             // Wenn der Spieler nicht im Schloss isst, ist es dem Frosch egal
             return;
         }
@@ -466,14 +489,16 @@ public class FroschprinzReactionsComp
     private void froschprinzHuepftAusTascheUndWillMitessen() {
         locationComp.narrateAndSetLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST,
                 () -> {
-                    n.narrate(neuerSatz("Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
-                            + "du dich's versiehst "
-                            + "hüpft der garstige Frosch heraus. Patsch! – sitzt er neben "
-                            + "dir auf der "
-                            + "Holzbank und drängt sich nass an deinen Oberschenkel. "
-                            + "„Heb mich herauf!“ ruft er "
-                            + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
-                            + "Brunnenwasser? Heb mich herauf!“", PARAGRAPH)
+                    n.narrate(neuerSatz(
+                            "Auf einmal ruckelt es unangenehm in deiner Tasche, und eh "
+                                    + "du dich's versiehst "
+                                    + "hüpft der garstige Frosch heraus. Patsch! – sitzt er "
+                                    + "neben "
+                                    + "dir auf der "
+                                    + "Holzbank und drängt sich nass an deinen Oberschenkel. "
+                                    + "„Heb mich herauf!“ ruft er "
+                                    + "„weißt du nicht, was du zu mir gesagt bei dem kühlen "
+                                    + "Brunnenwasser? Heb mich herauf!“", PARAGRAPH)
                             .timed(secs(25)));
 
                     narrateAndDoFroschHatHochhebenGefordert();
@@ -485,7 +510,8 @@ public class FroschprinzReactionsComp
         n.narrate(du("spürst",
                 "auf einmal etwas Feuchtes an deinem rechten Bein – o "
                         + "nein, der "
-                        + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was du "
+                        + "garstige Frosch! „Heb mich herauf!“, ruft er, „weißt du nicht, was"
+                        + " du "
                         + "zu mir gesagt bei dem kühlen Brunnenwasser? Heb mich herauf!“",
                 PARAGRAPH)
                 .mitVorfeldSatzglied("auf einmal")
@@ -565,10 +591,18 @@ public class FroschprinzReactionsComp
         );
     }
 
+    private String getWoFroschprinz() {
+        @Nullable final ILocationGO location = locationComp.getLocation();
+        if (location == null) {
+            return "hier";
+        }
+
+        return location.storingPlaceComp().getLocationMode().getWo(
+                stateComp.getState().hasGestalt(Gestalt.FROSCH));
+    }
 
     private boolean schlossfestHatBegonnen() {
-        return loadSchlossfest()
-                .stateComp().hasState(BEGONNEN, VERWUESTET);
+        return loadSchlossfest().stateComp().hasState(BEGONNEN, VERWUESTET);
     }
 
     @NonNull

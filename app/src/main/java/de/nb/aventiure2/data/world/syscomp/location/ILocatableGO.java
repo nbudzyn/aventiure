@@ -42,4 +42,18 @@ public interface ILocatableGO extends ICanHaveOuterMostLocation {
 
         return locationComp().hasRecursiveLocation((ILocationGO) location);
     }
+
+    @Override
+    default boolean isOrHasVisiblyRecursiveLocation(@Nullable final IGameObject location) {
+        if (equals(location)) {
+            return true;
+        }
+
+        if (!(location instanceof ILocationGO)) {
+            return false;
+        }
+
+        return locationComp().hasVisiblyRecursiveLocation(location.getId());
+    }
+
 }

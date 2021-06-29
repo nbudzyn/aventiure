@@ -13,6 +13,7 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -172,7 +173,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             final ILocationGO to,
             final FROM movingGOFrom) {
         if (scFrom != null) {
-            if (World.isOrHasRecursiveLocation(scFrom, movingGOFrom)) {
+            if (LocationSystem.isOrHasRecursiveLocation(scFrom, movingGOFrom)) {
                 @Nullable SpatialConnection conn = null;
                 if (scFrom instanceof ISpatiallyConnectedGO) {
                     final ISpatiallyConnectedGO scFromSpatiallyConnected =
@@ -255,7 +256,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         }
 
         // FIXME Wieder entfernen, wenn Problem behoben!
-        if (gameObjectId == World.RAPUNZELS_ZAUBERIN
+        if (gameObjectId.equals(World.RAPUNZELS_ZAUBERIN)
                 && (world.<ITalkerGO<?>>load(World.RAPUNZELS_ZAUBERIN)
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
                 || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
@@ -320,7 +321,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         }
 
         // FIXME Wieder entfernen, wenn Problem behoben!
-        if (gameObjectId == World.RAPUNZELS_ZAUBERIN
+        if (gameObjectId.equals(World.RAPUNZELS_ZAUBERIN)
                 && (world.<ITalkerGO<?>>load(World.RAPUNZELS_ZAUBERIN)
                 .talkingComp().isTalkingTo(World.SPIELER_CHARAKTER)
                 || loadSC().talkingComp().isTalkingTo(World.RAPUNZELS_ZAUBERIN))) {
@@ -392,7 +393,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();
 
-            if (World.isOrHasRecursiveLocation(scLastLocation, from)) {
+            if (LocationSystem.isOrHasRecursiveLocation(scLastLocation, from)) {
                 narrateMovingGOKommtSCNach(
                         spatialConnection, numberOfWaysIn);
                 return;

@@ -247,13 +247,13 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
         final GameObject location = world.load(locationId);
 
-        if (!(location instanceof ILocationGO)
-                || !((ILocationGO) location).storingPlaceComp()
+        @Nullable final ILocationGO myLocation = getLocation();
+        if (myLocation == null || !myLocation.storingPlaceComp()
                 .manKannHineinsehenUndLichtScheintHineinUndHinaus()) {
             return false;
         }
 
-        return hasRecursiveLocation((ILocationGO) location);
+        return myLocation.isOrHasVisiblyRecursiveLocation(location);
     }
 
     /**
