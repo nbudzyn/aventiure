@@ -68,6 +68,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VE
 import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -308,6 +309,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final boolean inSublocationInDieManNichtHineinsehenKonnte =
                 toIsEqualOrInsideOldLocation
                         && LocationSystem.isBewegungUeberSichtschranke(oldLocation, to);
+
         if (// Wenn man z.B. in einem Zimmer auf einen Tisch steigt: Nicht noch einmal
             // beschreiben, was sonst auf dem Tisch steht!
                 !toIsEqualOrInsideOldLocation
@@ -449,10 +451,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "geblieben?"),
                 neuerSatz("wo", istSind, "denn", aufzaehlung.nomK(), "abgeblieben?"),
                 du("kannst", aufzaehlung.akkK(), "nirgendwo entdecken")
-                        .schonLaenger()
-                ,
-                neuerSatz("von", aufzaehlung.datK(), "keine Spur!")
-        );
+                        .schonLaenger(),
+                neuerSatz(VON.mit(aufzaehlung), "keine Spur!"));
 
         if (missingObjects.size() == 2) {
             alt.add(neuerSatz("weder",

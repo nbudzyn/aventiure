@@ -48,7 +48,7 @@ interface IMovementNarrator {
     <FROM extends ILocationGO & ISpatiallyConnectedGO>
     void narrateAndDoEnters(FROM from,
                             ILocationGO to,
-                            SpatialConnection spatialConnection,
+                            @Nullable SpatialConnection spatialConnection,
                             NumberOfWays numberOfWaysIn);
 
     /**

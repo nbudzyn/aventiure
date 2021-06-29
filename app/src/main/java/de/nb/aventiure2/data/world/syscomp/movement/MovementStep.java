@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import androidx.annotation.NonNull;
+
 import java.util.Objects;
 
 import javax.annotation.concurrent.Immutable;
@@ -28,6 +30,7 @@ class MovementStep {
         return startTime.plus(expDuration);
     }
 
+    @NonNull
     GameObjectId getFromId() {
         return fromId;
     }

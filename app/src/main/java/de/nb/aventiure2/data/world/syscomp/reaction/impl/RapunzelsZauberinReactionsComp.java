@@ -196,7 +196,8 @@ public class RapunzelsZauberinReactionsComp
     private void narrateAndDoScTrifftEvtlZauberinImDazwischen(final ILocationGO scFrom,
                                                               @Nullable final
                                                               ILocationGO scTo) {
-        if (scTo != null && movementComp.isMoving() && locationComp.getLocationId() == null) {
+        if (scTo != null && movementComp.isMoving()
+                && locationComp.getLocationId() == null) {
             // Zauberin ist in Bewegung - und gerade im "Dazwischen"
 
             final boolean spielerHatZauberinUeberholt =

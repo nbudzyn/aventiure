@@ -8,6 +8,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import java.util.Collection;
 
+import javax.annotation.Nonnull;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
@@ -220,7 +222,7 @@ public class MovementComp
             narrateAndDoMovementLeaves();
         }
 
-        while (now.isEqualOrAfter(getCurrentStep().getExpDoneTime())) {
+        while (now.isEqualOrAfter(requireCurrentStep().getExpDoneTime())) {
             if (!narrateAndMoveOneStep()) {
                 // Das IMovingGO soll am Zielort des Schritts stehenbleiben.
                 return;
@@ -242,15 +244,14 @@ public class MovementComp
     private boolean narrateAndMoveOneStep() {
         checkState(hasCurrentStep(), "No current step");
 
-        locationComp.setLocation(getCurrentStepToId());
+        locationComp.setLocation(requireCurrentStepToId());
 
-        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(getCurrentStepToId())) {
+        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(requireCurrentStepToId())) {
             narrateAndDoEnters();
         }
 
-        locationComp.narrateAndDoEnterReactions(
-                getCurrentStepFromId(), getCurrentStepToId()
-        );
+        locationComp
+                .narrateAndDoEnterReactions(requireCurrentStepFromId(), requireCurrentStepToId());
 
         if (locationComp.hasLocation(getTargetLocationId())) {
             stopMovement();
@@ -261,7 +262,7 @@ public class MovementComp
             return false;
         }
 
-        setupNextStepIfNecessaryAndPossible(getCurrentStep().getExpDoneTime());
+        setupNextStepIfNecessaryAndPossible(requireCurrentStep().getExpDoneTime());
         if (!hasCurrentStep()
                 || requirePcd().getPauseForSCAction() == PAUSED
                 || conversationable.isInConversation()) {
@@ -302,12 +303,12 @@ public class MovementComp
     private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoEnters() {
         checkState(hasCurrentStep(), "No current step");
 
-        final FROM from = getCurrentStepFrom();
+        final FROM from = requireCurrentStepFrom();
 
         @Nullable final SpatialConnection spatialConnection =
-                from.spatialConnectionComp().getConnection(getCurrentStepToId());
+                from.spatialConnectionComp().getConnection(requireCurrentStepToId());
 
-        final ILocationGO to = getCurrentStepTo();
+        final ILocationGO to = requireCurrentStepTo();
 
         final NumberOfWays numberOfWaysIn =
                 to instanceof ISpatiallyConnectedGO ?
@@ -421,29 +422,29 @@ public class MovementComp
     }
 
     private void narrateAndDoMovementLeaves() {
+        checkState(hasCurrentStep(), "No current step");
+
         requirePcd().setPauseForSCAction(UNPAUSED);
 
-        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(getCurrentStepFromId())) {
+        if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(requireCurrentStepFromId())) {
             narrateAndDoLeaves();
         }
-        // FIXME Prüfen: Wenn das Moving Being der Raum verlässt, während der SC z.B.
-        //  gerade unter einem Bett liegt, müsste der SC beim Herauskriechen eine Info
-        //  bekommen - in der Art ... ist nicht mehr da (sonst nicht üblich bei Movables!)
-        //  (Evtl. World#shouldBeDescribedAfterScMovement() verwenden?)
 
-        locationComp.narrateAndDoLeaveReactions(getCurrentStepToId());
+        locationComp.narrateAndDoLeaveReactions(requireCurrentStepToId());
         locationComp.unsetLocation();
         // Ab jetzt befindet sich das IMovingBeing im "Dazwischen" zwischen
         // from und to.
     }
 
     private <FROM extends ILocationGO & ISpatiallyConnectedGO> void narrateAndDoLeaves() {
-        final FROM from = getCurrentStepFrom();
+        checkState(hasCurrentStep(), "No current step");
+
+        final FROM from = requireCurrentStepFrom();
 
         movementNarrator.narrateAndDoLeaves(
                 from,
-                getCurrentStepTo(),
-                from.spatialConnectionComp().getConnection(getCurrentStepToId()),
+                requireCurrentStepTo(),
+                from.spatialConnectionComp().getConnection(requireCurrentStepToId()),
                 from.spatialConnectionComp().getNumberOfWaysOut());
 
         requirePcd().setHatDenSCGeradeVerlassen(true);
@@ -452,6 +453,8 @@ public class MovementComp
     public void narrateAndDoScTrifftMovingGOImDazwischen(
             @Nullable final ILocationGO scFrom,
             final ILocationGO scTo) {
+        checkState(hasCurrentStep(), "No current step");
+
         narrateScTrifftMovingGOImDazwischen(scFrom, scTo);
 
         world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
@@ -478,10 +481,12 @@ public class MovementComp
 
     private void narrateScTrifftMovingGOImDazwischen(@Nullable final ILocationGO scFrom,
                                                      final ILocationGO scTo) {
+        checkState(hasCurrentStep(), "No current step");
+
         movementNarrator.narrateScTrifftMovingGOImDazwischen(
                 scFrom,
                 scTo,
-                requireNonNull(getCurrentStepFrom()));
+                requireCurrentStepFrom());
     }
 
     public boolean isMoving() {
@@ -518,12 +523,21 @@ public class MovementComp
         return getCurrentStep() != null;
     }
 
+    @Nonnull
+    public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM requireCurrentStepFrom() {
+        return requireNonNull(getCurrentStepFrom());
+    }
+
     @Nullable
-    @SuppressWarnings("unchecked")
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM getCurrentStepFrom() {
         @Nullable final GameObjectId currentStepFromId = getCurrentStepFromId();
 
         return currentStepFromId != null ? world.load(currentStepFromId) : null;
+    }
+
+    @Nonnull
+    private ILocationGO requireCurrentStepTo() {
+        return requireNonNull(getCurrentStepTo());
     }
 
     @Nullable
@@ -531,6 +545,12 @@ public class MovementComp
         @Nullable final GameObjectId currentStepToId = getCurrentStepToId();
 
         return currentStepToId != null ? world.load(currentStepToId) : null;
+    }
+
+    @Nonnull
+    @VisibleForTesting
+    public GameObjectId requireCurrentStepFromId() {
+        return requireNonNull(getCurrentStepFromId());
     }
 
     @Nullable
@@ -541,12 +561,23 @@ public class MovementComp
         return currentStep != null ? currentStep.getFromId() : null;
     }
 
+    @Nonnull
+    @VisibleForTesting
+    public GameObjectId requireCurrentStepToId() {
+        return requireNonNull(getCurrentStepToId());
+    }
+
     @Nullable
     @VisibleForTesting
-    public GameObjectId getCurrentStepToId() {
+    private GameObjectId getCurrentStepToId() {
         @Nullable final MovementStep currentStep = getCurrentStep();
 
         return currentStep != null ? currentStep.getToId() : null;
+    }
+
+    @Nonnull
+    private MovementStep requireCurrentStep() {
+        return requireNonNull(getCurrentStep());
     }
 
     @Nullable

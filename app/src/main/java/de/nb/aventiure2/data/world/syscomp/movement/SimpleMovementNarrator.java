@@ -394,8 +394,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                     loadSC().locationComp().getLastLocation();
 
             if (LocationSystem.isOrHasRecursiveLocation(scLastLocation, from)) {
-                narrateMovingGOKommtSCNach(
-                        spatialConnection, numberOfWaysIn);
+                narrateMovingGOKommtSCNach(spatialConnection, numberOfWaysIn);
                 return;
             }
 

@@ -27,7 +27,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinSt
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-@SuppressWarnings("unchecked")
 public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     // ---------------------------------------------
     // Relative Bewegungen von Zauberin und SC
@@ -37,7 +36,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO>
     void zauberinUnbewegt_scBewegtSichWoanders__keineErwaehnung() {
         // GIVEN
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         // Zauberin unbewegt
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
@@ -52,7 +51,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO>
     void zauberinUnbewegt_scBewegtSichZumMovingBeing__Narration() {
         // GIVEN
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         // Zauberin unbewegt
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
@@ -69,7 +68,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO & IMovingGO>
     void zauberinInBewegung_scKommtIhrEntgegen__Narration() {
         // GIVEN
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
         zauberin.movementComp().startMovement(
                 timeTaker.now(), IM_WALD_NAHE_DEM_SCHLOSS
@@ -88,7 +87,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     public <Z extends IResponder & ILocatableGO & IMovingGO>
     void zauberinInBewegung_scUeberholtZauberin__Narration() {
         // GIVEN
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
         zauberin.movementComp().startMovement(
                 timeTaker.now(), IM_WALD_NAHE_DEM_SCHLOSS
@@ -108,7 +107,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
     void scUnbewegt_zauberinUnbewegt__KeineNarration() {
         // GIVEN
         // Zauberin unbewegt
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
         loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
@@ -126,7 +125,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         // GIVEN
         loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(ABZWEIG_IM_WALD);
 
         // WHEN
@@ -148,7 +147,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         // GIVEN
         loadSC().locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.locationComp().setLocation(VOR_DER_HUETTE_IM_WALD);
 
         // WHEN
@@ -175,7 +174,7 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         timeTaker.setNow(new AvDateTime(1, oClock(16)));
         loadSC().locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
-        final Z zauberin = (Z) world.load(RAPUNZELS_ZAUBERIN);
+        final Z zauberin = world.load(RAPUNZELS_ZAUBERIN);
         zauberin.stateComp().setState(AUF_DEM_WEG_ZU_RAPUNZEL);
         zauberin.locationComp().setLocation(VOR_DEM_ALTEN_TURM);
 
@@ -188,8 +187,9 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
         // Ist die Zauberin schon wieder losgegangen
         assertThat(zauberin.movementComp().isMoving()).isTrue();
         assertThat(zauberin.locationComp().hasNoLocation()).isTrue();
-        assertThat(zauberin.movementComp().getCurrentStepFromId()).isEqualTo(VOR_DEM_ALTEN_TURM);
-        assertThat(zauberin.movementComp().getCurrentStepToId())
+        assertThat(zauberin.movementComp().requireCurrentStepFromId())
+                .isEqualTo(VOR_DEM_ALTEN_TURM);
+        assertThat(zauberin.movementComp().requireCurrentStepToId())
                 .isEqualTo(IM_WALD_NAHE_DEM_SCHLOSS);
     }
 
@@ -197,8 +197,8 @@ public class RapunzelsZauberinReactionsCompTest extends AndroidTestBase {
             final Z responder, final GameObjectId fromId, final GameObjectId toId) {
         loadSC().locationComp().setLocation(fromId);
 
-        final ILocationGO from = (ILocationGO) world.load(fromId);
-        final ILocationGO to = (ILocationGO) world.load(toId);
+        final ILocationGO from = world.load(fromId);
+        final ILocationGO to = world.load(toId);
         ((RapunzelsZauberinReactionsComp) responder.reactionsComp())
                 .onLeave(loadSC(), from, to);
 
