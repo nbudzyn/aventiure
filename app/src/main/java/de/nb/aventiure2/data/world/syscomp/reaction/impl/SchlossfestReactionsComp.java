@@ -54,7 +54,6 @@ public class SchlossfestReactionsComp
             case NOCH_NICHT_BEGONNEN:
                 break;
             case BEGONNEN:
-
                 if (WetterData.contains(wetterSteps, STURM)) {
                     stateComp.narrateAndSetState(VERWUESTET);
 
@@ -74,9 +73,8 @@ public class SchlossfestReactionsComp
                 }
                 break;
             case VERWUESTET:
-                // FIXME Das Schlossfest könnte auch einen State WIEDER_AUFGEBAUT
+                // IDEA: Das Schlossfest könnte auch einen State WIEDER_AUFGEBAUT
                 //  erhalten.
-                // FIXME Wenn der SC den State-Wechsel miterlebt, muss die App das speichern!
                 break;
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());

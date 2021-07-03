@@ -74,9 +74,6 @@ public class HolzFuerStrickleiterReactionsComp
                 scErlebtAesteWurdenZwischenzeitlichVonDenBaeumenGebrchen();
             }
         }
-
-        // FIXME Danach sollte sich das Wetter wieder normalisieren
-        //  (Planwetter -> null).
     }
 
     private void scErlebtAesteWerdenVonDenBaeumenGebrochen() {

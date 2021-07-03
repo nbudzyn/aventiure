@@ -133,7 +133,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             case VERWUESTET:
                 res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
                 break;
-            // FIXME SC kennt Schlossfest im Sturm, aber jetzt wieder aufgebaut:
+            // IDEA SC kennt Schlossfest im Sturm, aber jetzt wieder aufgebaut:
             //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
             //   gerichtet und es herscht wieder reges Treiben"
             default:

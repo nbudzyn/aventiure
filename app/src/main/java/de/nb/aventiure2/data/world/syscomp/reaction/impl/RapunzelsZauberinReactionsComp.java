@@ -630,10 +630,6 @@ public class RapunzelsZauberinReactionsComp
             return;
         }
 
-        // FIXME Am Ende geht die Zauberin, wenn Rapunzel trotz Rufens die Haare nicht
-        //  heruntergelassen hat, davon aus, dass Rapunzel befreit wurde.
-        //  (Oder der SC wird zuvor enttarnt.)
-
         zauberinSteigtNachMoeglichkeitZuRapunzelHinauf();
     }
 

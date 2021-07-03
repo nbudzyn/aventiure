@@ -99,12 +99,6 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             "hinauf.\n"
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "
                                     + "Tisch, Stuhl, ein Bett"),
-                    // FIXME Tagsüber wird dieser Satz gewählt - offenbar, weil die Kammer
-                    //  als "drinnen" und "unbeleuchtet" gilt. Das ist unglücklich, denn
-                    //  eigentlich strahlt ja das Tageslicht durch das Fenster herein
-                    //  (auch wenn die Kammer nicht nach oben offen ist). Wie ist das zu lösen
-                    //  (die Kammer ist - anders als das Schloss - nicht dauerhaft beleuchtet!)
-                    //  Gibt es das Problem auch bei der Hütte (oder ergibt es dort sogar Sinn)?
                     du(SENTENCE, "steigst",
                             "vorsichtig hinauf und klettest durch das Fensterchen "
                                     + "in eine kleine Kammer. Alles ist dunkel, ein Bett kannst "
