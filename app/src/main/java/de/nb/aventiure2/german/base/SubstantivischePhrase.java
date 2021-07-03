@@ -18,6 +18,46 @@ import static de.nb.aventiure2.german.base.Person.P3;
 public interface SubstantivischePhrase
         extends DeklinierbarePhrase, SubstPhrOderReflexivpronomen, Praedikativum {
     @Override
+    SubstantivischePhrase ohneNegationspartikelphrase();
+
+    /**
+     * Verknüpft die Substantivische Phrase mit dieser Negation - verwendet dabei
+     * nach Möglichkeit negativ-indefinite Wörter:
+     * <ul>
+     * <li>"der Mörder" -> "nicht der Mörder"
+     * <li>"ein Mörder" -> "kein Mörder"
+     * <li>"ein Verdächtiger" -> "schon lange kein Verdächtiger mehr"
+     * </ul>
+     *
+     * @param negationspartikelphrase Die Negationspartikelphrase: "nicht",
+     *                                "noch nicht",
+     *                                "nicht mehr", "längst nicht mehr" o.Ä.
+     */
+    default SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase) {
+        return neg(negationspartikelphrase, true);
+    }
+
+    /**
+     * Verknüpft die Substantivische Phrase mit dieser Negation:
+     * <ul>
+     * <li>"der Mörder" -> "nicht der Mörder"
+     * <li>"ein Mörder" -> "nicht ein Mörder" / "kein Mörder"
+     * <li>"ein Verdächtiger" ->  "schon lange nicht mehr Verdächtiger" / "schon lange kein
+     * Verdächtiger mehr"
+     * </ul>
+     *
+     * @param negationspartikelphrase                     Die Negationspartikelphrase: "nicht",
+     *                                                    "noch nicht",
+     *                                                    "nicht mehr", "längst nicht mehr" o.Ä.
+     * @param moeglichstNegativIndefiniteWoerterVerwenden Ob statt "nicht ..." möglichst
+     *                                                    negativ-indefinitve Wörter verwendet
+     *                                                    werden sollen, z.B. "kein...",
+     *                                                    "niemand" etc.
+     */
+    SubstantivischePhrase neg(Negationspartikelphrase negationspartikelphrase,
+                              boolean moeglichstNegativIndefiniteWoerterVerwenden);
+
+    @Override
     SubstantivischePhrase ohneFokuspartikel();
 
     /**
@@ -26,6 +66,17 @@ public interface SubstantivischePhrase
      * wird die Partikel verworfen)
      */
     SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
+
+    @Override
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                              @Nullable
+                                              final Negationspartikelphrase negationspartikel) {
+        if (negationspartikel == null) {
+            return getPraedikativ(person, numerus);
+        }
+
+        return neg(negationspartikel).getPraedikativ(person, numerus);
+    }
 
     @Override
     @CheckReturnValue

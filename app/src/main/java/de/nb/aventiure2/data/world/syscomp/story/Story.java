@@ -29,6 +29,9 @@ public enum Story {
     //  gerade zum / kurz vor dem entscheidenden Zeitpunkt daher! ("Wir wollten gerade das Schloss
     //  stürmen und das Klnigreich übernehnen).
 
+    // IDEA Die NSCs treiben die Handlung! Den SC nicht zur Geschichte zwingen - er tut, was er mag,
+    //  hat aber manchmal nur Möglichkeiten im Rahmen der Handlung.
+
     // IDEA https://www.technicalgrimoire.com/downloads - alternative Ideen zum Tod
 
     // FIXME 1W6-Freunde Abenteuergenerator-Tabelle

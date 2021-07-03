@@ -11,6 +11,6 @@ public class SchlossfestStateComp extends NonScModifiableStateComp<SchlossfestSt
     public SchlossfestStateComp(final AvDatabase db,
                                 final TimeTaker timeTaker,
                                 final World world) {
-        super(SCHLOSSFEST, db, timeTaker, world, SchlossfestState.class, NOCH_NICHT_BEGONNEN);
+        super(SCHLOSSFEST, db, timeTaker, world, NOCH_NICHT_BEGONNEN);
     }
 }

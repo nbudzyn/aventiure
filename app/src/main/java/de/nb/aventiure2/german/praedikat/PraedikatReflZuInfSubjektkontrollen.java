@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
@@ -61,7 +62,7 @@ public class PraedikatReflZuInfSubjektkontrollen
             final Kasus kasus,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         this(verb, kasus, ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null, lexikalischerKern);
     }
 
@@ -70,12 +71,13 @@ public class PraedikatReflZuInfSubjektkontrollen
             final Kasus kasus,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.lexikalischerKern = lexikalischerKern;
     }
@@ -88,7 +90,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                 kasus,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
@@ -105,7 +107,27 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
+                lexikalischerKern);
+    }
+
+    @Override
+    public PraedikatReflZuInfSubjektkontrollen neg() {
+        return (PraedikatReflZuInfSubjektkontrollen) super.neg();
+    }
+
+    @Override
+    public PraedikatReflZuInfSubjektkontrollen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatReflZuInfSubjektkontrollen(
+                getVerb(), kasus,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
     }
@@ -121,7 +143,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                 getVerb(),
                 kasus,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
@@ -139,7 +161,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                 kasus,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe,
                 lexikalischerKern
         );
@@ -149,21 +171,6 @@ public class PraedikatReflZuInfSubjektkontrollen
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
         // *"Dich gefreut, sie zu sehen, [gehst du ins Bad]"
         return false;
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final Person person, final Numerus numerus) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        // ?"Rapunzel freust du, dich zu sehen" - eher nicht.
-
-        return null;
     }
 
     @Override
@@ -188,6 +195,7 @@ public class PraedikatReflZuInfSubjektkontrollen
                         advAngabeSkopusVerbAllg.getDescription(personSubjekt,
                                 numerusSubjekt) :  // "erneut"
                         null, // (ins Nachfeld verschieben)
+                getNegationspartikel(), // "nicht"
                 advAngabeSkopusVerbAllg != null &&
                         !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
                         // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
@@ -299,16 +307,11 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     @CheckReturnValue
     public Konstituentenfolge getRelativpronomen() {
-        @Nullable final Konstituentenfolge res = lexikalischerKern.getRelativpronomen();
-        if (res != null) {
-            return res;
-        }
-
-        return null;
+        return lexikalischerKern.getRelativpronomen();
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

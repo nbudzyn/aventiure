@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
@@ -41,7 +42,7 @@ public class ReflPraedikatSubOhneLeerstellen
     ReflPraedikatSubOhneLeerstellen(final Verb verb,
                                     final Kasus reflKasus) {
         this(verb, reflKasus, ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -50,11 +51,12 @@ public class ReflPraedikatSubOhneLeerstellen
             final Kasus reflKasus,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.reflKasus = reflKasus;
     }
 
@@ -66,7 +68,7 @@ public class ReflPraedikatSubOhneLeerstellen
                 reflKasus,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -80,9 +82,28 @@ public class ReflPraedikatSubOhneLeerstellen
 
         return new ReflPraedikatSubOhneLeerstellen(
                 getVerb(), reflKasus, getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+
+    @Override
+    public ReflPraedikatSubOhneLeerstellen neg() {
+        return (ReflPraedikatSubOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public ReflPraedikatSubOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new ReflPraedikatSubOhneLeerstellen(
+                getVerb(), reflKasus, getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -95,7 +116,7 @@ public class ReflPraedikatSubOhneLeerstellen
         return new ReflPraedikatSubOhneLeerstellen(
                 getVerb(), reflKasus,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -111,7 +132,7 @@ public class ReflPraedikatSubOhneLeerstellen
                 getVerb(), reflKasus,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -131,9 +152,11 @@ public class ReflPraedikatSubOhneLeerstellen
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
-                Reflexivpronomen.get(personSubjekt, numerusSubjekt).imK(reflKasus), // "sich"
+                Reflexivpronomen.get(personSubjekt, numerusSubjekt).imK(reflKasus),
+                // "sich" - wird nach links versetzt :-)
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "in den Wald"
         );

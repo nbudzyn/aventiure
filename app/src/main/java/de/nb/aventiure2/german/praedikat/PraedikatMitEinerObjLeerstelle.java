@@ -76,7 +76,7 @@ class PraedikatMitEinerObjLeerstelle implements PraedikatMitEinerObjektleerstell
                 kasusOderPraepositionalkasus,
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
                 substPhr, ImmutableList.of(),
-                null, null,
+                null, null, null,
                 advAngabeSkopusVerbWohinWoher);
     }
 }

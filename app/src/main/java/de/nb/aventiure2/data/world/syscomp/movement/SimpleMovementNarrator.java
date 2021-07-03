@@ -387,8 +387,6 @@ public class SimpleMovementNarrator implements IMovementNarrator {
                 !world.hasSameOuterMostLocationAsSC(
                         loadSC().locationComp().getLastLocation()
                 )
-            // FIXME Prüfen: Fälle, wenn SC unter dem Bett hervorkriecht oder unters Bett
-            //  kriecht
         ) {
             @Nullable final ILocationGO scLastLocation =
                     loadSC().locationComp().getLastLocation();

@@ -13,6 +13,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -28,7 +29,7 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
     @Valenz
     PraedikatSubOhneLeerstellen(final Verb verb) {
         this(verb, ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -36,11 +37,12 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
             final Verb verb,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
                 getVerb(),
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -64,11 +66,28 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
 
         return new PraedikatSubOhneLeerstellen(
                 getVerb(), getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
 
+    @Override
+    public PraedikatSubOhneLeerstellen neg() {
+        return (PraedikatSubOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatSubOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatSubOhneLeerstellen(
+                getVerb(), getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
+    }
 
     @Override
     public PraedikatSubOhneLeerstellen mitAdvAngabe(
@@ -80,7 +99,7 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
         return new PraedikatSubOhneLeerstellen(
                 getVerb(),
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -96,7 +115,7 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
                 getVerb(),
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -113,11 +132,11 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
             final Person personSubjekt, final Numerus numerusSubjekt) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
-                // "aus einer Laune heraus"
+                        numerusSubjekt),// "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // "in den Wald"
         );

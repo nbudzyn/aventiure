@@ -74,7 +74,8 @@ public class FullWalkthrough {
                     "Mit dem Frosch diskutieren",
                     "Eintopf essen",
                     "Vom Tisch aufstehen",
-                    "Das Schloss verlassen und in den Schlossgarten gehen");
+                    "Das Schloss verlassen und in den Schlossgarten gehen",
+                    "Dem Mann antworten");
     public static final Walkthrough ANFANG_BIS_PRINZABFAHRT =
             ANFANG_BIS_SCHLOSSFEST_SCHLOSS_BETRETEN
                     .append(SCHLOSSFEST_SCHLOSS_BETRETEN_BIS_PRINZABFAHRT);

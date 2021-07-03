@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -240,6 +241,12 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
                                                                    final Numerus numerus) {
         return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(person, numerus
         );
+    }
+
+    @Override
+    public PraedikatSubOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        return toPraedikat().neg(negationspartikelphrase);
     }
 
     @Override

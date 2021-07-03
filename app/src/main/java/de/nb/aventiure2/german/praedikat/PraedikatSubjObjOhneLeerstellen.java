@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -67,7 +68,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
                 objekt,
                 ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -78,11 +79,12 @@ public class PraedikatSubjObjOhneLeerstellen
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
     }
@@ -96,7 +98,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -114,10 +116,33 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
+
+    @Override
+    public PraedikatSubjObjOhneLeerstellen neg() {
+        return (PraedikatSubjObjOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatSubjObjOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatSubjObjOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus,
+                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
+                objekt,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
+    }
+
 
     @Override
     public PraedikatSubjObjOhneLeerstellen mitAdvAngabe(
@@ -132,7 +157,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
                 objekt,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -151,7 +176,7 @@ public class PraedikatSubjObjOhneLeerstellen
                 objekt,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -173,6 +198,10 @@ public class PraedikatSubjObjOhneLeerstellen
             return speziellesVorfeldFromSuper;
         }
 
+        if (getNegationspartikel() != null) {
+            return null;
+        }
+
         if (inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
             final Konstituentenfolge vorfeldCandidate = objekt.imK(kasusOderPraepositionalkasus);
             if (vorfeldCandidate.size() == 1 && vorfeldCandidate.get(0) instanceof Konstituente) {
@@ -192,6 +221,10 @@ public class PraedikatSubjObjOhneLeerstellen
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
+        }
+
+        if (getNegationspartikel() != null) {
+            return null;
         }
 
         /*
@@ -222,8 +255,12 @@ public class PraedikatSubjObjOhneLeerstellen
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),// "aus einer Laune heraus"
+                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                // "besser doch (nicht)"
+                getNegationspartikel(), // "nicht"
                 objekt.imK(kasusOderPraepositionalkasus),
-                kf(getModalpartikeln()), // "mal eben"
+                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                // "besser doch"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
@@ -311,7 +348,7 @@ public class PraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
 
         if (this == o) {
             return true;

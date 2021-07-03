@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -71,7 +72,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
             final SubstantivischePhrase objekt,
             final WoertlicheRede woertlicheRede) {
         this(verb, kasusOderPraepositionalkasus, objekt, woertlicheRede,
-                ImmutableList.of(), null, null, null);
+                ImmutableList.of(), null, null, null, null);
     }
 
     private PraedikatObjWoertlicheRedeOhneLeerstellen(
@@ -81,11 +82,12 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
             final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
         this.woertlicheRede = woertlicheRede;
@@ -98,7 +100,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 getVerb(), kasusOderPraepositionalkasus, objekt, woertlicheRede,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -114,9 +116,29 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt, woertlicheRede,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikatObjWoertlicheRedeOhneLeerstellen neg() {
+        return (PraedikatObjWoertlicheRedeOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatObjWoertlicheRedeOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatObjWoertlicheRedeOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus, objekt, woertlicheRede,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -130,7 +152,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt, woertlicheRede,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -147,7 +169,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 kasusOderPraepositionalkasus, objekt, woertlicheRede,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -192,7 +214,8 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
         /*
          * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
          * (Eisenberg Der Satz 5.4.2)
-         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
+         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel oder
+         * Negationspartikelphrasen haben)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
             return null;
@@ -223,6 +246,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
                 kf(getModalpartikeln()),  // "mal eben"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // ("mitten ins Gesicht" - sofern überhaupt möglich)
         );

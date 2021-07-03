@@ -10,6 +10,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UN
 public class FroschprinzStateComp extends NonScModifiableStateComp<FroschprinzState> {
     public FroschprinzStateComp(final AvDatabase db, final TimeTaker timeTaker,
                                 final World world) {
-        super(FROSCHPRINZ, db, timeTaker, world, FroschprinzState.class, UNAUFFAELLIG);
+        super(FROSCHPRINZ, db, timeTaker, world, UNAUFFAELLIG);
     }
 }

@@ -12,6 +12,6 @@ public class SchlosswacheStateComp extends NonScModifiableStateComp<Schlosswache
                                  final AvDatabase db,
                                  final TimeTaker timeTaker,
                                  final World world) {
-        super(gameObjectId, db, timeTaker, world, SchlosswacheState.class, UNAUFFAELLIG);
+        super(gameObjectId, db, timeTaker, world, UNAUFFAELLIG);
     }
 }

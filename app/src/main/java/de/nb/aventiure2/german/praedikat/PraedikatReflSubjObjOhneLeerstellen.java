@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -65,7 +66,7 @@ class PraedikatReflSubjObjOhneLeerstellen
         this(verb, reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
                 objekt,
                 ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -76,11 +77,12 @@ class PraedikatReflSubjObjOhneLeerstellen
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb,
                 modalpartikeln,
-                advAngabeSkopusSatz, advAngabeSkopusVerbAllg,
+                advAngabeSkopusSatz, negationspartikelphrase, advAngabeSkopusVerbAllg,
                 advAngabeSkopusVerbWohinWoher);
         this.reflKasusOderPraepositionalKasus = reflKasusOderPraepositionalKasus;
         this.objektKasusOderPraepositionalkasus = objektKasusOderPraepositionalkasus;
@@ -95,7 +97,7 @@ class PraedikatReflSubjObjOhneLeerstellen
                 objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -111,9 +113,29 @@ class PraedikatReflSubjObjOhneLeerstellen
                 getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
                 objekt,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikatReflSubjObjOhneLeerstellen neg() {
+        return (PraedikatReflSubjObjOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatReflSubjObjOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatReflSubjObjOhneLeerstellen(
+                getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
+                objekt,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -127,7 +149,7 @@ class PraedikatReflSubjObjOhneLeerstellen
                 getVerb(), reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
                 objekt,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -144,7 +166,7 @@ class PraedikatReflSubjObjOhneLeerstellen
                 objekt,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -198,8 +220,11 @@ class PraedikatReflSubjObjOhneLeerstellen
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt),
                 // "aus einer Laune heraus"
+                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                // "besser doch (nicht...)"
+                getNegationspartikel(), // "nicht"
                 objekt.imK(objektKasusOderPraepositionalkasus), // "die goldene Kugel"
-                kf(getModalpartikeln()), // "besser doch"
+                getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 Reflexivpronomen.get(personSubjekt, numerusSubjekt)

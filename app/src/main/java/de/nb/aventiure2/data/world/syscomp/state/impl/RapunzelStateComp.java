@@ -10,6 +10,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.UNAEU
 public class RapunzelStateComp extends NonScModifiableStateComp<RapunzelState> {
     public RapunzelStateComp(final AvDatabase db, final TimeTaker timeTaker,
                              final World world) {
-        super(RAPUNZEL, db, timeTaker, world, RapunzelState.class, UNAEUFFAELLIG);
+        super(RAPUNZEL, db, timeTaker, world, UNAEUFFAELLIG);
     }
 }

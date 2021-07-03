@@ -8,7 +8,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 public class Interrogativpronomen
-        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
+        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe
         implements IInterrogativwort {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public static final Interrogativpronomen WER =
@@ -23,7 +23,13 @@ public class Interrogativpronomen
 
     private Interrogativpronomen(final NumerusGenus numerusGenus,
                                  final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, flextionsreihe, null);
+        this(numerusGenus, null, flextionsreihe);
+    }
+
+    private Interrogativpronomen(final NumerusGenus numerusGenus,
+                                 @Nullable final Negationspartikelphrase negationspartikelphrase,
+                                 final Flexionsreihe flextionsreihe) {
+        super(numerusGenus, negationspartikelphrase, flextionsreihe, null);
     }
 
     /**
@@ -34,6 +40,23 @@ public class Interrogativpronomen
     public Interrogativpronomen mitFokuspartikel(
             @Nullable final String fokuspartikel) {
         return this;
+    }
+
+    @Override
+    public SubstantivischePhrase ohneNegationspartikelphrase() {
+        if (getNegationspartikelphrase() == null) {
+            return this;
+        }
+
+        return new Interrogativpronomen(getNumerusGenus(), null,
+                getFlexionsreihe());
+    }
+
+    @Override
+    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
+                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        return new Interrogativpronomen(getNumerusGenus(), negationspartikelphrase,
+                getFlexionsreihe());
     }
 
     @Override

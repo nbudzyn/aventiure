@@ -18,7 +18,8 @@ import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
 import static java.util.Objects.requireNonNull;
 
-public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne {
+public class Relativpronomen extends
+        SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe {
     public enum Typ {
         // "das Kind, das"
         REGEL,
@@ -171,7 +172,10 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
                             final NumerusGenus numerusGenus,
                             final Flexionsreihe flexionsreihe,
                             @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(numerusGenus, flexionsreihe, bezugsobjekt);
+        super(numerusGenus,
+                // Relativpronommen können keine Negationspartikelphrasen haben:
+                // *"das Kind, nicht das..."
+                null, flexionsreihe, bezugsobjekt);
         this.person = person;
     }
 
@@ -189,7 +193,23 @@ public class Relativpronomen extends SubstantivischesPronomenMitVollerFlexionsre
             return this;
         }
 
-        return new Relativpronomen(person, getNumerusGenus(), getFlexionsreihe(), bezugsobjekt);
+        return new Relativpronomen(person, getNumerusGenus(),
+                getFlexionsreihe(), bezugsobjekt);
+    }
+
+    @Override
+    public SubstantivischePhrase ohneNegationspartikelphrase() {
+        // Relativpronommen können keine Negationspartikelphrasen haben:
+        // *"das Kind, nicht das..."
+        return this;
+    }
+
+    @Override
+    public Relativpronomen neg(final Negationspartikelphrase negationspartikelphrase,
+                               final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        // Relativpronommen können keine Negationspartikelphrasen haben:
+        // *"das Kind, nicht das..."
+        return this;
     }
 
     @Override

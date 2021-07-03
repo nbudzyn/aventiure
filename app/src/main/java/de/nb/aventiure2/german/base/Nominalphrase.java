@@ -12,6 +12,8 @@ import de.nb.aventiure2.german.satz.Satz;
 
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.getNegativeForm;
+import static de.nb.aventiure2.german.base.Artikel.Typ.isNegativ;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
@@ -28,7 +30,7 @@ import static de.nb.aventiure2.german.base.Person.P3;
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
 public class Nominalphrase
-        extends EinzelneSubstantivischePhraseMitOptFokuspartikel
+        extends EinzelneKomplexeSubstantivischePhrase
         implements IErlaubtAttribute {
     @Nullable
     private final Artikel.Typ artikelTyp;
@@ -37,7 +39,6 @@ public class Nominalphrase
     private final AdjPhrOhneLeerstellen adjPhr;
 
     private final Flexionsreihe flexionsreiheArtikellos;
-
 
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
     public static final Nominalphrase BLICK_AUF_DEN_STERNENHIMMEL =
@@ -299,16 +300,18 @@ public class Nominalphrase
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
                           @Nullable final IBezugsobjekt bezugsobjekt) {
-        this(null, numerusGenus, artikelTyp, adjPhr, flexionsreiheArtikellos, bezugsobjekt);
+        this(null, null,
+                numerusGenus, artikelTyp, adjPhr, flexionsreiheArtikellos, bezugsobjekt);
     }
 
     private Nominalphrase(final @Nullable String fokuspartikel,
+                          final @Nullable Negationspartikelphrase negationspartikelphrase,
                           final NumerusGenus numerusGenus,
                           @Nullable final Artikel.Typ artikelTyp,
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
                           @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(fokuspartikel, numerusGenus, bezugsobjekt);
+        super(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt);
         this.artikelTyp = artikelTyp;
         this.adjPhr = adjPhr;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
@@ -324,7 +327,31 @@ public class Nominalphrase
             return this;
         }
 
-        return new Nominalphrase(fokuspartikel, getNumerusGenus(), artikelTyp,
+        return new Nominalphrase(fokuspartikel, getNegationspartikelphrase(),
+                getNumerusGenus(), artikelTyp,
+                adjPhr,
+                flexionsreiheArtikellos, getBezugsobjekt());
+    }
+
+    @Override
+    public SubstantivischePhrase ohneNegationspartikelphrase() {
+        return this;
+    }
+
+    @Override
+    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
+                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        @Nullable final Artikel.Typ negativerArtikeltyp =
+                moeglichstNegativIndefiniteWoerterVerwenden ?
+                        getNegativeForm(artikelTyp) : null;
+
+        // Wir speichern die Negationspartikelphrase in jedem Fall - weil sie auch
+        // Dinge wie "noch (nicht)" oder "(nicht) mehr" könnte.
+
+        return new Nominalphrase(getFokuspartikel(),
+                // Hier wird ggf. eine bestehende negationspartikelphrase überschrieben.
+                negationspartikelphrase,
+                getNumerusGenus(), negativerArtikeltyp,
                 adjPhr,
                 flexionsreiheArtikellos, getBezugsobjekt());
     }
@@ -415,16 +442,36 @@ public class Nominalphrase
         @Nullable final AdjPhrOhneLeerstellen attributivAnteilLockererNachtrag = adjPhr != null ?
                 adjPhr.getAttributivAnteilLockererNachtrag(kasus) : null;
 
+        @Nullable final String anteilNegationspartikelphraseVorArtikelUndNominalphrasenkern =
+                getNegationspartikelphrase() != null ?
+                        (isNegativ(artikelTyp) ?
+                                getNegationspartikelphrase().getVorangestellteWoerter() :
+                                // "länger( kein ... mehr)"
+                                getNegationspartikelphrase().getDescription()) :
+                        // "länger nicht mehr"
+                        null;
+
+        @Nullable final String anteilNegationspartikelphraseNachNominalphrasenkern =
+                (getNegationspartikelphrase() != null && isNegativ(artikelTyp)) ?
+                        getNegationspartikelphrase().getNachgestellteWoerter() :
+                        // "(länger kein ... )mehr"
+                        null;
+
         return joinToKonstituentenfolge(
                 // Eine Konstituentenfolge mit nur einer Konstituente
                 joinToKonstituentenfolge(
                         getFokuspartikel(), // "sogar"
-                        mitArtikel && artikel != null ? artikel.imStr(kasus) : null, // "die"
+                        !isNegativ(artikelTyp) ? getNegationspartikelphrase() : null,
+                        anteilNegationspartikelphraseVorArtikelUndNominalphrasenkern,
+                        // "länger" (vor "kein") / "länger nicht mehr" (nicht vor "kein")
+                        mitArtikel && artikel != null ? artikel.imStr(kasus) : null,
+                        // "die" / "eine" / "keine"
                         adjPhr != null ?
                                 adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), kasus,
                                         artikelwortTraegtKasusendung) :
                                 null, // "junge"
                         flexionsreiheArtikellos.im(kasus), // "Frau"
+                        anteilNegationspartikelphraseNachNominalphrasenkern, // "mehr" (nach "kein")
                         attributivAnteilRelativsatz != null ?
                                 schliesseInKommaEin(attributivAnteilRelativsatz.getRelativsatz())
                                 // , die sich fragt, ob du wohl kommst [,]

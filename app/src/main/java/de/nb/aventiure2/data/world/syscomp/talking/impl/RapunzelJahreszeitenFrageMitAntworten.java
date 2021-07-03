@@ -8,8 +8,8 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
-import de.nb.aventiure2.data.world.syscomp.talking.IScBegruessable;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -23,7 +23,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ANTWORTEN;
 
-class RapunzelJahreszeitenFrageMitAntworten extends AbstractFrageMitAntworten {
+class RapunzelJahreszeitenFrageMitAntworten extends RapunzelFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         FRAGE_BEANTWORTET
@@ -33,8 +33,8 @@ class RapunzelJahreszeitenFrageMitAntworten extends AbstractFrageMitAntworten {
                                           final Narrator n, final World world,
                                           final RapunzelStateComp stateComp,
                                           final FeelingsComp feelingsComp,
-                                          final IScBegruessable begruesstMitScSetter) {
-        super(RAPUNZEL, counterDao, n, world, stateComp, feelingsComp, begruesstMitScSetter);
+                                          final ITalkContext talkContext) {
+        super(RAPUNZEL, counterDao, n, world, stateComp, feelingsComp, talkContext);
     }
 
     @Override
@@ -113,7 +113,7 @@ class RapunzelJahreszeitenFrageMitAntworten extends AbstractFrageMitAntworten {
 
         stateComp.narrateAndSetState(NORMAL);
 
-        scBegruessable.setSchonBegruesstMitSC(true);
+        talkContext.setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().requestMoodMin(BEWEGT);
     }
 

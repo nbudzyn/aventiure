@@ -15,6 +15,7 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
+import static java.util.Objects.requireNonNull;
 
 public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL = ImmutableMap.of(
@@ -32,18 +33,8 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     private final String dativ;
     private final String akkusativ;
 
-    public static boolean isReflexivpronomen(final String string) {
-        return ALL.values().stream()
-                .flatMap(m -> m.values().stream())
-                .anyMatch(p -> p.isWortform(string));
-    }
-
-    private boolean isWortform(final String string) {
-        return dativ.equals(string) || akkusativ.equals(string);
-    }
-
     public static Reflexivpronomen get(final Person person, final Numerus numerus) {
-        return ALL.get(numerus).get(person);
+        return requireNonNull(ALL.get(numerus)).get(person);
     }
 
     private Reflexivpronomen(final String dativAkkusativ) {
@@ -67,6 +58,21 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
 
     @Override
     public Reflexivpronomen ohneFokuspartikel() {
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public Negationspartikelphrase getNegationspartikelphrase() {
+        // Es wäre etwas wie "nicht sich selbst" möglich - aber nicht bei
+        // echt reflexivem Gebrauch:
+        // "Ich habe nicht mich selbst gewaschen.", aber
+        // *"Ich habe das Buch nicht an mich selbst genommen."
+        return null;
+    }
+
+    @Override
+    public SubstPhrOderReflexivpronomen ohneNegationspartikelphrase() {
         return this;
     }
 

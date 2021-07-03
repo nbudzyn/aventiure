@@ -159,7 +159,6 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 );
             case ZURUECKVERWANDELT_IN_VORHALLE:
             case ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN:
-                return ImmutableList.of();
             default:
                 throw new IllegalStateException("Unexpected Froschprinz state: "
                         + stateComp.getState());

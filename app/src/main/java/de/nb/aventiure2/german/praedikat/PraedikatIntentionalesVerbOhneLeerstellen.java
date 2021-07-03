@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -51,7 +52,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
             final Verb verb,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         this(verb, ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null, lexikalischerKern);
     }
 
@@ -59,12 +60,13 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
             final Verb verb,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.lexikalischerKern = lexikalischerKern;
     }
 
@@ -75,12 +77,11 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                 getVerb(),
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
     }
-
 
     @Override
     public PraedikatIntentionalesVerbOhneLeerstellen mitAdvAngabe(
@@ -92,7 +93,26 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         return new PraedikatIntentionalesVerbOhneLeerstellen(
                 getVerb(),
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
+                lexikalischerKern);
+    }
+
+    @Override
+    public PraedikatIntentionalesVerbOhneLeerstellen neg() {
+        return (PraedikatIntentionalesVerbOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatIntentionalesVerbOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatIntentionalesVerbOhneLeerstellen(
+                getVerb(), getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
     }
@@ -107,7 +127,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         return new PraedikatIntentionalesVerbOhneLeerstellen(
                 getVerb(),
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
@@ -124,12 +144,11 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                 getVerb(),
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe,
                 lexikalischerKern
         );
     }
-
 
     @Override
     public boolean kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden() {
@@ -174,6 +193,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                         advAngabeSkopusVerbAllg.getDescription(personSubjekt,
                                 numerusSubjekt) :  // "erneut"
                         null, // (ins Nachfeld verschieben)
+                getNegationspartikel(), // "nicht"
                 advAngabeSkopusVerbAllg != null &&
                         !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
                         // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
@@ -276,7 +296,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

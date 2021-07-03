@@ -14,6 +14,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -54,7 +55,7 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitModalpartikeln(
+    public ZweiPraedikateOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
         return new ZweiPraedikateOhneLeerstellen(
                 erstes.mitModalpartikeln(modalpartikeln),
@@ -70,6 +71,16 @@ public class ZweiPraedikateOhneLeerstellen
                 erstes.mitAdvAngabe(advAngabe),
                 konnektor,
                 zweites
+        );
+    }
+
+    @Override
+    public ZweiPraedikateOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        return new ZweiPraedikateOhneLeerstellen(
+                erstes.neg(negationspartikelphrase),
+                konnektor,
+                zweites.neg(negationspartikelphrase)
         );
     }
 

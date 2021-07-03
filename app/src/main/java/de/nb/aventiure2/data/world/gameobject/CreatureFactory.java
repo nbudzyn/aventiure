@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveComp;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.MultiDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzeDescriptionComp;
@@ -43,6 +42,7 @@ import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.LobebauerReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
@@ -58,16 +58,21 @@ import de.nb.aventiure2.data.world.syscomp.taking.impl.RapunzelTakingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.impl.LobebauerTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINFACH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GEKLEIDET;
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MANN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
@@ -122,6 +127,30 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                 stateComp,
                 talkingComp,
                 new FroschprinzReactionsComp(db, n, world, stateComp, locationComp, talkingComp));
+    }
+
+    GameObject createLobebauer() {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(LOBEBAUER,
+                        np(INDEF,
+                                GEKLEIDET.mitAdvAngabe(new AdvAngabeSkopusSatz(EINFACH)),
+                                MANN,
+                                LOBEBAUER),
+                        np(DEF,
+                                GEKLEIDET.mitAdvAngabe(new AdvAngabeSkopusSatz(EINFACH)),
+                                MANN,
+                                LOBEBAUER),
+                        np(MANN, LOBEBAUER));
+        final LocationComp locationComp =
+                new LocationComp(LOBEBAUER, db, world, null, null,
+                        false);
+        final LobebauerTalkingComp talkingComp =
+                new LobebauerTalkingComp(db, timeTaker, n, world, locationComp);
+        final LobebauerReactionsComp reactionsComp =
+                new LobebauerReactionsComp(db.counterDao(), n, world, talkingComp);
+
+        return new SimpleTalkingReactionsCreature<>(LOBEBAUER,
+                descriptionComp, locationComp, talkingComp, reactionsComp);
     }
 
     GameObject createRapunzel() {
@@ -276,20 +305,55 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         return ImmutableMap.of(
                 RAPUNZEL, ImmutableMap.of(
                         FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
-                        (float) FeelingIntensity.DEUTLICH
-                )
-        );
+                        (float) FeelingIntensity.DEUTLICH));
     }
 
+    private static class SimpleTalkingReactionsCreature<TALKING_COMP extends AbstractTalkingComp>
+            extends SimpleObject
+            implements ILivingBeingGO, ITalkerGO<TALKING_COMP>, IResponder {
+        private final AliveComp aliveComp;
+        private final TALKING_COMP talkingComp;
+        private final AbstractReactionsComp reactionsComp;
 
-    private static class BasicCreature<S extends Enum<S>> extends StateObject<S>
-            implements IDescribableGO, ILivingBeingGO {
+        SimpleTalkingReactionsCreature(
+                final GameObjectId id,
+                final AbstractDescriptionComp descriptionComp, final LocationComp locationComp,
+                final TALKING_COMP talkingComp,
+                final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp);
+            // Jede Komponente muss registiert werden!
+            aliveComp = addComponent(new AliveComp(id));
+            this.talkingComp = addComponent(talkingComp);
+            this.reactionsComp = addComponent(reactionsComp);
+        }
+
+        @Nonnull
+        @Override
+        public AliveComp aliveComp() {
+            return aliveComp;
+        }
+
+        @NonNull
+        @Override
+        public AbstractReactionsComp reactionsComp() {
+            return reactionsComp;
+        }
+
+        @NonNull
+        @Override
+        public TALKING_COMP talkingComp() {
+            return talkingComp;
+        }
+    }
+
+    private static class BasicStatefulCreature<S extends Enum<S>> extends StateObject<S>
+            implements ILivingBeingGO {
         private final AliveComp alive;
 
-        private BasicCreature(final GameObjectId id,
-                              final AbstractDescriptionComp descriptionComp,
-                              final LocationComp locationComp,
-                              final AbstractStateComp<S> stateComp) {
+        private BasicStatefulCreature(final GameObjectId id,
+                                      final AbstractDescriptionComp descriptionComp,
+                                      final LocationComp locationComp,
+                                      final AbstractStateComp<S> stateComp) {
             super(id, descriptionComp, locationComp, stateComp);
             // Jede Komponente muss registiert werden!
             alive = addComponent(new AliveComp(id));
@@ -303,7 +367,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
     }
 
     private static class ReactionsCreature<S extends Enum<S>>
-            extends BasicCreature<S>
+            extends BasicStatefulCreature<S>
             implements IResponder {
         private final AbstractReactionsComp reactionsComp;
 

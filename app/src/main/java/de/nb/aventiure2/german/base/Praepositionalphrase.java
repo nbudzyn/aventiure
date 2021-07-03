@@ -59,14 +59,18 @@ public class Praepositionalphrase implements Praedikativum, IAlternativeKonstitu
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return joinToKonstituentenfolge(
-                modAdverbOderAdjektiv,
+    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                             @Nullable final
+                                             Negationspartikelphrase negationspartikelphrase) {
+        return joinToKonstituentenfolge( // ("er ist")
+                negationspartikelphrase, // "noch nicht lange"
+                modAdverbOderAdjektiv, // "am"
                 // Es sollte wohl eher selten sein, dass man ein prädikativ
                 // gebrauchte Phrase danach mit "er..." referenziert.
                 // Allerdings könnte ein enthaltenes Substantiv zur Verwirrung
                 // führen.
-                praepositionMitKasus.getDescription(substPhrOderReflPron).ohneBezugsobjekt());
+                praepositionMitKasus.getDescription(substPhrOderReflPron)
+                        .ohneBezugsobjekt()); // "Arsch"
     }
 
     @Override

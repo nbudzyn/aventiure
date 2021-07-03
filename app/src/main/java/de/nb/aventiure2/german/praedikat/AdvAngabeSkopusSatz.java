@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
@@ -32,6 +33,10 @@ public class AdvAngabeSkopusSatz
 
     public AdvAngabeSkopusSatz(final Praepositionalphrase praepositionalphrase) {
         super(praepositionalphrase);
+    }
+
+    public AdvAngabeSkopusSatz(final Negationspartikelphrase negationspartikelphrase) {
+        super(negationspartikelphrase.getDescription());
     }
 
     /**

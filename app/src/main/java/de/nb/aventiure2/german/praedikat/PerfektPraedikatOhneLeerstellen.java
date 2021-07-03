@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -60,6 +61,13 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // erlauben keine zusätzlichen Angaben für das Hilfsverb haben / sein.
         return new PerfektPraedikatOhneLeerstellen(
                 lexikalischerKern.mitAdvAngabe(advAngabe));
+    }
+
+    @Override
+    public PraedikatOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        return new PerfektPraedikatOhneLeerstellen(
+                lexikalischerKern.neg(negationspartikelphrase));
     }
 
     @Override

@@ -21,7 +21,8 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static java.util.Objects.requireNonNull;
 
-public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne {
+public class Personalpronomen extends
+        SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe {
     private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL = ImmutableMap.of(
             P1,
             alleGenera(P1,
@@ -52,8 +53,13 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
             return false;
         }
 
-        final Personalpronomen personalpronomen = (Personalpronomen) substPhrOderReflexivpronomen;
+        return isEs((Personalpronomen) substPhrOderReflexivpronomen, kasusOderPraepositionalkasus);
+    }
 
+    private static boolean isEs(final Personalpronomen personalpronomen,
+                                final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
+        // "es" ist nicht phrasenbildend, kann also keine Fokuspartikel oder
+        //         Negationspartikelphrasen haben
         return personalpronomen.getPerson() == P3
                 && personalpronomen.getNumerusGenus() == N
                 && (kasusOderPraepositionalkasus == NOM || kasusOderPraepositionalkasus == AKK);
@@ -88,10 +94,6 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
         return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
     }
 
-    /**
-     * Fügt der substantivischen Phrase etwas hinzu wie "auch", "allein", "ausgerechnet",
-     * "wenigstens" etc.
-     */
     @Override
     public Personalpronomen ohneFokuspartikel() {
         return (Personalpronomen) super.ohneFokuspartikel();
@@ -109,7 +111,27 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
             return this;
         }
 
-        return new Personalpronomen(fokuspartikel, person, getNumerusGenus(),
+        return new Personalpronomen(fokuspartikel, getNegationspartikelphrase(), person,
+                getNumerusGenus(),
+                getFlexionsreihe(), getBezugsobjekt());
+    }
+
+    @Override
+    public Personalpronomen ohneNegationspartikelphrase() {
+        if (getNegationspartikelphrase() == null) {
+            return this;
+        }
+
+        return new Personalpronomen(getFokuspartikel(), null, person,
+                getNumerusGenus(),
+                getFlexionsreihe(), getBezugsobjekt());
+    }
+
+    @Override
+    public Personalpronomen neg(@Nullable final Negationspartikelphrase negationspartikelphrase,
+                                final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        return new Personalpronomen(getFokuspartikel(), negationspartikelphrase, person,
+                getNumerusGenus(),
                 getFlexionsreihe(), getBezugsobjekt());
     }
 
@@ -118,7 +140,8 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
             return this;
         }
 
-        return new Personalpronomen(getFokuspartikel(), person, getNumerusGenus(),
+        return new Personalpronomen(getFokuspartikel(), getNegationspartikelphrase(), person,
+                getNumerusGenus(),
                 getFlexionsreihe(), bezugsobjekt);
     }
 
@@ -133,25 +156,45 @@ public class Personalpronomen extends SubstantivischesPronomenMitVollerFlexionsr
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe,
                              @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(fokuspartikel, numerusGenus, flexionsreihe,
+        this(fokuspartikel, null, person, numerusGenus, flexionsreihe,
+                bezugsobjekt);
+    }
+
+
+    private Personalpronomen(@Nullable final String fokuspartikel,
+                             @Nullable final Negationspartikelphrase negationspartikelphrase,
+                             final Person person,
+                             final NumerusGenus numerusGenus,
+                             final Flexionsreihe flexionsreihe,
+                             @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(fokuspartikel, negationspartikelphrase, numerusGenus, flexionsreihe,
                 person == P3 ? bezugsobjekt : null);
         this.person = person;
     }
 
     @Override
     public final String imStr(final Kasus kasus) {
-        if (getFokuspartikel() != null
-                && isPersonalpronomenEs(this, kasus)) {
-            return ohneFokuspartikel().imStr(kasus);
+        if (isPersonalpronomenEs(this, kasus)) {
+            // "es" ist nicht phrasenbildend - also keine Fokuspartikel erlaubt.
+            if (getFokuspartikel() != null) {
+                return ohneFokuspartikel().imStr(kasus);
+            }
         }
+
+        // Weil "es" nicht phrasenbildend ist, ist vermutlich eigentlich auch
+        // "nicht es" falsch. Wir generieren es hier trotzdem - alles
+        // andere wäre aufwendig, man müsste stattdessen "nicht das Haus" o.Ä.
+        // erzeugen - und "das Haus" ist in dieser Komponente zurzeit
+        // gar nicht bekannt. Die einfache Alternative, dass imStr() oder imK()
+        // @Nullable wären und der Aufrufer immer mit null rechnen müsste, wäre
+        // ein Alptraum!
 
         return super.imStr(kasus);
     }
 
-
     @Override
     public Personalpronomen persPron() {
-        return ohneFokuspartikel();
+        return Personalpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
     }
 
     @Override

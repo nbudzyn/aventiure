@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -47,7 +48,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             final Verb verb,
             final AdjPhrOhneLeerstellen adjektivphrase) {
         this(verb, adjektivphrase,
-                ImmutableList.of(), null, null,
+                ImmutableList.of(), null, null, null,
                 null);
     }
 
@@ -56,11 +57,12 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
             final AdjPhrOhneLeerstellen adjektivphrase,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.adjektivphrase = adjektivphrase;
     }
 
@@ -71,7 +73,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 getVerb(), adjektivphrase,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -87,9 +89,30 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 getVerb(),
                 adjektivphrase,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen neg() {
+        return (PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen) super
+                .neg();
+    }
+
+    @Override
+    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(
+                getVerb(),
+                adjektivphrase,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -103,7 +126,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 getVerb(),
                 adjektivphrase,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -120,7 +143,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 adjektivphrase,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -156,6 +179,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "leider"
                 kf(getModalpartikeln()), // "halt"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
@@ -229,7 +253,7 @@ public class PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

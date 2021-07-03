@@ -33,12 +33,15 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
     }
 
     @Override
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                             @Nullable final Negationspartikelphrase negationspartikel) {
+        // "schon lange kein Esel mehr und schon lange nicht mehr doof"
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erst.getPraedikativ(person, numerus),
+                erst.getPraedikativ(person, numerus, negationspartikel),
                 schliesseInKommaEin(
                         joinToKonstituentenfolge(
-                                konnektor, zweit.getPraedikativ(person, numerus)),
+                                konnektor,
+                                zweit.getPraedikativ(person, numerus, negationspartikel)),
                         konnektorErfordertKommata)
         );
     }

@@ -40,7 +40,7 @@ import static java.util.Objects.requireNonNull;
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD>
-        implements IScBegruessable, IConversationable {
+        implements ITalkContext, IConversationable {
     private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
 
@@ -149,11 +149,13 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
     }
 
-    protected void talkerBeendetGespraech() {
+    @Override
+    public void talkerBeendetGespraech() {
         unsetTalkingTo(true);
     }
 
-    protected void gespraechspartnerBeendetGespraech() {
+    @Override
+    public void gespraechspartnerBeendetGespraech() {
         unsetTalkingTo(false);
     }
 

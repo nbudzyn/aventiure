@@ -18,6 +18,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -47,18 +48,19 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
     PraedikatWoertlicheRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede) {
         this(verb, woertlicheRede, ImmutableList.of(), null,
-                null, null);
+                null, null, null);
     }
 
     private PraedikatWoertlicheRedeOhneLeerstellen(
             final Verb verb, final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.woertlicheRede = woertlicheRede;
     }
 
@@ -69,11 +71,10 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                 getVerb(), woertlicheRede,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
-
 
     @Override
     public PraedikatWoertlicheRedeOhneLeerstellen mitAdvAngabe(
@@ -86,9 +87,29 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                 getVerb(),
                 woertlicheRede,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikatWoertlicheRedeOhneLeerstellen neg() {
+        return (PraedikatWoertlicheRedeOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatWoertlicheRedeOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatWoertlicheRedeOhneLeerstellen(
+                getVerb(),
+                woertlicheRede,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -102,7 +123,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                 getVerb(),
                 woertlicheRede,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -119,7 +140,7 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                 woertlicheRede,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -139,6 +160,10 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                         nachAnschlusswort);
         if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
             return speziellesVorfeldSehrErwuenschtFromSuper;
+        }
+
+        if (getNegationspartikel() != null) {
+            return null;
         }
 
         if (!nachAnschlusswort
@@ -163,8 +188,9 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
                 kf(getModalpartikeln()),  // "mal eben"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
-// "in ein Kissen"
+                // "in ein Kissen"
         );
     }
 
@@ -251,7 +277,8 @@ public class PraedikatWoertlicheRedeOhneLeerstellen
         if (!super.equals(o)) {
             return false;
         }
-        final PraedikatWoertlicheRedeOhneLeerstellen that = (PraedikatWoertlicheRedeOhneLeerstellen) o;
+        final PraedikatWoertlicheRedeOhneLeerstellen that =
+                (PraedikatWoertlicheRedeOhneLeerstellen) o;
         return woertlicheRede.equals(that.woertlicheRede);
     }
 

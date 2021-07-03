@@ -21,8 +21,8 @@ import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.InterrogativadverbVerbAllg;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -135,9 +135,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private final RapunzelStateComp stateComp;
     private final FeelingsComp feelingsComp;
 
-    private final AbstractFrageMitAntworten jahreszeitenFrage;
-    private final AbstractFrageMitAntworten kugelherkunftsfrage;
-    private final AbstractFrageMitAntworten naschereifrage;
+    private final RapunzelFrageMitAntworten jahreszeitenFrage;
+    private final RapunzelFrageMitAntworten kugelherkunftsfrage;
+    private final RapunzelFrageMitAntworten naschereifrage;
 
     public RapunzelTalkingComp(final AvDatabase db,
                                final TimeTaker timeTaker,

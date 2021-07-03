@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.base.Person.P3;
  */
 @ParametersAreNonnullByDefault
 public class Indefinitpronomen
-        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelne
+        extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe
         implements IErlaubtAttribute {
     public static final Indefinitpronomen ALLES =
             ip(N, Relativpronomen.Typ.WERWAS, fr("alles", "allem"));
@@ -83,7 +83,14 @@ public class Indefinitpronomen
     private Indefinitpronomen(final NumerusGenus numerusGenus,
                               final Relativpronomen.Typ relPronTyp,
                               final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, flextionsreihe, null);
+        this(numerusGenus, null, relPronTyp, flextionsreihe);
+    }
+
+    private Indefinitpronomen(final NumerusGenus numerusGenus,
+                              @Nullable final Negationspartikelphrase negationspartikelphrase,
+                              final Relativpronomen.Typ relPronTyp,
+                              final Flexionsreihe flextionsreihe) {
+        super(numerusGenus, negationspartikelphrase, flextionsreihe, null);
         this.relPronTyp = relPronTyp;
     }
 
@@ -94,6 +101,23 @@ public class Indefinitpronomen
     @Override
     public Indefinitpronomen mitFokuspartikel(@Nullable final String fokuspartikel) {
         return this;
+    }
+
+    @Override
+    public Indefinitpronomen ohneNegationspartikelphrase() {
+        if (getNegationspartikelphrase() == null) {
+            return this;
+        }
+
+        return new Indefinitpronomen(getNumerusGenus(), null, relPronTyp,
+                getFlexionsreihe());
+    }
+
+    @Override
+    public Indefinitpronomen neg(final Negationspartikelphrase negationspartikelphrase,
+                                 final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        return new Indefinitpronomen(getNumerusGenus(), negationspartikelphrase, relPronTyp,
+                getFlexionsreihe());
     }
 
     @Override

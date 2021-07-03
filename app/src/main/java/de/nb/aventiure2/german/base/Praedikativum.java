@@ -60,12 +60,23 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird, - ohne den Anteil, der nach Möglichkeit
      * ins Nachfeld gestellt werden soll.
      */
-    @CheckReturnValue
     default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus) {
-        return getPraedikativ(person, numerus).cutLast(
+        return getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus, null);
+    }
+
+    /**
+     * Gibt die Phrase zurück, wie sie als Prädikativum für ein Subjekt in dieser
+     * Person und diesem Numerus verwendet wird, - ohne den Anteil, der nach Möglichkeit
+     * ins Nachfeld gestellt werden soll, - und ggf. mit dieser Negationsphrase verknüpft.
+     */
+    default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
+            final Person person, final Numerus numerus,
+            @Nullable final Negationspartikelphrase negationspartikel) {
+        return getPraedikativ(person, numerus, negationspartikel).cutLast(
                 getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
     }
+
 
     /**
      * Gibt die prädikative Form zurück: "hoch", "glücklich, dich zu sehen",
@@ -80,7 +91,19 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird:
      * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher" o.Ä.
      */
-    Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus);
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+        return getPraedikativ(person, numerus, null);
+    }
+
+    /**
+     * Gibt die Phrase zurück, wie sie als Prädikativum für ein Subjekt in dieser
+     * Person und diesem Numerus verwendet wird, ggf. mit dieser Negation
+     * verknüpft
+     * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher",
+     * "(Ich bin) kein Esel", "(Er ist) nicht doof)o.Ä.
+     */
+    Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                      @Nullable Negationspartikelphrase negationspartikel);
 
     /**
      * Liefert die Teil-Konstituenten-Folge von {@link #getPraedikativ(Person, Numerus)},
@@ -94,5 +117,4 @@ public interface Praedikativum {
     @CheckReturnValue
     Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
             final Person person, final Numerus numerus);
-
 }

@@ -86,6 +86,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     LUFT(F),
     LUFTHAUCH(M),
     LUFTZUG(M),
+    MANN(M),
     MITTAG(M),
     MITTAGSHITZE(F),
     MITTAGSSONNE(F),
@@ -290,6 +291,24 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     @Override
     public Nominalphrase mitFokuspartikel(@Nullable final String fokuspartikel) {
         return toNominalphrase().mitFokuspartikel(fokuspartikel);
+    }
+
+    @Override
+    public SubstantivischePhrase ohneNegationspartikelphrase() {
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public Negationspartikelphrase getNegationspartikelphrase() {
+        return null;
+    }
+
+    @Override
+    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
+                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        return toNominalphrase()
+                .neg(negationspartikelphrase, moeglichstNegativIndefiniteWoerterVerwenden);
     }
 
     @Override

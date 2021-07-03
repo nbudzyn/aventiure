@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -55,7 +56,7 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public PraedikatOhneLeerstellen mitModalpartikeln(
+    public PraedikatModalverbOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
         // Der Einfachheit halber tun wir so, als würde sich das "halt"
         // bei "halt singen können" auf das Singen beziehen.
@@ -72,6 +73,16 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
         // Das ist eine Vereinfachung. Jedenfalls ist ein doppeltes "leider" unmöglich.
         return new PraedikatModalverbOhneLeerstellen(
                 verb, lexikalischerKern.mitAdvAngabe(advAngabe));
+    }
+
+    @Override
+    public PraedikatModalverbOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        // Der Einfachheit halber tun wir so, als würde sich die Negationspartikel(phrase)
+        // bei "nicht singen können" auf das Singen beziehen.
+        // Das ist eine Vereinfachung. Jedenfalls wäre ein doppeltes "nicht" sehr ungebräuchlich.
+        return new PraedikatModalverbOhneLeerstellen(
+                verb, lexikalischerKern.neg(negationspartikelphrase));
     }
 
     @Override

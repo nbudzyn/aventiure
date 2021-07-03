@@ -16,6 +16,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -27,7 +28,8 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
- * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum - alle Leerstellen sind besetzt.
+ * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum ("müde sein",
+ * "glücklich sein, dich zu sehen") - alle Leerstellen sind besetzt.
  */
 public class PraedikativumPraedikatOhneLeerstellen
         extends AbstractAngabenfaehigesPraedikatOhneLeerstellen {
@@ -42,7 +44,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                                                  final Praedikativum praedikativum) {
         this(verb, praedikativum,
                 ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -51,11 +53,12 @@ public class PraedikativumPraedikatOhneLeerstellen
             final Praedikativum praedikativum,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.praedikativum = praedikativum;
     }
 
@@ -66,7 +69,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                 getVerb(), praedikativum,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -82,9 +85,30 @@ public class PraedikativumPraedikatOhneLeerstellen
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikativumPraedikatOhneLeerstellen neg() {
+        return (PraedikativumPraedikatOhneLeerstellen) super.neg();
+    }
+
+
+    @Override
+    public PraedikativumPraedikatOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikativumPraedikatOhneLeerstellen(
+                getVerb(),
+                praedikativum,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -98,7 +122,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -116,7 +140,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                 praedikativum,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -162,9 +186,9 @@ public class PraedikativumPraedikatOhneLeerstellen
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt)
+                        personSubjekt, numerusSubjekt, getNegationspartikel())
                 // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr glücklich
-                // [, dich zu sehen]"
+                // [, dich zu sehen]", "kein Esel",  "schon lange kein Verdächtiger mehr"
         );
     }
 
@@ -256,7 +280,7 @@ public class PraedikativumPraedikatOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

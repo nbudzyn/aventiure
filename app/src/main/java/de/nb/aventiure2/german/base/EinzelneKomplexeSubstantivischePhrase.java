@@ -9,15 +9,24 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * Eine ungereihte Phrase, die substantivisch verwendet werden kann, also insbesondere
  * ein Pronomen ("sie", "du", "wir") oder eine (andere) Nominalphrase ("die goldene Kugel"),
- * die eine Fokuspartikel umfassen kann.
+ * die eine Fokuspartikel oder auch eine {@link Negationspartikelphrase} umfassen kann.
  */
-public abstract class EinzelneSubstantivischePhraseMitOptFokuspartikel implements
+public abstract class EinzelneKomplexeSubstantivischePhrase implements
         EinzelneSubstantivischePhrase {
     /**
      * Etwas hinzu wie "auch", "allein", "ausgerechnet", "wenigstens" etc.
      */
     @Nullable
     private final String fokuspartikel;
+
+    /**
+     * Eine Phrase, deren Kern die Negationspartikel "nicht" ist und die
+     * diese substantivische Phrase negiert. Sie kann direkt verwendet werden
+     * ("überhaupt nicht mehr dieser Mann") oder in ein negativ-indefinites Artikelwort
+     * übertragen ("überhaupt kein Verdächtiger mehr").
+     */
+    @Nullable
+    private final Negationspartikelphrase negationspartikelphrase;
 
     private final NumerusGenus numerusGenus;
 
@@ -28,13 +37,16 @@ public abstract class EinzelneSubstantivischePhraseMitOptFokuspartikel implement
     @Nullable
     private final IBezugsobjekt bezugsobjekt;
 
-    EinzelneSubstantivischePhraseMitOptFokuspartikel(@Nullable final String fokuspartikel,
-                                                     final NumerusGenus numerusGenus,
-                                                     @Nullable final IBezugsobjekt bezugsobjekt) {
+    EinzelneKomplexeSubstantivischePhrase(
+            @Nullable final String fokuspartikel,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
+            final NumerusGenus numerusGenus,
+            @Nullable final IBezugsobjekt bezugsobjekt) {
         checkArgument(fokuspartikel == null || !fokuspartikel.isEmpty(),
                 "Fokuspartikel ist Leerstring");
 
         this.fokuspartikel = fokuspartikel;
+        this.negationspartikelphrase = negationspartikelphrase;
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;
     }
@@ -59,6 +71,12 @@ public abstract class EinzelneSubstantivischePhraseMitOptFokuspartikel implement
 
     @Override
     @Nullable
+    public Negationspartikelphrase getNegationspartikelphrase() {
+        return negationspartikelphrase;
+    }
+
+    @Override
+    @Nullable
     public IBezugsobjekt getBezugsobjekt() {
         return bezugsobjekt;
     }
@@ -76,15 +94,16 @@ public abstract class EinzelneSubstantivischePhraseMitOptFokuspartikel implement
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final EinzelneSubstantivischePhraseMitOptFokuspartikel
-                that = (EinzelneSubstantivischePhraseMitOptFokuspartikel) o;
-        return Objects.equals(fokuspartikel, that.fokuspartikel) &&
-                numerusGenus == that.numerusGenus &&
-                Objects.equals(bezugsobjekt, that.bezugsobjekt);
+        final EinzelneKomplexeSubstantivischePhrase
+                that = (EinzelneKomplexeSubstantivischePhrase) o;
+        return Objects.equals(fokuspartikel, that.fokuspartikel)
+                && Objects.equals(negationspartikelphrase, that.negationspartikelphrase)
+                && numerusGenus == that.numerusGenus
+                && Objects.equals(bezugsobjekt, that.bezugsobjekt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fokuspartikel, numerusGenus, bezugsobjekt);
+        return Objects.hash(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt);
     }
 }

@@ -8,6 +8,11 @@ public interface SubstPhrOderReflexivpronomen {
     @Nullable
     String getFokuspartikel();
 
+    SubstPhrOderReflexivpronomen ohneNegationspartikelphrase();
+
+    @Nullable
+    Negationspartikelphrase getNegationspartikelphrase();
+
     String imStr(Kasus kasus);
 
     Konstituentenfolge imK(Kasus kasus);

@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -94,7 +95,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
             final Praedikativum praedikativum) {
         this(verb, dat, praedikativum,
                 ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null);
     }
 
@@ -104,11 +105,12 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
             final Praedikativum praedikativum,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, true, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.dat = dat;
         this.praedikativum = praedikativum;
     }
@@ -124,7 +126,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(), dat, praedikativum,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -140,9 +142,30 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(),
                 dat, praedikativum,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen neg() {
+        return (DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen) super
+                .neg();
+    }
+
+    @Override
+    public DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen(
+                getVerb(),
+                dat, praedikativum,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -156,7 +179,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 getVerb(),
                 dat, praedikativum,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -174,7 +197,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                 dat, praedikativum,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -197,26 +220,16 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
             return speziellesVorfeldFromSuper;
         }
 
+        if (getNegationspartikel() != null) {
+            return null;
+        }
+
         if (inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) { // gilt immer
             final Konstituentenfolge vorfeldCandidate = dat.datK();
             if (vorfeldCandidate.size() == 1 && vorfeldCandidate.get(0) instanceof Konstituente) {
                 // "mir (wird warm)"
                 return (Konstituente) vorfeldCandidate.get(0);
             }
-        }
-
-        return null;
-    }
-
-    @SuppressWarnings("RedundantIfStatement")
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                            final Numerus numerus) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
         }
 
         return null;
@@ -239,8 +252,8 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
                         numerusSubjekt),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt)
-                // "kalt"
+                        personSubjekt, numerusSubjekt, getNegationspartikel())
+                // "kalt", "nicht kalt"
         );
     }
 

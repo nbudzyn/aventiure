@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import androidx.annotation.NonNull;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -10,6 +12,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
@@ -63,6 +66,12 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
         return getPraedikativAnteilKandidatFuerNachfeld(
                 subjekt.getPerson(),
                 subjekt.getNumerus()) == null;
+    }
+
+    default AdjPhrOhneLeerstellen neg(
+            @NonNull final Negationspartikelphrase negationspartikelphrase) {
+        // Hier geht die ursprüngliche AdvAngabeSkopusSatz verloren!
+        return mitAdvAngabe(new AdvAngabeSkopusSatz(negationspartikelphrase));
     }
 
     default AdjPhrOhneLeerstellen mitGraduativerAngabe(@Nullable final String graduativeAngabe) {
@@ -150,13 +159,28 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <li>"(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
      * </ul>
      *
-     * @param kasusBezugselement
      * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
      * @see #getAttributivAnteilRelativsatz(Kasus)
      */
     @Nullable
     AdjPhrOhneLeerstellen getAttributivAnteilLockererNachtrag(Kasus kasusBezugselement);
 
+    /**
+     * Gibt die prädikative Form zurück, ggf. negiert mit dieser Negationsphrase:
+     * "hoch", "nicht mehr lange glücklich, dich zu sehen",
+     * "nicht glücklich, sich erheben zu dürfen"
+     */
+    @Override
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                              @Nullable final
+                                              Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return getPraedikativ(person, numerus);
+        }
+
+        return neg(negationspartikelphrase)
+                .getPraedikativ(person, numerus); // "nicht mehr lange einfach"
+    }
 
     /**
      * Gibt die prädikative Form zurück: "hoch", "glücklich, dich zu sehen",

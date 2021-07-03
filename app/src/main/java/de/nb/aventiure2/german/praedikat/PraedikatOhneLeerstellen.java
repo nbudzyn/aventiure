@@ -14,10 +14,13 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
+
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.NICHT;
 
 /**
  * Ein Prädikat im Sinne eines Verbs mit allen Ergänzungen und Angaben, jedoch ohne Subjekt, bei
@@ -32,6 +35,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
     }
 
     PraedikatOhneLeerstellen mitModalpartikeln(Collection<Modalpartikel> modalpartikeln);
+
 
     /**
      * Erzeugt aus diesem Prädikat ein Prädikat im Perfekt
@@ -89,6 +93,53 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
 
     PraedikatOhneLeerstellen mitAdvAngabe(
             @Nullable IAdvAngabeOderInterrogativWohinWoher advAngabe);
+
+    /**
+     * Fügt dem Prädikat die {@link Negationspartikelphrase} "nicht" hinzu:
+     * <ul>
+     * <li>Der <i>Geltungsbereich der Negation</i> (was wird logisch negiert?) ist das
+     * gesamte Prädikat oder der gesamte Einzel-Satz, der mit dem Prädikat gebildet wird -
+     * eventuell mit Ausnahmen gewisser Satzadverbien wie "leider" etc.
+     * <li>Der <i>Fokus der Negation</i> (der Aspekt der Aussage, in dem eine
+     * Erwartungshaltungshaltung
+     * korrigiert werden soll) ist das gesamte Prädikat (ausgenommen die Satzadverbien, die noch
+     * nicht einmal zum Geltungsbereich gehören).
+     */
+    default PraedikatOhneLeerstellen neg() {
+        return neg(NICHT);
+    }
+
+    /**
+     * Fügt dem Prädikat diese {@link Negationspartikelphrase} hinzu.
+     * <ul>
+     * <li>Der <i>Geltungsbereich der Negation</i> (was wird logisch negiert?) ist das
+     * gesamte Prädikat oder der gesamte Einzel-Satz, der mit dem Prädikat gebildet wird -
+     * eventuell mit Ausnahmen gewisser Satzadverbien wie "leider" etc.
+     * <li>Der <i>Fokus der Negation</i> (der Aspekt der Aussage, in dem eine
+     * Erwartungshaltungshaltung
+     * korrigiert werden soll) ist das gesamte Prädikat (ausgenommen die Satzadverbien, die noch
+     * nicht einmal zum Geltungsbereich gehören).
+     * <p>
+     * Gibt es bereits eine Negationspartikelphrase, wird dies überschrieben, - das Argument
+     * {@code null} überschreibt nicht.
+     */
+    PraedikatOhneLeerstellen neg(@Nullable
+                                         Negationspartikelphrase negationspartikelphrase);
+
+    // FIXME Verneinung: Der Geltungsbereich ist das gesamte Prädikat oder der gesamte 
+    //  Einzel-Satz, der
+    //  mit dem Prädikat gebildet wird. Der Fokus ist das gesamte Prädikat - vielleicht
+    //  ausgenommen Satzadverbien wie "leider" etc.
+    //  Dann wird die Negationspartikelphrase an entsprechender Stelle positioniert, ggf. auch
+    //  der Satz umgestellt (neues Vorfeld o.Ä., Inhalte in Nebensatz auslagern
+    //  o.Ä.).
+    //  - Andere Fälle bedenken:
+    //  -- "Peter ist (ein) Schuster" - "Ein Schuster ist Peter nicht" / "Peter ist kein Schuster"
+    //  -- "Der Mörder war der Gärtner" - "Der Gärtner war der Mörder nicht" / "Der Mörder war
+    //  nicht der Gärtner" nicht
+    //  -- Achtung bei Satzadverbien:
+    //  "Helga liest den Spiegel wahrscheinlich nicht",
+    //  "Helga liest *wahrscheinlich* nicht den Spiegel"
 
     @Nullable
     @CheckReturnValue

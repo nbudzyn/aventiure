@@ -39,7 +39,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschlu
 /**
  * Der Spielercharakter heult.
  */
-@SuppressWarnings({"unchecked", "IfStatementWithIdenticalBranches"})
+@SuppressWarnings("IfStatementWithIdenticalBranches")
 public class HeulenAction extends AbstractScAction {
     public static Collection<HeulenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,

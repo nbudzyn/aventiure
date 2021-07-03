@@ -8,8 +8,8 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractFrageMitAntworten;
-import de.nb.aventiure2.data.world.syscomp.talking.IScBegruessable;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -33,7 +33,7 @@ import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_ERLAUBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANGEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
 
-class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten {
+class RapunzelKugelherkunftsfrageMitAntworten extends RapunzelFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         FRAGE_BEANTWORTET
@@ -43,8 +43,8 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
                                             final Narrator n, final World world,
                                             final RapunzelStateComp stateComp,
                                             final FeelingsComp feelingsComp,
-                                            final IScBegruessable begruesstMitScSetter) {
-        super(RAPUNZEL, counterDao, n, world, stateComp, feelingsComp, begruesstMitScSetter);
+                                            final ITalkContext talkContext) {
+        super(RAPUNZEL, counterDao, n, world, stateComp, feelingsComp, talkContext);
     }
 
     @Override
@@ -87,7 +87,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
 
         stateComp.narrateAndSetState(NORMAL);
 
-        scBegruessable.setSchonBegruesstMitSC(true);
+        talkContext.setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().requestMoodMax(AUFGEDREHT);
     }
 
@@ -105,7 +105,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
 
         stateComp.narrateAndSetState(NORMAL);
 
-        scBegruessable.setSchonBegruesstMitSC(true);
+        talkContext.setSchonBegruesstMitSC(true);
     }
 
     private void dieWahrheitSagen() {
@@ -120,7 +120,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends AbstractFrageMitAntworten 
 
         stateComp.narrateAndSetState(NORMAL);
 
-        scBegruessable.setSchonBegruesstMitSC(true);
+        talkContext.setSchonBegruesstMitSC(true);
         loadSC().feelingsComp().requestMoodMax(ZUFRIEDEN);
     }
 

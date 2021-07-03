@@ -10,7 +10,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 
 import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.RUFEN;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Objekt und wörtlicher Rede
@@ -19,14 +18,16 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.RUFEN;
 public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
     // Verben ohne Präfix
     ANTWORTEN("antworten", DAT, "antworte", "antwortest",
-            "antwortet", "antwortett",
+            "antwortet", "antwortet",
             Perfektbildung.HABEN, "geantwortet"),
 
     // Präfixverben
     ENTGEGENBLAFFEN("entgegenblaffen", DAT, "blaffe", "blaffst",
             "blafft", "blafft", "entgegen",
             Perfektbildung.HABEN, "entgegengeblafft"),
-    ENTGEGENRUFEN(RUFEN, DAT, "entgegen", Perfektbildung.HABEN);
+    ENTGEGENRUFEN("entgegenrufen", DAT,
+            "rufe", "rufst", "ruft", "ruft",
+            "entgegen", Perfektbildung.HABEN, "entgegengerufen");
 
     /**
      * Das Verb an sich, ohne Ergänzungen, ohne Angaben
@@ -62,21 +63,6 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
                               final Perfektbildung perfektbildung, final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, partikel, perfektbildung,
                 partizipII), kasusOderPraepositionalkasus);
-    }
-
-    VerbSubjObjWoertlicheRede(final VerbMitValenz verbMitValenz,
-                              final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                              final String partikel,
-                              final Perfektbildung perfektbildung) {
-        this(verbMitValenz.getVerb(), kasusOderPraepositionalkasus, partikel, perfektbildung);
-    }
-
-    VerbSubjObjWoertlicheRede(final Verb verbOhnePartikel,
-                              final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-                              final String partikel,
-                              final Perfektbildung perfektbildung) {
-        this(verbOhnePartikel.mitPartikel(partikel).mitPerfektbildung(perfektbildung),
-                kasusOderPraepositionalkasus);
     }
 
     VerbSubjObjWoertlicheRede(final Verb verb,

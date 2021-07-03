@@ -4,37 +4,26 @@ import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 public abstract class AbstractFrageMitAntworten {
-    protected CounterDao counterDao;
     protected final Narrator n;
     protected final World world;
-    protected final RapunzelStateComp stateComp;
-    protected final FeelingsComp feelingsComp;
-    protected final IScBegruessable scBegruessable;
-    private final GameObjectId gameObjectId;
+    protected final ITalkContext talkContext;
+    protected final GameObjectId gameObjectId;
 
-    protected AbstractFrageMitAntworten(
-            final GameObjectId gameObjectId,
-            final CounterDao counterDao,
-            final Narrator n, final World world, final RapunzelStateComp stateComp,
-            final FeelingsComp feelingsComp, final IScBegruessable scBegruessable) {
-        this.gameObjectId = gameObjectId;
-        this.counterDao = counterDao;
+    public AbstractFrageMitAntworten(
+            final GameObjectId gameObjectId, final Narrator n, final World world,
+            final ITalkContext talkContext) {
         this.n = n;
         this.world = world;
-        this.stateComp = stateComp;
-        this.feelingsComp = feelingsComp;
-        this.scBegruessable = scBegruessable;
+        this.talkContext = talkContext;
+        this.gameObjectId = gameObjectId;
     }
 
     public abstract void nscStelltFrage();
@@ -102,6 +91,4 @@ public abstract class AbstractFrageMitAntworten {
     protected SpielerCharakter loadSC() {
         return world.loadSC();
     }
-
-    public abstract void forgetAll();
 }

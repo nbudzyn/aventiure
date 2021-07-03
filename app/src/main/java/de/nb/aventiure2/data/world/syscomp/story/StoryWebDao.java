@@ -115,6 +115,7 @@ public abstract class StoryWebDao implements IComponentDao<StoryWebPCD> {
         return res;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static IStoryNode toStoryNode(final Story story, final String storyNodeName) {
         return (IStoryNode) Enum.valueOf(
                 (Class<? extends Enum>) story.getNodeClass(),

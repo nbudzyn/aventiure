@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -72,7 +73,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final SubstantivischePhrase objekt,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         this(verb, kasus, objekt,
-                ImmutableList.of(), null, null,
+                ImmutableList.of(), null, null, null,
                 null, lexikalischerKern);
     }
 
@@ -82,13 +83,14 @@ public class PraedikatDirektivesVerbOhneLeerstellen
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final PraedikatOhneLeerstellen lexikalischerKern) {
         super(verb,
                 modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasus = kasus;
         this.objekt = objekt;
         this.lexikalischerKern = lexikalischerKern;
@@ -101,7 +103,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 getVerb(), kasus, objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
@@ -119,7 +121,29 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kasus,
                 objekt,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
+                lexikalischerKern);
+    }
+
+    @Override
+    public PraedikatDirektivesVerbOhneLeerstellen neg() {
+        return (PraedikatDirektivesVerbOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatDirektivesVerbOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatDirektivesVerbOhneLeerstellen(
+                getVerb(),
+                kasus,
+                objekt,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern);
     }
@@ -136,7 +160,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 kasus,
                 objekt,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher(),
                 lexikalischerKern
         );
@@ -155,7 +179,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 objekt,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe,
                 lexikalischerKern
         );
@@ -174,6 +198,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
+        }
+
+        if (getNegationspartikel() != null) {
+            return null;
         }
 
         /*
@@ -206,6 +234,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
                         numerusSubjekt),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 objekt.imK(kasus), // "die junge Frau"
@@ -312,7 +341,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }
@@ -322,7 +351,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         if (!super.equals(o)) {
             return false;
         }
-        final PraedikatDirektivesVerbOhneLeerstellen that = (PraedikatDirektivesVerbOhneLeerstellen) o;
+        final PraedikatDirektivesVerbOhneLeerstellen that =
+                (PraedikatDirektivesVerbOhneLeerstellen) o;
         return kasus == that.kasus &&
                 Objects.equals(objekt, that.objekt) &&
                 lexikalischerKern.equals(that.lexikalischerKern);

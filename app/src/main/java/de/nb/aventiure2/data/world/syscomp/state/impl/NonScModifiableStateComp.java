@@ -18,9 +18,9 @@ import de.nb.aventiure2.data.world.syscomp.state.StateModification;
 public abstract class NonScModifiableStateComp<S extends Enum<S>> extends AbstractStateComp<S> {
     NonScModifiableStateComp(final GameObjectId gameObjectId, final AvDatabase db,
                              final TimeTaker timeTaker,
-                             final World world, final Class<S> stateEnumClass,
+                             final World world,
                              final S initialState) {
-        super(gameObjectId, db, timeTaker, world, stateEnumClass, initialState);
+        super(gameObjectId, db, timeTaker, world, initialState);
     }
 
     @Override

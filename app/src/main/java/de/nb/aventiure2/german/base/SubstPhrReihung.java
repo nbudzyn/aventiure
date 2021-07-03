@@ -25,6 +25,14 @@ import static java.util.stream.Collectors.toList;
 public class SubstPhrReihung implements SubstantivischePhrase {
     private final ImmutableList<SubstantivischePhrase> elemente;
 
+    /**
+     * Erzeugt eine {@link SubstPhrReihung} für den "pathologischen Fall" nur eines
+     * einzigen {@link SubstantivischePhrase}-Objekts.
+     */
+    private SubstPhrReihung(final SubstantivischePhrase element) {
+        this(ImmutableList.of(element));
+    }
+
     SubstPhrReihung(final SubstantivischePhrase first,
                     final SubstantivischePhrase second) {
         this(ImmutableList.of(first, second));
@@ -32,6 +40,44 @@ public class SubstPhrReihung implements SubstantivischePhrase {
 
     public SubstPhrReihung(final List<SubstantivischePhrase> elemente) {
         this.elemente = ImmutableList.copyOf(elemente);
+    }
+
+    @Override
+    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                             @Nullable
+                                             final Negationspartikelphrase negationspartikel) {
+        if (negationspartikel == null) {
+            return getPraedikativ(person, numerus);
+        }
+
+        return neg(negationspartikel).getPraedikativ(person, numerus);
+    }
+
+    @Override
+    public SubstantivischePhrase ohneNegationspartikelphrase() {
+        return withFirst(elemente.get(0).ohneNegationspartikelphrase());
+    }
+
+    @Override
+    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
+                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        if (elemente.size() == 1) {
+            return new SubstPhrReihung(
+                    elemente.get(0)
+                            .neg(negationspartikelphrase,
+                                    moeglichstNegativIndefiniteWoerterVerwenden));
+        }
+
+        // Die Negations soll sich offenbar auf die gesamte Reihung beziehen:
+        // "nicht der Butler und der Gärtner",
+        // "(Sie waren) nicht länger ein Butler und der Gärtner" (nicht "kein"!)
+        return withFirst(elemente.get(0).neg(negationspartikelphrase));
+    }
+
+    @Nullable
+    @Override
+    public Negationspartikelphrase getNegationspartikelphrase() {
+        return elemente.get(0).getNegationspartikelphrase();
     }
 
     /**
@@ -110,13 +156,10 @@ public class SubstPhrReihung implements SubstantivischePhrase {
         return toAufzaehlung(
                 ImmutableList.<Konstituentenfolge>builder()
                         .add(elemente.get(0).artikellosDatK())
-                        .addAll(
-                                mapToList(elemente.subList(1, elemente.size()),
-                                        SubstantivischePhrase::datK)
-                        )
+                        .addAll(mapToList(elemente.subList(1, elemente.size()),
+                                SubstantivischePhrase::datK))
                         .build());
     }
-
 
     /**
      * Gibt die substantivische Phrase im Akkusativ, aber ohne Artikel, zurück
@@ -127,10 +170,8 @@ public class SubstPhrReihung implements SubstantivischePhrase {
         return toAufzaehlung(
                 ImmutableList.<Konstituentenfolge>builder()
                         .add(elemente.get(0).artikellosAkkK())
-                        .addAll(
-                                mapToList(elemente.subList(1, elemente.size()),
-                                        SubstantivischePhrase::akkK)
-                        )
+                        .addAll(mapToList(elemente.subList(1, elemente.size()),
+                                SubstantivischePhrase::akkK))
                         .build());
     }
 

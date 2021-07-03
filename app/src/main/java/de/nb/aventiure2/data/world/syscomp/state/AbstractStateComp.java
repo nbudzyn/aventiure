@@ -30,16 +30,16 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     /**
      * Constructor for a {@link AbstractStateComp}.
      */
+    @SuppressWarnings("unchecked")
     protected AbstractStateComp(final GameObjectId gameObjectId,
                                 final AvDatabase db,
                                 final TimeTaker timeTaker,
                                 final World world,
-                                final Class<S> stateEnumClass,
                                 final S initialState) {
         super(gameObjectId, db.stateDao());
         this.timeTaker = timeTaker;
         this.world = world;
-        this.stateEnumClass = stateEnumClass;
+        stateEnumClass = (Class<S>) initialState.getClass();
         this.initialState = initialState;
     }
 

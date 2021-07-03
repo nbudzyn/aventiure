@@ -164,8 +164,12 @@ public class World {
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
     public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
-    public static final GameObjectId RAPUNZEL = new GameObjectId(20_002);
-    public static final GameObjectId RAPUNZELS_ZAUBERIN = new GameObjectId(20_003);
+    /**
+     * Der "Lobebauer" lobt den SC, nachdem er den Froschprinzen erlöst hat
+     */
+    public static final GameObjectId LOBEBAUER = new GameObjectId(20_002);
+    public static final GameObjectId RAPUNZEL = new GameObjectId(20_010);
+    public static final GameObjectId RAPUNZELS_ZAUBERIN = new GameObjectId(20_011);
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
@@ -372,6 +376,7 @@ public class World {
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
                 creature.createFroschprinz(),
+                creature.createLobebauer(),
                 creature.createRapunzel(),
                 creature.createRapunzelsZauberin(),
 

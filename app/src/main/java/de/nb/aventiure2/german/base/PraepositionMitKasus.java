@@ -125,7 +125,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     public Konstituente getDescription(final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
-        if (substPhrOderReflPron instanceof EinzelneSubstantivischePhraseMitOptFokuspartikel) {
+        if (substPhrOderReflPron instanceof EinzelneKomplexeSubstantivischePhrase) {
             return getDescription((SubstantivischePhrase) substPhrOderReflPron);
         }
 
@@ -191,8 +191,11 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
             final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
         return joinToKonstituentenfolge(
                 substPhrOderReflPron.getFokuspartikel(),
+                substPhrOderReflPron.getNegationspartikelphrase(),
                 praeposition,
-                substPhrOderReflPron.ohneFokuspartikel().imK(kasus))
+                substPhrOderReflPron
+                        .ohneFokuspartikel().ohneNegationspartikelphrase()
+                        .imK(kasus))
                 .joinToSingleKonstituente();
     }
 

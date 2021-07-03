@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.IInterrogativadverb;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -28,6 +29,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.impliziertZustandsaenderung;
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.isMehrteilig;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -65,6 +68,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     private final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz;
 
     @Nullable
+    private final Negationspartikelphrase negationspartikelphrase;
+
+    @Nullable
     private final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg;
 
     @Nullable
@@ -74,18 +80,20 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             final Verb verb,
             final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich) {
         this(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, ImmutableList.of(),
-                null, null, null);
+                null, null,
+                null, null);
     }
 
     AbstractAngabenfaehigesPraedikatOhneLeerstellen(
             final Verb verb,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         this(verb, false,
                 modalpartikeln, advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg,
+                negationspartikelphrase, advAngabeSkopusVerbAllg,
                 advAngabeSkopusVerbWohinWoher);
     }
 
@@ -94,6 +102,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             final boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         this.verb = verb;
@@ -101,6 +110,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich;
         this.modalpartikeln = ImmutableList.copyOf(modalpartikeln);
         this.advAngabeSkopusSatz = advAngabeSkopusSatz;
+        this.negationspartikelphrase = negationspartikelphrase;
         this.advAngabeSkopusVerbAllg = advAngabeSkopusVerbAllg;
         this.advAngabeSkopusVerbWohinWoher = advAngabeSkopusVerbWohinWoher;
     }
@@ -206,6 +216,10 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
                                                                    final Numerus numerusSubjekt) {
+        if (getNegationspartikel() != null) {
+            return null;
+        }
+
         @Nullable final Konstituente
                 advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
@@ -417,6 +431,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Nullable
+    Negationspartikelphrase getNegationspartikel() {
+        return negationspartikelphrase;
+    }
+
+    @Nullable
     IAdvAngabeOderInterrogativVerbAllg getAdvAngabeSkopusVerbAllg() {
         return advAngabeSkopusVerbAllg;
     }
@@ -429,6 +448,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return advAngabeSkopusSatz != null ||
+                isMehrteilig(negationspartikelphrase) ||
                 advAngabeSkopusVerbAllg != null ||
                 advAngabeSkopusVerbWohinWoher != null;
     }
@@ -436,10 +456,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public boolean isBezugAufNachzustandDesAktantenGegeben() {
         // Bei "weggehen" ist ein Bezug auf den Nachzustand des Aktanten gegeben.
-        return verb.isPartikelverb() ||
+        return verb.isPartikelverb()
+                // Auch bei "nicht mehr gehen" ist eine Bezug auf den Nachzustand des
+                // Aktanten gegeben.
+                || impliziertZustandsaenderung(negationspartikelphrase)
                 // Auch bei "nach Berlin gehen" ist ein Bezug auf den Nachzustand des
                 // Aktanten gegeben.
-                advAngabeSkopusVerbWohinWoher != null;
+                || advAngabeSkopusVerbWohinWoher != null;
 
         // Sonst ("gehen", "endlich gehen") eher nicht.
     }
@@ -476,6 +499,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 verb.equals(that.verb) &&
                 Objects.equals(modalpartikeln, that.modalpartikeln) &&
                 Objects.equals(advAngabeSkopusSatz, that.advAngabeSkopusSatz) &&
+                Objects.equals(negationspartikelphrase, that.negationspartikelphrase) &&
                 Objects.equals(advAngabeSkopusVerbAllg, that.advAngabeSkopusVerbAllg) &&
                 Objects
                         .equals(advAngabeSkopusVerbWohinWoher, that.advAngabeSkopusVerbWohinWoher);
@@ -485,7 +509,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     public int hashCode() {
         return Objects
                 .hash(verb, inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich, modalpartikeln,
-                        advAngabeSkopusSatz, advAngabeSkopusVerbAllg,
+                        advAngabeSkopusSatz, negationspartikelphrase, advAngabeSkopusVerbAllg,
                         advAngabeSkopusVerbWohinWoher);
     }
 }

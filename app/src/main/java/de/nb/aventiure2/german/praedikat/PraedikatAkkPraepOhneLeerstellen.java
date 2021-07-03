@@ -18,6 +18,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
@@ -27,6 +28,7 @@ import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
@@ -53,7 +55,7 @@ public class PraedikatAkkPraepOhneLeerstellen
             final SubstantivischePhrase akk,
             final SubstantivischePhrase praep) {
         this(verb, praepositionMitKasus, akk, praep,
-                ImmutableList.of(), null, null,
+                ImmutableList.of(), null, null, null,
                 null);
     }
 
@@ -64,11 +66,12 @@ public class PraedikatAkkPraepOhneLeerstellen
             final SubstantivischePhrase praep,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.praepositionMitKasus = praepositionMitKasus;
         this.praep = praep;
         this.akk = akk;
@@ -81,7 +84,7 @@ public class PraedikatAkkPraepOhneLeerstellen
                 getVerb(), praepositionMitKasus, akk, praep,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -99,9 +102,29 @@ public class PraedikatAkkPraepOhneLeerstellen
                 getVerb(),
                 praepositionMitKasus, akk, praep,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher()
         );
+    }
+
+    @Override
+    public PraedikatAkkPraepOhneLeerstellen neg() {
+        return (PraedikatAkkPraepOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatAkkPraepOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatAkkPraepOhneLeerstellen(
+                getVerb(),
+                praepositionMitKasus, akk, praep,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher());
     }
 
     @Override
@@ -117,7 +140,7 @@ public class PraedikatAkkPraepOhneLeerstellen
                 getVerb(),
                 praepositionMitKasus, akk, praep,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher()
         );
     }
@@ -136,7 +159,7 @@ public class PraedikatAkkPraepOhneLeerstellen
                 praepositionMitKasus, akk, praep,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe
         );
     }
@@ -154,6 +177,10 @@ public class PraedikatAkkPraepOhneLeerstellen
                 super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
+        }
+
+        if (getNegationspartikel() != null) {
+            return null;
         }
 
         /*
@@ -183,17 +210,19 @@ public class PraedikatAkkPraepOhneLeerstellen
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
             final Person personSubjekt, final Numerus numerusSubjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return joinToKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
-                // "aus einer Laune heraus"
+                        numerusSubjekt),// "aus einer Laune heraus"
+                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                // "besser doch (nicht)"
+                getNegationspartikel(), // "nicht"
                 akk.akkK(), // "das Teil"
-                kf(getModalpartikeln()), // "besser doch"
+                getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
-                // "anch dem Weg"
-                praep.imK(praepositionMitKasus)); // "aus der La main"
+                // "aus der La main"
+                praep.imK(praepositionMitKasus)); // "nach dem Weg"
     }
 
     @Nullable
@@ -270,7 +299,7 @@ public class PraedikatAkkPraepOhneLeerstellen
             return akk.akkK();
         }
 
-        if (praep instanceof Interrogativpronomen) {
+        if (praep instanceof Relativpronomen) {
             // "mit dem"
             return praep.imK(praepositionMitKasus);
         }
@@ -279,7 +308,7 @@ public class PraedikatAkkPraepOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

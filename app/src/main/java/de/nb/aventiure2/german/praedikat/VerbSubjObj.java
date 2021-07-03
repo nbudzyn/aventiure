@@ -24,6 +24,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
  */
 public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
+    ANTWORTEN(VerbSubjObjWoertlicheRede.ANTWORTEN, DAT, Perfektbildung.HABEN),
     BAUEN("bauen", AKK, "baue", "baust", "baut", "baut",
             Perfektbildung.HABEN, "gebaut"),
     BEDECKEN("bedecken", AKK, "bedecke", "bedeckst", "bedeckt",
@@ -86,6 +87,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             "poliere", "polierst", "poliert",
             "poliert",
             Perfektbildung.HABEN, "poliert"),
+    REAGIEREN("reagieren", AUF_AKK, "reagiere", "reagierst",
+            "reagiert", "reagiert", Perfektbildung.HABEN, "reagiert"),
     REDEN("reden", MIT_DAT, "rede", "redest", "redet",
             "redet",
             Perfektbildung.HABEN, "geredet"),

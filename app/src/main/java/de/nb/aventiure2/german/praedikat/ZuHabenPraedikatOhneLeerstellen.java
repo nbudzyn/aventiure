@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -63,6 +64,18 @@ public class ZuHabenPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // zusätzlichen Angaben für "zu haben".
         return new ZuHabenPraedikatOhneLeerstellen(
                 lexikalischerKern.mitAdvAngabe(advAngabe));
+    }
+
+    @Override
+    public ZuHabenPraedikatOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        // Bei einem Prädikat wie "nicht das Auto zu waschen haben"
+        // kann man nicht differenzieren zwischen *"nicht zu waschen" und *"nicht zu haben".
+        // Deshalb speichern wir die Negationspartikelphrase im lexikalischen Kern und erlauben
+        // keine
+        // zusätzliche Negationspartikelphrase für "zu haben".
+        return new ZuHabenPraedikatOhneLeerstellen(
+                lexikalischerKern.neg(negationspartikelphrase));
     }
 
     @Override

@@ -23,6 +23,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HERB;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LEICHT;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.NEG_INDEF;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -45,6 +46,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BERICHTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 
+@SuppressWarnings("ConstantConditions")
 public class NominalphraseTest {
     @Test
     public void test_nurAdjektiattribute_Def_Nom_Sg() {
@@ -130,6 +132,60 @@ public class NominalphraseTest {
         assertThat(actual.vorkommaNoetig()).isFalse();
         assertThat(actual.vordoppelpunktNoetig()).isFalse();
         assertThat(actual.getText()).isEqualTo("dunkle Angebote");
+        assertThat(actual.kommaStehtAus()).isFalse();
+        assertThat(actual.woertlicheRedeNochOffen()).isFalse();
+        assertThat(actual.getKannAlsBezugsobjektVerstandenWerdenFuer()).isSameInstanceAs(PL_MFN);
+        assertThat(actual.getPhorikKandidat()).isNull();
+    }
+
+    @Test
+    public void test_nurAdjektiattribute_Neg_Indef_Nom_Sg() {
+        // GIVEN
+        final Nominalphrase np = np(NEG_INDEF, FROEHLICH, GESPRAECH);
+
+        // WHEN
+        final Konstituente actual = np.imK(NOM).joinToSingleKonstituente();
+
+        // THEN
+        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vordoppelpunktNoetig()).isFalse();
+        assertThat(actual.getText()).isEqualTo("kein fröhliches Gespräch");
+        assertThat(actual.kommaStehtAus()).isFalse();
+        assertThat(actual.woertlicheRedeNochOffen()).isFalse();
+        assertThat(actual.getKannAlsBezugsobjektVerstandenWerdenFuer()).isSameInstanceAs(N);
+        assertThat(actual.getPhorikKandidat()).isNull();
+    }
+
+    @Test
+    public void test_nurAdjektiattribute_Neg_Indef_Dat_Sg() {
+        // GIVEN
+        final Nominalphrase np = np(NEG_INDEF, FROEHLICH, GESPRAECH);
+
+        // WHEN
+        final Konstituente actual = np.imK(DAT).joinToSingleKonstituente();
+
+        // THEN
+        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vordoppelpunktNoetig()).isFalse();
+        assertThat(actual.getText()).isEqualTo("keinem fröhlichen Gespräch");
+        assertThat(actual.kommaStehtAus()).isFalse();
+        assertThat(actual.woertlicheRedeNochOffen()).isFalse();
+        assertThat(actual.getKannAlsBezugsobjektVerstandenWerdenFuer()).isSameInstanceAs(N);
+        assertThat(actual.getPhorikKandidat()).isNull();
+    }
+
+    @Test
+    public void test_nurAdjektiattribute_Neg_Indef_Pl() {
+        // GIVEN
+        final Nominalphrase np = np(NEG_INDEF, DUNKEL, ANGEBOTE);
+
+        // WHEN
+        final Konstituente actual = np.imK(AKK).joinToSingleKonstituente();
+
+        // THEN
+        assertThat(actual.vorkommaNoetig()).isFalse();
+        assertThat(actual.vordoppelpunktNoetig()).isFalse();
+        assertThat(actual.getText()).isEqualTo("keine dunklen Angebote");
         assertThat(actual.kommaStehtAus()).isFalse();
         assertThat(actual.woertlicheRedeNochOffen()).isFalse();
         assertThat(actual.getKannAlsBezugsobjektVerstandenWerdenFuer()).isSameInstanceAs(PL_MFN);

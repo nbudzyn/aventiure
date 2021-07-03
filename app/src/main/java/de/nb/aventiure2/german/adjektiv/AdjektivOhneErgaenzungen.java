@@ -75,6 +75,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     // TODO EINBRECHEND z.B. sollte besser ein spezielles Partizip II sein.
     //  Kaum prädikativ sinnvoll.
     EINBRECHEND,
+    EINFACH,
     EISIG,
     EISKALT,
     EISEKALT,
@@ -93,6 +94,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     FROEHLICH("fröhlich"),
     FROSTIG,
     GANZ,
+    GEKLEIDET,
     GEKNICKT,
     GENAU,
     GENERVT,

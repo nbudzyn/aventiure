@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Relativpronomen;
@@ -68,7 +69,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
             final Satz indirekterFragesatz) {
         this(verb, kasusOderPraepositionalkasus, objekt,
                 ImmutableList.of(),
-                null, null,
+                null, null, null,
                 null, indirekterFragesatz);
     }
 
@@ -78,12 +79,13 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
             final SubstantivischePhrase objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
             @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg,
             @Nullable final IAdvAngabeOderInterrogativWohinWoher advAngabeSkopusVerbWohinWoher,
             final Satz indirekterFragesatz) {
         super(verb, modalpartikeln,
                 advAngabeSkopusSatz,
-                advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
+                negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
         this.indirekterFragesatz = indirekterFragesatz;
@@ -97,7 +99,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 kasusOderPraepositionalkasus, objekt,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz
         );
@@ -114,7 +116,28 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
-                advAngabe, getAdvAngabeSkopusVerbAllg(),
+                advAngabe, getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
+                getAdvAngabeSkopusVerbWohinWoher(),
+                indirekterFragesatz);
+    }
+
+    @Override
+    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen neg() {
+        return (PraedikatSubjObjIndirekterFragesatzOhneLeerstellen) super.neg();
+    }
+
+    @Override
+    public PraedikatSubjObjIndirekterFragesatzOhneLeerstellen neg(
+            @Nullable final Negationspartikelphrase negationspartikelphrase) {
+        if (negationspartikelphrase == null) {
+            return this;
+        }
+
+        return new PraedikatSubjObjIndirekterFragesatzOhneLeerstellen(
+                getVerb(),
+                kasusOderPraepositionalkasus, objekt,
+                getModalpartikeln(),
+                getAdvAngabeSkopusSatz(), negationspartikelphrase, getAdvAngabeSkopusVerbAllg(),
                 getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz);
     }
@@ -130,7 +153,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 getVerb(),
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
-                getAdvAngabeSkopusSatz(), advAngabe,
+                getAdvAngabeSkopusSatz(), getNegationspartikel(), advAngabe,
                 getAdvAngabeSkopusVerbWohinWoher(),
                 indirekterFragesatz
         );
@@ -148,7 +171,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 kasusOderPraepositionalkasus, objekt,
                 getModalpartikeln(),
                 getAdvAngabeSkopusSatz(),
-                getAdvAngabeSkopusVerbAllg(),
+                getNegationspartikel(), getAdvAngabeSkopusVerbAllg(),
                 advAngabe,
                 indirekterFragesatz
         );
@@ -189,6 +212,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
                 kf(getModalpartikeln()),  // "mal eben"
                 getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
                         numerusSubjekt), // "erneut"
+                getNegationspartikel(), // "nicht"
                 getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
                 // ("mitten ins Gesicht" - sofern überhaupt möglich)
         );
@@ -275,7 +299,7 @@ public class PraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }
