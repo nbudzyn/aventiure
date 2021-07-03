@@ -70,6 +70,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         this.stateComp = stateComp;
     }
 
+    @SuppressWarnings("DuplicateBranchesInSwitch")
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =

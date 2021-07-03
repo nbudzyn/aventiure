@@ -1,6 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.taking.impl;
 
-import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -31,7 +30,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private final FeelingsComp feelingsComp;
 
-    public RapunzelTakingComp(final AvDatabase db, final Narrator n, final World world,
+    public RapunzelTakingComp(final Narrator n, final World world,
                               final RapunzelStateComp stateComp,
                               final FeelingsComp feelingsComp) {
         super(RAPUNZEL, n, world);

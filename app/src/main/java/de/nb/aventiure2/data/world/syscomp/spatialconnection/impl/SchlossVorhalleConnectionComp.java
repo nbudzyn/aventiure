@@ -61,7 +61,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
  * for the {@link World#SCHLOSS_VORHALLE}
  * room.
  */
-@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})

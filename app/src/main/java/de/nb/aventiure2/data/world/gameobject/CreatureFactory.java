@@ -186,7 +186,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                         locationComp, feelingsComp,
                         talkingComp);
         final RapunzelTakingComp takingComp =
-                new RapunzelTakingComp(db, n, world, stateComp, feelingsComp);
+                new RapunzelTakingComp(n, world, stateComp, feelingsComp);
         return new TalkingMemoryFeelingsTakingReactionsCreature<>(RAPUNZEL,
                 descriptionComp,
                 locationComp,

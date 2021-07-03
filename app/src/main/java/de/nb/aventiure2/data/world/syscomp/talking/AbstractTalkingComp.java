@@ -234,7 +234,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         requirePcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isSchonBegruesstMitSC() {
         return requirePcd().isSchonBegruesstMitSC();
     }

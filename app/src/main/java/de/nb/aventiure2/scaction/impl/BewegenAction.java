@@ -679,9 +679,6 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     toDiskontinuitaetDuSatzanschluss(
             final TimedDescription<?> description,
             final AbstractFlexibleDescription<?> fDesc) {
-        final TextDescription descriptionSatzanschlussOhneSubjekt =
-                fDesc.toTextDescriptionSatzanschlussOhneSubjektOhneAnschlusswort();
-
         final AltTimedDescriptionsBuilder alt = altTimed();
         alt.add(description.withDescription(
                 fDesc.toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma()
