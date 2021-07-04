@@ -37,7 +37,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     ABENDSONNE(F),
     ABENDSONNENSCHEIN(M),
     ABRISS(M),
-    AESTE(PL_MFN, "Aste", "Ästen"),
+    AESTE(PL_MFN, "Äste", "Ästen"),
     ANGEBOTE(PL_MFN, "Angebote", "Angeboten"),
     ASTGABEL(F),
     BANK(F),

@@ -27,6 +27,7 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
@@ -41,6 +42,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VE
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
@@ -177,6 +179,9 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Rabe mit Sinn HINTERlegen!
 
+    // FIXME Keine genauen Tipps, wenn der SC sehr müde ist. "Vor Müdigkeit kannst du an
+    //  nichts anderes mehr denken..."
+
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         STORY_ADVANCE
@@ -218,10 +223,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                       @Nullable final Integer expAchievementSteps,
                       @Nullable final GameObjectId locationId,
                       @Nullable final IHinter hinter) {
-        this.preconditions = ImmutableSet.copyOf(preconditions);
-        locationIdProducer = w -> locationId;
-        this.expAchievementSteps = expAchievementSteps;
-        this.hinter = hinter;
+        this(preconditions, expAchievementSteps, w -> locationId, hinter);
     }
 
     RapunzelStoryNode(final Collection<RapunzelStoryNode> preconditions,
@@ -333,7 +335,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        alt.addAll(altTurmWohnenHineinHeraus(world));
+        alt.addAll(altTurmWohnenHineinHeraus(n.getNarrationEndedBy(), world));
 
         n.narrateAlt(alt, NO_TIME);
     }
@@ -396,7 +398,7 @@ public enum RapunzelStoryNode implements IStoryNode {
         alt.add(paragraph("unvermittelt kommt dir die magere Frau in den Sinn, die "
                 + "so geschäftig umherläuft. Wohin will die bloß?").schonLaenger());
 
-        alt.addAll(altTurmWohnenHineinHeraus(world));
+        alt.addAll(altTurmWohnenHineinHeraus(n.getNarrationEndedBy(), world));
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             alt.add(du(PARAGRAPH, "wirst",
@@ -432,13 +434,14 @@ public enum RapunzelStoryNode implements IStoryNode {
                                     + "die macht dir Angst…"));
         } else {
             // SC hat alles vergessen
-            alt.addAll(altHintsAllesVergessenNichtObenImTurm(world));
+            alt.addAll(altHintsAllesVergessenNichtObenImTurm(n.getNarrationEndedBy(), world));
         }
 
         n.narrateAlt(alt, NO_TIME);
     }
 
     private static ImmutableSet<AbstractDescription<?>> altHintsAllesVergessenNichtObenImTurm(
+            final StructuralElement narrationEndedBy,
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -465,7 +468,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                         "eigentlich gerade darauf?").schonLaenger()
                 // FIXME Weitere Alternativen
         );
-        alt.addAll(altTurmWohnenHineinHeraus(world));
+        alt.addAll(altTurmWohnenHineinHeraus(narrationEndedBy, world));
 
         return alt.build();
     }
@@ -494,7 +497,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             }
         } else if (!world.loadSC().memoryComp().isKnown(RAPUNZELRUF)) {
             // SC hat alles vergessen
-            alt.addAll(altHintsAllesVergessenNichtObenImTurm(world));
+            alt.addAll(altHintsAllesVergessenNichtObenImTurm(n.getNarrationEndedBy(), world));
         } else if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (rapunzel.stateComp().hasState(HAARE_VOM_TURM_HERUNTERGELASSEN)) {
                 alt.add(paragraph("Droht dir wohl Gefahr, wenn du die Haare hinaufsteigst?")
@@ -648,10 +651,9 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  "In dir reift ein Plan, wie die Rapunzel retten kannst!"
     //  "Du warst schon immer der Bastler-Typ!"
 
-
     @CheckReturnValue
     private static ImmutableSet<AbstractDescription<?>> altTurmWohnenHineinHeraus(
-            final World world) {
+            final StructuralElement narrationEndedBy, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
@@ -659,11 +661,12 @@ public enum RapunzelStoryNode implements IStoryNode {
                     + "oder hinaus?").schonLaenger());
             alt.add(paragraph("Ob jemand im Turm ein und aus geht? Aber wie bloß?").schonLaenger());
         } else {
-            alt.add(du(PARAGRAPH, "musst",
-                    "wieder an den alten Turm denken… wenn dort jemand wohnt, "
-                            + "wie kommt der bloß hinein oder heraus?", PARAGRAPH)
-                    .mitVorfeldSatzglied("wieder").schonLaenger()
-            );
+            if (narrationEndedBy != CHAPTER) {
+                alt.add(du(PARAGRAPH, "musst",
+                        "wieder an den alten Turm denken… wenn dort jemand wohnt, "
+                                + "wie kommt der bloß hinein oder heraus?", PARAGRAPH)
+                        .mitVorfeldSatzglied("wieder").schonLaenger());
+            }
             alt.add(paragraph(
                     "Dir kommt auf einmal wieder der alte Turm in den Sinn: "
                             + "Wer wird darinnen wohl wohnen?").schonLaenger());

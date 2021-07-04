@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.reaction.system;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -50,6 +52,10 @@ public class ReactionSystem
         IWetterChangedReactions,
         ITimePassedReactions,
         ISCActionReactions {
+    private static final Comparator<IResponder> REACTION_ORDER_COMPARATOR =
+            new ReactionOrderComparator();
+
+
     private final World world;
     private final TimeTaker timeTaker;
     private final Narrator n;
@@ -92,12 +98,13 @@ public class ReactionSystem
     public void onLeave(final ILocatableGO locatable,
                         final ILocationGO from,
                         @Nullable final ILocationGO to) {
-        // In Ausnahmefällen ist es hier wohl möglich, dass from.getId() == toId()
+        // In Ausnahmefällen w#re es hier wohl möglich, dass from.getId() == to.getId()
         // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
         // Wieder-Auffangen.)
 
         doReactions(IMovementReactions.class,
-                reactions -> reactions.onLeave(locatable, from, to));
+                reactions -> reactions.onLeave(locatable, from, to)
+        );
     }
 
     @Override
@@ -111,6 +118,10 @@ public class ReactionSystem
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final GameObjectId fromId,
                         final GameObjectId toId) {
+        // FIXME Wetter als erstes beschreiben, dann NSC-Reaktionen?
+        //  Vielleicht Objekte in Kategoien einteilen oder auf
+        //  Alive prüfen?
+
         onEnter(locatableId,
                 fromId != null ? (ILocationGO) world.load(fromId) : null,
                 toId);
@@ -146,7 +157,8 @@ public class ReactionSystem
         // Wieder-Auffangen.)
 
         doReactions(IMovementReactions.class,
-                reactions -> reactions.onEnter(locatable, from, to));
+                reactions -> reactions.onEnter(locatable, from, to)
+        );
     }
 
     // IEssenReactions
@@ -154,7 +166,8 @@ public class ReactionSystem
     public void onEssen(final IGameObject gameObject) {
         doReactions(IEssenReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
-                reactions -> reactions.onEssen(gameObject));
+                reactions -> reactions.onEssen(gameObject),
+                REACTION_ORDER_COMPARATOR);
     }
 
     // IStateChangedReactions
@@ -179,7 +192,8 @@ public class ReactionSystem
         doReactions(IStateChangedReactions.class,
                 ((Predicate<IResponder>) gameObject::equals).negate(),
                 reactions -> reactions.onStateChanged(
-                        gameObject, oldState, newState));
+                        gameObject, oldState, newState),
+                REACTION_ORDER_COMPARATOR);
     }
 
     // IKnownChangedReactions
@@ -202,7 +216,8 @@ public class ReactionSystem
 
         doReactions(IKnownChangedReactions.class,
                 reactions -> reactions.onKnownChanged(
-                        knower, knowee, oldKnown, newKnown));
+                        knower, knowee, oldKnown, newKnown)
+        );
     }
 
     // IRufReactions
@@ -221,7 +236,7 @@ public class ReactionSystem
         doReactions(IRufReactions.class,
                 ((Predicate<IResponder>) rufer::equals).negate(),
                 reactions -> reactions.onRuf(
-                        rufer, ruftyp));
+                        rufer, ruftyp), REACTION_ORDER_COMPARATOR);
     }
 
     // onWetterChanged
@@ -231,7 +246,8 @@ public class ReactionSystem
                 "At least to wetter steps necessary: old and new");
 
         doReactions(IWetterChangedReactions.class,
-                reactions -> reactions.onWetterChanged(wetterSteps));
+                reactions -> reactions.onWetterChanged(wetterSteps)
+        );
     }
 
     // ITimePassedReactions
@@ -242,14 +258,16 @@ public class ReactionSystem
     @Override
     public void onTimePassed(final Change<AvDateTime> change) {
         doReactions(ITimePassedReactions.class,
-                reactions -> reactions.onTimePassed(change));
+                reactions -> reactions.onTimePassed(change)
+        );
     }
 
     // ISCActionReactions
     @Override
     public void afterScActionAndFirstWorldUpdate() {
         doReactions(ISCActionReactions.class,
-                ISCActionReactions::afterScActionAndFirstWorldUpdate);
+                ISCActionReactions::afterScActionAndFirstWorldUpdate
+        );
     }
 
     /**
@@ -259,8 +277,8 @@ public class ReactionSystem
     private <R extends IReactions> void doReactions(
             final Class<R> reactionsInterface,
             final Consumer<R> narrateAndDoReaction) {
-        doReactions(reactionsInterface, responder -> true,
-                narrateAndDoReaction);
+        doReactions(reactionsInterface, responder -> true, narrateAndDoReaction,
+                ReactionSystem.REACTION_ORDER_COMPARATOR);
     }
 
     /**
@@ -270,20 +288,20 @@ public class ReactionSystem
      *     <li>and fulfil this <code>condition</code>.
      * </ul>
      */
-    @SuppressWarnings("unchecked")
-    private <R extends IReactions> void doReactions(
+    @SuppressWarnings({"unchecked", "SameParameterValue"})
+    private <R extends IReactions, G extends GameObject & IResponder> void doReactions(
             final Class<R> reactionsInterface,
             final Predicate<IResponder> condition,
-            final Consumer<R> narrateAndDoReaction) {
+            final Consumer<R> narrateAndDoReaction,
+            @Nullable final Comparator<? super IResponder> order) {
 
-        final List<? extends IResponder> respondersToReaction =
+        List<G> respondersToReaction =
                 world.loadResponders(reactionsInterface);
-        // IDEA: Natürlicher wäre "wachst erst nach einigen Stunden wieder auf" -
-        //  Danach die Tageszeitreactions ("Es ist jetzt vollständig dunkel geworden"),
-        //  dann die "Wann hast du eigentlich zuletzt etwas gegessen", dann
-        //  "Plitsch platsch" Frosch-Reactions.
-        //  Die verschiedeenen Responder könnten also eine "Initiative" o.Ä. haben, oder
-        //  sie werden programmatisch in einer bestimmten Reihenfolge aufgerufen...
+
+        if (order != null) {
+            respondersToReaction = new ArrayList<>(respondersToReaction);
+            respondersToReaction.sort(order);
+        }
 
         final AvDateTime reactionsStartTime = timeTaker.now();
         AvDateTime timeAfterAllReactions = reactionsStartTime;

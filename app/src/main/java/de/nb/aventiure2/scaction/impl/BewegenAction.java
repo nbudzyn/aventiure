@@ -715,7 +715,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private TimedDescription<?>
     tweakForLastActionBewegen(final TimedDescription<?> timedDescription) {
         if (sc.memoryComp().getLastAction().is(BEWEGEN)) {
-            if (n.endsThisIsExactly(StructuralElement.WORD) && n.dann()
+            if (n.getNarrationEndedBy() == StructuralElement.WORD && n.dann()
                     && !timedDescription.isSchonLaenger()) {
                 // "Du stehst wieder vor dem Schloss. Dann gehst du wieder hinein in das Schloss."
                 final TextDescription satzEvtlMitDann = timedDescription.getDescription()

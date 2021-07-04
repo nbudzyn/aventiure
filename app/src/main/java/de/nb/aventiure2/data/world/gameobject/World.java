@@ -135,7 +135,7 @@ public class World {
             new AvDateTime(2,
                     oClock(5, 30));
 
-    // SPIELER-CHARAKTER
+    // SPIELER-CHARAKTERF
     public static final GameObjectId SPIELER_CHARAKTER = new GameObjectId(1);
 
     // OBJECTS
@@ -684,23 +684,23 @@ public class World {
     }
 
     /**
-     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
-     * oder sich (ggf. rekusiv) an dieser Location befindet (soweit die Sichtbarkeit reicht).
-     */
-    public boolean isOrHasVisiblyRecursiveLocation(final GameObjectId gameObjectId,
-                                                   final GameObjectId locationId) {
-        return isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId), locationId);
-    }
-
-    /**
      * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
      * <code>locationIds</code> hat oder
      * sich (ggf. rekusiv) an einer dieser Locations befindet (soweit die Sichtbarkeit reicht).
      */
-    public boolean isOrHasVisiblyRecursiveLocation(
-            final GameObjectId gameObjectId, final GameObjectId... locationIds) {
-        for (final GameObjectId locationId : locationIds) {
-            if (isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId), locationId)) {
+    public boolean isOrHasVisiblyRecursiveLocation(final GameObjectId gameObjectId,
+                                                   final GameObjectId locationId,
+                                                   // In der API
+                                                   // isOrHasVisiblyRecursiveLocation(gameObjectId)
+                                                   // verhindern.
+                                                   final GameObjectId... moreLocationIds) {
+        if (isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId), locationId)) {
+            return true;
+        }
+
+        for (final GameObjectId otherLocationId : moreLocationIds) {
+            if (isOrHasVisiblyRecursiveLocation((IGameObject) load(gameObjectId),
+                    otherLocationId)) {
                 return true;
             }
         }
@@ -709,11 +709,16 @@ public class World {
     }
 
     /**
-     * Gibt <code>true</code> zurück, falls das Game Object als ID diese <code>locationId</code> hat
-     * oder sich (ggf. rekusiv) an dieser Location befindet - soweit die Sichtbarkeit reicht.
+     * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
+     * <code>locationIds</code> hat oder
+     * sich (ggf. rekusiv) an einer dieser Locations befindet.
      */
     public boolean isOrHasVisiblyRecursiveLocation(@Nullable final IGameObject gameObject,
-                                                   final GameObjectId locationId) {
+                                                   final GameObjectId locationId,
+                                                   // In der API
+                                                   // isOrHasVisiblyRecursiveLocation(gameObject)
+                                                   // verhindern.
+                                                   final GameObjectId... moreLocationIds) {
         if (gameObject == null) {
             return false;
         }
@@ -724,19 +729,12 @@ public class World {
 
         final GameObject location = load(locationId);
 
-        return LocationSystem.isOrHasVisiblyRecursiveLocation(gameObject, location);
-    }
+        if (LocationSystem.isOrHasVisiblyRecursiveLocation(gameObject, location)) {
+            return true;
+        }
 
-
-    /**
-     * Gibt <code>true</code> zurück, falls das Game Object als ID eine dieser
-     * <code>locationIds</code> hat oder
-     * sich (ggf. rekusiv) an einer dieser Locations befindet.
-     */
-    public boolean isOrHasRecursiveLocation(
-            final GameObjectId gameObjectId, final GameObjectId... locationIds) {
-        for (final GameObjectId locationId : locationIds) {
-            if (isOrHasRecursiveLocation((IGameObject) load(gameObjectId), locationId)) {
+        for (final GameObjectId otherLocationId : moreLocationIds) {
+            if (isOrHasVisiblyRecursiveLocation(gameObject, otherLocationId)) {
                 return true;
             }
         }

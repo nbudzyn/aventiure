@@ -34,9 +34,10 @@ public class Narration {
     }
 
     /**
-     * This {@link Narration} ends this ... (paragraph, e.g.)
+     * Das {@link StructuralElement}, mit dem diese Narration endet: Ein Kapitelende,
+     * ein Absatzende, ...
      */
-    private final StructuralElement endsThis;
+    private final StructuralElement endedBy;
     @PrimaryKey
     @NonNull
     private final String text;
@@ -106,13 +107,13 @@ public class Narration {
     private final NarrationSource lastNarrationSource;
 
     public Narration(@NonNull final NarrationSource lastNarrationSource,
-                     @NonNull final StructuralElement endsThis,
+                     @NonNull final StructuralElement endedBy,
                      @NonNull final String text,
                      final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(lastNarrationSource, endsThis, text, woertlicheRedeNochOffen, kommaStehtAus,
+        this(lastNarrationSource, endedBy, text, woertlicheRedeNochOffen, kommaStehtAus,
                 allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
                 phorikKandidat != null ?
                         ((GameObjectId) phorikKandidat.getBezugsobjekt()) : null,
@@ -121,7 +122,7 @@ public class Narration {
     }
 
     public Narration(@NonNull final NarrationSource lastNarrationSource,
-                     @NonNull final StructuralElement endsThis,
+                     @NonNull final StructuralElement endedBy,
                      @NonNull final String text,
                      final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
@@ -129,12 +130,12 @@ public class Narration {
                      @Nullable final GameObjectId phorikKandidatBezugsobjekt,
                      @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
         checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
-                        || endsThis == WORD,
+                        || endedBy == WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
                         + "|| endsThis == StructuralElement.WORD verletzt");
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.lastNarrationSource = lastNarrationSource;
-        this.endsThis = endsThis;
+        this.endedBy = endedBy;
         this.text = text;
         this.kommaStehtAus = kommaStehtAus;
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
@@ -144,8 +145,8 @@ public class Narration {
         this.phorikKandidatNumerusGenus = phorikKandidatNumerusGenus;
     }
 
-    StructuralElement getEndsThis() {
-        return endsThis;
+    StructuralElement getEndedBy() {
+        return endedBy;
     }
 
     @NonNull
@@ -202,7 +203,7 @@ public class Narration {
         final StringBuilder resText = new StringBuilder(text.trim());
 
         final StructuralElement brreak =
-                StructuralElement.max(endsThis, additionDesc.getStartsNew());
+                StructuralElement.max(endedBy, additionDesc.getStartsNew());
 
         final String addition = additionDesc.getText();
 
@@ -226,25 +227,25 @@ public class Narration {
             }
         }
 
-        StructuralElement resEndsThis;
+        StructuralElement resEndedBy;
         if (capitalize && beginnStehtCapitalizeNichtImWeg(addition)) {
             try {
                 resText.append(capitalizeFirstLetter(addition));
-                resEndsThis = additionDesc.getEndsThis();
+                resEndedBy = additionDesc.getEndsThis();
             } catch (final NoLetterException e) {
                 // Diese TextDescription war nur etwas wie "„".
                 // Der Text der folgenden TextDescription muss großgeschrieben werden.
                 resText.append(addition);
-                resEndsThis = StructuralElement.max(SENTENCE, additionDesc.getEndsThis());
+                resEndedBy = StructuralElement.max(SENTENCE, additionDesc.getEndsThis());
             }
         } else {
             resText.append(addition);
-            resEndsThis = additionDesc.getEndsThis();
+            resEndedBy = additionDesc.getEndsThis();
         }
 
         return new Narration(
                 narrationSource,
-                resEndsThis,
+                resEndedBy,
                 resText.toString().trim(),
                 additionDesc.toSingleKonstituente().woertlicheRedeNochOffen(),
                 additionDesc.isKommaStehtAus(),

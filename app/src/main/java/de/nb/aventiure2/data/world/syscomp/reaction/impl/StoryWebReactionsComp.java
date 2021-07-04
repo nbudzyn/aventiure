@@ -60,6 +60,10 @@ public class StoryWebReactionsComp
     @Override
     public void onLeave(final ILocatableGO locatable, final ILocationGO from,
                         @Nullable final ILocationGO to) {
+        // In Ausnahmefällen w#re es hier wohl möglich, dass from.getId() == to.getId()
+        // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
+        // Wieder-Auffangen.)
+
         if (locatable.is(SPIELER_CHARAKTER)) {
             onSCLeave(from, to);
             return;
@@ -67,6 +71,11 @@ public class StoryWebReactionsComp
 
         if (world.isOrHasRecursiveLocation(FROSCHPRINZ, locatable)) {
             onFroschprinzRecLeave(to);
+            return;
+        }
+
+        if (world.isOrHasRecursiveLocation(LOBEBAUER, locatable)) {
+            onLobebauerRecLeave(to);
             return;
         }
     }
@@ -79,13 +88,39 @@ public class StoryWebReactionsComp
         }
     }
 
-    private void onFroschprinzRecLeave(@Nullable final ILocationGO to) {
+    private void onFroschprinzRecLeave(
+            @Nullable final ILocationGO to) {
         final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
         if (froschprinz.stateComp().hasState(
-                FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN) &&
-                to == null) {
+                FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
+                && to == null) {
             reachStoryNode(FroschkoenigStoryNode.PRINZ_IST_WEGGEFAHREN);
+            if (!world.isOrHasVisiblyRecursiveLocation(
+                    SPIELER_CHARAKTER, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+                // SC ist bei der Abfahrt nicht anwesend und hat das Lob vom
+                // Lobebauer verpasst.
+                reachStoryNode(
+                        FroschkoenigStoryNode
+                                .SC_WURDE_IMPLIZIT_GELOBT_ODER_HAT_ES_ZEITLICH_VERPASST);
+            }
+
             return;
+        }
+    }
+
+    private void onLobebauerRecLeave(
+            @Nullable final ILocationGO to) {
+        final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
+        if (froschprinz.stateComp().hasState(
+                FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
+                && to == null
+                && world
+                .isOrHasVisiblyRecursiveLocation(SPIELER_CHARAKTER, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+            // SC ist bei der Froschprinz-Abfahrt anwesend und hat das Lob vom
+            // Lobebauer erhalten.
+            reachStoryNode(
+                    FroschkoenigStoryNode
+                            .SC_WURDE_IMPLIZIT_GELOBT_ODER_HAT_ES_ZEITLICH_VERPASST);
         }
     }
 

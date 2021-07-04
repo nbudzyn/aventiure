@@ -50,8 +50,8 @@ public class LobebauerReactionsComp extends AbstractDescribableReactionsComp
 
         final F froschprinz = loadFroschprinz();
         if (!froschprinz.stateComp().hasState(ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
-                || !world
-                .isOrHasVisiblyRecursiveLocation(SPIELER_CHARAKTER, DRAUSSEN_VOR_DEM_SCHLOSS)) {
+                || !world.isOrHasVisiblyRecursiveLocation(
+                SPIELER_CHARAKTER, DRAUSSEN_VOR_DEM_SCHLOSS)) {
             return;
         }
 
@@ -65,7 +65,8 @@ public class LobebauerReactionsComp extends AbstractDescribableReactionsComp
     }
 
     @Override
-    public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from, final ILocationGO to) {
+    public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
+                        final ILocationGO to) {
     }
 
     @NonNull

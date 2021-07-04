@@ -419,11 +419,11 @@ public class Narrator {
                 .isAnaphorischerBezugMoeglich(pk, gameObjectId));
     }
 
-    public boolean endsThisIsExactly(final StructuralElement structuralElement) {
-        return applyToNarration(
-                d -> d.getEndsThis() == structuralElement,
-                n -> n.getEndsThis() == structuralElement
-        );
+    /**
+     * Gibt das {@link StructuralElement} zurück, mit dem die Narration derzeit endet.
+     */
+    public StructuralElement getNarrationEndedBy() {
+        return applyToNarration(AbstractDescription::getEndsThis, Narration::getEndedBy);
     }
 
     /**

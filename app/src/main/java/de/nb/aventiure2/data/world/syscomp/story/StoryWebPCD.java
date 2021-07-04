@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.story;
 
+import android.util.Pair;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
@@ -17,6 +19,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.MentalModelComp;
 
 import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.AKTIV;
+import static de.nb.aventiure2.data.world.syscomp.story.StoryData.State.BEENDET;
 
 /**
  * Mutable - and therefore persistent - data of the {@link MentalModelComp} component.
@@ -62,6 +65,7 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
             storyDataMap.put(story, storyData);
             setChanged();
         }
+
         if (storyData.reachStoryNode(storyNode, scActionStepCount)) {
             setChanged();
         }
@@ -74,10 +78,21 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
             return ImmutableSet.of();
         }
 
-        final int lastAchievementStepCount = getLastAchievementStepCount();
-        final int lastHintActionStepCount = getLastHintActionStepCount();
+        final Pair<Integer, StoryData.State> lastAchievementStepCountAndStoryState =
+                getLastAchievementStepCountAndStoryState();
 
         // Was war zuletzt:
+        if (lastAchievementStepCountAndStoryState.first == scActionStepCount - 1
+                && lastAchievementStepCountAndStoryState.second == BEENDET) {
+            // Es wurde eben gerade eine Story beendet! (Glückwunsch. :-) )
+            // Wir geben sofort einen Tipp zu einer anderen Story, damit der Spieler einen
+            // Anhaltspunkt hat, wie es weitergehen soll.
+            return res;
+        }
+
+        final int lastAchievementStepCount = lastAchievementStepCountAndStoryState.first;
+        final int lastHintActionStepCount = getLastHintActionStepCount();
+
         if (lastAchievementStepCount >= lastHintActionStepCount) {
             // Das Letzte war: Der Benutzer hat einen Story Node erreicht!
             if (scActionStepCount <
@@ -149,14 +164,18 @@ public class StoryWebPCD extends AbstractPersistentComponentData {
         return res.build();
     }
 
-    private int getLastAchievementStepCount() {
-        int res = 0;
+    private Pair<Integer, StoryData.State> getLastAchievementStepCountAndStoryState() {
+        int resStepCount = 0;
+        StoryData.State resState = null;
 
         for (final StoryData storyData : storyDataMap.values()) {
-            res = Math.max(res, storyData.getLastAchievementStepCount());
+            if (storyData.getLastAchievementStepCount() >= resStepCount) {
+                resStepCount = storyData.getLastAchievementStepCount();
+                resState = storyData.getState();
+            }
         }
 
-        return res;
+        return Pair.create(resStepCount, resState);
     }
 
     @SuppressWarnings("WeakerAccess")

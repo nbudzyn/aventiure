@@ -22,13 +22,8 @@ public class NurRapunzelWalkthrough {
                     "Den Pfad zurückgehen",
                     "Den langen schmalen Pfad zum Turm aufwärtsgehen",
                     "In den Schatten der Bäume setzen",
-                    "Rasten", // Frau steigt vom Turm herunter und geht?
-                    "Rasten", // Frau steigt vom Turm herunter und geht?
-                    "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht?
-                    "Auf die magere Frau warten",
-                    "Auf die magere Frau warten",
-                    "Auf die magere Frau warten",
-                    "Auf die magere Frau warten",
+                    "Rasten", // Frau steigt vom Turm herunter und geht
+                    "Rasten",
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",

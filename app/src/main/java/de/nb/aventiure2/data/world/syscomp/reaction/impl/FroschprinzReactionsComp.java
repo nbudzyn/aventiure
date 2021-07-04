@@ -50,7 +50,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZU
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -315,7 +314,7 @@ public class FroschprinzReactionsComp
         n.narrate(
                 du("siehst",
                         "noch einen Wagen davonfahren, mit acht weißen Pferden bespannt, "
-                                + "jedes mit weißen Straußfedern auf dem Kopf", CHAPTER)
+                                + "jedes mit weißen Straußfedern auf dem Kopf", PARAGRAPH)
                         .schonLaenger()
                         .timed(mins(2)));
 

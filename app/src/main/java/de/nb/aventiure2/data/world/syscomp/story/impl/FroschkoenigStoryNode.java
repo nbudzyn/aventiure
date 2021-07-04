@@ -93,29 +93,42 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     // Dramatische Frage: Schafft es der SC, zu erfahren, wie es mit dem Prinzen weitergeht?
     PRINZ_IST_WEGGEFAHREN(4, DRAUSSEN_VOR_DEM_SCHLOSS,
             FroschkoenigStoryNode::narrateAndDoHintAction_PrinzIstWeggefahren,
-            PRINZ_IST_ERLOEST);
-
-    // FIXME Sobald eine Story beendet ist: Zwingend einen (klaren) Tipp zur nächsten noch
-    //  offenen Story geben!
+            PRINZ_IST_ERLOEST),
+    // Dramatische Frage: Wars das jetzt? Hat sich das alles gelohnt?
+    // (Das passiert automatisch - keine Tipps sinnvoll)
+    SC_WURDE_IMPLIZIT_GELOBT_ODER_HAT_ES_ZEITLICH_VERPASST;
 
     private final ImmutableSet<FroschkoenigStoryNode> preconditions;
 
-    private final int expAchievementSteps;
+    @Nullable
+    private final Integer expAchievementSteps;
 
     @Nullable
     private final GameObjectId locationId;
 
+    @Nullable
     private final IHinter hinter;
 
-    FroschkoenigStoryNode(final int expAchievementSteps, @Nullable final GameObjectId locationId,
-                          final IHinter hinter,
+    /**
+     * Konstruktor für einen Story Node, der nur automatisch freigeschaltet wird, für den
+     * es also keine Tipps geben soll.
+     */
+    @SuppressWarnings("RedundantCast")
+    FroschkoenigStoryNode() {
+        this(null, (GameObjectId) null, null);
+    }
+
+    FroschkoenigStoryNode(@Nullable final Integer expAchievementSteps,
+                          @Nullable final GameObjectId locationId,
+                          @Nullable final IHinter hinter,
                           final FroschkoenigStoryNode... preconditions) {
         this(asList(preconditions), expAchievementSteps, locationId, hinter);
     }
 
     FroschkoenigStoryNode(final Collection<FroschkoenigStoryNode> preconditions,
-                          final int expAchievementSteps, @Nullable final GameObjectId locationId,
-                          final IHinter hinter) {
+                          @Nullable final Integer expAchievementSteps,
+                          @Nullable final GameObjectId locationId,
+                          @Nullable final IHinter hinter) {
         this.preconditions = ImmutableSet.copyOf(preconditions);
         this.locationId = locationId;
         this.expAchievementSteps = expAchievementSteps;
@@ -132,6 +145,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
         return preconditions;
     }
 
+    @Nullable
     @Override
     public Integer getExpAchievementSteps() {
         return expAchievementSteps;
@@ -145,10 +159,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @Override
     public boolean beendetStory() {
-        return this == PRINZ_IST_WEGGEFAHREN;
+        return this == values()[values().length - 1];
     }
 
     @Override
+    @Nullable
     public IHinter getHinter() {
         return hinter;
     }
