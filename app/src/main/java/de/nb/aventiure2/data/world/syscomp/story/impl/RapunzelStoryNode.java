@@ -56,30 +56,28 @@ import static java.util.Arrays.asList;
 @SuppressWarnings("UnnecessaryReturnStatement")
 public enum RapunzelStoryNode implements IStoryNode {
     // Zentrale Dramatische Frage für des Märchens:
-    // FIXME Schafft es (Charakter X) (Charakter Y) zu (Aktion), so dass (Ergebnis / Ziel).
-    // Charaktere: FIXME Charaktere
-    // Gewünschtes Ergebnis: FIXME Gewünschtes Ergebnis
-    // FIXME Oft ist X der Actor, Y der Resistor.
+    // Schafft es der SC, der jungen Frau aus dem Turm (Rapunzel) dauerhaft die Freiheit zu geben?
+    // Charaktere: SC, Rapunzel, Zauberin; FIXME Seilerin?
+    // Gewünschtes Ergebnis: Rapunzel ist dauerhaft gerettet
+    // Der SC ist Actor, Zauberin ist Resistor.
     // Schwierigkeiten:
-    //  - FIXME Schwierigkeiten
-    // (FIXME Das Ergebnis / Ziel sollte (für den Character / den SC) schwer zu erreichen sein.
-    //   Das erzeugt Spannung.)
-    //  (FIXME Im Idealfall können wir die zentrale dramatische Frage des Märchen direkt
-    //   übernehmen.)
-    // FIXME Je früher man die zentrale dramtische Frage einführt, desto besser.
+    // - Der SC muss Rapunzel erst einmal finden, zu ihr kommen und ihr Vertrauen gewinnen.
+    // - Wenn die Zauberin Wind von der Sache bekommt, spricht sie einen Vergessenszauber.
+    // - Der SC muss Rapunzel eine Abstiegsmöglichkeit bauen.
+    // - Die Zauberin bekommt irgendwann auf jeden Fall Wind von der Sache und
+    //  verzaubert Rapunzel in einen Vogel. Der SC muss die Verzauberung auflösen.
+    // - Der SC muss die Macht der Zauberin dauerhaft brechen.
 
-    //FIXME Es sollte nach jedem Story Beat noch eine offene Dramatische Frage geben.
-    // Bestenfalls die zentrale Dramatische Frage des Märchens - oder eine andere.
-    // Die Tipps könnten auf die / eine noch offene dramatische Frage Bezug nehmen -
+    //FIXME Die Tipps könnten auf die / eine noch offene dramatische Frage Bezug nehmen -
     // wenn die Frage nicht zu allgemein ist.
-    // Oft ist es dramatisch interessanter, wenn eine dramatische Frage mit
-    // Nein beantwortet wird.
+    // Die zentrale dramatische Frage wird letztlich mit Ja beantwortet.
 
     // FIXME Es sollte jederzeit (nicht nur die aktuelle dramatische Frage, sondern auch andere)
     //  offene Fragen geben ("Warum...?").
 
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
+    // Dramatische Frage (vor diesem Story Node): Gibt es in der Welt noch mehr zu entdecken?
     TURM_GEFUNDEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmGefunden),
     // Dramatische Frage: Was hat es mit dem Turm auf sich?
@@ -104,7 +102,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZauberinHeimlichBeimRufenBeobachtet,
             TURM_GEFUNDEN),
-    // Dramatische Frage: Schafft es der SC, auch in den Turm zu kommen, indem er selbst  ruft?
+    // Dramatische Frage: Schafft es der SC, auch in den Turm zu kommen, indem er selbst ruft?
     ZU_RAPUNZEL_HINAUFGESTIEGEN(10, VOR_DEM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET),
@@ -112,7 +110,8 @@ public enum RapunzelStoryNode implements IStoryNode {
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN),
-    // Dramatische Frage ab hier: Schafft es der SC, Rapunzel zu befreien?
+    // Dramatische Frage ab hier: Schafft es der SC, der jungen Frau aus dem Turm (Rapunzel)
+    // die Freiheit zu geben?
     TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN(10, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
             RAPUNZEL_RETTUNG_VERSPROCHEN),
@@ -131,6 +130,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             // dass der SC alles vergessen hat
             RapunzelStoryNode::narrateAndDoHintAction_AesteGenommen,
             STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN),
+
     AESTE_IN_STUECK_GEBROCHEN(10,
             RapunzelStoryNode::getVisibibleOuterMostLocationIdForHolz,
             // Auch hier muss bei den Tipps der Sonderfall eingearbeitet werden,
@@ -178,10 +178,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Vielleicht kann man auch den Raben erlösen (wenn man ihr schon vorher gesehen hat?)
 
     // FIXME Rabe mit Sinn HINTERlegen!
-
-    // FIXME Keine genauen Tipps, wenn der SC sehr müde ist. "Vor Müdigkeit kannst du an
-    //  nichts anderes mehr denken..."
-
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         STORY_ADVANCE

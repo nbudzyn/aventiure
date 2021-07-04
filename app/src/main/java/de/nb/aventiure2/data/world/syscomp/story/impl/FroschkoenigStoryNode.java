@@ -43,11 +43,11 @@ public enum FroschkoenigStoryNode implements IStoryNode {
     // Zentrale Dramatische Frage für des Märchens:
     //  Schafft es der SC, sich zu überwinden und mit dem Frosch zu essen, so dass etwas
     //  Magisches passiert?
-    //  Charaktere: SC, Frosch
+    //  Charaktere: SC, Frosch (Lobebauer)
     //  Gewünschtes Ergebnis: etwas Magisches passiert
     //  Der SC ist Actor und Resistor gleichermaßen.
     //  Schwierigkeiten:
-    //  - Der SC muss ich überwinden.
+    //  - Der SC muss sich überwinden.
     //  - Der SC muss erkennen, dass man beim Schlossfest zusammen essen kann.
     //  - Der SC muss auf das Schlossfest warten.
     //  (Also für den Spieler eher leicht zu erreichen -> geringe Spannung.)
@@ -246,8 +246,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
         if (world.hasSameVisibleOuterMostLocationAsSC(goldeneKugel)) {
-            // FIXME Nicht, wenn man (wann auch immer) müde ist. (Das wird wohl viele
-            //  der Tipps betreffen!)
             alt.add(du(PARAGRAPH,
                     "hast",
                     "Lust, einmal wieder mit deiner goldenen Kugel "

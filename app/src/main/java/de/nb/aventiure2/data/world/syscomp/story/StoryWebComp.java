@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.wetter.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -27,6 +28,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -34,6 +36,11 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static java.util.Arrays.asList;
 
 /**
@@ -212,18 +219,48 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return;
         }
 
-        // Nicht alle Geschichten sind von Anfang an "verfügbar", und manchmal
-        // kann der Spieler sie auch nur bis zu einem bestimmten Punkt spielen.
-        // Wenn aber häufig Tipps notwendig waren, der Spieler also trotz Tipps
-        // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
-        // "weiterzusetzen" (z.B. zu starten).
-        // (Das wird wohl eher selten der Fall sein.)
-        if (!Story.checkAndAdvanceAStoryIfAppropriate(db, timeTaker, n, world)) {
-            // Das hier ist der Regelfall!
-            storyNode.narrateAndDoHintAction(db, timeTaker, n, world);
+        if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH) {
+            // Des SC ist müde. Er soll sich erst darum kümmern - bis er nicht geschlafen hat
+            // erhält er keine konkreten Tipps und es wird auch keine andere Geschichte
+            // freigeschaltet o.Ä.
+
+            narrateMuedeHint();
+        } else {
+            // Nicht alle Geschichten sind von Anfang an "verfügbar", und manchmal
+            // kann der Spieler sie auch nur bis zu einem bestimmten Punkt spielen.
+            // Wenn aber häufig Tipps notwendig waren, der Spieler also trotz Tipps
+            // nicht oder nur langsam weiterkommt, versuchen wir, eine solche Geschichte
+            // "weiterzusetzen" (z.B. zu starten).
+            // (Das wird wohl eher selten der Fall sein.)
+            if (!Story.checkAndAdvanceAStoryIfAppropriate(db, timeTaker, n, world)) {
+                // Das hier ist der Regelfall!
+                storyNode.narrateAndDoHintAction(db, timeTaker, n, world);
+            }
         }
 
         requirePcd().setLastHintActionStepCount(scActionStepCountDao.stepCount());
+    }
+
+    private void narrateMuedeHint() {
+        final AltDescriptionsBuilder alt =
+                AltDescriptionsBuilder.alt()
+                        .add(du(PARAGRAPH, "kannst",
+                                "vor Müdigkeit an nichts anderes mehr denken")
+                                        .mitVorfeldSatzglied("vor Müdigkeit"),
+                                paragraph("müde, wie du bist, kannst du gar keinen klaren",
+                                        "Gedanken mehr fassen"),
+                                du(SENTENCE, "fühlst", "dich etwas",
+                                        "durcheinander, müde wie du bist",
+                                        SENTENCE),
+                                neuerSatz("aber hauptsächlich bist du erst einmal müde!"),
+                                du(SENTENCE, "bist", "vorrangig müde")
+                                        .mitVorfeldSatzglied("vorrangig"),
+                                neuerSatz(PARAGRAPH, "wie müde du bist!"),
+                                neuerSatz(PARAGRAPH,
+                                        "die Müdigkeit lässt dich keinen klaren",
+                                        "Gedanken mehr fassen"),
+                                neuerSatz(PARAGRAPH, "was bist du müde!")).schonLaenger();
+        n.narrateAlt(alt, NO_TIME);
     }
 
     public int getScore() {

@@ -118,10 +118,6 @@ public class ReactionSystem
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final GameObjectId fromId,
                         final GameObjectId toId) {
-        // FIXME Wetter als erstes beschreiben, dann NSC-Reaktionen?
-        //  Vielleicht Objekte in Kategoien einteilen oder auf
-        //  Alive prüfen?
-
         onEnter(locatableId,
                 fromId != null ? (ILocationGO) world.load(fromId) : null,
                 toId);
@@ -266,8 +262,7 @@ public class ReactionSystem
     @Override
     public void afterScActionAndFirstWorldUpdate() {
         doReactions(ISCActionReactions.class,
-                ISCActionReactions::afterScActionAndFirstWorldUpdate
-        );
+                ISCActionReactions::afterScActionAndFirstWorldUpdate);
     }
 
     /**
