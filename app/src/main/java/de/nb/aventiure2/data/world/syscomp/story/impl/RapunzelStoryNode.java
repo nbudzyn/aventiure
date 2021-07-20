@@ -57,8 +57,11 @@ import static java.util.Arrays.asList;
 public enum RapunzelStoryNode implements IStoryNode {
     // Zentrale Dramatische Frage für des Märchens:
     // Schafft es der SC, der jungen Frau aus dem Turm (Rapunzel) dauerhaft die Freiheit zu geben?
+    // (Letztlich mit Ja beantwortet.)
+    // (Und: Gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung aufzubauen? - Letztlich
+    // mit Nein beantwortet)
     // Charaktere: SC, Rapunzel, Zauberin; FIXME Seilerin?
-    // Gewünschtes Ergebnis: Rapunzel ist dauerhaft gerettet
+    // Gewünschtes Ergebnis: Rapunzel ist dauerhaft in Freiheit
     // Der SC ist Actor, Zauberin ist Resistor.
     // Schwierigkeiten:
     // - Der SC muss Rapunzel erst einmal finden, zu ihr kommen und ihr Vertrauen gewinnen.
@@ -67,13 +70,6 @@ public enum RapunzelStoryNode implements IStoryNode {
     // - Die Zauberin bekommt irgendwann auf jeden Fall Wind von der Sache und
     //  verzaubert Rapunzel in einen Vogel. Der SC muss die Verzauberung auflösen.
     // - Der SC muss die Macht der Zauberin dauerhaft brechen.
-
-    //FIXME Die Tipps könnten auf die / eine noch offene dramatische Frage Bezug nehmen -
-    // wenn die Frage nicht zu allgemein ist.
-    // Die zentrale dramatische Frage wird letztlich mit Ja beantwortet.
-
-    // FIXME Es sollte jederzeit (nicht nur die aktuelle dramatische Frage, sondern auch andere)
-    //  offene Fragen geben ("Warum...?").
 
     // Idee für die Schritte: Das muss man machen, dann kommt man weiter (sonst nicht)
 
@@ -107,11 +103,13 @@ public enum RapunzelStoryNode implements IStoryNode {
             RapunzelStoryNode::narrateAndDoHintAction_ZuRapunzelHinaufgestiegen,
             ZAUBERIN_HEIMLICH_BEIM_RUFEN_BEOBACHTET),
     // Dramatische Frage: Kann der SC die junge Frau irgendwie unterstützen?
+    // Und gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung aufzubauen?
     RAPUNZEL_RETTUNG_VERSPROCHEN(15, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_RapunzelRettungVersprochen,
             ZU_RAPUNZEL_HINAUFGESTIEGEN),
     // Dramatische Frage ab hier: Schafft es der SC, der jungen Frau aus dem Turm (Rapunzel)
-    // die Freiheit zu geben?
+    // die Freiheit zu geben? Und gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung
+    // aufzubauen?
     TURMZIMMER_VERLASSEN_UM_RAPUNZEL_ZU_BEFREIEN(10, OBEN_IM_ALTEN_TURM,
             RapunzelStoryNode::narrateAndDoHintAction_TurmzimmmerVerlassenUmRapunzelZuBefreien,
             RAPUNZEL_RETTUNG_VERSPROCHEN),
@@ -125,6 +123,8 @@ public enum RapunzelStoryNode implements IStoryNode {
     //  gebrochen hat. Tipps dafür wären nicht sinnvoll
     STURM_HAT_AESTE_VON_BAEUMEN_GEBROCHEN,
 
+    // (Neue, zusätzliche offene Frage: Kann man aus den Ästen eine Vorrichtung bauen,
+    // mit der Rapunzel den Turm verlassen kann?)
     AESTE_GENOMMEN(10, DRAUSSEN_VOR_DEM_SCHLOSS,
             // Auch hier muss bei den Tipps der Sonderfall eingearbeitet werden,
             // dass der SC alles vergessen hat
@@ -141,32 +141,45 @@ public enum RapunzelStoryNode implements IStoryNode {
     // Auch ab hier muss bei allen Tipps der Sonderfall eingearbeitet werden,
     // dass der SC alles vergessen hat
 
-    // FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
-    //  - Seilerin?
-    //  Vorher sollt es ein Gespräch geben o.Ä. - sie sollte es nicht direkt anbieten!
-    //  - Vielleicht muss man ihr etwas bringen (Beeren...??!)
-    //  und das Seilflechten kommt erst im Gespräch danach zu auf?!
-    //  - Sie könnte auch auf dem Schlossfest sitzen und man sieht ihr zu und lernt es dabei?!
-    //  - Man könnte sie auch fragen - sie hat kein Seil mehr, das lang genug ist?!
+    //FIXME Die Tipps ab hier könnten auf die / eine noch offene dramatische Frage Bezug nehmen.
+
+    //FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
+    // - "An einer Ecke ist ein kleiner Markt"
+    // -> "Auf den kleinen Markt gehen"
+    // - "Auf dem kleinen Markt  / Dort sitzen ein paar einfache Leute und halten ihre Waren feil:
+    // Eine Bauersfrau verkauft Mus, eine schöne junge Frau hat Töpfe und irdenes Geschirr vor sich
+    // stehen und eine alte Frau flicht Körbe.
+    // -> "Dich der Bauersfrau zuwenden"
+    // -- "Mus feil", "die Töpfe", "die Nase", "der Geruch von dem süßen Mus steigt" (Hunger...)
+    //  Kein Geld! Kugel -> "Diebesgut?!"
+
+    // FIXME -> "Dich der alten Frau / Seilerin zuwenden"
+    //  Gespräch
+    //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
+    //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
+    //  ("du schaust ihr genau dabei zu. So schwer sieht
+    //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann nimmt man
+    //   wieder...  Mh-hm,  gut zu wissen! / Interessant")
+
+    // FIXME "Die Seilerin hat ihren Stand gut verschnürt und abgedeckt"
+
+    // FIXME Idee: Bach / kleiner Fluss nach Trampelpfad hinter Hütte, dort wachsen
+    //  die Binsen
 
     // FIXME Binsen, Seil flechten...
+    //  - Binsen wachsen auf sumpfigem Gelände auf Wiesen oder im Wald.  Sie ähneln Gras, sind
+    //  aber rund, markhaltig, dunkelgrün und zäher. Im Wasser von Seen werden sie bis 2m,
+    //  auf feuchten Wiesen und im Wald 1/2 bis 3/4m hoch. Man schneidet die Binsen vor der
+    //  Blüte, weil sie später verholzen und dann nicht mehr so geschmeidig sind.
     //  - "du rupfst Binsen und flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
-    //  - "Binsenseil"
+    //  - Binsen anfeuchten?
+    //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
     //  - KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
     //   restlichen müssen auch alle vorhanden sein)
     //  - "Sprossen"
 
-    // FIXME Jedes "Puzzle" sollte möglichst nur "Verbs" (Aktionen) verwenden, die der Spieler
-    //  schon zuvor kennengelernt hat (Beispiel: hochwerfern -> Kugel an richtiger Stelle
-    //  hochwerfen; nehmen -> Äste nehmen; ?? -> Seil flechten;
-    //  ?? -> Aus Seil und Ästen Strickleiter bauen). Oder es sollte zu einem sehr einfachen
-    //  "Puzzle" mit einem neuen Verb ein schwereres Puzzle mit demselben Verb geben.
-
-    // FIXME Wenn ein "Puzzle" grundsätzlich zu leicht ist: Das Feedback, ob der Spieler auf dem
-    //  richigen Weg ist, verzögern.
-
-    // FIXME Wenn ein "Puzzle" (für den Spieler im Moment) zu schwer ist: Feedback geben, dass /
-    //  ob der SC auf dem richtigen Weg ist. (Kann man als "Tipps" einbauen.)
+    // FIXME Sackgasse: "Am Seil herunterlassen" / "am Seil herunterklettern": Das tut Rapunzel
+    //  nicht.
 
     // FIXME "steigst die Leiter herauf"
 
@@ -178,6 +191,13 @@ public enum RapunzelStoryNode implements IStoryNode {
     // FIXME Vielleicht kann man auch den Raben erlösen (wenn man ihr schon vorher gesehen hat?)
 
     // FIXME Rabe mit Sinn HINTERlegen!
+
+    // FIXME Auflösung der letzen / zentralen dramatischen Fragen:
+    //  Schafft es der SC, der jungen Frau aus dem Turm (Rapunzel)
+    //  die Freiheit zu geben? - Ja.
+    //  Und gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung
+    //  aufzubauen? - Nein.
+
     @SuppressWarnings({"unused", "RedundantSuppression"})
     enum Counter {
         STORY_ADVANCE

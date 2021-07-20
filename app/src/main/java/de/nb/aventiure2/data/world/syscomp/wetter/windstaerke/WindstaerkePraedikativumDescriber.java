@@ -79,14 +79,6 @@ public class WindstaerkePraedikativumDescriber {
                 throw new IllegalArgumentException("Unexpected Windstaerke: " + windstaerke);
         }
 
-        // FIXME Idee: Bach / kleiner Fluss nach Trampelpfad hinter Hütte, dort wachsen
-        //  die Binsen
-
-        // FIXME Seilerin beobachten bei ihrer Tätigkeit
-        //  "du schaust ihr genau dabei zu. So schwer sieht es eigentlich gar nicht aus.
-        //  man legt einfach... und dann nimmt man wieder...  Mh-hm, gut zu wissen! / Interessant"
-        // FIXME "Die Seilerin hat ihren Stand gut verschnürt und abgedeckt"
-
         return alt.build();
     }
 }

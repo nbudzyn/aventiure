@@ -105,7 +105,7 @@ public class DeklinierbarePhraseUtil {
             case N:
                 return EINES;
             case PL_MFN:
-                return Indefinitpronomen.WELCHER3.get(numerusGenus);
+                return Indefinitpronomen.WELCHER.get(numerusGenus);
             default:
                 throw new IllegalArgumentException("Unexpected numerusGenus: " + numerusGenus);
         }

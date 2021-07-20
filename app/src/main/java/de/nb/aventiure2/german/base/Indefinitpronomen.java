@@ -35,7 +35,7 @@ public class Indefinitpronomen
             // Dativ: "Von NICHTS kommt nichts."
             ip(N, Relativpronomen.Typ.WERWAS, fr("nichts"));
 
-    static final Map<NumerusGenus, Indefinitpronomen> WELCHER3;
+    static final Map<NumerusGenus, Indefinitpronomen> WELCHER;
 
     static {
         final IndefinitpronomenFlektierer flekt = new IndefinitpronomenFlektierer();
@@ -53,7 +53,7 @@ public class Indefinitpronomen
                     extractFlexionsreihe(wortformen, numerusGenus)));
         }
 
-        WELCHER3 = res.build();
+        WELCHER = res.build();
     }
 
     /**
