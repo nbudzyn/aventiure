@@ -1,12 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.story.impl;
 
-public class SiebenAufEinenStreichStoryNode {
+public class DasTapfereSchneiderleinStoryNode {
     // FIXME hölzernes Messer, ziemlich stupf (in der Hütte auf dem Tisch)
 
     // FIXME Brot (z.B. aus Frau Holles Ofen)
     //  Der Frosch könnte den Tipp geben...
 
     // FIXME Frau auf Markt verkauft Mus
+
+
+    //  --- Story Node: SC kauft Mus
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
 
     // FIXME "Gut Mus feil! Mus feil! ruft sie dich an Gibt Kraft und Stärke auf jedem Stück Brot
     //  ruft!
@@ -28,10 +33,20 @@ public class SiebenAufEinenStreichStoryNode {
     // FIXME Das Mus auf Brot streichen? (mit dem hölzernen Messer)
     //  ??Nur bei gutem Wetter?
 
+    //  --- Story Node: Fliegen setzen sich auf das Musbrot
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
     // FIXME Eine Fliege setzt sich auf dein Brot
     //  - Die Flige mit der Hand fortwedeln
     //  - Mit der flachen Hand aufs Brot schlagen
     //   Das Mus spritzt überall hin
+
+    //  --- Story Node: SC erschlägt 7 Fliegen
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
 
     // FIXME Noch eine Fliege
 
@@ -46,6 +61,34 @@ public class SiebenAufEinenStreichStoryNode {
     //  . Du straffst dich und versuchst wie ein heldenhafter Kämpfer zu wirken... Jemand kömnte
     //  einen später darauf ansprecjen...Quest...
     //   „Sieben auf einen Streich!", hörst du es plötzlich rufen
+    //  --- Story Node: SC streicht Mus auf Brot
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
+    //  --- Story Node: SC packt Käse ein
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
+    //  --- Story Node: SC trifft den Riesen, Riese presst Wasser aus Stein
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
+    //  --- Story Node: SC presst Wasser aus Käse
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
+    //  --- Story Node: Riese wirft Stein in die Höhe
+    //  ---- Woher weiß der SC das?
+    //  ---- Dramatische Frage:
+    //  ---- Wie gibt der SC Anstoß zur weiteren Entwicklung?
+
+    // FIXME Mindestens der Rest des Märchens scheint im ersten Moment nicht mehr geeignet...
+
+    // FIXME Es kommt zu einem Missverständnis, der SC wird als großer Krieger missverstanden...
+    //  Märchen: Sieben auf einen Streich.
 
     // FIXME Jedes "Puzzle" sollte möglichst nur "Verbs" (Aktionen) verwenden, die der Spieler
     //  schon zuvor kennengelernt hat (Beispiel: hochwerfern -> Kugel an richtiger Stelle
