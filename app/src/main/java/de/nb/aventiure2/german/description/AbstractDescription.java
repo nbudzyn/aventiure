@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -20,12 +26,6 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Abstract superclass for a description.

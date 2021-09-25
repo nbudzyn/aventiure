@@ -50,6 +50,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.archLifecycleVersion"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation "androidx.room:room-runtime:$rootProject.roomVersion"
+    implementation 'com.google.errorprone:error_prone_annotations:2.9.0'
     implementation "com.google.android.material:material:$rootProject.materialVersion"
     implementation 'com.google.guava:guava:30.1-jre'
     implementation 'de.nb.holdbold:federkiel:0.0.4'
