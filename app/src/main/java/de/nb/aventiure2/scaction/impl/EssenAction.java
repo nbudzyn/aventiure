@@ -1,5 +1,21 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN;
+import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN_SEIT_ENTER;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,22 +37,6 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN;
-import static de.nb.aventiure2.scaction.impl.EssenAction.Counter.FELSENBIRNEN_SEIT_ENTER;
 
 /**
  * Der SC möchte etwas essen.
@@ -196,6 +196,11 @@ public class EssenAction extends AbstractScAction {
                 "Am Tisch um euch herum entsteht Aufregung. Der junge Mann erhebt "
                         + "sich und schickt sich an, die Halle zu verlassen")
                 .timed(secs(10)));
+
+        // FIXME Wenn der SC sofort danach aufsteht und sich "durch das Eingangstor" "drängt",
+        //  wird nicht mehr beschrieben, dass der Prinz auch durch das Eingangstor geht - man
+        //  erhält sofort die Beschreibung "siehst noch einen Wagen...". Das ist etwas verwirrend,
+        //  weil man sich fragt: Wie ist der Prinz jetzt nach draußen gekommen?
 
         world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
         froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE);

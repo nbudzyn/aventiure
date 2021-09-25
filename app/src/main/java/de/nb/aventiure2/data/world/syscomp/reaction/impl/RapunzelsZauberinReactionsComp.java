@@ -1,5 +1,33 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.days;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -43,34 +71,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.days;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp.Counter.ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_RUECKWEG_VON_RAPUNZEL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.AUF_DEM_WEG_ZU_RAPUNZEL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.BEI_RAPUNZEL_OBEN_IM_TURM;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.WARTEZEIT_NACH_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.Counter.NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * "Reaktionen" von Rapunzels Zauberin, z.B. darauf, dass Zeit vergeht
@@ -733,8 +733,10 @@ public class RapunzelsZauberinReactionsComp
                         getDescription(true).nomK(),
                         "schließlich langsam. „Ach, ist auch nicht so wichtig“, plappert",
                         world.getDescription(RAPUNZEL).nomK(),
-                        "aufgedreht, „wie war das, was hattest gestern eingekocht?“ – Du",
-                        "wirst etwas nervös").timed(NO_TIME));
+                        "aufgedreht, „wie war das, was hattest du gestern eingekocht?“ – Du",
+                        "wirst etwas nervös").timed(NO_TIME)
+                        .withCounterIdIncrementedIfTextIsNarrated(
+                                NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT));
             }
 
             n.narrateAlt(alt);

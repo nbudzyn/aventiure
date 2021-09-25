@@ -1,5 +1,15 @@
 package de.nb.aventiure2.german.base;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -10,16 +20,6 @@ import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.string.NoLetterException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
 
 /**
  * Die Flexionsspalte eines Nomens, d.h. die verschiedenen Kasus-Formen für ein Nomen
@@ -121,6 +121,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     SONNENUNTERGANG(M),
     STUECKE(PL_MFN, "Stücke", "Stücken"),
     TISCH(M),
+    // FIXME "scheint der Mond *von dem* Sternenhimmel herab",
+    //  "steigt die sonne *an dem* Firmament empor" (-> vom, am)
     STERNENHIMMEL(M),
     STERNENLICHT(N),
     STERNENZELT(N),

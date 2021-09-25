@@ -1,5 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -21,18 +33,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp.Counter.ALTER_TURM_UMRUNDET;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -95,6 +95,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                     "an den Zöpfen",
                     "An den Haaren hinaufsteigen",
                     mins(1),
+                    // FIXME Wenn einiger Wind geht, dann vielleicht: du steigst an den
+                    //  schwankenden Haarzöpfen hinauf
                     du("steigst",
                             "hinauf.\n"
                                     + "Durch das Fensterchen kletterst du in eine kleine Kammer: "

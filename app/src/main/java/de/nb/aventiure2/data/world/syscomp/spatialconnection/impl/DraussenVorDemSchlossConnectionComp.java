@@ -1,5 +1,18 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conNichtSC;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -21,19 +34,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.conNichtSC;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -82,14 +82,14 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         mins(10),
                         du("folgst",
                                 "einem Weg in den Wald.",
-                                "Nach ein paar Schritten führt linker, Hand ein schmaler Pfad",
+                                "Nach ein paar Schritten führt linker Hand ein schmaler Pfad",
                                 "einen Hügel hinauf"),
                         neuerSatz("Jeder kennt die Geschichten, die man "
                                 + "sich über den Wald erzählt: Räuber sind noch "
                                 + "die kleinste Gefahr. Aber das schreckt dich ganz "
                                 + "offenbar nicht und du folgst dem erstbesten "
                                 + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
-                                + "führt linker, Hand ein schmaler, dunkler Pfad einen Hügel "
+                                + "führt linker Hand ein schmaler, dunkler Pfad einen Hügel "
                                 + "hinauf")
                                 .timed(mins(12)),
                         du("läufst",

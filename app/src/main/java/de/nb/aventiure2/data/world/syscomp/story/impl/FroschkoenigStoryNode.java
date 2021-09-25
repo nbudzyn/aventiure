@@ -1,5 +1,19 @@
 package de.nb.aventiure2.data.world.syscomp.story.impl;
 
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
@@ -24,20 +38,6 @@ import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static java.util.Arrays.asList;
 
 public enum FroschkoenigStoryNode implements IStoryNode {
     // Zentrale Dramatische Frage für des Märchens:
@@ -400,6 +400,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> altKugelVermissen() {
+        // FIXME Dieser Text erscheint teilweise, obwohl der SC die Kugel bei sich hat!
         final AltDescriptionsBuilder alt = alt();
 
         alt.add(paragraph("Wo ist eigentlich die schöne goldene Kugel, die du "
