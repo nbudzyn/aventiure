@@ -1,13 +1,13 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 
 /**
  * Ein Verb wie "... an sich nehmen" oder "sich von jdm verabschieden", das
@@ -90,7 +90,6 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
         this.reflKasusOderPraepositionalKasus = reflKasusOderPraepositionalKasus;
         this.objektKasusOderPraepositionalkasus = objektKasusOderPraepositionalkasus;
     }
-
 
     @Override
     public PraedikatReflSubjObjOhneLeerstellen mit(

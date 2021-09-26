@@ -1,5 +1,26 @@
 package de.nb.aventiure2.data.world.syscomp.story.impl;
 
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.duParagraph;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -31,27 +52,6 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altParagraphs;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.duParagraph;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static java.util.Arrays.asList;
 
 @SuppressWarnings("UnnecessaryReturnStatement")
 public enum RapunzelStoryNode implements IStoryNode {
@@ -163,14 +163,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME "Die Seilerin hat ihren Stand gut verschnürt und abgedeckt"
 
-    // FIXME Idee: Bach / kleiner Fluss nach Trampelpfad hinter Hütte, dort wachsen
-    //  die Binsen
-
-    // FIXME Binsen, Seil flechten...
-    //  - Binsen wachsen auf sumpfigem Gelände auf Wiesen oder im Wald.  Sie ähneln Gras, sind
-    //  aber rund, markhaltig, dunkelgrün und zäher. Im Wasser von Seen werden sie bis 2m,
-    //  auf feuchten Wiesen und im Wald 1/2 bis 3/4m hoch. Man schneidet die Binsen vor der
-    //  Blüte, weil sie später verholzen und dann nicht mehr so geschmeidig sind.
+    // FIXME Binsen, Seil flechten..
     //  - "du rupfst Binsen und flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
     //  - Binsen anfeuchten?
     //  - "Binsenseil", "Fingerspitzengefühl und Kraft"

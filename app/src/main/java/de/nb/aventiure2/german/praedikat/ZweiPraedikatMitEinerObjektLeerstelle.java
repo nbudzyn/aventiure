@@ -6,21 +6,22 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
- * Zwei Verben, die mit demselben Subjekt und (inhaltlich)
- * demselben (Präpositional-)objekt stehen.
+ * Zwei Prädikate, deren einzige Leerstelle mit (inhaltlich)
+ * demsselben Objekt gefüllt werden soll.
  * <p>
  * Man hat hier nicht ein Prädikat, sondern zwei Prädikate, jeweils mit einer Objekt-Leerstelle.
  * Wenn man ein Objekt einsetzt, erhält man einen <i>zusammengezogenen Satz</i>, bei dem das
  * Subjekt im zweiten Teil <i>eingespart</i> ist ("Du hebst die Kugel auf und [du] reinigst sie").
  */
-public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
-    private final VerbSubjObj erstesVerb;
-    private final VerbSubjObj zweitesVerb;
+public class ZweiPraedikatMitEinerObjektLeerstelle implements PraedikatMitEinerObjektleerstelle {
+    private final PraedikatMitEinerObjektleerstelle erstesPraedikat;
+    private final PraedikatMitEinerObjektleerstelle zweitesPraedikat;
 
-    public ZweiVerbenSubjObj(final VerbSubjObj erstesVerb,
-                             final VerbSubjObj zweitesVerb) {
-        this.erstesVerb = erstesVerb;
-        this.zweitesVerb = zweitesVerb;
+    public ZweiPraedikatMitEinerObjektLeerstelle(
+            final PraedikatMitEinerObjektleerstelle erstesPraedikat,
+            final PraedikatMitEinerObjektleerstelle zweitesPraedikat) {
+        this.erstesPraedikat = erstesPraedikat;
+        this.zweitesPraedikat = zweitesPraedikat;
     }
 
     @Override
@@ -47,9 +48,9 @@ public class ZweiVerbenSubjObj implements PraedikatMitEinerObjektleerstelle {
             final SubstantivischePhrase zweiteSubstantivischePhrase) {
         return new ZweiPraedikateOhneLeerstellen(
                 // "die goldene Kugel"
-                erstesVerb.mit(ersteSubstantivischePhrase),
+                erstesPraedikat.mit(ersteSubstantivischePhrase),
                 konnektor,
                 // "sie"
-                zweitesVerb.mit(zweiteSubstantivischePhrase));
+                zweitesPraedikat.mit(zweiteSubstantivischePhrase));
     }
 }

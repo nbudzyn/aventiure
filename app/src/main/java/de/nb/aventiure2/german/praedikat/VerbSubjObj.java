@@ -1,11 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
@@ -16,8 +10,16 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.BLASEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.TROCKNEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.WEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
@@ -151,6 +153,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     // Partikelverben
     ABKUEHLEN(KUEHLEN, AKK, "ab", Perfektbildung.HABEN),
     ABSETZEN(SETZEN, AKK, "ab", Perfektbildung.HABEN),
+    ABTROCKNEN(TROCKNEN, AKK, "ab", Perfektbildung.HABEN),
     ANBLICKEN("anblicken", AKK, "blicke", "blickst", "blickt",
             "blickt", "an", Perfektbildung.HABEN, "angeblickt"),
     ANGUCKEN(GUCKEN, AKK, "an", Perfektbildung.HABEN),
@@ -275,10 +278,15 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     }
 
     public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        return new PraedikatMitEinerObjLeerstelle(
+                verb, kasusOderPraepositionalkasus, advAngabe, null);
+    }
+
+    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
         return new PraedikatMitEinerObjLeerstelle(
-                verb, kasusOderPraepositionalkasus, advAngabe
-        );
+                verb, kasusOderPraepositionalkasus, null, advAngabe);
     }
 
     @Override

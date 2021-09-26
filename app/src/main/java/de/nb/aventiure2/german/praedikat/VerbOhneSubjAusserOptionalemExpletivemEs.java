@@ -1,14 +1,15 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
+import de.nb.aventiure2.german.base.Kasus;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Verb (ggf. mit Präfix), bei dem das Subjekt fehlen kann oder nur
@@ -64,8 +65,15 @@ public enum VerbOhneSubjAusserOptionalemExpletivemEs
     }
 
     public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+            @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
+        return new PraedikatMitEinerObjLeerstelle(verb, kasus,
+                true, advAngabe, null);
+    }
+
+    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(verb, kasus, true, advAngabe);
+        return new PraedikatMitEinerObjLeerstelle(verb, kasus,
+                true, null, advAngabe);
     }
 
     @Override

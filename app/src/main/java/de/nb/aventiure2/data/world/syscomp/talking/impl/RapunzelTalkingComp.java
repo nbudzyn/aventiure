@@ -1,45 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.VisibleForTesting;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.TimeTaker;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.InterrogativadverbVerbAllg;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.description.SimpleDuDescription;
-import de.nb.aventiure2.german.description.TextDescription;
-import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -111,6 +71,46 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZUSAGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HELFEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINUNTERLASSEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObjIndirekterFragesatz.FRAGEN_OB_W;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Collection;
+
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.InterrogativadverbVerbAllg;
+import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.SimpleDuDescription;
+import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler

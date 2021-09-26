@@ -97,6 +97,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     MONDLICHT(N),
     MONDSCHEIN(M),
     MONDSCHIMMER(M),
+    MORAST(M),
     MORGEN(M),
     MORGENLICHT(N),
     MORGENSONNE(F),

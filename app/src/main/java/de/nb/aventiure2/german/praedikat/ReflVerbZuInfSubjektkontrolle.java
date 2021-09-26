@@ -1,16 +1,17 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.german.base.Kasus;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
 
 /**
  * Ein Verb wie "sich [Akk] freuen, zu ...". Dabei ist es das Subjekt, dass ... tut
  * ("Subjektkontrolle").
  */
-public enum ReflVerbZuInfSubjektkontrolle implements VerbMitValenz {
+public enum ReflVerbZuInfSubjektkontrolle
+        implements VerbMitValenz, PraedikatNurMitLeerstelleFuerLexikalischenKern {
     SICH_FREUEN_ZU("freuen", AKK,
             "freue", "freust", "freut",
             "freut", "gefreut");
@@ -44,6 +45,7 @@ public enum ReflVerbZuInfSubjektkontrolle implements VerbMitValenz {
     /**
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
+    @Override
     public PraedikatReflZuInfSubjektkontrollen mitLexikalischemKern(
             final PraedikatOhneLeerstellen lexikalischerKern) {
         return new PraedikatReflZuInfSubjektkontrollen(verb, kasus,

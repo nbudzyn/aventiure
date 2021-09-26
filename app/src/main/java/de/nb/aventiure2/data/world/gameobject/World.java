@@ -1,5 +1,31 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_IMMER;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -46,6 +72,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReaction
 import de.nb.aventiure2.data.world.syscomp.reaction.system.ReactionSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.AbzweigImWaldConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.HinterDerHuetteConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp;
@@ -65,32 +92,6 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_IMMER;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * The world contains and manages all game objects.
@@ -183,9 +184,10 @@ public class World {
     public static final GameObjectId VOR_DER_HUETTE_IM_WALD = new GameObjectId(30_011);
     public static final GameObjectId HUETTE_IM_WALD = new GameObjectId(30_012);
     public static final GameObjectId HINTER_DER_HUETTE = new GameObjectId(30_014);
-    public static final GameObjectId IM_WALD_BEIM_BRUNNEN = new GameObjectId(30_015);
-    public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_016);
-    public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_017);
+    public static final GameObjectId BINSENSUMPF = new GameObjectId(30_015);
+    public static final GameObjectId IM_WALD_BEIM_BRUNNEN = new GameObjectId(30_020);
+    public static final GameObjectId UNTEN_IM_BRUNNEN = new GameObjectId(30_021);
+    public static final GameObjectId WALDWILDNIS_HINTER_DEM_BRUNNEN = new GameObjectId(30_022);
 
     // INVISIBLES
     public static final GameObjectId WETTER = new GameObjectId(40_000);
@@ -360,7 +362,13 @@ public class World {
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
                         LEUCHTET_NIE,
                         EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
-                        connection.createHinterDerHuette()),
+                        new HinterDerHuetteConnectionComp(db, timeTaker, n, this)),
+                room.create(BINSENSUMPF, StoringPlaceType.IM_MORAST,
+                        false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
+                        LEUCHTET_NIE,
+                        EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT,
+                                Temperatur.RECHT_HEISS),
+                        connection.createBinsensumpf()),
                 room.createImWaldBeimBrunnen(),
                 room.create(UNTEN_IM_BRUNNEN, StoringPlaceType.AM_GRUNDE_DES_BRUNNENS,
                         false, MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS,
@@ -589,7 +597,7 @@ public class World {
      * direkt oder
      * rekursiv enthalten sind.
      */
-    public boolean shouldBeDescribedAfterScMovement(
+    private boolean shouldBeDescribedAfterScMovement(
             final @Nullable ILocationGO from,
             final IGameObject to,
             final ILocatableGO movableGameObject) {
@@ -674,8 +682,8 @@ public class World {
      * (ggf. rekusiv) - soweit die Sichtbarkeit reicht.
      * </ul>
      */
-    public boolean isOrHasVisiblyRecursiveLocation(final GameObjectId oneId,
-                                                   @Nullable final IGameObject other) {
+    private boolean isOrHasVisiblyRecursiveLocation(final GameObjectId oneId,
+                                                    @Nullable final IGameObject other) {
         if (other == null) {
             return false;
         }

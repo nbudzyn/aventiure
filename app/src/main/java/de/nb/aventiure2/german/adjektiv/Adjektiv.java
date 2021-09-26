@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.base.Preconditions;
@@ -12,17 +18,10 @@ import de.nb.aventiure2.german.base.Endungen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static java.util.Objects.requireNonNull;
-
 /**
  * Repräsentiert ein Adjektiv als Lexem, von dem Wortformen gebildet werden können - jedoch <i>ohne
  * Informationen zur Valenz</i>.
  */
-@SuppressWarnings("DuplicateBranchesInSwitch")
 public class Adjektiv {
     private static final Map<NumerusGenus, Endungen> ENDUNGEN_STARK = ImmutableMap.of(
             M, new Endungen("er", "em", "en"),

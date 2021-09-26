@@ -1,5 +1,13 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -13,14 +21,6 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STEIGEN_AUF;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TRETEN_AUF;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
@@ -95,6 +95,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             Perfektbildung.HABEN, "gestrahlt"),
     STUERMEN("stürmen", "stürme", "stürmst", "stürmt", "stürmt",
             Perfektbildung.HABEN, "gestürmt"),
+    TROCKNEN("trocknen", "trockne", "trocknest", "trocknet",
+            "trocknet", Perfektbildung.SEIN, "getrocknet"),
     VERSCHWINDEN("verschwinden", "verschwinde", "verschwindest",
             "verschwindet", "verschwindet",
             Perfektbildung.SEIN, "verschwunden"),

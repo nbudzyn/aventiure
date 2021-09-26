@@ -1,5 +1,8 @@
 package de.nb.aventiure2.german.satz;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -22,9 +25,6 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 
 public class Satzreihe implements Satz {
     private final Satz ersterSatz;
@@ -55,7 +55,8 @@ public class Satzreihe implements Satz {
                 // FIXME Wenn das Subjekt gleich ist (gleicher Text, gleiches Bezugsobjekt, kein
                 //  Personalprononomen-ohne-Bezugsobjekt-außer-Expletivem-Es)
                 //  und getPraedikatSofern...() != null
-                //  zurückgibt, sollte man Sätze zusammenfassen:
+                //  zurückgibt, sollte man die *Prädikate* reihen
+                //  (vgl. ZweiPraedikateOhneLeerstellen):
                 //  - Statt "Du gehst um die Ecke und du siehst einen Drachen" besser
                 //    "Du gehst um die Ecke und siehst einen Drachen"
                 //  - Statt "Es ist kalt und es ist windig" besser "Es ist kalt und windig".
@@ -164,7 +165,7 @@ public class Satzreihe implements Satz {
         this(ersterSatz, false, konnektor, zweiterSatz);
     }
 
-    public Satzreihe(
+    private Satzreihe(
             final Satz ersterSatz,
             final boolean moeglichstSemikolon,
             final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,

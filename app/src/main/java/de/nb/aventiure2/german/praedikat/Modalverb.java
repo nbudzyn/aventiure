@@ -1,14 +1,14 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-
 import static com.google.common.base.Preconditions.checkArgument;
+
+import androidx.annotation.NonNull;
 
 /**
  * Ein Modalverb. Modalverben regieren den reinen Infinitiv
  * (z.B. <i>etw. tun können</i>).
  */
-public enum Modalverb implements VerbMitValenz {
+public enum Modalverb implements VerbMitValenz, PraedikatNurMitLeerstelleFuerLexikalischenKern {
     DUERFEN("dürfen",
             "darf", "darfst", "darf", "dürft",
             Perfektbildung.HABEN,
@@ -79,6 +79,7 @@ public enum Modalverb implements VerbMitValenz {
     /**
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
+    @Override
     public PraedikatModalverbOhneLeerstellen mitLexikalischemKern(
             final PraedikatOhneLeerstellen lexikalischerKern) {
         return new PraedikatModalverbOhneLeerstellen(verb, lexikalischerKern);

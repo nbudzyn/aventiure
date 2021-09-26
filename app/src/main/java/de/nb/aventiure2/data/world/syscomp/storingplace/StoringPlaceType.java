@@ -1,15 +1,9 @@
 package de.nb.aventiure2.data.world.syscomp.storingplace;
 
-import androidx.annotation.Nullable;
-
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.ZweiVerbenSubjObj;
-
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUS;
+import static de.nb.aventiure2.german.praedikat.IntentionalesReflVerb.SICH_BEMUEHEN;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.AN_SICH_NEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABTROCKNEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFHEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFKLAUBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFSAMMELN;
@@ -22,6 +16,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.POLIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAMMELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZUSAMMENSAMMELN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZUSAMMENSUCHEN;
+
+import androidx.annotation.Nullable;
+
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikatMitEinerObjektLeerstelle;
 
 /**
  * Where an object is stored specifically
@@ -65,7 +68,7 @@ public enum StoringPlaceType {
     WALD("im Wald", "in den Wald", NEHMEN, AUFKLAUBEN),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",
             "auf den matschigen Waldboden",
-            new ZweiVerbenSubjObj(AUFHEBEN, POLIEREN),
+            new ZweiPraedikatMitEinerObjektLeerstelle(AUFHEBEN, POLIEREN),
             ZUSAMMENSAMMELN,
             WALD),
     // IDEA    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
@@ -78,6 +81,14 @@ public enum StoringPlaceType {
     HOLZDIELEN_OBEN_IM_TURM("auf den Holzdielen", "auf die Holzdielen",
             NEHMEN, ZUSAMMENSUCHEN, TURMZIMMER),
     UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN, AUFHEBEN),
+    IM_MORAST("im Morast", "in den Morast",
+            // "du hebst die Kugel aus dem Morast und bemühst dich, sie etwas abzutrocknen"
+            new ZweiPraedikatMitEinerObjektLeerstelle(
+                    HEBEN.mitAdvAngabe(
+                            new AdvAngabeSkopusVerbWohinWoher(AUS.mit(NomenFlexionsspalte.MORAST))),
+                    SICH_BEMUEHEN.mitLexikalischemKern(ABTROCKNEN)),
+            SAMMELN.mitAdvAngabe(new AdvAngabeSkopusSatz("widerwillig"))
+                    .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("aus dem Matsch"))),
     UNTER_DEM_BETT("unter dem Bett", "unter das Bett", HERVORHOLEN, HERVORSUCHEN);
 
     private final String wo;
