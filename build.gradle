@@ -4,6 +4,22 @@ buildscript {
     repositories {
         google()
         jcenter()
+        // FIXME Migrate from jcenter.
+        //  Some of these links might be helpful?
+        //  https://github.com/bourdakos1/jCenter-Upload
+        //  https://mvnrepository.com/search?q=leseratte
+        //  https://www.google.com/search?client=firefox-b-d&q=gradle+repositories+bintray
+        //  https://docs.gradle.org/current/userguide/declaring_repositories.html#sub:maven_jcenter
+        //  https://docs.gradle.org/current/userguide/declaring_repositories.html
+        //  https://stackoverflow.com/questions/25715982/how-to-use-a-bintray-user-repo-correctly-for-a-dependency-from-gradle
+        //  https://stackoverflow.com/questions/25715982/how-to-use-a-bintray-user-repo-correctly-for-a-dependency-from-gradle
+        //  https://medium.com/@anitaa_1990/6-easy-steps-to-upload-your-android-library-to-bintray-jcenter-59e6030c8890
+        //  https://jfrog.com/center-sunset/#/bintray/jcenter?tab=packages
+        //  https://www.google.com/search?client=firefox-b-d&q=com.jfrog.bintray+plugin
+        //  https://jfrog.com/platform/?utm_source=google&utm_medium=cpc&utm_campaign={campaign}&gclid=Cj0KCQjwwuD7BRDBARIsAK_5YhVEsNkNQ6caTC5UKTF2wIH74uXbBN6A0cSVnUgnuUNG35yyzhLXvPYaAhE9EALw_wcB
+        //  https://plugins.gradle.org/plugin/com.jfrog.bintray
+        //  https://github.com/bintray/gradle-bintray-plugin
+        //  https://github.com/bintray/bintray-examples/blob/master/gradle-bintray-plugin-examples/publications-example/build.gradle
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:7.0.2'

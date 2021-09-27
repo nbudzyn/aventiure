@@ -78,6 +78,36 @@ public class MainActivity extends AppCompatActivity {
     //  - "Erlebe dein eigenes Märchen"!
     //  - interaktives Leseabenteuer
 
+    // FIXME Evtl. anderen Font verwenden?
+    //  Diese Links könnten hilfreich sein:
+    //  https://www.google.de/search?q=use+google+fonts+in+androi
+    //  https://developer.android.com/guide/topics/ui/look-and-feel/downloadable-fonts
+    //  https://kinsta.com/blog/best-google-fonts/
+    //  https://developer.android.com/guide/topics/ui/look-and-feel/fonts-in-xml
+    //  https://fonts.google.com/?preview.text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,
+    //  %20der%20pfiff%20auf%20eine%20Tocher&preview.text_type=custom&query=book
+    //  https://fonts.google.com/specimen/UnifrakturMaguntia?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom&query=Frak#standard-styles
+    //  https://fonts.google.com/specimen/Cormorant?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom&category=Serif#standard-styles
+    //  https://fonts.google.com/specimen/Quattrocento?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom&category=Serif#standard-styles
+    //  https://fonts.google.com/specimen/Almendra?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom&category=Serif#standard-styles
+    //  https://fonts.google.com/specimen/Almendra+SC?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom
+    //  https://fonts.google.com/specimen/Almendra+Display?preview
+    //  .text=Es%20lebte%20einmal%20ein%20K%C3%B6nig,%20der%20pfiff%20auf%20eine%20Tocher&preview
+    //  .text_type=custom
+    //  https://www.typografie.info/3/topic/17116-tipp-schrift-zum-thema-m%C3%A4rchen/
+    //  https://de.wikipedia.org/wiki/Fraktur_%28Schrift%29#Schriftbeispiele_f.C3.BCr_die_Fraktur
+    //  https://www.dafont.com/de/champignon.font?text=Du+%FCberlegst+es+dir+aber+anders+und&psize=l
+
     private static final Logger LOGGER = Logger.getLogger();
 
     private MainActivityBinding binding;
