@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.memory;
 
+import static java.util.Arrays.asList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Ignore;
@@ -15,8 +17,6 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.IGameObject;
 
-import static java.util.Arrays.asList;
-
 /**
  * Eine Aktion des {@link IHasMemoryGO} - oft eine Interaktion mit einem konkreten anderen
  * Game Object.
@@ -24,15 +24,19 @@ import static java.util.Arrays.asList;
 @Immutable
 public class Action {
     public enum Type {
-        // Diese Typ-Konstante steht dafür, dass das Spiel zuvor begonnen hat und es also
-        // keine letzte Aktion gab (Null Object Pattern).
+        /**
+         * Diese Typ-Konstante steht dafür, dass das Spiel zuvor begonnen hat und es also
+         * keine letzte Aktion gab (Null Object Pattern).
+         */
         SPIELBEGINN,
         ABLEGEN,
         /**
          * Das {@link de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO} bewegt sich, z.B. der
          * Spielercharakter geht irgendwo hin.
          */
-        BEWEGEN, ESSEN, GEBEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN, RUFEN,
+        BEWEGEN,
+        CREATE_NEHMEN,
+        ESSEN, GEBEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN, RUFEN,
         SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH, STATE_MODIFICATION, RASTEN, WARTEN;
     }
 

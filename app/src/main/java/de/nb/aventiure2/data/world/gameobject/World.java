@@ -214,6 +214,12 @@ public class World {
     public static final GameObjectId SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT =
             new GameObjectId(40_020);
 
+    /**
+     * Maximale ID für feste Game-Object-IDs. Darüber beginnt der Bereich für
+     * on-the-fly-Game-Objects (vgl. {@link OnTheFlyGOFactory}).
+     */
+    static final GameObjectId MAX_STATIC_GAME_OBJECT_ID = new GameObjectId(999_999);
+
     // MEANING
     public static final GameObjectId STORY_WEB = new GameObjectId(100_000);
 
@@ -225,6 +231,9 @@ public class World {
 
     private final Narrator n;
 
+    /**
+     * Enthält alle Game Objects (statische und on-the-fly-Game-Objects).
+     */
     private GameObjectIdMap all;
 
     private ReactionSystem reactionSystem;
@@ -478,6 +487,13 @@ public class World {
                 baum.createImGartenHinterDerHuetteImWald(),
                 GeneralObjectFactory.create(RAPUNZELS_HAARE)
         );
+    }
+
+    public void putOnTheFlyGameObject(final GameObject gameObject) {
+        prepare();
+
+        all.put(gameObject);
+        gameObject.saveInitialState();
     }
 
     /**

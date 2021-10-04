@@ -1,5 +1,29 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_ANFASSEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -35,30 +59,6 @@ import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_ANFASSEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.MITNEHMEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.NEHMEN;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Der Spieler(charakter) nimmt einen Gegenstand (oder in Ausnahmefällen eine
@@ -383,8 +383,7 @@ public class NehmenAction
         gameObject.locationComp().narrateAndSetLocation(targetLocation);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
-
-
+    
     private void narrateObject() {
         final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
                 requireNonNull(gameObject.locationComp().getMitnehmenPraedikat(

@@ -22,7 +22,7 @@ class GameObjectIdMap extends HashMap<GameObjectId, GameObject> {
 
     @Nullable
     @CanIgnoreReturnValue
-    private GameObject put(final GameObject gameObject) {
+    GameObject put(final GameObject gameObject) {
         return super.put(gameObject.getId(), gameObject);
     }
 }

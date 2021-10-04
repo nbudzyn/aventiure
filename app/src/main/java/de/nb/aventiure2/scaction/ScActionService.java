@@ -1,5 +1,7 @@
 package de.nb.aventiure2.scaction;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import android.content.Context;
 
 import androidx.annotation.Nullable;
@@ -27,6 +29,7 @@ import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.scaction.impl.AblegenAction;
 import de.nb.aventiure2.scaction.impl.BewegenAction;
+import de.nb.aventiure2.scaction.impl.CreateNehmenAction;
 import de.nb.aventiure2.scaction.impl.EssenAction;
 import de.nb.aventiure2.scaction.impl.GebenAction;
 import de.nb.aventiure2.scaction.impl.HeulenAction;
@@ -39,8 +42,6 @@ import de.nb.aventiure2.scaction.impl.SchlafenAction;
 import de.nb.aventiure2.scaction.impl.WartenAction;
 import de.nb.aventiure2.scaction.impl.ZustandVeraendernAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Repository for the actions the player can choose from.
@@ -94,6 +95,12 @@ public class ScActionService {
         }
         res.addAll(buildPlayerOnlyAction(
                 spielerCharakter, wasSCVisiblyInDenHaendenHat, location));
+
+        res.addAll(buildCreateActions(
+                spielerCharakter,
+                wasSCVisiblyInDenHaendenHat, visibleObjectsInLocation,
+                scInventoryLivingBeings, scInventoryObjects));
+
         if (location != null) {
             res.addAll(buildObjectInLocationActions(
                     spielerCharakter,
@@ -203,6 +210,29 @@ public class ScActionService {
                 res.addAll(SchlafenAction
                         .buildActions(db.scActionStepCountDao(), timeTaker, n, world,
                                 location));
+            }
+        }
+
+        return res.build();
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private <DESC_OBJ extends ILocatableGO & IDescribableGO,
+            LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
+            TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
+    ImmutableList<AbstractScAction> buildCreateActions(
+            final SpielerCharakter spielerCharakter,
+            final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat,
+            final List<? extends DESC_OBJ> objectsInLocation,
+            final List<LIV> scInventoryLivingBeings,
+            final ImmutableList<DESC_OBJ> scInventoryObjects) {
+        final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
+        if (!spielerCharakter.talkingComp().isInConversation()) {
+            if (wasSCVisiblyInDenHaendenHat.isEmpty()) {
+                res.addAll(CreateNehmenAction.buildObjectActions(
+                        db, timeTaker, n, world, scInventoryObjects));
             }
         }
 
