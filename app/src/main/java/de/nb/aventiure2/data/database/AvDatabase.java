@@ -34,6 +34,8 @@ import de.nb.aventiure2.data.world.base.GameObjectIdConverters;
 import de.nb.aventiure2.data.world.counter.Counter;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.amount.AmountDao;
+import de.nb.aventiure2.data.world.syscomp.amount.AmountPCD;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
@@ -88,6 +90,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
         SCActionStepCount.class,
         NowEntity.class,
         TypePCD.class,
+        AmountPCD.class,
         StatePCD.class,
         WetterPCD.class,
         WaitingPCD.class,
@@ -146,6 +149,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract NarrationDao narrationDao();
 
     public abstract TypeDao typeDao();
+
+    public abstract AmountDao amountDao();
 
     public abstract StateDao stateDao();
 

@@ -13,6 +13,8 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.counter.CounterDao;
+import de.nb.aventiure2.data.world.syscomp.amount.AmountComp;
+import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
@@ -37,12 +39,14 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
 
         counterDao = db.counterDao();
     }
-    
-    public GameObject createAusgerupfteBinsen() {
+
+    public GameObject createEinigeAusgerupfteBinsen() {
         final GameObjectId newId = generateNewGameObjectId();
 
-        return new SimpleTypedObject(newId,
+        return new AmountObject(newId,
+                db,
                 new TypeComp(newId, db, GameObjectType.AUSGERUPFTE_BINSEN),
+                1,
                 new SimpleDescriptionComp(newId,
                         np(INDEF, AUSGERUPFT, BINSEN),
                         BINSEN.mit(AUSGERUPFT),
@@ -57,6 +61,38 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
     private GameObjectId generateNewGameObjectId() {
         return new GameObjectId(counterDao.incAndGet(Counter.NUM_ON_THE_FLY_GAME_OBJECTS)
                 + MAX_STATIC_GAME_OBJECT_ID.toLong());
+    }
+
+    private static class AmountObject extends SimpleTypedObject
+            implements IAmountableGO {
+        private final AmountComp amountComp;
+
+        AmountObject(final GameObjectId id,
+                     final AvDatabase db,
+                     final TypeComp typeComp,
+                     final int initialAmount,
+                     final AbstractDescriptionComp descriptionComp,
+                     final LocationComp locationComp) {
+            this(id, typeComp,
+                    new AmountComp(id, db, initialAmount),
+                    descriptionComp, locationComp);
+        }
+
+        AmountObject(final GameObjectId id,
+                     final TypeComp typeComp,
+                     final AmountComp amountComp,
+                     final AbstractDescriptionComp descriptionComp,
+                     final LocationComp locationComp) {
+            super(id, typeComp, descriptionComp, locationComp);
+            // Jede Komponente muss registiert werden!
+            this.amountComp = addComponent(amountComp);
+        }
+
+        @NonNull
+        @Override
+        public AmountComp amountComp() {
+            return amountComp;
+        }
     }
 
     private static class SimpleTypedObject extends SimpleObject

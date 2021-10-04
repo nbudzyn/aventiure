@@ -128,7 +128,7 @@ public class CreateNehmenAction
 
     private <GO extends GameObject & IDescribableGO & ILocatableGO>
     void narrateAndDoBinsenAusrupfen() {
-        final GO neuAusgerupfteBinsen = (GO) onTheFlyGOFactory.createAusgerupfteBinsen();
+        final GO neuAusgerupfteBinsen = (GO) onTheFlyGOFactory.createEinigeAusgerupfteBinsen();
         world.putOnTheFlyGameObject(neuAusgerupfteBinsen);
 
         world.narrateAndUpgradeScKnownAndAssumedState(neuAusgerupfteBinsen);

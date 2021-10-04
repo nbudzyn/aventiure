@@ -11,8 +11,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  * Mutable - and therefore persistent - data of the {@link LocationComp} component.
  */
 @Entity
-public
-class LocationPCD extends AbstractPersistentComponentData {
+public class LocationPCD extends AbstractPersistentComponentData {
     @Nullable
     private GameObjectId locationId;
 
