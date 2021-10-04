@@ -98,8 +98,8 @@ public class ScActionService {
 
         res.addAll(buildCreateActions(
                 spielerCharakter,
-                wasSCVisiblyInDenHaendenHat, visibleObjectsInLocation,
-                scInventoryLivingBeings, scInventoryObjects));
+                wasSCVisiblyInDenHaendenHat,
+                scInventoryObjects));
 
         if (location != null) {
             res.addAll(buildObjectInLocationActions(
@@ -216,17 +216,10 @@ public class ScActionService {
         return res.build();
     }
 
-
-    @SuppressWarnings("unchecked")
-    private <DESC_OBJ extends ILocatableGO & IDescribableGO,
-            LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
-            TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
-            TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
+    private <DESC_OBJ extends ILocatableGO & IDescribableGO>
     ImmutableList<AbstractScAction> buildCreateActions(
             final SpielerCharakter spielerCharakter,
             final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat,
-            final List<? extends DESC_OBJ> objectsInLocation,
-            final List<LIV> scInventoryLivingBeings,
             final ImmutableList<DESC_OBJ> scInventoryObjects) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         if (!spielerCharakter.talkingComp().isInConversation()) {
@@ -296,6 +289,7 @@ public class ScActionService {
         return res.build();
     }
 
+    @SuppressWarnings("RedundantIfStatement")
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO> boolean scCanGiveSomthingTo(
             final DESC_OBJ potentialTaker) {
         if (!(potentialTaker instanceof ITakerGO<?>)) {

@@ -37,7 +37,7 @@ public class Action {
         BEWEGEN,
         CREATE_NEHMEN,
         ESSEN, GEBEN, HEULEN, HOCHWERFEN, NEHMEN, REDEN, RUFEN,
-        SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH, STATE_MODIFICATION, RASTEN, WARTEN;
+        SCHLAFEN_ODER_VERGEBLICHER_EINSCHLAF_VERSUCH, STATE_MODIFICATION, RASTEN, WARTEN
     }
 
     @NonNull
@@ -160,15 +160,13 @@ public class Action {
     @Override
     @NonNull
     public String toString() {
-        final StringBuilder res = new StringBuilder();
-        res.append(type);
-        if (object != null) {
-            res.append("(")
-                    .append(Joiner.on(",").skipNulls()
-                            .join(object, adverbial))
-                    .append(")");
+        if (object == null) {
+            return type.toString();
         }
 
-        return res.toString();
+        return type
+                + "("
+                + Joiner.on(",").skipNulls().join(object, adverbial)
+                + ")";
     }
 }

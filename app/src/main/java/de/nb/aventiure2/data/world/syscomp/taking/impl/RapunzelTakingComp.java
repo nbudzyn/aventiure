@@ -63,7 +63,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
         final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
         final EinzelneSubstantivischePhrase givenDescAtFirstSight =
                 // "eine goldene Kugel" / "einige Binsen"
-                world.getDescriptionAtFirstSight(given);
+                getDescriptionAtFirstSight(given);
 
         n.narrateAlt(secs(10),
                 neuerSatz(rapunzelAnaph.nomK(),
