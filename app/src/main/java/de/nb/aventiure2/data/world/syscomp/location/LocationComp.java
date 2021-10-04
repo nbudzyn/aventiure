@@ -52,9 +52,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         this(gameObjectId, db, world, initialLocationId, initialLastLocationId, movable, false);
     }
 
-    /**
-     * Constructor for a {@link LocationComp}.
-     */
     public LocationComp(final GameObjectId gameObjectId,
                         final AvDatabase db,
                         final World world,

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.database;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import android.content.Context;
 
 import androidx.annotation.NonNull;
@@ -63,6 +65,9 @@ import de.nb.aventiure2.data.world.syscomp.story.StoryWebDao;
 import de.nb.aventiure2.data.world.syscomp.story.StoryWebPCD;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingDao;
 import de.nb.aventiure2.data.world.syscomp.talking.TalkingPCD;
+import de.nb.aventiure2.data.world.syscomp.typed.GameObjectTypeConverters;
+import de.nb.aventiure2.data.world.syscomp.typed.TypeDao;
+import de.nb.aventiure2.data.world.syscomp.typed.TypePCD;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingDao;
 import de.nb.aventiure2.data.world.syscomp.waiting.WaitingPCD;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterDao;
@@ -76,14 +81,13 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-
 @Database(entities = {
         Counter.class,
         ConsumedNarrationAlternativeInfo.class,
         Narration.class,
         SCActionStepCount.class,
         NowEntity.class,
+        TypePCD.class,
         StatePCD.class,
         WetterPCD.class,
         WaitingPCD.class,
@@ -103,6 +107,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
         version = 1,
         exportSchema = false)
 @TypeConverters({
+        GameObjectTypeConverters.class,
         BewoelkungConverters.class,
         BlitzUndDonnerConverters.class,
         TemperaturConverters.class,
@@ -139,6 +144,8 @@ public abstract class AvDatabase extends RoomDatabase {
     public abstract SCActionStepCountDao scActionStepCountDao();
 
     public abstract NarrationDao narrationDao();
+
+    public abstract TypeDao typeDao();
 
     public abstract StateDao stateDao();
 

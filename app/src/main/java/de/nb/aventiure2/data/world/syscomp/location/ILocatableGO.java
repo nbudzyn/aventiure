@@ -55,5 +55,4 @@ public interface ILocatableGO extends ICanHaveOuterMostLocation {
 
         return locationComp().hasVisiblyRecursiveLocation(location.getId());
     }
-
 }
