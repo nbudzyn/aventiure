@@ -1,15 +1,5 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import java.util.Objects;
-
-import javax.annotation.CheckReturnValue;
-
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Artikel.Typ.getNegativeForm;
@@ -25,6 +15,16 @@ import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import java.util.Objects;
+
+import javax.annotation.CheckReturnValue;
+
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
@@ -61,6 +61,9 @@ public class Nominalphrase
     public static final Nominalphrase DRUECKENDE_HITZE_DER_SONNE =
             np(F, DEF, "drückende Hitze der Sonne",
                     "drückenden Hitze der Sonne");
+    public static final Nominalphrase EINIGE_BINSEN =
+            np(PL_MFN, null, "einige Binsen",
+                    "einigen Binsen");
     public static final Nominalphrase ERSTER_SONNENSTRAHL =
             np(M, DEF, "erste Sonnenstrahl",
                     "ersten Sonnenstrahl", "ersten Sonnenstrahl");
@@ -87,10 +90,16 @@ public class Nominalphrase
     public static final Nominalphrase KEIN_WIND =
             np(M, null, "kein Wind",
                     "keinem Winde", "keinen Wind");
+    public static final Nominalphrase KEINE_BINSEN =
+            np(PL_MFN, null, "keine Binsen",
+                    "keinen Binsen");
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
     public static final Nominalphrase SCHUTZ_VOR_DEM_AERGSTEN_STURM =
             np(M, null, "Schutz vor dem ärgsten Sturm");
+    public static final Nominalphrase VIELE_BINSEN =
+            np(PL_MFN, null, "viele Binsen",
+                    "vielen Binsen");
     public static final Nominalphrase VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT =
             np(F, DEF, "von der Sonne aufgeheizte stehende Luft",
                     "von der Sonne aufgeheizten stehenden Luft");

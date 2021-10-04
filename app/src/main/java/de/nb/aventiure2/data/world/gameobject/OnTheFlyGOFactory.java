@@ -8,6 +8,8 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableMap;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
@@ -16,11 +18,13 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountComp;
 import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
 import de.nb.aventiure2.data.world.syscomp.typed.TypeComp;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * Eine Factory für GameObjects, die on-the-fly erzeugt werden.
@@ -43,12 +47,21 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
     public GameObject createEinigeAusgerupfteBinsen() {
         final GameObjectId newId = generateNewGameObjectId();
 
+        final ImmutableMap<Integer, EinzelneSubstantivischePhrase>
+                soundsovieleBinsen =
+                ImmutableMap.<Integer, EinzelneSubstantivischePhrase>builder()
+                        .put(0, Nominalphrase.KEINE_BINSEN)
+                        .put(1, Nominalphrase.EINIGE_BINSEN)
+                        .put(3, Nominalphrase.VIELE_BINSEN)
+                        .build();
+
         return new AmountObject(newId,
                 db,
                 new TypeComp(newId, db, GameObjectType.AUSGERUPFTE_BINSEN),
                 1,
-                new SimpleDescriptionComp(newId,
+                new AmountDescriptionComp(newId,
                         np(INDEF, AUSGERUPFT, BINSEN),
+                        soundsovieleBinsen,
                         BINSEN.mit(AUSGERUPFT),
                         BINSEN),
                 new LocationComp(newId, db, world, BINSENSUMPF, null, true,
