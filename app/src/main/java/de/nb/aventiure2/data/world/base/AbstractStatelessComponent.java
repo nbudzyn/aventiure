@@ -23,4 +23,9 @@ public abstract class AbstractStatelessComponent extends AbstractComponent {
     public void saveIfChanged(final boolean unload) {
         // Component doesn't have any mutable state to be loaded.
     }
+
+    @Override
+    public void delete() {
+        // Component doesn't have any mutable state to be deleted.
+    }
 }

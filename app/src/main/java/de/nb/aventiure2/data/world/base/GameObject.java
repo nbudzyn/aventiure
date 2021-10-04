@@ -91,6 +91,18 @@ public class GameObject implements IGameObject {
         }
     }
 
+    /**
+     * Löscht alle Daten für dieses Game Obect (d.h. die Daten aller seiner Komponenten)
+     * aus der Datenbank.
+     */
+    public void delete() {
+        for (final IComponent component : components) {
+            component.delete();
+        }
+
+        internalState = InternalState.NOT_LOADED;
+    }
+
     @Override
     public boolean is(final IGameObject... someAlternatives) {
         return Arrays.asList(someAlternatives).contains(this);

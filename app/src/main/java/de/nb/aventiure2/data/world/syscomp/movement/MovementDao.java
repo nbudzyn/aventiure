@@ -31,4 +31,8 @@ public abstract class MovementDao implements IComponentDao<MovementPCD> {
             + ":toId")
     @Nullable
     abstract GameObjectId findWerDenSCGeradeVerlassenHat(GameObjectId toId);
+
+    @Override
+    @Query("DELETE from MovementPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

@@ -1,8 +1,8 @@
 package de.nb.aventiure2.data.world.base;
 
-import androidx.annotation.Nullable;
-
 import static java.util.Objects.requireNonNull;
+
+import androidx.annotation.Nullable;
 
 /**
  * Abstract super-class for {@link AbstractComponent}s that have mutable - and therefore
@@ -71,12 +71,26 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
         }
     }
 
+    @Override
+    public void delete() {
+        doDelete();
+
+        pcd = null;
+    }
+
     /**
      * Speichert die Daten der Komponente in die Datenbank und löscht veränderliche Daten
      * aus dem Speicher.
      */
     private void doSave() {
         dao.insert(pcd);
+    }
+
+    /**
+     * Löscht alle Daten dieser Komponente aus der Datenbank und aus dem Speicher.
+     */
+    private void doDelete() {
+        dao.delete(getGameObjectId());
     }
 
     protected PCD requirePcd() {

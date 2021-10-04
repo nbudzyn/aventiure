@@ -55,4 +55,9 @@ interface IComponent {
      * geladen wurde, passiert nichts.
      */
     void saveIfChanged(boolean unload);
+    
+    /**
+     * Löscht alle Daten dieser Komponente aus der Datenbank und aus dem Speicher.
+     */
+    void delete();
 }

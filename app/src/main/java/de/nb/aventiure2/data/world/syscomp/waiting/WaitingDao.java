@@ -24,4 +24,8 @@ public abstract class WaitingDao implements IComponentDao<WaitingPCD> {
     @Override
     @Query("SELECT * from WaitingPCD where :gameObjectId = gameObjectId")
     public abstract WaitingPCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from WaitingPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

@@ -34,4 +34,8 @@ public abstract class TypeDao implements IComponentDao<TypePCD> {
     @Override
     @Query("SELECT * from TypePCD where :gameObjectId = gameObjectId")
     public abstract TypePCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from TypePCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

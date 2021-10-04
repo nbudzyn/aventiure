@@ -59,7 +59,7 @@ public abstract class FeelingsDao implements IComponentDao<FeelingsPCD> {
     /**
      * Wer das hier aufruft, muss auch lokale Informationen verwerfen!
      */
-    @Query("DELETE FROM FeelingsTowardsInfo WHERE :feelingBeing = feelingBeing" )
+    @Query("DELETE FROM FeelingsTowardsInfo WHERE :feelingBeing = feelingBeing")
     abstract void deleteFeelingTowardsInfos(GameObjectId feelingBeing);
 
     /**
@@ -78,7 +78,7 @@ public abstract class FeelingsDao implements IComponentDao<FeelingsPCD> {
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
      * gespeichert sind!
      */
-    @Query("SELECT * from FeelingsPCD where :feelingBeing = gameObjectId" )
+    @Query("SELECT * from FeelingsPCD where :feelingBeing = gameObjectId")
     public abstract FeelingsPCD getInternal(GameObjectId feelingBeing);
 
     private static Map<GameObjectId, Map<FeelingTowardsType, Float>> toMap(
@@ -107,6 +107,16 @@ public abstract class FeelingsDao implements IComponentDao<FeelingsPCD> {
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
      * gespeichert sind!
      */
-    @Query("SELECT * from FeelingsTowardsInfo where :feelingBeing = feelingBeing" )
+    @Query("SELECT * from FeelingsTowardsInfo where :feelingBeing = feelingBeing")
     abstract List<FeelingsTowardsInfo> getFeelingTowardsInfos(GameObjectId feelingBeing);
+
+    @Override
+    public void delete(final GameObjectId feelingBeing) {
+        deleteInternal(feelingBeing);
+
+        deleteFeelingTowardsInfos(feelingBeing);
+    }
+
+    @Query("DELETE from FeelingsPCD where :feelingBeing = gameObjectId")
+    abstract void deleteInternal(GameObjectId feelingBeing);
 }

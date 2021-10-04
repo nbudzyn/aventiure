@@ -238,6 +238,12 @@ public class World {
      */
     private GameObjectIdMap all;
 
+    /**
+     * Enthält alle on-the-fly-Game-Objekte, die beim Speichern aus der Datenbank gelöscht
+     * werden sollen.
+     */
+    private GameObjectIdMap toBeDeleted;
+
     private ReactionSystem reactionSystem;
 
     // SYSTEMS
@@ -304,6 +310,10 @@ public class World {
 
         if (reactionSystem == null) {
             reactionSystem = new ReactionSystem(n, this, timeTaker);
+        }
+
+        if (toBeDeleted == null) {
+            toBeDeleted = new GameObjectIdMap();
         }
 
         final SpielerCharakterFactory spieler = new SpielerCharakterFactory(db, timeTaker, n, this);
@@ -491,11 +501,18 @@ public class World {
         );
     }
 
-    public void putOnTheFlyGameObject(final GameObject gameObject) {
+    public void addOnTheFlyGameObject(final GameObject gameObject) {
         prepare();
 
         all.put(gameObject);
         gameObject.saveInitialState();
+    }
+
+    public void removeOnTheFlyGameObject(final GameObject gameObject) {
+        prepare();
+
+        toBeDeleted.put(gameObject);
+        all.remove(gameObject.getId());
     }
 
     /**
@@ -508,6 +525,8 @@ public class World {
         for (final GameObject gameObject : all.values()) {
             gameObject.saveInitialState();
         }
+
+        toBeDeleted = new GameObjectIdMap();
     }
 
     public void scActionDone(final AvDateTime startTimeOfUserAction) {
@@ -1613,6 +1632,11 @@ public class World {
      */
     public void saveAll(final boolean unload) {
         prepare();
+
+        for (final GameObject gameObject : toBeDeleted.values()) {
+            gameObject.delete();
+        }
+        toBeDeleted = new GameObjectIdMap();
 
         for (final GameObject gameObject : all.values()) {
             gameObject.save(unload);

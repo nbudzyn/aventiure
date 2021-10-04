@@ -24,4 +24,8 @@ public abstract class StateDao implements IComponentDao<StatePCD> {
     @Override
     @Query("SELECT * from StatePCD where :gameObjectId = gameObjectId")
     public abstract StatePCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from StatePCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

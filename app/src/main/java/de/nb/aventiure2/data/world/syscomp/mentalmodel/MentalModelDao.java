@@ -24,6 +24,13 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
         insertAssumedStates(pcd);
     }
 
+    @Override
+    public void delete(final GameObjectId assumer) {
+        deleteAllLocationsHeAssumes(assumer);
+        deleteAllStatesHeAssumes(assumer);
+        deleteInternal(assumer);
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertInternal(MentalModelPCD pcd);
 
@@ -39,7 +46,6 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
                     entry.getValue()));
         }
     }
-
 
     /**
      * Speicher alle angenommenen States in die Datenbank, das hier aufruft, muss auch lokale
@@ -96,11 +102,13 @@ public abstract class MentalModelDao implements IComponentDao<MentalModelPCD> {
     @Query("SELECT * from AssumedLocationInfo where :assumer = assumer")
     abstract List<AssumedLocationInfo> getAssumedLocationInfos(GameObjectId assumer);
 
-
     /**
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an dem Game Object
      * gespeichert sind!
      */
     @Query("SELECT * from AssumedStateInfo where :assumer = assumer")
     abstract List<AssumedStateInfo> getAssumedStateInfos(GameObjectId assumer);
+
+    @Query("DELETE from MentalModelPCD where :assumer = gameObjectId")
+    abstract void deleteInternal(final GameObjectId assumer);
 }

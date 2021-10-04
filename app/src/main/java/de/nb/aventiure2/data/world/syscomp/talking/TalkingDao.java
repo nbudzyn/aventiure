@@ -24,4 +24,8 @@ public abstract class TalkingDao implements IComponentDao<TalkingPCD> {
     @Override
     @Query("SELECT * from TalkingPCD where :gameObjectId = gameObjectId")
     public abstract TalkingPCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from TalkingPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

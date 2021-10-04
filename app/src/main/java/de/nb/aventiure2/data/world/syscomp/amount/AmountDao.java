@@ -24,4 +24,8 @@ public abstract class AmountDao implements IComponentDao<AmountPCD> {
     @Override
     @Query("SELECT * from AmountPCD where :gameObjectId = gameObjectId")
     public abstract AmountPCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from AmountPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(final GameObjectId gameObjectId);
 }

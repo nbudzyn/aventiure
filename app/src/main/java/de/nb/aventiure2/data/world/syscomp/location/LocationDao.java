@@ -33,4 +33,8 @@ public abstract class LocationDao implements IComponentDao<LocationPCD> {
     @Override
     @Query("SELECT * from LocationPCD where :gameObjectId = gameObjectId")
     public abstract LocationPCD get(GameObjectId gameObjectId);
+
+    @Override
+    @Query("DELETE from LocationPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

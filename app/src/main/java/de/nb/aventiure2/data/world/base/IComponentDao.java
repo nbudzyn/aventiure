@@ -11,4 +11,6 @@ public interface IComponentDao<PCD extends AbstractPersistentComponentData> {
      * gespeichert sind!
      */
     PCD get(GameObjectId gameObjectId);
+
+    void delete(GameObjectId gameObjectId);
 }

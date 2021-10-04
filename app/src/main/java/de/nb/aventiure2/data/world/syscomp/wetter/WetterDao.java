@@ -20,4 +20,8 @@ public abstract class WetterDao implements IComponentDao<WetterPCD> {
     @Override
     @Query("SELECT * from WetterPCD where :id = gameObjectId")
     public abstract WetterPCD get(final GameObjectId id);
+
+    @Override
+    @Query("DELETE from WetterPCD where :gameObjectId = gameObjectId")
+    public abstract void delete(GameObjectId gameObjectId);
 }

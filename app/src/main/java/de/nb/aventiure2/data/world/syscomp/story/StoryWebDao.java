@@ -32,6 +32,13 @@ public abstract class StoryWebDao implements IComponentDao<StoryWebPCD> {
         }
     }
 
+    @Override
+    public void delete(final GameObjectId storyWebId) {
+        deleteInternalReachedStoryNodeData(storyWebId);
+        deleteInternalStoryData(storyWebId);
+        deleteInternal(storyWebId);
+    }
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertInternal(StoryWebPCD pcd);
 
@@ -63,6 +70,9 @@ public abstract class StoryWebDao implements IComponentDao<StoryWebPCD> {
      */
     @Query("DELETE FROM InternalReachedStoryNodeData WHERE :storyWeb = storyWeb")
     abstract void deleteInternalReachedStoryNodeData(GameObjectId storyWeb);
+
+    @Query("DELETE from StoryWebPCD where :storyWeb = gameObjectId")
+    abstract void deleteInternal(GameObjectId storyWeb);
 
     /**
      * Vor jedem Aufruf muss sichergestellt sein, dass alle Änderungen an
