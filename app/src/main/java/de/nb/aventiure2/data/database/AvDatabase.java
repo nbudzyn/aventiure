@@ -36,7 +36,9 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountDao;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountPCD;
+import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsTowardsInfo;
@@ -78,6 +80,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.BewoelkungConverter
 import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonnerConverters;
 import de.nb.aventiure2.data.world.syscomp.wetter.temperatur.TemperaturConverters;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.WindstaerkeConverters;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.NumerusGenusConverters;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCount;
@@ -268,8 +271,7 @@ public abstract class AvDatabase extends RoomDatabase {
             final List<? extends IDescribableGO> objectsInRoom) {
         final StringBuilder res = new StringBuilder(100);
         for (int i = 0; i < objectsInRoom.size(); i++) {
-            res.append(
-                    objectsInRoom.get(i).descriptionComp().getDescriptionAtFirstSight().nomStr());
+            res.append(getDescriptionAtFirstSight(objectsInRoom.get(i)).nomStr());
             if (i == objectsInRoom.size() - 2) {
                 // one before the last
                 res.append(" und ");
@@ -281,6 +283,18 @@ public abstract class AvDatabase extends RoomDatabase {
         }
 
         return res.toString();
+    }
+
+    private static EinzelneSubstantivischePhrase getDescriptionAtFirstSight(
+            final IDescribableGO describable) {
+        if ((describable instanceof IAmountableGO)
+                && describable.descriptionComp() instanceof AmountDescriptionComp) {
+            return ((AmountDescriptionComp) describable.descriptionComp())
+                    .getDescriptionAtFirstSight(
+                            ((IAmountableGO) describable).amountComp().getAmount());
+        }
+
+        return describable.descriptionComp().getDescriptionAtFirstSight();
     }
 
     public static AvDatabase getDatabase(final Context context) {

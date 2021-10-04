@@ -210,7 +210,7 @@ public class NehmenAction
                             new AdvAngabeSkopusVerbWohinWoher(
                                     PraepositionMitKasus.IN_AKK
                                             .mit(targetLocation.descriptionComp()
-                                                    .getDescription(true, true))
+                                                    .getShortDescriptionWhenKnown())
                             )); // "in die Hände nehmen"
         }
 
@@ -383,7 +383,7 @@ public class NehmenAction
         gameObject.locationComp().narrateAndSetLocation(targetLocation);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
-    
+
     private void narrateObject() {
         final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
                 requireNonNull(gameObject.locationComp().getMitnehmenPraedikat(

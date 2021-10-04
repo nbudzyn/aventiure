@@ -1,5 +1,16 @@
 package de.nb.aventiure2.data.world.syscomp.taking.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
@@ -13,17 +24,6 @@ import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.GLUECKLICH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
@@ -62,8 +62,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
         final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
         final EinzelneSubstantivischePhrase givenDescAtFirstSight =
-                // "eine goldene Kugel"
-                given.descriptionComp().getDescriptionAtFirstSight();
+                // "eine goldene Kugel" / "einige Binsen"
+                world.getDescriptionAtFirstSight(given);
 
         n.narrateAlt(secs(10),
                 neuerSatz(rapunzelAnaph.nomK(),

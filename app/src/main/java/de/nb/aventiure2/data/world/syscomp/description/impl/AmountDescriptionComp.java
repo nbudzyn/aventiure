@@ -47,10 +47,10 @@ public class AmountDescriptionComp extends SimpleDescriptionComp {
             return getDescriptionAtFirstSight(amount);
         }
 
-        return getDescription(true, shortIfKnown);
+        return getDescriptionWhenKnown(shortIfKnown);
     }
 
-    private EinzelneSubstantivischePhrase getDescriptionAtFirstSight(final int amount) {
+    public EinzelneSubstantivischePhrase getDescriptionAtFirstSight(final int amount) {
         checkState(amount >= 0, "amount < 0");
 
         @Nullable EinzelneSubstantivischePhrase res = null;

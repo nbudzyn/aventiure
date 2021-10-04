@@ -19,8 +19,8 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
 
     public abstract EinzelneSubstantivischePhrase getDescriptionAtFirstSight();
 
-    public EinzelneSubstantivischePhrase getDescription(final boolean known,
-                                                        final boolean shortIfKnown) {
+    public final EinzelneSubstantivischePhrase getDescription(final boolean known,
+                                                              final boolean shortIfKnown) {
         if (known) {
             return getDescriptionWhenKnown(shortIfKnown);
         }
@@ -28,7 +28,8 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
         return getDescriptionAtFirstSight();
     }
 
-    private EinzelneSubstantivischePhrase getDescriptionWhenKnown(final boolean shortIfKnown) {
+    protected final EinzelneSubstantivischePhrase getDescriptionWhenKnown(
+            final boolean shortIfKnown) {
         return shortIfKnown ?
                 getShortDescriptionWhenKnown() :
                 getNormalDescriptionWhenKnown();
@@ -36,7 +37,7 @@ public abstract class AbstractDescriptionComp extends AbstractStatelessComponent
 
     public abstract EinzelneSubstantivischePhrase getNormalDescriptionWhenKnown();
 
-    protected abstract EinzelneSubstantivischePhrase getShortDescriptionWhenKnown();
+    public abstract EinzelneSubstantivischePhrase getShortDescriptionWhenKnown();
 
 
     @NonNull

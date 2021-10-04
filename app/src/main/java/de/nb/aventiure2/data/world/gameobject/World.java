@@ -54,7 +54,9 @@ import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.EinschlafhindernisSc;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -1475,8 +1477,30 @@ public class World {
     private static EinzelneSubstantivischePhrase getPOVDescription(final IHasMemoryGO observer,
                                                                    final IDescribableGO describable,
                                                                    final boolean shortIfKnown) {
+        final boolean known = observer.memoryComp().isKnown(describable);
+
+        if ((describable instanceof IAmountableGO)
+                && describable.descriptionComp() instanceof AmountDescriptionComp) {
+            return ((AmountDescriptionComp) describable.descriptionComp())
+                    .getDescription(
+                            ((IAmountableGO) describable).amountComp().getAmount(),
+                            known, shortIfKnown);
+        }
+
         return describable.descriptionComp().getDescription(
-                observer.memoryComp().isKnown(describable), shortIfKnown);
+                known, shortIfKnown);
+    }
+
+    public static EinzelneSubstantivischePhrase getDescriptionAtFirstSight(
+            final IDescribableGO describable) {
+        if ((describable instanceof IAmountableGO)
+                && describable.descriptionComp() instanceof AmountDescriptionComp) {
+            return ((AmountDescriptionComp) describable.descriptionComp())
+                    .getDescriptionAtFirstSight(
+                            ((IAmountableGO) describable).amountComp().getAmount());
+        }
+
+        return describable.descriptionComp().getDescriptionAtFirstSight();
     }
 
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
