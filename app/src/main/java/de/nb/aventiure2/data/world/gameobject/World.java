@@ -131,6 +131,19 @@ public class World {
     //   zumindest mit IntelliJ prüfen, dass es keine unerwünschten Abhängigkeiten gibt?
     //   (Depency Matrix) Oder ArchiUnit-Tests anlegen?
 
+    // FIXME Es soll möglich werden, zur Laufzeit gewisse Objekte zu erzeungen.
+
+    // FIXME Ein solches Objekt sollte dupliziert werden können (Prototyping), z.B.
+    //  man nimmt nur einen Teil der ausgerupften Binsen - dann wird das bestehende
+    //  ausgerupfte-Binsen-Objekt kopiert und nur die Menge zweimal geändert.
+
+    // FIXME Man muss feststellen können: Liegt an einen Ort schon ein
+    //  ausgerupfte-Binsen-Objekt - oder nicht? Und welche ID hat es?
+
+    // FIXME Idee: Jedes Objekt, das on-the-fly erzeugt werden soll, erhält einen Typ. Der Typ
+    //  ist (zunächst)
+    //  unveränderlich und ist hauptsächlich für Suchen vorgesehen
+    //  (Finde alle Objekte vom Typ SC oder alle Objekte vom Typ ausgerupfte Binsen).
 
     public static final AvDateTime SCHLOSSFEST_BEGINN_DATE_TIME =
             new AvDateTime(2,
