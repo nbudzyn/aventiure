@@ -30,6 +30,10 @@ public class AmountComp extends AbstractStatefulComponent<AmountPCD> {
         return new AmountPCD(getGameObjectId(), initialAmount);
     }
 
+    public void addAmount(final int add) {
+        setAmount(getAmount() + add);
+    }
+
     public void setAmount(final int amount) {
         requirePcd().setAmount(amount);
     }

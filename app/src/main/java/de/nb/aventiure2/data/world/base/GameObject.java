@@ -40,9 +40,9 @@ public class GameObject implements IGameObject {
     /**
      * Speichert die initialen Daten des Game Objects (d.h. seiner Koponenten) in die Datenbank.
      */
-    public void saveInitialState() {
+    public void saveInitialState(final boolean unload) {
         for (final IComponent component : components) {
-            component.saveInitialState();
+            component.saveInitialState(unload);
         }
     }
 

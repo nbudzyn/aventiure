@@ -1,5 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
+import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -27,15 +36,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandar
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.system.SpatialConnectionSystem;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.DO_START_LEAVING;
-import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.PAUSED;
-import static de.nb.aventiure2.data.world.syscomp.movement.MovementPCD.PauseForSCAction.UNPAUSED;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -244,6 +244,8 @@ public class MovementComp
     private boolean narrateAndMoveOneStep() {
         checkState(hasCurrentStep(), "No current step");
 
+        // (Dies hier müsste angepasst werden, wenn das Objekt ein
+        // IAmountableGO wäre. Das wäre aber sehr seltsam.)
         locationComp.setLocation(requireCurrentStepToId());
 
         if (world.loadSC().locationComp().hasVisiblyRecursiveLocation(requireCurrentStepToId())) {
@@ -524,7 +526,7 @@ public class MovementComp
     }
 
     @Nonnull
-    public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM requireCurrentStepFrom() {
+    private <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM requireCurrentStepFrom() {
         return requireNonNull(getCurrentStepFrom());
     }
 
@@ -555,7 +557,7 @@ public class MovementComp
 
     @Nullable
     @VisibleForTesting
-    public GameObjectId getCurrentStepFromId() {
+    private GameObjectId getCurrentStepFromId() {
         @Nullable final MovementStep currentStep = getCurrentStep();
 
         return currentStep != null ? currentStep.getFromId() : null;

@@ -1,25 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import androidx.annotation.Nullable;
-
-import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-
-import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.TimeTaker;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-import de.nb.aventiure2.data.world.syscomp.memory.Action;
-import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -49,6 +29,26 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.VERSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.IGNORIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REDEN;
+
+import androidx.annotation.Nullable;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.List;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.memory.Action;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 /**
  * Component for den {@link World#FROSCHPRINZ}en: Der Spieler
@@ -529,7 +529,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 .timed(secs(30)));
 
         for (final LOC_DESC object : objectsInDenBrunnenGefallen) {
-            object.locationComp().narrateAndSetLocation(scLocationId);
+            world.narrateAndSetLocationOrIncAmount(object, scLocationId);
         }
 
         stateComp.narrateAndSetState(ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS);

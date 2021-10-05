@@ -87,6 +87,8 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
+import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Indefinitpronomen;
@@ -501,14 +503,101 @@ public class World {
         );
     }
 
-    public void addOnTheFlyGameObject(final GameObject gameObject) {
+    /**
+     * Initialisiert diese Game Object neu und macht es der Welt bekannt.
+     * Erst danach darf man auf die Komponeten des Objekts zugreifen.
+     */
+    public void attachNew(final GameObject gameObject) {
         prepare();
 
+        // Der Fall, dass ein Objekt mit dieser ID zuvor zum Löschen markiert wurde,
+        // sollte sehr selten sein!
+        toBeDeleted.remove(gameObject.getId());
+
         all.put(gameObject);
-        gameObject.saveInitialState();
+
+        gameObject.saveInitialState(false);
     }
 
-    public void removeOnTheFlyGameObject(final GameObject gameObject) {
+    /**
+     * Setzt die Location und ruft dabei entsprechende Narration-Callbacks auf;
+     * oder erhöht die Menge des Objekts mit gleichem Typ am Zielort und löscht
+     * das Locatable.
+     */
+    public void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
+                                                 @Nullable final ILocationGO newLocation) {
+        narrateAndSetLocationOrIncAmount(locatable,
+                newLocation != null ? newLocation.getId() : null);
+    }
+
+    /**
+     * Setzt die Location und ruft dabei entsprechende Narration-Callbacks auf;
+     * oder erhöht die Menge des Objekts mit gleichem Typ am Zielort und löscht
+     * das Locatable.
+     */
+    public void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
+                                                 @Nullable final GameObjectId newLocationId) {
+        narrateAndSetLocationOrIncAmount(locatable, newLocationId, () -> {});
+    }
+
+    /**
+     * Setzt die Location und ruft dabei entsprechende Narration-Callbacks auf;
+     * oder erhöht die Menge des Objekts mit gleichem Typ am Zielort und löscht
+     * das Locatable.
+     */
+    public void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
+                                                 @Nullable final ILocationGO newLocation,
+                                                 @Nullable final Runnable onEnter) {
+        narrateAndSetLocationOrIncAmount(locatable,
+                newLocation != null ? newLocation.getId() : null, onEnter);
+    }
+
+    /**
+     * Setzt die Location und ruft dabei entsprechende Narration-Callbacks auf;
+     * oder erhöht die Menge des Objekts mit gleichem Typ am Zielort und löscht
+     * das Locatable.
+     */
+    private void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
+                                                  @Nullable final GameObjectId newLocationId,
+                                                  @Nullable final Runnable onEnter) {
+        if (newLocationId != null && locatable instanceof ITypedGO
+                && locatable instanceof GameObject) {
+            // Das locatable hat einen Typ (z.B. "ausgerupfte Binsen").
+            // Dann prüfen, ob am Zielort bereits ein Objekt von diesem Typ liegt.
+
+            final ImmutableList<? extends ITypedGO> objectsOfSameTypeAlreadyInNewLocation =
+                    loadTypedInventory(newLocationId,
+                            ((ITypedGO) locatable).typeComp().getType());
+            if (!objectsOfSameTypeAlreadyInNewLocation.isEmpty()) {
+                // Im Zielort liegt bereits ein Objekt von diesem Typ.
+                // Kein weiteres Objekt desselben Typs dazulegen!
+                final ITypedGO objectOfSameTypeAlreadyInNewLocation =
+                        objectsOfSameTypeAlreadyInNewLocation.iterator().next();
+
+                if (locatable instanceof IAmountableGO
+                        && objectOfSameTypeAlreadyInNewLocation instanceof IAmountableGO) {
+                    // Menge erhöhen
+                    ((IAmountableGO) objectOfSameTypeAlreadyInNewLocation).amountComp()
+                            .addAmount(((IAmountableGO) locatable).amountComp().getAmount());
+                }
+
+                if (onEnter != null) {
+                    onEnter.run();
+                }
+
+                delete((GameObject) locatable);
+                return;
+            }
+        }
+
+        locatable.locationComp().narrateAndSetLocation(newLocationId, onEnter);
+    }
+
+    /**
+     * Markiert dieses Game Object (diese ID) zum Löschen.
+     * Danach darf man nicht mehr auf dieses Objekt zugreifen.
+     */
+    public void delete(final GameObject gameObject) {
         prepare();
 
         toBeDeleted.put(gameObject);
@@ -523,7 +612,7 @@ public class World {
         prepare();
 
         for (final GameObject gameObject : all.values()) {
-            gameObject.saveInitialState();
+            gameObject.saveInitialState(true);
         }
 
         toBeDeleted = new GameObjectIdMap();
@@ -1212,6 +1301,28 @@ public class World {
     }
 
     /**
+     * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die
+     * Objekte von diesem GameObjectType
+     * (z.B. nur "ausgerupfte-Binsen"-Objekte) an dieser <code>locationId</code> (<i>nicht</i>
+     * rekursiv, also <i>keine</i>  ausgerupften Binsen auf einem Tisch in einem Raum)
+     * und gibt sie zurück.
+     */
+    private <LOC_TYPED extends ILocatableGO & ITypedGO>
+    ImmutableList<LOC_TYPED> loadTypedInventory(
+            final GameObjectId locationId, final GameObjectType gameObjectType) {
+        saveAll(false);
+
+        final ImmutableList<GameObject> res =
+                locationSystem.findByLocation(locationId).stream()
+                        .filter(((Predicate<GameObjectId>) SPIELER_CHARAKTER::equals).negate())
+                        .map(this::get)
+                        .filter(ITypedGO.class::isInstance)
+                        .filter(go -> ((ITypedGO) go).typeComp().hasType(gameObjectType))
+                        .collect(toImmutableList());
+        return loadGameObjects(res);
+    }
+
+    /**
      * (Speichert ggf. alle Änderungen und) lädt (soweit noch nicht geschehen) die Game Objects
      * an dieser <code>locationId</code> (<i>nicht</i> rekursiv)
      * und gibt sie zurück - nur {@link ILocationGO}s.
@@ -1248,7 +1359,6 @@ public class World {
                         .collect(toImmutableList());
         return loadGameObjects(res);
     }
-
 
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO>
     ImmutableList<DESC_OBJ> filterNonLivingBeing(final List<DESC_OBJ> gameObjects) {

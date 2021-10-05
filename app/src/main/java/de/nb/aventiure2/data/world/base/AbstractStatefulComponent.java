@@ -21,10 +21,13 @@ public abstract class AbstractStatefulComponent<PCD extends AbstractPersistentCo
     }
 
     @Override
-    public void saveInitialState() {
+    public void saveInitialState(final boolean unload) {
         pcd = createInitialState();
         doSave();
-        pcd = null;
+
+        if (unload) {
+            pcd = null;
+        }
     }
 
     protected abstract PCD createInitialState();

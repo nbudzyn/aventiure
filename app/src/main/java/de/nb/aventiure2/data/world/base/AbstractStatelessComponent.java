@@ -10,7 +10,7 @@ public abstract class AbstractStatelessComponent extends AbstractComponent {
     }
 
     @Override
-    public final void saveInitialState() {
+    public final void saveInitialState(final boolean unload) {
         // Component doesn't have any mutable state to be saved.
     }
 

@@ -41,7 +41,7 @@ interface IComponent {
      * Speichert die initialen Daten der Komponente (sofern sie welche hat) in die
      * Datenbank.
      */
-    void saveInitialState();
+    void saveInitialState(boolean unload);
 
     /**
      * Lädt die Daten dieser Komponente aus der Datenbank - <i>es sei denn, sie
@@ -55,7 +55,7 @@ interface IComponent {
      * geladen wurde, passiert nichts.
      */
     void saveIfChanged(boolean unload);
-    
+
     /**
      * Löscht alle Daten dieser Komponente aus der Datenbank und aus dem Speicher.
      */

@@ -270,48 +270,47 @@ public class NehmenAction
                         .undWartest()
         );
 
-        gameObject.locationComp()
-                .narrateAndSetLocation(targetLocation,
-                        () -> {
-                            world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
-                            sc.feelingsComp().requestMood(NEUTRAL);
+        world.narrateAndSetLocationOrIncAmount(gameObject, targetLocation,
+                () -> {
+                    world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
+                    sc.feelingsComp().requestMood(NEUTRAL);
 
-                            final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
+                    final SubstantivischePhrase anaph = world.anaph(FROSCHPRINZ);
 
-                            n.narrateAlt(
-                                    neuerSatz(anaph.nomK(),// "Er"
-                                            SeinUtil.istSind(anaph),
-                                            "glibschig und",
-                                            "schleimig – pfui-bäh! – schnell lässt du",
-                                            anaph.persPron().akkK(),
-                                            "in eine Tasche gleiten",
-                                            SENTENCE,
-                                            anaph.possArt().vor(NumerusGenus.N).nomStr(),
-                                            "gedämpftes Quaken könnte",
-                                            "wohlig sein oder",
-                                            "genauso gut vorwurfsvoll", PARAGRAPH)
-                                            .timed(secs(10)),
-                                    du("versenkst", anaph.akkK(), // "ihn"
-                                            "tief in deine Tasche. Du",
-                                            "versuchst, deine Hand an der",
-                                            "Kleidung zu reinigen, aber der",
-                                            "Schleim verteilt sich nur",
-                                            "überall – igitt!", PARAGRAPH)
-                                            .mitVorfeldSatzglied("tief in deine Tasche")
-                                            .timed(secs(10)),
-                                    du("packst",
-                                            anaph.akkK(), // "ihn"
-                                            "in deine Tasche",
-                                            SENTENCE,
-                                            froschDesc.persPron().nomK(),
-                                            SICH_ANFASSEN.getPraesensOhnePartikel(anaph),
-                                            "sich sehr eklig an und du bist",
-                                            "glücklich, als die Prozedur",
-                                            "vorbei ist.").timed(secs(10))
-                                            .dann()
-                            );
-                        }
-                );
+                    n.narrateAlt(
+                            neuerSatz(anaph.nomK(),// "Er"
+                                    SeinUtil.istSind(anaph),
+                                    "glibschig und",
+                                    "schleimig – pfui-bäh! – schnell lässt du",
+                                    anaph.persPron().akkK(),
+                                    "in eine Tasche gleiten",
+                                    SENTENCE,
+                                    anaph.possArt().vor(NumerusGenus.N).nomStr(),
+                                    "gedämpftes Quaken könnte",
+                                    "wohlig sein oder",
+                                    "genauso gut vorwurfsvoll", PARAGRAPH)
+                                    .timed(secs(10)),
+                            du("versenkst", anaph.akkK(), // "ihn"
+                                    "tief in deine Tasche. Du",
+                                    "versuchst, deine Hand an der",
+                                    "Kleidung zu reinigen, aber der",
+                                    "Schleim verteilt sich nur",
+                                    "überall – igitt!", PARAGRAPH)
+                                    .mitVorfeldSatzglied("tief in deine Tasche")
+                                    .timed(secs(10)),
+                            du("packst",
+                                    anaph.akkK(), // "ihn"
+                                    "in deine Tasche",
+                                    SENTENCE,
+                                    froschDesc.persPron().nomK(),
+                                    SICH_ANFASSEN.getPraesensOhnePartikel(anaph),
+                                    "sich sehr eklig an und du bist",
+                                    "glücklich, als die Prozedur",
+                                    "vorbei ist.").timed(secs(10))
+                                    .dann()
+                    );
+                }
+        );
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
@@ -319,14 +318,12 @@ public class NehmenAction
     private void narrateAndDoFroschprinz_HatHochhebenGefordert() {
         narrateFroschprinz_HatHochhebenGefordert();
 
-        gameObject.locationComp()
-                .narrateAndSetLocation(
-                        targetLocation,
-                        () -> {
-                            world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
-                            sc.feelingsComp().requestMood(ANGESPANNT);
-                        }
-                );
+        world.narrateAndSetLocationOrIncAmount(gameObject, targetLocation,
+                () -> {
+                    world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
+                    sc.feelingsComp().requestMood(ANGESPANNT);
+                }
+        );
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
@@ -380,7 +377,7 @@ public class NehmenAction
 
         narrateObject();
 
-        gameObject.locationComp().narrateAndSetLocation(targetLocation);
+        world.narrateAndSetLocationOrIncAmount(gameObject, targetLocation);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 

@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.typed;
 
 import androidx.annotation.NonNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObjectId;
@@ -14,6 +16,7 @@ import de.nb.aventiure2.data.world.base.GameObjectId;
  * </p>
  * Der Typ eines Objekts ist unveränderlich.
  */
+@ParametersAreNonnullByDefault
 public class TypeComp extends AbstractStatefulComponent<TypePCD> {
     private final GameObjectType type;
 
@@ -30,6 +33,11 @@ public class TypeComp extends AbstractStatefulComponent<TypePCD> {
         return new TypePCD(getGameObjectId(), type);
     }
 
+    public boolean hasType(final GameObjectType type) {
+        return getType() == type;
+    }
+
+    @NonNull
     public GameObjectType getType() {
         return type;
     }

@@ -82,18 +82,11 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public void narrateAndSetLocation(@Nullable final ILocationGO newLocation) {
-        narrateAndSetLocation(
-                newLocation != null ? newLocation.getId() : null);
+        narrateAndSetLocation(newLocation != null ? newLocation.getId() : null);
     }
 
     public void narrateAndSetLocation(@Nullable final GameObjectId newLocationId) {
         narrateAndSetLocation(newLocationId, () -> {});
-    }
-
-    public void narrateAndSetLocation(@Nullable final ILocationGO newLocation,
-                                      final Runnable onEnter) {
-        narrateAndSetLocation(
-                newLocation != null ? newLocation.getId() : null, onEnter);
     }
 
     public void narrateAndSetLocation(@Nullable final GameObjectId newLocationId,

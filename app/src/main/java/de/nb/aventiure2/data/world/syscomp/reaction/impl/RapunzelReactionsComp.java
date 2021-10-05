@@ -1,5 +1,49 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.DO_START_HAARE_VOM_TURM_HERUNTERLASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FUSS;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaetze;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SCHIEBEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -45,50 +89,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_DU_ALTE_IST_SO_NEUGIERIG;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.BEGRUESSUNG_KANNST_DU_MIR_NUN_HELFEN;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.DO_START_HAARE_VOM_TURM_HERUNTERLASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_HERKUNFT_DER_GOLDENEN_KUGEL_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_KUGEL_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_LIEBSTER_JAHRESZEIT_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FUSS;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altSaetze;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SCHIEBEN;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -803,7 +803,7 @@ public class RapunzelReactionsComp
         }
 
         for (final LOC_DESC object : gegenstaendeFuerUntersBett) {
-            object.locationComp().narrateAndSetLocation(BETT_OBEN_IM_ALTEN_TURM);
+            world.narrateAndSetLocationOrIncAmount(object, BETT_OBEN_IM_ALTEN_TURM);
         }
     }
 

@@ -1,5 +1,28 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.LEGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -29,29 +52,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ABSETZEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HINLEGEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.LEGEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 
 /**
  * Der SC legt einen Gegenstand ab - z.B. direkt in einen Raum (d.h. auf den Boden o.Ä.)
@@ -280,7 +280,7 @@ public class AblegenAction
 
     private void narrateUpgradeKnownAndSetLocationAndAction() {
         world.narrateAndUpgradeScKnownAndAssumedState(gameObject);
-        gameObject.locationComp().narrateAndSetLocation(location);
+        world.narrateAndSetLocationOrIncAmount(gameObject, location);
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 

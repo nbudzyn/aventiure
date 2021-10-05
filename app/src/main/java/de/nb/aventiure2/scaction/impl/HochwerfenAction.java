@@ -1,5 +1,36 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static com.google.common.collect.ImmutableList.of;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOEHE;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.FALLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.LANDEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ROLLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHLAGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.VERSCHWINDEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
+import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -34,37 +65,6 @@ import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static com.google.common.collect.ImmutableList.of;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOEHE;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.FALLEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.LANDEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.ROLLEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHLAGEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.VERSCHWINDEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
-import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Spieler(charakter) wirft einen Gegenstand hoch.
@@ -183,7 +183,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 
-        object.locationComp().narrateAndSetLocation(location);
+        world.narrateAndSetLocationOrIncAmount(object, location);
     }
 
     private void narrateAndDoErstesMal() {
@@ -316,7 +316,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         .timed(secs(10))
                         .dann(!n.dann()));
 
-        object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
+        world.narrateAndSetLocationOrIncAmount(object, UNTEN_IM_BRUNNEN);
     }
 
     private void narrateAndDoWiederholung() {
@@ -365,7 +365,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
             sc.feelingsComp().requestMoodMax(UNTROESTLICH);
 
-            object.locationComp().narrateAndSetLocation(UNTEN_IM_BRUNNEN);
+            world.narrateAndSetLocationOrIncAmount(object, UNTEN_IM_BRUNNEN);
             return;
         }
 
@@ -385,7 +385,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         sc.feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 
-        object.locationComp().narrateAndSetLocation(location);
+        world.narrateAndSetLocationOrIncAmount(object, location);
     }
 
     @Override

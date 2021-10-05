@@ -129,14 +129,14 @@ public class CreateNehmenAction
     private <GO extends GameObject & IDescribableGO & ILocatableGO>
     void narrateAndDoBinsenAusrupfen() {
         final GO neuAusgerupfteBinsen = (GO) onTheFlyGOFactory.createEinigeAusgerupfteBinsen();
-        world.addOnTheFlyGameObject(neuAusgerupfteBinsen);
-
-        world.narrateAndUpgradeScKnownAndAssumedState(neuAusgerupfteBinsen);
+        world.attachNew(neuAusgerupfteBinsen);
 
         narrateBinsenAusrupfen(neuAusgerupfteBinsen);
 
-        neuAusgerupfteBinsen.locationComp()
-                .narrateAndSetLocation(EINE_TASCHE_DES_SPIELER_CHARAKTERS);
+        world.narrateAndUpgradeScKnownAndAssumedState(neuAusgerupfteBinsen);
+        world.narrateAndSetLocationOrIncAmount(neuAusgerupfteBinsen,
+                EINE_TASCHE_DES_SPIELER_CHARAKTERS);
+
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
@@ -161,11 +161,13 @@ public class CreateNehmenAction
 
     @Override
     protected boolean isDefinitivWiederholung() {
+        // FIXME "Du rupfst einige Binsen aus. Du rupfst einige Binsen aus..."
         return false;
     }
 
     @Override
     protected boolean isDefinitivFortsetzung() {
+        // FIXME "Du rupfst einige Binsen aus. Du rupfst einige Binsen aus..."
         return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
     }
 
