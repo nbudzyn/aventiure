@@ -32,6 +32,13 @@ public class LocationPCD extends AbstractPersistentComponentData {
     }
 
     void setLocationId(@Nullable final GameObjectId locationId) {
+        // FIXME Alle Aufrufer prüfen: Ggf. soll nicht das Objekt verschoben werden, sondern
+        //  stattdessen das Objekt gelöscht und am Zielort die Menge erhöht werden.
+        //  Diese Funktion möglichst zentral (World?) anbieten!
+        //  Dazu muss man die Objekte (gleichen Typs) laden, die dort liegen (vorher save all?).
+        //  Außerdem ist es wichtig, dass - falls das Objekt gelöscht oder zum Löschen markiert
+        //  wurde - das Objekt danach nicht mehr verwendet wird.
+
         setChanged();
         this.locationId = locationId;
     }

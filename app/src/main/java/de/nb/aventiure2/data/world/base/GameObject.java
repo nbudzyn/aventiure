@@ -16,7 +16,7 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
  */
 public class GameObject implements IGameObject {
     private enum InternalState {
-        NOT_LOADED, LOADED
+        NOT_LOADED, LOADED, DELETED
     }
 
     private final GameObjectId id;
@@ -100,7 +100,7 @@ public class GameObject implements IGameObject {
             component.delete();
         }
 
-        internalState = InternalState.NOT_LOADED;
+        internalState = InternalState.DELETED;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class GameObject implements IGameObject {
     @NonNull
     @Override
     public String toString() {
-        if (internalState == InternalState.NOT_LOADED) {
+        if (internalState != InternalState.LOADED) {
             return id.toString();
         }
 
