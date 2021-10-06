@@ -46,6 +46,7 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
         counterDao = db.counterDao();
     }
 
+    @SuppressWarnings("unchecked")
     public <AUSGERUFPFTE_BINSEN extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
     AUSGERUFPFTE_BINSEN createEinigeAusgerupfteBinsen() {
         final GameObjectId newId = generateNewGameObjectId();

@@ -581,9 +581,7 @@ public class World {
                             .addAmount(((IAmountableGO) locatable).amountComp().getAmount());
                 }
 
-                if (onEnter != null) {
-                    onEnter.run();
-                }
+                onEnter.run();
 
                 delete((GameObject) locatable);
                 return;
@@ -718,6 +716,7 @@ public class World {
      * direkt oder
      * rekursiv enthalten sind.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean shouldBeDescribedAfterScMovement(
             final @Nullable ILocationGO from,
             final IGameObject to,

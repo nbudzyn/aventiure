@@ -98,8 +98,8 @@ public class ScActionService {
 
         res.addAll(buildCreateActions(
                 spielerCharakter,
-                wasSCVisiblyInDenHaendenHat,
-                scInventoryObjects));
+                wasSCVisiblyInDenHaendenHat
+        ));
 
         if (location != null) {
             res.addAll(buildObjectInLocationActions(
@@ -219,13 +219,12 @@ public class ScActionService {
     private <DESC_OBJ extends ILocatableGO & IDescribableGO>
     ImmutableList<AbstractScAction> buildCreateActions(
             final SpielerCharakter spielerCharakter,
-            final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat,
-            final ImmutableList<DESC_OBJ> scInventoryObjects) {
+            final List<DESC_OBJ> wasSCVisiblyInDenHaendenHat) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         if (!spielerCharakter.talkingComp().isInConversation()) {
             if (wasSCVisiblyInDenHaendenHat.isEmpty()) {
                 res.addAll(CreateNehmenAction.buildObjectActions(
-                        db, timeTaker, n, world, scInventoryObjects));
+                        db, timeTaker, n, world));
             }
         }
 

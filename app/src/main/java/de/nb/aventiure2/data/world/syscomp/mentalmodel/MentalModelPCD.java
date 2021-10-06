@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.mentalmodel;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
@@ -18,8 +20,6 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Mutable - and therefore persistent - data of the {@link MentalModelComp} component.
@@ -63,9 +63,7 @@ public class MentalModelPCD extends AbstractPersistentComponentData {
                    final Map<GameObjectId, ? extends Enum<?>> assumedStates) {
         super(gameObjectId);
         this.assumedLocations = new HashMap<>(assumedLocations);
-
         this.assumedStates = new HashMap<>();
-        Preconditions.checkState(this.assumedStates.isEmpty(), "Already initialized!");
 
         // Kein setChanged() !
         for (final Map.Entry<GameObjectId, ? extends Enum<?>> entry : assumedStates.entrySet()) {

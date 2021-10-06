@@ -42,9 +42,7 @@ import de.nb.aventiure2.scaction.AbstractScAction;
  */
 @ParametersAreNonnullByDefault
 @SuppressWarnings("SwitchStatementWithTooFewBranches")
-public class CreateNehmenAction
-        <DESC_OBJ extends ILocatableGO & IDescribableGO>
-        extends AbstractScAction {
+public class CreateNehmenAction extends AbstractScAction {
     private final OnTheFlyGOFactory onTheFlyGOFactory;
 
     /**
@@ -52,13 +50,11 @@ public class CreateNehmenAction
      */
     private final GameObjectType gameObjectType;
 
-    public static <DESC_OBJ extends ILocatableGO & IDescribableGO>
-    Collection<CreateNehmenAction<DESC_OBJ>> buildObjectActions(final AvDatabase db,
-                                                                final TimeTaker timeTaker,
-                                                                final Narrator n,
-                                                                final World world,
-                                                                final ImmutableList<DESC_OBJ> scInventoryObjects) {
-        final ImmutableList.Builder<CreateNehmenAction<DESC_OBJ>> res =
+    public static Collection<CreateNehmenAction> buildObjectActions(final AvDatabase db,
+                                                                    final TimeTaker timeTaker,
+                                                                    final Narrator n,
+                                                                    final World world) {
+        final ImmutableList.Builder<CreateNehmenAction> res =
                 ImmutableList.builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(BINSENSUMPF)) {
@@ -73,10 +69,9 @@ public class CreateNehmenAction
     }
 
     @NonNull
-    private static <DESC_OBJ extends ILocatableGO & IDescribableGO>
-    CreateNehmenAction<DESC_OBJ> createBinsenAusrupfenAction(
+    private static CreateNehmenAction createBinsenAusrupfenAction(
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
-        return new CreateNehmenAction<>(db, timeTaker, n, world,
+        return new CreateNehmenAction(db, timeTaker, n, world,
                 GameObjectType.AUSGERUPFTE_BINSEN);
     }
 
