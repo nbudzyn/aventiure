@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.talking;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -27,9 +30,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Component for a {@link GameObject}: Das Game Object kann mit einem anderen
@@ -197,10 +197,6 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @VisibleForTesting
     public ITalkerGO<?> getTalkingTo() {
         @Nullable final GameObjectId talkingToId = getTalkingToId();
-        if (talkingToId == null) {
-            return null;
-        }
-
         return world.load(talkingToId);
     }
 

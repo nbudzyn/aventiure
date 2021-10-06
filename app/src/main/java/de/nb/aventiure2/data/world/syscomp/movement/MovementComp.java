@@ -504,12 +504,7 @@ public class MovementComp
 
     @Nullable
     private ILocationGO getTargetLocation() {
-        @Nullable final GameObjectId targetLocationId = getTargetLocationId();
-        if (targetLocationId == null) {
-            return null;
-        }
-
-        return world.load(targetLocationId);
+        return world.load(getTargetLocationId());
     }
 
     @Nullable
@@ -532,9 +527,7 @@ public class MovementComp
 
     @Nullable
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM getCurrentStepFrom() {
-        @Nullable final GameObjectId currentStepFromId = getCurrentStepFromId();
-
-        return currentStepFromId != null ? world.load(currentStepFromId) : null;
+        return world.load(getCurrentStepFromId());
     }
 
     @Nonnull
@@ -544,9 +537,7 @@ public class MovementComp
 
     @Nullable
     public ILocationGO getCurrentStepTo() {
-        @Nullable final GameObjectId currentStepToId = getCurrentStepToId();
-
-        return currentStepToId != null ? world.load(currentStepToId) : null;
+        return world.load(getCurrentStepToId());
     }
 
     @Nonnull

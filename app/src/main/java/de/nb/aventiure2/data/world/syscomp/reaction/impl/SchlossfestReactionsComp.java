@@ -1,5 +1,19 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -14,20 +28,6 @@ import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * "Reaktionen" des Schlossfestess, z.B. darauf, dass Zeit vergeht.
@@ -111,7 +111,8 @@ public class SchlossfestReactionsComp
     }
 
     private void scErlebtSchlossfestWirdVonSturmVerwuestet() {
-        n.narrate(du(PARAGRAPH, "musst erschüttert miterleben, wie der Sturm viele der kleinen",
+        n.narrate(du(PARAGRAPH, "musst",
+                "erschüttert miterleben, wie der Sturm viele der kleinen",
                 "farbigen Pagoden überall im Schlossgarten umwirft oder",
                 "ihnen die Dächer abreißt. Marktleute verlassen ihre Stände",
                 "oder versuchen sie an windgeschützten Plätzen zu verzurren.",

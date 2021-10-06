@@ -131,10 +131,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * * diese Methode immer <code>null</code> zurück.
      */
     public boolean hasSameOuterMostLocationAs(@Nullable final GameObjectId otherId) {
-        if (otherId == null) {
-            return false;
-        }
-
         return hasSameOuterMostLocationAs((IGameObject) world.load(otherId));
     }
 
@@ -146,10 +142,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * * diese Methode immer <code>null</code> zurück.
      */
     public boolean hasSameVisibleOuterMostLocationAs(@Nullable final GameObjectId otherId) {
-        if (otherId == null) {
-            return false;
-        }
-
         return hasSameVisibleOuterMostLocationAs((IGameObject) world.load(otherId));
     }
 
@@ -212,11 +204,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * sich (ggf. rekusiv) an dieser Location befindet.
      */
     public boolean hasRecursiveLocation(@Nullable final GameObjectId locationId) {
-        if (locationId == null) {
-            return false;
-        }
-
-        final GameObject location = world.load(locationId);
+        @Nullable final GameObject location = world.load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -231,11 +219,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * sich (ggf. rekusiv - soweit man sehen kann) an dieser Location befindet.
      */
     public boolean hasVisiblyRecursiveLocation(@Nullable final GameObjectId locationId) {
-        if (locationId == null) {
-            return false;
-        }
-
-        final GameObject location = world.load(locationId);
+        @Nullable final GameObject location = world.load(locationId);
 
         @Nullable final ILocationGO myLocation = getLocation();
         if (myLocation == null || !myLocation.storingPlaceComp()
@@ -337,12 +321,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     public ILocationGO getLocation() {
-        @Nullable final GameObjectId locationId = getLocationId();
-        if (locationId == null) {
-            return null;
-        }
-
-        return world.load(locationId);
+        return world.load(getLocationId());
     }
 
     @Nullable
@@ -383,12 +362,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     public ILocationGO getLastLocation() {
-        @Nullable final GameObjectId lastLocationId = getLastLocationId();
-        if (lastLocationId == null) {
-            return null;
-        }
-
-        return world.load(lastLocationId);
+        return world.load(getLastLocationId());
     }
 
     @Nullable

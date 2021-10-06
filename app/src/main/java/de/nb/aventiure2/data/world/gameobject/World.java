@@ -1290,12 +1290,7 @@ public class World {
     public IMovingGO loadWerDenSCGeradeVerlassenHat(final GameObjectId toId) {
         saveAll(false);
 
-        @Nullable final GameObjectId id = movementSystem.findWerDenSCGeradeVerlassenHat(toId);
-        if (id == null) {
-            return null;
-        }
-
-        return load(id);
+        return load(movementSystem.findWerDenSCGeradeVerlassenHat(toId));
     }
 
     /**
@@ -1630,19 +1625,11 @@ public class World {
     }
 
     public final boolean hasSameOuterMostLocationAsSC(@Nullable final GameObjectId gameObjectId) {
-        if (gameObjectId == null) {
-            return false;
-        }
-
         return hasSameOuterMostLocationAsSC((IGameObject) load(gameObjectId));
     }
 
     public final boolean hasSameVisibleOuterMostLocationAsSC(
             @Nullable final GameObjectId gameObjectId) {
-        if (gameObjectId == null) {
-            return false;
-        }
-
         return hasSameVisibleOuterMostLocationAsSC((IGameObject) load(gameObjectId));
     }
 
@@ -1724,10 +1711,14 @@ public class World {
     }
 
     /**
-     * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück.
+     * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück - null-safe.
      */
-    @Nonnull
-    public <T extends IGameObject> T load(final GameObjectId id) {
+    @Nullable
+    public <T extends IGameObject> T load(@Nullable final GameObjectId id) {
+        if (id == null) {
+            return null;
+        }
+
         final GameObject gameObject = get(id);
         gameObject.load();
         return (T) gameObject;

@@ -1,5 +1,9 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.system;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.time.AvDateTime.latest;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
@@ -36,10 +40,6 @@ import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.time.AvDateTime.latest;
 
 /**
  * Functionality concerned with Reactions that might delta several game objects.
@@ -118,9 +118,7 @@ public class ReactionSystem
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final GameObjectId fromId,
                         final GameObjectId toId) {
-        onEnter(locatableId,
-                fromId != null ? (ILocationGO) world.load(fromId) : null,
-                toId);
+        onEnter(locatableId, (ILocationGO) world.load(fromId), toId);
     }
 
     private void onEnter(final GameObjectId locatableId,
