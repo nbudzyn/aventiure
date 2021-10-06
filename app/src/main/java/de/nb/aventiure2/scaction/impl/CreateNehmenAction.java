@@ -4,7 +4,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUSRUPFEN;
 
 import androidx.annotation.NonNull;
@@ -21,12 +24,14 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -47,11 +52,6 @@ public class CreateNehmenAction
      */
     private final GameObjectType gameObjectType;
 
-    /**
-     * Die Objekte (nicht Kreaturen!), die der SC bereits bei sich trägt.
-     */
-    private final ImmutableList<? extends ILocatableGO> scInventoryObjects;
-
     public static <DESC_OBJ extends ILocatableGO & IDescribableGO>
     Collection<CreateNehmenAction<DESC_OBJ>> buildObjectActions(final AvDatabase db,
                                                                 final TimeTaker timeTaker,
@@ -62,7 +62,7 @@ public class CreateNehmenAction
                 ImmutableList.builder();
 
         if (world.loadSC().locationComp().hasRecursiveLocation(BINSENSUMPF)) {
-            res.add(createBinsenAusrupfenAction(db, timeTaker, n, world, scInventoryObjects));
+            res.add(createBinsenAusrupfenAction(db, timeTaker, n, world));
 
             // Sobald es hier weitere Dinge gibt, die im Binsensumpf erzeugt werden könnten,
             // muss buildMemorizedAction() angepasst werden, damit
@@ -75,22 +75,19 @@ public class CreateNehmenAction
     @NonNull
     private static <DESC_OBJ extends ILocatableGO & IDescribableGO>
     CreateNehmenAction<DESC_OBJ> createBinsenAusrupfenAction(
-            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world,
-            final ImmutableList<DESC_OBJ> scInventoryObjects) {
+            final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         return new CreateNehmenAction<>(db, timeTaker, n, world,
-                GameObjectType.AUSGERUPFTE_BINSEN, scInventoryObjects);
+                GameObjectType.AUSGERUPFTE_BINSEN);
     }
 
     private CreateNehmenAction(
             final AvDatabase db,
             final TimeTaker timeTaker, final Narrator n, final World world,
-            final GameObjectType gameObjectType,
-            final ImmutableList<DESC_OBJ> scInventoryObjects) {
+            final GameObjectType gameObjectType) {
         super(db.scActionStepCountDao(), timeTaker, n, world);
 
         onTheFlyGOFactory = new OnTheFlyGOFactory(db, timeTaker, world);
         this.gameObjectType = checkNotNull(gameObjectType, "gameObjectType");
-        this.scInventoryObjects = checkNotNull(scInventoryObjects, "scInventoryObjects");
     }
 
     @Override
@@ -126,9 +123,10 @@ public class CreateNehmenAction
         }
     }
 
-    private <GO extends GameObject & IDescribableGO & ILocatableGO>
+    private <AUSGERUFPFTE_BINSEN extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
     void narrateAndDoBinsenAusrupfen() {
-        final GO neuAusgerupfteBinsen = (GO) onTheFlyGOFactory.createEinigeAusgerupfteBinsen();
+        final AUSGERUFPFTE_BINSEN neuAusgerupfteBinsen =
+                onTheFlyGOFactory.createEinigeAusgerupfteBinsen();
         world.attachNew(neuAusgerupfteBinsen);
 
         narrateBinsenAusrupfen(neuAusgerupfteBinsen);
@@ -140,8 +138,44 @@ public class CreateNehmenAction
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
 
-    private <GO extends IDescribableGO & ILocatableGO>
-    void narrateBinsenAusrupfen(final GO ausgerupfteBinsen) {
+    private <AUSGERUFPFTE_BINSEN extends IDescribableGO & ILocatableGO & IAmountableGO>
+    void narrateBinsenAusrupfen(final AUSGERUFPFTE_BINSEN ausgerupfteBinsen) {
+        final ImmutableList<? extends AUSGERUFPFTE_BINSEN> binsenInTascheList =
+                world.loadTypedInventory(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
+                        GameObjectType.AUSGERUPFTE_BINSEN);
+        final int amountBinsenInTasche =
+                binsenInTascheList.isEmpty() ?
+                        0 :
+                        binsenInTascheList.iterator().next().amountComp().getAmount();
+
+        if (amountBinsenInTasche == 2) {
+            n.narrateAlt(secs(10),
+                    neuerSatz(SENTENCE,
+                            "Schnell noch ein paar – jetzt trägst du eine ganze Menge",
+                            "Binsenhalme bei dir"));
+            return;
+        }
+
+        if (amountBinsenInTasche > 0) {
+            final AltDescriptionsBuilder alt = alt();
+
+            alt.add(du(SENTENCE, "rupfst", "einige weitere Binsen aus")
+                            .undWartest().dann(),
+                    du(SENTENCE, "rupfst", "noch ein paar Binsen aus")
+                            .undWartest().dann(),
+                    du(SENTENCE, "rupfst", "noch weitere Binsen aus")
+                            .undWartest().dann(),
+                    du(SENTENCE, "brichst", "weitere Binsen ab")
+                            .undWartest().dann());
+
+            if (amountBinsenInTasche > 4) {
+                alt.add(neuerSatz("Je mehr, desto besser, hm?"));
+            }
+
+            n.narrateAlt(alt, secs(30));
+            return;
+        }
+
         final EinzelneSubstantivischePhrase objectDesc =
                 world.getDescription(ausgerupfteBinsen, true);
         final PraedikatOhneLeerstellen praedikatMitObjekt = AUSRUPFEN.mit(objectDesc);
@@ -161,14 +195,12 @@ public class CreateNehmenAction
 
     @Override
     protected boolean isDefinitivWiederholung() {
-        // FIXME "Du rupfst einige Binsen aus. Du rupfst einige Binsen aus..."
         return false;
     }
 
     @Override
     protected boolean isDefinitivFortsetzung() {
-        // FIXME "Du rupfst einige Binsen aus. Du rupfst einige Binsen aus..."
-        return buildMemorizedAction().equals(sc.memoryComp().getLastAction());
+        return false;
     }
 
     @Override

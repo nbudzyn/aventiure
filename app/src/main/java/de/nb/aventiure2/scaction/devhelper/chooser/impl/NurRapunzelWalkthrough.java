@@ -98,7 +98,15 @@ public class NurRapunzelWalkthrough {
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
                     "Das Holz nehmen",
-                    "Das Klaubholz in Stücke brechen"
+                    "Das Klaubholz in Stücke brechen",
+                    "In den Wald gehen",
+                    "Tiefer in den Wald hineingehen",
+                    "Den überwachsenen Abzweig zur Hütte nehmen",
+                    "In den Garten hinter der Hütte gehen",
+                    "Hinter dem Garten weitergehen",
+                    "Einige Binsen ausrupfen",
+                    "Einige Binsen ausrupfen",
+                    "Einige Binsen ausrupfen"
             );
 
     public static final Walkthrough NUR_RAPUNZEL =

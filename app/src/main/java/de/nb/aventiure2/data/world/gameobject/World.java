@@ -547,7 +547,7 @@ public class World {
      */
     public void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
                                                  @Nullable final ILocationGO newLocation,
-                                                 @Nullable final Runnable onEnter) {
+                                                 final Runnable onEnter) {
         narrateAndSetLocationOrIncAmount(locatable,
                 newLocation != null ? newLocation.getId() : null, onEnter);
     }
@@ -559,7 +559,7 @@ public class World {
      */
     private void narrateAndSetLocationOrIncAmount(final ILocatableGO locatable,
                                                   @Nullable final GameObjectId newLocationId,
-                                                  @Nullable final Runnable onEnter) {
+                                                  final Runnable onEnter) {
         if (newLocationId != null && locatable instanceof ITypedGO
                 && locatable instanceof GameObject) {
             // Das locatable hat einen Typ (z.B. "ausgerupfte Binsen").
@@ -1239,8 +1239,7 @@ public class World {
 
         for (final LOC_DESC directlyContained : directlyContainedList) {
             if (directlyContained instanceof ILocationGO) {
-                res.addAll(
-                        loadDescribableRecursiveInventory((ILocationGO) directlyContained));
+                res.addAll(loadDescribableRecursiveInventory((ILocationGO) directlyContained));
             }
         }
 
@@ -1307,8 +1306,7 @@ public class World {
      * rekursiv, also <i>keine</i>  ausgerupften Binsen auf einem Tisch in einem Raum)
      * und gibt sie zurück.
      */
-    private <LOC_TYPED extends ILocatableGO & ITypedGO>
-    ImmutableList<LOC_TYPED> loadTypedInventory(
+    public <LOC_TYPED extends ILocatableGO & ITypedGO> ImmutableList<LOC_TYPED> loadTypedInventory(
             final GameObjectId locationId, final GameObjectType gameObjectType) {
         saveAll(false);
 

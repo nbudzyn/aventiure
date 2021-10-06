@@ -18,7 +18,9 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountComp;
 import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
@@ -44,7 +46,8 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
         counterDao = db.counterDao();
     }
 
-    public GameObject createEinigeAusgerupfteBinsen() {
+    public <AUSGERUFPFTE_BINSEN extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
+    AUSGERUFPFTE_BINSEN createEinigeAusgerupfteBinsen() {
         final GameObjectId newId = generateNewGameObjectId();
 
         final ImmutableMap<Integer, EinzelneSubstantivischePhrase>
@@ -55,7 +58,7 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                         .put(3, Nominalphrase.VIELE_BINSEN)
                         .build();
 
-        return new AmountObject(newId,
+        return (AUSGERUFPFTE_BINSEN) new AmountObject(newId,
                 db,
                 new TypeComp(newId, db, GameObjectType.AUSGERUPFTE_BINSEN),
                 1,
