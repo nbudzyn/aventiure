@@ -123,8 +123,8 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
         final int count = db.counterDao().get(ALTER_TURM_UMRUNDET);
         switch (count) {
             case 0:
-                if (world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
-                        !world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
+                if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG) &&
+                        !loadSC().memoryComp().isKnown(RAPUNZEL)) {
                     return du(SENTENCE, "möchtest",
                             "zu der süßen Stimme hinaufsteigen, "
                                     + "und suchst rundherum nach einer Türe des Turms, aber es "
@@ -136,7 +136,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                             .dann();
                 }
 
-                if (!world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
+                if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                     return du("gehst", "einmal um den Turm herum. Es ist keine "
                             + "Türe zu sehen, nur ganz oben ein kleines Fensterchen")
                             .timed(mins(2))

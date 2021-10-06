@@ -111,7 +111,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
             case BEGONNEN:
                 return getDescTo_SchlossVorhalle_FestBegonnen();
             case VERWUESTET:
-                return getDescTo_SchlossVorhalle_FestVerwuestet();
+                // fall-through
+            case MARKT_AUFGEBAUT:
+                return getDescTo_SchlossVorhalle_FestZumindestVerwuestet();
             default:
                 throw new IllegalStateException("Unexpected Schlossfest state: "
                         + schlossfest.stateComp().getState());
@@ -139,10 +141,10 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                     .komma();
         }
 
-        return getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung();
+        return getDescTo_SchlossVorhalle_FestZumindestBegonnen_Wiederholung();
     }
 
-    private TimedDescription<?> getDescTo_SchlossVorhalle_FestVerwuestet() {
+    private TimedDescription<?> getDescTo_SchlossVorhalle_FestZumindestVerwuestet() {
         if (db.counterDao().get(SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN) == 0) {
             return du("gehst", "die Treppe zum Schloss hinauf;",
                     "drinnen empfängt dich großes Gedränge. Die prächtige Vorhalle steht voller",
@@ -153,10 +155,10 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                     .komma();
         }
 
-        return getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung();
+        return getDescTo_SchlossVorhalle_FestZumindestBegonnen_Wiederholung();
     }
 
-    private static TimedDescription<?> getDescTo_SchlossVorhalle_FestBegonnenOderVerwuestet_Wiederholung() {
+    private static TimedDescription<?> getDescTo_SchlossVorhalle_FestZumindestBegonnen_Wiederholung() {
         return du("betrittst", "wieder das Schloss")
                 .mitVorfeldSatzglied("wieder")
                 .timed(mins(2))

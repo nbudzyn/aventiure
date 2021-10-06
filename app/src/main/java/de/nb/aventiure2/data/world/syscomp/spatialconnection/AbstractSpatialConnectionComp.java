@@ -18,6 +18,7 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 /**
@@ -91,8 +92,13 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
      * {@link SpatialConnectionData.ScMoveTimedDescriptionProvider#altScMoveTimedDescriptions(Known, Lichtverhaeltnisse)}
      * aufgerufen wird!
      */
-    public abstract boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
-                                                                    Known newLocationKnown,
-                                                                    Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
+    public abstract boolean isAlternativeMovementDescriptionAllowed(
+            final GameObjectId to,
+            Known newLocationKnown,
+            Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
 
+    @NonNull
+    protected SpielerCharakter loadSC() {
+        return world.loadSC();
+    }
 }

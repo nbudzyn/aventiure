@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -28,8 +30,6 @@ import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.StoryWebComp;
 import de.nb.aventiure2.data.world.syscomp.story.impl.FroschkoenigStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Reagiert auf die Aktionen des SCs und managet dabei die Stories, d.h. die kleinen
@@ -195,8 +195,7 @@ public class StoryWebReactionsComp
                 SCHLOSS_VORHALLE,
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST)).stateComp()
-                        .hasState(SchlossfestState.BEGONNEN,
-                                SchlossfestState.VERWUESTET)) {
+                        .hasState(SchlossfestState::schlossfestLaeuft)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
         }
 
@@ -323,7 +322,7 @@ public class StoryWebReactionsComp
     }
 
     private void onSchlossfestStateChanged(final SchlossfestState newState) {
-        if ((newState == SchlossfestState.BEGONNEN || newState == SchlossfestState.VERWUESTET)
+        if (newState.schlossfestLaeuft()
                 && loadSC().locationComp().hasRecursiveLocation(
                 DRAUSSEN_VOR_DEM_SCHLOSS, SCHLOSS_VORHALLE,
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)) {

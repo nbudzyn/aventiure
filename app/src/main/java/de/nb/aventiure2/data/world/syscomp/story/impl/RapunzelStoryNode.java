@@ -7,6 +7,7 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKT_AUFGEBAUT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -60,7 +61,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     // (Letztlich mit Ja beantwortet.)
     // (Und: Gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung aufzubauen? - Letztlich
     // mit Nein beantwortet)
-    // Charaktere: SC, Rapunzel, Zauberin; FIXME Seilerin?
+    // Charaktere: SC, Rapunzel, Zauberin; Seilerin
     // Gewünschtes Ergebnis: Rapunzel ist dauerhaft in Freiheit
     // Der SC ist Actor, Zauberin ist Resistor.
     // Schwierigkeiten:
@@ -143,9 +144,10 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     //FIXME Die Tipps ab hier könnten auf die / eine noch offene dramatische Frage Bezug nehmen.
 
+    // FIXME Binsenseil geflochten
+
     //FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
-    // - "An einer Ecke ist ein kleiner Markt"
-    // -> "Auf den kleinen Markt gehen"
+    // - "Auf den kleinen Markt gehen" / "Bauernmarkt" / "zu den Marktständen"
     // - "Auf dem kleinen Markt  / Dort sitzen ein paar einfache Leute und halten ihre Waren feil:
     // Eine Bauersfrau verkauft Mus, eine schöne junge Frau hat Töpfe und irdenes Geschirr vor sich
     // stehen und eine alte Frau flicht Körbe.
@@ -163,8 +165,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME "Die Seilerin hat ihren Stand gut verschnürt und abgedeckt"
 
-    // FIXME Binsen, Seil flechten..
-    //  - "du rupfst Binsen und flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
+    // FIXME Seil flechten..
+    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
     //  - Binsen anfeuchten?
     //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
     //  - KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
@@ -570,7 +572,8 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(paragraph("Holz hat schon vielen Menschen als guter Rohstoff",
                     "für allerlei nützliche Dinge gedient, jaja!").schonLaenger());
         } else {
-            if (world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, VERWUESTET)) {
+            if (world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, VERWUESTET,
+                    MARKT_AUFGEBAUT)) {
                 alt.add(paragraph("Manchmal haben Durcheinander und Katastrophen auch",
                         "ihr Gutes und schaffen neue Möglichkeiten"),
                         paragraph("Der Sturm hat die Welt wieder einmal kräftig",

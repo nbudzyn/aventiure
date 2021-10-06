@@ -91,7 +91,7 @@ public class DasTapfereSchneiderleinStoryNode {
     //  Märchen: Sieben auf einen Streich.
 
     // FIXME Jedes "Puzzle" sollte möglichst nur "Verbs" (Aktionen) verwenden, die der Spieler
-    //  schon zuvor kennengelernt hat (Beispiel: hochwerfern -> Kugel an richtiger Stelle
+    //  schon zuvor kennengelernt hat (Beispiel: hochwerfen -> Kugel an richtiger Stelle
     //  hochwerfen; nehmen -> Äste nehmen; ?? -> Seil flechten;
     //  ?? -> Aus Seil und Ästen Strickleiter bauen). Oder es sollte zu einem sehr einfachen
     //  "Puzzle" mit einem neuen Verb ein schwereres Puzzle mit demselben Verb geben.

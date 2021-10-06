@@ -79,7 +79,7 @@ public class HinterDerHuetteConnectionComp extends AbstractSpatialConnectionComp
     }
 
     private String getActionName_HinterDerHuette_To_Binsensumpf() {
-        if (world.loadSC().memoryComp().isKnown(BINSENSUMPF)) {
+        if (loadSC().memoryComp().isKnown(BINSENSUMPF)) {
             return "Den Hang hinter dem Garten hinabsteigen";
         }
         return "Hinter dem Garten weitergehen";

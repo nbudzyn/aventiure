@@ -1,5 +1,33 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static com.google.common.collect.ImmutableList.builder;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
+import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
@@ -52,36 +80,6 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static com.google.common.collect.ImmutableList.builder;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.german.base.GermanUtil.buildAufzaehlung;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Der Spielercharakter bewegt sich in einen anderen Raum oder in ein Objekt, das im
@@ -555,7 +553,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         final GameObject newLocation = world.load(spatialConnection.getTo());
 
         if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
-                .hasState(BEGONNEN, VERWUESTET)) {
+                .hasState(SchlossfestState::schlossfestLaeuft)) {
             if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS)
                     && newLocation.is(SCHLOSS_VORHALLE)) {
                 return true;

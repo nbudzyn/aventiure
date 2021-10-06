@@ -1,5 +1,33 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp.Counter.NACH_DRAUSSEN_KEIN_FEST;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -25,34 +53,10 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConn
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp.Counter.NACH_DRAUSSEN_KEIN_FEST;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -79,13 +83,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                                                            final Known newLocationKnown,
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(DRAUSSEN_VOR_DEM_SCHLOSS)
-                || (
-                world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, NOCH_NICHT_BEGONNEN)
-                        && !loadSchlossfest().stateComp().hasState(NOCH_NICHT_BEGONNEN));
+                || getAssumedSchlossfestState() == loadSchlossfest().stateComp().getState();
     }
 
     @NonNull
-    public IHasStateGO<SchlossfestState> loadSchlossfest() {
+    private IHasStateGO<SchlossfestState> loadSchlossfest() {
         return world.load(SCHLOSSFEST);
     }
 
@@ -133,15 +135,15 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             case VERWUESTET:
                 res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
                 break;
-            // IDEA SC kennt Schlossfest im Sturm, aber jetzt wieder aufgebaut:
-            //   "Im Schlossgarten sind die meisten Verwüstungen durch den Sturm schon wieder
-            //   gerichtet und es herscht wieder reges Treiben"
+            case MARKT_AUFGEBAUT:
+                res = altDescTo_DraussenVorDemSchloss_MarktAufgebaut(lichtverhaeltnisse);
+                break;
             default:
                 throw new IllegalStateException("Unexpected state: "
                         + loadSchlossfest().stateComp().getState());
         }
 
-        world.loadSC().mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
+        loadSC().mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
 
         return res;
     }
@@ -200,7 +202,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     @NonNull
     private TimedDescription<?> getDescTo_DraussenVorDemSchloss_FestBegonnen() {
-        if (!world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN)) {
+        if (!loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, BEGONNEN)) {
             return du("bist", "von dem Lärm überrascht, der dir",
                     "schon von weitem",
                     "entgegenschallt. Als du aus dem Wald heraustrittst,",
@@ -220,7 +222,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();
 
         if (assumedSchlossfestState == null || assumedSchlossfestState == NOCH_NICHT_BEGONNEN) {
-            world.loadSC().feelingsComp().requestMoodMax(BETRUEBT);
+            loadSC().feelingsComp().requestMoodMax(BETRUEBT);
 
             return du("bist",
                     "betroffen, als du aus dem Wald heraustrittst.",
@@ -232,7 +234,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     "verführerisch nach Gebratenem")
                     .schonLaenger().timed(mins(10));
         } else if (assumedSchlossfestState == BEGONNEN) {
-            world.loadSC().feelingsComp().requestMoodMax(BETRUEBT);
+            loadSC().feelingsComp().requestMoodMax(BETRUEBT);
 
             return neuerSatz(
                     "Als du aus dem Wald heraustrittst, bietet sich dir ein trauriges Bild.",
@@ -242,7 +244,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     "Aus dem Schloss aber hört man immer noch die Menschenmenge")
                     .schonLaenger().timed(mins(10));
         } else {
-            world.loadSC().feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
+            loadSC().feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
 
             return du("erreichst", "bald den vom Sturm verwüsteten Schlossgarten")
                     .schonLaenger()
@@ -252,13 +254,70 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         }
     }
 
+    private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_MarktAufgebaut(
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();
+
+        if (assumedSchlossfestState == null || assumedSchlossfestState == NOCH_NICHT_BEGONNEN
+                || assumedSchlossfestState == BEGONNEN) {
+            if (lichtverhaeltnisse == HELL) {
+                return ImmutableList.of(neuerSatz(
+                        PARAGRAPH,
+                        "im Schlossgarten herrscht reges Treiben.",
+                        "In einer Ecke hat sich",
+                        "ein kleiner Bauernmarkt aufgebaut")
+                        .schonLaenger().timed(mins(10)));
+            }
+            return altNeueSaetze("der Schlossgarten liegt",
+                    mapToList(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
+                            timeTaker.now(), true),
+                            PraepositionMitKasus.IN_DAT::mit),
+                    SENTENCE,
+                    "In einer Ecke stehen einige Marktstände – natürlich alle",
+                    "geschlossen zu dieser Tageszeit")
+                    .schonLaenger().timed(mins(10))
+                    .build();
+        } else if (assumedSchlossfestState == VERWUESTET) {
+            loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
+
+            if (lichtverhaeltnisse == HELL) {
+                return ImmutableList.of(neuerSatz(
+                        PARAGRAPH,
+                        "im Schlossgarten herrscht wieder reges Treiben. Die Diener haben",
+                        "die vom Sturm zerstörten Pagoden abgeräumt; in einer Ecke hat sich ein",
+                        "kleiner Bauernmarkt aufgebaut")
+                        .schonLaenger()
+                        .timed(mins(10)));
+            }
+            return altNeueSaetze(
+                    "der Schlossgarten liegt",
+                    mapToList(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
+                            timeTaker.now(), true),
+                            PraepositionMitKasus.IN_DAT::mit),
+                    SENTENCE,
+                    "die Diener haben",
+                    "die vom Sturm zerstörten Pagoden abgeräumt",
+                    SENTENCE,
+                    "in einer Ecke stehen einige Marktstände – zu dieser Tageszeit",
+                    "alle geschlossen")
+                    .schonLaenger()
+                    .timed(mins(10))
+                    .build();
+        } else {
+            return ImmutableList.of(neuerSatz("Nachdem du einige Schritte gelaufen bist,"
+                    + "stehst du wieder im Schlossgarten")
+                    .schonLaenger()
+                    .timed(mins(10)));
+        }
+    }
+
     @Nullable
     private SchlossfestState getAssumedSchlossfestState() {
-        return (SchlossfestState) world.loadSC().mentalModelComp().getAssumedState(SCHLOSSFEST);
+        return (SchlossfestState) loadSC().mentalModelComp().getAssumedState(SCHLOSSFEST);
     }
 
     private String getActionNameTo_VorDemAltenTurm() {
-        if (world.loadSC().memoryComp().isKnown(VOR_DEM_ALTEN_TURM)) {
+        if (loadSC().memoryComp().isKnown(VOR_DEM_ALTEN_TURM)) {
             return "Den langen schmalen Pfad zum Turm aufwärtsgehen";
         }
 

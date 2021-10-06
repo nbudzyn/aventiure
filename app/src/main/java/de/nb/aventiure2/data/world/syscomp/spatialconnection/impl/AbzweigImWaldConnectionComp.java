@@ -1,5 +1,24 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -28,25 +47,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Objects.requireNonNull;
-
 @SuppressWarnings("unchecked")
 public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     public AbzweigImWaldConnectionComp(
@@ -63,7 +63,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
                 !world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
-                !world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
+                !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
 
     }
 
@@ -121,7 +121,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     private TimedDescription<?> getDescTo_ImWaldNaheDemSchloss(
             final Known newLocationKnown,
             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
-        if (world.loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
+        if (loadSC().locationComp().lastLocationWas(IM_WALD_NAHE_DEM_SCHLOSS)) {
             return du("gehst", "zurück in Richtung Schloss").timed(mins(5));
         }
 
@@ -146,7 +146,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
                 world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
-                world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
+                loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirdTraurig());
         }
 
@@ -191,7 +191,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         final ImmutableList<? extends IDescribableGO> objectsInDenBrunnenGefallen =
                 getObjectsInDenBrunnenGefallen();
 
-        world.loadSC().feelingsComp().requestMoodMax(TRAURIG);
+        loadSC().feelingsComp().requestMoodMax(TRAURIG);
 
         final SubstantivischePhrase descObjects =
                 world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
@@ -224,7 +224,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private String getActionNameTo_HinterDerHuette() {
-        if (world.loadSC().memoryComp().isKnown(VOR_DER_HUETTE_IM_WALD)) {
+        if (loadSC().memoryComp().isKnown(VOR_DER_HUETTE_IM_WALD)) {
             return "Den überwachsenen Abzweig zur Hütte nehmen";
         }
 
@@ -232,7 +232,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     }
 
     private String getActionNameTo_ImWaldBeimBrunnen() {
-        if (world.loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
+        if (loadSC().memoryComp().isKnown(IM_WALD_BEIM_BRUNNEN)) {
             return "Zum Brunnen gehen";
         }
 

@@ -7,8 +7,6 @@ import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ZUFRIEDEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -92,7 +90,7 @@ public class EssenAction extends AbstractScAction {
                                                          final ILocationGO location) {
         if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
-                        .hasState(BEGONNEN, VERWUESTET)) {
+                        .hasState(SchlossfestState::schlossfestLaeuft)) {
             return true;
         }
 

@@ -7,12 +7,15 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKT_AUFGEBAUT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -22,10 +25,12 @@ import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IWetterChangedReactions;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.WetterData;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 
@@ -35,7 +40,7 @@ import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
  */
 public class SchlossfestReactionsComp
         extends AbstractReactionsComp
-        implements IWetterChangedReactions, ITimePassedReactions {
+        implements IMovementReactions, IWetterChangedReactions, ITimePassedReactions {
     private final AbstractStateComp<SchlossfestState> stateComp;
 
     public SchlossfestReactionsComp(final Narrator n,
@@ -43,6 +48,37 @@ public class SchlossfestReactionsComp
                                     final AbstractStateComp<SchlossfestState> stateComp) {
         super(SCHLOSSFEST, n, world);
         this.stateComp = stateComp;
+    }
+
+    @Override
+    public void onLeave(final ILocatableGO locatable, final ILocationGO from,
+                        @Nullable final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            onSCLeave(from, to);
+            return;
+        }
+
+        return;
+    }
+
+    private void onSCLeave(final ILocationGO from, @Nullable final ILocationGO to) {
+        if (stateComp.hasState(VERWUESTET)
+                && from.is(IM_WALD_NAHE_DEM_SCHLOSS)
+                && to != null
+                && to.is(ABZWEIG_IM_WALD)) {
+            stateComp.narrateAndSetState(MARKT_AUFGEBAUT);
+        }
+    }
+
+    @Override
+    public boolean isVorScVerborgen() {
+        return false;
+    }
+
+    @Override
+    public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
+                        final ILocationGO to) {
+        // Nichts zu tun
     }
 
     @Override
@@ -73,8 +109,8 @@ public class SchlossfestReactionsComp
                 }
                 break;
             case VERWUESTET:
-                // IDEA: Das Schlossfest könnte auch einen State WIEDER_AUFGEBAUT
-                //  erhalten.
+                // fall-through
+            case MARKT_AUFGEBAUT:
                 break;
             default:
                 throw new IllegalStateException("Unexpected state: " + stateComp.getState());

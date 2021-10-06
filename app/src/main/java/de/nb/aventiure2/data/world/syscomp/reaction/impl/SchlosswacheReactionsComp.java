@@ -1,5 +1,25 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+
 import com.google.common.collect.ImmutableCollection;
 
 import javax.annotation.Nullable;
@@ -25,28 +45,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_REACTIONS_ABLEGEN_WACHE_IST_AUFMERKSAM;
-import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
 /**
  * "Reaktionen" der Schlosswache, z.B. darauf, dass Zeit vergeht,
@@ -221,7 +219,7 @@ public class SchlosswacheReactionsComp
         }
 
         if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
-                .hasState(BEGONNEN, VERWUESTET)) {
+                .hasState(SchlossfestState::schlossfestLaeuft)) {
             // Schlosswache hat andere Dinge zu tun
             return;
         }

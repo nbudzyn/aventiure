@@ -1,5 +1,12 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -23,13 +30,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.german.description.TimedDescription;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-
 public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialConnectionComp {
     WaldwildnisHinterDemBrunnenConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -37,7 +37,6 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
         super(WALDWILDNIS_HINTER_DEM_BRUNNEN, db, timeTaker, n, world);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean isAlternativeMovementDescriptionAllowed(final GameObjectId to,
                                                            final Known newLocationKnown,
@@ -46,7 +45,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
                 !world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
-                !world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
+                !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
     }
 
     @Override
@@ -60,13 +59,12 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
                         this::getDescTo_ImWaldBeimBrunnen));
     }
 
-    @SuppressWarnings("unchecked")
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
                                                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
                 world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
-                world.loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
+                loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return getDescTo_ImWaldBeimBrunnenWirdTraurig();
         }
 
@@ -80,7 +78,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
 
     @NonNull
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnenWirdTraurig() {
-        world.loadSC().feelingsComp().requestMoodMax(TRAURIG);
+        loadSC().feelingsComp().requestMoodMax(TRAURIG);
 
         return du("suchst",
                 "dir einen Weg zurück. Kaum am Brunnen, musst du "

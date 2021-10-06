@@ -124,7 +124,7 @@ public class VorDerHuetteImWaldConnectionComp extends AbstractSpatialConnectionC
     }
 
     private String getActionNameTo_HinterDerHuette() {
-        if (world.loadSC().memoryComp().isKnownFromLight(HINTER_DER_HUETTE)) {
+        if (loadSC().memoryComp().isKnownFromLight(HINTER_DER_HUETTE)) {
             return "In den Garten hinter der Hütte gehen";
         }
 

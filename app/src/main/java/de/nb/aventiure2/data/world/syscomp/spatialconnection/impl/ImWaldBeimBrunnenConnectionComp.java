@@ -1,5 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -18,15 +27,6 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -68,7 +68,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                         .komma()));
 
         if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
-                world.loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
+                loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
             resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "im Wald",
                     EAST,
@@ -100,7 +100,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
     }
 
     private String getActionNameTo_WildnisHinterDemBrunnen() {
-        if (world.loadSC().memoryComp()
+        if (loadSC().memoryComp()
                 // Etwas unklar, ob die Früchte bei Nacht zu sehen sind...
                 // bleiben wir konservativ!
                 .isKnownFromLight(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {

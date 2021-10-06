@@ -106,8 +106,12 @@ public class NurRapunzelWalkthrough {
                     "Hinter dem Garten weitergehen",
                     "Einige Binsen ausrupfen",
                     "Einige Binsen ausrupfen",
-                    "Einige Binsen ausrupfen"
-            );
+                    "Einige Binsen ausrupfen",
+                    "Den Hang zum verwilderten Garten hinaufsteigen",
+                    "Zur Vorderseite der Hütte gehen",
+                    "Auf den Waldweg zurückkehren",
+                    "In Richtung Schloss gehen",
+                    "Den Wald verlassen und in den Schlossgarten gehen");
 
     public static final Walkthrough NUR_RAPUNZEL =
             BIS_OBEN_BEI_RAPUNZEL

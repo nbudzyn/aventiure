@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -54,13 +57,11 @@ public abstract class AbstractStateComp<S extends Enum<S>>
 
     @SafeVarargs
     public final boolean hasState(final S... alternatives) {
-        for (final S test : alternatives) {
-            if (getState().equals(test)) {
-                return true;
-            }
-        }
+        return hasState(s -> Stream.of(alternatives).anyMatch(s::equals));
+    }
 
-        return false;
+    public final boolean hasState(final Predicate<S> predicate) {
+        return predicate.test(getState());
     }
 
     public S getState() {
