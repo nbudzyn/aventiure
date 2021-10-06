@@ -1,5 +1,23 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
+import static de.nb.aventiure2.german.base.InterrogativadverbVerbAllg.WIE;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.INSEKTEN;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIRPEN;
+import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
+import static de.nb.aventiure2.scaction.impl.RastenAction.Counter.RASTEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -23,24 +41,6 @@ import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
-import static de.nb.aventiure2.german.base.InterrogativadverbVerbAllg.WIE;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.INSEKTEN;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIRPEN;
-import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
-import static de.nb.aventiure2.scaction.impl.RastenAction.Counter.RASTEN;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Spielercharakter legt (wach!) eine Rast ein.
@@ -317,6 +317,6 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @NonNull
     private IHasStateGO<RapunzelState> loadRapunzel() {
-        return world.load(RAPUNZEL);
+        return world.loadRequired(RAPUNZEL);
     }
 }

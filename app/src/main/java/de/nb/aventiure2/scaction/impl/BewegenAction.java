@@ -367,7 +367,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                                 final IDescribableGO lastObject) {
         n.narrate(
                 neuerSatz(objectsDescription)
-                        .timed(secs(numObjects * 2))
+                        .timed(secs(numObjects * 2L))
                         .phorikKandidat(
                                 world.getDescription(lastObject, false),
                                 lastObject.getId()));
@@ -492,7 +492,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @NonNull
     private ILocationGO loadTo() {
-        return world.load(spatialConnection.getTo());
+        return world.loadRequired(spatialConnection.getTo());
     }
 
     @NonNull
@@ -550,9 +550,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @SuppressWarnings({"RedundantIfStatement"})
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newLocation = world.load(spatialConnection.getTo());
+        final GameObject newLocation = world.loadRequired(spatialConnection.getTo());
 
-        if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
+        if (world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST).stateComp()
                 .hasState(SchlossfestState::schlossfestLaeuft)) {
             if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS)
                     && newLocation.is(SCHLOSS_VORHALLE)) {
@@ -572,7 +572,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @SuppressWarnings("RedundantIfStatement")
     private boolean scWirdMitSchlafgelegenheitKonfrontiert() {
-        final GameObject newLocation = world.load(spatialConnection.getTo());
+        final GameObject newLocation = world.loadRequired(spatialConnection.getTo());
         if (oldLocation.is(VOR_DER_HUETTE_IM_WALD) && newLocation.is(HUETTE_IM_WALD)) {
             return true;
         }

@@ -1,5 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.story;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -30,18 +42,6 @@ import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static java.util.Arrays.asList;
 
 /**
  * Managet die Stories, d.h. die kleinen
@@ -322,7 +322,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return NO_TIME;
         }
 
-        final ILocationGO storyNodeLocation = world.load(storyNodeLocationId);
+        final ILocationGO storyNodeLocation = world.loadRequired(storyNodeLocationId);
 
         final ILocationGO outerMostStoryNodeLocation =
                 storyNodeLocation.getOuterMostLocation();

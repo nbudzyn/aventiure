@@ -132,7 +132,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
 
         if (oldTalkingToId != null) {
-            world.<ITalkerGO<?>>load(oldTalkingToId).talkingComp()
+            world.<ITalkerGO<?>>loadRequired(oldTalkingToId).talkingComp()
                     .unsetTalkingTo(false);
         }
 
@@ -230,6 +230,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         requirePcd().setSchonBegruesstMitSC(schonBegruesstMitSC);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     protected boolean isSchonBegruesstMitSC() {
         return requirePcd().isSchonBegruesstMitSC();
     }

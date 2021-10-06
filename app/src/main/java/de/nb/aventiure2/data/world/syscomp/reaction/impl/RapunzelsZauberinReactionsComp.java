@@ -794,6 +794,6 @@ public class RapunzelsZauberinReactionsComp
             ITalkerGO<RapunzelTalkingComp> &
             IResponder>
     R loadRapunzel() {
-        return world.load(RAPUNZEL);
+        return world.loadRequired(RAPUNZEL);
     }
 }

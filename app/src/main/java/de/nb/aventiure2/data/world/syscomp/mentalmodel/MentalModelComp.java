@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.mentalmodel;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Ignore;
@@ -22,9 +25,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Componente für eine {@link de.nb.aventiure2.data.world.base.GameObject}:
@@ -264,7 +264,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
             return null;
         }
 
-        final GameObject gameObject = world.load(gameObjectId);
+        final GameObject gameObject = world.loadRequired(gameObjectId);
         checkArgument(gameObject instanceof IHasStateGO<?>,
                 "No IHasStateGO: " + gameObject);
 
@@ -280,7 +280,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     public <S extends Enum<S>> void setAssumedStateToActual(final GameObjectId gameObjectId) {
-        setAssumedStateToActual(world.<IHasStateGO<S>>load(gameObjectId));
+        setAssumedStateToActual(world.<IHasStateGO<S>>loadRequired(gameObjectId));
     }
 
     public <S extends Enum<S>> void setAssumedStateToActual(final IHasStateGO<S> gameObject) {
@@ -292,8 +292,8 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
         setAssumedState(gameObject.getId(), state);
     }
 
-    public <S extends Enum<S>> void setAssumedState(final GameObjectId gameObjectId,
-                                                    @Nullable final S state) {
+    private <S extends Enum<S>> void setAssumedState(final GameObjectId gameObjectId,
+                                                     @Nullable final S state) {
         requirePcd().setAssumedState(gameObjectId, state);
     }
 

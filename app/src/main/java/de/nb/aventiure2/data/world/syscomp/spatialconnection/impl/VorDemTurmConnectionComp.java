@@ -39,7 +39,6 @@ import de.nb.aventiure2.german.description.TimedDescription;
  * for the {@link World#VOR_DEM_ALTEN_TURM}
  * room.
  */
-@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -89,7 +88,7 @@ public class VorDemTurmConnectionComp extends AbstractSpatialConnectionComp {
                         .undWartest()
         ));
 
-        if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp()
+        if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp()
                 .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             res.add(con(OBEN_IM_ALTEN_TURM,
                     "an den Zöpfen",

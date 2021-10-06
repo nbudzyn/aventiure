@@ -228,7 +228,8 @@ public abstract class AvDatabase extends RoomDatabase {
                         +
                         "Sie beginnt im königlichen Schloss, in einer prächtigen "
                         + "Vorhalle, Marmor und Brokat überall.\n");
-        final List<IDescribableGO> objectsInRoom = ImmutableList.of(world.load(GOLDENE_KUGEL));
+        final List<IDescribableGO> objectsInRoom =
+                ImmutableList.of(world.loadRequired(GOLDENE_KUGEL));
         text.append(buildObjectsInRoomDescription(objectsInRoom));
 
         return new Narration(Narration.NarrationSource.INITIALIZATION,

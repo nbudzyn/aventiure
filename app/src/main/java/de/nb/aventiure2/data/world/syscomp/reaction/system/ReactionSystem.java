@@ -71,7 +71,7 @@ public class ReactionSystem
     public void onLeave(final GameObjectId locatableId,
                         final ILocationGO from,
                         @Nullable final GameObjectId toId) {
-        onLeave((ILocatableGO) world.load(locatableId), from, toId);
+        onLeave((ILocatableGO) world.loadRequired(locatableId), from, toId);
     }
 
     private void onLeave(final ILocatableGO locatable,
@@ -124,7 +124,7 @@ public class ReactionSystem
     private void onEnter(final GameObjectId locatableId,
                          @Nullable final ILocationGO from,
                          final GameObjectId toId) {
-        onEnter((ILocatableGO) world.load(locatableId), from, toId);
+        onEnter((ILocatableGO) world.loadRequired(locatableId), from, toId);
     }
 
     public void onEnter(final ILocatableGO locatable,

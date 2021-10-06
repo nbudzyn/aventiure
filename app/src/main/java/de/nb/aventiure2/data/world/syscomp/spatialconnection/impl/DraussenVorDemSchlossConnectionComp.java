@@ -104,7 +104,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
 
     private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final IHasStateGO<SchlossfestState> schlossfest = world.load(SCHLOSSFEST);
+        final IHasStateGO<SchlossfestState> schlossfest = world.loadRequired(SCHLOSSFEST);
         switch (schlossfest.stateComp().getState()) {
             case NOCH_NICHT_BEGONNEN:
                 return getDescTo_SchlossVorhalle_KeinFest();

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.score;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import android.content.Context;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -9,8 +11,6 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryWebGO;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
 
 /**
  * Repository for score (percentage of story nodes) the player has
@@ -30,7 +30,7 @@ public class ScoreService {
     }
 
     public int getScore() {
-        final IStoryWebGO storyWeb = world.load(STORY_WEB);
+        final IStoryWebGO storyWeb = world.loadRequired(STORY_WEB);
         return storyWeb.storyWebComp().getScore();
     }
 }

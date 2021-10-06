@@ -1,6 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
@@ -722,7 +723,7 @@ public class World {
             final IGameObject to,
             final GameObjectId movableGameObjectId) {
         return shouldBeDescribedAfterScMovement(from, to,
-                this.<ILocatableGO>load(movableGameObjectId));
+                this.<ILocatableGO>loadRequired(movableGameObjectId));
     }
 
     /**
@@ -1490,7 +1491,7 @@ public class World {
     public SubstantivischePhrase anaph(
             final GameObjectId describableId,
             final boolean descShortIfKnown) {
-        return anaph((IDescribableGO) load(describableId), descShortIfKnown);
+        return anaph((IDescribableGO) loadRequired(describableId), descShortIfKnown);
     }
 
     /**
@@ -1528,7 +1529,7 @@ public class World {
      * ob der Spieler das Game Object schon kennt oder nicht.
      */
     public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId) {
-        return getDescription((IDescribableGO) load(gameObjectId));
+        return getDescription((IDescribableGO) loadRequired(gameObjectId));
     }
 
     /**
@@ -1551,7 +1552,7 @@ public class World {
      */
     public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId,
                                                         final boolean shortIfKnown) {
-        return getDescription((IDescribableGO) load(gameObjectId), shortIfKnown);
+        return getDescription((IDescribableGO) loadRequired(gameObjectId), shortIfKnown);
     }
 
     /**
@@ -1576,7 +1577,7 @@ public class World {
     EinzelneSubstantivischePhrase getPOVDescription(final GameObjectId observerId,
                                                     final IDescribableGO describable,
                                                     final boolean shortIfKnown) {
-        return getPOVDescription((IGameObject) load(observerId), describable, shortIfKnown);
+        return getPOVDescription((IGameObject) loadRequired(observerId), describable, shortIfKnown);
     }
 
     /**
@@ -1658,7 +1659,7 @@ public class World {
     }
 
     public final void narrateAndUpgradeScKnownAndAssumedState(final GameObjectId gameObjectId) {
-        narrateAndUpgradeScKnownAndAssumedState((IGameObject) load(gameObjectId));
+        narrateAndUpgradeScKnownAndAssumedState((IGameObject) loadRequired(gameObjectId));
     }
 
     public final void narrateAndUpgradeScKnownAndAssumedState(final IGameObject gameObject) {
@@ -1676,7 +1677,7 @@ public class World {
     SpielerCharakter loadSC() {
         prepare();
 
-        return load(SPIELER_CHARAKTER);
+        return loadRequired(SPIELER_CHARAKTER);
     }
 
     /**
@@ -1686,7 +1687,7 @@ public class World {
     Wetter loadWetter() {
         prepare();
 
-        return load(WETTER);
+        return loadRequired(WETTER);
     }
 
     /**
@@ -1708,6 +1709,14 @@ public class World {
     @Nonnull
     public ImmutableList<GameObject> load(final Collection<GameObjectId> ids) {
         return mapToList(ids, this::load);
+    }
+
+    /**
+     * Lädt (sofern nicht schon geschehen) dieses Game Object und gibt es zurück - nicht null-safe.
+     */
+    @Nonnull
+    public <T extends IGameObject> T loadRequired(@Nonnull final GameObjectId id) {
+        return requireNonNull(load(id), "id  null ");
     }
 
     /**

@@ -47,7 +47,6 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
-@SuppressWarnings("unchecked")
 public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
     public AbzweigImWaldConnectionComp(
             final AvDatabase db, final TimeTaker timeTaker,
@@ -61,7 +60,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(IM_WALD_BEIM_BRUNNEN) ||
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
-                !world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
+                !world.<IHasStateGO<FroschprinzState>>loadRequired(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
                 !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
 
@@ -144,7 +143,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
-                world.<IHasStateGO<FroschprinzState>>load(FROSCHPRINZ)
+                world.<IHasStateGO<FroschprinzState>>loadRequired(FROSCHPRINZ)
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirdTraurig());

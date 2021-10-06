@@ -1,5 +1,19 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.BettFactory.Counter.*;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+
 import androidx.annotation.NonNull;
 
 import javax.annotation.CheckReturnValue;
@@ -16,20 +30,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
-import static de.nb.aventiure2.data.world.gameobject.BettFactory.Counter.*;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_NICHT_DIREKT_HINEINSEHEN_UND_LICHT_SCHEINT_NICHT_HINEIN_ODER_HINAUS;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.UNTER_DEM_BETT;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BETT;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 public class BettFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -90,7 +90,7 @@ public class BettFactory extends AbstractGameObjectFactory {
     @CheckReturnValue
     private TimedDescription<?> getDescDrunter(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp().hasState(
+        if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp().hasState(
                 PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             if (db.counterDao().get(BETT_DRUNTERKRIECHEN_VERSTECKEN) == 0) {
                 return du(SENTENCE, "schaust",

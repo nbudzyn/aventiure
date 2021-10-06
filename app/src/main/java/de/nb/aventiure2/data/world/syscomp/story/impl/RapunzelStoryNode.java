@@ -567,8 +567,9 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER).locationComp().hasRecursiveLocation(
-                world.loadSC().locationComp().getLocation())) {
+        if (world.<ILocatableGO>loadRequired(HOLZ_FUER_STRICKLEITER).locationComp()
+                .hasRecursiveLocation(
+                        world.loadSC().locationComp().getLocation())) {
             alt.add(paragraph("Holz hat schon vielen Menschen als guter Rohstoff",
                     "für allerlei nützliche Dinge gedient, jaja!").schonLaenger());
         } else {
@@ -619,7 +620,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             final AvDatabase db, final TimeTaker timeTaker, final Narrator n, final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER).locationComp()
+        if (world.<ILocatableGO>loadRequired(HOLZ_FUER_STRICKLEITER).locationComp()
                 .hasRecursiveLocation(SPIELER_CHARAKTER)) {
             alt.add(neuerSatz("Diese langen Äste, die du da bei dir trägst, sind",
                     "ziemlich unpraktisch").schonLaenger(),
@@ -689,19 +690,19 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     @Nullable
     private static GameObjectId getVisibibleOuterMostLocationIdForHolz(final World world) {
-        return Optional.ofNullable(world.<ILocatableGO>load(HOLZ_FUER_STRICKLEITER)
+        return Optional.ofNullable(world.<ILocatableGO>loadRequired(HOLZ_FUER_STRICKLEITER)
                 .getVisibleOuterMostLocation()).map(IGameObject::getId).orElse(null);
     }
 
     @NonNull
     private static IHasStateGO<RapunzelState> loadRapunzel(final World world) {
-        return world.load(RAPUNZEL);
+        return world.loadRequired(RAPUNZEL);
     }
 
     @NonNull
     private static <Z extends IHasStateGO<RapunzelsZauberinState> & ILocatableGO>
     Z loadZauberin(final World world) {
-        return world.load(RAPUNZELS_ZAUBERIN);
+        return world.loadRequired(RAPUNZELS_ZAUBERIN);
     }
 
     private static EinzelneSubstantivischePhrase getDescription(final World world) {

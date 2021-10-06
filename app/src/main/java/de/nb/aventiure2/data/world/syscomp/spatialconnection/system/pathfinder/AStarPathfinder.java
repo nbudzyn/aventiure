@@ -1,5 +1,9 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.system.pathfinder;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -12,10 +16,6 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 public class AStarPathfinder {
     private final World world;
@@ -85,7 +85,7 @@ public class AStarPathfinder {
 
                 if (nextNode == null) {
                     nextNode = new AStarNode(
-                            world.load(nextStep.getTo()),
+                            world.loadRequired(nextStep.getTo()),
                             curDistance.plus(currentNode.getDist()),
                             estimateDistToTarget(nextStep.getTo(), targetGO),
                             currentNode);

@@ -78,7 +78,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
     }
 
     public void narrateAndUnsetLocation(final Runnable onEnter) {
-        narrateAndSetLocation((GameObjectId) null, onEnter);
+        narrateAndSetLocation(null, onEnter);
     }
 
     public void narrateAndSetLocation(@Nullable final ILocationGO newLocation) {
@@ -124,16 +124,6 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
         world.narrateAndDoReactions()
                 .onEnter(getGameObjectId(), conceptualLastLocationId, newLocationId);
     }
-
-    /**
-     * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben
-     * (z.B. denselben Raum). Wenn <code>otherId</code> <code>null</code> ist, gibt
-     * * diese Methode immer <code>null</code> zurück.
-     */
-    public boolean hasSameOuterMostLocationAs(@Nullable final GameObjectId otherId) {
-        return hasSameOuterMostLocationAs((IGameObject) world.load(otherId));
-    }
-
 
     /**
      * Gibt zurück, ob sich diese beiden Game Objects dieselbe äußerste Location haben

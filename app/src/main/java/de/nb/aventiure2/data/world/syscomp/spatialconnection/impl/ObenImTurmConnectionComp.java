@@ -1,5 +1,16 @@
 package de.nb.aventiure2.data.world.syscomp.spatialconnection.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp.Counter.HERABGESTIEGEN;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABKLETTERN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABSTEIGEN;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -23,23 +34,11 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp.Counter.HERABGESTIEGEN;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABKLETTERN;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABSTEIGEN;
-
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
  * for the {@link World#OBEN_IM_ALTEN_TURM}
  * room.
  */
-@SuppressWarnings("unchecked")
 @ParametersAreNonnullByDefault
 public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -67,7 +66,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 
-        if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp()
+        if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp()
                 .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             res.add(con(VOR_DEM_ALTEN_TURM,
                     "an den Zöpfen",

@@ -217,7 +217,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = world.loadRequired(GOLDENE_KUGEL);
 
         if (!world.hasSameVisibleOuterMostLocationAsSC(goldeneKugel)) {
             alt.addAll(altKugelVermissen());
@@ -243,7 +243,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
-        final ILocatableGO goldeneKugel = world.load(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = world.loadRequired(GOLDENE_KUGEL);
         if (world.hasSameVisibleOuterMostLocationAsSC(goldeneKugel)) {
             alt.add(du(PARAGRAPH,
                     "hast",
@@ -311,7 +311,7 @@ public enum FroschkoenigStoryNode implements IStoryNode {
 
         alt.add(paragraph("Heute ist viel passiert").schonLaenger());
 
-        if (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
+        if (world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST).stateComp()
                 .hasState(SchlossfestState::schlossfestLaeuft)) {
             alt.add(paragraph("Plötzlich überkommt dich ein schlechtes Gewissen. Hättest du nicht "
                     + "mit dem Frosch gemeinsam essen wollen? Hattest du nicht etwas in der Art "

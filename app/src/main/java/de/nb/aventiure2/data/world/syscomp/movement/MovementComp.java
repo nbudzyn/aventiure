@@ -392,7 +392,7 @@ public class MovementComp
                 spatialStandardStep.getTo(),
                 startTime,
                 calcExpectedDuration(
-                        from, world.load(spatialStandardStep.getTo()),
+                        from, world.loadRequired(spatialStandardStep.getTo()),
                         spatialStandardStep.getStandardDuration(), takesNoTime));
     }
 

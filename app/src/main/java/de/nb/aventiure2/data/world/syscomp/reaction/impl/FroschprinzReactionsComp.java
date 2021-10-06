@@ -587,6 +587,6 @@ public class FroschprinzReactionsComp
 
     @NonNull
     private IHasStateGO<SchlossfestState> loadSchlossfest() {
-        return world.load(SCHLOSSFEST);
+        return world.loadRequired(SCHLOSSFEST);
     }
 }

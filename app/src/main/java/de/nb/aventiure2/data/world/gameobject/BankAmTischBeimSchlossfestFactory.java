@@ -1,5 +1,17 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.BankAmTischBeimSchlossfestFactory.Counter.*;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+
 import androidx.annotation.NonNull;
 
 import javax.annotation.CheckReturnValue;
@@ -17,18 +29,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
-import static de.nb.aventiure2.data.world.gameobject.BankAmTischBeimSchlossfestFactory.Counter.*;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -91,7 +91,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
         // konkreter Tisch ausgewählt ist).
         // Das Problem gibt es nur, weil es ja eigentlich ganz viele
         // Tische beim Schlossfest gibt.
-        world.<ILocatableGO>load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
+        world.<ILocatableGO>loadRequired(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
                 .locationComp().setLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
         if (db.counterDao().get(BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN) == 0) {
@@ -118,7 +118,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
     private StructuredDescription getDescOut(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
         // Der Tisch wird wieder entfernt, s.o.
-        world.<ILocatableGO>load(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
+        world.<ILocatableGO>loadRequired(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
                 .locationComp().unsetLocation();
         // Wir müssen auch die Erinnerung des SCs an den Tisch löschen!
         // Sonst erhalten wir beim Aufstehen einen Text in der Art

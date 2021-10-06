@@ -50,6 +50,7 @@ public class SchlossfestReactionsComp
         this.stateComp = stateComp;
     }
 
+    @SuppressWarnings("UnnecessaryReturnStatement")
     @Override
     public void onLeave(final ILocatableGO locatable, final ILocationGO from,
                         @Nullable final ILocationGO to) {
@@ -142,7 +143,7 @@ public class SchlossfestReactionsComp
         }
 
         stateComp.narrateAndSetState(BEGONNEN);
-        world.<ILocatableGO>load(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)
+        world.<ILocatableGO>loadRequired(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)
                 .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
     }
 

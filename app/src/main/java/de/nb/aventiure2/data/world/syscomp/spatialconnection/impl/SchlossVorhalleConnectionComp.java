@@ -89,12 +89,12 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
 
     @NonNull
     private IHasStateGO<FroschprinzState> loadFroschprinz() {
-        return world.load(FROSCHPRINZ);
+        return world.loadRequired(FROSCHPRINZ);
     }
 
     @NonNull
     private IHasStateGO<SchlossfestState> loadSchlossfest() {
-        return world.load(SCHLOSSFEST);
+        return world.loadRequired(SCHLOSSFEST);
     }
 
     @Override

@@ -1,5 +1,21 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
+import static de.nb.aventiure2.data.world.gameobject.SchattenDerBaeumeFactory.Counter.*;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHATTEN;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,22 +37,6 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conData;
-import static de.nb.aventiure2.data.world.gameobject.SchattenDerBaeumeFactory.Counter.*;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.MAN_KANN_HINEINSEHEN_UND_LICHT_SCHEINT_HINEIN_UND_HINAUS;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHATTEN;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 class SchattenDerBaeumeFactory extends AbstractGameObjectFactory {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -125,7 +125,7 @@ class SchattenDerBaeumeFactory extends AbstractGameObjectFactory {
                         || world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
         )
                 && !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)
-                && !world.<ILocatableGO>load(RAPUNZELS_ZAUBERIN).locationComp()
+                && !world.<ILocatableGO>loadRequired(RAPUNZELS_ZAUBERIN).locationComp()
                 .hasRecursiveLocation(VOR_DEM_ALTEN_TURM);
     }
 

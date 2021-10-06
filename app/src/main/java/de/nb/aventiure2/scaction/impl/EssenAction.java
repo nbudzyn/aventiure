@@ -74,7 +74,7 @@ public class EssenAction extends AbstractScAction {
             return false;
         }
 
-        final F froschprinz = world.load(FROSCHPRINZ);
+        final F froschprinz = world.loadRequired(FROSCHPRINZ);
         if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
                 froschprinz.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER) &&
                 froschprinz.stateComp().hasState(HAT_HOCHHEBEN_GEFORDERT)) {
@@ -89,7 +89,7 @@ public class EssenAction extends AbstractScAction {
     private static boolean locationEnthaeltEtwasEssbares(final World world,
                                                          final ILocationGO location) {
         if (location.is(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST).stateComp()
+                world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST).stateComp()
                         .hasState(SchlossfestState::schlossfestLaeuft)) {
             return true;
         }
@@ -153,7 +153,7 @@ public class EssenAction extends AbstractScAction {
 
     private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
     void narrateAndDoSchlossfest() {
-        final F froschprinz = world.load(FROSCHPRINZ);
+        final F froschprinz = world.loadRequired(FROSCHPRINZ);
         if (froschprinz.locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
                 froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {

@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,9 +16,6 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.LobebauerTalkingComp;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
 
 /**
  * Reaktionen des Lobebauern - z.B. darauf, dass er neben dem SC vor dem Schloss steht,
@@ -71,6 +71,6 @@ public class LobebauerReactionsComp extends AbstractDescribableReactionsComp
 
     @NonNull
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> F loadFroschprinz() {
-        return world.load(FROSCHPRINZ);
+        return world.loadRequired(FROSCHPRINZ);
     }
 }

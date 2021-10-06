@@ -155,7 +155,7 @@ public class NehmenAction
             @NonNull final GO gameObject,
             @NonNull final GameObjectId targetLocationId) {
         this(scActionStepCountDao, timeTaker, n, world,
-                gameObject, (TARGET_LOC) world.load(targetLocationId));
+                gameObject, (TARGET_LOC) world.loadRequired(targetLocationId));
     }
 
     /**

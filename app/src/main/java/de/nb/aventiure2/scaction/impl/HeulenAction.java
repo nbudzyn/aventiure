@@ -1,5 +1,17 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -23,18 +35,6 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.satzanschluss;
 
 /**
  * Der Spielercharakter heult.
@@ -95,7 +95,7 @@ public class HeulenAction extends AbstractScAction {
             ITalkerGO<FroschprinzTalkingComp> &
             ILivingBeingGO>
     void narrateAndDoWiederholungFortsetzung() {
-        final F froschprinz = world.load(FROSCHPRINZ);
+        final F froschprinz = world.loadRequired(FROSCHPRINZ);
 
         if (froschprinz.locationComp().hasRecursiveLocation(
                 world.loadSC().locationComp().getLocation()) &&

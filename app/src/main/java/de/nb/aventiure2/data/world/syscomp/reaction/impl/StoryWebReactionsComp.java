@@ -90,7 +90,7 @@ public class StoryWebReactionsComp
 
     private void onFroschprinzRecLeave(
             @Nullable final ILocationGO to) {
-        final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = world.loadRequired(FROSCHPRINZ);
         if (froschprinz.stateComp().hasState(
                 FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
                 && to == null) {
@@ -110,7 +110,7 @@ public class StoryWebReactionsComp
 
     private void onLobebauerRecLeave(
             @Nullable final ILocationGO to) {
-        final IHasStateGO<FroschprinzState> froschprinz = world.load(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = world.loadRequired(FROSCHPRINZ);
         if (froschprinz.stateComp().hasState(
                 FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)
                 && to == null
@@ -179,13 +179,13 @@ public class StoryWebReactionsComp
     }
 
     private void onSCEnter(final ILocationGO to) {
-        final ILocatableGO rapunzelsZauberin = world.load(RAPUNZELS_ZAUBERIN);
+        final ILocatableGO rapunzelsZauberin = world.loadRequired(RAPUNZELS_ZAUBERIN);
         if (rapunzelsZauberin.locationComp().hasSameVisibleOuterMostLocationAs(to)) {
             reachStoryNode(RapunzelStoryNode.ZAUBERIN_AUF_TURM_WEG_GETROFFEN);
         }
 
         if (to.is(IM_WALD_BEIM_BRUNNEN) &&
-                (world.<ILocatableGO>load(GOLDENE_KUGEL)).locationComp()
+                (world.<ILocatableGO>loadRequired(GOLDENE_KUGEL)).locationComp()
                         .hasRecursiveLocation(SPIELER_CHARAKTER)) {
             reachStoryNode(FroschkoenigStoryNode.MIT_KUGEL_ZUM_BRUNNEN_GEGANGEN);
         }
@@ -194,7 +194,7 @@ public class StoryWebReactionsComp
                 DRAUSSEN_VOR_DEM_SCHLOSS,
                 SCHLOSS_VORHALLE,
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                (world.<IHasStateGO<SchlossfestState>>load(SCHLOSSFEST)).stateComp()
+                (world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST)).stateComp()
                         .hasState(SchlossfestState::schlossfestLaeuft)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
         }
@@ -206,7 +206,7 @@ public class StoryWebReactionsComp
         if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
             reachStoryNode(RapunzelStoryNode.TURM_GEFUNDEN);
 
-            if (world.<IHasStateGO<RapunzelState>>load(RAPUNZEL).stateComp()
+            if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp()
                     .hasState(RapunzelState.SINGEND)) {
                 reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
             }

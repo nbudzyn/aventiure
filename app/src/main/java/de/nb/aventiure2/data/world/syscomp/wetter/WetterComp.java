@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -29,13 +35,6 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Wetter
@@ -77,8 +76,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      *                             Wetteränderung beginnt also sofort (beim nächsten
      *                             {@link #onTimePassed(Change)})
      */
-    public void setPlanwetter(@Nullable final WetterData planwetter,
-                              final boolean firstStepTakesNoTime) {
+    private void setPlanwetter(@Nullable final WetterData planwetter,
+                               final boolean firstStepTakesNoTime) {
         setPlanwetter(planwetter, firstStepTakesNoTime, null);
     }
 
@@ -178,7 +177,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * Führt einen Wetter-Schritt aus, es findet also ein Wetterwechsel statt.
      */
     private void narrateAndDoWetterStep() {
-        checkNotNull(requirePcd().getCurrentWetterStep(), "No current weather step");
+        requireNonNull(requirePcd().getCurrentWetterStep(), "No current weather step");
 
         final WetterData wetter = requireNonNull(requirePcd().getCurrentWetterStep()).getWetterTo();
 
@@ -369,7 +368,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @NonNull
     public ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseKommtNachDraussen(
             final AvDateTime time, final GameObjectId locationId) {
-        @Nullable final ILocationGO location = world.load(locationId);
+        final ILocationGO location = world.loadRequired(locationId);
         return requirePcd().altSpWetterhinweiseKommtNachDraussen(
                 time,
                 location.storingPlaceComp().getDrinnenDraussen() ==
@@ -426,7 +425,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvDateTime time, final GameObjectId locationId) {
-        final ILocationGO location = world.load(locationId);
+        final ILocationGO location = world.loadRequired(locationId);
 
         return requirePcd().altWetterhinweiseWohinHinaus(
                 time,
@@ -447,7 +446,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
             final AvDateTime time, final GameObjectId locationId) {
-        final ILocationGO location = world.load(locationId);
+        final ILocationGO location = world.loadRequired(locationId);
 
         return requirePcd().altWetterhinweiseWoDraussen(time,
                 location.storingPlaceComp().getDrinnenDraussen() ==
@@ -517,7 +516,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return (getMovementSpeedFactor(from) + getMovementSpeedFactor(to)) / 2;
     }
 
-    public double getMovementSpeedFactor(@Nullable final ILocationGO location) {
+    private double getMovementSpeedFactor(@Nullable final ILocationGO location) {
         return getLokaleWindstaerke(location).getMovementSpeedFactor();
     }
 

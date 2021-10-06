@@ -109,13 +109,13 @@ public class ScActionService {
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            if (world.<ITalkerGO<?>>load(RAPUNZEL).talkingComp()
+            if (world.<ITalkerGO<?>>loadRequired(RAPUNZEL).talkingComp()
                     .isTalkingTo(SPIELER_CHARAKTER)) {
                 throw new IllegalStateException("Spieler nicht in Conversation, aber "
                         + "Rapunzel ist talking to Spieler");
             }
 
-            if (((ITalkerGO<?>) world.load(RAPUNZELS_ZAUBERIN)).talkingComp()
+            if (((ITalkerGO<?>) world.loadRequired(RAPUNZELS_ZAUBERIN)).talkingComp()
                     .isTalkingTo(SPIELER_CHARAKTER)) {
                 throw new IllegalStateException("Spieler nicht in Conversation, aber "
                         + "Zauberin ist talking to Spieler");

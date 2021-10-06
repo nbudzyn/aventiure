@@ -1,32 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.TimeTaker;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
-import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
-import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
-import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
-import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
-import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.german.base.PraepositionMitKasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
@@ -54,6 +27,33 @@ import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_VERABSCHIED
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.FRAGEN_NACH;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSPRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BEGRUESSEN;
+
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableList;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
+import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.VorDemTurmConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinStateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.german.base.PraepositionMitKasus;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Component for {@link World#RAPUNZELS_ZAUBERIN}: Der Spieler
@@ -406,6 +406,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
             ITalkerGO<RapunzelTalkingComp> &
             IResponder>
     R loadRapunzel() {
-        return world.load(RAPUNZEL);
+        return world.loadRequired(RAPUNZEL);
     }
 }
