@@ -15,9 +15,6 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKT_AUFGEBAUT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -582,7 +579,7 @@ public class FroschprinzReactionsComp
     }
 
     private boolean schlossfestHatBegonnen() {
-        return loadSchlossfest().stateComp().hasState(BEGONNEN, VERWUESTET, MARKT_AUFGEBAUT);
+        return loadSchlossfest().stateComp().hasState(SchlossfestState::schlossfestLaeuft);
     }
 
     @NonNull

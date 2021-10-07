@@ -35,6 +35,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Wetter
@@ -329,13 +330,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public ImmutableCollection<AbstractDescription<?>>
     altSpWetterhinweiseFuerAktuellenZeitpunktAmOrtDesSC() {
         @Nullable final ILocationGO location = loadScLocation();
-        return altSpWetterhinweise(
-                timeTaker.now(),
-                location != null ?
-                        location.storingPlaceComp().getDrinnenDraussen() : DRINNEN,
-                location != null ?
-                        location.storingPlaceComp().getEffectiveTemperaturRange() :
-                        EnumRange.all(Temperatur.class));
+        return altSpWetterhinweise(timeTaker.now(), location);
     }
 
     /**
@@ -344,7 +339,68 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      * <p>
      * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
      * dieser Wetterhinweise - oder ein Wetterhinweis
-     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode - auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
+     */
+    private ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise(
+            final AvDateTime dateTime,
+            @Nullable final ILocationGO location) {
+        return altSpWetterhinweise(
+                dateTime,
+                location != null ?
+                        location.storingPlaceComp().getDrinnenDraussen() : DRINNEN,
+                location != null ?
+                        location.storingPlaceComp().getEffectiveTemperaturRange() :
+                        EnumRange.all(Temperatur.class));
+    }
+
+    /**
+     * Gibt alternative Sätze zum "Wetter" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode - auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
+     */
+    @CheckReturnValue
+    public ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+            final AvDateTime dateTime, @Nullable final GameObjectId locationId,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        return altSpWetterhinweisSaetze(dateTime, (ILocationGO) world.load(locationId),
+                nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
+    }
+
+    /**
+     * Gibt alternative Sätze zum "Wetter" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode - auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
+     */
+    @CheckReturnValue
+    private ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+            final AvDateTime dateTime, @Nullable final ILocationGO location,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        return altSpWetterhinweisSaetze(
+                dateTime,
+                location != null ?
+                        location.storingPlaceComp().getDrinnenDraussen() : DRINNEN,
+                location != null ?
+                        location.storingPlaceComp().getEffectiveTemperaturRange() :
+                        EnumRange.all(Temperatur.class),
+                nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
+    }
+
+    /**
+     * Gibt alternative Beschreibungen des "Wetters" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode - auch ausgegeben wird!
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
@@ -352,6 +408,25 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
             final AvDateTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange) {
         return requirePcd().altSpWetterhinweise(time, drinnenDraussen, locationTemperaturRange);
+    }
+
+    /**
+     * Gibt alternative Sätze zum "Wetter" zurück, wie man es drinnen
+     * oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode - auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
+     */
+    @CheckReturnValue
+    private ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+            final AvDateTime time, final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        return requirePcd()
+                .altSpWetterhinweisSaetze(time, drinnenDraussen, locationTemperaturRange,
+                        nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
     }
 
     /**

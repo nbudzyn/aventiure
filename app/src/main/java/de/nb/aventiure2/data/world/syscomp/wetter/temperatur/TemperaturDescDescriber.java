@@ -1,6 +1,21 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.STECHEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -26,21 +41,6 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
-import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.STECHEN;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link AbstractDescription}s.
@@ -374,7 +374,7 @@ public class TemperaturDescDescriber {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
         // "Es ist kühl", "es ist warmes Wetter"
-        alt.addAll(satzDescriber.alt(temperatur, time, drinnenDraussen,
+        alt.addAll(satzDescriber.altOhneHeuteDerTagSonnenhitze(temperatur, time, drinnenDraussen,
                 auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
                 false));
 

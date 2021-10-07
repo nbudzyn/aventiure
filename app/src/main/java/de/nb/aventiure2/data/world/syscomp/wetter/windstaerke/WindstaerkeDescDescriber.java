@@ -1,5 +1,18 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -17,19 +30,6 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeDescDescriber {
@@ -135,7 +135,7 @@ public class WindstaerkeDescDescriber {
                                     .mitVorfeldSatzglied("hier")));
         }
 
-        return altSp.build();
+        return altSp.schonLaenger().build();
     }
 
     /**
@@ -216,10 +216,10 @@ public class WindstaerkeDescDescriber {
                                                            final Windstaerke windstaerke) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        // (nicht leer)
-        final ImmutableCollection<EinzelnerSatz> altSaetze = satzDescriber.altSp(time, windstaerke,
-                false, false);
-        alt.addAll(altSaetze);
+        alt.addAll(
+                // (nicht leer)
+                satzDescriber.altSp(time, windstaerke,
+                        false, false));
 
         switch (windstaerke) {
             case WINDSTILL:

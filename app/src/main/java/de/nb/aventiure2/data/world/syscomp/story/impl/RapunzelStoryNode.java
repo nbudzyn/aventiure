@@ -7,7 +7,8 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKT_AUFGEBAUT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -144,26 +145,12 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     //FIXME Die Tipps ab hier könnten auf die / eine noch offene dramatische Frage Bezug nehmen.
 
-    // FIXME Binsenseil geflochten
+    // FIXME BINSENSEIL_GEFLOCHTEN
 
-    //FIXME Seilflechten von eine (alten? armen?) Frau lernen? ("Mentor")
-    // - "Auf den kleinen Markt gehen" / "Bauernmarkt" / "zu den Marktständen"
-    // - "Auf dem kleinen Markt  / Dort sitzen ein paar einfache Leute und halten ihre Waren feil:
-    // Eine Bauersfrau verkauft Mus, eine schöne junge Frau hat Töpfe und irdenes Geschirr vor sich
-    // stehen und eine alte Frau flicht Körbe.
+    //FIXME Seilflechten von einer (alten? armen?) Frau lernen? ("Mentor")
     // -> "Dich der Bauersfrau zuwenden"
     // -- "Mus feil", "die Töpfe", "die Nase", "der Geruch von dem süßen Mus steigt" (Hunger...)
     //  Kein Geld! Kugel -> "Diebesgut?!"
-
-    // FIXME -> "Dich der alten Frau / Seilerin zuwenden"
-    //  Gespräch
-    //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
-    //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
-    //  ("du schaust ihr genau dabei zu. So schwer sieht
-    //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann nimmt man
-    //   wieder...  Mh-hm,  gut zu wissen! / Interessant")
-
-    // FIXME "Die Seilerin hat ihren Stand gut verschnürt und abgedeckt"
 
     // FIXME Seil flechten..
     //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
@@ -574,7 +561,8 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "für allerlei nützliche Dinge gedient, jaja!").schonLaenger());
         } else {
             if (world.loadSC().mentalModelComp().hasAssumedState(SCHLOSSFEST, VERWUESTET,
-                    MARKT_AUFGEBAUT)) {
+                    NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN,
+                    NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN)) {
                 alt.add(paragraph("Manchmal haben Durcheinander und Katastrophen auch",
                         "ihr Gutes und schaffen neue Möglichkeiten"),
                         paragraph("Der Sturm hat die Welt wieder einmal kräftig",

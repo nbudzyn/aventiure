@@ -14,13 +14,16 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SchlossVorhalleConnectionComp.Counter.VORHALLE_NACHDRAUSSEN_VERLASSEN_KEIN_FEST_REGELFALL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_IN_VORHALLE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKT_AUFGEBAUT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_DRAENGEN;
@@ -121,20 +124,33 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     private ImmutableCollection<TimedDescription<?>>
     altDescTo_DraussenVorDemSchloss(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
+        final ImmutableCollection<TimedDescription<?>> res;
+
         switch (loadSchlossfest().stateComp().getState()) {
             case NOCH_NICHT_BEGONNEN:
-                return altDescTo_DraussenVorDemSchlosss_KeinFest(
+                res = altDescTo_DraussenVorDemSchlosss_KeinFest(
                         newLocationKnown, lichtverhaeltnisse);
+                break;
             case BEGONNEN:
-                return ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen());
+                res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestBegonnen());
+                break;
             case VERWUESTET:
-                return getDescTo_DraussenVorDemSchloss_FestVerwuestet();
-            case MARKT_AUFGEBAUT:
-                return getDescTo_DraussenVorDemSchloss_MarktAufgebaut(lichtverhaeltnisse);
+                res = altDescTo_DraussenVorDemSchloss_FestVerwuestet();
+                break;
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN:
+                res = altDescTo_DraussenVorDemSchloss_MarktOffen();
+                break;
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN:
+                res = altDescTo_DraussenVorDemSchloss_MarktGeschlossen();
+                break;
             default:
                 throw new IllegalStateException("Unexpected state: "
                         + loadSchlossfest().stateComp().getState());
         }
+
+        loadSC().mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
+
+        return res;
     }
 
     private ImmutableCollection<TimedDescription<?>>
@@ -248,7 +264,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     @CheckReturnValue
     private ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
-    getDescTo_DraussenVorDemSchloss_FestVerwuestet() {
+    altDescTo_DraussenVorDemSchloss_FestVerwuestet() {
         if (getAssumedSchlossfestState() != VERWUESTET) {
             loadSC().feelingsComp().requestMoodMax(BETRUEBT);
 
@@ -277,27 +293,88 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     @CheckReturnValue
     private ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
-    getDescTo_DraussenVorDemSchloss_MarktAufgebaut(final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (getAssumedSchlossfestState() != MARKT_AUFGEBAUT) {
-            loadSC().feelingsComp().requestMoodMin(BEWEGT);
+    altDescTo_DraussenVorDemSchloss_MarktOffen() {
+        final AvTimeSpan wegZeit = mins(10);
 
-            if (lichtverhaeltnisse == HELL) {
-                return ImmutableList.of(neuerSatz(PARAGRAPH,
-                        "Als du aus dem Schloss heraustrittst, haben die Diener",
-                        "die vom Sturm zerstörten Pagoden",
-                        "abgeräumt; in einer Ecke hat sich ein kleiner Bauernmarkt aufgebaut")
-                        .schonLaenger()
-                        .timed(mins(10)));
-            }
+        if (getAssumedSchlossfestState() == VERWUESTET) {
+            loadSC().feelingsComp().requestMoodMin(BEWEGT);
 
             return ImmutableList.of(neuerSatz(PARAGRAPH,
                     "Als du aus dem Schloss heraustrittst, haben die Diener",
+                    "die vom Sturm zerstörten Pagoden",
+                    "abgeräumt; in einer Ecke hat sich ein kleiner Bauernmarkt aufgebaut")
+                    .schonLaenger()
+                    .timed(wegZeit));
+        }
+
+        if (getAssumedSchlossfestState()
+                == NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN) {
+            return alt().addAll(
+                    mapToList(
+                            world.loadWetter().wetterComp()
+                                    .altLichtInDemEtwasLiegt(
+                                            timeTaker.now().plus(wegZeit), true),
+                            sonnenlicht ->
+                                    du(PARAGRAPH,
+                                            "trittst",
+                                            "aus dem Schloss nach draußen",
+                                            IN_AKK.mit(sonnenlicht),
+                                            SENTENCE,
+                                            "wie es scheint, hat der Markt begonnen")))
+                    .undWartest()
+                    .timed(wegZeit)
+                    .build();
+        }
+
+        if (loadFroschprinz().stateComp()
+                .hasState(ZURUECKVERWANDELT_IN_VORHALLE,
+                        ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN)) {
+            return altDescTo_DraussenVorDemSchloss_InWetterHinaus();
+        }
+
+        return altDescTo_DraussenVorDemSchloss_UeberDieMarmortreppeHinaus();
+    }
+
+    @NonNull
+    @CheckReturnValue
+    private ImmutableList<TimedDescription<? extends AbstractDescription<?>>>
+    altDescTo_DraussenVorDemSchloss_MarktGeschlossen() {
+        final AvTimeSpan wegZeit = mins(10);
+
+        if (getAssumedSchlossfestState() == VERWUESTET) {
+            loadSC().feelingsComp().requestMoodMin(BEWEGT);
+
+            return altNeueSaetze(PARAGRAPH,
+                    "Als du aus dem Schloss heraustrittst, haben die Diener",
                     "die vom Sturm zerstörten Pagoden abgeräumt",
                     SENTENCE,
-                    "in einer Ecke stehen einige Marktstände – zu dieser Tageszeit",
-                    "alle geschlossen")
+                    "in einer Ecke stehen verlassen einige Marktstände",
+                    // "unter dem Sternenhimmel"
+                    world.loadWetter().wetterComp().altWetterhinweiseWoDraussen(
+                            timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS))
                     .schonLaenger()
-                    .timed(mins(10)));
+                    .timed(wegZeit)
+                    .build();
+        }
+
+        if (getAssumedSchlossfestState()
+                == NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN) {
+            loadSC().feelingsComp().requestMoodMin(BETRUEBT);
+
+            return alt().addAll(
+                    mapToList(
+                            world.loadWetter().wetterComp()
+                                    .altLichtInDemEtwasLiegt(
+                                            timeTaker.now().plus(wegZeit), true),
+                            sonnenlicht ->
+                                    du(PARAGRAPH,
+                                            "verlässt",
+                                            "das Schloss",
+                                            SENTENCE,
+                                            "Marktzeit ist offenbar schon vorbei")))
+                    .schonLaenger()
+                    .timed(wegZeit)
+                    .build();
         }
 
         if (loadFroschprinz().stateComp()

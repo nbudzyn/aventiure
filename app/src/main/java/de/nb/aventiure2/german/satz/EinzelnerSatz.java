@@ -1,5 +1,12 @@
 package de.nb.aventiure2.german.satz;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -28,13 +35,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Ein Satz.
@@ -201,6 +201,13 @@ public class EinzelnerSatz implements Satz {
             final boolean angabensatzMoeglichstVorangestellt) {
         if (angabensatz == null) {
             return this;
+        }
+
+        if (this.angabensatz != null) {
+            return new EinzelnerSatz(anschlusswort, subjekt, praedikat,
+                    this.angabensatz.stelleVoran(angabensatz),
+                    this.angabensatzMoeglichstVorangestellt
+                            || angabensatzMoeglichstVorangestellt);
         }
 
         return new EinzelnerSatz(anschlusswort, subjekt, praedikat, angabensatz,
@@ -479,6 +486,7 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
+    @Nullable
     public SubstantivischePhrase getErstesSubjekt() {
         return getSubjekt();
     }

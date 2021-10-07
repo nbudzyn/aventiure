@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -28,10 +32,6 @@ import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Ein Prädikat, bestehend aus Dativobjekt, <i>sein</i> und einer prädikativen
@@ -358,7 +358,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

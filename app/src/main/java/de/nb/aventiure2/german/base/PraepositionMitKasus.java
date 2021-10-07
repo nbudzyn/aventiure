@@ -1,13 +1,13 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
  * Eine Präposition, die einen bestimmten Kasus fordert.
@@ -125,12 +125,12 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     }
 
     public Konstituente getDescription(final SubstPhrOderReflexivpronomen substPhrOderReflPron) {
-        if (substPhrOderReflPron instanceof EinzelneKomplexeSubstantivischePhrase) {
+        if (substPhrOderReflPron instanceof SubstantivischePhrase) {
             return getDescription((SubstantivischePhrase) substPhrOderReflPron);
         }
 
         // Ansonsten kann es keine Verschmelzungen geben, weil die anderen Phrasen
-        // keinen Artikel haben, mit dem die Präposition verschmelzen könnte.
+        // (Reflexivpronomen) keinen Artikel haben, mit dem die Präposition verschmelzen könnte.
         return getDescriptionUnverschmolzen(substPhrOderReflPron);
     }
 
@@ -138,9 +138,6 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     public Konstituente getDescription(final SubstantivischePhrase substantivischePhrase) {
         if (kasus == DAT &&
                 substantivischePhrase.erlaubtVerschmelzungVonPraepositionMitArtikel()) {
-            // FIXME Steht dabei ein Relativsatz, der etwas näher definiert ("zu dem Zahnarzt,
-            //  der ihr gestern empfohlen wurde") ist die Verschmelzung verboten.
-
             @Nullable final String praepositionVerschmolzen =
                     getPraepositionVerschmolzen(substantivischePhrase.getNumerusGenus());
 

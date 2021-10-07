@@ -1,41 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import java.util.stream.Stream;
-
-import javax.annotation.CheckReturnValue;
-
-import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.base.Change;
-import de.nb.aventiure2.data.world.base.Temperatur;
-import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
-import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.ZweiPraedikativa;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
-import de.nb.aventiure2.german.praedikat.VerbSubj;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.praedikat.Witterungsverb;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.satz.Satzreihe;
-
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.stream.Collectors.toSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
@@ -95,7 +62,40 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.LIEGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.NACHLASSEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHEINEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
+
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import java.util.stream.Stream;
+
+import javax.annotation.CheckReturnValue;
+
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
+import de.nb.aventiure2.data.world.base.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitPraedikativumDescriber;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.ZweiPraedikativa;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemEs;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.praedikat.Witterungsverb;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.Satzreihe;
 
 /**
  * Beschreibt die {@link Temperatur} jeweils als {@link de.nb.aventiure2.german.satz.Satz}.
@@ -761,14 +761,14 @@ public class TemperaturSatzDescriber {
                 unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
                         DRAUSSEN_GESCHUETZT;
         alt.addAll(
-                mapToList(alt(temperatur, time,
+                mapToList(altOhneHeuteDerTagSonnenhitze(temperatur, time,
                         kommtNachDrinnenDraussen,
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
                         true),
                         s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))));
 
         if (temperatur.isBetweenIncluding(KNAPP_UEBER_DEM_GEFRIERPUNKT, RECHT_HEISS)) {
-            alt.addAll(alt(temperatur, time, kommtNachDrinnenDraussen,
+            alt.addAll(altOhneHeuteDerTagSonnenhitze(temperatur, time, kommtNachDrinnenDraussen,
                     auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
                     false));
         }
@@ -801,7 +801,45 @@ public class TemperaturSatzDescriber {
 
     /**
      * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
-     * {@link EinzelnerSatz} dabei.
+     * {@link EinzelnerSatz} dabei. Gibt ggf. auch Sätze zurück zu "heute", "der Tag"
+     * oder zur Sonnenhitze.
+     */
+    @NonNull
+    @CheckReturnValue
+    public ImmutableCollection<Satz> alt(
+            final Temperatur temperatur,
+            final AvTime time, final DrinnenDraussen drinnenDraussen,
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+            final boolean auchHeuteDerTagWennSinnvoll) {
+        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+
+        // "Es ist kühl", "es ist warmes Wetter"
+        alt.addAll(altOhneHeuteDerTagSonnenhitze(temperatur, time, drinnenDraussen,
+                auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+                false));
+
+        if (drinnenDraussen.isDraussen()) {
+            if (auchHeuteDerTagWennSinnvoll) {
+                final boolean unterOffenemHimmel = drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+                alt.addAll(altSpDraussenHeuteDerTag(
+                        temperatur,
+                        time,
+                        !unterOffenemHimmel));
+            }
+
+            if (drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL) {
+                alt.addAll(altSpSonnenhitzeWennHeissUndNichtNachts(temperatur, time,
+                        true));
+            }
+        }
+
+        return alt.build();
+    }
+
+    /**
+     * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
+     * {@link EinzelnerSatz} dabei. Gibt keine Sätze zurück zu "heute", "der Tag"
+     * oder zur Sonnenhitze.
      *
      * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der Satz auch für eine
      *                                                                zusätzliche  adverbiale
@@ -819,7 +857,7 @@ public class TemperaturSatzDescriber {
      *                                                                Wetter").
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> alt(
+    public ImmutableCollection<Satz> altOhneHeuteDerTagSonnenhitze(
             final Temperatur temperatur,
             final AvTime time,
             final DrinnenDraussen drinnenDraussen,
@@ -1014,6 +1052,12 @@ public class TemperaturSatzDescriber {
             return ImmutableSet.of();
         }
 
+        return altSpDraussenHeuteDerTag(temperatur, time, sonneNichtErwaehnen);
+    }
+
+    private ImmutableList<Satz> altSpDraussenHeuteDerTag(final Temperatur temperatur,
+                                                         final AvTime time,
+                                                         final boolean sonneNichtErwaehnen) {
         final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
 
         // "Heute ist es heiß."

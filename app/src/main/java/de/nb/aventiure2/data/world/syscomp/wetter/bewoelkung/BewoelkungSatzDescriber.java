@@ -1,31 +1,6 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import javax.annotation.CheckReturnValue;
-
-import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.base.Change;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Indefinitpronomen;
-import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.VerbSubj;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
-import de.nb.aventiure2.german.satz.Satzreihe;
-
+import static java.util.stream.Collectors.toSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
@@ -107,7 +82,32 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.FREIGEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERTREIBEN;
 import static de.nb.aventiure2.german.praedikat.Witterungsverb.AUFKLAREN;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import javax.annotation.CheckReturnValue;
+
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.Indefinitpronomen;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.Satzreihe;
 
 /**
  * Beschreibt die {@link Bewoelkung}, evtl. auch Tageszeit und tageszeitliche
@@ -138,7 +138,7 @@ public class BewoelkungSatzDescriber {
      * Tageszeit gewechselt hat: "Die Sonne geht auf" o.Ä.
      */
     @CheckReturnValue
-    ImmutableCollection<Satz> altSpTageszeitenwechsel(
+    public ImmutableCollection<Satz> altSpTageszeitenwechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
         // Leere Menge als Ergebnis bei:

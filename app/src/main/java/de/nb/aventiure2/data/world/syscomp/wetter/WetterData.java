@@ -1,5 +1,75 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.stream.Collectors.toSet;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.base.Temperatur.KUEHL;
+import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEWOELKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.KRAEFTIGER_WIND;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
+import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDSTILL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BRUETEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DRUECKEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HART;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEFTIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAEFTIG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAFTVOLL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.PFEIFEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.RAU;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STEHEND;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFTZUG;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSHITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKENFETZEN;
+import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
+import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_MITTAGSSONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_SONNE;
+import static de.nb.aventiure2.german.base.Nominalphrase.VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.DURCH;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UEBER_AKK;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.WEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ENTGEGENBLASEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ENTGEGENWEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.PFEIFEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STREICHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TREIBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZAUSEN;
+import static de.nb.aventiure2.german.praedikat.Witterungsverb.STUERMEN;
+import static de.nb.aventiure2.german.satz.Satzreihe.altGereihtStandard;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -10,6 +80,7 @@ import com.google.common.collect.ImmutableSet;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
@@ -68,75 +139,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.Satzreihe;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.base.Temperatur.KUEHL;
-import static de.nb.aventiure2.data.world.base.Temperatur.WARM;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEWOELKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.KRAEFTIGER_WIND;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.STURM;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
-import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDSTILL;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BRUETEND;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DRUECKEND;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HART;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEFTIG;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HEISS;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAEFTIG;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KRAFTVOLL;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.PFEIFEND;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.RAU;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STEHEND;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFTZUG;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSHITZE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAGSSONNE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENHITZE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SONNENSCHEIN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKENFETZEN;
-import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_MITTAGSSONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
-import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_MITTAGSSONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.DURCH;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UEBER_AKK;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.WEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ENTGEGENBLASEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ENTGEGENWEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.PFEIFEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STREICHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TREIBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZAUSEN;
-import static de.nb.aventiure2.german.praedikat.Witterungsverb.STUERMEN;
-import static de.nb.aventiure2.german.satz.Satzreihe.altGereihtStandard;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
 
 @SuppressWarnings("DuplicateBranchesInSwitch")
 @Immutable
@@ -301,7 +303,7 @@ public class WetterData {
                 w -> w.getWindstaerkeUnterOffenemHimmel().compareTo(windstaerke) >= 0);
     }
 
-    // FIXME altSparse(), wenn nicht für eine Kombination von
+    // FIXME altSp() ("alternatives, sparse"), wenn nicht für eine Kombination von
     //  Parametern eine leere Collection zurückkommt.
     //  Überall umstellen (Suchen nach of() und "leer"),
     //  Unnötige Kommentare entfernen
@@ -317,7 +319,6 @@ public class WetterData {
      *                                                                         Tageszeitenwechsel
      *                                                                         nur einmalig
      *                                                                         auftreten
-     * @param beschreibungUnerwuenscht
      */
     ImmutableCollection<AbstractDescription<?>> altSpWetterhinweise(
             final AvTime time, final DrinnenDraussen drinnenDraussen,
@@ -338,6 +339,53 @@ public class WetterData {
                     !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
                     time, drinnenDraussen,
                     auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben);
+        }
+
+        return ImmutableList.of();
+    }
+
+
+    /**
+     * Gibt alternative Sätze zum "Wetter" zurück, wie man es drinnen
+     * (nur Temperatur) oder draußen erlebt - oder eine leere Menge.
+     *
+     * @param auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                         draußen beschrieben
+     *                                                                         werden sollen, die
+     *                                                                         nach einem
+     *                                                                         Tageszeitenwechsel
+     *                                                                         nur einmalig
+     *                                                                         auftreten
+     * @param beschreibungUnerwuenscht                                         Welche
+     *                                                                         Wetterparameter
+     *                                                                         nicht beschrieben
+     *                                                                         werden
+     *                                                                         sollen
+     */
+    ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+            final AvTime time, final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+            final WetterParamFlags beschreibungUnerwuenscht,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        if (drinnenDraussen.isDraussen()) {
+            return altSpWetterHinweisSaetzeFuerDraussen(time,
+                    drinnenDraussen == DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                    locationTemperaturRange,
+                    auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+                    beschreibungUnerwuenscht,
+                    nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
+        }
+
+        // drinnen!
+        if (!beschreibungUnerwuenscht.isTemperatur()) {
+            // "Es ist kühl"
+            return TEMPERATUR_SATZ_DESCRIBER
+                    .altOhneHeuteDerTagSonnenhitze(
+                            getLokaleTemperatur(time, locationTemperaturRange), time,
+                            drinnenDraussen,
+                            auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
+                            nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
         }
 
         return ImmutableList.of();
@@ -473,6 +521,142 @@ public class WetterData {
         return alt.schonLaenger().build();
     }
 
+    /**
+     * Gibt alternative Sätze zum Wetters zurück, wie man es draußen erlebt -
+     * oder eine leere Collection.
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     * @param beschreibungUnerwuenscht                                 Welche Wetterparameter
+     *                                                                 nicht beschrieben werden
+     *                                                                 sollen
+     */
+    private ImmutableCollection<Satz> altSpWetterHinweisSaetzeFuerDraussen(
+            final AvTime time, final boolean unterOffenemHimmel,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+            final WetterParamFlags beschreibungUnerwuenscht,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        // FIXME Blitz und Donner berücksichtigen
+
+        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+
+        final DrinnenDraussen drinnenDraussen =
+                unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT;
+
+        final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
+                .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        final boolean windMussBeschriebenWerden =
+                !beschreibungUnerwuenscht.isWindstaerke()
+                        && windMussDraussenBeschriebenWerden(windstaerke);
+        final boolean temperaturMussBeschriebenWerden =
+                !beschreibungUnerwuenscht.isTemperatur()
+                        && temperaturMussDraussenBeschriebenWerden(time, unterOffenemHimmel,
+                        temperatur,
+                        windstaerke);
+        final boolean bewoelkungMussBeschriebenWerden =
+                !beschreibungUnerwuenscht.isBewoelkung()
+                        && bewoelkungMussDraussenBeschriebenWerden(time, unterOffenemHimmel,
+                        windstaerke);
+
+        if (!windMussBeschriebenWerden
+                && !temperaturMussBeschriebenWerden
+                && !bewoelkungMussBeschriebenWerden) {
+            // "es ist schon dunkel", "es ist Abend"
+            alt.addAll(TAGESZEIT_SATZ_DESCRIBER.altSpDraussen(time,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
+
+        if (!windMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isTemperatur()) {
+            // "Es ist kühl"
+            alt.addAll(TEMPERATUR_SATZ_DESCRIBER.alt(temperatur,
+                    time, drinnenDraussen,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                    !nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
+
+            if (bewoelkung.isUnauffaellig(time.getTageszeit())) {
+                // "Es ist ein schöner Abend und noch ziemlich warm"
+                alt.addAll(
+                        TEMPERATUR_SATZ_DESCRIBER
+                                .altSchoneTageszeitUndAberSchonNochAdjPhr(
+                                        temperatur, time.getTageszeit()));
+            }
+        }
+
+        if (!temperaturMussBeschriebenWerden && !bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
+            alt.addAll(WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
+                    nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete, false));
+        }
+
+        if (!windMussBeschriebenWerden && !temperaturMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isBewoelkung()) {
+            if (unterOffenemHimmel && temperatur.isUnauffaellig(time.getTageszeit())) {
+                alt.addAll(BEWOELKUNG_SATZ_DESCRIBER.altUnterOffenemHimmel(bewoelkung, time,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+                if (time.kurzVorSonnenaufgang() && bewoelkung.isUnauffaellig(NACHTS)) {
+                    alt.addAll(mapToSet(
+                            BEWOELKUNG_SATZ_DESCRIBER.altSpTageszeitenwechsel(
+                                    bewoelkung, Tageszeit.MORGENS, true),
+                            sonneGehtAuf -> sonneGehtAuf.mitAdvAngabe(
+                                    new AdvAngabeSkopusVerbAllg("bald"))));
+                }
+            }
+
+            if (temperatur == WARM && time.getTageszeit() == ABENDS) {
+                if (bewoelkung.isUnauffaellig(time.getTageszeit())
+                        && !unterOffenemHimmel) {
+                    // "Es ist ein schöner Abend"
+                    alt.add(np(INDEF, SCHOEN, time.getTageszeit().getNomenFlexionsspalte())
+                            .alsPraedikativumPraedikat()
+                            .alsSatzMitSubjekt(EXPLETIVES_ES));
+                }
+            }
+        }
+
+        if (!bewoelkungMussBeschriebenWerden
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
+            alt.addAll(altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
+                    nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
+        }
+
+        if (!windMussBeschriebenWerden && unterOffenemHimmel
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isBewoelkung()) {
+            // Temperatur und Bewölkung werden beide erwähnt
+            alt.addAll(altStatischeBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
+                    time,
+                    locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
+        }
+
+        // Für den seltenen Fall windstaerkeMussBeschriebenWerden &&
+        //  !temperaturMussBeschriebenWerden &&
+        //  bewoelkungMussbeschriebenWerden sehen wir keine speziellen Beschreibungen vor.
+        //  Dann werden Windstärke, Temperatur und Bewölkung eben alle beschrieben.
+
+        if (unterOffenemHimmel
+                && !beschreibungUnerwuenscht.isTemperatur()
+                && !beschreibungUnerwuenscht.isBewoelkung()
+                && !beschreibungUnerwuenscht.isWindstaerke()) {
+            // Wind, Temperatur und Bewölkung werden alle erwähnt
+            alt.addAll(altSpStatischeWindBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
+                    time,
+                    windstaerke,
+                    locationTemperaturRange,
+                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                    nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
+        }
+
+        return alt.build();
+    }
 
     /**
      * Gibt alternative statische Beschreibungen von Wind, Bewölkung <i>und</i> Temperatur
@@ -582,6 +766,76 @@ public class WetterData {
         return alt.schonLaenger().build();
     }
 
+    /**
+     * Gibt alternative statische Sätze über Wind, Bewölkung <i>und</i> Temperatur
+     * zurück, wie man sie unter offenem Himmel erlebt, - ggf. leer.
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
+    private ImmutableCollection<Satz>
+    altSpStatischeWindBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
+            final AvTime time,
+            final Windstaerke windstaerke,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        // "Es weht ein kühler Wind, der Himmel ist bewölkt"
+        final ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze =
+                altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
+                        nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
+
+        if (windstaerke.compareTo(WINDIG) <= 0) {
+            alt.addAll(altGereihtStandard(
+                    BEWOELKUNG_SATZ_DESCRIBER
+                            .altUnterOffenemHimmel(bewoelkung, time,
+                                    auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben),
+                    altStatischeWindUndTemperaturSaetze));
+        }
+
+        switch (windstaerke) {
+            case WINDSTILL:
+                break;
+            case LUEFTCHEN:
+                break;
+            case WINDIG:
+                break;
+            case KRAEFTIGER_WIND:
+                if (bewoelkung.isBetweenIncluding(LEICHT_BEWOELKT, BEWOELKT)) {
+                    // "Der kalte Wind treibt Wolkenfetzen über den Sternenhimmel"
+                    alt.addAll(TEMPERATUR_PRAEDIKATIVUM_DESCRIBER
+                            .altLuftAdjPhr(temperatur, time.getTageszeit()).stream()
+                            .flatMap(kalt -> windstaerke.altSpNomenFlexionsspalte().stream()
+                                    .flatMap(wind ->
+                                            time.getTageszeit()
+                                                    .altWolkenloserHimmel().stream()
+                                                    .map(himmel -> TREIBEN.mit(WOLKENFETZEN)
+                                                            .alsSatzMitSubjekt(wind.mit(kalt))
+                                                            .mitAdvAngabe(
+                                                                    new AdvAngabeSkopusVerbAllg(
+                                                                            UEBER_AKK
+                                                                                    .mit(himmel))))))
+                            .collect(Collectors.toList()));
+                }
+                break;
+            case STURM:
+                break;
+            case SCHWERER_STURM:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected windstaerke: " + windstaerke);
+        }
+
+        return alt.build();
+    }
+
     private static ImmutableCollection<AbstractDescription<?>> altStatischWindUndTemperatur(
             final AvTime time, final boolean unterOffenemHimmel,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
@@ -597,7 +851,7 @@ public class WetterData {
                 WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         false, false),
                 ";",
-                TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
+                TEMPERATUR_SATZ_DESCRIBER.altOhneHeuteDerTagSonnenhitze(temperatur, time,
                         unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
                         auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
                         false)));
@@ -655,7 +909,7 @@ public class WetterData {
                 alt.addAll(altNeueSaetze(
                         "es tobt ein heftiges Unwetter",
                         SENTENCE,
-                        TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
+                        TEMPERATUR_SATZ_DESCRIBER.altOhneHeuteDerTagSonnenhitze(temperatur, time,
                                 unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
                                         DRAUSSEN_GESCHUETZT,
                                 auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
@@ -863,17 +1117,9 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Es ist kühl und der Himmel ist bewölkt"
-        alt.addAll(altGereihtStandard(
-                TEMPERATUR_SATZ_DESCRIBER.alt(
-                        temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL,
-                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
-                        false).stream()
-                        // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
-                        .filter(EinzelnerSatz.class::isInstance)
-                        .collect(toImmutableSet()),
-                BEWOELKUNG_SATZ_DESCRIBER
-                        .altUnterOffenemHimmel(bewoelkung, time,
-                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
+        alt.addAll(altStatischeBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
+                time, locationTemperaturRange,
+                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
         final ImmutableCollection<Satz> heuteOderDerTagSaetze =
                 TEMPERATUR_SATZ_DESCRIBER
@@ -904,6 +1150,37 @@ public class WetterData {
         }
 
         return alt.schonLaenger().build();
+    }
+
+    /**
+     * Gibt alternative statische Sätze über Bewölkung <i>und</i> Temperatur zurück, wie
+     * man sie unter offenem Himmel erlebt
+     *
+     * @param auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben Ob auch Erlebnisse
+     *                                                                 beschrieben werden sollen,
+     *                                                                 die nach einem
+     *                                                                 Tageszeitenwechsel nur
+     *                                                                 einmalig auftreten
+     */
+    private ImmutableCollection<Satzreihe>
+    altStatischeBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
+            final AvTime time,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
+        final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
+
+        // "Es ist kühl und der Himmel ist bewölkt"
+        return altGereihtStandard(
+                TEMPERATUR_SATZ_DESCRIBER.altOhneHeuteDerTagSonnenhitze(
+                        temperatur, time, DRAUSSEN_UNTER_OFFENEM_HIMMEL,
+                        auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
+                        false).stream()
+                        // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
+                        .filter(EinzelnerSatz.class::isInstance)
+                        .collect(toImmutableSet()),
+                BEWOELKUNG_SATZ_DESCRIBER
+                        .altUnterOffenemHimmel(bewoelkung, time,
+                                auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
     }
 
     private static boolean windMussDraussenBeschriebenWerden(final Windstaerke windstaerke) {
@@ -1224,7 +1501,7 @@ public class WetterData {
                         true, false).stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen"))),
                 ";",
-                TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
+                TEMPERATUR_SATZ_DESCRIBER.altOhneHeuteDerTagSonnenhitze(temperatur, time,
                         unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT,
                         auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
                         false)));
@@ -1289,7 +1566,7 @@ public class WetterData {
                 alt.addAll(altNeueSaetze(
                         "draußen tobt ein heftiges Unwetter",
                         SENTENCE,
-                        TEMPERATUR_SATZ_DESCRIBER.alt(temperatur, time,
+                        TEMPERATUR_SATZ_DESCRIBER.altOhneHeuteDerTagSonnenhitze(temperatur, time,
                                 unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
                                         DRAUSSEN_GESCHUETZT,
                                 auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
@@ -2526,8 +2803,7 @@ public class WetterData {
                                                 .stream()
                                                 .filter(EinzelnerSatz.class::isInstance)
                                                 .map(tempSatz ->
-                                                        new Satzreihe(
-                                                                (EinzelnerSatz) windSatz,
+                                                        new Satzreihe(windSatz,
                                                                 (EinzelnerSatz) tempSatz))),
                         SENTENCE,
                         BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(

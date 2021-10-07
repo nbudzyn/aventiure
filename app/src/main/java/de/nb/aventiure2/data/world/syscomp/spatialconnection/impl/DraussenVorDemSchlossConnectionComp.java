@@ -75,6 +75,7 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         "zwischen den Buchsbaumhecken",
                         NORTH,
                         secs(90)),
+                // FIXME Je nach Status: Markt!
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
                         "auf dem Weg",
                         EAST,
@@ -112,7 +113,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                 return getDescTo_SchlossVorhalle_FestBegonnen();
             case VERWUESTET:
                 // fall-through
-            case MARKT_AUFGEBAUT:
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN:
+                // fall-through
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN:
                 return getDescTo_SchlossVorhalle_FestZumindestVerwuestet();
             default:
                 throw new IllegalStateException("Unexpected Schlossfest state: "

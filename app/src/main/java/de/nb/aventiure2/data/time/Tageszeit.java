@@ -1,24 +1,6 @@
 package de.nb.aventiure2.data.time;
 
-import androidx.annotation.Nullable;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import java.util.Collection;
-import java.util.stream.Stream;
-
-import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.VerbSubj;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
+import static java.util.stream.Collectors.toSet;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
@@ -49,7 +31,23 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANBRECHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import java.util.Collection;
+import java.util.stream.Stream;
+
+import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 public enum Tageszeit {
     // Reihenfolge ist relevant, nicht ändern!
@@ -190,13 +188,6 @@ public enum Tageszeit {
      * Gibt einen Satz zurück wie "es wird Morgen" oder "es wird Tag".
      */
     private EinzelnerSatz esWirdSatz() {
-        return esWirdSatz(null);
-    }
-
-    /**
-     * Gibt einen Satz zurück wie "und es wird Morgen" oder "und es wird Tag".
-     */
-    private EinzelnerSatz esWirdSatz(final @Nullable String anschlusswort) {
         return npArtikellos(nomenFlexionsspalte).alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
     }

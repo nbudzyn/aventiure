@@ -1,5 +1,20 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
+import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FRISCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.OFFEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Embedded;
@@ -33,21 +48,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_GESCHUETZT;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRAUSSEN_UNTER_OFFENEM_HIMMEL;
-import static de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen.DRINNEN;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FRISCH;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.OFFEN;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_AKK;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * Veränderliche (und daher persistente) Daten der {@link WetterComp}-Komponente.
@@ -274,6 +275,47 @@ public class WetterPCD extends AbstractPersistentComponentData {
                         locationTemperaturRange,
                         wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
                         wetterChangeGeradeErzaehlt);
+
+        resetWetterChangeGeradeErzaehlt();
+
+        if (!alt.isEmpty()) {
+            saveWetterhinweisGegeben(drinnenDraussen);
+        }
+
+        return alt;
+    }
+
+
+    /**
+     * Gibt alternative Sätze zum "Wetter" zurück, wie
+     * man es drinnen oder draußen erlebt - oder eine leere Menge.
+     * <p>
+     * Sofern keine leere Menge zurückgegeben wurde, muss der  Aufrufer dafür sorgen, dass einer
+     * dieser Wetterhinweise - oder ein Wetterhinweis
+     * aus einer anderen <code>...Wetterhinweis...</code>-Methode auch ausgegeben wird!
+     * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
+     */
+    @CheckReturnValue
+    ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+            final AvDateTime time,
+            final DrinnenDraussen drinnenDraussen,
+            final EnumRange<Temperatur> locationTemperaturRange,
+            final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
+        if (timeLetzteBeschriebeneTageszeit.getTageszeit() != time.getTageszeit()) {
+            // Schwebender Tageszeitenwechsel - keinen Wetterhinweis geben!
+            // (Sonst könnte es zu etwas kommen wie "Im Morgenlicht siehst du...
+            //  Langsam geht die Nacht in den Morgen über." - also erst der Zustandsbeschreibung,
+            //  dann der Beschreibung des Übergangs.)
+            return ImmutableList.of();
+        }
+
+        final ImmutableCollection<Satz> alt =
+                wetter.altSpWetterhinweisSaetze(time.getTime(),
+                        drinnenDraussen,
+                        locationTemperaturRange,
+                        wennWiederDraussenWetterBeschreibenAuchEinmaligeErlebnisseNachTageszeitenwechsel,
+                        wetterChangeGeradeErzaehlt,
+                        nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
 
         resetWetterChangeGeradeErzaehlt();
 

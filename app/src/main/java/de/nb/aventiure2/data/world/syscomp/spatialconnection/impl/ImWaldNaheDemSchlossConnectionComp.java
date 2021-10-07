@@ -18,14 +18,21 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp.Counter.NACH_DRAUSSEN_KEIN_FEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NOCH_NICHT_BEGONNEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHLOSSGARTEN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.KOMMEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 import androidx.annotation.NonNull;
@@ -57,6 +64,11 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.Satz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -135,8 +147,11 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             case VERWUESTET:
                 res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
                 break;
-            case MARKT_AUFGEBAUT:
-                res = altDescTo_DraussenVorDemSchloss_MarktAufgebaut(lichtverhaeltnisse);
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN:
+                res = altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeoeffnet();
+                break;
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN:
+                res = altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeschlossen();
                 break;
             default:
                 throw new IllegalStateException("Unexpected state: "
@@ -227,13 +242,15 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
             return du("bist",
                     "betroffen, als du aus dem Wald heraustrittst.",
                     "Das Schlossfest hat begonnen, aber der Sturm hat heftig gewütet:",
-                    "Viele der kleinen farbigen Pagoden überall im Schlossgarten sind umgeworfen",
+                    "Viele der kleinen farbigen Pagoden überall im Schlossgarten sind "
+                            + "umgeworfen",
                     "oder ihr Dach ist abgerissen. Einige Marktstände sind ausgeräumt oder",
                     "stehen aufwendig verzurrt an windgeschützten Plätzen. –",
                     "Aus dem Schloss allerdings hört man die Menschenmenge und es duftet",
                     "verführerisch nach Gebratenem")
                     .schonLaenger().timed(mins(10));
-        } else if (assumedSchlossfestState == BEGONNEN) {
+        }
+        if (assumedSchlossfestState == BEGONNEN) {
             loadSC().feelingsComp().requestMoodMax(BETRUEBT);
 
             return neuerSatz(
@@ -243,52 +260,79 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     "ausgeräumt oder stehen aufwendig verzurrt an windgeschützten Plätzen. –",
                     "Aus dem Schloss aber hört man immer noch die Menschenmenge")
                     .schonLaenger().timed(mins(10));
-        } else {
-            loadSC().feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
-
-            return du("erreichst", "bald den vom Sturm verwüsteten Schlossgarten")
-                    .schonLaenger()
-                    .mitVorfeldSatzglied("bald")
-                    .timed(mins(10))
-                    .undWartest();
         }
+
+        loadSC().feelingsComp().requestMoodMax(ETWAS_GEKNICKT);
+
+        return du("erreichst", "bald den vom Sturm verwüsteten Schlossgarten")
+                .schonLaenger()
+                .mitVorfeldSatzglied("bald")
+                .timed(mins(10))
+                .undWartest();
     }
 
-    private ImmutableCollection<TimedDescription<?>> altDescTo_DraussenVorDemSchloss_MarktAufgebaut(
-            final Lichtverhaeltnisse lichtverhaeltnisse) {
+    private ImmutableCollection<TimedDescription<?>>
+    altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeoeffnet() {
+        final AvTimeSpan wegZeit = mins(10);
+
         @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();
 
         if (assumedSchlossfestState == null || assumedSchlossfestState == NOCH_NICHT_BEGONNEN
                 || assumedSchlossfestState == BEGONNEN) {
-            if (lichtverhaeltnisse == HELL) {
-                return ImmutableList.of(neuerSatz(
-                        PARAGRAPH,
-                        "im Schlossgarten herrscht reges Treiben.",
-                        "In einer Ecke hat sich",
-                        "ein kleiner Bauernmarkt aufgebaut")
-                        .schonLaenger().timed(mins(10)));
-            }
-            return altNeueSaetze("der Schlossgarten liegt",
-                    mapToList(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
-                            timeTaker.now(), true),
-                            PraepositionMitKasus.IN_DAT::mit),
-                    SENTENCE,
-                    "In einer Ecke stehen einige Marktstände – natürlich alle",
-                    "geschlossen zu dieser Tageszeit")
-                    .schonLaenger().timed(mins(10))
-                    .build();
-        } else if (assumedSchlossfestState == VERWUESTET) {
+            return ImmutableList.of(neuerSatz(
+                    PARAGRAPH,
+                    "im Schlossgarten herrscht reges Treiben.",
+                    "In einer Ecke hat sich",
+                    "ein kleiner Bauernmarkt aufgebaut")
+                    .schonLaenger().timed(wegZeit));
+        }
+        if (assumedSchlossfestState == VERWUESTET) {
             loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
 
-            if (lichtverhaeltnisse == HELL) {
-                return ImmutableList.of(neuerSatz(
-                        PARAGRAPH,
-                        "im Schlossgarten herrscht wieder reges Treiben. Die Diener haben",
-                        "die vom Sturm zerstörten Pagoden abgeräumt; in einer Ecke hat sich ein",
-                        "kleiner Bauernmarkt aufgebaut")
-                        .schonLaenger()
-                        .timed(mins(10)));
-            }
+            return ImmutableList.of(neuerSatz(
+                    PARAGRAPH,
+                    "im Schlossgarten herrscht wieder reges Treiben. Die Diener haben",
+                    "die vom Sturm zerstörten Pagoden abgeräumt; in einer Ecke hat sich ein",
+                    "kleiner Bauernmarkt aufgebaut")
+                    .schonLaenger()
+                    .timed(wegZeit));
+        }
+        if (assumedSchlossfestState
+                == NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN) {
+            return altNeueSaetze(altWiederImSchlossgartenWetterHinweisSaetze(wegZeit),
+                    // "als du wieder im Schlossgarten stehst, ist es hellichter Tag[.]"
+                    SENTENCE, "der kleine Bauernmarkt ist jetzt geöffnet")
+                    .schonLaenger()
+                    .timed(wegZeit)
+                    .build();
+        }
+
+        return ImmutableList.of(neuerSatz("Nachdem du einige Schritte gelaufen bist,",
+                "stehst du wieder im Schlossgarten")
+                .schonLaenger()
+                .timed(wegZeit));
+    }
+
+    private ImmutableCollection<TimedDescription<?>>
+    altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeschlossen() {
+        final AvTimeSpan wegZeit = mins(10);
+
+        @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();
+
+        if (assumedSchlossfestState == null || assumedSchlossfestState == NOCH_NICHT_BEGONNEN
+                || assumedSchlossfestState == BEGONNEN) {
+            return altNeueSaetze("der Schlossgarten liegt",
+                    mapToList(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
+                            timeTaker.now().plus(wegZeit), true),
+                            PraepositionMitKasus.IN_DAT::mit),
+                    SENTENCE,
+                    "In einer Ecke stehen einige verlassene Marktstände")
+                    .schonLaenger().timed(wegZeit)
+                    .build();
+        }
+        if (assumedSchlossfestState == VERWUESTET) {
+            loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
+
             return altNeueSaetze(
                     "der Schlossgarten liegt",
                     mapToList(world.loadWetter().wetterComp().altLichtInDemEtwasLiegt(
@@ -298,17 +342,65 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                     "die Diener haben",
                     "die vom Sturm zerstörten Pagoden abgeräumt",
                     SENTENCE,
-                    "in einer Ecke stehen einige Marktstände – zu dieser Tageszeit",
-                    "alle geschlossen")
+                    "in einer Ecke stehen einige verlassene Marktstände")
                     .schonLaenger()
-                    .timed(mins(10))
+                    .timed(wegZeit)
                     .build();
-        } else {
-            return ImmutableList.of(neuerSatz("Nachdem du einige Schritte gelaufen bist,"
-                    + "stehst du wieder im Schlossgarten")
-                    .schonLaenger()
-                    .timed(mins(10)));
         }
+        if (assumedSchlossfestState
+                == NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN) {
+            return altNeueSaetze(altWiederImSchlossgartenWetterHinweisSaetze(wegZeit),
+                    // "als du wieder im Schlossgarten stehst, ist es dunkel[.]"
+                    SENTENCE, "der kleine Markt liegt verlassen da")
+                    .schonLaenger()
+                    .timed(wegZeit)
+                    .build();
+        }
+
+        return ImmutableList.of(neuerSatz("Nachdem du einige Schritte gelaufen bist,",
+                "stehst du wieder im Schlossgarten")
+                .schonLaenger()
+                .timed(wegZeit));
+    }
+
+    /**
+     * Gibt alternative Sätze zurück wie "Als du wieder im Schlossgarten stehst, ist es dunkel" oder
+     * "Du kommst wieder in den Schlossgarten". Der Aufrufer muss dafür sorgen, dass einer
+     * dieser Sätze ausgegeben wird, denn ggf. vermerkt diese Methode, dass der Spieler über das
+     * aktuelle Wetter informiert wurde.
+     */
+    @NonNull
+    private ImmutableCollection<Satz> altWiederImSchlossgartenWetterHinweisSaetze(
+            final AvTimeSpan wegZeit) {
+        final ImmutableCollection<Satz> altSpWetterhinweisSaetze =
+                world.loadWetter().wetterComp().altSpWetterhinweisSaetze(
+                        timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS,
+                        // Damit vermeidet man "temporalsemantische Doppelbesetzungen" wie
+                        // "Als du in den Schlossgarten kommst, ist heute schönes Wetter".
+                        true);
+
+        if (altSpWetterhinweisSaetze.isEmpty()) {
+            // "du kommst wieder in den Schlossgarten"
+            return ImmutableList.of(
+                    // "du kommst wieder in den Schlossgarten"
+                    KOMMEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher(
+                                    IN_AKK.mit(SCHLOSSGARTEN)))
+                            .alsSatzMitSubjekt(duSc())
+            );
+        }
+
+        // "als du wieder im Schlossgarten stehst, ist es dunkel"
+        return mapToList(altSpWetterhinweisSaetze,
+                // "als du wieder im Schlossgarten stehst, ist es dunkel"
+                s -> s.mitAngabensatz(
+                        new Konditionalsatz("als",
+                                STEHEN
+                                        .mitAdvAngabe(new AdvAngabeSkopusSatz("wieder"))
+                                        .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
+                                                IN_DAT.mit(SCHLOSSGARTEN)))
+                                        .alsSatzMitSubjekt(duSc())),
+                        true));
     }
 
     @Nullable

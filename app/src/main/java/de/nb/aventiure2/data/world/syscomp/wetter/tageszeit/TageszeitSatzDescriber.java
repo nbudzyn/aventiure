@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.tageszeit;
 
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -12,9 +15,6 @@ import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Tageszeit} als {@link Satz}.
@@ -58,7 +58,7 @@ public class TageszeitSatzDescriber {
      * Gibt Alternativen zurück wie "draußen ist es schon dunkel" - oder eine leere
      * {@link java.util.Collection}.
      */
-    ImmutableCollection<EinzelnerSatz> altSpDraussen(
+    public ImmutableCollection<EinzelnerSatz> altSpDraussen(
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();

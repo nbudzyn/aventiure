@@ -75,7 +75,7 @@ public class Satzreihe implements Satz {
      * verbunden sind.
      */
     @NonNull
-    private static Satzreihe gereihtStandard(final Satz ersterSatz, final Satz zweiterSatz) {
+    static Satzreihe gereihtStandard(final Satz ersterSatz, final Satz zweiterSatz) {
         if (zweiterSatz instanceof EinzelnerSatz) {
             return gereihtStandard(ersterSatz, (EinzelnerSatz) zweiterSatz);
         }
@@ -407,6 +407,7 @@ public class Satzreihe implements Satz {
     }
 
     @Override
+    @Nullable
     public SubstantivischePhrase getErstesSubjekt() {
         return ersterSatz.getErstesSubjekt();
     }

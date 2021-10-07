@@ -1,29 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.temperatur;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
-
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.base.Temperatur;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.NomenFlexionsspalte;
-import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.ZweiPraedikativa;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.stream.Collectors.toSet;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
@@ -67,7 +45,29 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WETTER;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
+
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.ZweiPraedikativa;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link Praedikativum}.
@@ -648,6 +648,7 @@ public class TemperaturPraedikativumDescriber {
 
                 alt.add(AdjektivOhneErgaenzungen.KUEHL,
                         AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("ziemlich"),
+                        AdjektivOhneErgaenzungen.KUEHL.mitGraduativerAngabe("durchaus"),
                         AdjektivOhneErgaenzungen.FRISCH);
                 break;
             case WARM:
@@ -659,7 +660,8 @@ public class TemperaturPraedikativumDescriber {
                     alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("recht"));
                 }
 
-                alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("ziemlich"));
+                alt.add(AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("ziemlich"),
+                        AdjektivOhneErgaenzungen.HEISS.mitGraduativerAngabe("wirklich"));
                 break;
             case SEHR_HEISS:
                 alt.add(AdjektivOhneErgaenzungen.GLUTHEISS);

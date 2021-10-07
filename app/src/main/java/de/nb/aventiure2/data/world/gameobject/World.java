@@ -74,6 +74,7 @@ import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.system.ReactionSystem;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.AbzweigImWaldConnectionComp;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.BauernmarktConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.HinterDerHuetteConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ImWaldNaheDemSchlossConnectionComp;
@@ -192,7 +193,8 @@ public class World {
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
-    public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_002);
+    public static final GameObjectId DRAUSSEN_VOR_DEM_SCHLOSS = new GameObjectId(30_001);
+    public static final GameObjectId BAUERNMARKT = new GameObjectId(30_002);
     public static final GameObjectId ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN =
             new GameObjectId(30_003);
     public static final GameObjectId IM_WALD_NAHE_DEM_SCHLOSS = new GameObjectId(30_004);
@@ -352,6 +354,11 @@ public class World {
                         false, NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT,
                         LEUCHTET_NIE,
                         new DraussenVorDemSchlossConnectionComp(db, timeTaker, n, this)),
+                room.create(BAUERNMARKT,
+                        StoringPlaceType.BODEN_AUF_DEM_KLEINEN_MARKT,
+                        false, NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT,
+                        LEUCHTET_NIE,
+                        new BauernmarktConnectionComp(db, timeTaker, n, this)),
                 room.create(ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         StoringPlaceType.BODEN_VOR_DEM_SCHLOSS,
                         false, NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT,

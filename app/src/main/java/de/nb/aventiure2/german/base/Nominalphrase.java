@@ -371,6 +371,9 @@ public class Nominalphrase
             return false;
         }
 
+        // FIXME Steht dabei ein Relativsatz, der etwas näher definiert ("zu dem Zahnarzt,
+        //  der ihr gestern empfohlen wurde") ist die Verschmelzung verboten.
+
         return artikelTyp.erlaubtVerschmelzungMitPraeposition();
     }
 

@@ -97,6 +97,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
             Perfektbildung.HABEN, "gestürmt"),
     TROCKNEN("trocknen", "trockne", "trocknest", "trocknet",
             "trocknet", Perfektbildung.SEIN, "getrocknet"),
+    VERGEHEN("vergehen", "vergehe", "vergehst", "vergeht", "vergeht",
+            Perfektbildung.SEIN, "vergangen"),
     VERSCHWINDEN("verschwinden", "verschwinde", "verschwindest",
             "verschwindet", "verschwindet",
             Perfektbildung.SEIN, "verschwunden"),

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.satz;
 
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -20,8 +22,6 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 
 public interface Satz extends IAlternativeKonstituentenfolgable {
     default Satz mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd() {
@@ -44,8 +44,8 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
         return mitAnschlusswort(null);
     }
 
-    Satz mitAnschlusswort(@Nullable
-                                  NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort);
+    Satz mitAnschlusswort(
+            @Nullable NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort);
 
     default boolean hasAnschlusswort() {
         return getAnschlusswort() != null;
@@ -170,6 +170,7 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
 
     boolean isSatzreihungMitUnd();
 
+    @Nullable
     SubstantivischePhrase getErstesSubjekt();
 
     boolean hatAngabensatz();
