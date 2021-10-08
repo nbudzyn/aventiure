@@ -5,18 +5,21 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
  * Reaktionen der Topf-Verkäuferin - z.B. darauf, dass der Markt öffnet oder schließt.
  */
 public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsComp
-        implements IMovementReactions {
+        implements IMovementReactions, ITimePassedReactions {
     public TopfVerkaeuferinReactionsComp(final CounterDao counterDao,
                                          final Narrator n,
                                          final World world) {
@@ -36,6 +39,22 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
     @Override
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            onSCEnter(from, to);
+            return;
+        }
+    }
+
+    private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+            onSCEnter_Bauernmarkt(from, to);
+            return;
+        }
+    }
+
+    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO from,
+                                       final ILocationGO to) {
+
         // FIXME eine schöne junge Frau hat Töpfe und irdenes
         //  Geschirr vor
         //  sich stehen
@@ -46,5 +65,30 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
         // FIXME "Die junge Frau mit den feinen Gesichtszügen hat wohl gerade ein Schüsselchen /
         //  Tellerchen / irdenes
         //  Schälchen verkauft"
+
+        // FIXME Die schöne junge Frau sortiert ihre irdenen Näpfe und Töpfe.
+    }
+
+    @Override
+    public void onTimePassed(final Change<AvDateTime> change) {
+        // FIXME Orte und ggf. assumptions aktualiseren
+
+        // FIXME eine schöne junge Frau hat Töpfe und irdenes
+        //  Geschirr vor
+        //  sich stehen
+
+        // FIXME eine junge Frau mit fein geschnittenem Gesicht
+        //   hat Töpfe und irdenes Geschirr vor sich stehen
+
+        // FIXME  - "Die schöne junge Frau klappert mit ihren Töpfen"
+
+        // FIXME "Die junge Frau mit den feinen Gesichtszügen hat wohl gerade ein Schüsselchen /
+        //  Tellerchen / irdenes
+        //  Schälchen verkauft"
+
+        // FIXME "Die schöne junge Frau stapelt alle ihre Töpfe und Schächen in ein Tuch,
+        //  bindet es zusammen und geht ihrer Wege"
+
+        // FIXME "..verlässt den Markt"
     }
 }

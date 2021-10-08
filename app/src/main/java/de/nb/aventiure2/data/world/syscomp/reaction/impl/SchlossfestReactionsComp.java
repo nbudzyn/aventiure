@@ -16,6 +16,7 @@ import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 
 import com.google.common.collect.ImmutableList;
 
@@ -119,20 +120,29 @@ public class SchlossfestReactionsComp
 
         if (loadSC().locationComp().hasVisiblyRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             scErlebtDraussenVorDemSchloss_MarktOeffnet();
+        } else if (loadSC().locationComp().hasVisiblyRecursiveLocation(BAUERNMARKT)) {
+            scErlebtBauernmarkt_MarktOeffnet();
         }
-
-        // FIXME Texte für Bauernmarkt, Assumptions aktualisieren
-
-        // FIXME "GEGEN MORGEN belebt sich der Platz: Eine Bäuerin setzt sich und baut vor sich
-        //  ... einige Leute kommen daher und schauen sich um"
-
-        // FIXME "Wie es scheint, beginnt jetzt der Markt"
     }
 
     private void scErlebtDraussenVorDemSchloss_MarktOeffnet() {
-        n.narrate(neuerSatz(PARAGRAPH, "Auf dem Markt wird es lebendig: Händler",
-                "bauen ihre Stände auf, die ersten Leute schauen sich dort um")
-                .timed(mins(5))); // extra-Zeit fürs Zuschauen
+        n.narrateAlt(
+                neuerSatz(PARAGRAPH, "Auf dem Markt wird es lebendig: Händler",
+                        "bauen ihre Stände auf, die ersten Leute schauen sich dort um")
+                        .timed(mins(5)), // extra-Zeit fürs Zuschauen
+                paragraph("wie es scheint, beginnt gerade der Markt")
+                        .timed(NO_TIME));
+
+        loadSC().mentalModelComp().setAssumptionsToActual(SCHLOSSFEST);
+    }
+
+    private void scErlebtBauernmarkt_MarktOeffnet() {
+        n.narrateAlt(
+                neuerSatz(PARAGRAPH, "der Platz belebt sich",
+                        SENTENCE,
+                        "einige Leute kommen daher und schauen sich um").timed(NO_TIME),
+                neuerSatz(PARAGRAPH, "wie es scheint, beginnt jetzt der Markt")
+                        .timed(NO_TIME));
 
         loadSC().mentalModelComp().setAssumptionsToActual(SCHLOSSFEST);
     }
@@ -142,23 +152,9 @@ public class SchlossfestReactionsComp
 
         if (loadSC().locationComp().hasVisiblyRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {
             scErlebtDraussenVorDemSchloss_MarktSchliesst();
+        } else if (loadSC().locationComp().hasVisiblyRecursiveLocation(BAUERNMARKT)) {
+            scErlebtBauernmarkt_MarktSchliesst();
         }
-
-        // FIXME Texte für Bauernmarkt, Assumptions aktualisieren
-
-        // FIXME "Die Korbflechterin deckt ihren Stand ab und verschnürt alles gut"
-
-        // FIXME "Allmählich wird es SPÄTER NACHMITTAG(?) und die Bäuerin kramt ihre
-        //  Siebensachen zusammen und geht"
-
-        // FIXME "Die schöne junge Frau stapelt alle ihre Töpfe und Schächen in ein Tuch,
-        //  bindet es zusammen und geht ihrer Wege"
-
-        // FIXME "Auch die dicke Bäuerin ist nicht mehr da. Die Menschen haben sich
-        //  verlaufen, und
-        //  du stehst allein zwischen den leeren Bänken und Ständen"
-
-        // FIXME "Die Standbesitzer verlassen den Markt"
     }
 
     private void scErlebtDraussenVorDemSchloss_MarktSchliesst() {
@@ -172,6 +168,25 @@ public class SchlossfestReactionsComp
                         "bald ist der kleine Bauernmarkt wie leer gefegt"));
 
         loadSC().mentalModelComp().setAssumptionsToActual(SCHLOSSFEST);
+        loadSC().mentalModelComp().unsetAssumedLocation(MUS_VERKAEUFERIN);
+        loadSC().mentalModelComp().unsetAssumedLocation(TOPF_VERKAEUFERIN);
+        loadSC().mentalModelComp().unsetAssumedLocation(KORBFLECHTERIN);
+    }
+
+    private void scErlebtBauernmarkt_MarktSchliesst() {
+        n.narrateAlt(
+                neuerSatz("die Marktzeit scheint zu Ende zu sein",
+                        SENTENCE,
+                        "die letzten Menschen haben sich verlaufen und",
+                        "du stehst allein zwischen den leeren Bänken und Ständen")
+                        .timed(mins(2)), // extra-Zeit
+                neuerSatz(PARAGRAPH, "die letzten Standbesitzer verlassen den Markt")
+                        .timed(mins(2))); // extra-Zeit
+
+        loadSC().mentalModelComp().setAssumptionsToActual(SCHLOSSFEST);
+        loadSC().mentalModelComp().unsetAssumedLocation(MUS_VERKAEUFERIN);
+        loadSC().mentalModelComp().unsetAssumedLocation(TOPF_VERKAEUFERIN);
+        loadSC().mentalModelComp().unsetAssumedLocation(KORBFLECHTERIN);
     }
 
     private void schlossfestBeginnt() {

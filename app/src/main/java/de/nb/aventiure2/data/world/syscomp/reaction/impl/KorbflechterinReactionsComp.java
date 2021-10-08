@@ -5,11 +5,14 @@ import static de.nb.aventiure2.data.world.gameobject.World.*;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
+import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
 /**
@@ -19,7 +22,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 //  dass alles, was mit der Korbflechterin zu tun hat, in einem Verzeichnis zu liegen kommt.
 //  (Das ist ein Schritt zur Trennung von Welt und Framework).
 public class KorbflechterinReactionsComp extends AbstractDescribableReactionsComp
-        implements IMovementReactions {
+        implements IMovementReactions, ITimePassedReactions {
     public KorbflechterinReactionsComp(final CounterDao counterDao,
                                        final Narrator n,
                                        final World world) {
@@ -39,15 +42,27 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
     @Override
     public void onEnter(final ILocatableGO locatable, @Nullable final ILocationGO from,
                         final ILocationGO to) {
+        if (locatable.is(SPIELER_CHARAKTER)) {
+            onSCEnter(from, to);
+            return;
+        }
+    }
+
+    private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
+        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+            onSCEnter_Bauernmarkt(from, to);
+            return;
+        }
+    }
+
+    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO from,
+                                       final ILocationGO to) {
+
         // FIXME  eine alte Frau flicht Körbe
 
         // FIXME "Die Frau / Alte / Korbflechterin ist fleißig dabei, einen Korb zu flechten"
 
         // FIXME "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
-
-        // FIXME "Auch die dicke Bäuerin ist nicht mehr da. Die Menschen haben sich
-        //  verlaufen, und
-        //  du stehst allein zwischen den leeren Bänken und Ständen"
 
         // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
         //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
@@ -69,5 +84,25 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt"
 
         // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
+
+    }
+
+    @Override
+    public void onTimePassed(final Change<AvDateTime> change) {
+        // FIXME Orte und ggf. assumptions aktualiseren
+
+        // FIXME "Die Korbflechterin deckt ihren Stand ab und verschnürt alles gut"
+
+        // FIXME  eine alte Frau flicht Körbe
+
+        // FIXME "Die Frau / Alte / Korbflechterin ist fleißig dabei, einen Korb zu flechten"
+
+        // FIXME "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
+
+        // FIXME "Auch die dicke Bäuerin ist nicht mehr da. Die Menschen haben sich
+        //  verlaufen, und
+        //  du stehst allein zwischen den leeren Bänken und Ständen"
+
+        // FIXME "..verlässt den Markt"
     }
 }

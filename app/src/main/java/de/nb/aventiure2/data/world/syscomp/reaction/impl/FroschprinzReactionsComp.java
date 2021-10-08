@@ -116,8 +116,7 @@ public class FroschprinzReactionsComp
                             .undWartest(),
                     neuerSatz("„Halt!“, ruft der Frosch dir nach, „nimm mich mit!“")
             );
-            world.narrateAndDoReactions().onRuf(
-                    FROSCHPRINZ, Ruftyp.WARTE_NIMM_MICH_MIT);
+            world.narrateAndDoReactions().onRuf(FROSCHPRINZ, Ruftyp.WARTE_NIMM_MICH_MIT);
             return;
         }
     }

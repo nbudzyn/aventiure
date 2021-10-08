@@ -84,8 +84,7 @@ public class RapunzelsZauberinReactionsComp
         IKnownChangedReactions,
         ITimePassedReactions {
     @SuppressWarnings({"unused", "RedundantSuppression"})
-    public
-    enum Counter {
+    public enum Counter {
         ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST,
         ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT
     }

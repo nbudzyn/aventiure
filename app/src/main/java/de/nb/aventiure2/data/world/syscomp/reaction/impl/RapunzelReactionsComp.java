@@ -183,8 +183,6 @@ public class RapunzelReactionsComp
             onSCEnter_ObenImAltenTurm(from, to);
             return;
         }
-
-        return;
     }
 
     private void onSCEnter_VorDemAltenTurm(@Nullable final ILocationGO from,

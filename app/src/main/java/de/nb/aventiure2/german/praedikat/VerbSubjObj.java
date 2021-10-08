@@ -8,6 +8,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
+import static de.nb.aventiure2.german.praedikat.Perfektbildung.SEIN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.BLASEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.TROCKNEN;
@@ -125,7 +126,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "gestanden"),
     STEIGEN_AUF("steigen", AUF_AKK,
             "steige", "steigst", "steigt", "steigt",
-            Perfektbildung.SEIN, "gestiegen"),
+            SEIN, "gestiegen"),
     STREICHEN("streichen", DAT, "streiche",
             "streichst", "streicht", "streicht",
             Perfektbildung.HABEN, "gestrichen"),
@@ -136,7 +137,9 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             Perfektbildung.HABEN, "getrieben"),
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
-            Perfektbildung.SEIN, "getreten"),
+            SEIN, "getreten"),
+    VERKAUFEN("verkaufen", AKK, "verkaufe", "verkaufst", "verkauft", "verkauft",
+            Perfektbildung.HABEN, "verkauft"),
     VERLASSEN("verlassen", AKK, "verlasse", "verlässt", "verlässt",
             "verlasst", Perfektbildung.HABEN, "verlassen"),
     VERLIEREN_AN("verlieren", AN_DAT, "verliere", "verlierst", "verliert", "verliert",
@@ -176,7 +179,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
             "auf",
             Perfektbildung.HABEN, "aufgeklaubt"),
     AUFSAMMELN(SAMMELN, AKK, "auf", Perfektbildung.HABEN),
-    AUFSTEHEN_VON(STEHEN, VON, "auf", Perfektbildung.SEIN),
+    AUFSTEHEN_VON(STEHEN, VON, "auf", SEIN),
     AUSRUPFEN(RUPFEN, AKK, "aus", Perfektbildung.HABEN),
     EINSAMMELN(SAMMELN, AKK, "ein", Perfektbildung.HABEN),
     ENTGEGENBLASEN(BLASEN, DAT, "entgegen", Perfektbildung.HABEN),
@@ -202,7 +205,7 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     NACHBLICKEN(ANBLICKEN, DAT, "nach", Perfektbildung.HABEN),
     NACHSCHAUEN(SCHAUEN, DAT, "nach", Perfektbildung.HABEN),
     NACHSEHEN(SEHEN, DAT, "nach", Perfektbildung.HABEN),
-    UEBERGEHEN(GEHEN, IN_AKK, "über", Perfektbildung.SEIN),
+    UEBERGEHEN(GEHEN, IN_AKK, "über", SEIN),
     WIEDERSEHEN(SEHEN, AKK, "wieder", Perfektbildung.HABEN),
     ZUGUCKEN(GUCKEN, DAT, "zu", Perfektbildung.HABEN),
     ZUSAMMENSAMMELN(SAMMELN, AKK, "zusammen", Perfektbildung.HABEN),

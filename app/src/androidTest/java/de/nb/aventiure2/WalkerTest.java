@@ -1,5 +1,9 @@
 package de.nb.aventiure2;
 
+import static com.google.common.truth.Truth.assertThat;
+import static junit.framework.TestCase.fail;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+
 import android.content.Context;
 
 import androidx.annotation.Nullable;
@@ -30,10 +34,6 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.RandomActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 import de.nb.aventiure2.score.ScoreService;
-
-import static com.google.common.truth.Truth.assertThat;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static junit.framework.TestCase.fail;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -148,7 +148,7 @@ public class WalkerTest extends AndroidTestBase {
             if (playerActions.isEmpty()) {
                 final SpielerCharakter spielerCharakter = world.loadSC();
 
-                final ITalkerGO<?> zauberin = world.load(RAPUNZELS_ZAUBERIN);
+                final ITalkerGO<?> zauberin = world.loadRequired(RAPUNZELS_ZAUBERIN);
 
                 final ImmutableList<? extends ILivingBeingGO> livingBeings =
                         world.loadDescribableLocatableLivingBeings();

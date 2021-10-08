@@ -1,16 +1,18 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.interfaces;
 
+import static de.nb.aventiure2.german.praedikat.VerbSubjWoertlicheRede.RUFEN;
+
 import de.nb.aventiure2.german.base.WoertlicheRede;
 import de.nb.aventiure2.german.praedikat.PraedikatWoertlicheRedeOhneLeerstellen;
-
-import static de.nb.aventiure2.german.praedikat.VerbSubjWoertlicheRede.RUFEN;
 
 /**
  * Was jemand gerufen hat.
  */
 public enum Ruftyp {
     WARTE_NIMM_MICH_MIT("Warte, nimm mich mit!"),
-    LASS_DEIN_HAAR_HERUNTER("Lass dein Haar herunter");
+    LASS_DEIN_HAAR_HERUNTER("Lass dein Haar herunter"),
+    MUS_FEIL("Mus feil");
+
     /**
      * Prädikat für den Namen des Rufts, z.B. ("Lass dein Haar herunter" rufen).
      */
