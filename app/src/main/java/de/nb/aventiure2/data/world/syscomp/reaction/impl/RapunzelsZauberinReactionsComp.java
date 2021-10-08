@@ -417,7 +417,7 @@ public class RapunzelsZauberinReactionsComp
             final SubstantivischePhrase anaph = anaph();
             n.narrate(neuerSatz(
                     anaph.nomK(), "begrüßt",
-                    world.getDescription(RAPUNZEL).akkK(),
+                    getDescription(RAPUNZEL).akkK(),
                     ", dann ist", anaph.persPron().nomK(),
                     "auf einmal still. „Wonach riecht es hier?“, fragt",
                     anaph(false).nomK(), "mit scharfer Stimme")
@@ -708,7 +708,7 @@ public class RapunzelsZauberinReactionsComp
 
             alt.add(neuerSatz(anaph(false).nomK(),
                     "und",
-                    world.getDescription(RAPUNZEL).nomK(),
+                    getDescription(RAPUNZEL).nomK(),
                     "unterhalten sich, aber sie haben einander kaum etwas",
                     "zu sagen").timed(mins(5)),
                     neuerSatz(anaph(false).nomK(),

@@ -53,7 +53,7 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     protected SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        return world.anaph(getGameObjectId(), descShortIfKnown);
+        return anaph(getGameObjectId(), descShortIfKnown);
     }
 
     /**
@@ -75,6 +75,6 @@ public abstract class AbstractDescribableReactionsComp extends AbstractReactions
      *                     kürzere Beschreibung gewählt
      */
     protected EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return world.getDescription(getGameObjectId(), shortIfKnown);
+        return getDescription(getGameObjectId(), shortIfKnown);
     }
 }

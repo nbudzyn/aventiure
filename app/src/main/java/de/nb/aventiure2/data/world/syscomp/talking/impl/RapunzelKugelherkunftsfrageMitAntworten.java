@@ -1,18 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
-import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
-import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
@@ -32,6 +19,19 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_ERLAUBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANGEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
+
+import com.google.common.collect.ImmutableList;
+
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 class RapunzelKugelherkunftsfrageMitAntworten extends RapunzelFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -54,7 +54,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends RapunzelFrageMitAntworten 
         n.narrate(neuerSatz(
                 anaph.possArt().vor(M).nomStr(), // "Ihr"
                 "Blick fällt auf",
-                world.getDescription(GOLDENE_KUGEL, true).akkK(),
+                getDescription(GOLDENE_KUGEL, true).akkK(),
                 "„Woher hast du die?“, fragt",
                 anaph.nomK(),
                 "dich")

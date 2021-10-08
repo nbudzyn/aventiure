@@ -1,21 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.state.impl;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.data.database.AvDatabase;
-import de.nb.aventiure2.data.time.TimeTaker;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
-import de.nb.aventiure2.data.world.syscomp.state.StateModification;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.DescriptionBuilder;
-import de.nb.aventiure2.german.description.TimedDescription;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AM_BAUM;
@@ -32,6 +16,22 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_NEHMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BRECHEN;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+
+import de.nb.aventiure2.data.database.AvDatabase;
+import de.nb.aventiure2.data.time.TimeTaker;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
+import de.nb.aventiure2.data.world.syscomp.state.StateModification;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.DescriptionBuilder;
+import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
 
 public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStrickleiterState> {
     public HolzFuerStrickleiterStateComp(final AvDatabase db,
@@ -103,7 +103,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     protected SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        return world.anaph(getGameObjectId(), descShortIfKnown);
+        return anaph(getGameObjectId(), descShortIfKnown);
     }
 
     /**
@@ -125,7 +125,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
      *                     kürzere Beschreibung gewählt
      */
     protected EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return world.getDescription(getGameObjectId(), shortIfKnown);
+        return getDescription(getGameObjectId(), shortIfKnown);
     }
 
 }

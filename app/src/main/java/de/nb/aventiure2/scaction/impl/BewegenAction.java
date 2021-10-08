@@ -369,7 +369,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 neuerSatz(objectsDescription)
                         .timed(secs(numObjects * 2L))
                         .phorikKandidat(
-                                world.getDescription(lastObject, false),
+                                getDescription(lastObject, false),
                                 lastObject.getId()));
     }
 
@@ -454,9 +454,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (missingObjects.size() == 2) {
             alt.add(neuerSatz("weder",
-                    world.getDescription(missingObjects.get(0)).nomK(),
+                    getDescription(missingObjects.get(0)).nomK(),
                     "noch",
-                    world.getDescription(missingObjects.get(1)).nomK(),
+                    getDescription(missingObjects.get(1)).nomK(),
                     "ist irgendwo zu sehen"));
         }
 

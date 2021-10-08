@@ -11,7 +11,9 @@ import de.nb.aventiure2.data.world.gameobject.*;
  * react to certain events.
  */
 public abstract class AbstractReactionsComp extends AbstractStatelessComponent
-        implements IReactions, IWorldLoaderMixin {
+        implements IReactions,
+        // Mixins
+        IWorldLoaderMixin, IWorldDescriptionMixin {
     protected final World world;
 
     protected final Narrator n;

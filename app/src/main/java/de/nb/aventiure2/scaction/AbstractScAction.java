@@ -28,7 +28,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 @ParametersAreNonnullByDefault
 public abstract class AbstractScAction implements IPlayerAction,
 // Mixins
-        IWorldLoaderMixin {
+        IWorldLoaderMixin, IWorldDescriptionMixin {
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
     private final SCActionStepCountDao scActionStepCountDao;

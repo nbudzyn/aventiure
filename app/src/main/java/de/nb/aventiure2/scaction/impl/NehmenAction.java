@@ -196,7 +196,7 @@ public class NehmenAction
 
         return joinToKonstituentenfolge(
                 SENTENCE,
-                praedikat.mit(world.getDescription(gameObject, true))
+                praedikat.mit(getDescription(gameObject, true))
                         // Relevant für etwas wie "Die Schale an *mich* nehmen"
                         .getInfinitiv(P2, SG))
                 .joinToString();
@@ -246,7 +246,7 @@ public class NehmenAction
             return;
         }
 
-        final EinzelneSubstantivischePhrase froschDesc = world.getDescription(gameObject, true);
+        final EinzelneSubstantivischePhrase froschDesc = getDescription(gameObject, true);
 
         n.narrateAlt(secs(10),
                 du(PARAGRAPH,
@@ -342,7 +342,7 @@ public class NehmenAction
             }
 
             final EinzelneSubstantivischePhrase froschDesc =
-                    world.getDescription(gameObject, false);
+                    getDescription(gameObject, false);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET,
@@ -392,7 +392,8 @@ public class NehmenAction
         }
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
-            final EinzelneSubstantivischePhrase objectDesc = world.getDescription(gameObject, true);
+            final EinzelneSubstantivischePhrase objectDesc =
+                    getDescription(gameObject, true);
             n.narrate(neuerSatz("Dann nimmst du", objectDesc.akkK())
                     .timed(secs(5))
                     .undWartest());
@@ -433,9 +434,9 @@ public class NehmenAction
 
     private void narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        final EinzelneSubstantivischePhrase objectDesc = world.getDescription(gameObject);
+        final EinzelneSubstantivischePhrase objectDesc = getDescription(gameObject);
         final EinzelneSubstantivischePhrase objectDescShort =
-                world.getDescription(gameObject, true);
+                getDescription(gameObject, true);
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 
@@ -452,7 +453,7 @@ public class NehmenAction
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", nur um",
                     nehmenPraedikat
-                            .mit(world.getDescription(gameObject, true).persPron())
+                            .mit(getDescription(gameObject, true).persPron())
                             .mitAdvAngabe(
                                     new AdvAngabeSkopusSatz("gleich erneut"))
                             .getZuInfinitiv(P2, SG))

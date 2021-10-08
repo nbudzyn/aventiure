@@ -1,5 +1,20 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
+import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ANBIETEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.HINHALTEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.REICHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZEIGEN;
+import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -24,21 +39,6 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
-import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ANBIETEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.HINHALTEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.REICHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZEIGEN;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Der Benutzer gibt einem Living Being einen Gegenstand, den er bei sich trägt.
@@ -95,8 +95,8 @@ public class GebenAction<
     public String getName() {
         return capitalize(
                 GEBEN
-                        .mitDat(world.getDescription(taker, true))
-                        .mit(world.getDescription(given))
+                        .mitDat(getDescription(taker, true))
+                        .mit(getDescription(given))
                         .getInfinitiv(P2, SG).joinToString(
                 ));
     }
@@ -136,8 +136,8 @@ public class GebenAction<
     private ImmutableList<PraedikatOhneLeerstellen> altAnbietenPraedikate() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
-        final SubstantivischePhrase takerAnaph = world.anaph(taker);
-        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given, false);
+        final SubstantivischePhrase takerAnaph = anaph(taker);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(given, false);
 
         alt.add(
                 // "Du hältst IHR DIE GOLDENE KUGEL hin"
@@ -165,8 +165,8 @@ public class GebenAction<
     private ImmutableList<PraedikatOhneLeerstellen> altGebenPraedikate() {
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
-        final SubstantivischePhrase takerAnaph = world.anaph(taker);
-        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given, false);
+        final SubstantivischePhrase takerAnaph = anaph(taker);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(given, false);
 
         alt.add(
                 // "Du gibst IHR DIE GOLDENE KUGEL"

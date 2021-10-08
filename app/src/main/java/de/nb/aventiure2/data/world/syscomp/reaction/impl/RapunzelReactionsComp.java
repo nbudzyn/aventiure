@@ -601,7 +601,7 @@ public class RapunzelReactionsComp
                     SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG) <= -FeelingIntensity.MERKLICH) {
                 n.narrate(neuerSatz(
                         "„Unter meinem Bett liegt ein Einbrecher“, hörst du",
-                        world.getDescription(RAPUNZEL).akkK(),
+                        getDescription(RAPUNZEL).akkK(),
                         "sagen").timed(secs(5)));
 
                 loadZauberin().talkingComp().zauberinZaubertVergessenszauber();
@@ -795,7 +795,7 @@ public class RapunzelReactionsComp
                     .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
                     .mitAdvAngabe(
                             new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(
-                                    world.getDescription(BETT_OBEN_IM_ALTEN_TURM))))
+                                    getDescription(BETT_OBEN_IM_ALTEN_TURM))))
                     .mitAdvAngabe(
                             new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
                     .alsSatzMitSubjekt(anaph()))

@@ -192,7 +192,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::rapunzelRettungZusagen),
                         st(this::frageNachRapunzelsMutterSinnvoll,
                                 FRAGEN_NACH
-                                        .mitPraep(world.getDescription(RAPUNZELS_ZAUBERIN)),
+                                        .mitPraep(getDescription(RAPUNZELS_ZAUBERIN)),
                                 this::nachRapunzelsZauberinFragen),
                         st(this::herzAusschuettenMoeglich,
                                 // "Der jungen Frau dein Herz ausschütten"
@@ -1276,7 +1276,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         .timed(secs(10))
                         .dann());
             }
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
+            loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
         } else if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                 && feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 >= -FeelingIntensity.MERKLICH) {

@@ -285,7 +285,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.narrate(neuerSatz("„",
-                    world.getDescription(objectInDenBrunnenGefallen).nomK(),
+                    getDescription(objectInDenBrunnenGefallen).nomK(),
                     "ist mir in den Brunnen hinabgefallen.“")
                     .timed(secs(10)));
             setSchonBegruesstMitSC(true);

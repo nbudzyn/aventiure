@@ -4,7 +4,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
 
 public class AbstractGameObjectFactory
-        implements IWorldLoaderMixin {
+        implements IWorldLoaderMixin, IWorldDescriptionMixin {
     protected final AvDatabase db;
     protected final TimeTaker timeTaker;
     protected final World world;

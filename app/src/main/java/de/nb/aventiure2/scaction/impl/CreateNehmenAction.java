@@ -172,7 +172,7 @@ public class CreateNehmenAction extends AbstractScAction {
         }
 
         final EinzelneSubstantivischePhrase objectDesc =
-                world.getDescription(ausgerupfteBinsen, true);
+                getDescription(ausgerupfteBinsen, true);
         final PraedikatOhneLeerstellen praedikatMitObjekt = AUSRUPFEN.mit(objectDesc);
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {

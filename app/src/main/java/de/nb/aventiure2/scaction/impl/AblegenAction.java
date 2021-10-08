@@ -126,7 +126,7 @@ public class AblegenAction
         return joinToKonstituentenfolge(
                 SENTENCE,
                 getPraedikat()
-                        .mit(world.getDescription(gameObject, true))
+                        .mit(getDescription(gameObject, true))
                         .mitAdvAngabe(getWohinDetail())
                         .getInfinitiv(P2, SG))
                 .joinToString();
@@ -227,7 +227,7 @@ public class AblegenAction
             return;
         }
 
-        final SubstantivischePhrase anaph = world.anaph(gameObject, true);
+        final SubstantivischePhrase anaph = anaph(gameObject, true);
 
         n.narrate(
                 du("setzt",
@@ -343,7 +343,7 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             n.narrate(
                     du(PARAGRAPH, "legst",
-                            world.getDescription(gameObject, false)
+                            getDescription(gameObject, false)
                                     .akkK(),
                             (wohinDetail != null ? " zurück" : " wieder hin"))
                             .timed(secs(5))
@@ -354,7 +354,7 @@ public class AblegenAction
 
         n.narrate(
                 du(PARAGRAPH, "legst",
-                        world.getDescription(gameObject, false).akkK(),
+                        getDescription(gameObject, false).akkK(),
                         (wohinDetail == null ? k("hin") : wohinDetail.getDescription(P2, SG)))
                         .timed(secs(3))
                         .undWartest()

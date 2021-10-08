@@ -12,7 +12,8 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
  * Component for a {@link GameObject}: The game object can take something -
  * or at least react to an offer.
  */
-public abstract class AbstractTakingComp extends AbstractStatelessComponent {
+public abstract class AbstractTakingComp extends AbstractStatelessComponent
+        implements IWorldLoaderMixin, IWorldDescriptionMixin {
     protected Narrator n;
     protected final World world;
 
@@ -30,4 +31,9 @@ public abstract class AbstractTakingComp extends AbstractStatelessComponent {
      */
     public abstract <GIVEN extends IDescribableGO & ILocatableGO>
     SCTakeAction<GIVEN> getAction(GIVEN offered);
+
+    @Override
+    public World getWorld() {
+        return world;
+    }
 }

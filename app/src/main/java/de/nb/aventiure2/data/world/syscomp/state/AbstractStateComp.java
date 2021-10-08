@@ -1,11 +1,12 @@
 package de.nb.aventiure2.data.world.syscomp.state;
 
+import static java.util.Arrays.asList;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
 
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvDateTime;
@@ -21,9 +22,9 @@ import de.nb.aventiure2.data.world.gameobject.*;
  * direkt ändern.
  */
 public abstract class AbstractStateComp<S extends Enum<S>>
-        extends AbstractStatefulComponent<StatePCD> {
+        extends AbstractStatefulComponent<StatePCD>
+        implements IWorldLoaderMixin, IWorldDescriptionMixin {
     private final TimeTaker timeTaker;
-
 
     protected final World world;
 
@@ -57,7 +58,7 @@ public abstract class AbstractStateComp<S extends Enum<S>>
 
     @SafeVarargs
     public final boolean hasState(final S... alternatives) {
-        return hasState(s -> Stream.of(alternatives).anyMatch(s::equals));
+        return hasState(asList(alternatives)::contains);
     }
 
     public final boolean hasState(final Predicate<S> predicate) {
@@ -106,4 +107,9 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     }
 
     public abstract ImmutableList<StateModification<S>> getScStateModificationData();
+
+    @Override
+    public World getWorld() {
+        return world;
+    }
 }

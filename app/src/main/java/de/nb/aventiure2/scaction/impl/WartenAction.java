@@ -1,5 +1,19 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
+import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -22,20 +36,6 @@ import de.nb.aventiure2.german.description.DescriptionUmformulierer;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.VERSTEHT_SICH_VON_SELBST;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WARTEN;
-import static de.nb.aventiure2.scaction.impl.AbstractWartenRastenAction.Counter.WARTEN_ODER_RASTEN_IN_FOLGE;
 
 /**
  * Der Spielercharakter wartet (wach!) auf etwas.
@@ -82,7 +82,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         return joinToKonstituentenfolge(
                 SENTENCE,
                 WARTEN
-                        .mit(world.getDescription(erwartet))
+                        .mit(getDescription(erwartet))
                         .getInfinitiv(P2, SG))
                 .joinToString();
     }
@@ -131,14 +131,14 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         final Kohaerenzrelation kohaerenzrelation = getKohaerenzrelationFuerUmformulierung();
 
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
-            final SubstantivischePhrase anaph = world.anaph(erwartet, false);
+            final SubstantivischePhrase anaph = anaph(erwartet, false);
             n.narrateAlt(secs(5),
                     WARTEN_ODER_RASTEN_IN_FOLGE,
                     du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
             final SubstantivischePhrase anaph =
-                    world.anaph(erwartet, true);
+                    anaph(erwartet, true);
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
                             kohaerenzrelation,

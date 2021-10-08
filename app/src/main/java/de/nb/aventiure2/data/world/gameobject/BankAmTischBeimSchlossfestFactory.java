@@ -128,7 +128,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
 
         // "du stehst vom Tisch auf"
         return du(VerbSubjObj.AUFSTEHEN_VON
-                .mit(world.getDescription(
+                .mit(getDescription(
                         SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST, true)))
                 .undWartest()
                 .dann();

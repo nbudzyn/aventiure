@@ -58,9 +58,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO>
     void narrateTakerAndDo_Sonstiges_Abgelehnt(final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
+        final SubstantivischePhrase rapunzelAnaph = anaph(RAPUNZEL);
 
-        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(given);
         final EinzelneSubstantivischePhrase givenDescAtFirstSight =
                 // "eine goldene Kugel" / "einige Binsen"
                 getDescriptionAtFirstSight(given);
@@ -114,11 +114,11 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
             final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = world.anaph(RAPUNZEL);
-        final SubstantivischePhrase givenAnaph = world.anaph(given);
+        final SubstantivischePhrase rapunzelAnaph = anaph(RAPUNZEL);
+        final SubstantivischePhrase givenAnaph = anaph(given);
 
-        final EinzelneSubstantivischePhrase givenDesc = world.getDescription(given);
-        final EinzelneSubstantivischePhrase givenDescShort = world.getDescription(given, true);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(given);
+        final EinzelneSubstantivischePhrase givenDescShort = getDescription(given, true);
 
         feelingsComp.upgradeFeelingsTowards(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.DEUTLICH);
@@ -171,9 +171,9 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
         world.narrateAndUpgradeScKnownAndAssumedState(given);
 
-        world.loadSC().feelingsComp().upgradeFeelingsTowards(
+        loadSC().feelingsComp().upgradeFeelingsTowards(
                 RAPUNZEL, ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
-        world.loadSC().feelingsComp().requestMoodMin(GLUECKLICH);
+        loadSC().feelingsComp().requestMoodMin(GLUECKLICH);
 
         // Das Gespräch wird nicht beendet!
     }

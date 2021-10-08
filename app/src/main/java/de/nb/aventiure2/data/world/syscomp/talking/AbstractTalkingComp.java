@@ -41,7 +41,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD>
         implements ITalkContext, IConversationable,
 // Mixins
-        IWorldLoaderMixin {
+        IWorldLoaderMixin, IWorldDescriptionMixin {
     private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
 
@@ -278,7 +278,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        return world.anaph(getGameObjectId(), descShortIfKnown);
+        return anaph(getGameObjectId(), descShortIfKnown);
     }
 
     /**
@@ -300,7 +300,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
      *                     kürzere Beschreibung gewählt
      */
     protected final EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return world.getDescription(getGameObjectId(), shortIfKnown);
+        return getDescription(getGameObjectId(), shortIfKnown);
     }
 
     @Override

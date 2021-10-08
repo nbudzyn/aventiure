@@ -1,17 +1,15 @@
 package de.nb.aventiure2.data.world.syscomp.talking;
 
-import androidx.annotation.NonNull;
-
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
-public abstract class AbstractFrageMitAntworten {
+public abstract class AbstractFrageMitAntworten
+        implements IWorldLoaderMixin, IWorldDescriptionMixin {
     protected final Narrator n;
     protected final World world;
     protected final ITalkContext talkContext;
@@ -61,7 +59,7 @@ public abstract class AbstractFrageMitAntworten {
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     private SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        return world.anaph(gameObjectId, descShortIfKnown);
+        return anaph(gameObjectId, descShortIfKnown);
     }
 
     /**
@@ -84,11 +82,11 @@ public abstract class AbstractFrageMitAntworten {
      */
     private EinzelneSubstantivischePhrase getDescription(
             final boolean shortIfKnown) {
-        return world.getDescription(gameObjectId, shortIfKnown);
+        return getDescription(gameObjectId, shortIfKnown);
     }
 
-    @NonNull
-    protected SpielerCharakter loadSC() {
-        return world.loadSC();
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

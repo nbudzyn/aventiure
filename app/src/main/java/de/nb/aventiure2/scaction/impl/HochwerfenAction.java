@@ -126,7 +126,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return GermanStringUtil.capitalize(world.getDescription(object).akkStr()) + " hochwerfen";
+        return GermanStringUtil.capitalize(getDescription(object).akkStr()) + " hochwerfen";
     }
 
     @Override
@@ -143,8 +143,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoVielteilig() {
-        final EinzelneSubstantivischePhrase objectDescLong = world.getDescription(object, false);
-        final EinzelneSubstantivischePhrase objectDescShort = world.getDescription(object, true);
+        final EinzelneSubstantivischePhrase objectDescLong = getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDescShort = getDescription(object, true);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -196,7 +196,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
             return;
         }
 
-        final SubstantivischePhrase anaph = world.anaph(object, false);
+        final SubstantivischePhrase anaph = anaph(object, false);
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             narrateAndDoHochwerfenAuffangen(
@@ -240,7 +240,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
         // Der Frosch ist nicht mehr in Stimmung, Dinge aus dem Brunnen zu holen.
         if (object.is(GOLDENE_KUGEL)) {
-            final EinzelneSubstantivischePhrase objectDesc = world.getDescription(object);
+            final EinzelneSubstantivischePhrase objectDesc = getDescription(object);
 
             narrateAndDoHochwerfenAuffangen(
                     du(PARAGRAPH, "wirfst",
@@ -299,7 +299,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoObjectFaelltSofortInDenBrunnen() {
-        final EinzelneSubstantivischePhrase objectDesc = world.getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDesc = getDescription(object, false);
 
         n.narrate(
                 du(PARAGRAPH, "wirfst",
@@ -321,8 +321,8 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
 
     private void narrateAndDoWiederholung() {
         final IHasStateGO<FroschprinzState> froschprinz = loadRequired(FROSCHPRINZ);
-        final EinzelneSubstantivischePhrase objectDescShort = world.getDescription(object, false);
-        final EinzelneSubstantivischePhrase objectDescLong = world.getDescription(object, true);
+        final EinzelneSubstantivischePhrase objectDescShort = getDescription(object, false);
+        final EinzelneSubstantivischePhrase objectDescLong = getDescription(object, true);
 
         if (counterDao.get(HOCHWERFEN_ACTION_WIEDERHOLUNG) == 0 ||
                 (location.is(IM_WALD_BEIM_BRUNNEN) && !froschprinz.stateComp()
@@ -343,7 +343,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                             "– bei dieser Dunkelheit schon gar nicht" : null;
 
             n.narrate(du("wirfst",
-                    world.getDescription(object).akkK(),
+                    getDescription(object).akkK(),
                     "noch einmal in die Höhe… doch o nein,",
                     objectDescShort.nomK(),
                     FALLEN.getPraesensOhnePartikel(objectDescShort),
@@ -379,7 +379,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                 LANDEN.mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                         location.storingPlaceComp().getLocationMode()
                                 .getWo(false)))
-                        .alsSatzMitSubjekt(world.getDescription(object, true)))
+                        .alsSatzMitSubjekt(getDescription(object, true)))
                 .mitVorfeldSatzglied("übermütig")
                 .timed(secs(5)));
 

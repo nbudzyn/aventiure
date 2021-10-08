@@ -126,35 +126,33 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
         //  du stehst allein zwischen den leeren Bänken und Ständen"
 
 
-        {
-            res.add(
-                    con(IM_WALD_NAHE_DEM_SCHLOSS,
-                            "auf dem Weg",
-                            EAST,
-                            "In den Wald gehen",
-                            mins(10),
-                            du("folgst",
-                                    "einem Weg in den Wald.",
-                                    "Nach ein paar Schritten führt linker Hand ein schmaler Pfad",
-                                    "einen Hügel hinauf"),
-                            neuerSatz("Jeder kennt die Geschichten, die man "
-                                    + "sich über den Wald erzählt: Räuber sind noch "
-                                    + "die kleinste Gefahr. Aber das schreckt dich ganz "
-                                    + "offenbar nicht und du folgst dem erstbesten "
-                                    + "Weg hinein in den dunklen Wald. Schon nach ein paar "
-                                    + "Schritten "
-                                    + "führt linker Hand ein schmaler, dunkler Pfad einen Hügel "
-                                    + "hinauf")
-                                    .timed(mins(12)),
-                            du("läufst",
-                                    "wieder in den dunklen Wald")
-                                    .mitVorfeldSatzglied("wieder")
-                                    .dann(),
-                            du("läufst",
-                                    "wieder in den dunklen Wald")
-                                    .mitVorfeldSatzglied("wieder")
-                                    .dann()));
-        }
+        res.add(
+                con(IM_WALD_NAHE_DEM_SCHLOSS,
+                        "auf dem Weg",
+                        EAST,
+                        "In den Wald gehen",
+                        mins(10),
+                        du("folgst",
+                                "einem Weg in den Wald.",
+                                "Nach ein paar Schritten führt linker Hand ein schmaler Pfad",
+                                "einen Hügel hinauf"),
+                        neuerSatz("Jeder kennt die Geschichten, die man "
+                                + "sich über den Wald erzählt: Räuber sind noch "
+                                + "die kleinste Gefahr. Aber das schreckt dich ganz "
+                                + "offenbar nicht und du folgst dem erstbesten "
+                                + "Weg hinein in den dunklen Wald. Schon nach ein paar "
+                                + "Schritten "
+                                + "führt linker Hand ein schmaler, dunkler Pfad einen Hügel "
+                                + "hinauf")
+                                .timed(mins(12)),
+                        du("läufst",
+                                "wieder in den dunklen Wald")
+                                .mitVorfeldSatzglied("wieder")
+                                .dann(),
+                        du("läufst",
+                                "wieder in den dunklen Wald")
+                                .mitVorfeldSatzglied("wieder")
+                                .dann()));
 
         return res.build();
     }
@@ -223,5 +221,10 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                 .timed(mins(2))
                 .undWartest()
                 .dann();
+    }
+
+    @NonNull
+    private IHasStateGO<SchlossfestState> loadSchlossfest() {
+        return loadRequired(SCHLOSSFEST);
     }
 }

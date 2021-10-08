@@ -40,7 +40,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
  * eines {@link de.nb.aventiure2.data.world.syscomp.movement.IMovingGO} zu beschreiben
  */
 public class SimpleMovementNarrator implements IMovementNarrator,
-        IWorldLoaderMixin {
+        IWorldLoaderMixin, IWorldDescriptionMixin {
     protected final GameObjectId gameObjectId;
     protected final Narrator n;
     protected final World world;
@@ -558,7 +558,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
     protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
         final IDescribableGO describableGO = load(getGameObjectId());
 
-        return world.anaph(describableGO, descShortIfKnown);
+        return anaph(describableGO, descShortIfKnown);
     }
 
     /**
@@ -580,7 +580,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
      *                     kürzere Beschreibung gewählt
      */
     private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return world.getDescription(gameObjectId, shortIfKnown);
+        return getDescription(gameObjectId, shortIfKnown);
     }
 
     private GameObjectId getGameObjectId() {
