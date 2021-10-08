@@ -1,6 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KOERBE;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.FLECHTEN;
 
 import androidx.annotation.Nullable;
 
@@ -10,10 +17,12 @@ import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 /**
  * Reaktionen der Topf-Verkäuferin - z.B. darauf, dass der Markt öffnet oder schließt.
@@ -55,37 +64,55 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         }
     }
 
-    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO from,
-                                       final ILocationGO to) {
+    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
+        if (!world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())
+                // SC und Korbflechterin sind nicht am gleichen Ort
+                || isVorScVerborgen()
+                || LocationSystem.isOrHasRecursiveLocation(scTo, scFrom)
+                || LocationSystem.isOrHasRecursiveLocation(scFrom, scTo)
+            // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
+            // wieder vom Tisch herabgestiegen o.Ä.
+        ) {
+            // Die Korbflechterin nicht (erneut) beschreiben.
+            return;
+        }
 
-        // FIXME  eine alte Frau flicht Körbe
+        final AltDescriptionsBuilder alt = alt();
 
-        // FIXME "Die Frau / Alte / Korbflechterin ist fleißig dabei, einen Korb zu flechten"
+        alt.add(FLECHTEN.mit(np(INDEF, KOERBE)).alsSatzMitSubjekt(anaph(false)));
 
-        // FIXME "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
+        if (loadSC().memoryComp().isKnown(KORBFLECHTERIN)) {
+            alt.add(neuerSatz(anaph(false).nomK(),
+                    "ist fleißig dabei, einen Korb zu flechten"));
+        }
 
-        // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
-        //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
-        //  Seil, das legt sie dann immer wieder im Kreis, bis daraus ein großes Korb entsteht.
+        n.narrateAlt(alt, secs(30));
 
-        // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
-        //  Gespräch
-        //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
-        //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
-        //  ("du schaust ihr genau dabei zu. So schwer sieht
-        //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann
-        //   nimmt man
-        //   wieder...  Mh-hm,  gut zu wissen!")
-
-        // FIXME "Du siehst der alten Frau weiter bei der Arbeit zu."
-        //  "Es ist ein Freude, der fleißigen Alten zuzusehen."
-        //  "Eine langwierige Arbeit!"
-
-        // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt"
-
-        // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
-
+        world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
     }
+
+    // FIXME (?) "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
+
+    // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
+    //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
+    //  Seil, das legt sie dann immer wieder im Kreis, bis daraus ein großes Korb entsteht.
+
+    // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
+    //  Gespräch
+    //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
+    //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
+    //  ("du schaust ihr genau dabei zu. So schwer sieht
+    //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann
+    //   nimmt man
+    //   wieder...  Mh-hm,  gut zu wissen!")
+
+    // FIXME "Du siehst der alten Frau weiter bei der Arbeit zu."
+    //  "Es ist ein Freude, der fleißigen Alten zuzusehen."
+    //  "Eine langwierige Arbeit!"
+
+    // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt"
+
+    // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
 
     @Override
     public void onTimePassed(final Change<AvDateTime> change) {

@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 /**
  * Reaktionen der Mus-Verkäuferin - z.B. darauf, dass der Markt öffnet oder schließt.
  */
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -81,7 +82,7 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         }
 
         if (counterDao.get(BESCHREIBUNG_MUS_VERKAEUFERIN) == 1) {
-            n.narrate(neuerSatz("„Mus feil“, ruft", anaph().nomK())
+            n.narrate(neuerSatz("„Mus feil“, ruft", anaph(false).nomK())
                     .timed(NO_TIME)
                     .schonLaenger()
                     .withCounterIdIncrementedIfTextIsNarrated(BESCHREIBUNG_MUS_VERKAEUFERIN));
@@ -90,15 +91,16 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         } else {
             final AltDescriptionsBuilder alt = alt();
             // "Die dicke Bäuerin verkauft Mus"
-            alt.add(VERKAUFEN.mit(MUS).alsSatzMitSubjekt(anaph()));
+            alt.add(VERKAUFEN.mit(MUS).alsSatzMitSubjekt(anaph(false)));
 
             if (loadSC().memoryComp().isKnown(MUS_VERKAEUFERIN)) {
-                alt.add(neuerSatz("der Duft von süßem Mus steigt dir in die Nase", PARAGRAPH)
-                        .schonLaenger());
-                alt.add(neuerSatz("der Geruch von süßem Mus kitzelt dir die Nase", PARAGRAPH)
-                        .schonLaenger());
-                alt.add(neuerSatz("wieder steigt dir der Geruch von dem süßem Mus",
-                        "in die Nase", PARAGRAPH).schonLaenger());
+                alt.add(
+                        neuerSatz("der Duft von süßem Mus steigt dir in die Nase", PARAGRAPH)
+                                .schonLaenger(),
+                        neuerSatz("der Geruch von süßem Mus kitzelt dir die Nase", PARAGRAPH)
+                                .schonLaenger(),
+                        neuerSatz("wieder steigt dir der Geruch von dem süßem Mus",
+                                "in die Nase", PARAGRAPH).schonLaenger());
             }
 
             n.narrateAlt(alt, NO_TIME, BESCHREIBUNG_MUS_VERKAEUFERIN);

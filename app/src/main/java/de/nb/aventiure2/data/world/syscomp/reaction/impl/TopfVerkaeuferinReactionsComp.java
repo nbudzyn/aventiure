@@ -1,6 +1,9 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 import androidx.annotation.Nullable;
 
@@ -10,14 +13,17 @@ import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 /**
  * Reaktionen der Topf-Verkäuferin - z.B. darauf, dass der Markt öffnet oder schließt.
  */
+@SuppressWarnings("UnnecessaryReturnStatement")
 public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
     public TopfVerkaeuferinReactionsComp(final CounterDao counterDao,
@@ -52,21 +58,35 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
         }
     }
 
-    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO from,
-                                       final ILocationGO to) {
+    private void onSCEnter_Bauernmarkt(@Nullable final ILocationGO scFrom, final ILocationGO scTo) {
+        if (!world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())
+                // SC und Topf-Verkäuferin sind nicht am gleichen Ort
+                || isVorScVerborgen()
+                || LocationSystem.isOrHasRecursiveLocation(scTo, scFrom)
+                || LocationSystem.isOrHasRecursiveLocation(scFrom, scTo)
+            // Der Spieler ist nur im selben Raum auf einen Tisch gestiegen,
+            // wieder vom Tisch herabgestiegen o.Ä.
+        ) {
+            // Die Topf-Verkäuferin nicht (erneut) beschreiben.
+            return;
+        }
 
-        // FIXME eine schöne junge Frau hat Töpfe und irdenes
-        //  Geschirr vor
-        //  sich stehen
-        // FIXME eine junge Frau mit fein geschnittenem Gesicht
-        //   hat Töpfe und irdenes Geschirr vor sich stehen
+        final AltDescriptionsBuilder alt = alt();
 
-        // FIXME  - "Die schöne junge Frau klappert mit ihren Töpfen"
-        // FIXME "Die junge Frau mit den feinen Gesichtszügen hat wohl gerade ein Schüsselchen /
-        //  Tellerchen / irdenes
-        //  Schälchen verkauft"
+        alt.add(neuerSatz(anaph(false).nomK()
+                , "hat Töpfe und irdenes Geschirr vor sich stehen").schonLaenger());
 
-        // FIXME Die schöne junge Frau sortiert ihre irdenen Näpfe und Töpfe.
+        if (loadSC().memoryComp().isKnown(TOPF_VERKAEUFERIN)) {
+            alt.add(
+                    neuerSatz(anaph(false).nomK(), "klappert mit ihren Töpfen"),
+                    neuerSatz(anaph(false).nomK(), "hat wohl gerade ein Schüsselchen",
+                            "verkauft"),
+                    neuerSatz(anaph().nomK(), "sortiert ihre irdenen Näpfe und Töpfe"));
+        }
+
+        n.narrateAlt(alt, secs(30));
+
+        world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
     }
 
     @Override

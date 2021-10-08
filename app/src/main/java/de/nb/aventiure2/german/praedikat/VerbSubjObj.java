@@ -57,6 +57,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     FINDEN("finden", AKK,
             "finde", "findest", "findet", "findet",
             Perfektbildung.HABEN, "gefunden"),
+    FLECHTEN("flechten", AKK, "flechte", "flichst", "flicht",
+            "flechtet", Perfektbildung.HABEN, "geflochten"),
     GUCKEN("gucken", IN_AKK, "gucke", "guckst", "guckt", "guckt",
             Perfektbildung.HABEN, "geguckt"),
     HABEN(HabenUtil.VERB, AKK),

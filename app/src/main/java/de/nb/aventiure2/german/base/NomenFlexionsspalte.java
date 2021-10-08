@@ -82,6 +82,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     KINN(N),
     KLAUBHOLZ(N),
     KOENIGSSOHN(M, "Königssohn"),
+    KOERBE(PL_MFN, "Körbe", "Körben"),
     KORBFLECHTERIN(F),
     KRAFT(F),
     KUEHLE(N, "Kühle", "Kühlen"),
