@@ -7,7 +7,6 @@ import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
@@ -112,7 +111,8 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                 .undWartest()
                 ),
 
-                conAltDesc(IM_WALD_BEIM_BRUNNEN, "auf dem breiten Weg tiefer in den Wald",
+                SpatialConnection.conAltDescTimed(IM_WALD_BEIM_BRUNNEN,
+                        "auf dem breiten Weg tiefer in den Wald",
                         EAST, this::getActionNameTo_ImWaldBeimBrunnen, mins(3),
                         this::getDescTo_ImWaldBeimBrunnen));
     }

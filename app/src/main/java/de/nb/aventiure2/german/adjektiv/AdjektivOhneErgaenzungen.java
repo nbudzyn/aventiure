@@ -37,6 +37,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     // FIXME Hat man Partizipien II, kann man auch Perfekt bilden!
     ABGEKUEHLT("abgekühlt"),
     ALLMAEHLICH("allmählich"),
+    ALT,
     ANBRECHEND,
     ANDERS("anders", "ander"),
     ANGENEHM,

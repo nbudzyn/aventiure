@@ -8,7 +8,7 @@ import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
-import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDesc;
+import static de.nb.aventiure2.data.world.base.SpatialConnection.conAltDescTimed;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BETRUEBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
@@ -107,12 +107,12 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     @Override
     public List<SpatialConnection> getConnections() {
         return ImmutableList.of(
-                conAltDesc(DRAUSSEN_VOR_DEM_SCHLOSS,
+                conAltDescTimed(DRAUSSEN_VOR_DEM_SCHLOSS,
                         "auf dem Weg aus dem Wald",
                         WEST, "Den Wald verlassen und in den Schlossgarten gehen",
                         mins(10),
                         this::altDescTo_DraussenVorDemSchloss),
-                conAltDesc(VOR_DEM_ALTEN_TURM,
+                SpatialConnection.conAltDescTimed(VOR_DEM_ALTEN_TURM,
                         "auf dem schmalen Pfad den Hügel hinauf",
                         NORTH, this::getActionNameTo_VorDemAltenTurm,
                         mins(25),
@@ -148,7 +148,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                 res = ImmutableList.of(getDescTo_DraussenVorDemSchloss_FestVerwuestet());
                 break;
             case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN:
-                res = altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeoeffnet();
+                res = altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeOffen();
                 break;
             case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN:
                 res = altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeschlossen();
@@ -272,7 +272,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
     }
 
     private ImmutableCollection<TimedDescription<?>>
-    altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeGeoeffnet() {
+    altDescTo_DraussenVorDemSchloss_GerichtetMarktstaendeOffen() {
         final AvTimeSpan wegZeit = mins(10);
 
         @Nullable final SchlossfestState assumedSchlossfestState = getAssumedSchlossfestState();

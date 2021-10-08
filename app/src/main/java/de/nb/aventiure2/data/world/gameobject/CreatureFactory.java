@@ -1,5 +1,24 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DICK;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINFACH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GEKLEIDET;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAEUERIN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAUERSFRAU;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MANN;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,11 +61,14 @@ import de.nb.aventiure2.data.world.syscomp.movement.MovementComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.IResponder;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.FroschprinzReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.KorbflechterinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.LobebauerReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.MusVerkaeuferinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinMovementNarrator;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelsZauberinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp;
+import de.nb.aventiure2.data.world.syscomp.reaction.impl.TopfVerkaeuferinReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
@@ -61,20 +83,9 @@ import de.nb.aventiure2.data.world.syscomp.talking.impl.FroschprinzTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.LobebauerTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelsZauberinTalkingComp;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-
-import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINFACH;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GEKLEIDET;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MANN;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 /**
  * A factory for special {@link GameObject}s: Creatures.
@@ -151,6 +162,61 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
         return new SimpleTalkingReactionsCreature<>(LOBEBAUER,
                 descriptionComp, locationComp, talkingComp, reactionsComp);
+    }
+
+    GameObject createMusVerkaeuferin() {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(MUS_VERKAEUFERIN,
+                        np(INDEF, DICK, BAEUERIN, MUS_VERKAEUFERIN),
+                        np(DICK, BAEUERIN, MUS_VERKAEUFERIN),
+                        np(BAUERSFRAU, MUS_VERKAEUFERIN));
+        final LocationComp locationComp =
+                new LocationComp(MUS_VERKAEUFERIN, db, world, null, BAUERNMARKT,
+                        false);
+        final MusVerkaeuferinReactionsComp reactionsComp =
+                new MusVerkaeuferinReactionsComp(db.counterDao(), n, world);
+
+        return new SimpleReactionsCreature(MUS_VERKAEUFERIN,
+                descriptionComp, locationComp, reactionsComp);
+    }
+
+    GameObject createTopfVerkaeuferin() {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(TOPF_VERKAEUFERIN,
+                        np(F, INDEF,
+                                "junge Frau mit feinen Gesichtszügen",
+                                "jungen Frau mit feinen Gesichtszügen",
+                                TOPF_VERKAEUFERIN),
+                        np(new ZweiAdjPhrOhneLeerstellen(
+                                        SCHOEN,
+                                        false,
+                                        JUNG),
+                                FRAU, TOPF_VERKAEUFERIN),
+                        np(SCHOEN, FRAU, TOPF_VERKAEUFERIN));
+        final LocationComp locationComp =
+                new LocationComp(TOPF_VERKAEUFERIN, db, world, null, BAUERNMARKT,
+                        false);
+        final TopfVerkaeuferinReactionsComp reactionsComp =
+                new TopfVerkaeuferinReactionsComp(db.counterDao(), n, world);
+
+        return new SimpleReactionsCreature(TOPF_VERKAEUFERIN,
+                descriptionComp, locationComp, reactionsComp);
+    }
+
+    GameObject createKorbflechterin() {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(KORBFLECHTERIN,
+                        np(INDEF, ALT, FRAU, KORBFLECHTERIN),
+                        np(ALT, NomenFlexionsspalte.KORBFLECHTERIN, KORBFLECHTERIN),
+                        np(ALT, FRAU, KORBFLECHTERIN));
+        final LocationComp locationComp =
+                new LocationComp(KORBFLECHTERIN, db, world, null, BAUERNMARKT,
+                        false);
+        final KorbflechterinReactionsComp reactionsComp =
+                new KorbflechterinReactionsComp(db.counterDao(), n, world);
+
+        return new SimpleReactionsCreature(KORBFLECHTERIN,
+                descriptionComp, locationComp, reactionsComp);
     }
 
     GameObject createRapunzel() {
@@ -309,21 +375,40 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
     }
 
     private static class SimpleTalkingReactionsCreature<TALKING_COMP extends AbstractTalkingComp>
-            extends SimpleObject
-            implements ILivingBeingGO, ITalkerGO<TALKING_COMP>, IResponder {
-        private final AliveComp aliveComp;
+            extends SimpleReactionsCreature
+            implements ITalkerGO<TALKING_COMP> {
         private final TALKING_COMP talkingComp;
-        private final AbstractReactionsComp reactionsComp;
 
         SimpleTalkingReactionsCreature(
                 final GameObjectId id,
                 final AbstractDescriptionComp descriptionComp, final LocationComp locationComp,
                 final TALKING_COMP talkingComp,
                 final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, reactionsComp);
+            // Jede Komponente muss registiert werden!
+            this.talkingComp = addComponent(talkingComp);
+        }
+
+        @NonNull
+        @Override
+        public TALKING_COMP talkingComp() {
+            return talkingComp;
+        }
+    }
+
+    private static class SimpleReactionsCreature
+            extends SimpleObject
+            implements ILivingBeingGO, IResponder {
+        private final AliveComp aliveComp;
+        private final AbstractReactionsComp reactionsComp;
+
+        SimpleReactionsCreature(
+                final GameObjectId id,
+                final AbstractDescriptionComp descriptionComp, final LocationComp locationComp,
+                final AbstractReactionsComp reactionsComp) {
             super(id, descriptionComp, locationComp);
             // Jede Komponente muss registiert werden!
             aliveComp = addComponent(new AliveComp(id));
-            this.talkingComp = addComponent(talkingComp);
             this.reactionsComp = addComponent(reactionsComp);
         }
 
@@ -337,12 +422,6 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         @Override
         public AbstractReactionsComp reactionsComp() {
             return reactionsComp;
-        }
-
-        @NonNull
-        @Override
-        public TALKING_COMP talkingComp() {
-            return talkingComp;
         }
     }
 

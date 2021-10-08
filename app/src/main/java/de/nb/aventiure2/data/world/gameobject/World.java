@@ -183,13 +183,16 @@ public class World {
 
     // CREATURES
     public static final GameObjectId SCHLOSSWACHE = new GameObjectId(20_000);
-    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_001);
+    public static final GameObjectId MUS_VERKAEUFERIN = new GameObjectId(20_010);
+    public static final GameObjectId TOPF_VERKAEUFERIN = new GameObjectId(20_011);
+    public static final GameObjectId KORBFLECHTERIN = new GameObjectId(20_012);
+    public static final GameObjectId FROSCHPRINZ = new GameObjectId(20_021);
     /**
      * Der "Lobebauer" lobt den SC, nachdem er den Froschprinzen erlöst hat
      */
-    public static final GameObjectId LOBEBAUER = new GameObjectId(20_002);
-    public static final GameObjectId RAPUNZEL = new GameObjectId(20_010);
-    public static final GameObjectId RAPUNZELS_ZAUBERIN = new GameObjectId(20_011);
+    public static final GameObjectId LOBEBAUER = new GameObjectId(20_022);
+    public static final GameObjectId RAPUNZEL = new GameObjectId(20_030);
+    public static final GameObjectId RAPUNZELS_ZAUBERIN = new GameObjectId(20_031);
 
     // RÄUME
     public static final GameObjectId SCHLOSS_VORHALLE = new GameObjectId(30_000);
@@ -427,6 +430,9 @@ public class World {
                         EnumRange.of(Temperatur.KLIRREND_KALT, Temperatur.RECHT_HEISS),
                         connection.createWaldwildnisHinterDemBrunnen()),
                 creature.createSchlosswache(),
+                creature.createMusVerkaeuferin(),
+                creature.createTopfVerkaeuferin(),
+                creature.createKorbflechterin(),
                 creature.createFroschprinz(),
                 creature.createLobebauer(),
                 creature.createRapunzel(),

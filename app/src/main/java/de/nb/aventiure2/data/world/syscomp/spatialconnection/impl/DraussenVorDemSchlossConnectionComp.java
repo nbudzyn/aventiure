@@ -9,12 +9,20 @@ import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDire
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.WEST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.DraussenVorDemSchlossConnectionComp.Counter.SCHLOSS_VORHALLE_FEST_ZUMINDEST_BEGONNEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUF_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.GEHEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -24,6 +32,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Known;
@@ -33,7 +42,12 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
+import de.nb.aventiure2.german.base.NomenFlexionsspalte;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -66,65 +80,27 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 
-        res.add(
-                con(SCHLOSS_VORHALLE,
-                        "auf der Treppe",
-                        WEST, "Das Schloss betreten",
-                        secs(90),
-                        this::getDescTo_SchlossVorhalle),
+        res.add(con(SCHLOSS_VORHALLE,
+                "auf der Treppe",
+                WEST, "Das Schloss betreten",
+                secs(90),
+                this::getDescTo_SchlossVorhalle),
                 conNichtSC(
                         ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         "zwischen den Buchsbaumhecken",
                         NORTH,
                         secs(90)));
 
-        // FIXME Je nach Status: Markt!
-
-        //FIXME einer (alten? armen?) Frau?
-        // - "Auf den kleinen Markt gehen" / "Bauernmarkt" / "zu den Marktständen"
-        // - "Auf dem kleinen Markt  / Dort sitzen ein paar einfache Leute und halten ihre
-        // Waren feil:
-        // Eine dicke Bäuerin verkauft Mus, eine schöne junge Frau hat Töpfe und irdenes
-        // Geschirr vor
-        // sich stehen und eine alte Frau flicht Körbe.
-
-        // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
-        //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
-        //  Seil, das legt sie dann immer wieder im Kreis, bis daraus ein großes Korb entsteht.
-
-
-        // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
-        //  Gespräch
-        //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
-        //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
-        //  ("du schaust ihr genau dabei zu. So schwer sieht
-        //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann
-        //   nimmt man
-        //   wieder...  Mh-hm,  gut zu wissen!")
-
-        // FIXME "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
-
-        // FIXME "Du siehst der alten Frau weiter bei der Arbeit zu."
-        //  "Es ist ein Freude, der fleißigen Alten zuzusehen."
-        //  "Eine langwierige Arbeit!"
-
-        // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt: "Mus feil", ruft
-        //  die
-        //  dicke Bauersfrau. Die schöne junge Frau sortiert ihre irdenen Näpfe und Töpfe."
-
-        // FIXME "Der Geruch von dem süßen Mus kitzelt dir die Nase"
-        //  "Wieder steigt dir der Geruch von dem süßen Mus in die Nase" (Hunger?!)
-
-        // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
-
-        // FIXME "Die schöne junge Frau hat wohl gerade ein Schüsselchen / Tellerchen / irdenes
-        //  Schälchen
-        //  verkauft"
-
-        // FIXME "Auch die dicke Bäuerin ist nicht mehr da. Die Menschen haben sich
-        //  verlaufen, und
-        //  du stehst allein zwischen den leeren Bänken und Ständen"
-
+        if (loadSchlossfest().stateComp()
+                .hasState(NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN,
+                        NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN)) {
+            res.add(SpatialConnection.conAltDescTimed(BAUERNMARKT,
+                    "kurz vor dem Markt",
+                    NORTH,
+                    this::getActionNameTo_Bauernmarkt,
+                    mins(3),
+                    this::altDescTo_Bauernmarkt));
+        }
 
         res.add(
                 con(IM_WALD_NAHE_DEM_SCHLOSS,
@@ -221,6 +197,94 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                 .timed(mins(2))
                 .undWartest()
                 .dann();
+    }
+
+    private String getActionNameTo_Bauernmarkt() {
+        if (loadSchlossfest().stateComp().hasState(
+                NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN)) {
+            return "Auf den kleinen Markt gehen";
+        }
+        return "Zu den Markständen gehen";
+    }
+
+    private ImmutableList<TimedDescription<?>> altDescTo_Bauernmarkt(
+            final Known known,
+            final Lichtverhaeltnisse lichtverhaeltnisse) {
+        final ImmutableList.Builder<TimedDescription<?>> res = ImmutableList.builder();
+
+        switch (loadSchlossfest().stateComp().getState()) {
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN:
+                res.addAll(TimedDescription.toTimed(altDescTo_Bauernmarkt_Offen(), mins(5)));
+                break;
+            case NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN:
+                res.addAll(altDescTo_Bauernmarkt_Geschlossen());
+                break;
+            default:
+                throw new IllegalStateException("Unerwarteter Zustand: "
+                        + loadSchlossfest().stateComp().getState()
+                        + ", erwartet: Markt");
+        }
+
+        loadSC().mentalModelComp().setAssumedStateToActual(SCHLOSSFEST);
+
+        return res.build();
+    }
+
+    private ImmutableList<AbstractDescription<?>> altDescTo_Bauernmarkt_Offen() {
+        if (standbesitzerKnown()) {
+            return ImmutableList.of(
+                    du("siehst",
+                            "dich noch ein wenig auf dem Bauernmarkt um")
+                            .dann(),
+                    du("schaust",
+                            "noch einmal kurz auf dem kleinen Markt vorbei")
+                            .dann(),
+                    du(GEHEN
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder"))
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher(
+                                    AUF_AKK.mit(NomenFlexionsspalte.BAUERNMARKT))))
+                            .undWartest()
+            );
+        }
+
+        return ImmutableList.of(
+                neuerSatz(SENTENCE, "Auf dem kleinen Markt sitzen ein paar einfache",
+                        "Leute und halten ihre Waren feil")
+                        .schonLaenger());
+    }
+
+    private ImmutableCollection<TimedDescription<?>> altDescTo_Bauernmarkt_Geschlossen() {
+        final AvTimeSpan wegZeit = mins(5);
+
+        if (standbesitzerKnown()) {
+            return ImmutableList.of(
+                    du(PARAGRAPH, "betrittst", "kurz den kleinen Markt; er liegt wie",
+                            "ausgestorben da")
+                            .schonLaenger()
+                            .timed(wegZeit),
+                    du("gehst", "kurz einsam zwischen den verlassenen Markständen",
+                            "umher")
+                            .mitVorfeldSatzglied("kurz")
+                            .timed(wegZeit)
+            );
+        }
+
+        return AltDescriptionsBuilder.altNeueSaetze(
+                PARAGRAPH, "Die Marktstände liegen verlassen",
+                // "im Mondlicht"
+                mapToList(
+                        loadWetter().wetterComp().altLichtInDemEtwasLiegt(
+                                timeTaker.now().plus(wegZeit),
+                                true
+                        ),
+                        IN_DAT::mit)
+        ).timed(wegZeit).build();
+    }
+
+    private boolean standbesitzerKnown() {
+        return loadSC().memoryComp().isKnown(MUS_VERKAEUFERIN)
+                || loadSC().memoryComp().isKnown(TOPF_VERKAEUFERIN)
+                || loadSC().memoryComp().isKnown(KORBFLECHTERIN);
     }
 
     @NonNull

@@ -1,5 +1,12 @@
 package de.nb.aventiure2.data.world.base;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
+import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
+import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
+import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataNichtSC;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,13 +16,6 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
-import static de.nb.aventiure2.data.world.base.Known.UNKNOWN;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
-import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
-import static de.nb.aventiure2.data.world.base.SpatialConnectionData.conDataNichtSC;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Die Verbindung von einem {@link de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO}
@@ -746,7 +746,7 @@ public class SpatialConnection {
         return con(to, wo, null, actionName, standardDuration, scMoveTimedDescriptionProvider);
     }
 
-    public static SpatialConnection conAltDesc(
+    public static SpatialConnection conAltDescTimed(
             final GameObjectId to,
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
@@ -754,7 +754,7 @@ public class SpatialConnection {
             final AvTimeSpan standardDuration,
             final SpatialConnectionData.ScMoveAltTimedDescriptionProvider
                     scMoveAltTimedDescriptionProvider) {
-        return conAltDesc(to, wo, cardinalDirection, () -> actionName, standardDuration,
+        return conAltDescTimed(to, wo, cardinalDirection, () -> actionName, standardDuration,
                 scMoveAltTimedDescriptionProvider);
     }
 
@@ -789,7 +789,7 @@ public class SpatialConnection {
             final AvTimeSpan standardDuration,
             final SpatialConnectionData.ScMoveTimedDescriptionProvider
                     scMoveTimedDescriptionProvider) {
-        return conAltDesc(to, wo, cardinalDirection, actionNameSupplier, standardDuration,
+        return conAltDescTimed(to, wo, cardinalDirection, actionNameSupplier, standardDuration,
                 scMoveTimedDescriptionProvider);
     }
 
@@ -799,10 +799,30 @@ public class SpatialConnection {
             @Nullable final CardinalDirection cardinalDirection,
             final Supplier<String> actionNameSupplier,
             final AvTimeSpan standardDuration,
+            final SpatialConnectionData.ScMoveAltDescriptionProvider
+                    scMoveAltDescriptionProvider) {
+        return con(to,
+                SpatialConnectionData.conDataAltDesc(
+                        wo,
+                        cardinalDirection,
+                        requireNonNull(actionNameSupplier, "action name supplier expected to be "
+                                + "non-null. Use conNichtSC() to create a SpatialConnection "
+                                + "the SC cannot use"),
+                        standardDuration,
+                        scMoveAltDescriptionProvider
+                ));
+    }
+
+    public static SpatialConnection conAltDescTimed(
+            final GameObjectId to,
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            final Supplier<String> actionNameSupplier,
+            final AvTimeSpan standardDuration,
             final SpatialConnectionData.ScMoveAltTimedDescriptionProvider
                     scMoveAltTimedDescriptionProvider) {
         return con(to,
-                SpatialConnectionData.conDataAltDesc(
+                SpatialConnectionData.conDataAltDescTimed(
                         wo,
                         cardinalDirection,
                         requireNonNull(actionNameSupplier, "action name supplier expected to be "
@@ -812,7 +832,6 @@ public class SpatialConnection {
                         scMoveAltTimedDescriptionProvider
                 ));
     }
-
 
     /**
      * Erzeugt eine SpatialConnection, die der SC niemals benutzen kann. Damit können z.B.

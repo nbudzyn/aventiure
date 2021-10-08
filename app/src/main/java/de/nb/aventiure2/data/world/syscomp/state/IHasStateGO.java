@@ -10,5 +10,5 @@ import de.nb.aventiure2.data.world.base.IGameObject;
  */
 public interface IHasStateGO<S extends Enum<S>> extends IGameObject {
     @Nonnull
-    public AbstractStateComp<S> stateComp();
+    AbstractStateComp<S> stateComp();
 }

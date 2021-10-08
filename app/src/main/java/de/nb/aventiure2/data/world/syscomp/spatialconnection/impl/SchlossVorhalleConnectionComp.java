@@ -104,7 +104,7 @@ public class SchlossVorhalleConnectionComp extends AbstractSpatialConnectionComp
     @NonNull
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
-        res.add(SpatialConnection.conAltDesc(DRAUSSEN_VOR_DEM_SCHLOSS,
+        res.add(SpatialConnection.conAltDescTimed(DRAUSSEN_VOR_DEM_SCHLOSS,
                 "auf der Treppe",
                 EAST, this::getActionNameTo_DraussenVorDemSchloss,
                 secs(90),

@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.base;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,8 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 public class SpatialConnectionData {
     /**
@@ -112,12 +113,12 @@ public class SpatialConnectionData {
                 scMoveTimedDescriptionProvider);
     }
 
-    public static SpatialConnectionData conDataAltDesc(
+    public static SpatialConnectionData conDataAltDescTimed(
             final String wo,
             final String actionName,
             final AvTimeSpan standardDuration,
             final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
-        return conDataAltDesc(wo, null, actionName, standardDuration,
+        return conDataAltDescTimed(wo, null, actionName, standardDuration,
                 scMoveAltTimedDescriptionProvider);
     }
 
@@ -132,13 +133,13 @@ public class SpatialConnectionData {
     }
 
     @SuppressWarnings("SameParameterValue")
-    private static SpatialConnectionData conDataAltDesc(
+    private static SpatialConnectionData conDataAltDescTimed(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             final String actionName,
             final AvTimeSpan standardDuration,
             final ScMoveAltTimedDescriptionProvider scMoveAltTimedDescriptionProvider) {
-        return conDataAltDesc(wo, cardinalDirection, () -> actionName, standardDuration,
+        return conDataAltDescTimed(wo, cardinalDirection, () -> actionName, standardDuration,
                 scMoveAltTimedDescriptionProvider);
     }
 
@@ -186,7 +187,7 @@ public class SpatialConnectionData {
             @Nullable final Supplier<String> actionNameProvider,
             final AvTimeSpan standardDuration,
             @Nullable final ScMoveTimedDescriptionProvider scMoveTimedDescriptionProvider) {
-        return conDataAltDesc(
+        return conDataAltDescTimed(
                 wo,
                 cardinalDirection, actionNameProvider,
                 standardDuration,
@@ -195,6 +196,20 @@ public class SpatialConnectionData {
     }
 
     static SpatialConnectionData conDataAltDesc(
+            final String wo,
+            @Nullable final CardinalDirection cardinalDirection,
+            @Nullable final Supplier<String> actionNameProvider,
+            final AvTimeSpan standardDuration,
+            @Nullable final ScMoveAltDescriptionProvider scMoveDescriptionProvider) {
+        return conDataAltDescTimed(wo, cardinalDirection, actionNameProvider, standardDuration,
+                scMoveDescriptionProvider == null ? null :
+                        (Known k, Lichtverhaeltnisse l) ->
+                                scMoveDescriptionProvider.altScMoveDescriptions(k, l).stream()
+                                        .map(d -> d.timed(standardDuration))
+                                        .collect(toImmutableSet()));
+    }
+
+    static SpatialConnectionData conDataAltDescTimed(
             final String wo,
             @Nullable final CardinalDirection cardinalDirection,
             @Nullable final Supplier<String> actionNameProvider,
@@ -285,6 +300,13 @@ public class SpatialConnectionData {
         TimedDescription<?> getScMoveTimedDescription(
                 Known newLocationKnown,
                 Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
+    }
+
+    @FunctionalInterface
+    public interface ScMoveAltDescriptionProvider {
+        ImmutableCollection<AbstractDescription<?>> altScMoveDescriptions(
+                final Known newLocationKnown,
+                final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
     }
 
     @FunctionalInterface
