@@ -187,7 +187,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoErstesMal() {
-        final IHasStateGO<FroschprinzState> froschprinz = world.loadRequired(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = loadRequired(FROSCHPRINZ);
 
         if (location.is(IM_WALD_BEIM_BRUNNEN) &&
                 !froschprinz.stateComp().hasState(FroschprinzState.UNAUFFAELLIG)) {
@@ -320,7 +320,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     }
 
     private void narrateAndDoWiederholung() {
-        final IHasStateGO<FroschprinzState> froschprinz = world.loadRequired(FROSCHPRINZ);
+        final IHasStateGO<FroschprinzState> froschprinz = loadRequired(FROSCHPRINZ);
         final EinzelneSubstantivischePhrase objectDescShort = world.getDescription(object, false);
         final EinzelneSubstantivischePhrase objectDescLong = world.getDescription(object, true);
 

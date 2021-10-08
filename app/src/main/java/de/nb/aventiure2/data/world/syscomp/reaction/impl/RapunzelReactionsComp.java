@@ -884,12 +884,12 @@ public class RapunzelReactionsComp
             return false;
         }
 
-        if (world.<ILocatableGO>loadRequired(RAPUNZELS_ZAUBERIN)
+        if (((ILocatableGO) loadRequired(RAPUNZELS_ZAUBERIN))
                 .locationComp().hasLocation(VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        if (world.<ILocatableGO>loadRequired(RAPUNZELS_ZAUBERIN).locationComp()
+        if (((ILocatableGO) loadRequired(RAPUNZELS_ZAUBERIN)).locationComp()
                 .hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             // Während Rapunzel von der Zauberin Besuch hat, singt sie nicht
             return false;
@@ -940,7 +940,7 @@ public class RapunzelReactionsComp
                             + "dem kleinen Fensterchen oben im Turm?")
                     .timed(secs(20)));
 
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+            loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
 
             loadSC().waitingComp().stopWaiting();
             return;
@@ -967,7 +967,7 @@ public class RapunzelReactionsComp
                             .timed(NO_TIME)
             );
 
-            world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+            loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
 
             return;
         }
@@ -994,7 +994,7 @@ public class RapunzelReactionsComp
                         .timed(NO_TIME)
         );
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+        loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
     }
@@ -1040,7 +1040,7 @@ public class RapunzelReactionsComp
 
         n.narrateAlt(alt, NO_TIME);
 
-        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
+        loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
     }
 
     @Override
@@ -1053,7 +1053,7 @@ public class RapunzelReactionsComp
     @NonNull
     private <Z extends ILocatableGO & IResponder & ITalkerGO<RapunzelsZauberinTalkingComp>>
     Z loadZauberin() {
-        return world.loadRequired(RAPUNZELS_ZAUBERIN);
+        return loadRequired(RAPUNZELS_ZAUBERIN);
     }
 
     public void forgetAll() {

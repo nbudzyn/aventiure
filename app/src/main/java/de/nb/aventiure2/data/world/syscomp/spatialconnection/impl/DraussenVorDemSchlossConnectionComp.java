@@ -64,7 +64,9 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     @NonNull
     @CheckReturnValue
     public List<SpatialConnection> getConnections() {
-        return ImmutableList.of(
+        final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
+
+        res.add(
                 con(SCHLOSS_VORHALLE,
                         "auf der Treppe",
                         WEST, "Das Schloss betreten",
@@ -74,38 +76,92 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
                         ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         "zwischen den Buchsbaumhecken",
                         NORTH,
-                        secs(90)),
-                // FIXME Je nach Status: Markt!
-                con(IM_WALD_NAHE_DEM_SCHLOSS,
-                        "auf dem Weg",
-                        EAST,
-                        "In den Wald gehen",
-                        mins(10),
-                        du("folgst",
-                                "einem Weg in den Wald.",
-                                "Nach ein paar Schritten führt linker Hand ein schmaler Pfad",
-                                "einen Hügel hinauf"),
-                        neuerSatz("Jeder kennt die Geschichten, die man "
-                                + "sich über den Wald erzählt: Räuber sind noch "
-                                + "die kleinste Gefahr. Aber das schreckt dich ganz "
-                                + "offenbar nicht und du folgst dem erstbesten "
-                                + "Weg hinein in den dunklen Wald. Schon nach ein paar Schritten "
-                                + "führt linker Hand ein schmaler, dunkler Pfad einen Hügel "
-                                + "hinauf")
-                                .timed(mins(12)),
-                        du("läufst",
-                                "wieder in den dunklen Wald")
-                                .mitVorfeldSatzglied("wieder")
-                                .dann(),
-                        du("läufst",
-                                "wieder in den dunklen Wald")
-                                .mitVorfeldSatzglied("wieder")
-                                .dann()));
+                        secs(90)));
+
+        // FIXME Je nach Status: Markt!
+
+        //FIXME einer (alten? armen?) Frau?
+        // - "Auf den kleinen Markt gehen" / "Bauernmarkt" / "zu den Marktständen"
+        // - "Auf dem kleinen Markt  / Dort sitzen ein paar einfache Leute und halten ihre
+        // Waren feil:
+        // Eine dicke Bäuerin verkauft Mus, eine schöne junge Frau hat Töpfe und irdenes
+        // Geschirr vor
+        // sich stehen und eine alte Frau flicht Körbe.
+
+        // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
+        //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
+        //  Seil, das legt sie dann immer wieder im Kreis, bis daraus ein großes Korb entsteht.
+
+
+        // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
+        //  Gespräch
+        //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
+        //  - man sieht ihr zu (beobachtet sie bei ihrer Tätigkeit) und lernt es dabei?!
+        //  ("du schaust ihr genau dabei zu. So schwer sieht
+        //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann
+        //   nimmt man
+        //   wieder...  Mh-hm,  gut zu wissen!")
+
+        // FIXME "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
+
+        // FIXME "Du siehst der alten Frau weiter bei der Arbeit zu."
+        //  "Es ist ein Freude, der fleißigen Alten zuzusehen."
+        //  "Eine langwierige Arbeit!"
+
+        // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt: "Mus feil", ruft
+        //  die
+        //  dicke Bauersfrau. Die schöne junge Frau sortiert ihre irdenen Näpfe und Töpfe."
+
+        // FIXME "Der Geruch von dem süßen Mus kitzelt dir die Nase"
+        //  "Wieder steigt dir der Geruch von dem süßen Mus in die Nase" (Hunger?!)
+
+        // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
+
+        // FIXME "Die schöne junge Frau hat wohl gerade ein Schüsselchen / Tellerchen / irdenes
+        //  Schälchen
+        //  verkauft"
+
+        // FIXME "Auch die dicke Bäuerin ist nicht mehr da. Die Menschen haben sich
+        //  verlaufen, und
+        //  du stehst allein zwischen den leeren Bänken und Ständen"
+
+
+        {
+            res.add(
+                    con(IM_WALD_NAHE_DEM_SCHLOSS,
+                            "auf dem Weg",
+                            EAST,
+                            "In den Wald gehen",
+                            mins(10),
+                            du("folgst",
+                                    "einem Weg in den Wald.",
+                                    "Nach ein paar Schritten führt linker Hand ein schmaler Pfad",
+                                    "einen Hügel hinauf"),
+                            neuerSatz("Jeder kennt die Geschichten, die man "
+                                    + "sich über den Wald erzählt: Räuber sind noch "
+                                    + "die kleinste Gefahr. Aber das schreckt dich ganz "
+                                    + "offenbar nicht und du folgst dem erstbesten "
+                                    + "Weg hinein in den dunklen Wald. Schon nach ein paar "
+                                    + "Schritten "
+                                    + "führt linker Hand ein schmaler, dunkler Pfad einen Hügel "
+                                    + "hinauf")
+                                    .timed(mins(12)),
+                            du("läufst",
+                                    "wieder in den dunklen Wald")
+                                    .mitVorfeldSatzglied("wieder")
+                                    .dann(),
+                            du("läufst",
+                                    "wieder in den dunklen Wald")
+                                    .mitVorfeldSatzglied("wieder")
+                                    .dann()));
+        }
+
+        return res.build();
     }
 
     private TimedDescription<?> getDescTo_SchlossVorhalle(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        final IHasStateGO<SchlossfestState> schlossfest = world.loadRequired(SCHLOSSFEST);
+        final IHasStateGO<SchlossfestState> schlossfest = loadRequired(SCHLOSSFEST);
         switch (schlossfest.stateComp().getState()) {
             case NOCH_NICHT_BEGONNEN:
                 return getDescTo_SchlossVorhalle_KeinFest();

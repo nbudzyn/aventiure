@@ -71,6 +71,6 @@ public class LobebauerReactionsComp extends AbstractDescribableReactionsComp
 
     @NonNull
     private <F extends IHasStateGO<FroschprinzState> & ILocatableGO> F loadFroschprinz() {
-        return world.loadRequired(FROSCHPRINZ);
+        return loadRequired(FROSCHPRINZ);
     }
 }

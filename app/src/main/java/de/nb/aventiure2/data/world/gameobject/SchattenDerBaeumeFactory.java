@@ -121,11 +121,11 @@ class SchattenDerBaeumeFactory extends AbstractGameObjectFactory {
 
     private boolean isDescInUnauffaelligHinweisSinnvoll() {
         return (
-                world.loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN)
-                        || world.loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
+                loadSC().memoryComp().isKnown(RAPUNZELS_ZAUBERIN)
+                        || loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)
         )
-                && !world.loadSC().memoryComp().isKnown(RAPUNZELRUF)
-                && !world.<ILocatableGO>loadRequired(RAPUNZELS_ZAUBERIN).locationComp()
+                && !loadSC().memoryComp().isKnown(RAPUNZELRUF)
+                && !((ILocatableGO) loadRequired(RAPUNZELS_ZAUBERIN)).locationComp()
                 .hasRecursiveLocation(VOR_DEM_ALTEN_TURM);
     }
 

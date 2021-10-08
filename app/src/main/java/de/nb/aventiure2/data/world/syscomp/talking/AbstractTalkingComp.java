@@ -21,7 +21,6 @@ import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
@@ -40,7 +39,9 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * {@link ITalkerGO} dann irgendwie reagiert).
  */
 public abstract class AbstractTalkingComp extends AbstractStatefulComponent<TalkingPCD>
-        implements ITalkContext, IConversationable {
+        implements ITalkContext, IConversationable,
+// Mixins
+        IWorldLoaderMixin {
     private static final ImmutableSet<String> TAGESZEITUNABHAENGIE_BEGRUESSUNGEN =
             ImmutableSet.of("hallo", "holla", "Gott zum Gruß", "Gott zum Gruße");
 
@@ -115,7 +116,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
             return;
         }
 
-        setTalkingTo((ITalkerGO<?>) world.load(talkingToId));
+        setTalkingTo((ITalkerGO<?>) load(talkingToId));
     }
 
     public void setTalkingTo(@Nullable final ITalkerGO<?> newOtherTalker) {
@@ -132,7 +133,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         }
 
         if (oldTalkingToId != null) {
-            world.<ITalkerGO<?>>loadRequired(oldTalkingToId).talkingComp()
+            ((ITalkerGO<?>) loadRequired(oldTalkingToId)).talkingComp()
                     .unsetTalkingTo(false);
         }
 
@@ -197,7 +198,7 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
     @VisibleForTesting
     public ITalkerGO<?> getTalkingTo() {
         @Nullable final GameObjectId talkingToId = getTalkingToId();
-        return world.load(talkingToId);
+        return load(talkingToId);
     }
 
     @Nullable
@@ -302,8 +303,8 @@ public abstract class AbstractTalkingComp extends AbstractStatefulComponent<Talk
         return world.getDescription(getGameObjectId(), shortIfKnown);
     }
 
-    @NonNull
-    protected SpielerCharakter loadSC() {
-        return world.loadSC();
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

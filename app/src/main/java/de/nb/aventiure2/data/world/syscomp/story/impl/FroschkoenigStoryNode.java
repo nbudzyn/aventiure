@@ -112,7 +112,6 @@ public enum FroschkoenigStoryNode implements IStoryNode {
      * Konstruktor für einen Story Node, der nur automatisch freigeschaltet wird, für den
      * es also keine Tipps geben soll.
      */
-    @SuppressWarnings("RedundantCast")
     FroschkoenigStoryNode() {
         this(null, (GameObjectId) null, null);
     }

@@ -32,7 +32,8 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
  * der Welt. Der NSC geht also von gewissen Dingen aus, z.B.
  * dass sich jemand oder etwas irgendwo befindet.
  */
-public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
+public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD>
+        implements IWorldLoaderMixin {
     private final World world;
 
     @NonNull
@@ -76,7 +77,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
      * Werte.
      */
     public void setAssumptionsToActual(final GameObjectId gameObjectId) {
-        final GameObject gameObject = world.load(gameObjectId);
+        final GameObject gameObject = load(gameObjectId);
 
         if (gameObject instanceof ILocatableGO) {
             setAssumedLocation(gameObjectId,
@@ -264,7 +265,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
             return null;
         }
 
-        final GameObject gameObject = world.loadRequired(gameObjectId);
+        final GameObject gameObject = loadRequired(gameObjectId);
         checkArgument(gameObject instanceof IHasStateGO<?>,
                 "No IHasStateGO: " + gameObject);
 
@@ -280,7 +281,7 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
     }
 
     public <S extends Enum<S>> void setAssumedStateToActual(final GameObjectId gameObjectId) {
-        setAssumedStateToActual(world.<IHasStateGO<S>>loadRequired(gameObjectId));
+        setAssumedStateToActual((IHasStateGO<S>) loadRequired(gameObjectId));
     }
 
     public <S extends Enum<S>> void setAssumedStateToActual(final IHasStateGO<S> gameObject) {
@@ -299,6 +300,11 @@ public class MentalModelComp extends AbstractStatefulComponent<MentalModelPCD> {
 
     private static <S extends Enum<S>> S getActualState(final IHasStateGO<S> gameObject) {
         return gameObject.stateComp().getState();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }
 

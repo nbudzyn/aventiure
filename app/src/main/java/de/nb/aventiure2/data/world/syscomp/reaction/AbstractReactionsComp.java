@@ -1,20 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.reaction;
 
-import androidx.annotation.NonNull;
-
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.gameobject.player.*;
 
 /**
  * Component für ein {@link GameObject}: The game object might
  * react to certain events.
  */
 public abstract class AbstractReactionsComp extends AbstractStatelessComponent
-        implements IReactions {
+        implements IReactions, IWorldLoaderMixin {
     protected final World world;
 
     protected final Narrator n;
@@ -35,8 +32,8 @@ public abstract class AbstractReactionsComp extends AbstractStatelessComponent
         this.world = world;
     }
 
-    @NonNull
-    protected SpielerCharakter loadSC() {
-        return world.loadSC();
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

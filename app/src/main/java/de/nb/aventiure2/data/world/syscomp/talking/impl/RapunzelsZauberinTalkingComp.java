@@ -406,6 +406,6 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
             ITalkerGO<RapunzelTalkingComp> &
             IResponder>
     R loadRapunzel() {
-        return world.loadRequired(RAPUNZEL);
+        return loadRequired(RAPUNZEL);
     }
 }

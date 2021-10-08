@@ -19,7 +19,8 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
  * Component for a {@link GameObject}: The game object
  * can be situated in a location in the world.
  */
-public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
+public class LocationComp extends AbstractStatefulComponent<LocationPCD>
+        implements IWorldLoaderMixin {
     private final World world;
 
     @Nullable
@@ -132,7 +133,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * * diese Methode immer <code>null</code> zurück.
      */
     public boolean hasSameVisibleOuterMostLocationAs(@Nullable final GameObjectId otherId) {
-        return hasSameVisibleOuterMostLocationAs((IGameObject) world.load(otherId));
+        return hasSameVisibleOuterMostLocationAs((IGameObject) load(otherId));
     }
 
 
@@ -194,7 +195,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * sich (ggf. rekusiv) an dieser Location befindet.
      */
     public boolean hasRecursiveLocation(@Nullable final GameObjectId locationId) {
-        @Nullable final GameObject location = world.load(locationId);
+        @Nullable final GameObject location = load(locationId);
 
         if (!(location instanceof ILocationGO)) {
             return false;
@@ -209,7 +210,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
      * sich (ggf. rekusiv - soweit man sehen kann) an dieser Location befindet.
      */
     public boolean hasVisiblyRecursiveLocation(@Nullable final GameObjectId locationId) {
-        @Nullable final GameObject location = world.load(locationId);
+        @Nullable final GameObject location = load(locationId);
 
         @Nullable final ILocationGO myLocation = getLocation();
         if (myLocation == null || !myLocation.storingPlaceComp()
@@ -311,7 +312,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     public ILocationGO getLocation() {
-        return world.load(getLocationId());
+        return load(getLocationId());
     }
 
     @Nullable
@@ -352,7 +353,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     @Nullable
     public ILocationGO getLastLocation() {
-        return world.load(getLastLocationId());
+        return load(getLastLocationId());
     }
 
     @Nullable
@@ -366,5 +367,10 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD> {
 
     public boolean isVielteilig() {
         return vielteilig;
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

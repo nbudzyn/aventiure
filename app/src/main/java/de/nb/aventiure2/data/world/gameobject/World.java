@@ -1682,8 +1682,6 @@ public class World {
      */
     public @Nonnull
     SpielerCharakter loadSC() {
-        prepare();
-
         return loadRequired(SPIELER_CHARAKTER);
     }
 
@@ -1692,8 +1690,6 @@ public class World {
      */
     public @Nonnull
     Wetter loadWetter() {
-        prepare();
-
         return loadRequired(WETTER);
     }
 

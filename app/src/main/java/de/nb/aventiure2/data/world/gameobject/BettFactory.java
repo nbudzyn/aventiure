@@ -90,7 +90,7 @@ public class BettFactory extends AbstractGameObjectFactory {
     @CheckReturnValue
     private TimedDescription<?> getDescDrunter(
             final Known newLocationKnown, final Lichtverhaeltnisse lichtverhaeltnisse) {
-        if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp().hasState(
+        if (((IHasStateGO<RapunzelState>) loadRequired(RAPUNZEL)).stateComp().hasState(
                 PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             if (db.counterDao().get(BETT_DRUNTERKRIECHEN_VERSTECKEN) == 0) {
                 return du(SENTENCE, "schaust",

@@ -18,7 +18,6 @@ import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.base.SpatialConnectionData;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.german.description.AbstractDescription;
 
 /**
@@ -27,7 +26,8 @@ import de.nb.aventiure2.german.description.AbstractDescription;
  * Spielercharakter oder jemand anderes entlang diesen Verbindungen bewegen kann.
  */
 @ParametersAreNonnullByDefault
-public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent {
+public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent
+        implements IWorldLoaderMixin {
     protected final AvDatabase db;
     protected final TimeTaker timeTaker;
     protected final Narrator n;
@@ -97,8 +97,8 @@ public abstract class AbstractSpatialConnectionComp extends AbstractStatelessCom
             Known newLocationKnown,
             Lichtverhaeltnisse lichtverhaeltnisseInNewLocation);
 
-    @NonNull
-    protected SpielerCharakter loadSC() {
-        return world.loadSC();
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

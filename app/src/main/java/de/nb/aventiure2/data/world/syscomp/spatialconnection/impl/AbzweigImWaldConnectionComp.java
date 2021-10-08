@@ -60,7 +60,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(IM_WALD_BEIM_BRUNNEN) ||
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
-                !world.<IHasStateGO<FroschprinzState>>loadRequired(FROSCHPRINZ)
+                !((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
                 !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
 
@@ -143,7 +143,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
-                world.<IHasStateGO<FroschprinzState>>loadRequired(FROSCHPRINZ)
+                ((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirdTraurig());

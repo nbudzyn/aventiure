@@ -1,5 +1,11 @@
 package de.nb.aventiure2.scaction;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
+import static de.nb.aventiure2.data.time.AvTimeSpan.days;
+import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -12,22 +18,17 @@ import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
-import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.narration.Narration.NarrationSource.SC_ACTION;
-import static de.nb.aventiure2.data.time.AvTimeSpan.days;
-import static de.nb.aventiure2.german.description.Kohaerenzrelation.DISKONTINUITAET;
-import static java.util.Objects.requireNonNull;
 
 /**
  * An action the player could choose.
  */
 @ParametersAreNonnullByDefault
-public abstract class AbstractScAction implements IPlayerAction {
+public abstract class AbstractScAction implements IPlayerAction,
+// Mixins
+        IWorldLoaderMixin {
     private static final AvTimeSpan MAX_WORLD_TICK = days(1);
 
     private final SCActionStepCountDao scActionStepCountDao;
@@ -46,7 +47,7 @@ public abstract class AbstractScAction implements IPlayerAction {
 
         this.n = n;
 
-        sc = world.loadSC();
+        sc = loadSC();
     }
 
     /**
@@ -185,13 +186,13 @@ public abstract class AbstractScAction implements IPlayerAction {
     abstract protected boolean isDefinitivDiskontinuitaet();
 
     @NonNull
-    protected Wetter loadWetter() {
-        return world.loadWetter();
-    }
-
-    @NonNull
     @Override
     public String toString() {
         return getName();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

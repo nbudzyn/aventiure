@@ -48,7 +48,8 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
  * Geschichten / Märchen, die der Spieler erlebt. Beginnt neue Stories, speichert den
  * Stand, erzeugt Tipps, wenn der Benutzer in einer Story nicht weiterkommt etc.
  */
-public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
+public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD>
+        implements IWorldLoaderMixin {
     private final AvDatabase db;
     private final World world;
     private final TimeTaker timeTaker;
@@ -139,7 +140,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
     private void updatePlanWetter() {
         // Diese Bedingungen hier sind Story-übergreifend nach Priorität geordnet!
 
-        final Wetter wetterGO = world.loadWetter();
+        final Wetter wetterGO = loadWetter();
 
         if (requirePcd().isReachedOrStoryBeendet(FroschkoenigStoryNode.KUGEL_GENOMMEN)
                 && !requirePcd().isReachedOrStoryBeendet(
@@ -219,7 +220,7 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return;
         }
 
-        if (world.loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH) {
+        if (loadSC().feelingsComp().getMuedigkeit() >= FeelingIntensity.DEUTLICH) {
             // Des SC ist müde. Er soll sich erst darum kümmern - bis er nicht geschlafen hat
             // erhält er keine konkreten Tipps und es wird auch keine andere Geschichte
             // freigeschaltet o.Ä.
@@ -322,12 +323,12 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
             return NO_TIME;
         }
 
-        final ILocationGO storyNodeLocation = world.loadRequired(storyNodeLocationId);
+        final ILocationGO storyNodeLocation = loadRequired(storyNodeLocationId);
 
         final ILocationGO outerMostStoryNodeLocation =
                 storyNodeLocation.getOuterMostLocation();
         @Nullable final ILocationGO outerMostSCLocation =
-                world.loadSC().locationComp().getOuterMostLocation();
+                loadSC().locationComp().getOuterMostLocation();
 
         if (outerMostStoryNodeLocation.is(outerMostSCLocation)) {
             return NO_TIME;
@@ -343,4 +344,8 @@ public class StoryWebComp extends AbstractStatefulComponent<StoryWebPCD> {
                 outerMostStoryNodeLocation);
     }
 
+    @Override
+    public World getWorld() {
+        return world;
+    }
 }

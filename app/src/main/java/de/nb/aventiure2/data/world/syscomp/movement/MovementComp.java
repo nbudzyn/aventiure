@@ -69,7 +69,8 @@ import de.nb.aventiure2.german.description.TimedDescription;
  */
 public class MovementComp
         extends AbstractStatefulComponent<MovementPCD>
-        implements ISCActionDoneListenerComponent {
+        implements ISCActionDoneListenerComponent,
+        IWorldLoaderMixin {
     private final World world;
 
     private final SpatialConnectionSystem spatialConnectionSystem;
@@ -392,7 +393,7 @@ public class MovementComp
                 spatialStandardStep.getTo(),
                 startTime,
                 calcExpectedDuration(
-                        from, world.loadRequired(spatialStandardStep.getTo()),
+                        from, loadRequired(spatialStandardStep.getTo()),
                         spatialStandardStep.getStandardDuration(), takesNoTime));
     }
 
@@ -504,7 +505,7 @@ public class MovementComp
 
     @Nullable
     private ILocationGO getTargetLocation() {
-        return world.load(getTargetLocationId());
+        return load(getTargetLocationId());
     }
 
     @Nullable
@@ -527,7 +528,7 @@ public class MovementComp
 
     @Nullable
     public <FROM extends ILocationGO & ISpatiallyConnectedGO> FROM getCurrentStepFrom() {
-        return world.load(getCurrentStepFromId());
+        return load(getCurrentStepFromId());
     }
 
     @Nonnull
@@ -537,7 +538,7 @@ public class MovementComp
 
     @Nullable
     public ILocationGO getCurrentStepTo() {
-        return world.load(getCurrentStepToId());
+        return load(getCurrentStepToId());
     }
 
     @Nonnull
@@ -576,5 +577,10 @@ public class MovementComp
     @Nullable
     private MovementStep getCurrentStep() {
         return requirePcd().getCurrentStep();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

@@ -40,7 +40,8 @@ import de.nb.aventiure2.german.satz.Satz;
 /**
  * Wetter
  */
-public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
+public class WetterComp extends AbstractStatefulComponent<WetterPCD>
+        implements IWorldLoaderMixin {
     private final TimeTaker timeTaker;
     private final Narrator n;
     private final World world;
@@ -367,7 +368,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     public ImmutableCollection<Satz> altSpWetterhinweisSaetze(
             final AvDateTime dateTime, @Nullable final GameObjectId locationId,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        return altSpWetterhinweisSaetze(dateTime, (ILocationGO) world.load(locationId),
+        return altSpWetterhinweisSaetze(dateTime, (ILocationGO) load(locationId),
                 nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
     }
 
@@ -443,7 +444,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
     @NonNull
     public ImmutableSet<AbstractDescription<?>> altSpWetterhinweiseKommtNachDraussen(
             final AvDateTime time, final GameObjectId locationId) {
-        final ILocationGO location = world.loadRequired(locationId);
+        final ILocationGO location = loadRequired(locationId);
         return requirePcd().altSpWetterhinweiseKommtNachDraussen(
                 time,
                 location.storingPlaceComp().getDrinnenDraussen() ==
@@ -500,7 +501,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     public ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altWetterhinweiseWohinHinaus(
             final AvDateTime time, final GameObjectId locationId) {
-        final ILocationGO location = world.loadRequired(locationId);
+        final ILocationGO location = loadRequired(locationId);
 
         return requirePcd().altWetterhinweiseWohinHinaus(
                 time,
@@ -521,7 +522,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
      */
     public ImmutableCollection<AdvAngabeSkopusVerbAllg> altWetterhinweiseWoDraussen(
             final AvDateTime time, final GameObjectId locationId) {
-        final ILocationGO location = world.loadRequired(locationId);
+        final ILocationGO location = loadRequired(locationId);
 
         return requirePcd().altWetterhinweiseWoDraussen(time,
                 location.storingPlaceComp().getDrinnenDraussen() ==
@@ -657,7 +658,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
 
     @Nullable
     private ILocationGO loadScLocation() {
-        return world.loadSC().locationComp().getLocation();
+        return loadSC().locationComp().getLocation();
     }
 
     @NonNull
@@ -670,4 +671,8 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD> {
         return requirePcd().getPlan();
     }
 
+    @Override
+    public World getWorld() {
+        return world;
+    }
 }

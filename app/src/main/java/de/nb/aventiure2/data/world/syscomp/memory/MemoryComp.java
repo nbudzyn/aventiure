@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.memory;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -22,14 +25,12 @@ import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static java.util.Objects.requireNonNull;
-
 /**
  * Component for a {@link GameObject}: The game object
  * remembers things.
  */
-public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
+public class MemoryComp extends AbstractStatefulComponent<MemoryPCD>
+        implements IWorldLoaderMixin {
     @NonNull
     private final Map<GameObjectId, Known> initiallyKnown;
 
@@ -143,7 +144,7 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     }
 
     private Known getKnownForLocation(final GameObjectId otherGameObjectId) {
-        final GameObject otherGameObject = world.load(otherGameObjectId);
+        final GameObject otherGameObject = load(otherGameObjectId);
         if (!(otherGameObject instanceof ILocatableGO)) {
             // Anscheinend ist andere Game Object ein nichtmaterielles Ding, das keinen wirklichen
             // Aufenthaltsort in der Welt hat.
@@ -210,5 +211,10 @@ public class MemoryComp extends AbstractStatefulComponent<MemoryPCD> {
     @NonNull
     public Known getKnown(final GameObjectId otherGameObjectId) {
         return requirePcd().getKnown(otherGameObjectId);
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

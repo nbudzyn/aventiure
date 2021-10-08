@@ -1,5 +1,24 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.data.time.AvTime.oClock;
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -37,30 +56,12 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTime.oClock;
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Arrays.asList;
-
 /**
  * Component for a {@link GameObject}: The game object
  * has needs and feelings.
  */
-public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
+public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
+        implements IWorldLoaderMixin {
     private final TimeTaker timeTaker;
 
     private final SCActionStepCountDao scActionStepCountDao;
@@ -785,7 +786,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
     @CheckReturnValue
     public int getFeelingTowardsForActionsMitEmpathischerSchranke(final GameObjectId targetId,
                                                                   final FeelingTowardsType type) {
-        final GameObject target = world.load(targetId);
+        final GameObject target = load(targetId);
         final int upperBound;
         if (!(target instanceof IFeelingBeingGO)) {
             upperBound = Integer.MAX_VALUE;
@@ -1247,5 +1248,10 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD> {
 
     private int getMuedigkeitGemaessBiorhythmus() {
         return muedigkeitsBiorythmus.get(timeTaker.now().getTime());
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

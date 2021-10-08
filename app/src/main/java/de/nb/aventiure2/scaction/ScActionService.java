@@ -47,7 +47,8 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
  * Repository for the actions the player can choose from.
  */
 @ParametersAreNonnullByDefault
-public class ScActionService {
+public class ScActionService
+        implements IWorldLoaderMixin {
     private final AvDatabase db;
     private final TimeTaker timeTaker;
     private final Narrator n;
@@ -67,7 +68,7 @@ public class ScActionService {
     public <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends ILocatableGO & IDescribableGO & ILivingBeingGO> List<AbstractScAction>
     getPlayerActions() {
-        final SpielerCharakter spielerCharakter = world.loadSC();
+        final SpielerCharakter spielerCharakter = loadSC();
 
         final @Nullable ILocationGO location = spielerCharakter.locationComp().getLocation();
 
@@ -109,13 +110,13 @@ public class ScActionService {
         }
 
         if (!spielerCharakter.talkingComp().isInConversation()) {
-            if (world.<ITalkerGO<?>>loadRequired(RAPUNZEL).talkingComp()
+            if (((ITalkerGO<?>) loadRequired(RAPUNZEL)).talkingComp()
                     .isTalkingTo(SPIELER_CHARAKTER)) {
                 throw new IllegalStateException("Spieler nicht in Conversation, aber "
                         + "Rapunzel ist talking to Spieler");
             }
 
-            if (((ITalkerGO<?>) world.loadRequired(RAPUNZELS_ZAUBERIN)).talkingComp()
+            if (((ITalkerGO<?>) loadRequired(RAPUNZELS_ZAUBERIN)).talkingComp()
                     .isTalkingTo(SPIELER_CHARAKTER)) {
                 throw new IllegalStateException("Spieler nicht in Conversation, aber "
                         + "Zauberin ist talking to Spieler");
@@ -371,6 +372,11 @@ public class ScActionService {
 
     @VisibleForTesting
     public ILocationGO getSCLocation() {
-        return world.loadSC().locationComp().getLocation();
+        return loadSC().locationComp().getLocation();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

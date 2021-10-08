@@ -17,7 +17,7 @@ import de.nb.aventiure2.data.world.syscomp.story.IStoryWebGO;
  * reached.
  */
 @ParametersAreNonnullByDefault
-public class ScoreService {
+public class ScoreService implements IWorldLoaderMixin {
     private final World world;
 
     // Note that in order to unit test the repository, you have to remove the Application
@@ -30,7 +30,12 @@ public class ScoreService {
     }
 
     public int getScore() {
-        final IStoryWebGO storyWeb = world.loadRequired(STORY_WEB);
+        final IStoryWebGO storyWeb = loadRequired(STORY_WEB);
         return storyWeb.storyWebComp().getScore();
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

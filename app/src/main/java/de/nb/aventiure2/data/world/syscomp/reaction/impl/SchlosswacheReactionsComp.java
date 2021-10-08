@@ -129,7 +129,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        final ILocatableGO goldeneKugel = world.loadRequired(GOLDENE_KUGEL);
+        final ILocatableGO goldeneKugel = loadRequired(GOLDENE_KUGEL);
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE) > 1) {
@@ -197,7 +197,7 @@ public class SchlosswacheReactionsComp
      */
     private ImmutableCollection<AdvAngabeSkopusVerbWohinWoher> altSchlossVerlassenWetterhinweiseWohinAdvAngaben(
             final AvDateTime timeDraussen) {
-        return world.loadWetter().wetterComp()
+        return loadWetter().wetterComp()
                 .altWetterhinweiseWohinHinaus(timeDraussen, DRAUSSEN_VOR_DEM_SCHLOSS);
     }
 
@@ -218,7 +218,7 @@ public class SchlosswacheReactionsComp
             return;
         }
 
-        if (world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST).stateComp()
+        if (((IHasStateGO<SchlossfestState>) loadRequired(SCHLOSSFEST)).stateComp()
                 .hasState(SchlossfestState::schlossfestLaeuft)) {
             // Schlosswache hat andere Dinge zu tun
             return;

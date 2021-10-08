@@ -55,10 +55,9 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
     @Override
     @NonNull
     public List<SpatialConnection> getConnections() {
-        final ImmutableList.Builder<SpatialConnection> resImWaldBeimBrunnnen =
-                ImmutableList.builder();
+        final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 
-        resImWaldBeimBrunnnen.add(con(ABZWEIG_IM_WALD,
+        res.add(con(ABZWEIG_IM_WALD,
                 "auf dem Weg",
                 WEST, "Den Weg Richtung Schloss gehen",
                 mins(3),
@@ -69,7 +68,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
 
         if (storingPlaceComp.getLichtverhaeltnisse() == HELL ||
                 loadSC().memoryComp().isKnown(WALDWILDNIS_HINTER_DEM_BRUNNEN)) {
-            resImWaldBeimBrunnnen.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
+            res.add(con(WALDWILDNIS_HINTER_DEM_BRUNNEN,
                     "im Wald",
                     EAST,
                     this::getActionNameTo_WildnisHinterDemBrunnen,
@@ -96,7 +95,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                             .dann()));
         }
 
-        return resImWaldBeimBrunnnen.build();
+        return res.build();
     }
 
     private String getActionNameTo_WildnisHinterDemBrunnen() {

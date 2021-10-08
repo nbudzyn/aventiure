@@ -100,7 +100,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     @NonNull
     private IHasStateGO<SchlossfestState> loadSchlossfest() {
-        return world.loadRequired(SCHLOSSFEST);
+        return loadRequired(SCHLOSSFEST);
     }
 
     @NonNull
@@ -456,17 +456,17 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
 
     private <FROSCHPRINZ extends ILocatableGO & IHasStateGO<FroschprinzState>>
     boolean alleinAufDemPfadZumTurm() {
-        if (world.<ILocatableGO>loadRequired(RAPUNZELS_ZAUBERIN).locationComp()
+        if (((ILocatableGO) loadRequired(RAPUNZELS_ZAUBERIN)).locationComp()
                 .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        if (world.<ILocatableGO>loadRequired(RAPUNZEL).locationComp()
+        if (((ILocatableGO) loadRequired(RAPUNZEL)).locationComp()
                 .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM)) {
             return false;
         }
 
-        final FROSCHPRINZ froschprinz = world.loadRequired(FROSCHPRINZ);
+        final FROSCHPRINZ froschprinz = loadRequired(FROSCHPRINZ);
         return !froschprinz.stateComp().getState().hasGestalt(FroschprinzState.Gestalt.MENSCH) ||
                 !froschprinz.locationComp()
                         .hasLocation(IM_WALD_NAHE_DEM_SCHLOSS, VOR_DEM_ALTEN_TURM);

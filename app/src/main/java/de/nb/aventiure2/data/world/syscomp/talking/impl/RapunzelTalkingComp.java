@@ -963,7 +963,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private boolean scHatSeltsameSacheMitFroschErlebt() {
-        return world.<IHasStateGO<FroschprinzState>>loadRequired(FROSCHPRINZ).stateComp()
+        return ((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ)).stateComp()
                 .hasState(FroschprinzState.HAT_FORDERUNG_GESTELLT,
                         FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS,
                         FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST,
@@ -1352,7 +1352,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
     @NonNull
     private ILocatableGO loadZauberin() {
-        return world.loadRequired(RAPUNZELS_ZAUBERIN);
+        return loadRequired(RAPUNZELS_ZAUBERIN);
     }
 
     public void narrateOWehZauberinKommt() {

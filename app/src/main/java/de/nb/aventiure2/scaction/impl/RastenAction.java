@@ -317,6 +317,6 @@ public class RastenAction extends AbstractWartenRastenAction {
 
     @NonNull
     private IHasStateGO<RapunzelState> loadRapunzel() {
-        return world.loadRequired(RAPUNZEL);
+        return loadRequired(RAPUNZEL);
     }
 }

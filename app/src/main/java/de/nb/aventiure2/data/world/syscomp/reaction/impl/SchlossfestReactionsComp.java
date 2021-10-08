@@ -176,7 +176,7 @@ public class SchlossfestReactionsComp
 
     private void schlossfestBeginnt() {
         stateComp.narrateAndSetState(BEGONNEN);
-        world.<ILocatableGO>loadRequired(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST)
+        ((ILocatableGO) loadRequired(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST))
                 .locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
 
         if (loadSC().locationComp().hasVisiblyRecursiveLocation(DRAUSSEN_VOR_DEM_SCHLOSS)) {

@@ -51,7 +51,9 @@ public class ReactionSystem
         IRufReactions,
         IWetterChangedReactions,
         ITimePassedReactions,
-        ISCActionReactions {
+        ISCActionReactions,
+        // Mixins
+        IWorldLoaderMixin {
     private static final Comparator<IResponder> REACTION_ORDER_COMPARATOR =
             new ReactionOrderComparator();
 
@@ -71,7 +73,7 @@ public class ReactionSystem
     public void onLeave(final GameObjectId locatableId,
                         final ILocationGO from,
                         @Nullable final GameObjectId toId) {
-        onLeave((ILocatableGO) world.loadRequired(locatableId), from, toId);
+        onLeave((ILocatableGO) loadRequired(locatableId), from, toId);
     }
 
     private void onLeave(final ILocatableGO locatable,
@@ -86,7 +88,7 @@ public class ReactionSystem
             return;
         }
 
-        final GameObject to = world.load(toId);
+        final GameObject to = load(toId);
         if (!(to instanceof ILocationGO)) {
             return;
         }
@@ -118,13 +120,13 @@ public class ReactionSystem
     public void onEnter(final GameObjectId locatableId,
                         @Nullable final GameObjectId fromId,
                         final GameObjectId toId) {
-        onEnter(locatableId, (ILocationGO) world.load(fromId), toId);
+        onEnter(locatableId, (ILocationGO) load(fromId), toId);
     }
 
     private void onEnter(final GameObjectId locatableId,
                          @Nullable final ILocationGO from,
                          final GameObjectId toId) {
-        onEnter((ILocatableGO) world.loadRequired(locatableId), from, toId);
+        onEnter((ILocatableGO) loadRequired(locatableId), from, toId);
     }
 
     public void onEnter(final ILocatableGO locatable,
@@ -134,7 +136,7 @@ public class ReactionSystem
         // (z.B. wenn der SC um den Turm herumgeht, vielleicht auch beim Hochwerfen und
         // Wieder-Auffangen.)
 
-        final GameObject to = world.load(toId);
+        final GameObject to = load(toId);
         if (!(to instanceof ILocationGO)) {
             return;
         }
@@ -169,7 +171,7 @@ public class ReactionSystem
     public <S extends Enum<S>> void onStateChanged(final GameObjectId gameObjectId,
                                                    final S oldState,
                                                    final S newState) {
-        final IGameObject gameObject = world.load(gameObjectId);
+        final IGameObject gameObject = load(gameObjectId);
         if (!(gameObject instanceof IHasStateGO<?>)) {
             return;
         }
@@ -195,7 +197,7 @@ public class ReactionSystem
                                final Known oldKnown, final Known newKnown) {
         checkArgument(oldKnown != newKnown, "Known unverändert: " + oldKnown);
 
-        final IGameObject knower = world.load(knowerId);
+        final IGameObject knower = load(knowerId);
         if (!(knower instanceof IHasMemoryGO)) {
             return;
         }
@@ -216,7 +218,7 @@ public class ReactionSystem
 
     // IRufReactions
     public void onRuf(final GameObjectId ruferId, final Ruftyp ruftyp) {
-        final IGameObject rufer = world.load(ruferId);
+        final IGameObject rufer = load(ruferId);
 
         if (!(rufer instanceof ILocatableGO)) {
             return;
@@ -318,5 +320,10 @@ public class ReactionSystem
 
             timeTaker.setNow(timeAfterAllReactions);
         }
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

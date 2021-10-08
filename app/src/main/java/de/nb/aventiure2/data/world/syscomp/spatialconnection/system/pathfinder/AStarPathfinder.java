@@ -17,7 +17,8 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnected
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.SpatialStandardStep;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 
-public class AStarPathfinder {
+public class AStarPathfinder
+        implements IWorldLoaderMixin {
     private final World world;
 
     public AStarPathfinder(final World world) {
@@ -85,7 +86,7 @@ public class AStarPathfinder {
 
                 if (nextNode == null) {
                     nextNode = new AStarNode(
-                            world.loadRequired(nextStep.getTo()),
+                            loadRequired(nextStep.getTo()),
                             curDistance.plus(currentNode.getDist()),
                             estimateDistToTarget(nextStep.getTo(), targetGO),
                             currentNode);
@@ -168,5 +169,10 @@ public class AStarPathfinder {
                                 Math.abs(
                                         startGOId.toLong() - targetGO.getId().toLong()
                                 ));
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

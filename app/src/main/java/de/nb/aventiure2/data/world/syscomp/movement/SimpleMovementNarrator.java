@@ -1,30 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.movement;
 
-import androidx.annotation.NonNull;
-
-import java.util.Collection;
-
-import javax.annotation.Nullable;
-
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.time.AvTimeSpan;
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.gameobject.player.*;
-import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
-import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
-import de.nb.aventiure2.german.description.StructuredDescription;
-import de.nb.aventiure2.german.description.TimedDescription;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.NO_WAY;
@@ -38,11 +13,34 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.TimedDescription.withAltDescriptions;
 
+import java.util.Collection;
+
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.SpatialConnection;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
+import de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays;
+import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.StructuredDescription;
+import de.nb.aventiure2.german.description.TimedDescription;
+
 /**
  * Grundlegende Implementierung, um dem Spieler die Bewegung
  * eines {@link de.nb.aventiure2.data.world.syscomp.movement.IMovingGO} zu beschreiben
  */
-public class SimpleMovementNarrator implements IMovementNarrator {
+public class SimpleMovementNarrator implements IMovementNarrator,
+        IWorldLoaderMixin {
     protected final GameObjectId gameObjectId;
     protected final Narrator n;
     protected final World world;
@@ -558,7 +556,7 @@ public class SimpleMovementNarrator implements IMovementNarrator {
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        final IDescribableGO describableGO = world.load(getGameObjectId());
+        final IDescribableGO describableGO = load(getGameObjectId());
 
         return world.anaph(describableGO, descShortIfKnown);
     }
@@ -585,12 +583,12 @@ public class SimpleMovementNarrator implements IMovementNarrator {
         return world.getDescription(gameObjectId, shortIfKnown);
     }
 
-    @NonNull
-    private SpielerCharakter loadSC() {
-        return world.loadSC();
-    }
-
     private GameObjectId getGameObjectId() {
         return gameObjectId;
+    }
+
+    @Override
+    public World getWorld() {
+        return world;
     }
 }

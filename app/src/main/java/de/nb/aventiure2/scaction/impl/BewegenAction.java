@@ -299,7 +299,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         // World#shouldBeDescribedAfterScMovement - nur etwas optimiert.
 
         final GameObjectId toId = spatialConnection.getTo();
-        final GameObject to = world.load(toId);
+        final GameObject to = load(toId);
 
         final boolean toIsEqualOrInsideOldLocation =
                 LocationSystem.isOrHasRecursiveLocation(to, oldLocation);
@@ -492,7 +492,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @NonNull
     private ILocationGO loadTo() {
-        return world.loadRequired(spatialConnection.getTo());
+        return loadRequired(spatialConnection.getTo());
     }
 
     @NonNull
@@ -550,9 +550,9 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @SuppressWarnings({"RedundantIfStatement"})
     private boolean scWirdMitEssenKonfrontiert() {
-        final GameObject newLocation = world.loadRequired(spatialConnection.getTo());
+        final GameObject newLocation = loadRequired(spatialConnection.getTo());
 
-        if (world.<IHasStateGO<SchlossfestState>>loadRequired(SCHLOSSFEST).stateComp()
+        if (((IHasStateGO<SchlossfestState>) loadRequired(SCHLOSSFEST)).stateComp()
                 .hasState(SchlossfestState::schlossfestLaeuft)) {
             if (oldLocation.is(DRAUSSEN_VOR_DEM_SCHLOSS)
                     && newLocation.is(SCHLOSS_VORHALLE)) {
@@ -572,7 +572,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @SuppressWarnings("RedundantIfStatement")
     private boolean scWirdMitSchlafgelegenheitKonfrontiert() {
-        final GameObject newLocation = world.loadRequired(spatialConnection.getTo());
+        final GameObject newLocation = loadRequired(spatialConnection.getTo());
         if (oldLocation.is(VOR_DER_HUETTE_IM_WALD) && newLocation.is(HUETTE_IM_WALD)) {
             return true;
         }
@@ -744,7 +744,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         boolean alternativeDescriptionAllowed = false;
         if (oldLocation instanceof ISpatiallyConnectedGO &&
-                world.load(spatialConnection.getTo()) instanceof ISpatiallyConnectedGO) {
+                load(spatialConnection.getTo()) instanceof ISpatiallyConnectedGO) {
             alternativeDescriptionAllowed =
                     ((ISpatiallyConnectedGO) oldLocation).spatialConnectionComp()
                             .isAlternativeMovementDescriptionAllowed(
@@ -818,7 +818,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     }
 
     private double calcSpeedFactor() {
-        return world.loadSC().feelingsComp().getMovementSpeedFactor()
+        return loadSC().feelingsComp().getMovementSpeedFactor()
                 * loadWetter().wetterComp().getMovementSpeedFactor(oldLocation, loadTo());
     }
 

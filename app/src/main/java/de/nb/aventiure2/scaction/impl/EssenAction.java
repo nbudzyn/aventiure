@@ -153,7 +153,7 @@ public class EssenAction extends AbstractScAction {
 
     private <F extends ILocatableGO & IHasStateGO<FroschprinzState>>
     void narrateAndDoSchlossfest() {
-        final F froschprinz = world.loadRequired(FROSCHPRINZ);
+        final F froschprinz = loadRequired(FROSCHPRINZ);
         if (froschprinz.locationComp()
                 .hasRecursiveLocation(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST) &&
                 froschprinz.stateComp().hasState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN)) {
@@ -200,7 +200,7 @@ public class EssenAction extends AbstractScAction {
         //  erhält sofort die Beschreibung "siehst noch einen Wagen...". Das ist etwas verwirrend,
         //  weil man sich fragt: Wie ist der Prinz jetzt nach draußen gekommen?
 
-        world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
+        loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
         froschprinz.stateComp().narrateAndSetState(ZURUECKVERWANDELT_IN_VORHALLE);
         froschprinz.locationComp().narrateAndSetLocation(SCHLOSS_VORHALLE);
     }
@@ -208,7 +208,7 @@ public class EssenAction extends AbstractScAction {
     private void narrateAndDoSchlossfestHungrig() {
         saveSatt();
 
-        world.loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
+        loadSC().feelingsComp().requestMoodMin(ZUFRIEDEN);
 
         n.narrateAlt(mins(10),
                 du(PARAGRAPH,

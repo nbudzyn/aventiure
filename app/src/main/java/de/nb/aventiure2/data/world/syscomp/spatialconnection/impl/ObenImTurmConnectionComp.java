@@ -66,7 +66,7 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 
-        if (world.<IHasStateGO<RapunzelState>>loadRequired(RAPUNZEL).stateComp()
+        if (((IHasStateGO<RapunzelState>) loadRequired(RAPUNZEL)).stateComp()
                 .hasState(RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN)) {
             res.add(con(VOR_DEM_ALTEN_TURM,
                     "an den Zöpfen",

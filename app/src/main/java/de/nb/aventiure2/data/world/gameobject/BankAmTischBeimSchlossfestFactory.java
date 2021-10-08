@@ -91,7 +91,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
         // konkreter Tisch ausgewählt ist).
         // Das Problem gibt es nur, weil es ja eigentlich ganz viele
         // Tische beim Schlossfest gibt.
-        world.<ILocatableGO>loadRequired(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST)
+        ((ILocatableGO) loadRequired(SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST))
                 .locationComp().setLocation(SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST);
 
         if (db.counterDao().get(BANK_AM_TISCH_BEIM_SCHLOSSFEST_FACTORY_IN) == 0) {
@@ -123,7 +123,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
         // Wir müssen auch die Erinnerung des SCs an den Tisch löschen!
         // Sonst erhalten wir beim Aufstehen einen Text in der Art
         // "Der lange Brettertisch ist verschwunden!" :-)
-        world.loadSC().mentalModelComp().unsetAssumedLocation(
+        loadSC().mentalModelComp().unsetAssumedLocation(
                 SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST);
 
         // "du stehst vom Tisch auf"
