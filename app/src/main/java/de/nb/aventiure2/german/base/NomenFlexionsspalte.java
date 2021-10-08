@@ -92,6 +92,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     LUFTHAUCH(M),
     LUFTZUG(M),
     MANN(M),
+    MARKT(M),
+    MARKTSTAENDE(PL_MFN, "Marktstände", "Marktständen"),
     MITTAG(M),
     MITTAGSHITZE(F),
     MITTAGSSONNE(F),

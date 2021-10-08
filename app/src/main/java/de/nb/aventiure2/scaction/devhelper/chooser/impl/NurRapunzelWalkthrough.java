@@ -112,7 +112,8 @@ public class NurRapunzelWalkthrough {
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
-                    "Auf den kleinen Markt gehen");
+                    "Auf den kleinen Markt gehen",
+                    "Den Bauernmarkt verlassen");
 
     public static final Walkthrough NUR_RAPUNZEL =
             BIS_OBEN_BEI_RAPUNZEL

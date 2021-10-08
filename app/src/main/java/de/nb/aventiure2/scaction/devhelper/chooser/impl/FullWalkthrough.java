@@ -155,7 +155,8 @@ public class FullWalkthrough {
                     "Auf den Waldweg zurückkehren",
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
-                    "Auf den kleinen Markt gehen");
+                    "Auf den kleinen Markt gehen",
+                    "Den Bauernmarkt verlassen");
     public static final Walkthrough FULL =
             ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN
                     .append(RAPUNZEL_RETTUNG_ZUSAGEN_BIS_ENDE);

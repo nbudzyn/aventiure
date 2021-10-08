@@ -137,6 +137,8 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
             Perfektbildung.SEIN, "getreten"),
+    VERLASSEN("verlassen", AKK, "verlasse", "verlässt", "verlässt",
+            "verlasst", Perfektbildung.HABEN, "verlassen"),
     VERLIEREN_AN("verlieren", AN_DAT, "verliere", "verlierst", "verliert", "verliert",
             Perfektbildung.HABEN, "verloren"),
     VERTREIBEN("verteiben", AKK,

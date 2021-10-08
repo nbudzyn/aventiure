@@ -80,11 +80,12 @@ public class DraussenVorDemSchlossConnectionComp extends AbstractSpatialConnecti
     public List<SpatialConnection> getConnections() {
         final ImmutableList.Builder<SpatialConnection> res = ImmutableList.builder();
 
-        res.add(con(SCHLOSS_VORHALLE,
-                "auf der Treppe",
-                WEST, "Das Schloss betreten",
-                secs(90),
-                this::getDescTo_SchlossVorhalle),
+        res.add(
+                con(SCHLOSS_VORHALLE,
+                        "auf der Treppe",
+                        WEST, "Das Schloss betreten",
+                        secs(90),
+                        this::getDescTo_SchlossVorhalle),
                 conNichtSC(
                         ZWISCHEN_DEN_HECKEN_VOR_DEM_SCHLOSS_EXTERN,
                         "zwischen den Buchsbaumhecken",
