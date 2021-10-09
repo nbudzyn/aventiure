@@ -30,7 +30,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.RAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STEHEND;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;
@@ -45,7 +46,6 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WOLKENFETZEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_MITTAGSSONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.BRUETENDE_HITZE_DER_SONNE;
-import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
 import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_MITTAGSSONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.DRUECKENDE_HITZE_DER_SONNE;
 import static de.nb.aventiure2.german.base.Nominalphrase.VON_DER_SONNE_AUFGEHEIZTE_STEHENDE_LUFT;
@@ -1022,7 +1022,7 @@ public class WetterData {
                                 new AdvAngabeSkopusVerbAllg("ums Gesicht"))
                                 .alsSatzMitSubjekt(np(INDEF, kuehl, WIND))));
                 alt.addAll(mapToSet(tempAltAdjPhrAttributiv,
-                        kuehl -> ZAUSEN.mit(DEIN_HAAR)
+                        kuehl -> ZAUSEN.mit(np(DEIN, HAAR))
                                 .alsSatzMitSubjekt(np(INDEF, kuehl, WIND))));
                 if (temperatur.compareTo(KUEHL) <= 0
                         && !nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {

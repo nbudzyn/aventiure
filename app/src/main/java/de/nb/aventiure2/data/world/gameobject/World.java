@@ -11,14 +11,14 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.EINE_TASCHE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GOLDEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
@@ -466,11 +466,8 @@ public class World {
                         NACH_OBEN_WEITGEHEND_OFFEN_UND_UNGESCHUETZT, false, HAENDE,
                         EnumRange.of(Temperatur.KNAPP_UEBER_DEM_GEFRIERPUNKT, Temperatur.WARM)),
                 object.create(GOLDENE_KUGEL,
-                        np(F, INDEF, "goldene Kugel",
-                                "goldenen Kugel", GOLDENE_KUGEL),
-                        np(F, DEF,
-                                "goldene Kugel",
-                                "goldenen Kugel", GOLDENE_KUGEL),
+                        np(INDEF, GOLDEN, KUGEL, GOLDENE_KUGEL),
+                        np(DEF, GOLDEN, KUGEL, GOLDENE_KUGEL),
                         np(KUGEL, GOLDENE_KUGEL),
                         SCHLOSS_VORHALLE, DRAUSSEN_VOR_DEM_SCHLOSS,
                         true),

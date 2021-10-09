@@ -226,8 +226,8 @@ public class Relativpronomen extends
     }
 
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
-        return ArtikelFlexionsspalte.getPossessiv(person, getNumerusGenus());
+    public ArtikelwortFlexionsspalte.Typ possArt() {
+        return ArtikelwortFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 
     @Override

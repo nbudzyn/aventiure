@@ -34,17 +34,18 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGEISTE
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FREUDESTRAHLEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENERVT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISCH;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.IHR;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.IHR;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HASEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HERZ;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NAME;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RABEN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG;
-import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -198,7 +199,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::nachRapunzelsZauberinFragen),
                         st(this::herzAusschuettenMoeglich,
                                 // "Der jungen Frau dein Herz ausschütten"
-                                AUSSCHUETTEN.mitAkk(DEIN_HERZ),
+                                AUSSCHUETTEN.mitAkk(np(DEIN, HERZ)),
                                 this::herzAusschuetten),
                         st(SICH_UNTERHALTEN, this::unterhalten_allg),
                         exitSt(this::scUnmittelbarObenImTurm,

@@ -1,5 +1,24 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMitAntworten.Counter.FRAGE_BEANTWORTET;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GROB;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ERKLAEREN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -14,25 +33,6 @@ import de.nb.aventiure2.german.base.Indefinitpronomen;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAT_NACH_BIENEN_UND_BLUMEN_GEFRAGT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMAL;
-import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMitAntworten.Counter.FRAGE_BEANTWORTET;
-import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GROB;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ERKLAEREN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 
 class NaschereifrageMitAntworten extends RapunzelFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})

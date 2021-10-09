@@ -1,14 +1,17 @@
 package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DICK;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HAESSLICH;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FROSCH;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 
 /**
  * Implementierung von {@link AbstractDescriptionComp} für den
@@ -24,12 +27,14 @@ public class FroschprinzDescriptionComp extends MultiDescriptionComp {
         super(FROSCHPRINZ);
         this.stateComp = stateComp;
         froschDescriptionTriple = new DescriptionTriple(
-                np(M, INDEF, "dicker, hässlicher Frosch",
-                        "dicken, hässlichen Frosch",
-                        "dicken, hässlichen Frosch", FROSCHPRINZ),
-                np(M, DEF, "hässliche Frosch",
-                        "hässlichen Frosch",
-                        "hässlichen Frosch", FROSCHPRINZ),
+                np(INDEF,
+                        new ZweiAdjPhrOhneLeerstellen(
+                                DICK,
+                                true,
+                                HAESSLICH),
+                        FROSCH,
+                        FROSCHPRINZ),
+                np(DEF, HAESSLICH, FROSCH, FROSCHPRINZ),
                 np(FROSCH, FROSCHPRINZ));
         prinzDescriptionTriple =
                 new DescriptionTriple(

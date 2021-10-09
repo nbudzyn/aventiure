@@ -10,7 +10,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelKugelherkunftsfrageMitAntworten.Counter.FRAGE_BEANTWORTET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.KLEIN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NOTLUEGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WAHRHEIT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;

@@ -72,9 +72,9 @@ public class Interrogativpronomen
     }
 
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
+    public ArtikelwortFlexionsspalte.Typ possArt() {
         // "Was ist das? Sein..."
-        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
+        return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

@@ -1,15 +1,18 @@
 package de.nb.aventiure2.german.base;
 
 import static java.util.Objects.requireNonNull;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEIN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.EUER;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.IHR;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.MEIN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.SEIN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.UNSER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.ETWAS;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EUER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.IHR;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.MEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.SEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.UNSER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.VIEL_INDEF;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -25,11 +28,12 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Ein Artikel (genauer gesagt: die Flexionsspalte eines Artikels für einen gewissen
- * Numerus und ein gewisses Genus) - umfasst auch einige Artikel "im weiteren Sinne"
- * (gewisse Artikelwörter), z.B. "kein", auch "Possessivartikel wie "unser", "sein" etc.
+ * Ein (attributiv gebrauchtes) Artikelwort (genauer gesagt: die Flexionsspalte
+ * eines Artikelworts  für einen gewissen Numerus und ein gewisses Genus) - umfasst
+ * neben den eigentlichen Artikeln auch, Wörter wie "kein", Possessivartikel ("mein", "unser"),
+ * Indefinitartikel etc.
  */
-public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
+public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
     public enum Typ {
         /**
          * "kein( Haus)", "keine(Häuser)"
@@ -73,7 +77,28 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
         /**
          * Possessivartikel für ein Bezugsobjekt 2. Person Plural: "unser( Haus)", "unsere( Häuser)"
          */
-        EUER(false, false, null);
+        EUER(false, false, null),
+        /**
+         * Indefinitpronomen "etwas"
+         */
+        ETWAS(false, false,
+                // "Nicht etwas Wassser"* -> "kein Wassser"
+                // "Nicht einige Leute"* -> "keine Leute"
+                NEG_INDEF),
+        /**
+         * Indefinitpronomen "einiges" / einige"
+         */
+        EINIGER(false, false,
+                // "Nicht etwas Wassser"* -> "kein Wassser"
+                // "Nicht einige Leute"* -> "keine Leute"
+                NEG_INDEF),
+        /**
+         * Indefinitpronomen "viel" / "viele" (ohne vorangehenden Artikel):
+         * "viel Soße" (nicht: "die viele Soße"!)
+         */
+        VIEL_INDEF(false, false,
+                // "nicht viel" / "nicht viele"
+                null);
 
         private final boolean erlaubtVerschmelzungMitPraeposition;
 
@@ -96,11 +121,11 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
             this.negativeForm = negativ ? this : negativeForm;
         }
 
-        public ArtikelFlexionsspalte vor(final IErlaubtAttribute phraseDieAttributeErlaubt) {
+        public ArtikelwortFlexionsspalte vor(final IErlaubtAttribute phraseDieAttributeErlaubt) {
             return get(this, phraseDieAttributeErlaubt.getNumerusGenus());
         }
 
-        public ArtikelFlexionsspalte vor(final NumerusGenus numerusGenus) {
+        public ArtikelwortFlexionsspalte vor(final NumerusGenus numerusGenus) {
             return get(this, numerusGenus);
         }
 
@@ -135,28 +160,22 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
         }
     }
 
-    private static final Map<Typ, Map<NumerusGenus, ArtikelFlexionsspalte>> ALL =
+    private static final Map<Typ, Map<NumerusGenus, ArtikelwortFlexionsspalte>> ALL =
             new ConcurrentHashMap<>();
 
     private final NumerusGenus numerusGenus;
     private final Flexionsreihe flexionsreihe;
 
-    private static final Map<NumerusGenus, Endungen> ALL_ENDUNGEN_TYP_EIN = ImmutableMap.of(
-            M, new Endungen("", "em", "en"),
-            F, new Endungen("e", "er"),
-            N, new Endungen("", "em"),
-            PL_MFN, new Endungen("e", "en"));
-
     static {
         // der, die, das, ...
         ALL.put(DEF, ImmutableMap.of(
-                M, new ArtikelFlexionsspalte(M,
+                M, new ArtikelwortFlexionsspalte(M,
                         fr("der", "dem", "den")),
-                F, new ArtikelFlexionsspalte(F,
+                F, new ArtikelwortFlexionsspalte(F,
                         fr("die", "der")),
-                N, new ArtikelFlexionsspalte(N,
+                N, new ArtikelwortFlexionsspalte(N,
                         fr("das", "dem")),
-                PL_MFN, new ArtikelFlexionsspalte(PL_MFN,
+                PL_MFN, new ArtikelwortFlexionsspalte(PL_MFN,
                         fr("die", "den"))));
 
         // ein, eine, ...
@@ -172,6 +191,21 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
         ALL.put(IHR, buildFlexionsspaltenTypEin("ihr", true));
         ALL.put(UNSER, buildFlexionsspaltenTypEin("unser", true));
         ALL.put(EUER, buildFlexionsspaltenTypEin("euer", true));
+
+        // Indefinitpronomen etwas / einiges
+        ALL.put(EINIGER, buildFlexionsspaltenTypDieser("einig", true));
+        ALL.put(ETWAS, ImmutableMap.of(
+                // "etwas Hirsch"
+                M, new ArtikelwortFlexionsspalte(M, fr("etwas")),
+                // "etwas Soße"
+                F, new ArtikelwortFlexionsspalte(F, fr("etwas")),
+                // "etwas Wasser"
+                N, new ArtikelwortFlexionsspalte(N, fr("etwas")),
+                // Ersatzkonstruktion: "einige Leute"
+                PL_MFN, requireNonNull(requireNonNull(ALL.get(EINIGER)).get(PL_MFN))));
+
+        // Indefinitpronomen viel, indefinit: "viel Soße", "viele Leute", ...
+        ALL.put(VIEL_INDEF, buildFlexionsspaltenTypEin("viel", true));
     }
 
     /**
@@ -179,16 +213,36 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
      * Genera im Singular, ggf. auch für den Plural, für einen Artikel
      * vom Typ "ein".
      */
-    private static ImmutableMap<NumerusGenus, ArtikelFlexionsspalte> buildFlexionsspaltenTypEin(
+    private static ImmutableMap<NumerusGenus, ArtikelwortFlexionsspalte> buildFlexionsspaltenTypEin(
             final String stamm, final boolean auchPlural) {
-        final ImmutableMap.Builder<NumerusGenus, ArtikelFlexionsspalte> res =
+        final ImmutableMap.Builder<NumerusGenus, ArtikelwortFlexionsspalte> res =
                 ImmutableMap.builder();
-        res.put(M, new ArtikelFlexionsspalte(stamm, M));
-        res.put(F, new ArtikelFlexionsspalte(stamm, F));
-        res.put(N, new ArtikelFlexionsspalte(stamm, N));
+        res.put(M, new ArtikelwortFlexionsspalte(stamm, false, M));
+        res.put(F, new ArtikelwortFlexionsspalte(stamm, false, F));
+        res.put(N, new ArtikelwortFlexionsspalte(stamm, false, N));
 
         if (auchPlural) {
-            res.put(PL_MFN, new ArtikelFlexionsspalte(stamm, PL_MFN));
+            res.put(PL_MFN, new ArtikelwortFlexionsspalte(stamm, false, PL_MFN));
+        }
+
+        return res.build();
+    }
+
+    /**
+     * Baut die Artikel (genauer: die Artikel-Flexionsspalten) für allen
+     * Genera im Singular, ggf. auch für den Plural, für einen Artikel
+     * vom Typ "dieser".
+     */
+    private static ImmutableMap<NumerusGenus, ArtikelwortFlexionsspalte> buildFlexionsspaltenTypDieser(
+            final String stamm, final boolean auchPlural) {
+        final ImmutableMap.Builder<NumerusGenus, ArtikelwortFlexionsspalte> res =
+                ImmutableMap.builder();
+        res.put(M, new ArtikelwortFlexionsspalte(stamm, true, M));
+        res.put(F, new ArtikelwortFlexionsspalte(stamm, true, F));
+        res.put(N, new ArtikelwortFlexionsspalte(stamm, true, N));
+
+        if (auchPlural) {
+            res.put(PL_MFN, new ArtikelwortFlexionsspalte(stamm, true, PL_MFN));
         }
 
         return res.build();
@@ -249,31 +303,43 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
         }
     }
 
-    static boolean traegtKasusendung(@Nullable final ArtikelFlexionsspalte artikelFlexionsspalte,
-                                     final Kasus kasus) {
-        if (artikelFlexionsspalte == null) {
+    static boolean traegtKasusendung(
+            @Nullable final ArtikelwortFlexionsspalte artikelwortFlexionsspalte,
+            final Kasus kasus) {
+        if (artikelwortFlexionsspalte == null) {
             return false;
         }
 
-        return artikelFlexionsspalte.traegtKasusendung(kasus);
+        return artikelwortFlexionsspalte.traegtKasusendung(kasus);
     }
 
     public static @Nullable
-    ArtikelFlexionsspalte get(@Nullable final Typ typ, final NumerusGenus numerusGenus) {
+    ArtikelwortFlexionsspalte get(@Nullable final Typ typ, final NumerusGenus numerusGenus) {
         if (typ == null) {
             return null;
         }
         return requireNonNull(ALL.get(typ)).get(numerusGenus);
     }
 
-    private ArtikelFlexionsspalte(final String stammTypEin, final NumerusGenus numerusGenus) {
+    private ArtikelwortFlexionsspalte(final String stammTypEin,
+                                      final boolean stetsMitEndung,
+                                      final NumerusGenus numerusGenus) {
         this(numerusGenus,
-                requireNonNull(ALL_ENDUNGEN_TYP_EIN.get(numerusGenus))
+                requireNonNull(endungenEinDieser(stetsMitEndung).get(numerusGenus))
                         .buildFlexionsreihe(stammTypEin));
     }
 
-    private ArtikelFlexionsspalte(final NumerusGenus numerusGenus,
-                                  final Flexionsreihe flexionsreihe) {
+    private static Map<NumerusGenus, Endungen> endungenEinDieser(final boolean stetsMitEdung) {
+        return ImmutableMap.of(
+                M, new Endungen(stetsMitEdung ? "er" : "",
+                        "em", "en"),
+                F, new Endungen("e", "er"),
+                N, new Endungen(stetsMitEdung ? "es" : "", "em"),
+                PL_MFN, new Endungen("e", "en"));
+    }
+
+    private ArtikelwortFlexionsspalte(final NumerusGenus numerusGenus,
+                                      final Flexionsreihe flexionsreihe) {
         this.numerusGenus = numerusGenus;
         this.flexionsreihe = flexionsreihe;
     }
@@ -315,9 +381,9 @@ public class ArtikelFlexionsspalte implements DeklinierbarePhrase {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        final ArtikelFlexionsspalte artikelFlexionsspalte = (ArtikelFlexionsspalte) o;
-        return numerusGenus == artikelFlexionsspalte.numerusGenus &&
-                flexionsreihe.equals(artikelFlexionsspalte.flexionsreihe);
+        final ArtikelwortFlexionsspalte artikelwortFlexionsspalte = (ArtikelwortFlexionsspalte) o;
+        return numerusGenus == artikelwortFlexionsspalte.numerusGenus &&
+                flexionsreihe.equals(artikelwortFlexionsspalte.flexionsreihe);
     }
 
     @Override

@@ -2,14 +2,16 @@ package de.nb.aventiure2.data.world.syscomp.description.impl;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WUNDERSCHOEN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 /**
@@ -26,10 +28,19 @@ public class RapunzeDescriptionComp extends MultiDescriptionComp {
         this.world = world;
 
         jungeFrauDescriptionTriple = new DescriptionTriple(
-                np(F, INDEF, "wunderschöne junge Frau",
-                        "wunderschönen jungen Frau", RAPUNZEL),
-                np(F, DEF, "schöne junge Frau",
-                        "schönen jungen Frau", RAPUNZEL),
+                np(INDEF,
+                        new ZweiAdjPhrOhneLeerstellen(
+                                WUNDERSCHOEN,
+                                false,
+                                JUNG),
+                        FRAU,
+                        RAPUNZEL),
+                np(DEF, new ZweiAdjPhrOhneLeerstellen(
+                                SCHOEN,
+                                false,
+                                JUNG),
+                        FRAU,
+                        RAPUNZEL),
                 np(JUNG, FRAU, RAPUNZEL));
         rapunzelDescriptionTriple = new DescriptionTriple(
                 np(NomenFlexionsspalte.RAPUNZEL, RAPUNZEL),

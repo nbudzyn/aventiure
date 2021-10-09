@@ -7,7 +7,7 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.L
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELL;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;

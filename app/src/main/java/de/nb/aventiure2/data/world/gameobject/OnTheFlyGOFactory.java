@@ -2,8 +2,10 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUSGERUPFT;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.VIEL_INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 
@@ -27,7 +29,6 @@ import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
 import de.nb.aventiure2.data.world.syscomp.typed.TypeComp;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.Nominalphrase;
 
 /**
  * Eine Factory für GameObjects, die on-the-fly erzeugt werden.
@@ -56,8 +57,8 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                 soundsovieleBinsen =
                 ImmutableMap.<Integer, EinzelneSubstantivischePhrase>builder()
                         .put(0, np(NEG_INDEF, BINSEN))
-                        .put(1, Nominalphrase.EINIGE_BINSEN)
-                        .put(3, Nominalphrase.VIELE_BINSEN)
+                        .put(1, np(EINIGER, BINSEN))
+                        .put(3, np(VIEL_INDEF, BINSEN))
                         .build();
 
         return (AUSGERUFPFTE_BINSEN) new AmountObject(newId,

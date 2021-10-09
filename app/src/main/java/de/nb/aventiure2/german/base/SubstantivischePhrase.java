@@ -210,7 +210,7 @@ public interface SubstantivischePhrase
     /**
      * Gibt einen Possessivartikel für diese Phrase zurück.
      */
-    ArtikelFlexionsspalte.Typ possArt();
+    ArtikelwortFlexionsspalte.Typ possArt();
 
     /**
      * Gibt ein Relativpronomen für diese Phrase zurück.

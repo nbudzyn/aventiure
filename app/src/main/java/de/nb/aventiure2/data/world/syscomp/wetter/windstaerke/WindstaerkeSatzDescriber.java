@@ -13,14 +13,15 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHWAECH
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STAERKER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNANGENEHM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WINDGESCHUETZT;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KRAFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFTHAUCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STURM;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
-import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
 import static de.nb.aventiure2.german.base.Nominalphrase.SCHUTZ_VOR_DEM_AERGSTEN_STURM;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
@@ -336,7 +337,7 @@ public class WindstaerkeSatzDescriber {
                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("ums Gesicht"))
                                     .mitAdvAngabe(new AdvAngabeSkopusSatz(KRAEFTIG))
                                     .alsSatzMitSubjekt(WIND),
-                            ZAUSEN.mit(DEIN_HAAR).alsSatzMitSubjekt(WIND),
+                            ZAUSEN.mit(np(DEIN, HAAR)).alsSatzMitSubjekt(WIND),
                             new ZweiAdjPhrOhneLeerstellen(KRAEFTIG.mitGraduativerAngabe("sehr"),
                                     true,
                                     UNANGENEHM).alsPraedikativumPraedikat()

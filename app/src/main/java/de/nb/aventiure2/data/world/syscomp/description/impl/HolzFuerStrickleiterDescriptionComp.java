@@ -5,8 +5,8 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleite
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AUF_DEM_BODEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GESAMMELT;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.AESTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOLZ;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KLAUBHOLZ;

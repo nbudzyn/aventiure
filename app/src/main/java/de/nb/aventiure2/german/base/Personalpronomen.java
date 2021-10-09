@@ -215,8 +215,8 @@ public class Personalpronomen extends
      * "Er... sein..."
      */
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
-        return ArtikelFlexionsspalte.getPossessiv(person, getNumerusGenus());
+    public ArtikelwortFlexionsspalte.Typ possArt() {
+        return ArtikelwortFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 
     @Override

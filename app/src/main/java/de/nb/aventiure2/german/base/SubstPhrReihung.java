@@ -228,8 +228,8 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     }
 
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
-        return ArtikelFlexionsspalte.getPossessiv(getPerson(), getNumerusGenus());
+    public ArtikelwortFlexionsspalte.Typ possArt() {
+        return ArtikelwortFlexionsspalte.getPossessiv(getPerson(), getNumerusGenus());
     }
 
     @Override

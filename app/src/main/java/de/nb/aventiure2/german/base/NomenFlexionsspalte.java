@@ -161,6 +161,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     WOLKENFRONT(F),
     WUT(F),
     ZAUBERIN(F),
+    ZEIT(F),
     ZIEL(N),
     ZWIELICHT(N);
 
@@ -369,8 +370,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
-        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
+    public ArtikelwortFlexionsspalte.Typ possArt() {
+        return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

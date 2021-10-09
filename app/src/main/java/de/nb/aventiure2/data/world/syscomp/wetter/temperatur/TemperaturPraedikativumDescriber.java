@@ -30,7 +30,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNANGENE
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNERTRAEGLICH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNERWARTET;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WAERMER;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDHITZE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.EISESKAELTE;

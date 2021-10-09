@@ -6,7 +6,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKTZEIT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.IRDEN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESCHIRR;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARKT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TOEPFE;

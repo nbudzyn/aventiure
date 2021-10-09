@@ -23,7 +23,8 @@ import de.nb.federkiel.deutsch.lexikon.GermanPOS;
 import de.nb.federkiel.interfaces.IWordForm;
 
 /**
- * Ein Pronomen wie "alles", "nichts".
+ * Ein Pronomen wie "alles", "nichts". Zu Indefinit-Artikeln ("einige( Leute)", "etwas( Wein"), ...)
+ * siehe {@link ArtikelwortFlexionsspalte.Typ}.
  */
 @ParametersAreNonnullByDefault
 public class Indefinitpronomen
@@ -133,9 +134,9 @@ public class Indefinitpronomen
     }
 
     @Override
-    public ArtikelFlexionsspalte.Typ possArt() {
+    public ArtikelwortFlexionsspalte.Typ possArt() {
         // "[Haben wir noch Wein? - Im Keller ist noch welcher. ]Sein[ Geruch ist unverkennbar.]"
-        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
+        return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

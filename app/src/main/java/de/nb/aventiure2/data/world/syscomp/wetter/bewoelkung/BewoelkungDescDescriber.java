@@ -1,5 +1,31 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
+import static de.nb.aventiure2.data.time.AvTimeSpan.span;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEDECKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUNKEL;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -22,32 +48,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
-import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
-import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.BEDECKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUNKEL;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.STEHEN;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Beschreibt die {@link Bewoelkung} als {@link AbstractDescription}s.
@@ -90,7 +90,7 @@ public class BewoelkungDescDescriber {
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat - erlebt
      * unter offenem Himmel
      */
-    public ImmutableCollection<AbstractDescription<?>> altSprungOderWechselUnterOffenemHimmel(
+    private ImmutableCollection<AbstractDescription<?>> altSprungOderWechselUnterOffenemHimmel(
             final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();

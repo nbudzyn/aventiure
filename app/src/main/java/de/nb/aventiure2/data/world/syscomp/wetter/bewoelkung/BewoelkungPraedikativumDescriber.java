@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.ArtikelFlexionsspalte;
+import de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
@@ -65,7 +65,7 @@ public class BewoelkungPraedikativumDescriber {
     ImmutableCollection<SubstantivischePhrase> altSpStatischTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
-            final ArtikelFlexionsspalte.Typ artikelTyp) {
+            final ArtikelwortFlexionsspalte.Typ artikelTyp) {
         // "ein schummriger Morgen"
         return mapToSet(altSpStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
                 np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));

@@ -6,9 +6,10 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleite
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.GESAMMELT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HANDLICH;
-import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.ETWAS;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STUECKE;
-import static de.nb.aventiure2.german.base.Nominalphrase.ETWAS_ZEIT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZEIT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -63,7 +64,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
         return ImmutableList.of(
                 DescriptionBuilder.du(
                         new ZweiPraedikateOhneLeerstellen(
-                                SICH_NEHMEN.mit(ETWAS_ZEIT),
+                                SICH_NEHMEN.mit(np(ETWAS, ZEIT)),
                                 BRECHEN.mit(getDescription())
                                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                 IN_AKK.mit(np(INDEF, HANDLICH, STUECKE))))))
