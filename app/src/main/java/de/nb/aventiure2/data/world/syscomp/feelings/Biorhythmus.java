@@ -1,5 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Arrays.asList;
+
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
 
@@ -10,9 +13,6 @@ import java.util.List;
 import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Arrays.asList;
-
 /**
  * Biorhythmus für ein bestimmtes Gefühl: Zu gewissen Tages- und Nachtzeiten
  * ist das Gefühl üblicherweise soundso stark.
@@ -20,6 +20,7 @@ import static java.util.Arrays.asList;
 class Biorhythmus {
     private final List<Pair<AvTime, Integer>> pairsInTimeOrder;
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2) {
         this(asList(
@@ -27,6 +28,7 @@ class Biorhythmus {
                 Pair.create(time2, intensity2)));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3) {
@@ -37,6 +39,7 @@ class Biorhythmus {
         ));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,
@@ -49,6 +52,7 @@ class Biorhythmus {
         ));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,
@@ -63,6 +67,7 @@ class Biorhythmus {
         ));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,
@@ -79,7 +84,7 @@ class Biorhythmus {
         ));
     }
 
-
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,
@@ -98,6 +103,7 @@ class Biorhythmus {
         ));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,
@@ -141,6 +147,7 @@ class Biorhythmus {
         ));
     }
 
+    @SuppressWarnings("unused")
     public Biorhythmus(final AvTime time1, final Integer intensity1,
                        final AvTime time2, final Integer intensity2,
                        final AvTime time3, final Integer intensity3,

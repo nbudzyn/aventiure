@@ -4,8 +4,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.MusVerkaeuferinReactionsComp.Counter.BESCHREIBUNG_MUS_VERKAEUFERIN;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGINN_MARKTZEIT;
-import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.ENDE_MARKTZEIT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKTZEIT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARKT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MUS;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
@@ -20,6 +19,7 @@ import androidx.annotation.Nullable;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeInterval;
 import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
@@ -45,11 +45,13 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public enum Counter {
-        BESCHREIBUNG_MUS_VERKAEUFERIN;
+        BESCHREIBUNG_MUS_VERKAEUFERIN
     }
 
-    private static final AvTime BEGINN_AUF_MARKT = BEGINN_MARKTZEIT.rotate(mins(15));
-    private static final AvTime ENDE_AUF_MARKT = ENDE_MARKTZEIT.rotateMinus(mins(5));
+    private static final AvTimeInterval ZEIT_AUF_MARKT =
+            AvTimeInterval.fromExclusiveToInclusive(
+                    MARKTZEIT.getStartExclusive().rotate(mins(15)),
+                    MARKTZEIT.getEndInclusive().rotateMinus(mins(5)));
 
     public MusVerkaeuferinReactionsComp(final CounterDao counterDao,
                                         final Narrator n,
@@ -130,10 +132,9 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
     public void onTimePassed(final Change<AvDateTime> change) {
         final AvTime time = change.getNachher().getTime();
 
-        if (time.isWithin(BEGINN_AUF_MARKT, ENDE_AUF_MARKT)
-                && locationComp.hasNoLocation()) {
+        if (time.isWithin(ZEIT_AUF_MARKT) && locationComp.hasNoLocation()) {
             betrittDenMarkt();
-        } else if (!time.isWithin(BEGINN_AUF_MARKT, ENDE_AUF_MARKT)
+        } else if (!time.isWithin(ZEIT_AUF_MARKT)
                 && locationComp.hasRecursiveLocation(BAUERNMARKT)) {
             verlaesstDenMarkt();
         }

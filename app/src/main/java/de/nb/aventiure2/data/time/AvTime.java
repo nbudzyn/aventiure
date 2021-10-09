@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.time;
 
+import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
+import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
+
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
@@ -9,12 +15,6 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.world.base.Change;
-
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
-import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 
 /**
  * Wertobjekt für eine Uhrzeit in der Spielwelt
@@ -133,11 +133,7 @@ public class AvTime {
     }
 
     public AvTimeSpan timeSpanUntil(@NonNull final AvTime other) {
-        if (!other.isBefore(this)) {
-            return new AvTimeSpan(other.secsSinceMidnight - secsSinceMidnight);
-        }
-        return new AvTimeSpan(
-                SECS_IN_A_DAY + other.secsSinceMidnight - secsSinceMidnight);
+        return AvTimeInterval.fromExclusiveToInclusive(this, other).toTimeSpan();
     }
 
     public AvTime rotate(@NonNull final AvTimeSpan add) {
@@ -149,7 +145,7 @@ public class AvTime {
                 (int) ((secsSinceMidnight + SECS_IN_A_DAY - sub.getSecs()) % SECS_IN_A_DAY));
     }
 
-    int getSec() {
+    private int getSec() {
         return secsSinceMidnight
                 - (getHour() * SECS_IN_AN_HOUR)
                 - (getMin() * 60);
@@ -184,12 +180,16 @@ public class AvTime {
                 intervalDuration.getSecs();
     }
 
-    public boolean isWithin(final Change<AvTime> change) {
-        return isWithin(change.getVorher(), change.getNachher());
+    public boolean isWithin(final Change<AvTime> timeChange) {
+        return isWithin(AvTimeInterval.fromExclusiveToInclusive(timeChange));
     }
 
     public boolean isWithin(final AvTime startExclusive, final AvTime endInclusive) {
-        return startExclusive.isBefore(this) && endInclusive.isEqualOrAfter(this);
+        return isWithin(AvTimeInterval.fromExclusiveToInclusive(startExclusive, endInclusive));
+    }
+
+    public boolean isWithin(final AvTimeInterval timeInterval) {
+        return timeInterval.contains(this);
     }
 
     public boolean isBefore(final AvTime other) {
@@ -200,7 +200,7 @@ public class AvTime {
         return secsSinceMidnight <= other.secsSinceMidnight;
     }
 
-    private boolean isEqualOrAfter(@NonNull final AvTime other) {
+    boolean isEqualOrAfter(@NonNull final AvTime other) {
         return secsSinceMidnight >= other.secsSinceMidnight;
     }
 

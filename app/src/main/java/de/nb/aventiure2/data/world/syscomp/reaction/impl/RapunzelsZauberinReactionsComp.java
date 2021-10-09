@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeInterval;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.Change;
@@ -89,13 +89,14 @@ public class RapunzelsZauberinReactionsComp
         ZAUBERIN_KOMMT_AUSSER_DER_REIHE_NACHDEM_MAN_VON_IHR_GESPROCHEN_HAT
     }
 
-    // Vorher ist es der Zauberin für einen Rapunzelbesuch zu früh
-    private static final AvTime FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH =
-            oClock(6, 30);
-
-    // Danach wird es der Zauberin für einen Rapunzelbesuch zu spät
-    private static final AvTime SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH =
-            oClock(17);
+    /**
+     * In dieser Zeit geht die Zauberin zu Rapunzel los. Vorher (exklusiv) ist es ihr zu früh,
+     * danach ist es ihr zu spät.
+     */
+    private static final AvTimeInterval LOSGEHZEITINTERVALL_RAPUNZELBESUCH =
+            AvTimeInterval.fromExclusiveToInclusive(
+                    oClock(6, 30),
+                    oClock(17));
 
     private static final AvTimeSpan BESUCHSDAUER = mins(31);
 
@@ -564,9 +565,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     public static boolean liegtImZeitfensterFuerRapunzelbesuch(final AvDateTime now) {
-        return now.getTime().isWithin(
-                FRUEHESTE_LOSGEHZEIT_RAPUNZELBESUCH,
-                SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH);
+        return LOSGEHZEITINTERVALL_RAPUNZELBESUCH.contains(now.getTime());
     }
 
     private void onTimePassed_ToAufDemWegZuRapunzel(
@@ -610,8 +609,9 @@ public class RapunzelsZauberinReactionsComp
                 // Verhindern, dass die Zauberin sofort wieder umdreht. Das führt zu unsinnigen
                 // Kombinationen in der Art "Die magere Frau kommt dir hinterher. Sie kommt auf
                 // dich zu und geht an dir vorbei"
-                && !now.getTime()
-                .isBefore(SPAETESTE_LOSGEHZEIT_RAPUNZELBESUCH.rotateMinus(BESUCHSDAUER))) {
+                && !now.getTime().isBefore(
+                LOSGEHZEITINTERVALL_RAPUNZELBESUCH.getEndInclusive()
+                        .rotateMinus(BESUCHSDAUER))) {
             // Gegen Abend geht die Zauberin wieder zurück.
             talkingComp.zauberinNichtImTurmBeginntRueckweg();
             return;

@@ -1,5 +1,9 @@
 package de.nb.aventiure2.data.time;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_A_DAY;
+
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
@@ -11,10 +15,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.world.base.Change;
-
-import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
-import static de.nb.aventiure2.data.time.AvTime.SECS_IN_A_DAY;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Value Object für Datum und Zeitpunkt.
@@ -35,8 +35,8 @@ public class AvDateTime {
     public AvDateTime(final long daySinceBeginning, final int hoursSinceDayStart,
                       final int minutesSinceHourStart) {
         this(daySinceBeginning * SECS_IN_A_DAY
-                + hoursSinceDayStart * SECS_IN_AN_HOUR
-                + minutesSinceHourStart * 60);
+                + ((long) hoursSinceDayStart) * SECS_IN_AN_HOUR
+                + minutesSinceHourStart * 60L);
     }
 
     public AvDateTime(final long secsSinceBeginning) {
@@ -101,8 +101,8 @@ public class AvDateTime {
         return isWithin(change.getVorher(), change.getNachher());
     }
 
-    public boolean isWithin(final AvDateTime lowerBoundExclusive,
-                            final AvDateTime upperBoundInclusive) {
+    private boolean isWithin(final AvDateTime lowerBoundExclusive,
+                             final AvDateTime upperBoundInclusive) {
         requireNonNull(lowerBoundExclusive, "lowerBoundExclusive is null");
         requireNonNull(upperBoundInclusive, "upperBoundInclusive is null");
 

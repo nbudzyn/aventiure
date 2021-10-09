@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 
 import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.AvTimeInterval;
 
 /**
  * A state the Froschprinz can be in.
@@ -14,13 +15,15 @@ public enum SchlossfestState {
     NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN(true),
     NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN(true);
 
-    public static final AvTime BEGINN_MARKTZEIT = oClock(7, 15);
-    public static final AvTime ENDE_MARKTZEIT = oClock(16, 30);
+    public static final AvTimeInterval MARKTZEIT =
+            AvTimeInterval.fromExclusiveToInclusive(
+                    oClock(7, 15),
+                    oClock(16, 30));
 
     private final boolean schlossfestLaeuft;
 
     public static SchlossfestState getMarkt(final AvTime time) {
-        return time.isWithin(BEGINN_MARKTZEIT, ENDE_MARKTZEIT) ?
+        return time.isWithin(MARKTZEIT) ?
                 NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN :
                 NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_GESCHLOSSEN;
     }

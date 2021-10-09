@@ -1,5 +1,9 @@
 package de.nb.aventiure2.data.time;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.time.AvTime.HOURS_IN_A_DAY;
+import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
+
 import androidx.annotation.NonNull;
 import androidx.room.PrimaryKey;
 
@@ -11,10 +15,6 @@ import java.util.Objects;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.data.world.base.Change;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.time.AvTime.HOURS_IN_A_DAY;
-import static de.nb.aventiure2.data.time.AvTime.SECS_IN_AN_HOUR;
 
 /**
  * Eine Zeitspanne, immutable
@@ -166,10 +166,6 @@ public class AvTimeSpan {
 
     public boolean shorterThanOrEqual(@NonNull final AvTimeSpan other) {
         return secs <= other.secs;
-    }
-
-    public boolean isNoTime() {
-        return equals(NO_TIME);
     }
 
     @Contract(value = "null -> false", pure = true)
