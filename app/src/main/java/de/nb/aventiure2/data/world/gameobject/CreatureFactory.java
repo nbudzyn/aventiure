@@ -197,7 +197,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                 new LocationComp(TOPF_VERKAEUFERIN, db, world, null, BAUERNMARKT,
                         false);
         final TopfVerkaeuferinReactionsComp reactionsComp =
-                new TopfVerkaeuferinReactionsComp(db.counterDao(), n, world);
+                new TopfVerkaeuferinReactionsComp(db.counterDao(), n, world, locationComp);
 
         return new SimpleReactionsCreature(TOPF_VERKAEUFERIN,
                 descriptionComp, locationComp, reactionsComp);

@@ -73,146 +73,220 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
     IGNORIEREN("ignorieren", AKK, "ignoriere", "ignorierst", "ignoriert",
             "ignoriert",
             Perfektbildung.HABEN, "ignoriert"),
+    KLAPPERN_MIT("klappern", MIT_DAT, "klappere", "klapperst", "klappert",
+            "klappert", Perfektbildung.HABEN, "geklappert"),
     KUEHLEN("kühlen", AKK, "kühle", "kühlst", "kühlt",
             "kühlt", Perfektbildung.HABEN, "gekühlt"),
+
     KUENDIGEN("kündigen", AKK, "kündige", "kündigst", "kündigt",
             "kündigt", Perfektbildung.HABEN, "gekündigt"),
+
     LEGEN("legen", AKK, "lege", "legst", "legt",
             "legt",
             Perfektbildung.HABEN, "gelegt"),
+
     MUSTERN("mustern", AKK, "mustere", "musterst", "mustert",
             "mustert",
             Perfektbildung.HABEN, "gemustert"),
+
     NEHMEN("nehmen", AKK, "nehme", "nimmst", "nimmt",
             "nehmt", Perfektbildung.HABEN, "genommen"),
+
     PFEIFEN("pfeifen", DAT,
             "pfeife", "pfeifst", "pfeift", "pfeift",
             Perfektbildung.HABEN, "gepfiffen"),
+
     POLIEREN("polieren", AKK,
             "poliere", "polierst", "poliert",
             "poliert",
             Perfektbildung.HABEN, "poliert"),
+
     REAGIEREN("reagieren", AUF_AKK, "reagiere", "reagierst",
             "reagiert", "reagiert", Perfektbildung.HABEN, "reagiert"),
+
     REDEN("reden", MIT_DAT, "rede", "redest", "redet",
             "redet",
             Perfektbildung.HABEN, "geredet"),
+
     RUFEN("rufen", AKK, "rufe", "rufst", "ruft", "ruft",
             Perfektbildung.HABEN, "gerufen"),
+
     RUPFEN("rupfen", AKK, "rupfe", "rupfst", "rupft", "rupft",
             Perfektbildung.HABEN, "gerupft"),
+
     SAMMELN("sammeln", AKK, "sammle", "sammelst", "sammelt",
             "sammelt", Perfektbildung.HABEN, "gesammelt"),
+
     SAGEN("sagen", AKK,
             "sage", "sagst", "sagt", "sagt",
             Perfektbildung.HABEN, "gesagt"),
+
     SEHEN("sehen", AKK, "sehe", "siehst", "sieht", "seht",
             Perfektbildung.HABEN, "gesehen"),
+
     SCHAUEN("schauen", IN_AKK, "schaue", "schaust", "schaut", "schaut",
             Perfektbildung.HABEN, "geschaut"),
+
     SCHEINEN("scheinen", DAT,
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
+
     SCHIEBEN("schieben", AKK,
             "schiebe", "schiebst", "schiebt", "schiebt",
             Perfektbildung.HABEN, "geschoben"),
+
     SETZEN("setzen", AKK, "setze", "setzt", "setzt",
             "setzt", Perfektbildung.HABEN, "gesetzt"),
+
     SPRECHEN("sprechen", MIT_DAT, "spreche", "sprichst", "spricht",
             "sprecht", Perfektbildung.HABEN, "gesprochen"),
+
     SPUEREN("spüren", AKK, "spüre", "spürst", "spürt", "spürt",
             Perfektbildung.HABEN, "gespürt"),
+
     // Z.B. "jm. vor Augen stehen"
     STEHEN("stehen", DAT, "stehe", "stehst", "steht",
             "steht",
             Perfektbildung.HABEN, "gestanden"),
+
     STEIGEN_AUF("steigen", AUF_AKK,
             "steige", "steigst", "steigt", "steigt",
             SEIN, "gestiegen"),
+
     STREICHEN("streichen", DAT, "streiche",
             "streichst", "streicht", "streicht",
             Perfektbildung.HABEN, "gestrichen"),
+
     SUCHEN("suchen", AKK, "suche", "suchst", "sucht", "sucht",
             Perfektbildung.HABEN, "gesucht"),
+
     TREIBEN("treiben", AKK, "treibe", "treibst", "treibt",
             "treibt",
             Perfektbildung.HABEN, "getrieben"),
+
     TRETEN_AUF("treten", AUF_AKK,
             "trete", "trittst", "tritt", "tretet",
             SEIN, "getreten"),
+
     VERKAUFEN("verkaufen", AKK, "verkaufe", "verkaufst", "verkauft", "verkauft",
             Perfektbildung.HABEN, "verkauft"),
+
     VERLASSEN("verlassen", AKK, "verlasse", "verlässt", "verlässt",
             "verlasst", Perfektbildung.HABEN, "verlassen"),
+
     VERLIEREN_AN("verlieren", AN_DAT, "verliere", "verlierst", "verliert", "verliert",
             Perfektbildung.HABEN, "verloren"),
+
     VERTREIBEN("verteiben", AKK,
             "vertreibe", "vertreibst", "vertreibt", "vertreibt",
             Perfektbildung.HABEN, "vertrieben"),
+
     WARTEN("warten", AUF_AKK,
             "warte", "wartest", "wartet", "wartet",
             Perfektbildung.HABEN, "gewartet"),
+
     WERFEN("werfen", AKK,
             "werfe", "wirfst", "wirft", "werft",
             Perfektbildung.HABEN, "geworfen"),
+
     ZAUSEN("zausen", AKK,
             "zause", "zaust", "zaust", "zaust",
             Perfektbildung.HABEN, "gezaust"),
 
     // Partikelverben
     ABKUEHLEN(KUEHLEN, AKK, "ab", Perfektbildung.HABEN),
+
     ABSETZEN(SETZEN, AKK, "ab", Perfektbildung.HABEN),
+
     ABTROCKNEN(TROCKNEN, AKK, "ab", Perfektbildung.HABEN),
+
     ANBLICKEN("anblicken", AKK, "blicke", "blickst", "blickt",
             "blickt", "an", Perfektbildung.HABEN, "angeblickt"),
+
     ANGUCKEN(GUCKEN, AKK, "an", Perfektbildung.HABEN),
+
     ANKUENDIGEN(KUENDIGEN, AKK, "an", Perfektbildung.HABEN),
+
     ANSCHAUEN(SCHAUEN, AKK, "an", Perfektbildung.HABEN),
+
     ANSEHEN(SEHEN, AKK, "an", Perfektbildung.HABEN),
+
     ANSPRECHEN(SPRECHEN, AKK, "an", Perfektbildung.HABEN),
+
     ANSTRAHLEN("anstrahlen", AKK,
             "strahle", "strahlst", "strahlt", "strahlt",
             "an", Perfektbildung.HABEN, "angestrahlt"),
+
+    AUFBAUEN(BAUEN, AKK, "auf", Perfektbildung.HABEN),
+
     AUFFANGEN(FANGEN, AKK, "auf", Perfektbildung.HABEN),
+
     AUFHEBEN(HEBEN, AKK, "auf", Perfektbildung.HABEN),
+
     AUFKLAUBEN("aufklauben", AKK,
             "klaube", "klaubst", "klaubt",
             "klaubt",
             "auf",
             Perfektbildung.HABEN, "aufgeklaubt"),
+
     AUFSAMMELN(SAMMELN, AKK, "auf", Perfektbildung.HABEN),
+
     AUFSTEHEN_VON(STEHEN, VON, "auf", SEIN),
+
     AUSRUPFEN(RUPFEN, AKK, "aus", Perfektbildung.HABEN),
+
     EINSAMMELN(SAMMELN, AKK, "ein", Perfektbildung.HABEN),
+
     ENTGEGENBLASEN(BLASEN, DAT, "entgegen", Perfektbildung.HABEN),
+
     ENTGEGENWEHEN(WEHEN, DAT, "entgegen", Perfektbildung.HABEN),
+
     FREIGEBEN(GEBEN, AKK, "frei", Perfektbildung.HABEN),
+
     HERVORHOLEN(HOLEN, AKK, "hervor", Perfektbildung.HABEN),
+
     HERVORSUCHEN(SUCHEN, AKK, "hervor", Perfektbildung.HABEN),
+
     HERAUSKLAUBEN("herausklauben", AKK,
             "klaube", "klaubst", "klaubt",
             "klaubt",
             "heraus",
             Perfektbildung.HABEN, "herausgeklaubt"),
+
     HINAUFRUFEN(RUFEN, ZU, "hinauf", Perfektbildung.HABEN),
+
     HINLEGEN(LEGEN, AKK, "hin", Perfektbildung.HABEN),
+
     HINTERHERSCHAUEN(SCHAUEN, DAT, "hinterher", Perfektbildung.HABEN),
+
     HINTERHERSEHEN(SEHEN, DAT, "hinterher", Perfektbildung.HABEN),
+
     HINUNTERLASSEN("hinunterlassen", AKK,
             "lasse", "lässt", "lässt",
             "lasst",
             "hinunter",
             Perfektbildung.HABEN, "hinuntergelassen"),
+
     MITNEHMEN(NEHMEN, AKK, "mit", Perfektbildung.HABEN),
+
     NACHBLICKEN(ANBLICKEN, DAT, "nach", Perfektbildung.HABEN),
+
     NACHSCHAUEN(SCHAUEN, DAT, "nach", Perfektbildung.HABEN),
+
     NACHSEHEN(SEHEN, DAT, "nach", Perfektbildung.HABEN),
+
     UEBERGEHEN(GEHEN, IN_AKK, "über", SEIN),
+
     WIEDERSEHEN(SEHEN, AKK, "wieder", Perfektbildung.HABEN),
+
     ZUGUCKEN(GUCKEN, DAT, "zu", Perfektbildung.HABEN),
+
     ZUSAMMENSAMMELN(SAMMELN, AKK, "zusammen", Perfektbildung.HABEN),
+
     ZUSAMMENSUCHEN(SUCHEN, AKK, "zusammen", Perfektbildung.HABEN),
+
     ZUSCHAUEN(SCHAUEN, DAT, "zu", Perfektbildung.HABEN),
+
     ZUSEHEN(SEHEN, DAT, "zu", Perfektbildung.HABEN);
 
     /**

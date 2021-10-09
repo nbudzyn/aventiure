@@ -79,14 +79,17 @@ public class Nominalphrase
             np(F, null, "etwas Zeit");
     public static final Nominalphrase HASEN_UND_RABEN =
             np(PL_MFN, INDEF, "Hasen und Raben");
-    public static final Nominalphrase IHRE_HAARE =
-            np(PL_MFN, null, "ihre Haare",
-                    "ihren Haaren");
     public static final Nominalphrase IHR_NAME =
             np(M, null, "ihr Name",
                     "ihrem Namen", "ihren Namen");
     public static final Nominalphrase IHR_ZIEL =
             np(N, null, "ihr Ziel", "ihrem Ziel");
+    public static final Nominalphrase IHRE_HAARE =
+            np(PL_MFN, null, "ihre Haare",
+                    "ihren Haaren");
+    public static final Nominalphrase IHRE_TOEPFE =
+            np(PL_MFN, null, "ihre Töpfe",
+                    "ihren Töpfen");
     public static final Nominalphrase KEIN_WIND =
             np(M, null, "kein Wind",
                     "keinem Winde", "keinen Wind");

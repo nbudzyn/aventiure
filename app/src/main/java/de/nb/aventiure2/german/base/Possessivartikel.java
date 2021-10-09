@@ -1,10 +1,5 @@
 package de.nb.aventiure2.german.base;
 
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-import java.util.Objects;
-
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -13,7 +8,15 @@ import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+import java.util.Objects;
+
 public class Possessivartikel {
+    // FIXME So vereinheitlichen, dass man in Nominalphrasen auch
+    //  "Possessivartikel" als Artikel verwenden kann.
+
     private static final Map<Person, Map<NumerusGenus, Possessivartikel>> ALL = ImmutableMap.of(
             P1,
             alleGenera("mein", "unser"),
@@ -62,16 +65,12 @@ public class Possessivartikel {
         return ALL.get(person).get(numerusGenusBezugsnomen);
     }
 
-    public NumerusGenus getNumerusGenusBezugsnomen() {
-        return numerusGenusBezugsnomen;
-    }
-
     /**
      * Gibt die {@link FlexionsSpalte} zurück, die vor dieser substantivischen Phrase
      * (attributiv) notwendig ist.
      */
     public FlexionsSpalte vor(final IErlaubtAttribute substantivischePhrase) {
-        return new FlexionsSpalte(stamm, substantivischePhrase.getNumerusGenus());
+        return vor(substantivischePhrase.getNumerusGenus());
     }
 
     /**
@@ -125,5 +124,4 @@ public class Possessivartikel {
             return Objects.hash(flexionsreihe);
         }
     }
-
 }

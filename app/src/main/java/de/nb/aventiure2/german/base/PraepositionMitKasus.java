@@ -46,6 +46,7 @@ public enum PraepositionMitKasus implements KasusOderPraepositionalkasus {
     MIT_DAT("mit", DAT),
 
     NACH("nach", DAT),
+    NEBEN("neben", DAT),
     UEBER_DAT("über", DAT),
     UEBER_AKK("über", AKK), // "übern" scheint selten obligatorisch zu sein
     UNTER_DAT("unter", DAT),

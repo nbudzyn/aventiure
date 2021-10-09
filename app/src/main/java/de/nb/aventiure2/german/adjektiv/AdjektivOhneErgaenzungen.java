@@ -122,6 +122,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     HERB,
     HOCH("hoch", "hoh"), // Steigerung höher, höchst!
     HUNDEMUEDE("hundemüde"),
+    IRDEN,
     JUNG,
     KALT,
     KLAR,
