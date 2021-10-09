@@ -1,5 +1,11 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -26,12 +32,6 @@ import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
-
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 /**
  * Der Spieler(charakter) redet mit einem Wesen.
@@ -226,8 +226,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         // X spricht, weiß X danach auch, wo der SC sich befindet -
         // zumindest, wenn SC und X im selben Raum sind.
         // Es könnte Ausnahmen geben.
-        ((IHasMentalModelGO) talker).mentalModelComp()
-                .setAssumptionsToActual(SPIELER_CHARAKTER);
+        ((IHasMentalModelGO) talker).mentalModelComp().setAssumptionsToActual(SPIELER_CHARAKTER);
     }
 
     @Override

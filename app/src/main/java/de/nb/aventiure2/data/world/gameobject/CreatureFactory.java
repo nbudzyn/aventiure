@@ -21,6 +21,7 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -51,6 +52,9 @@ import de.nb.aventiure2.data.world.syscomp.feelings.IFeelingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.feelings.MenschlicherMuedigkeitsBiorhythmus;
 import de.nb.aventiure2.data.world.syscomp.feelings.Mood;
 import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
+import de.nb.aventiure2.data.world.syscomp.inspection.IInspectableGO;
+import de.nb.aventiure2.data.world.syscomp.inspection.InspectionComp;
+import de.nb.aventiure2.data.world.syscomp.inspection.impl.KorbflechterinInspection;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
@@ -215,8 +219,12 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         final KorbflechterinReactionsComp reactionsComp =
                 new KorbflechterinReactionsComp(db.counterDao(), n, world, locationComp);
 
-        return new SimpleReactionsCreature(KORBFLECHTERIN,
-                descriptionComp, locationComp, reactionsComp);
+        final InspectionComp inspectionComp =
+                new InspectionComp(KORBFLECHTERIN, db, timeTaker, n, world,
+                        ImmutableList.of(new KorbflechterinInspection(world, db.counterDao())));
+
+        return new SimpleInspectionsReactionsCreature(KORBFLECHTERIN,
+                descriptionComp, locationComp, inspectionComp, reactionsComp);
     }
 
     GameObject createRapunzel() {
@@ -393,6 +401,28 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         @Override
         public TALKING_COMP talkingComp() {
             return talkingComp;
+        }
+    }
+
+    private static class SimpleInspectionsReactionsCreature
+            extends SimpleReactionsCreature
+            implements IInspectableGO {
+        private final InspectionComp inspectionComp;
+
+        SimpleInspectionsReactionsCreature(
+                final GameObjectId id,
+                final AbstractDescriptionComp descriptionComp, final LocationComp locationComp,
+                final InspectionComp talkingComp,
+                final AbstractReactionsComp reactionsComp) {
+            super(id, descriptionComp, locationComp, reactionsComp);
+            // Jede Komponente muss registiert werden!
+            inspectionComp = addComponent(talkingComp);
+        }
+
+        @NonNull
+        @Override
+        public InspectionComp inspectionComp() {
+            return inspectionComp;
         }
     }
 

@@ -30,6 +30,7 @@ public class NurRapunzelWalkthrough {
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
                     "Auf die magere Frau warten",
+                    "Auf die magere Frau warten",
                     "Auf die magere Frau warten", // Frau kommt und ruft
                     "Auf die magere Frau warten", // Frau steigt vom Turm herunter und geht
                     "Aus dem Schatten der Bäume treten",
@@ -114,6 +115,7 @@ public class NurRapunzelWalkthrough {
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
                     "Auf den kleinen Markt gehen",
+                    "Der alten Korbflechterin bei ihrer Arbeit zusehen",
                     "Den Bauernmarkt verlassen");
 
     public static final Walkthrough NUR_RAPUNZEL =

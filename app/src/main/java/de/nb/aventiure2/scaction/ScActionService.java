@@ -22,6 +22,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.inspection.IInspectableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
@@ -39,6 +40,7 @@ import de.nb.aventiure2.scaction.impl.RastenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
+import de.nb.aventiure2.scaction.impl.UntersuchenAction;
 import de.nb.aventiure2.scaction.impl.WartenAction;
 import de.nb.aventiure2.scaction.impl.ZustandVeraendernAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -140,6 +142,7 @@ public class ScActionService
     @SuppressWarnings("unchecked")
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            INSPECTABLE extends IDescribableGO & ILocatableGO & IInspectableGO,
             TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildLivingBeingsActions(
@@ -152,6 +155,11 @@ public class ScActionService
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
 
         for (final LIV creature : creatures) {
+            if (creature instanceof IInspectableGO) {
+                res.addAll(UntersuchenAction.buildActions(db.scActionStepCountDao(), timeTaker,
+                        n, world, (INSPECTABLE) creature));
+            }
+
             if (creature instanceof ITalkerGO) {
                 res.addAll(RedenAction.buildActions(db.scActionStepCountDao(), timeTaker,
                         n, world, (TALKER) creature));
@@ -235,6 +243,7 @@ public class ScActionService
     @SuppressWarnings("unchecked")
     private <DESC_OBJ extends ILocatableGO & IDescribableGO,
             LIV extends IDescribableGO & ILocatableGO & ILivingBeingGO,
+            INSPECTABLE extends IDescribableGO & ILocatableGO & IInspectableGO,
             TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>,
             TAKER extends IDescribableGO & ILocatableGO & ITakerGO<?>>
     ImmutableList<AbstractScAction> buildObjectInLocationActions(
@@ -246,6 +255,13 @@ public class ScActionService
             final ImmutableList<DESC_OBJ> scInventoryObjects) {
         final ImmutableList.Builder<AbstractScAction> res = ImmutableList.builder();
         for (final DESC_OBJ object : objectsInLocation) {
+            if (object instanceof IInspectableGO
+                    && (spielerCharakter.talkingComp().isTalkingTo(object.getId()) ||
+                    !spielerCharakter.talkingComp().isInConversation())) {
+                res.addAll(UntersuchenAction.buildActions(db.scActionStepCountDao(), timeTaker,
+                        n, world, (INSPECTABLE) object));
+            }
+
             if (object instanceof ITalkerGO) {
                 if (spielerCharakter.talkingComp().isTalkingTo((TALKER) object) ||
                         !spielerCharakter.talkingComp().isInConversation()) {

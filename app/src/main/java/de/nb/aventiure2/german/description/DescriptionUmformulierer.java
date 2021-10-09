@@ -1,5 +1,15 @@
 package de.nb.aventiure2.german.description;
 
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.max;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableCollection;
@@ -13,16 +23,6 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.max;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Arrays.asList;
 
 /**
  * Statische Methoden, die {@link AbstractDescription}s umformulieren.
@@ -275,8 +275,11 @@ public class DescriptionUmformulierer {
                 final StructuredDescription sDesc = (StructuredDescription) fDesc;
 
                 alt.add(mitAdvAngabe(sDesc, new AdvAngabeSkopusSatz("immer noch"))
-                        .schonLaenger()
-                );
+                                .schonLaenger(),
+                        mitAdvAngabe(sDesc,
+                                new AdvAngabeSkopusVerbAllg("weiter")),
+                        mitAdvAngabe(sDesc,
+                                new AdvAngabeSkopusVerbAllg("weiterhin")));
             }
         }
 

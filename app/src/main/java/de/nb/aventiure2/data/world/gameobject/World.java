@@ -223,6 +223,7 @@ public class World {
     public static final GameObjectId RAPUNZELS_FREIHEITSWUNSCH = new GameObjectId(40_016);
     public static final GameObjectId SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT =
             new GameObjectId(40_020);
+    public static final GameObjectId BINSEN_FLECHTEN = new GameObjectId(40_030);
 
     /**
      * Maximale ID für feste Game-Object-IDs. Darüber beginnt der Bereich für
@@ -449,6 +450,7 @@ public class World {
                         .create(RAPUNZELS_ZAUBERIN_DIE_SIE_GEFANGEN_HAELT_IST_DIE_MAGERE_FRAU),
                 InvisibleFactory.create(RAPUNZELS_FREIHEITSWUNSCH),
                 InvisibleFactory.create(SC_HAT_RAPUNZEL_RETTUNG_ZUGESAGT),
+                InvisibleFactory.create(BINSEN_FLECHTEN),
                 object.create(EINE_TASCHE_DES_SPIELER_CHARAKTERS,
                         // Weil nicht klar, welche Tasche -> kein Bezugsobjekt
                         np(INDEF, NomenFlexionsspalte.TASCHE),

@@ -1,5 +1,8 @@
 package de.nb.aventiure2.scaction.impl;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -21,9 +24,6 @@ import de.nb.aventiure2.data.world.syscomp.state.StateModification;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
-import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
-import static java.util.Objects.requireNonNull;
-
 /**
  * Der SC ändert den Zustand eines Gegenstands (z.B. zerbricht er Holz in handliche Stücke).
  */
@@ -36,7 +36,7 @@ public class ZustandVeraendernAction<S extends Enum<S>, GO extends IDescribableG
     private final StateModification<S> modification;
 
     /**
-     * Erzeugt alle Aktionen, mit denen der Benutzer dieses <code>gameObject</code>
+     * Erzeugt alle Aktionen, mit denen der SC dieses <code>gameObject</code>
      * in seinem Zustand ändern kann.
      * <p>
      * Beispiel: Erzeugt die Aktion, mit denen der Benutzer das Holz in handliche Stücke
