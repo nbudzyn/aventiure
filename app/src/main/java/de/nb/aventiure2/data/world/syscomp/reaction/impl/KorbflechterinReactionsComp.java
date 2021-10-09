@@ -109,18 +109,14 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         world.narrateAndUpgradeScKnownAndAssumedState(getGameObjectId());
     }
 
-    // FIXME (?) "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
-
+    // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
     // FIXME "Der Frau bei ihrer Arbeit zusehen"
 
     // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
     //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem
     //  Seil, das legt sie dann immer wieder im Kreis, bis daraus ein großes Korb entsteht.
 
-    // FIXME -> "Dich der alten Frau / alten Korbflechterin zuwenden"
-    //  Gespräch
-    //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
-    //  - ("du schaust ihr genau dabei zu. So schwer sieht
+    // FIXME - ("du schaust ihr genau dabei zu. So schwer sieht
     //   es eigentlich gar nicht aus. Man dreht drei Binsenhalme zusammen... und dann
     //   nimmt man
     //   wieder...  Mh-hm,  gut zu wissen!")
@@ -132,6 +128,9 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
     // FIXME "Du schaust, was es sonst noch auf dem Markt zu sehen gibt"
 
     // FIXME "Dann wendest du dich wieder der alten Korbflechterin zu"....
+
+    // FIXME Gespräch
+    //  - Man könnte sie fragen - sie hat kein Seil mehr, das lang genug ist?!
 
     @Override
     public void onTimePassed(final Change<AvDateTime> change) {
