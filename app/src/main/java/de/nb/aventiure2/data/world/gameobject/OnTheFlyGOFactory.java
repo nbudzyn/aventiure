@@ -2,7 +2,8 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUSGERUPFT;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 
@@ -54,7 +55,7 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
         final ImmutableMap<Integer, EinzelneSubstantivischePhrase>
                 soundsovieleBinsen =
                 ImmutableMap.<Integer, EinzelneSubstantivischePhrase>builder()
-                        .put(0, Nominalphrase.KEINE_BINSEN)
+                        .put(0, np(NEG_INDEF, BINSEN))
                         .put(1, Nominalphrase.EINIGE_BINSEN)
                         .put(3, Nominalphrase.VIELE_BINSEN)
                         .build();

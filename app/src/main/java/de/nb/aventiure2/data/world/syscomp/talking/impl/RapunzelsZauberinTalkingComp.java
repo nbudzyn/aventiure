@@ -12,7 +12,8 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStNSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.immReEntryStSCHatteGespraechBeendet;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
-import static de.nb.aventiure2.german.base.Nominalphrase.IHR_ZIEL;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.IHR;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZIEL;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -96,9 +97,9 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                                         "ihrem Ziel")),
                                 this::frageNachZiel),
                         exitSt(this::gespraechBeenden),
-                        immReEntryStSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(IHR_ZIEL),
+                        immReEntryStSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(np(IHR, ZIEL)),
                                 this::frageNachZiel_ImmReEntrySCHatteGespraechBeendet),
-                        immReEntryStNSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(IHR_ZIEL),
+                        immReEntryStNSCHatteGespraechBeendet(FRAGEN_NACH.mitPraep(np(IHR, ZIEL)),
                                 this::frageNachZiel_ImmReEntryNSCHatteGespraechBeendet)
                 );
             case BEI_RAPUNZEL_OBEN_IM_TURM:

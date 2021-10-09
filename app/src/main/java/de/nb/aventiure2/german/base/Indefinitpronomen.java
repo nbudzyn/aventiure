@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.Person.P3;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
@@ -17,10 +21,6 @@ import de.nb.federkiel.deutsch.grammatik.wortart.flexion.IndefinitpronomenFlekti
 import de.nb.federkiel.deutsch.grammatik.wortart.flexion.SubstantivPronomenUtil;
 import de.nb.federkiel.deutsch.lexikon.GermanPOS;
 import de.nb.federkiel.interfaces.IWordForm;
-
-import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Ein Pronomen wie "alles", "nichts".
@@ -133,9 +133,9 @@ public class Indefinitpronomen
     }
 
     @Override
-    public Possessivartikel possArt() {
+    public ArtikelFlexionsspalte.Typ possArt() {
         // "[Haben wir noch Wein? - Im Keller ist noch welcher. ]Sein[ Geruch ist unverkennbar.]"
-        return Possessivartikel.get(P3, getNumerusGenus());
+        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

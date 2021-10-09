@@ -1,18 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Artikel;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.Nominalphrase;
-import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
@@ -49,6 +36,19 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZWIELICHT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.ArtikelFlexionsspalte;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.Nominalphrase;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+
 /**
  * Beschreibt die {@link Bewoelkung} als {@link Praedikativum}.
  * <p>
@@ -65,7 +65,7 @@ public class BewoelkungPraedikativumDescriber {
     ImmutableCollection<SubstantivischePhrase> altSpStatischTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
-            final Artikel.Typ artikelTyp) {
+            final ArtikelFlexionsspalte.Typ artikelTyp) {
         // "ein schummriger Morgen"
         return mapToSet(altSpStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
                 np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));

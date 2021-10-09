@@ -1,22 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
-
-import de.nb.aventiure2.data.time.AvDateTime;
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.world.base.Change;
-import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
-import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.ReflVerbSubj;
-import de.nb.aventiure2.german.praedikat.VerbSubj;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.stream.Collectors.toSet;
 import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
@@ -28,14 +13,14 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHWAECH
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STAERKER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.UNANGENEHM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WINDGESCHUETZT;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KRAFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LUFTHAUCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STURM;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.WIND;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HAAR;
-import static de.nb.aventiure2.german.base.Nominalphrase.KEIN_WIND;
 import static de.nb.aventiure2.german.base.Nominalphrase.SCHUTZ_VOR_DEM_AERGSTEN_STURM;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
@@ -57,7 +42,22 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERLIEREN_AN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZAUSEN;
 import static de.nb.aventiure2.german.praedikat.Witterungsverb.STUERMEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
+
+import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.world.base.Change;
+import de.nb.aventiure2.data.world.syscomp.wetter.base.WetterParamChange;
+import de.nb.aventiure2.data.world.syscomp.wetter.tageszeit.TageszeitAdvAngabeWannDescriber;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.ReflVerbSubj;
+import de.nb.aventiure2.german.praedikat.VerbSubj;
+import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeSatzDescriber {
@@ -272,7 +272,7 @@ public class WindstaerkeSatzDescriber {
     /**
      * Gibt alternative Sätze zur Windstärke zurück
      */
-    public ImmutableCollection<EinzelnerSatz> altKommtNachDraussen(
+    ImmutableCollection<EinzelnerSatz> altKommtNachDraussen(
             final AvTime time, final Windstaerke windstaerke) {
         final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
 
@@ -319,7 +319,7 @@ public class WindstaerkeSatzDescriber {
             case WINDSTILL:
                 if (!ausschliesslichHoerbares) {
                     alt.add(STEHEN.alsSatzMitSubjekt(LUFT),
-                            WEHEN.alsSatzMitSubjekt(KEIN_WIND));
+                            WEHEN.alsSatzMitSubjekt(np(NEG_INDEF, WIND)));
                 }
                 break;
             case LUEFTCHEN:

@@ -30,7 +30,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.RAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SENGEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STEHEND;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HITZE;

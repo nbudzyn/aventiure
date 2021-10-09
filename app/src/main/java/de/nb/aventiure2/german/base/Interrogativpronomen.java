@@ -1,11 +1,11 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.Person.P3;
+
+import androidx.annotation.Nullable;
 
 public class Interrogativpronomen
         extends SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe
@@ -72,9 +72,9 @@ public class Interrogativpronomen
     }
 
     @Override
-    public Possessivartikel possArt() {
+    public ArtikelFlexionsspalte.Typ possArt() {
         // "Was ist das? Sein..."
-        return Possessivartikel.get(P3, getNumerusGenus());
+        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

@@ -34,15 +34,17 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BEGEISTE
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.FREUDESTRAHLEND;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENERVT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISCH;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.IHR;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HASEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.NAME;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RABEN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RETTUNG;
 import static de.nb.aventiure2.german.base.Nominalphrase.DEIN_HERZ;
-import static de.nb.aventiure2.german.base.Nominalphrase.HASEN_UND_RABEN;
-import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_HAARE;
-import static de.nb.aventiure2.german.base.Nominalphrase.IHR_NAME;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -174,11 +176,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 np(INDEF, GESPRAECH)),
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
                         entryReEntrySt(this::scKenntRapunzelsNamenNicht,
-                                FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
+                                FRAGEN_NACH.mitPraep(np(IHR, NAME)), this::nachNameFragen),
                         // "Die junge Frau bitten ihre Haare wieder hinunterzulassen"
                         st_HaareHerunterlassenBitte(ENTRY_RE_ENTRY),
                         st(this::scKenntRapunzelsNamenNicht,
-                                FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
+                                FRAGEN_NACH.mitPraep(np(IHR, NAME)), this::nachNameFragen),
                         st(this::frageNachHelfenSinnvoll,
                                 // "Die junge Frau fragen, wie du ihr helfen kannst"
                                 FRAGEN_OB_W.mitIndirekterFragesatz(
@@ -209,7 +211,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
                         immReEntryStSCHatteGespraechBeendet(
                                 this::scKenntRapunzelsNamenNicht,
-                                FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
+                                FRAGEN_NACH.mitPraep(np(IHR, NAME)), this::nachNameFragen),
                         immReEntryStSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry),
@@ -218,7 +220,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 this::gespraechBeginnen_EntryReEntryImmReEntry),
                         immReEntryStNSCHatteGespraechBeendet(
                                 this::scKenntRapunzelsNamenNicht,
-                                FRAGEN_NACH.mitPraep(IHR_NAME), this::nachNameFragen),
+                                FRAGEN_NACH.mitPraep(np(IHR, NAME)), this::nachNameFragen),
                         immReEntryStNSCHatteGespraechBeendet(
                                 bittenHaareHerunterzulassenPraedikat(),
                                 this::haareHerunterlassenBitte_ExitImmReEntry));
@@ -311,7 +313,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private static PraedikatMitEinerObjektleerstelle bittenHaareHerunterzulassenPraedikat() {
         return BITTEN
                 .mitLexikalischerKern(HINUNTERLASSEN
-                        .mit(IHRE_HAARE)
+                        .mit(np(IHR, HAARE))
                         .mitAdvAngabe(
                                 // "wieder hinunterlassen": Das "wieder" gehört
                                 // quasi zu "hinunter", beides zusammen ("wieder hinunter")
@@ -421,7 +423,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 ":",
                 "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
                 "langatmig",
-                VON.mit(HASEN_UND_RABEN))
+                VON.mit(np(INDEF, HASEN).und(np(INDEF, RABEN))))
                 // .phorikKandidat(
                 //        null) // Missverständnis "sie (Rapunzel)" = "Hasen und Raben" vermeiden
                 .schonLaenger()

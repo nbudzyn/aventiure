@@ -1,13 +1,6 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-import java.util.Objects;
-
+import static java.util.Objects.requireNonNull;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -19,7 +12,14 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
-import static java.util.Objects.requireNonNull;
+
+import androidx.annotation.Nullable;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+import java.util.Objects;
 
 public class Personalpronomen extends
         SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe {
@@ -215,8 +215,8 @@ public class Personalpronomen extends
      * "Er... sein..."
      */
     @Override
-    public Possessivartikel possArt() {
-        return Possessivartikel.get(person, getNumerusGenus());
+    public ArtikelFlexionsspalte.Typ possArt() {
+        return ArtikelFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 
     @Override

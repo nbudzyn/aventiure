@@ -1,15 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableSet;
-
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.Praepositionalphrase;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.time.Tageszeit.TAGSUEBER;
@@ -17,7 +7,7 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.L
 import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.WOLKENLOS;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUESTER;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HELL;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.LICHT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MOND;
@@ -39,6 +29,16 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_DAT;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.VON;
 import static de.nb.aventiure2.util.StreamUtil.*;
+
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableSet;
+
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.base.Praepositionalphrase;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
 /**
  * Beschreibt die {@link Bewoelkung} als {@link Praepositionalphrase}.

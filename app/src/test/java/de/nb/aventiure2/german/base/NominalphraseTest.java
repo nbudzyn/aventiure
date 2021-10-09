@@ -1,14 +1,5 @@
 package de.nb.aventiure2.german.base;
 
-import com.google.common.collect.ImmutableList;
-
-import org.junit.Test;
-
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
-import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static com.google.common.truth.Truth.assertThat;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv.GLUECKLICH;
@@ -22,8 +13,8 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GRUEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HERB;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LEICHT;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.NEG_INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.NEG_INDEF;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -45,6 +36,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANSCHAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BERICHTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.DISKUTIEREN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
+
+import com.google.common.collect.ImmutableList;
+
+import org.junit.Test;
+
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.satz.Satz;
 
 @SuppressWarnings("ConstantConditions")
 public class NominalphraseTest {

@@ -1,14 +1,14 @@
 package de.nb.aventiure2.data.world.syscomp.description.impl;
 
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
-
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FROSCH;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
+
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
 
 /**
  * Implementierung von {@link AbstractDescriptionComp} für den

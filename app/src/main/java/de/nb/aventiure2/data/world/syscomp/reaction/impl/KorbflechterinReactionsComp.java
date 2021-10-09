@@ -2,7 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KOERBE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;

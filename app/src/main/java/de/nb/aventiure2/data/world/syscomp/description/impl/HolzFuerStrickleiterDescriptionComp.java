@@ -1,18 +1,12 @@
 package de.nb.aventiure2.data.world.syscomp.description.impl;
 
-import com.google.common.collect.ImmutableMap;
-
-import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
-import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterStateComp;
-
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AM_BAUM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AUF_DEM_BODEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GESAMMELT;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.AESTE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOLZ;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KLAUBHOLZ;
@@ -20,6 +14,12 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.RUNDHOELZER;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+
+import com.google.common.collect.ImmutableMap;
+
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
+import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterStateComp;
 
 /**
  * Implementierung von {@link AbstractDescriptionComp} für das Holz,

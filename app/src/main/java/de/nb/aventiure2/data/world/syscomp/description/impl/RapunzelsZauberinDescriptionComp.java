@@ -6,7 +6,7 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.MAGER;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZAUBERIN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;

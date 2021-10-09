@@ -1,11 +1,6 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Objects;
-
+import static java.util.Objects.requireNonNull;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -16,7 +11,12 @@ import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.REGEL;
 import static de.nb.aventiure2.german.base.Relativpronomen.Typ.WERWAS;
-import static java.util.Objects.requireNonNull;
+
+import androidx.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Objects;
 
 public class Relativpronomen extends
         SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe {
@@ -226,8 +226,8 @@ public class Relativpronomen extends
     }
 
     @Override
-    public Possessivartikel possArt() {
-        return Possessivartikel.get(person, getNumerusGenus());
+    public ArtikelFlexionsspalte.Typ possArt() {
+        return ArtikelFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 
     @Override

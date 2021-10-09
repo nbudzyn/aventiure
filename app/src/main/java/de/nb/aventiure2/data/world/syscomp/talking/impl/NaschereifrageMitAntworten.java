@@ -26,7 +26,7 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.NaschereifrageMit
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GENAU;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GROB;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABRISS;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;

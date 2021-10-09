@@ -12,8 +12,8 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.HAENDE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.TISCH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;

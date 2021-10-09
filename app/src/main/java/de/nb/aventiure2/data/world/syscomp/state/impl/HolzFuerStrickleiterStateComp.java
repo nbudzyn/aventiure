@@ -6,7 +6,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleite
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.GESAMMELT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HANDLICH;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.STUECKE;
 import static de.nb.aventiure2.german.base.Nominalphrase.ETWAS_ZEIT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;

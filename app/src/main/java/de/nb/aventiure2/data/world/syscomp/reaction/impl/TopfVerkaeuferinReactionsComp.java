@@ -6,11 +6,10 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKTZEIT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.IRDEN;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESCHIRR;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARKT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.TOEPFE;
-import static de.nb.aventiure2.german.base.Nominalphrase.IHRE_TOEPFE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -24,6 +23,7 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeue
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFBAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KLAPPERN_MIT;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERLASSEN;
 
 import androidx.annotation.Nullable;
@@ -173,18 +173,9 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
                     .alsSatzMitSubjekt(anaph));
 
             // "Die...  klappert mit ihren Töpfen"
-            alt.add(neuerSatz(anaph.nomK(),
-                    "klappert mit",
-                    anaph.possArt().vor(IHRE_TOEPFE).datStr(),
-                    IHRE_TOEPFE.datK()));
-            /* FIXME "ihre" in Nominalphrase erlauben!
             alt.add(KLAPPERN_MIT
-                    .mit(np(anaph.possArt().vor() )
-                    .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                            VOR.mit(anaph.reflPron())))
+                    .mit(np(anaph.possArt(), TOEPFE))
                     .alsSatzMitSubjekt(anaph));
-
-             */
 
             if (loadSC().memoryComp().isKnown(getGameObjectId())) {
                 alt.addAll(altNeueSaetze(

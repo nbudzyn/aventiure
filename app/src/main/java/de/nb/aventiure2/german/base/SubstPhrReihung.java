@@ -1,5 +1,13 @@
 package de.nb.aventiure2.german.base;
 
+import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
@@ -9,14 +17,6 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Eine Reihung (Aufzählung) von {@link SubstantivischePhrase}-Objekten, z.B.
@@ -228,8 +228,8 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     }
 
     @Override
-    public Possessivartikel possArt() {
-        return Possessivartikel.get(getPerson(), getNumerusGenus());
+    public ArtikelFlexionsspalte.Typ possArt() {
+        return ArtikelFlexionsspalte.getPossessiv(getPerson(), getNumerusGenus());
     }
 
     @Override

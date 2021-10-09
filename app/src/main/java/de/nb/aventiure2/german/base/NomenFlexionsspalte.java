@@ -70,8 +70,9 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     HAARE(PL_MFN, "Haare", "Haaren"),
     HAENDE(PL_MFN, "Hände", "Händen"),
     HALBDUNKEL(N),
+    HASEN(PL_MFN),
     HELLE(N, "Helle", "Hellen"),
-    HERZ(N),
+    HERZ(N, "Herz", "Herzen"),
     HELLEBARDE(F),
     HIMMEL(M),
     HITZE(F),
@@ -118,6 +119,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NOTLUEGE(F, "Notlüge"),
     OSTEN(M),
     PLATZ(M),
+    RABEN(PL_MFN),
     RAPUNZEL(F, true),
     RETTUNG(F),
     ROTWEINE(PL_MFN, "Rotweine", "Rotweinen"),
@@ -367,8 +369,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     @Override
-    public Possessivartikel possArt() {
-        return Possessivartikel.get(P3, getNumerusGenus());
+    public ArtikelFlexionsspalte.Typ possArt() {
+        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

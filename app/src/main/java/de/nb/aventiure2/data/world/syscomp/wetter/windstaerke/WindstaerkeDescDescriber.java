@@ -3,7 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.wetter.windstaerke;
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.data.time.AvTimeSpan.ONE_DAY;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;

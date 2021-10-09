@@ -27,7 +27,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.STERNENKLAR;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.TIEF;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WEISS;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABENDDAEMMERUNG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FIRMAMENT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HIMMEL;

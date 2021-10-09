@@ -1,14 +1,14 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
-import javax.annotation.CheckReturnValue;
-
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Person.P3;
+
+import androidx.annotation.Nullable;
+
+import javax.annotation.CheckReturnValue;
 
 /**
  * Eine Phrase, die substantivisch verwendet werden kann, also insbesondere ein Pronomen ("sie",
@@ -210,7 +210,7 @@ public interface SubstantivischePhrase
     /**
      * Gibt einen Possessivartikel für diese Phrase zurück.
      */
-    Possessivartikel possArt();
+    ArtikelFlexionsspalte.Typ possArt();
 
     /**
      * Gibt ein Relativpronomen für diese Phrase zurück.

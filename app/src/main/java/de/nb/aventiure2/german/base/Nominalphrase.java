@@ -1,18 +1,19 @@
 package de.nb.aventiure2.german.base;
 
-import static de.nb.aventiure2.german.base.Artikel.Typ.DEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Artikel.Typ.getNegativeForm;
-import static de.nb.aventiure2.german.base.Artikel.Typ.isNegativ;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.DEIN;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.getNegativeForm;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.isNegativ;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAAR;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HERZ;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.Person.P3;
 
@@ -33,7 +34,7 @@ public class Nominalphrase
         extends EinzelneKomplexeSubstantivischePhrase
         implements IErlaubtAttribute {
     @Nullable
-    private final Artikel.Typ artikelTyp;
+    private final ArtikelFlexionsspalte.Typ artikelTyp;
 
     @Nullable
     private final AdjPhrOhneLeerstellen adjPhr;
@@ -43,12 +44,8 @@ public class Nominalphrase
     // Allgemeine Nominalphrasen ohne Bezugsobjekt
     public static final Nominalphrase BLICK_AUF_DEN_STERNENHIMMEL =
             np(M, DEF, "Blick auf den Sternenhimmel");
-    public static final Nominalphrase DEIN_HAAR =
-            np(N, null, "dein Haar",
-                    "deinem Haar");
-    public static final Nominalphrase DEIN_HERZ =
-            np(N, null, "dein Herz",
-                    "deinem Herzen");
+    public static final Nominalphrase DEIN_HAAR = np(DEIN, HAAR);
+    public static final Nominalphrase DEIN_HERZ = np(DEIN, HERZ);
     public static final Nominalphrase BRUETENDE_HITZE_DER_MITTAGSSONNE =
             np(F, DEF, "brütende Hitze der Mittagssonne",
                     "brütenden Hitze der Mittagssonne");
@@ -61,6 +58,7 @@ public class Nominalphrase
     public static final Nominalphrase DRUECKENDE_HITZE_DER_SONNE =
             np(F, DEF, "drückende Hitze der Sonne",
                     "drückenden Hitze der Sonne");
+    // FIXME Indefinit-Artikel "einige" auch als Artikeltyp?!
     public static final Nominalphrase EINIGE_BINSEN =
             np(PL_MFN, null, "einige Binsen",
                     "einigen Binsen");
@@ -75,31 +73,14 @@ public class Nominalphrase
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
             np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
+    // FIXME Indefinit-Artikel "etwas" auch als Artikeltyp?!
     public static final Nominalphrase ETWAS_ZEIT =
             np(F, null, "etwas Zeit");
-    public static final Nominalphrase HASEN_UND_RABEN =
-            np(PL_MFN, INDEF, "Hasen und Raben");
-    public static final Nominalphrase IHR_NAME =
-            np(M, null, "ihr Name",
-                    "ihrem Namen", "ihren Namen");
-    public static final Nominalphrase IHR_ZIEL =
-            np(N, null, "ihr Ziel", "ihrem Ziel");
-    public static final Nominalphrase IHRE_HAARE =
-            np(PL_MFN, null, "ihre Haare",
-                    "ihren Haaren");
-    public static final Nominalphrase IHRE_TOEPFE =
-            np(PL_MFN, null, "ihre Töpfe",
-                    "ihren Töpfen");
-    public static final Nominalphrase KEIN_WIND =
-            np(M, null, "kein Wind",
-                    "keinem Winde", "keinen Wind");
-    public static final Nominalphrase KEINE_BINSEN =
-            np(PL_MFN, null, "keine Binsen",
-                    "keinen Binsen");
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
     public static final Nominalphrase SCHUTZ_VOR_DEM_AERGSTEN_STURM =
             np(M, null, "Schutz vor dem ärgsten Sturm");
+    // FIXME Indefinit-Artikel "viel" auch als Artikeltyp?!
     public static final Nominalphrase VIELE_BINSEN =
             np(PL_MFN, null, "viele Binsen",
                     "vielen Binsen");
@@ -112,7 +93,7 @@ public class Nominalphrase
      */
     @NonNull
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final Artikel.Typ artikelTyp,
+                                    @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                     final String nominalNominativDativUndAkkusativ) {
         return np(numerusGenus, artikelTyp, nominalNominativDativUndAkkusativ,
                 (IBezugsobjekt) null);
@@ -120,7 +101,7 @@ public class Nominalphrase
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
+                                   @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final String nominalNominativDativUndAkkusativ,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(numerusGenus, artikelTyp,
@@ -131,7 +112,7 @@ public class Nominalphrase
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
+                                   @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final String nominalNominativUndAkkusativ,
                                    final String nominalDativ) {
         return np(numerusGenus, artikelTyp, nominalNominativUndAkkusativ, nominalDativ,
@@ -140,7 +121,7 @@ public class Nominalphrase
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
+                                   @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final String nominalNominativUndAkkusativ,
                                    final String nominalDativ,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
@@ -155,7 +136,7 @@ public class Nominalphrase
      */
     @NonNull
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final Artikel.Typ artikelTyp,
+                                    @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                     final String nominalNominativ,
                                     final String nominalDativ,
                                     final String nominalAkkusativ) {
@@ -165,7 +146,7 @@ public class Nominalphrase
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
+                                   @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final String nominalNominativ,
                                    final String nominalDativ,
                                    final String nominalAkkusativ,
@@ -192,14 +173,14 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(final Artikel.Typ artikelTyp,
+    public static Nominalphrase np(final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final NomenFlexionsspalte nomenFlexionsspalte) {
         return np(artikelTyp, nomenFlexionsspalte, null);
     }
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final Artikel.Typ artikelTyp,
+                                   @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                    final Flexionsreihe flexionsreiheArtikellos) {
         return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
     }
@@ -229,7 +210,7 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+    public static Nominalphrase np(@Nullable final ArtikelFlexionsspalte.Typ artikeltyp,
                                    @Nullable final AdjPhrOhneLeerstellen adjPhr,
                                    final NomenFlexionsspalte nomenFlexionsspalte) {
         return np(artikeltyp, adjPhr, nomenFlexionsspalte, null);
@@ -242,7 +223,7 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+    public static Nominalphrase np(@Nullable final ArtikelFlexionsspalte.Typ artikeltyp,
                                    final NomenFlexionsspalte nomenFlexionsspalte,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(artikeltyp, null, nomenFlexionsspalte, bezugsobjekt);
@@ -272,7 +253,7 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final Artikel.Typ artikeltyp,
+    public static Nominalphrase np(@Nullable final ArtikelFlexionsspalte.Typ artikeltyp,
                                    @Nullable final AdjPhrOhneLeerstellen adjPhr,
                                    final NomenFlexionsspalte nomenFlexionsspalte,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
@@ -300,7 +281,7 @@ public class Nominalphrase
 
 
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final Artikel.Typ artikelTyp,
+                                    @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                                     final Flexionsreihe flexionsreiheArtikellos,
                                     @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Nominalphrase(numerusGenus, artikelTyp, null, flexionsreiheArtikellos,
@@ -308,7 +289,7 @@ public class Nominalphrase
     }
 
     private Nominalphrase(final NumerusGenus numerusGenus,
-                          @Nullable final Artikel.Typ artikelTyp,
+                          @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
                           @Nullable final IBezugsobjekt bezugsobjekt) {
@@ -319,7 +300,7 @@ public class Nominalphrase
     private Nominalphrase(final @Nullable String fokuspartikel,
                           final @Nullable Negationspartikelphrase negationspartikelphrase,
                           final NumerusGenus numerusGenus,
-                          @Nullable final Artikel.Typ artikelTyp,
+                          @Nullable final ArtikelFlexionsspalte.Typ artikelTyp,
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
                           @Nullable final IBezugsobjekt bezugsobjekt) {
@@ -353,7 +334,7 @@ public class Nominalphrase
     @Override
     public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
                                      final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
-        @Nullable final Artikel.Typ negativerArtikeltyp =
+        @Nullable final ArtikelFlexionsspalte.Typ negativerArtikeltyp =
                 moeglichstNegativIndefiniteWoerterVerwenden ?
                         getNegativeForm(artikelTyp) : null;
 
@@ -445,10 +426,11 @@ public class Nominalphrase
     }
 
     private Konstituentenfolge imK(final Kasus kasus, final boolean mitArtikel) {
-        @Nullable final Artikel artikel = getArtikel();
+        @Nullable final ArtikelFlexionsspalte artikelFlexionsspalte = getArtikel();
 
         final boolean artikelwortTraegtKasusendung =
-                !mitArtikel || Artikel.traegtKasusendung(artikel, kasus);
+                !mitArtikel || ArtikelFlexionsspalte
+                        .traegtKasusendung(artikelFlexionsspalte, kasus);
         // wenn kein Artikel erzeugt werden soll, steht etwas wie "zum" oder
         // "zur" davor, dass eine Kasusendung trägt
 
@@ -479,7 +461,8 @@ public class Nominalphrase
                         !isNegativ(artikelTyp) ? getNegationspartikelphrase() : null,
                         anteilNegationspartikelphraseVorArtikelUndNominalphrasenkern,
                         // "länger" (vor "kein") / "länger nicht mehr" (nicht vor "kein")
-                        mitArtikel && artikel != null ? artikel.imStr(kasus) : null,
+                        mitArtikel && artikelFlexionsspalte != null ?
+                                artikelFlexionsspalte.imStr(kasus) : null,
                         // "die" / "eine" / "keine"
                         adjPhr != null ?
                                 adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), kasus,
@@ -595,8 +578,8 @@ public class Nominalphrase
     }
 
     @Nullable
-    private Artikel getArtikel() {
-        return Artikel.get(artikelTyp, getNumerusGenus());
+    private ArtikelFlexionsspalte getArtikel() {
+        return ArtikelFlexionsspalte.get(artikelTyp, getNumerusGenus());
     }
 
     @Override
@@ -610,8 +593,8 @@ public class Nominalphrase
     }
 
     @Override
-    public Possessivartikel possArt() {
-        return Possessivartikel.get(P3, getNumerusGenus());
+    public ArtikelFlexionsspalte.Typ possArt() {
+        return ArtikelFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override

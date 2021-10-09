@@ -36,7 +36,7 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.W
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DUNKEL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.HOCH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
-import static de.nb.aventiure2.german.base.Artikel.Typ.INDEF;
+import static de.nb.aventiure2.german.base.ArtikelFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
