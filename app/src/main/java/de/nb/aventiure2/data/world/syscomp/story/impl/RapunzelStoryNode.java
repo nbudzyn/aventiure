@@ -147,13 +147,8 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME BINSENSEIL_GEFLOCHTEN
 
-    //FIXME Seilflechten von einer (alten? armen?) Frau lernen? ("Mentor")
-    // -> "Dich der Bauersfrau zuwenden"
-    // -- "Mus feil", "die Töpfe", "die Nase", "der Geruch von dem süßen Mus steigt" (Hunger...)
-    //  Kein Geld! Kugel -> "Diebesgut?!"
-
     // FIXME Seil flechten..
-    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Zustandsänderungs-Aktion)
+    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Evtl. Zustandsänderungs-Aktion?)
     //  - Binsen anfeuchten?
     //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
     //  - KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
