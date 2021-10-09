@@ -213,7 +213,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                 new LocationComp(KORBFLECHTERIN, db, world, null, BAUERNMARKT,
                         false);
         final KorbflechterinReactionsComp reactionsComp =
-                new KorbflechterinReactionsComp(db.counterDao(), n, world);
+                new KorbflechterinReactionsComp(db.counterDao(), n, world, locationComp);
 
         return new SimpleReactionsCreature(KORBFLECHTERIN,
                 descriptionComp, locationComp, reactionsComp);
