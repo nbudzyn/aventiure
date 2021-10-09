@@ -58,7 +58,7 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
     }
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(to, BAUERNMARKT)) {
             onSCEnter_Bauernmarkt(from, to);
             return;
         }
@@ -92,6 +92,8 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
     }
 
     // FIXME (?) "Die Korbflechterin hat ihren Stand gut verschnürt und abgedeckt"
+
+    // FIXME "Der Frau bei ihrer Arbeit zusehen"
 
     // FIXME "Du wendest dich der alten Frau zu. Sie arbeitet an einem Korb. Du siehst ihr
     //  genau dabei zu: Sie verdreht immer drei Stränge von Binsen zu einem

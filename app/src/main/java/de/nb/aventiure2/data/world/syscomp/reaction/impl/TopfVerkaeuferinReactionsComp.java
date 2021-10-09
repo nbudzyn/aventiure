@@ -52,7 +52,7 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
     }
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(to, BAUERNMARKT)) {
             onSCEnter_Bauernmarkt(from, to);
             return;
         }
@@ -93,6 +93,8 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
     public void onTimePassed(final Change<AvDateTime> change) {
         // FIXME Orte und ggf. assumptions aktualiseren
 
+        // FIXME Neben ihr baut eine ... vor sich auf.
+
         // FIXME eine schöne junge Frau hat Töpfe und irdenes
         //  Geschirr vor
         //  sich stehen
@@ -105,6 +107,8 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
         // FIXME "Die junge Frau mit den feinen Gesichtszügen hat wohl gerade ein Schüsselchen /
         //  Tellerchen / irdenes
         //  Schälchen verkauft"
+
+        // FIXME Du siehst auch, wie ...  dann geht sie ihrer Wege...
 
         // FIXME "Die schöne junge Frau stapelt alle ihre Töpfe und Schächen in ein Tuch,
         //  bindet es zusammen und geht ihrer Wege"

@@ -1,28 +1,38 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.MusVerkaeuferinReactionsComp.Counter.BESCHREIBUNG_MUS_VERKAEUFERIN;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.BEGINN_MARKTZEIT;
+import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.ENDE_MARKTZEIT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MARKT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MUS;
+import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERKAUFEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERLASSEN;
 
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.AvDateTime;
+import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.world.base.Change;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
+import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.reaction.AbstractDescribableReactionsComp;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.IMovementReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.ITimePassedReactions;
 import de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 
 /**
@@ -31,15 +41,22 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 @SuppressWarnings("UnnecessaryReturnStatement")
 public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsComp
         implements IMovementReactions, ITimePassedReactions {
+    private final LocationComp locationComp;
+
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public enum Counter {
         BESCHREIBUNG_MUS_VERKAEUFERIN;
     }
 
+    private static final AvTime BEGINN_AUF_MARKT = BEGINN_MARKTZEIT.rotate(mins(15));
+    private static final AvTime ENDE_AUF_MARKT = ENDE_MARKTZEIT.rotateMinus(mins(5));
+
     public MusVerkaeuferinReactionsComp(final CounterDao counterDao,
                                         final Narrator n,
-                                        final World world) {
+                                        final World world,
+                                        final LocationComp locationComp) {
         super(MUS_VERKAEUFERIN, counterDao, n, world);
+        this.locationComp = locationComp;
     }
 
     @Override
@@ -62,7 +79,7 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
     }
 
     private void onSCEnter(@Nullable final ILocationGO from, final ILocationGO to) {
-        if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
+        if (world.isOrHasRecursiveLocation(to, BAUERNMARKT)) {
             onSCEnter_Bauernmarkt(from, to);
             return;
         }
@@ -82,7 +99,7 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         }
 
         if (counterDao.get(BESCHREIBUNG_MUS_VERKAEUFERIN) == 1) {
-            n.narrate(neuerSatz("„Mus feil“, ruft", anaph(false).nomK())
+            n.narrate(neuerSatz("„Mus feil!“, ruft", anaph(false).nomK())
                     .timed(NO_TIME)
                     .schonLaenger()
                     .withCounterIdIncrementedIfTextIsNarrated(BESCHREIBUNG_MUS_VERKAEUFERIN));
@@ -91,7 +108,7 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         } else {
             final AltDescriptionsBuilder alt = alt();
             // "Die dicke Bäuerin verkauft Mus"
-            alt.add(VERKAUFEN.mit(MUS).alsSatzMitSubjekt(anaph(false)));
+            alt.add(VERKAUFEN.mit(npArtikellos(MUS)).alsSatzMitSubjekt(anaph(false)));
 
             if (loadSC().memoryComp().isKnown(MUS_VERKAEUFERIN)) {
                 alt.add(
@@ -111,27 +128,41 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
 
     @Override
     public void onTimePassed(final Change<AvDateTime> change) {
-        // FIXME         locationComp.narrateAndSetLocation(BAUERNMARKT);
-        // FIXME Orte und ggf. assumptions aktualisieren
+        final AvTime time = change.getNachher().getTime();
 
-        // FIXME "GEGEN MORGEN belebt sich der Platz: Eine Bäuerin setzt sich und baut vor sich
-        //  ... einige Leute kommen daher und schauen sich um"
+        if (time.isWithin(BEGINN_AUF_MARKT, ENDE_AUF_MARKT)
+                && locationComp.hasNoLocation()) {
+            betrittDenMarkt();
+        } else if (!time.isWithin(BEGINN_AUF_MARKT, ENDE_AUF_MARKT)
+                && locationComp.hasRecursiveLocation(BAUERNMARKT)) {
+            verlaesstDenMarkt();
+        }
+    }
 
-        // FIXME "Auch die dicke Bäuerin ist nicht mehr da.
-        // FIXME Wenn der Markt verlassen ist: Assumption über dicke Bäuerin
-        //  etc. korrigieren.
+    private void betrittDenMarkt() {
+        if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
+            final SubstantivischePhrase anaph = anaph(false);
+            n.narrate(neuerSatz(anaph.nomK(),
+                    "setzt sich und baut",
+                    anaph.possArt().vor(NumerusGenus.PL_MFN).akkStr(), // "ihre"
+                    "Waren auf").timed(NO_TIME));
+        }
 
-        // FIXME Wenn der Markt verlassen wird: Assumption über dicke Bäuerin
-        //  etc. korrigieren.
+        locationComp.narrateAndSetLocation(BAUERNMARKT);
+    }
 
-        // FIXME "..verlässt den Markt"
+    private void verlaesstDenMarkt() {
+        if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
+            final SubstantivischePhrase anaph = anaph();
 
-        // FIXME Eine dicke Bäuerin verkauft Mus
+            n.narrateAlt(NO_TIME,
+                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph())),
+                    neuerSatz(anaph, "kramt",
+                            anaph.possArt().vor(NumerusGenus.PL_MFN).akkStr(), // "ihre"
+                            "Siebensachen zusammen und geht")
+            );
+        }
 
-        // FIXME "Allmählich wird es SPÄTER NACHMITTAG(?) und die Bäuerin kramt ihre
-        //  Siebensachen zusammen und geht"
-
-        // FIXME "Auch die dicke Bäuerin ist nicht mehr da."
-
+        locationComp.narrateAndUnsetLocation();
     }
 }
