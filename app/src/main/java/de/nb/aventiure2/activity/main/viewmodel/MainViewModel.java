@@ -1,5 +1,8 @@
 package de.nb.aventiure2.activity.main.viewmodel;
 
+import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import android.app.Application;
 
 import androidx.annotation.Nullable;
@@ -25,9 +28,6 @@ import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 import de.nb.aventiure2.score.ScoreService;
-
-import static de.nb.aventiure2.data.database.AvDatabase.getDatabase;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 public class MainViewModel extends AndroidViewModel {
     private static final Logger LOGGER = Logger.getLogger();
@@ -82,14 +82,7 @@ public class MainViewModel extends AndroidViewModel {
         // Aktionen aus der GUI entfernen
         playerActionHandlers.setValue(ImmutableList.of());
 
-        AvDatabase.databaseWriteExecutor.execute(
-                new Runnable() {
-                    @WorkerThread
-                    @Override
-                    public void run() {
-                        walkActionsWork(actionChooser);
-                    }
-                });
+        AvDatabase.databaseWriteExecutor.execute(() -> walkActionsWork(actionChooser));
     }
 
     @WorkerThread
@@ -144,29 +137,18 @@ public class MainViewModel extends AndroidViewModel {
                 playerActionHandlers.setValue(ImmutableList.of());
 
                 AvDatabase.databaseWriteExecutor.execute(
-                        new Runnable() {
-                            @WorkerThread
-                            @Override
-                            public void run() {
-                                LOGGER.d("Action: " + playerAction.getName() + " [" +
-                                        timeTaker.now() + "]");
-                                db.runInTransaction(playerAction::doAndPassTime);
-                                postLiveDataUpdate();
-                            }
+                        () -> {
+                            LOGGER.d("Action: " + playerAction.getName() + " [" +
+                                    timeTaker.now() + "]");
+                            db.runInTransaction(playerAction::doAndPassTime);
+                            postLiveDataUpdate();
                         });
             }
         };
     }
 
     private void postLiveUpdateLater() {
-        db.databaseWriteExecutor.execute(
-                new Runnable() {
-                    @WorkerThread
-                    @Override
-                    public void run() {
-                        postLiveDataUpdate();
-                    }
-                });
+        AvDatabase.databaseWriteExecutor.execute(this::postLiveDataUpdate);
     }
 
     @WorkerThread

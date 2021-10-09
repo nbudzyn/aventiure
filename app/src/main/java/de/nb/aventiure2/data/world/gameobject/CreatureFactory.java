@@ -220,7 +220,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                 new KorbflechterinReactionsComp(db.counterDao(), n, world, locationComp);
 
         final InspectionComp inspectionComp =
-                new InspectionComp(KORBFLECHTERIN, db, timeTaker, n, world,
+                new InspectionComp(KORBFLECHTERIN, timeTaker, world,
                         ImmutableList.of(new KorbflechterinInspection(world, db.counterDao())));
 
         return new SimpleInspectionsReactionsCreature(KORBFLECHTERIN,

@@ -28,8 +28,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 /**
  * Der SC untersucht ein Game Object.
  */
-public class UntersuchenAction<INSPECTABLE extends IDescribableGO & ILocatableGO & IInspectableGO>
-        extends AbstractScAction {
+public class UntersuchenAction extends AbstractScAction {
     @NonNull
     private final IInspection inspection;
 
@@ -38,7 +37,7 @@ public class UntersuchenAction<INSPECTABLE extends IDescribableGO & ILocatableGO
      * untersuchen kann.
      */
     public static <INSPECTABLE extends IDescribableGO & ILocatableGO & IInspectableGO>
-    Collection<UntersuchenAction<INSPECTABLE>> buildActions(
+    Collection<UntersuchenAction> buildActions(
             final SCActionStepCountDao scActionStepCountDao,
             final TimeTaker timeTaker,
             final Narrator n, final World world,
@@ -52,13 +51,13 @@ public class UntersuchenAction<INSPECTABLE extends IDescribableGO & ILocatableGO
             return ImmutableList.of();
         }
 
-        final ImmutableList.Builder<UntersuchenAction<INSPECTABLE>> res = ImmutableList.builder();
+        final ImmutableList.Builder<UntersuchenAction> res = ImmutableList.builder();
 
         final ImmutableList<IInspection> inspections =
                 inspectable.inspectionComp().getInspections();
 
         for (final IInspection inspection : inspections) {
-            res.add(new UntersuchenAction<>(scActionStepCountDao, timeTaker,
+            res.add(new UntersuchenAction(scActionStepCountDao, timeTaker,
                     n, world, inspection));
         }
 

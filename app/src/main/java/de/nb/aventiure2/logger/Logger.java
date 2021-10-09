@@ -15,7 +15,7 @@ public class Logger {
 
         private final int value;
 
-        private LOGGER_DEPTH(final int newValue) {
+        LOGGER_DEPTH(final int newValue) {
             value = newValue;
         }
 
@@ -196,6 +196,7 @@ public class Logger {
         }
     }
 
+    @SuppressWarnings("unused")
     public void wtf(final String msg) {
         try {
             Log.wtf(getTag(LOGGER_DEPTH.ACTUAL_METHOD), msg);
