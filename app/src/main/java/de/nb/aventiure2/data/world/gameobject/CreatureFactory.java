@@ -177,7 +177,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                         np(BAUERSFRAU, MUS_VERKAEUFERIN));
         final InspectionComp inspectionComp =
                 new InspectionComp(MUS_VERKAEUFERIN, timeTaker, world,
-                        new MusVerkaeuferinInspection(timeTaker, world, db.counterDao()));
+                        new MusVerkaeuferinInspection(world, db.counterDao()));
         final LocationComp locationComp =
                 new LocationComp(MUS_VERKAEUFERIN, db, world, null, BAUERNMARKT,
                         false);

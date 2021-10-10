@@ -20,7 +20,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.VERSCHEUCHEN;
 
 import com.google.common.collect.ImmutableCollection;
 
-import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.inspection.IInspectableGO;
@@ -42,7 +41,6 @@ import de.nb.aventiure2.german.string.GermanStringUtil;
 public class MusVerkaeuferinInspection implements IInspection,
         // Mixins
         IWorldLoaderMixin, IWorldDescriptionMixin {
-    private final TimeTaker timeTaker;
     private final World world;
     private final CounterDao counterDao;
 
@@ -51,10 +49,8 @@ public class MusVerkaeuferinInspection implements IInspection,
         BEOBACHTEN
     }
 
-    public MusVerkaeuferinInspection(final TimeTaker timeTaker,
-                                     final World world,
+    public MusVerkaeuferinInspection(final World world,
                                      final CounterDao counterDao) {
-        this.timeTaker = timeTaker;
         this.world = world;
         this.counterDao = counterDao;
     }

@@ -149,14 +149,17 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME Seil flechten..
     //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Evtl. Zustandsänderungs-Aktion?)
-    //  - Binsen anfeuchten?
     //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
-    //  - KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
-    //   restlichen müssen auch alle vorhanden sein)
-    //  - "Sprossen"
+    //  - Wenn zu wenige Binsen: Du erhältst nur ein sehr kurzes Seil. / Das Seil ist
+    //  nicht besonders lang, stabil sieht es auch nicht aus. / Aus den vielen Binsen flichst du
+    //  ein langes, stabiles Seil.
 
     // FIXME Sackgasse: "Am Seil herunterlassen" / "am Seil herunterklettern": Das tut Rapunzel
     //  nicht.
+
+    // FIXME KombinierenAction (1. Parameter bestimmt die Reihenfolge in den Aktionen, die
+    //   restlichen müssen auch alle vorhanden sein)
+    //  - "Sprossen"
 
     // FIXME "steigst die Leiter herauf"
 
