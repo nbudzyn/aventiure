@@ -156,6 +156,7 @@ public class FullWalkthrough {
                     "In Richtung Schloss gehen",
                     "Den Wald verlassen und in den Schlossgarten gehen",
                     "Auf den kleinen Markt gehen",
+                    "Der schönen jungen Frau mit den Töpfen zusehen",
                     "Der alten Korbflechterin bei ihrer Arbeit zusehen",
                     "Den Bauernmarkt verlassen");
     public static final Walkthrough FULL =

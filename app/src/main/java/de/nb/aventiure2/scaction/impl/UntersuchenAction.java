@@ -1,8 +1,15 @@
 package de.nb.aventiure2.scaction.impl;
 
 import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.ZU;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAusTimed;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_WENDEN;
+import static de.nb.aventiure2.german.praedikat.ReflVerbSubjObj.SICH_ZUWENDEN;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +29,8 @@ import de.nb.aventiure2.data.world.syscomp.inspection.IInspection;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
+import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -91,8 +100,26 @@ public class UntersuchenAction extends AbstractScAction {
 
     @Override
     protected void narrateAndDo() {
-        n.narrateAlt(drueckeAusTimed(getKohaerenzrelationFuerUmformulierung(),
-                inspection.altTimedDescriptions()));
+        if (isDefinitivDiskontinuitaet()) {
+            n.narrateAlt(secs(5),
+                    du(PARAGRAPH, SICH_ZUWENDEN
+                            .mit(getDescription(false)))
+                            .undWartest(),
+                    du(PARAGRAPH, SICH_WENDEN
+                            .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher(
+                                    ZU.mit(getDescription(false)))))
+                            .undWartest(),
+                    du(PARAGRAPH, "schaust",
+                            "nach",
+                            getDescription(false).datK(),
+                            ":", SENTENCE)
+                            .undWartest());
+
+            n.narrateAlt(inspection.altTimedDescriptions());
+        } else {
+            n.narrateAlt(drueckeAusTimed(getKohaerenzrelationFuerUmformulierung(),
+                    inspection.altTimedDescriptions()));
+        }
 
         sc.memoryComp().setLastAction(buildMemorizedAction());
     }
@@ -109,7 +136,8 @@ public class UntersuchenAction extends AbstractScAction {
 
     @Override
     protected boolean isDefinitivDiskontinuitaet() {
-        return false;
+        return sc.memoryComp().getLastAction().is(Action.Type.UNTERSUCHEN)
+                && !sc.memoryComp().getLastAction().hasObject(inspection.getInspectable());
     }
 
     @Contract(" -> new")
@@ -118,4 +146,21 @@ public class UntersuchenAction extends AbstractScAction {
         return new Action(Action.Type.UNTERSUCHEN, inspection.getInspectable());
     }
 
+    /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase kann unterschiedlich sein, je nachdem,
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     *                     kürzere Beschreibung gewählt
+     */
+    @SuppressWarnings("SameParameterValue")
+    private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
+        return getDescription(getInspectable().getId(), shortIfKnown);
+    }
+
+    private IInspectableGO getInspectable() {
+        return inspection.getInspectable();
+    }
 }

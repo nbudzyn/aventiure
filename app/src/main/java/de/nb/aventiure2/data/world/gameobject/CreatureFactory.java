@@ -21,7 +21,6 @@ import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -55,6 +54,7 @@ import de.nb.aventiure2.data.world.syscomp.feelings.MuedigkeitsData;
 import de.nb.aventiure2.data.world.syscomp.inspection.IInspectableGO;
 import de.nb.aventiure2.data.world.syscomp.inspection.InspectionComp;
 import de.nb.aventiure2.data.world.syscomp.inspection.impl.KorbflechterinInspection;
+import de.nb.aventiure2.data.world.syscomp.inspection.impl.TopfVerkaeuferinInspection;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.memory.MemoryComp;
@@ -174,6 +174,22 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                         np(INDEF, DICK, BAEUERIN, MUS_VERKAEUFERIN),
                         np(DICK, BAEUERIN, MUS_VERKAEUFERIN),
                         np(BAUERSFRAU, MUS_VERKAEUFERIN));
+
+        // FIXME Musverkäuferin beobachten
+        //  "Mus feil!" ruft die... "gut Mus feil!"
+
+        // FIXME "Ein Käufer kommt, besieht sich alles genau, hält lange die Nase an ihr Mus" Dann
+        //  lässt er sich
+        //  von der Bauersfrau vier Lot Mus abwiegen. "wenns auch ein Viertelpfund ist,
+        //  kommt es mir nicht darauf an" Die Frau wiegt das Mus ab und wirkt etwas ärgerlich
+        //  und brummig. (1x)
+
+        // FIXME Das süße Mus hat einige Fliegen angelockt.
+
+        // FIXME "Gut Mus feil!" ruft die...
+
+        // FIXME Mit einem Lappen versucht die Bäuerin die Fliegen zu verscheuchen.
+
         final LocationComp locationComp =
                 new LocationComp(MUS_VERKAEUFERIN, db, world, null, BAUERNMARKT,
                         false);
@@ -200,11 +216,14 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         final LocationComp locationComp =
                 new LocationComp(TOPF_VERKAEUFERIN, db, world, null, BAUERNMARKT,
                         false);
+        final InspectionComp inspectionComp =
+                new InspectionComp(TOPF_VERKAEUFERIN, timeTaker, world,
+                        new TopfVerkaeuferinInspection(timeTaker, world, db.counterDao()));
         final TopfVerkaeuferinReactionsComp reactionsComp =
                 new TopfVerkaeuferinReactionsComp(db.counterDao(), n, world, locationComp);
 
-        return new SimpleReactionsCreature(TOPF_VERKAEUFERIN,
-                descriptionComp, locationComp, reactionsComp);
+        return new SimpleInspectionsReactionsCreature(TOPF_VERKAEUFERIN,
+                descriptionComp, locationComp, inspectionComp, reactionsComp);
     }
 
     GameObject createKorbflechterin() {
@@ -218,11 +237,9 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                         false);
         final KorbflechterinReactionsComp reactionsComp =
                 new KorbflechterinReactionsComp(db.counterDao(), n, world, locationComp);
-
         final InspectionComp inspectionComp =
                 new InspectionComp(KORBFLECHTERIN, timeTaker, world,
-                        ImmutableList.of(new KorbflechterinInspection(world, db.counterDao())));
-
+                        new KorbflechterinInspection(world, db.counterDao()));
         return new SimpleInspectionsReactionsCreature(KORBFLECHTERIN,
                 descriptionComp, locationComp, inspectionComp, reactionsComp);
     }

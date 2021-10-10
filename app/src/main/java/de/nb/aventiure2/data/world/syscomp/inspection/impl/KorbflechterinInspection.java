@@ -27,10 +27,11 @@ import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
-public class KorbflechterinInspection implements IInspection,
-        // Mixins
-        IWorldLoaderMixin, IWorldDescriptionMixin {
-
+/**
+ * Entspricht einer {@link de.nb.aventiure2.scaction.impl.UntersuchenAction},
+ * die der Benutzer an der Korbflechterin durchführen kann.
+ */
+public class KorbflechterinInspection implements IInspection {
     private final World world;
     private final CounterDao counterDao;
 
@@ -61,7 +62,7 @@ public class KorbflechterinInspection implements IInspection,
     public ImmutableCollection<? extends TimedDescription<?>> altTimedDescriptions() {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        final SubstantivischePhrase anaph = anaph(KORBFLECHTERIN);
+        final SubstantivischePhrase anaph = anaph();
 
         final int countBeimFlechtenBeobachtet = counterDao.get(BEIM_FLECHTEN_BEOBACHTEN);
         if (countBeimFlechtenBeobachtet == 0) {
@@ -70,7 +71,7 @@ public class KorbflechterinInspection implements IInspection,
             }
 
             alt.add(neuerSatz(PARAGRAPH,
-                    anaph.persPron().nomK(),
+                    anaph.nomK(),
                     "arbeitet an einem Binsenkorb", SENTENCE,
                     "du siehst",
                     anaph.persPron().datK(),

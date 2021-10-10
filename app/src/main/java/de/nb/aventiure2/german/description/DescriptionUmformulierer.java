@@ -148,36 +148,32 @@ public class DescriptionUmformulierer {
             final AbstractDescription<?> desc) {
         final AltDescriptionsBuilder alt = alt();
 
-        if (!(desc instanceof AbstractFlexibleDescription)) {
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch einmal:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
-                    desc));
+        if (desc instanceof StructuredDescription) {
+            final StructuredDescription sDesc = (StructuredDescription) desc;
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("noch einmal")));
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("erneut")));
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("von neuem")));
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("ein weiteres Mal")));
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("nochmals")).schonLaenger()
+            );
+
+            alt.add(mitAdvAngabe(sDesc,
+                    new AdvAngabeSkopusSatz("wieder")).schonLaenger()
+            );
         }
 
         if (desc instanceof AbstractFlexibleDescription) {
             final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
-
-            if (fDesc.hasSubjektDu()) {
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "gibst", "nicht auf",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "gibst aber", "nicht auf",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "es noch einmal",
-                        fDesc));
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "dich aber erneut", fDesc));
-            }
 
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal aber", fDesc));
@@ -187,29 +183,35 @@ public class DescriptionUmformulierer {
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("nochmals", fDesc));
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("wieder", fDesc));
 
-            if (desc instanceof StructuredDescription) {
-                final StructuredDescription sDesc = (StructuredDescription) fDesc;
+            if (!(desc instanceof StructuredDescription)) {
+                if (fDesc.hasSubjektDu()) {
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "gibst", "nicht auf",
+                            fDesc).schonLaenger()
+                    );
 
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("noch einmal")));
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "gibst aber", "nicht auf",
+                            fDesc).schonLaenger()
+                    );
 
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("erneut")));
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "es noch einmal",
+                            fDesc));
 
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("von neuem")));
-
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("ein weiteres Mal")));
-
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("nochmals")).schonLaenger()
-                );
-
-                alt.add(mitAdvAngabe(sDesc,
-                        new AdvAngabeSkopusSatz("wieder")).schonLaenger()
-                );
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "dich aber erneut", fDesc));
+                }
             }
+        }
+
+        if (!(desc instanceof AbstractFlexibleDescription)) {
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
+                    desc));
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch einmal:",
+                    desc));
+            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
+                    desc));
         }
 
         return alt.build();
@@ -219,6 +221,63 @@ public class DescriptionUmformulierer {
     private static ImmutableCollection<AbstractDescription<?>> drueckeFortsetzungAus(
             final AbstractDescription<?> desc) {
         final AltDescriptionsBuilder alt = alt();
+
+        if (desc instanceof StructuredDescription) {
+            final StructuredDescription sDesc = (StructuredDescription) desc;
+
+            alt.add(mitAdvAngabe(sDesc, new AdvAngabeSkopusSatz("immer noch"))
+                            .schonLaenger(),
+                    mitAdvAngabe(sDesc, new AdvAngabeSkopusSatz("unverdrossen"))
+                            .schonLaenger(),
+                    mitAdvAngabe(sDesc,
+                            new AdvAngabeSkopusVerbAllg("weiter")),
+                    mitAdvAngabe(sDesc,
+                            new AdvAngabeSkopusVerbAllg("weiterhin")));
+        }
+
+
+        if (desc instanceof AbstractFlexibleDescription<?>) {
+            final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
+            
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
+            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Unverdrossen", fDesc));
+
+            if (!(desc instanceof StructuredDescription)) {
+
+                if (fDesc.hasSubjektDu()) {
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "gibst", "nicht auf",
+                            fDesc).schonLaenger()
+                    );
+
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "gibst aber", "nicht auf",
+                            fDesc).schonLaenger()
+                    );
+
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "es weiter",
+                            fDesc).schonLaenger()
+                    );
+
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "es noch weiter",
+                            fDesc).schonLaenger()
+                    );
+
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "es weiterhin",
+                            fDesc).schonLaenger()
+                    );
+
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "versuchst", "es unverdrossen weiter",
+                            "unverdrossen",
+                            fDesc).schonLaenger()
+                    );
+                }
+            }
+        }
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
             alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
@@ -231,56 +290,6 @@ public class DescriptionUmformulierer {
                     desc));
             alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
                     desc));
-        }
-
-        if (desc instanceof AbstractFlexibleDescription<?>) {
-            final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
-
-            if (fDesc.hasSubjektDu()) {
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "gibst", "nicht auf",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "gibst aber", "nicht auf",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "es weiter",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "es noch weiter",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "es weiterhin",
-                        fDesc).schonLaenger()
-                );
-
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "versuchst", "es unverdrossen weiter",
-                        "unverdrossen",
-                        fDesc).schonLaenger()
-                );
-            }
-
-            alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
-
-            if (desc instanceof StructuredDescription) {
-                final StructuredDescription sDesc = (StructuredDescription) fDesc;
-
-                alt.add(mitAdvAngabe(sDesc, new AdvAngabeSkopusSatz("immer noch"))
-                                .schonLaenger(),
-                        mitAdvAngabe(sDesc,
-                                new AdvAngabeSkopusVerbAllg("weiter")),
-                        mitAdvAngabe(sDesc,
-                                new AdvAngabeSkopusVerbAllg("weiterhin")));
-            }
         }
 
         return alt.build();

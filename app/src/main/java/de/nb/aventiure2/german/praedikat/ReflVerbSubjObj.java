@@ -2,8 +2,10 @@ package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WENDEN;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
@@ -18,6 +20,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * </ul>
  */
 public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
+    // Verben ohne Partikel
     AN_SICH_NEHMEN("nehmen", PraepositionMitKasus.AN_AKK, AKK,
             "nehme", "nimmst", "nimmt",
             "nehmt",
@@ -34,7 +37,10 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
     SICH_VERABSCHIEDEN("verabschieden", AKK, PraepositionMitKasus.VON,
             "verabschiede", "verabschiedest", "verabschiedet",
             "verabschiedet",
-            Perfektbildung.HABEN, "verabschiedet");
+            Perfektbildung.HABEN, "verabschiedet"),
+
+    // Partikelverben
+    SICH_ZUWENDEN(WENDEN, AKK, DAT, "zu", Perfektbildung.HABEN);
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
@@ -79,6 +85,16 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
                     final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
                     final Perfektbildung perfektbildung) {
         this(verb.getVerb().mitPerfektbildung(perfektbildung), reflKasusOderPraepositionalKasus,
+                objektKasusOderPraepositionalkasus);
+    }
+
+    ReflVerbSubjObj(final VerbMitValenz verb,
+                    final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
+                    final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
+                    @Nullable final String partikel,
+                    final Perfektbildung perfektbildung) {
+        this(verb.getVerb().mitPartikel(partikel).mitPerfektbildung(perfektbildung),
+                reflKasusOderPraepositionalKasus,
                 objektKasusOderPraepositionalkasus);
     }
 

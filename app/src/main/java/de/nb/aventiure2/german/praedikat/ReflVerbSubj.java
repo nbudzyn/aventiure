@@ -1,5 +1,12 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIEHEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BAUEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WENDEN;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -14,12 +21,6 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIEHEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BAUEN;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
 
 /**
  * Ein Verb wie "sich beziehen", das nur ein reflexives Objekt oder Präpositionalobjekt hat
@@ -51,6 +52,7 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
             "verdüstere", "verdüsterst", "verdüstert",
             "verdüstert",
             Perfektbildung.HABEN, "verdüstert"),
+    SICH_WENDEN(WENDEN, AKK, Perfektbildung.HABEN),
 
     // Partikelverben
     SICH_ABKUEHLEN(KUEHLEN, AKK, "ab", Perfektbildung.HABEN),
@@ -82,6 +84,12 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
             final String partizipII) {
         this(new Verb(infinitiv, ichForm, duForm, erSieEsForm, ihrForm, perfektbildung, partizipII),
                 reflKasus);
+    }
+
+    ReflVerbSubj(final VerbMitValenz verbMitValenz,
+                 final Kasus reflKasus,
+                 final Perfektbildung perfektbildung) {
+        this(verbMitValenz.getVerb().mitPerfektbildung(perfektbildung), reflKasus);
     }
 
     ReflVerbSubj(final VerbMitValenz verbMitValenz,

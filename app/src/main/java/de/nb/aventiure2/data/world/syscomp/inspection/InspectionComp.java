@@ -24,7 +24,14 @@ public class InspectionComp extends AbstractStatelessComponent
     public InspectionComp(final GameObjectId gameObjectId,
                           final TimeTaker timeTaker,
                           final World world,
-                          final Collection<IInspection> inspections) {
+                          final IInspection inspection) {
+        this(gameObjectId, timeTaker, world, ImmutableList.of(inspection));
+    }
+
+    private InspectionComp(final GameObjectId gameObjectId,
+                           final TimeTaker timeTaker,
+                           final World world,
+                           final Collection<IInspection> inspections) {
         super(gameObjectId);
         this.timeTaker = timeTaker;
         this.world = world;
