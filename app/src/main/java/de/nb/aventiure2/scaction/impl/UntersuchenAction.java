@@ -118,6 +118,7 @@ public class UntersuchenAction extends AbstractScAction {
             n.narrateAlt(inspection.altTimedDescriptions());
         } else {
             n.narrateAlt(drueckeAusTimed(getKohaerenzrelationFuerUmformulierung(),
+                    true,
                     inspection.altTimedDescriptions()));
         }
 

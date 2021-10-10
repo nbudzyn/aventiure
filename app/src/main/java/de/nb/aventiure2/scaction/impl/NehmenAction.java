@@ -345,7 +345,7 @@ public class NehmenAction
                     getDescription(gameObject, false);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
-            alt.addAll(drueckeAusTimed(DISKONTINUITAET,
+            alt.addAll(drueckeAusTimed(DISKONTINUITAET, false,
                     du(PARAGRAPH, NEHMEN.mit(froschDesc))
                             .timed(secs(5))
                             .undWartest()));
@@ -440,7 +440,7 @@ public class NehmenAction
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        alt.addAll(drueckeAusTimed(DISKONTINUITAET,
+        alt.addAll(drueckeAusTimed(DISKONTINUITAET, false,
                 du(PARAGRAPH, nehmenPraedikat.mit(objectDesc)
                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("wieder")))
                         .timed(secs(5))

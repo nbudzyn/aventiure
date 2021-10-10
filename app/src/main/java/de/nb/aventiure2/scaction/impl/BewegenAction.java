@@ -681,7 +681,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         alt.add(description.withDescription(
                 fDesc.toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma()
                         .mitPraefix(", besinnst dich aber")));
-        alt.addAll(drueckeAusTimed(DISKONTINUITAET, description));
+        alt.addAll(drueckeAusTimed(DISKONTINUITAET, false, description));
         return alt.build();
     }
 
@@ -705,7 +705,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                     PARAGRAPH,
                     "Was willst du hier eigentlich?",
                     SENTENCE)));
-            alt.addAll(drueckeAusTimed(DISKONTINUITAET, timedDescription));
+            alt.addAll(drueckeAusTimed(DISKONTINUITAET, false,
+                    timedDescription));
         }
         return alt.build();
     }

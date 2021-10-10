@@ -91,6 +91,7 @@ public class ZustandVeraendernAction<S extends Enum<S>, GO extends IDescribableG
     @Override
     protected void narrateAndDo() {
         n.narrateAlt(drueckeAusTimed(getKohaerenzrelationFuerUmformulierung(),
+                false,
                 modification.altTimedDescriptions()));
 
         object.stateComp().narrateAndSetState(modification.getNewState());

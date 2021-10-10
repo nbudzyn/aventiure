@@ -142,6 +142,7 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
                             kohaerenzrelation,
+                            true,
                             du(WARTEN
                                     .mit(anaph)
                                     .mitAdvAngabe(new AdvAngabeSkopusSatz("weiter"))

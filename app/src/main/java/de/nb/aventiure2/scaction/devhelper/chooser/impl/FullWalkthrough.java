@@ -158,6 +158,7 @@ public class FullWalkthrough {
                     "Auf den kleinen Markt gehen",
                     "Der schönen jungen Frau mit den Töpfen zusehen",
                     "Der alten Korbflechterin bei ihrer Arbeit zusehen",
+                    "Die dicke Bäuerin beobachten",
                     "Den Bauernmarkt verlassen");
     public static final Walkthrough FULL =
             ANFANG_BIS_RAPUNZEL_RETTUNG_ZUSAGEN

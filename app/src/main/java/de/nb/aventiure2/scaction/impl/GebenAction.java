@@ -129,7 +129,8 @@ public class GebenAction<
         final ImmutableList<StructuredDescription> descAlt =
                 mapToList(praedikatAlt, GebenAction::toAnbietenGebenDuDescription);
 
-        n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(), descAlt),
+        n.narrateAlt(drueckeAus(getKohaerenzrelationFuerUmformulierung(),
+                false, descAlt),
                 secs(20));
     }
 

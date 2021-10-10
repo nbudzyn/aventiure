@@ -172,6 +172,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     // FIXME Partizip I...!
     STUERMEND("stürmend"),
     STUERMISCH("stürmisch"),
+    SUESS("süß"),
     TIEF,
     TRAURIG,
     TODMUEDE("todmüde"),

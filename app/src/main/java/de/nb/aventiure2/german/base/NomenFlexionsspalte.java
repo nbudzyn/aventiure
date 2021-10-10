@@ -58,6 +58,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     ELEFANTEN(PL_MFN),
     EISESKAELTE(F, "Eiseskälte"),
     FIRMAMENT(N),
+    FLIEGEN(PL_MFN),
     FRAU(F),
     FREUDE(F),
     FROSCH(M),

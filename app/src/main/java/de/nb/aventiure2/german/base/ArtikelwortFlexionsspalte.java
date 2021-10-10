@@ -3,7 +3,7 @@ package de.nb.aventiure2.german.base;
 import static java.util.Objects.requireNonNull;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
-import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGER;
+import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGE;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.ETWAS;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EUER;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.IHR;
@@ -88,7 +88,7 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         /**
          * Indefinitpronomen "einiges" / einige"
          */
-        EINIGER(false, false,
+        EINIGE(false, false,
                 // "Nicht etwas Wassser"* -> "kein Wassser"
                 // "Nicht einige Leute"* -> "keine Leute"
                 NEG_INDEF),
@@ -193,7 +193,7 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         ALL.put(EUER, buildFlexionsspaltenTypEin("euer", true));
 
         // Indefinitpronomen etwas / einiges
-        ALL.put(EINIGER, buildFlexionsspaltenTypDieser("einig", true));
+        ALL.put(EINIGE, buildFlexionsspaltenTypDieser("einig", true));
         ALL.put(ETWAS, ImmutableMap.of(
                 // "etwas Hirsch"
                 M, new ArtikelwortFlexionsspalte(M, fr("etwas")),
@@ -202,7 +202,7 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
                 // "etwas Wasser"
                 N, new ArtikelwortFlexionsspalte(N, fr("etwas")),
                 // Ersatzkonstruktion: "einige Leute"
-                PL_MFN, requireNonNull(requireNonNull(ALL.get(EINIGER)).get(PL_MFN))));
+                PL_MFN, requireNonNull(requireNonNull(ALL.get(EINIGE)).get(PL_MFN))));
 
         // Indefinitpronomen viel, indefinit: "viel Soße", "viele Leute", ...
         ALL.put(VIEL_INDEF, buildFlexionsspaltenTypEin("viel", true));

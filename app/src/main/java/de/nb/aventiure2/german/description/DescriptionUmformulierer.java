@@ -34,17 +34,21 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final TimedDescription<?>... desc) {
-        return drueckeAusTimed(kohaerenzrelation, asList(desc));
+        return drueckeAusTimed(kohaerenzrelation, hoechstensUnauffaelligeAnpassungen, asList(desc));
     }
 
     @CheckReturnValue
     public static ImmutableCollection<TimedDescription<?>> drueckeAusTimed(
             final Kohaerenzrelation kohaerenzrelation,
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final Collection<? extends TimedDescription<?>> descriptions) {
         return descriptions.stream()
                 .flatMap(d ->
-                        drueckeAus(kohaerenzrelation, d.getDescription()).stream()
+                        drueckeAus(kohaerenzrelation,
+                                hoechstensUnauffaelligeAnpassungen,
+                                d.getDescription()).stream()
                                 .map(r -> r.timed(d.getTimeElapsed())
                                         .withCounterIdIncrementedIfTextIsNarrated(
                                                 d.getCounterIdIncrementedIfTextIsNarrated()))
@@ -55,31 +59,38 @@ public class DescriptionUmformulierer {
     @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final AbstractDescription<?>... desc) {
         return drueckeAus(kohaerenzrelation,
+                hoechstensUnauffaelligeAnpassungen,
                 asList(desc));
     }
 
     @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final Collection<? extends AbstractDescription<?>> descriptions) {
         return descriptions.stream()
-                .flatMap(d -> drueckeAus(kohaerenzrelation, d).stream())
+                .flatMap(d -> drueckeAus(kohaerenzrelation,
+                        hoechstensUnauffaelligeAnpassungen,
+                        d)
+                        .stream())
                 .collect(ImmutableList.toImmutableList());
     }
 
     @CheckReturnValue
     public static ImmutableCollection<AbstractDescription<?>> drueckeAus(
             final Kohaerenzrelation kohaerenzrelation,
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final AbstractDescription<?> desc) {
         switch (kohaerenzrelation) {
             case DISKONTINUITAET:
-                return drueckeDiskontinuitaetAus(desc);
+                return drueckeDiskontinuitaetAus(hoechstensUnauffaelligeAnpassungen, desc);
             case WIEDERHOLUNG:
-                return drueckeWiederholungAus(desc);
+                return drueckeWiederholungAus(hoechstensUnauffaelligeAnpassungen, desc);
             case FORTSETZUNG:
-                return drueckeFortsetzungAus(desc);
+                return drueckeFortsetzungAus(hoechstensUnauffaelligeAnpassungen, desc);
             case VERSTEHT_SICH_VON_SELBST:
                 return ImmutableList.of(desc);
             default:
@@ -90,6 +101,7 @@ public class DescriptionUmformulierer {
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeDiskontinuitaetAus(
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final AbstractDescription<?> desc) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -97,9 +109,11 @@ public class DescriptionUmformulierer {
             final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
 
             if (fDesc.hasSubjektDu()) {
-                alt.add(duMitPraefixUndSatzanschluss(
-                        "besinnst", "dich aber",
-                        fDesc));
+                if (!hoechstensUnauffaelligeAnpassungen) {
+                    alt.add(duMitPraefixUndSatzanschluss(
+                            "besinnst", "dich aber",
+                            fDesc));
+                }
             }
 
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("noch einmal", fDesc));
@@ -134,17 +148,22 @@ public class DescriptionUmformulierer {
                         .phorikKandidat(fDesc.getPhorikKandidat()));
             }
         } else {
-            alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
-                    SENTENCE, "Aber dir kommt ein Gedanke:", SENTENCE)));
-            alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
-                    SENTENCE, "Dir kommt ein Gedanke:", SENTENCE)));
+            if (!hoechstensUnauffaelligeAnpassungen) {
+                alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
+                        SENTENCE, "Aber dir kommt ein Gedanke:", SENTENCE)));
+                alt.addAll(desc.altMitPraefix(joinToKonstituentenfolge(
+                        SENTENCE, "Dir kommt ein Gedanke:", SENTENCE)));
+            }
         }
+
+        alt.addIfOtherwiseEmpty(desc);
 
         return alt.build();
     }
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeWiederholungAus(
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final AbstractDescription<?> desc) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -185,40 +204,47 @@ public class DescriptionUmformulierer {
 
             if (!(desc instanceof StructuredDescription)) {
                 if (fDesc.hasSubjektDu()) {
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "gibst", "nicht auf",
-                            fDesc).schonLaenger()
-                    );
+                    if (!hoechstensUnauffaelligeAnpassungen) {
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "gibst", "nicht auf",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "gibst aber", "nicht auf",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "gibst aber", "nicht auf",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "es noch einmal",
-                            fDesc));
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "es noch einmal",
+                                fDesc));
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "dich aber erneut", fDesc));
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "dich aber erneut", fDesc));
+                    }
                 }
             }
         }
 
         if (!(desc instanceof AbstractFlexibleDescription)) {
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch einmal:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
-                    desc));
+            if (!hoechstensUnauffaelligeAnpassungen) {
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch einmal:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
+                        desc));
+            }
         }
+
+        alt.addIfOtherwiseEmpty(desc);
 
         return alt.build();
     }
 
     @CheckReturnValue
     private static ImmutableCollection<AbstractDescription<?>> drueckeFortsetzungAus(
+            final boolean hoechstensUnauffaelligeAnpassungen,
             final AbstractDescription<?> desc) {
         final AltDescriptionsBuilder alt = alt();
 
@@ -238,59 +264,64 @@ public class DescriptionUmformulierer {
 
         if (desc instanceof AbstractFlexibleDescription<?>) {
             final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
-            
+
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Immer noch", fDesc));
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Unverdrossen", fDesc));
 
             if (!(desc instanceof StructuredDescription)) {
-
                 if (fDesc.hasSubjektDu()) {
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "gibst", "nicht auf",
-                            fDesc).schonLaenger()
-                    );
+                    if (!hoechstensUnauffaelligeAnpassungen) {
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "gibst", "nicht auf",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "gibst aber", "nicht auf",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "gibst aber", "nicht auf",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "es weiter",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "es weiter",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "es noch weiter",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "es noch weiter",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "es weiterhin",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "es weiterhin",
+                                fDesc).schonLaenger()
+                        );
 
-                    alt.add(duMitPraefixUndSatzanschluss(
-                            "versuchst", "es unverdrossen weiter",
-                            "unverdrossen",
-                            fDesc).schonLaenger()
-                    );
+                        alt.add(duMitPraefixUndSatzanschluss(
+                                "versuchst", "es unverdrossen weiter",
+                                "unverdrossen",
+                                fDesc).schonLaenger()
+                        );
+                    }
                 }
             }
         }
 
         if (!(desc instanceof AbstractFlexibleDescription<?>)) {
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiter:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch weiter:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiterhin:",
-                    desc));
-            alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
-                    desc));
+            if (!hoechstensUnauffaelligeAnpassungen) {
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("gibst", "aber nicht auf:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiter:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es noch weiter:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("versuchst", "es weiterhin:",
+                        desc));
+                alt.addAll(duMitPraefixAltNeueSaetzeSchonLaenger("lässt", "dich nicht entmutigen.",
+                        desc));
+            }
         }
+
+        alt.addIfOtherwiseEmpty(desc);
 
         return alt.build();
     }
