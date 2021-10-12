@@ -49,6 +49,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     BETT(N),
     BETTGESTELL(N),
     BINSEN(PL_MFN),
+    BINSENSEIL(N),
+    BINSENSEILE(PL_MFN, "Binsenseile", "Binsenseilen"),
     BRETTERTISCH(M),
     DINGE(PL_MFN, "Dinge", "Dingen"),
     DAEMMERLICHT(N, "Dämmerlicht"),

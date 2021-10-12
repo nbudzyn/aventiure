@@ -27,11 +27,11 @@ public class AmountDescriptionComp extends SimpleDescriptionComp {
 
 
     public AmountDescriptionComp(final GameObjectId id,
-                                 final EinzelneSubstantivischePhrase descriptionAtFirstSight,
                                  final Map<Integer, EinzelneSubstantivischePhrase> descriptionsAtFirstSightByMinAmount,
                                  final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
                                  final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
-        super(id, descriptionAtFirstSight, normalDescriptionWhenKnown, shortDescriptionWhenKnown);
+        super(id, getDescriptionAtFirstSight(descriptionsAtFirstSightByMinAmount, 1),
+                normalDescriptionWhenKnown, shortDescriptionWhenKnown);
 
         checkArgument(descriptionsAtFirstSightByMinAmount.containsKey(0),
                 "Keine Beschreibung für Menge 0");
@@ -51,6 +51,12 @@ public class AmountDescriptionComp extends SimpleDescriptionComp {
     }
 
     public EinzelneSubstantivischePhrase getDescriptionAtFirstSight(final int amount) {
+        return getDescriptionAtFirstSight(descriptionsAtFirstSightByMinAmount, amount);
+    }
+
+    private static EinzelneSubstantivischePhrase getDescriptionAtFirstSight(
+            final Map<Integer, EinzelneSubstantivischePhrase> descriptionsAtFirstSightByMinAmount,
+            final int amount) {
         checkState(amount >= 0, "amount < 0");
 
         @Nullable EinzelneSubstantivischePhrase res = null;

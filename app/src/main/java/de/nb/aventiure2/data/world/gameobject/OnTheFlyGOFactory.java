@@ -2,12 +2,16 @@ package de.nb.aventiure2.data.world.gameobject;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUSGERUPFT;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGE;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.NEG_INDEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.VIEL_INDEF;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSEN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSENSEIL;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSENSEILE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 import androidx.annotation.NonNull;
 
@@ -57,7 +61,7 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                 soundsovieleBinsen =
                 ImmutableMap.<Integer, EinzelneSubstantivischePhrase>builder()
                         .put(0, np(NEG_INDEF, BINSEN))
-                        .put(1, np(EINIGE, BINSEN))
+                        .put(1, np(EINIGE, AUSGERUPFT, BINSEN, newId))
                         .put(3, np(VIEL_INDEF, BINSEN))
                         .build();
 
@@ -66,12 +70,52 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                 new TypeComp(newId, db, GameObjectType.AUSGERUPFTE_BINSEN),
                 1,
                 new AmountDescriptionComp(newId,
-                        np(INDEF, AUSGERUPFT, BINSEN),
                         soundsovieleBinsen,
-                        BINSEN.mit(AUSGERUPFT),
-                        BINSEN),
+                        np(AUSGERUPFT, BINSEN, newId),
+                        np(BINSEN, newId)),
                 new LocationComp(newId, db, world, BINSENSUMPF, null, true,
                         true));
+    }
+
+    // FIXME Seil flechten..
+    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Evtl. Zustandsänderungs-Aktion?)
+    //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
+    //  - Wenn zu wenige Binsen: Du erhältst nur ein sehr kurzes Seil. / Das Seil ist
+    //  nicht besonders lang, stabil sieht es auch nicht aus. / Aus den vielen Binsen flichst du
+    //  ein langes, stabiles Seil.
+    @SuppressWarnings("unchecked")
+    public <BINSENSEIL extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
+    BINSENSEIL createEinLangesBinsenseil() {
+        final GameObjectId newId = generateNewGameObjectId();
+
+        final ImmutableMap<Integer, EinzelneSubstantivischePhrase>
+                soundsovieleLangeBinsenseile =
+                ImmutableMap.<Integer, EinzelneSubstantivischePhrase>builder()
+                        .put(0, np(NEG_INDEF, LANG, BINSENSEIL))
+                        .put(1, np(INDEF, LANG, BINSENSEIL,
+                                newId))
+                        .put(2, np(PL_MFN, INDEF,
+                                "zwei lange Binsenseile",
+                                "zwei langen Binsenseilen"))
+                        .put(3, np(PL_MFN, INDEF,
+                                "drei lange Binsenseile",
+                                "drei langen Binsenseilen"))
+                        .put(4, np(PL_MFN, INDEF,
+                                "vier lange Binsenseile",
+                                "vier langen Binsenseilen"))
+                        .put(5, np(EINIGE, LANG, BINSENSEILE))
+                        .build();
+
+        return (BINSENSEIL) new AmountObject(newId,
+                db,
+                new TypeComp(newId, db, GameObjectType.LANGES_BINSENSEIL),
+                1,
+                new AmountDescriptionComp(newId,
+                        soundsovieleLangeBinsenseile,
+                        np(LANG, BINSENSEIL, newId),
+                        np(BINSENSEIL, newId)),
+                new LocationComp(newId, db, world, null, null,
+                        true, false));
     }
 
     /**

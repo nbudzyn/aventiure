@@ -147,13 +147,6 @@ public enum RapunzelStoryNode implements IStoryNode {
 
     // FIXME BINSENSEIL_GEFLOCHTEN
 
-    // FIXME Seil flechten..
-    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Evtl. Zustandsänderungs-Aktion?)
-    //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
-    //  - Wenn zu wenige Binsen: Du erhältst nur ein sehr kurzes Seil. / Das Seil ist
-    //  nicht besonders lang, stabil sieht es auch nicht aus. / Aus den vielen Binsen flichst du
-    //  ein langes, stabiles Seil.
-
     // FIXME Sackgasse: "Am Seil herunterlassen" / "am Seil herunterklettern": Das tut Rapunzel
     //  nicht.
 
