@@ -21,6 +21,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
@@ -204,36 +205,46 @@ public enum VerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstel
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getVerbzweit(praedRegMerkmale);
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getVerbzweit(textContext, praedRegMerkmale);
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
-        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(subjekt);
+        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(textContext, subjekt);
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getVerbletzt(praedRegMerkmale);
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getVerbletzt(textContext, praedRegMerkmale);
     }
 
     @Override
     @CheckReturnValue
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
     }
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }
 

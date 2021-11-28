@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht
@@ -146,6 +147,7 @@ public class ReflSemPraedikatSubOhneLeerstellen
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),

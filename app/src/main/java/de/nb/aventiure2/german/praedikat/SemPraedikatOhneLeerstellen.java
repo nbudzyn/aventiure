@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.Belebtheit;
@@ -173,15 +172,17 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen) - für ein
      * Subjekt wie dieses (was Person und Numerus angeht).
      */
-    default Konstituentenfolge getVerbzweit(final SubstantivischePhrase subjekt) {
-        return getVerbzweit(subjekt.getPraedRegMerkmale());
+    default Konstituentenfolge getVerbzweit(
+            final ITextContext textContext, final SubstantivischePhrase subjekt) {
+        return getVerbzweit(textContext, subjekt.getPraedRegMerkmale());
     }
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
-    Konstituentenfolge getVerbzweit(PraedRegMerkmale praedRegMerkmale);
+    Konstituentenfolge getVerbzweit(
+            final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang -,
@@ -189,13 +190,15 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * (In einem Verbzweitsatz würde dann noch ein Satzglied vor dem Ganzen stehen, z.B.
      * eine adverbiale Angabe).
      */
-    Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(SubstantivischePhrase subjekt);
+    Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext, SubstantivischePhrase subjekt);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */
-    Konstituentenfolge getVerbletzt(PraedRegMerkmale praedRegMerkmale);
+    Konstituentenfolge getVerbletzt(
+            final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt eine (oder in seltenen Fällen mehrere) unflektierte Phrase(n) mit Partizip II zurück:
@@ -216,10 +219,12 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
      * so verlangen sie unterschiedliche Hilfsverben.
      */
-    default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                 final Numerus numerus,
-                                                                 final Belebtheit belebtheit) {
-        return getPartizipIIPhrasen(new PraedRegMerkmale(person, numerus, belebtheit));
+    default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
+            final Person person,
+            final Numerus numerus,
+            final Belebtheit belebtheit) {
+        return getPartizipIIPhrasen(textContext, new PraedRegMerkmale(person, numerus, belebtheit));
     }
 
 
@@ -243,8 +248,9 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * so verlangen sie unterschiedliche Hilfsverben.
      */
     default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
-            final SubstantivischePhrase bezugswort) {
-        return getPartizipIIPhrasen(bezugswort.getPraedRegMerkmale());
+
+            final ITextContext textContext, final SubstantivischePhrase bezugswort) {
+        return getPartizipIIPhrasen(textContext, bezugswort.getPraedRegMerkmale());
     }
 
     /**
@@ -266,7 +272,9 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
      * so verlangen sie unterschiedliche Hilfsverben.
      */
-    ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(PraedRegMerkmale praedRegMerkmale);
+    ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
+            PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -277,8 +285,9 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    default Konstituentenfolge getInfinitiv(final SubstantivischePhrase substantivischePhrase) {
-        return getInfinitiv(substantivischePhrase.getPraedRegMerkmale());
+    default Konstituentenfolge getInfinitiv(
+            final ITextContext textContext, final SubstantivischePhrase substantivischePhrase) {
+        return getInfinitiv(textContext, substantivischePhrase.getPraedRegMerkmale());
     }
 
     /**
@@ -290,7 +299,8 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    Konstituentenfolge getInfinitiv(PraedRegMerkmale praedRegMerkmale);
+    Konstituentenfolge getInfinitiv(
+            final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -303,7 +313,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
     default Konstituentenfolge getZuInfinitiv(final SubstantivischePhrase substantivischePhrase) {
-        return getZuInfinitiv(substantivischePhrase.getPraedRegMerkmale());
+        return getZuInfinitiv(textContext, substantivischePhrase.getPraedRegMerkmale());
     }
 
     /**
@@ -315,7 +325,8 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    Konstituentenfolge getZuInfinitiv(PraedRegMerkmale praedRegMerkmale);
+    Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     default Konstituente getSpeziellesVorfeldSehrErwuenscht(
             final Person person, final Numerus numerus, final Belebtheit belebtheit,
@@ -463,14 +474,4 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
 
     @Nullable
     Konstituentenfolge getNachfeld(PraedRegMerkmale praedRegMerkmale);
-
-    /**
-     * Erzeugt aus diesem "semantischen Prädikat" ein eigentliches ("syntaktisches")
-     * Prädikat, wobei alle Diskursreferenten (Personen, Objekte etc.) auf jeweils
-     * eine konkrete sprachliche Repräsentation (z.B. ein konkretes Nomen oder
-     * Personalpronomen) festgelegt werden.
-     */
-    @Nonnull
-    @CheckReturnValue
-    SyntPraedikat toSynt(ITextContext textContext);
 }

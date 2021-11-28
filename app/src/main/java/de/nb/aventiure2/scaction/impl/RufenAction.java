@@ -81,7 +81,7 @@ public class RufenAction extends AbstractScAction {
     public String getName() {
         return joinToKonstituentenfolge(
                 SENTENCE,
-                ruftyp.getName().getInfinitiv(duSc()))
+                ruftyp.getName().getInfinitiv(textContext, duSc()))
                 .joinToString();
     }
 

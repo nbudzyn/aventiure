@@ -19,6 +19,7 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
@@ -125,46 +126,54 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 // "hebst die goldene Kugel auf"
-                erstes.getVerbzweit(praedRegMerkmale),
+                erstes.getVerbzweit(textContext, praedRegMerkmale),
                 konnektor,
-                zweites.getVerbzweit(praedRegMerkmale).withVorkommaNoetigMin(konnektor == null)
+                zweites.getVerbzweit(textContext, praedRegMerkmale)
+                        .withVorkommaNoetigMin(konnektor == null)
                 // "nimmst ein Bad"
         );
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getVerbzweitMitSubjektImMittelfeld(subjekt),
+                erstes.getVerbzweitMitSubjektImMittelfeld(textContext, subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
                 konnektor,
-                zweites.getVerbzweit(subjekt.getPraedRegMerkmale())
+                zweites.getVerbzweit(textContext, subjekt.getPraedRegMerkmale())
                         .withVorkommaNoetigMin(konnektor == null)
                 // "fällst dann todmüde ins Bett."
         );
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getVerbletzt(praedRegMerkmale),
+                erstes.getVerbletzt(textContext, praedRegMerkmale),
                 konnektor,
-                zweites.getVerbletzt(praedRegMerkmale).withVorkommaNoetigMin(konnektor == null));
+                zweites.getVerbletzt(textContext, praedRegMerkmale)
+                        .withVorkommaNoetigMin(konnektor == null));
     }
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
         PartizipIIPhrase tmp = null;
         @Nullable NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld tmpKonnektor = UND;
         for (final PartizipIIPhrase partizipIIPhrase :
-                erstes.getPartizipIIPhrasen(praedRegMerkmale)) {
+                erstes.getPartizipIIPhrasen(textContext, praedRegMerkmale)) {
             tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
                     res, tmp, tmpKonnektor, partizipIIPhrase);
             tmpKonnektor = UND;
@@ -172,7 +181,7 @@ public class ZweiPraedikateOhneLeerstellenSem
 
         tmpKonnektor = konnektor; // "[, ]aber"
         for (final PartizipIIPhrase partizipIIPhrase :
-                zweites.getPartizipIIPhrasen(praedRegMerkmale)) {
+                zweites.getPartizipIIPhrasen(textContext, praedRegMerkmale)) {
             tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
                     res, tmp, tmpKonnektor, partizipIIPhrase);
             tmpKonnektor = UND;
@@ -188,19 +197,23 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getInfinitiv(praedRegMerkmale),
+                erstes.getInfinitiv(textContext, praedRegMerkmale),
                 konnektor,
-                zweites.getInfinitiv(praedRegMerkmale));
+                zweites.getInfinitiv(textContext, praedRegMerkmale));
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getZuInfinitiv(praedRegMerkmale),
+                erstes.getZuInfinitiv(textContext, praedRegMerkmale),
                 konnektor,
-                zweites.getZuInfinitiv(praedRegMerkmale));
+                zweites.getZuInfinitiv(textContext, praedRegMerkmale));
     }
 
     @Override

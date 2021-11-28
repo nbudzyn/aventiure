@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein zu-haben-Prädikat, bei dem alle Leerstellen gefüllt sind
@@ -116,7 +117,9 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // hast Spannendes zu berichten
         // hast dich zu waschen
         // hast zu sagen: "Hallo!"
@@ -124,11 +127,13 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "hast"
-                lexikalischerKern.getZuInfinitiv(praedRegMerkmale)); // "dich zu waschen"
+                lexikalischerKern
+                        .getZuInfinitiv(textContext, praedRegMerkmale)); // "dich zu waschen"
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         // hast du Spannendes zu berichten
         // hast du dich zu waschen
@@ -142,7 +147,9 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes zu berichten hast
         // dich zu waschen hast
         // zu sagen hast: "Hallo!"
@@ -150,7 +157,7 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(praedRegMerkmale).cutLast(nachfeld),
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
                 // "Spannendes zu berichten"
                 requireNonNull(HabenUtil.VERB.getPraesensMitPartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "hast"
@@ -159,6 +166,7 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
@@ -168,7 +176,8 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
 
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        lexikalischerKern.getZuInfinitiv(praedRegMerkmale).cutLast(nachfeld),
+                        lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale)
+                                .cutLast(nachfeld),
                         // "Spannendes zu berichten"
                         HabenUtil.VERB.getPartizipII(), // "gehabt"
                         nachfeld), // : Odysseus ist zurück.
@@ -185,7 +194,9 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes zu berichten haben
         // dich zu waschen haben
         // zu sagen haben: "Hallo!"
@@ -193,21 +204,23 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(praedRegMerkmale).cutLast(nachfeld),
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
                 // "Spannendes zu berichten"
                 HabenUtil.VERB.getInfinitiv(), // haben
                 nachfeld); // : Odysseus ist zurück.
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes zu berichten zu haben
         // dich zu waschen zu haben
         // zu sagen zu haben: "Hallo!"
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(praedRegMerkmale).cutLast(nachfeld),
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
                 // "Spannendes zu berichten"
                 HabenUtil.VERB.getZuInfinitiv(), // zu haben
                 nachfeld); // : Odysseus ist zurück.

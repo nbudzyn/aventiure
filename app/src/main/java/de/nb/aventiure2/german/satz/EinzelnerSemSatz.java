@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -18,6 +19,7 @@ import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
 
+import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
@@ -27,6 +29,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
@@ -269,6 +272,43 @@ public class EinzelnerSemSatz implements SemSatz {
                 .withVorkommaNoetigMin(anschlusswort == null);
     }
 
+    @Override
+    public Konstituentenfolge getRelativsatz() {
+        // Zurzeit unterstützen wir nur die reinen Relativpronomen für die normalen Kasus
+        // wie "der" oder "das".
+        // Später sollten auch unterstützt werden:
+        // - Relativpronomen mit Präposition ("mit dem")
+        // - "substantivische Relativphrasen" wie "dessen Heldentaten"
+        // - "Infinitiv-Relativphrasen" wie "die Geschichte, die zu erzählen du vergessen hast"
+        // - "Relativsätze mit Interrogativadverbialien": "der Ort, wo"
+        if (subjekt instanceof Relativpronomen) {
+            // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
+            return getRelativsatzMitRelativpronomenSubjekt();
+        }
+
+        @Nullable final Konstituentenfolge relativpronomenImPraedikat =
+                praedikat.getRelativpronomen();
+
+        if (relativpronomenImPraedikat == null) {
+            throw new IllegalStateException("Kein (eindeutiges) Relativpronomen im Prädikat "
+                    + "gefunden: " + praedikat
+                    .getVerbzweit(textContext,
+                            DeklinierbarePhraseUtil.EINER_UNBELEBT.mitBelebheit(BELEBT)));
+        }
+
+        // "das du zu berichten hast", "dem er was gegeben hat", "der kommt"
+        return joinToKonstituentenfolge(
+                // FIXME Anschlusswort beim Relativsatz ist nur bei Reihungen sinnvoll...
+                //  Höchstens "das aber du zu berichten das..."
+                anschlusswort, // "und"
+                relativpronomenImPraedikat.withVorkommaNoetigMin(anschlusswort == null),
+                // "das" / "dem"
+                getVerbletztsatz().cutFirst(
+                        relativpronomenImPraedikat
+                ))// "du zu berichten hast", "er was gegeben hat", "kommt"
+                .withVorkommaNoetigMin(anschlusswort == null);
+    }
+
     private Konstituentenfolge getRelativsatzMitRelativpronomenSubjekt() {
         // "der etwas zu berichten hat", "der was zu berichten hat", "die kommt"
         return getVerbletztsatz()
@@ -328,6 +368,7 @@ public class EinzelnerSemSatz implements SemSatz {
                                     .schliesseInKommaEin(angabensatz.getDescription()) :
                             null, // "[, ]als er kommt[, ]"
                     praedikat.getVerbzweitMitSubjektImMittelfeld(
+                            textContext,
                             subjekt != null ? subjekt : Personalpronomen.EXPLETIVES_ES))
                     .withVorkommaNoetigMin(anschlusswort == null);
         }
@@ -335,7 +376,7 @@ public class EinzelnerSemSatz implements SemSatz {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und" /  "[, ]aber"
                 subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES.nomK(),
-                praedikat.getVerbzweit(getPraedRegMerkmale()),
+                praedikat.getVerbzweit(textContext, getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
@@ -368,8 +409,8 @@ public class EinzelnerSemSatz implements SemSatz {
 
     private Konstituentenfolge getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig() {
         return subjekt != null ?
-                praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt) :
-                praedikat.getVerbzweit(getPraedRegMerkmale());
+                praedikat.getVerbzweitMitSubjektImMittelfeld(textContext, subjekt) :
+                praedikat.getVerbzweit(textContext, getPraedRegMerkmale());
     }
 
     @Override
@@ -389,7 +430,7 @@ public class EinzelnerSemSatz implements SemSatz {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 subjekt != null ? subjekt.nomK() : null,
-                praedikat.getVerbletzt(getPraedRegMerkmale()),
+                praedikat.getVerbletzt(textContext, getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
@@ -407,7 +448,7 @@ public class EinzelnerSemSatz implements SemSatz {
     @Override
     public Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma() {
         return joinToKonstituentenfolge(
-                praedikat.getVerbzweit(getPraedRegMerkmale()),
+                praedikat.getVerbzweit(textContext, getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
@@ -417,7 +458,7 @@ public class EinzelnerSemSatz implements SemSatz {
     public Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma() {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                praedikat.getVerbzweit(getPraedRegMerkmale()),
+                praedikat.getVerbzweit(textContext, getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null)

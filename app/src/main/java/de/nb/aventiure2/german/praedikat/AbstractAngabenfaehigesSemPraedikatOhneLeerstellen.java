@@ -1,23 +1,15 @@
 package de.nb.aventiure2.german.praedikat;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.Objects.requireNonNull;
-import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Negationspartikelphrase.impliziertZustandsaenderung;
 import static de.nb.aventiure2.german.base.Negationspartikelphrase.isMehrteilig;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 
 import androidx.annotation.NonNull;
-import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -27,13 +19,12 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.IInterrogativadverb;
-import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat", in dem alle Leerstellen besetzt sind und dem grundsätzlich
@@ -132,17 +123,19 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
     }
 
     @Override
-    public final Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public final Konstituentenfolge getVerbzweit(final ITextContext textContext,
+                                                 final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
-                getMittelfeld(praedRegMerkmale),
+                getMittelfeld(textContext, praedRegMerkmale),
                 verb.getPartikel(),
                 getNachfeld(praedRegMerkmale));
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(subjekt)),
@@ -150,15 +143,16 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
                 subjekt.nomK(),
-                getMittelfeld(subjekt.getPraedRegMerkmale()),
+                getMittelfeld(textContext, subjekt.getPraedRegMerkmale()),
                 verb.getPartikel(),
                 getNachfeld(subjekt.getPraedRegMerkmale()));
     }
 
     @Override
-    public final Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public final Konstituentenfolge getVerbletzt(
+            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(praedRegMerkmale),
+                getMittelfeld(textContext, praedRegMerkmale),
                 requireNonNull(verb.getPraesensMitPartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
                 getNachfeld(praedRegMerkmale));
@@ -166,10 +160,11 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
 
     @Override
     public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        getMittelfeld(praedRegMerkmale),
+                        getMittelfeld(textContext, praedRegMerkmale),
                         verb.getPartizipII(),
                         getNachfeld(praedRegMerkmale)),
                 verb.getPerfektbildung()));
@@ -180,9 +175,10 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public final Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public final Konstituentenfolge getInfinitiv(
+            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(praedRegMerkmale),
+                getMittelfeld(textContext, praedRegMerkmale),
                 verb.getInfinitiv(),
                 getNachfeld(praedRegMerkmale));
     }
@@ -192,9 +188,11 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public final Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public final Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(praedRegMerkmale),
+                getMittelfeld(textContext, praedRegMerkmale),
                 verb.getZuInfinitiv(),
                 getNachfeld(praedRegMerkmale));
     }
@@ -234,86 +232,11 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
     }
 
     @CheckReturnValue
-    private Konstituentenfolge getMittelfeld(final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final SubstPhrOderReflexivpronomen datObjekt = getDat(praedRegMerkmale);
-        final SubstPhrOderReflexivpronomen akkObjekt = getAkk(praedRegMerkmale);
-
-        // einige wenige Verben wie "jdn. etw. lehren" haben zwei Akkusativobjekte
-        final SubstPhrOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
-
-        final ImmutableList<Konstituentenfolge> unbetontePronomen =
-                filterUnbetontePronomen(
-                        toPair(akkObjekt, Kasus.AKK),
-                        toPair(zweitesAkkObjekt, Kasus.AKK),
-                        toPair(datObjekt, Kasus.DAT));
-
-        // Das Mittelfeld besteht aus drei Teilen:
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                // 1. Der Bereich vor der Wackernagel-Position. Dort kann höchstens ein
-                //   Subjekt stehen, das keine unbetontes Pronomen ist.
-                //   Das Subjekt ist hier im Prädikat noch nicht bekannt.
-                // 2. Die Wackernagelposition. Hier stehen alle unbetonten Pronomen in den
-                // reinen Kasus in der festen Reihenfolge Nom < Akk < Dat
-                kf(unbetontePronomen),
-                // 3. Der Bereich nach der Wackernagel-Position. Hier steht alles übrige
-                cutFirstOneByOne(
-                        getMittelfeldOhneLinksversetzungUnbetonterPronomen(praedRegMerkmale),
-                        unbetontePronomen
-                ));
-    }
-
-    @Override
-    public final boolean hatAkkusativobjekt() {
-        return getAkk(
-                new PraedRegMerkmale(
-                        // Ob es ein Akkusativobjekt gibt, sollte von Person, Numuerus und
-                        // Belebtheit
-                        // unabhängig sein.
-                        P2, SG, UNBELEBT)) != null
-                || getZweitesAkk() != null;
-    }
-
-    /**
-     * Gibt das Akkusativ-Objekt zurück - sofern es eines gibt.
-     */
-    @Nullable
-    abstract SubstPhrOderReflexivpronomen getAkk(PraedRegMerkmale praedRegMerkmale);
-
-    /**
-     * Gibt das <i>zweite</i> Akkusativ-Objekt zurück - sofern es eines gibt.
-     * <p>
-     * Nur sehr wenige Verben fordern ein zweites Akkusativ-Objekt - z.B.
-     * <i>jdn. etw. lehren</i>
-     */
-    @Nullable
-    abstract SubstPhrOderReflexivpronomen getZweitesAkk();
-
-    /**
-     * Gibt das Dativ-Objekt zurück - sofern es eines gibt.
-     */
-    @Nullable
-    abstract SubstPhrOderReflexivpronomen getDat(PraedRegMerkmale praedRegMerkmale);
-
-
-    private static Pair<SubstPhrOderReflexivpronomen, Kasus> toPair(
-            @Nullable final
-            SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen,
-            final Kasus kasus) {
-        if (substPhrOderReflexivpronomen == null) {
-            return null;
-        }
-
-        return Pair.create(substPhrOderReflexivpronomen, kasus);
-    }
-
-    @SafeVarargs
-    private static ImmutableList<Konstituentenfolge> filterUnbetontePronomen(
-            final Pair<SubstPhrOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
-        return Stream.of(substantivischePhrasenMitKasus)
-                .filter(Objects::nonNull)
-                .filter(spk -> requireNonNull(spk.first).isUnbetontesPronomen())
-                .map(spk -> spk.first.imK(requireNonNull(spk.second)))
-                .collect(toImmutableList());
+    private Konstituentenfolge getMittelfeld(final ITextContext textContext,
+                                             final PraedRegMerkmale praedRegMerkmale) {
+        return getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+                textContext, praedRegMerkmale)
+                .toKonstituentenfolge();
     }
 
     /**
@@ -321,14 +244,11 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * Pronomen der Objekte noch nicht nach links versetzt zu sein - die Methode könnte also
      * etwas zurückgeben wie <i>dem Ork es geben</i>.
      * <p>
-     * Die Linksversetzung der unbetonten Pronomen an die Wackernagel-Position geschieht durch
-     * die Methode {@link #getMittelfeld(PraedRegMerkmale)} auf Basis der Methoden
-     * {@link #getAkk(PraedRegMerkmale)}, {@link #getZweitesAkk()} und
-     * {@link #getDat(PraedRegMerkmale)}.
+     * Die Linksversetzung der unbetonten Pronomen an die Wackernagel-Position geschieht
+     * in der Klasse {@link Mittelfeld}.
      */
-    @Nullable
-    abstract Konstituentenfolge
-    getMittelfeldOhneLinksversetzungUnbetonterPronomen(PraedRegMerkmale praedRegMerkmale);
+    abstract Mittelfeld getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     @NonNull
     Verb getVerb() {

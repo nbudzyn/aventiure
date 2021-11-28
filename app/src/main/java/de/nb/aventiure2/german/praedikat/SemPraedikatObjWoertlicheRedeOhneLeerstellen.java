@@ -32,6 +32,7 @@ import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" mit einem Objekt und wörtlicher Rede, in dem alle Leerstellen
@@ -233,6 +234,7 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 objekt.imK(kasusOderPraepositionalkasus), // "der Hexe"

@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -28,8 +30,8 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -186,19 +188,6 @@ public class SemPraedikatSubjObjOhneLeerstellen
         return true;
     }
 
-    @Override
-    public SyntPraedikatSubjObj toSynt(final ITextContext textContext) {
-        return new SyntPraedikatSubjObj(getVerb(),
-                kasusOderPraepositionalkasus,
-                inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich(),
-                objekt.alsSubstPhrase(textContext),
-                getModalpartikeln(),
-                getAdvAngabeSkopusSatz(),
-                getNegationspartikel(),
-                getAdvAngabeSkopusVerbAllg(),
-                getAdvAngabeSkopusVerbWohinWoher());
-    }
-
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
@@ -260,46 +249,55 @@ public class SemPraedikatSubjObjOhneLeerstellen
 
     @Override
     @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+    Mittelfeld getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+        final SubstantivischePhrase syntObjekt = objekt.alsSubstPhrase(textContext);
+        // FIXME Eigentlich kann sich der Kontext vor der Auswahl, welches syntaktische
+        //  Objekt geeignet ist, verändert haben! Besser sollte
+        //  joinToKonstituentenfolge() die Umwandlung in das syntaktische Objekt übernehmen!
+        //  Dazu müsste allerdings:
+        //  - joinToKonstituentenfolge() den textContext (zu Anfang) kennen
+        //  - den Text-Kontext ggf. ändern
+        //  - außerdem irgendwie zurückmelden, was die Objekte oder zumindest die
+        //  unbetonten Pronomen sind (oder man macht das anders mit den unbetonten
+        //  Pronomen...)
+
+        return new Mittelfeld(
+                joinToKonstituentenfolge(
+                        getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
 // "aus einer Laune heraus"
-                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
-                // "besser doch (nicht)"
-                getNegationspartikel(), // "nicht"
-                objekt.imK(kasusOderPraepositionalkasus),
-                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
-                // "besser doch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                        getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                        // "besser doch (nicht)"
+                        getNegationspartikel(), // "nicht"
+                        syntObjekt.imK(kasusOderPraepositionalkasus),
+                        getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                        // "besser doch"
+                        getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale),
+                        // "erneut"
+                        getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale))
                 // "auf den Tisch"
-        );
+                ,
+                filterAkk(syntObjekt),
+                null,
+                filterDat(syntObjekt));
+    }
+
+    private SubstantivischePhrase filterAkk(final SubstantivischePhrase syntObjekt) {
+        return filterKasus(syntObjekt, AKK);
+    }
+
+    private SubstantivischePhrase filterDat(final SubstantivischePhrase syntObjekt) {
+        return filterKasus(syntObjekt, DAT);
     }
 
     @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == DAT) {
-            return objekt;
+    private SubstantivischePhrase filterKasus(final SubstantivischePhrase syntObjekt,
+                                              final Kasus kasus) {
+        if (kasusOderPraepositionalkasus == kasus) {
+            return syntObjekt;
         }
 
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == AKK) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
         return null;
     }
 
@@ -318,6 +316,7 @@ public class SemPraedikatSubjObjOhneLeerstellen
         return true;
     }
 
+    // FIXME Diese Methode umstellen mit einer immutable State-Klasse wie Mittelfeld!
     @Nullable
     @Override
     @CheckReturnValue
@@ -339,7 +338,8 @@ public class SemPraedikatSubjObjOhneLeerstellen
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
-    
+
+    // FIXME Diese Methode umstellen mit einer immutable State-Klasse wie Mittelfeld!
     @Nullable
     @Override
     @CheckReturnValue

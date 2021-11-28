@@ -46,7 +46,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
                                     true))
                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                             IN_AKK.mit(np(INDEF, STUECKE))))
-                                    .getInfinitiv(duSc()).joinToString()),
+                                    .getInfinitiv(textContext, duSc()).joinToString()),
                             this::altTimedDescriptionsAndDo_holzZerbrechen,
                             IN_STUECKE_GEBROCHEN)
             );

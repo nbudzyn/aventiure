@@ -29,6 +29,7 @@ import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat", in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -207,6 +208,7 @@ public class SemPraedikatAkkPraepOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return joinToKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),

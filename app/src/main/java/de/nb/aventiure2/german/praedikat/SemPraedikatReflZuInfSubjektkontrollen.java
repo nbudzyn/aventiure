@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" eines Verbs wie "sich [Akk] freuen, zu ...". Dabei ist es das
@@ -176,6 +177,7 @@ public class SemPraedikatReflZuInfSubjektkontrollen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
@@ -206,7 +208,7 @@ public class SemPraedikatReflZuInfSubjektkontrollen
                         Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt "Subjektkontrolle" vor.
-                                        praedRegMerkmale
+                                        textContext, praedRegMerkmale
                                 )) // ", Rapunzel zu sehen[, ]"
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
                 getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
@@ -253,7 +255,7 @@ public class SemPraedikatReflZuInfSubjektkontrollen
                         Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt Subjektkontrolle vor.
-                                        praedRegMerkmale
+                                        textContext, praedRegMerkmale
                                 )) // "(Du freust dich), Rapunzel zu sehen[,] "
                         // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
                         : null,

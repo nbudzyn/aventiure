@@ -112,7 +112,7 @@ class DescriptionCombiner {
                 && firstPraedikat.umfasstSatzglieder()
                 && second.getStartsNew() == WORD) {
             final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                    firstPraedikat.getPartizipIIPhrasen(P2, SG, BELEBT);
+                    firstPraedikat.getPartizipIIPhrasen(textContext, P2, SG, BELEBT);
             if (partizipIIPhrasen.size() == 1) { // Wenn es mehrere sind, bilden sie
                 // bestimmt nicht alle das Perfekt mit "sein"!
                 // Aber es ist nur eine!

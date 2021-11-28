@@ -24,6 +24,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" mit einem Modalverb, bei dem alle Leerstellen gefüllt sind
@@ -123,7 +124,9 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // möchtest Spannendes berichten
         // kannst dich waschen
         // möchtest sagen: "Hallo!"
@@ -131,11 +134,12 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "möchtest"
-                lexikalischerKern.getInfinitiv(praedRegMerkmale)); // "dich waschen"
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale)); // "dich waschen"
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         // möchtest du Spannendes  berichten
         // möchtest du dich  waschen
@@ -144,11 +148,13 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(subjekt)), // "möchtest"
                 subjekt.nomK(), // "du"
-                lexikalischerKern.getInfinitiv(subjekt)); // "dich waschen"
+                lexikalischerKern.getInfinitiv(textContext, subjekt)); // "dich waschen"
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten möchtest
         // dich waschen möchtest
         // sagen möchtest: "Hallo!"
@@ -156,7 +162,7 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
                 requireNonNull(verb.getPraesensMitPartikel(
@@ -166,6 +172,7 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten wollen (Ersatzinfinitiv!)
         // dich waschen wollen
@@ -175,7 +182,7 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
 
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
+                        lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
                                 // "Spannendesberichten"
                                 nachfeld),
                         verb.getPartizipII(), // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
@@ -193,7 +200,9 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten wollen
         // dich waschen wollen
         // sagen wollen: "Hallo!"
@@ -201,7 +210,7 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
                 verb.getInfinitiv(), // wollen
@@ -209,14 +218,16 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten zu wollen
         // dich waschen zu wollen
         // sagen zu wollen: "Hallo!"
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
                 verb.getZuInfinitiv(), // zu wollen

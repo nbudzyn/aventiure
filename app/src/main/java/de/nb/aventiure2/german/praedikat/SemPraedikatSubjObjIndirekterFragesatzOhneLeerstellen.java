@@ -28,6 +28,7 @@ import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
@@ -201,6 +202,7 @@ public class SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 objekt.imK(kasusOderPraepositionalkasus), // "die Hexe"

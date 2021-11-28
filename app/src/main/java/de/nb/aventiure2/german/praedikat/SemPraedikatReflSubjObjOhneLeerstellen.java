@@ -30,6 +30,7 @@ import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" wie "die Kugel an sich nehmen", das mit einer
@@ -213,6 +214,7 @@ class SemPraedikatReflSubjObjOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),

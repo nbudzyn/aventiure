@@ -22,6 +22,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" eines (nicht-reflexiven) <i>Verbs mit intentionaler Bedeutung</i>,
@@ -174,6 +175,7 @@ public class SemPraedikatIntentionalesVerbOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
@@ -200,7 +202,7 @@ public class SemPraedikatIntentionalesVerbOhneLeerstellen
                         // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt Subjektkontrolle vor.
-                                praedRegMerkmale
+                                textContext, praedRegMerkmale
                         ) // "ihre Haare wieder hinunterzulassen"
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
                 getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
@@ -237,7 +239,7 @@ public class SemPraedikatIntentionalesVerbOhneLeerstellen
                         || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt Subjektkontrolle vor.
-                                praedRegMerkmale
+                                textContext, praedRegMerkmale
                         ) // "(Du versuchst) dich zu waschen"
                         // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
                         : null,

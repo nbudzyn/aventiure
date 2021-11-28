@@ -25,6 +25,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.WoertlicheRede;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" mit wörtlicher Rede, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -178,6 +179,7 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),

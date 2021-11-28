@@ -24,7 +24,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.satz.SyntSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
@@ -556,7 +556,7 @@ public class Nominalphrase
         // Kasusendung trägt. (Ein vorangestelltes Genitivattribut gilt nicht als
         // "artikelWeglassen"!)
 
-        @Nullable final SyntSatz attributivAnteilRelativsatz =
+        @Nullable final SemSatz attributivAnteilRelativsatz =
                 // FIXME Sollte sich der textContext vielleicht über die Generierung
                 //  schrittweise ändern? Wie kann das passieren?
                 //  Denkbar wäre ein ein mutable textContext mit Visitor-Pattern...
@@ -666,8 +666,8 @@ public class Nominalphrase
     }
 
     @Nullable
-    private SyntSatz getAttributivAnteilRelativsatz(final Kasus kasus) {
-        @Nullable SyntSatz attributivAnteilSemRelativsatz = null;
+    private SemSatz getAttributivAnteilRelativsatz(final Kasus kasus) {
+        @Nullable SemSatz attributivAnteilSemRelativsatz = null;
         if (adjPhr != null) {
             @Nullable final Praedikativum praedikativumFuerRelativsatz =
                     adjPhr.getAttributivAnteilRelativsatz(kasus);

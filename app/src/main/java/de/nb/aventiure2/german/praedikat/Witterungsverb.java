@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 public enum Witterungsverb implements VerbOhneLeerstellenSem {
@@ -83,46 +84,52 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
     }
 
     public Konstituentenfolge getVerbzweit() {
-        return getVerbzweit(EXPLETIVES_ES);
+        return getVerbzweit(textContext, EXPLETIVES_ES);
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getVerbzweit(praedRegMerkmale);
+        return toPraedikat().getVerbzweit(textContext, praedRegMerkmale);
     }
 
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld() {
-        return getVerbzweitMitSubjektImMittelfeld(EXPLETIVES_ES);
+        return getVerbzweitMitSubjektImMittelfeld(textContext, EXPLETIVES_ES);
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         Personalpronomen.checkExpletivesEs(subjekt);
 
-        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(subjekt);
+        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(textContext, subjekt);
     }
 
     public Konstituentenfolge getVerbletzt() {
-        return getVerbletzt(new PraedRegMerkmale(P3, SG, UNBELEBT));
+        return getVerbletzt(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT));
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getVerbletzt(praedRegMerkmale);
+        return toPraedikat().getVerbletzt(textContext, praedRegMerkmale);
     }
 
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase() {
-        return getPartizipIIPhrasen(EXPLETIVES_ES);
+        return getPartizipIIPhrasen(textContext, EXPLETIVES_ES);
     }
 
     @Override
     @CheckReturnValue
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
@@ -130,11 +137,13 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
     }
 
     public Konstituentenfolge getInfinitiv() {
-        return getInfinitiv(EXPLETIVES_ES);
+        return getInfinitiv(textContext, EXPLETIVES_ES);
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
         return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
@@ -146,7 +155,9 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));

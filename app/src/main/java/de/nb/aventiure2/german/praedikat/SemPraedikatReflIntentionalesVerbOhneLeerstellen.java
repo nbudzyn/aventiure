@@ -29,6 +29,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" eines <i>reflexiven Verbs mit intentionaler Bedeutung</i>,
@@ -194,6 +195,7 @@ public class SemPraedikatReflIntentionalesVerbOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
@@ -220,7 +222,7 @@ public class SemPraedikatReflIntentionalesVerbOhneLeerstellen
                         ?
                         // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
                         schliesseInKommaEin(
-                                lexikalischerKern.getZuInfinitiv(praedRegMerkmale
+                                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale
                                         // Es liegt Subjektkontrolle vor.
                                 )) // ", ihre Haare wieder hinunterzulassen, "
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
@@ -267,7 +269,7 @@ public class SemPraedikatReflIntentionalesVerbOhneLeerstellen
                         schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt Subjektkontrolle vor.
-                                        praedRegMerkmale
+                                        textContext, praedRegMerkmale
                                 )) // "(Du bemühst dich), dich zu waschen[,]"
                         // (Die Kommata rund um den Infinitiv sind offenbar fakultativ.)
                         : null,

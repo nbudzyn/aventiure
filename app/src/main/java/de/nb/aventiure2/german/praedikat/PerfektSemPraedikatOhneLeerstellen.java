@@ -20,6 +20,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein "semantisches Prädikat" im Perfekt, z.B. <i>ein guter Mensch geworden sein</i>,
@@ -108,7 +109,9 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbzweit(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // bist ein guter Mensch geworden
         // bist ein guter Mensch geworden und immer ehrlich geblieben
         // bist ein guter Mensch geworden und hast dabei viel Mühe gehabt
@@ -116,7 +119,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // hat ein guter Mensch werden wollen
         Konstituentenfolge res = null;
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {
             final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.get(i);
             if (res == null) {
@@ -141,6 +144,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+            final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
         // bist du ein guter Mensch geworden
         // bist du ein guter Mensch geworden und immer ehrlich geblieben
@@ -149,7 +153,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // hat er ein guter Mensch werden wollen
         Konstituentenfolge res = null;
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(subjekt);
+                lexikalischerKern.getPartizipIIPhrasen(textContext, subjekt);
 
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {
             final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.get(i);
@@ -171,7 +175,9 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getVerbletzt(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden bist
         // ein guter Mensch geworden und immer ehrlich geblieben bist
         // ein guter Mensch geworden bist und dabei viel Mühe gehabt hast
@@ -187,6 +193,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         // Doppeltes Perfekt - man sollte schon einen sehr guten Grund haben,
         // das zu erzeugen:
@@ -200,7 +207,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasenLexKern =
-                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
 
         for (int i = 0; i < partizipIIPhrasenLexKern.size(); i++) {
             final PartizipIIPhrase partizipIIPhraseLexKern = partizipIIPhrasenLexKern.get(i);
@@ -237,7 +244,9 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden sein
         // ein guter Mensch geworden und immer ehrlich geblieben sein
         // ein guter Mensch geworden sein und dabei viel Mühe gehabt haben
@@ -249,7 +258,9 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+    public Konstituentenfolge getZuInfinitiv(
+            final ITextContext textContext,
+            final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden zu sein
         // ein guter Mensch geworden und immer ehrlich geblieben zu sein
         // ein guter Mensch geworden zu sein und dabei viel Mühe gehabt zu haben
@@ -323,7 +334,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // ein guter Mensch hat werden wollen (!) (nicht *"ein guter Mensch werden wollen hat")
         Konstituentenfolge res = null;
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
 
         @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {

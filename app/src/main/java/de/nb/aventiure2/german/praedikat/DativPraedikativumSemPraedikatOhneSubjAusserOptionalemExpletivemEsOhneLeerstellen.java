@@ -31,6 +31,7 @@ import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 /**
@@ -237,6 +238,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
+            final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 dat.datK(), // Peter
