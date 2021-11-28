@@ -1,18 +1,18 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.base.Preconditions;
 
 import de.nb.aventiure2.german.base.Kasus;
 
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-
 /**
  * Ein Verb wie bitten, anregen, warnen, zwingen etc.
  * <p>
- * Zu direktiven Verben siehe Peter Eisenberg, Der Satz, S. 357 (Kapitel 11.2)
+ * Zu direktiven Verben siehe Peter Eisenberg, Der SemSatz, S. 357 (Kapitel 11.2)
  */
 public enum DirektivesVerb implements VerbMitValenz {
     // "Rapunzel bitten, die Haare herunterzulassen"
@@ -56,9 +56,10 @@ public enum DirektivesVerb implements VerbMitValenz {
         this.kasus = kasus;
     }
 
-    public PraedikatDirektivesVerbMitEinerObjektLeerstelle mitLexikalischerKern(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
-        return new PraedikatDirektivesVerbMitEinerObjektLeerstelle(verb, kasus, lexikalischerKern);
+    public SemPraedikatDirektivesVerbMitEinerObjektLeerstelle mitLexikalischerKern(
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
+        return new SemPraedikatDirektivesVerbMitEinerObjektLeerstelle(verb, kasus,
+                lexikalischerKern);
     }
 
     @Override

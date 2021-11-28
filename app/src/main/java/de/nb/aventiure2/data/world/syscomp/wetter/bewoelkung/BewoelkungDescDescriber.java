@@ -47,7 +47,7 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Beschreibt die {@link Bewoelkung} als {@link AbstractDescription}s.
@@ -473,14 +473,14 @@ public class BewoelkungDescDescriber {
                 break;
             case ABENDS:
                 // Leere Collection bei nicht unter offenem Himmel und bewölkung > BEWOELKT
-                final ImmutableCollection<Satz>
+                final ImmutableCollection<SemSatz>
                         altTageszeitenwechsel = satzDescriber.altSpTageszeitenwechsel(
                         bewoelkung, ABENDS, unterOffenemHimmel);
 
                 if (!altTageszeitenwechsel.isEmpty()) {
                     alt.addAll(altNeueSaetze("währenddessen ist der Tag vergangen",
                             altTageszeitenwechsel.stream()
-                                    .map(Satz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)));
+                                    .map(SemSatz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)));
                 }
                 if (unterOffenemHimmel && bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0) {
                     alt.add(neuerSatz("Die Sonne ist schon wieder am Untergehen"));

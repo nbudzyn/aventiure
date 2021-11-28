@@ -1,13 +1,13 @@
 package de.nb.aventiure2.german.praedikat;
 
-import androidx.annotation.NonNull;
-
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.HALTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep.SCHUETTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BIETEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
+
+import androidx.annotation.NonNull;
+
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -78,14 +78,14 @@ public enum VerbSubjDatAkk implements VerbMitValenz {
         this.verb = verb;
     }
 
-    public PraedikatDatAkkMitEinerAkkLeerstelle mitDat(
+    public SemPraedikatDatAkkMitEinerAkkLeerstelle mitDat(
             final SubstantivischePhrase substPhrDat) {
-        return new PraedikatDatAkkMitEinerAkkLeerstelle(verb, substPhrDat);
+        return new SemPraedikatDatAkkMitEinerAkkLeerstelle(verb, substPhrDat);
     }
 
-    public PraedikatDatAkkMitEinerDatLeerstelle mitAkk(
+    public SemPraedikatDatAkkMitEinerDatLeerstelle mitAkk(
             final SubstantivischePhrase substPhrAkk) {
-        return new PraedikatDatAkkMitEinerDatLeerstelle(verb, substPhrAkk);
+        return new SemPraedikatDatAkkMitEinerDatLeerstelle(verb, substPhrAkk);
     }
 
     @Override

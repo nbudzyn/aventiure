@@ -23,8 +23,8 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikatMitEinerObjektLeerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.ZweiSemPraedikatMitEinerObjektLeerstelle;
 
 /**
  * Where an object is stored specifically
@@ -73,7 +73,7 @@ public enum StoringPlaceType {
     WALD("im Wald", "in den Wald", NEHMEN, AUFKLAUBEN),
     MATSCHIGER_WALDBODEN("auf dem matschigen Waldboden",
             "auf den matschigen Waldboden",
-            new ZweiPraedikatMitEinerObjektLeerstelle(AUFHEBEN, POLIEREN),
+            new ZweiSemPraedikatMitEinerObjektLeerstelle(AUFHEBEN, POLIEREN),
             ZUSAMMENSAMMELN,
             WALD),
     // IDEA    WALDBODEN("zwischen Blättern und Gestrüpp", "auf den Waldboden",
@@ -88,7 +88,7 @@ public enum StoringPlaceType {
     UNTER_DEM_BAUM("unter dem Baum", "unter den Baum", AUFHEBEN, AUFHEBEN),
     IM_MORAST("im Morast", "in den Morast",
             // "du hebst die Kugel aus dem Morast und bemühst dich, sie etwas abzutrocknen"
-            new ZweiPraedikatMitEinerObjektLeerstelle(
+            new ZweiSemPraedikatMitEinerObjektLeerstelle(
                     HEBEN.mitAdvAngabe(
                             new AdvAngabeSkopusVerbWohinWoher(AUS.mit(NomenFlexionsspalte.MORAST))),
                     SICH_BEMUEHEN.mitLexikalischemKern(ABTROCKNEN)),
@@ -114,21 +114,21 @@ public enum StoringPlaceType {
      * Das Verb das beschreibt, das der Benutzer etwas, das <i>nicht aus vielen einzelnen
      * unverbundenen Teilen besteht</i> von diesem Ort <i>mitnimmt</i>.
      */
-    private final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard;
+    private final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard;
 
     /**
      * Das Verb das beschreibt, das der Benutzer etwas, das <i>aus vielen einzelnen
      * unverbundenen Teilen besteht</i> von diesem Ort <i>mitnimmt</i>.
      */
-    private final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig;
+    private final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig;
 
     StoringPlaceType(final String wo, final String wohin) {
         this(wo, wohin, NEHMEN, AUFSAMMELN);
     }
 
     StoringPlaceType(final String wo, final String wohin,
-                     final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard,
-                     final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig) {
+                     final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard,
+                     final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig) {
         this(wo, wohin, mitnehmenPraedikatStandard, mitnehmenPraedikatVielteilig,
                 null);
     }
@@ -139,8 +139,8 @@ public enum StoringPlaceType {
     }
 
     StoringPlaceType(final String wo, final String wohin,
-                     final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard,
-                     final PraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig,
+                     final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatStandard,
+                     final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikatVielteilig,
                      @Nullable final StoringPlaceType forBelebtUndEherGross) {
         this.wo = wo;
         this.wohin = wohin;
@@ -181,7 +181,7 @@ public enum StoringPlaceType {
      * @param vielteilig Ob das Objekt, das mitgenommen wird, vielteilig ist
      *                   (z.B. viele Äste)
      */
-    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat(final boolean vielteilig) {
+    public SemPraedikatMitEinerObjektleerstelle getMitnehmenPraedikat(final boolean vielteilig) {
         return vielteilig ? mitnehmenPraedikatVielteilig : mitnehmenPraedikatStandard;
     }
 }

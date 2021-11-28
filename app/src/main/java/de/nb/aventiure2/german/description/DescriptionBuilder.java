@@ -1,5 +1,13 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,16 +17,8 @@ import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToNullKonstituentenfolge;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 public class DescriptionBuilder {
     private DescriptionBuilder() {
@@ -143,21 +143,21 @@ public class DescriptionBuilder {
     }
 
     @CheckReturnValue
-    public static StructuredDescription du(final PraedikatOhneLeerstellen praedikat) {
+    public static StructuredDescription du(final SemPraedikatOhneLeerstellen praedikat) {
         return du(StructuralElement.WORD, praedikat);
     }
 
     @NonNull
     @CheckReturnValue
     public static StructuredDescription du(final StructuralElement startsNew,
-                                           final PraedikatOhneLeerstellen praedikat) {
+                                           final SemPraedikatOhneLeerstellen praedikat) {
         return du(startsNew, praedikat, WORD);
     }
 
     @NonNull
     @CheckReturnValue
     public static StructuredDescription du(final StructuralElement startsNew,
-                                           final PraedikatOhneLeerstellen praedikat,
+                                           final SemPraedikatOhneLeerstellen praedikat,
                                            final StructuralElement endsThis) {
         return satz(startsNew,
                 praedikat.alsSatzMitSubjekt(duSc()),
@@ -167,21 +167,21 @@ public class DescriptionBuilder {
     @NonNull
     @CheckReturnValue
     public static StructuredDescription satz(final StructuralElement startsNew,
-                                             final Satz satz) {
-        return satz(startsNew, satz, WORD);
+                                             final SemSatz semSatz) {
+        return satz(startsNew, semSatz, WORD);
     }
 
     @NonNull
     @CheckReturnValue
-    public static StructuredDescription satz(final Satz satz) {
-        return satz(WORD, satz);
+    public static StructuredDescription satz(final SemSatz semSatz) {
+        return satz(WORD, semSatz);
     }
 
     @NonNull
     @CheckReturnValue
     public static StructuredDescription satz(final StructuralElement startsNew,
-                                             final Satz satz,
+                                             final SemSatz semSatz,
                                              final StructuralElement endsThis) {
-        return new StructuredDescription(startsNew, satz, endsThis);
+        return new StructuredDescription(startsNew, semSatz, endsThis);
     }
 }

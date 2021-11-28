@@ -1,20 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableList;
-
-import java.util.Collection;
-
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANBLICKEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ANGUCKEN;
@@ -35,8 +20,23 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphra
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.SCHEINEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase.WIRKEN;
 
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableList;
+
+import java.util.Collection;
+
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.praedikat.VerbSubjPraedikativeAdjektivphrase;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
+
 /**
- * Statische Methode, die {@link EinzelnerSatz}-Objekte zu
+ * Statische Methode, die {@link EinzelnerSemSatz}-Objekte zu
  * Gefühlen erzeugen.
  */
 public class FeelingsSaetzeUtil {
@@ -46,7 +46,7 @@ public class FeelingsSaetzeUtil {
     /**
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - in Sätze um.
      */
-    static ImmutableList<Satz> toSichtbareReaktionSaetze(
+    static ImmutableList<SemSatz> toSichtbareReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> eindruckAdjPhr) {
@@ -63,12 +63,12 @@ public class FeelingsSaetzeUtil {
      * Wandelt diese Adjektivphrasen - die Eindrücke beschreiben - und diese adverbialen
      * Angaben in Sätze um - das Ergebnis kann leer sein!
      */
-    static ImmutableList<Satz> toSichtbareReaktionSaetze(
+    static ImmutableList<SemSatz> toSichtbareReaktionSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase feelingTargetDesc,
             final ImmutableList<AdjPhrOhneLeerstellen> altSpAdjPhr,
             final ImmutableList<AdvAngabeSkopusVerbAllg> eindruckAdvAngaben) {
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> res = ImmutableList.builder();
 
         res.addAll(altAnsehenSaetze(
                 subjekt, feelingTargetDesc, eindruckAdvAngaben));
@@ -103,7 +103,7 @@ public class FeelingsSaetzeUtil {
         return res.build();
     }
 
-    public static ImmutableList<Satz> altAnsehenSaetze(
+    public static ImmutableList<SemSatz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
@@ -111,7 +111,7 @@ public class FeelingsSaetzeUtil {
                 adjektivPhrase.alsAdvAngabeSkopusVerbAllg());
     }
 
-    private static ImmutableList<Satz> altAnsehenSaetze(
+    private static ImmutableList<SemSatz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final AdvAngabeSkopusVerbAllg advAngabe) {
@@ -120,26 +120,26 @@ public class FeelingsSaetzeUtil {
                 ImmutableList.of(advAngabe));
     }
 
-    public static ImmutableList<Satz> altAnsehenSaetze(
+    public static ImmutableList<SemSatz> altAnsehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase angesehenDesc,
             final ImmutableList<AdvAngabeSkopusVerbAllg> advAngaben) {
-        return EinzelnerSatz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
+        return EinzelnerSemSatz.altSubjObjSaetze(subjekt, ansehenVerben(), angesehenDesc,
                 advAngaben);
     }
 
-    public static ImmutableList<Satz> altNachsehenHinterhersehenSaetze(
+    public static ImmutableList<SemSatz> altNachsehenHinterhersehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase objekt) {
-        return EinzelnerSatz
+        return EinzelnerSemSatz
                 .altSubjObjSaetze(subjekt, nachsehenHinterhersehenVerben(), objekt);
     }
 
-    public static ImmutableList<Satz> altZusehenSaetze(
+    public static ImmutableList<SemSatz> altZusehenSaetze(
             final SubstantivischePhrase subjekt,
             final SubstantivischePhrase objekt,
             final Collection<AdvAngabeSkopusVerbAllg> advAngaben) {
-        return EinzelnerSatz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
+        return EinzelnerSemSatz.altSubjObjSaetze(subjekt, zusehenVerben(), objekt,
                 advAngaben);
     }
 
@@ -159,14 +159,14 @@ public class FeelingsSaetzeUtil {
         return ImmutableList.of(ZUGUCKEN, ZUSEHEN, ZUSCHAUEN);
     }
 
-    public static ImmutableList<Satz> altEindrueckSaetze(
+    public static ImmutableList<SemSatz> altEindrueckSaetze(
             final SubstantivischePhrase subjekt,
             final boolean subjektIstZuSehen,
             final AdjPhrOhneLeerstellen adjektivPhrase) {
         return altEindrueckSaetze(subjekt, subjektIstZuSehen, ImmutableList.of(adjektivPhrase));
     }
 
-    static ImmutableList<Satz> altEindrueckSaetze(
+    static ImmutableList<SemSatz> altEindrueckSaetze(
             final SubstantivischePhrase subjekt,
             final boolean subjektIstZuSehen,
             final ImmutableList<AdjPhrOhneLeerstellen> adjektivPhrasen) {

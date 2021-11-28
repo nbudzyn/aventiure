@@ -1,5 +1,7 @@
 package de.nb.aventiure2.processor;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
@@ -25,8 +27,6 @@ import javax.lang.model.type.DeclaredType;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.JavaFileObject;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 @Immutable
 class ValenzClassToBeGenerated {
@@ -102,7 +102,7 @@ class ValenzClassToBeGenerated {
     }
 
     private String createClassJavadoc() {
-        return "Ein Praedikat, gesetzt "
+        return "Ein SemPraedikat, gesetzt "
                 + (gefuellteArgumente.size() == 1 ? "ist" : "sind")
                 + " "
                 + (gefuellteArgumente.isEmpty() ?
@@ -152,9 +152,10 @@ class ValenzClassToBeGenerated {
     private void addLeerstellen(final TypeSpec.Builder classBuilder) {
         if (leerstellen.size() == 1) {
             final ArgumentField leerstelle = leerstellen.iterator().next();
-            if (leerstelle.getType().equals("de.nb.aventiure2.german.base.SubstantivischePhrase")) {
+            if (leerstelle.getType()
+                    .equals("de.nb.aventiure2.german.base.SubstantivischPhrasierbar")) {
                 classBuilder.addSuperinterface(ClassName.bestGuess(
-                        "de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle"));
+                        "de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle"));
 
                 final ClassName leerstelleClassName = ClassName.bestGuess(leerstelle.getType());
 
@@ -162,17 +163,17 @@ class ValenzClassToBeGenerated {
                         .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
                         .returns(ClassName.bestGuess(qualifiedNameWithoutLeerstellen))
-                        .addParameter(leerstelleClassName, "phrase")
+                        .addParameter(leerstelleClassName, "phrasierbar")
                         .addCode("return mit")
                         .addCode(capitalize(leerstelle.getName()))
-                        .addCode("(phrase);")
+                        .addCode("(phrasierbar);")
                         .build();
 
                 classBuilder.addMethod(mit);
             } else if (leerstelle.getType().equals("de.nb.aventiure2.german.base.Praedikativum")) {
                 classBuilder.addSuperinterface(ClassName.bestGuess(
                         "de.nb.aventiure2.german.praedikat"
-                                + ".PraedikatMitEinerPraedikativumLeerstelle"));
+                                + ".SemPraedikatMitEinerPraedikativumLeerstelle"));
 
                 final ClassName leerstelleClassName = ClassName.bestGuess(leerstelle.getType());
 
@@ -180,10 +181,10 @@ class ValenzClassToBeGenerated {
                         .addAnnotation(Override.class)
                         .addModifiers(Modifier.PUBLIC)
                         .returns(ClassName.bestGuess(qualifiedNameWithoutLeerstellen))
-                        .addParameter(leerstelleClassName, "phrase")
+                        .addParameter(leerstelleClassName, "praedikativum")
                         .addCode("return mit")
                         .addCode(capitalize(leerstelle.getName()))
-                        .addCode("(phrase);")
+                        .addCode("(praedikativum);")
                         .build();
 
                 classBuilder.addMethod(mit);
@@ -191,11 +192,11 @@ class ValenzClassToBeGenerated {
                     .equals("de.nb.aventiure2.german.base.WoertlicheRede")) {
                 classBuilder.addSuperinterface(ClassName.bestGuess(
                         "de.nb.aventiure2.german.praedikat"
-                                + ".PraedikatMitEinerLeerstelleFuerWoertlicheRede"));
+                                + ".SemPraedikatMitEinerLeerstelleFuerWoertlicheRede"));
             }
         } else {
             classBuilder.addSuperinterface(ClassName.bestGuess(
-                    "de.nb.aventiure2.german.praedikat.Praedikat"));
+                    "de.nb.aventiure2.german.praedikat.SemPraedikat"));
         }
 
         for (final ArgumentField leerstelle : leerstellen) {

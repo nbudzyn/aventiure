@@ -1,17 +1,17 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
+
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.Praedikativum;
 
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
-
 /**
  * Ein Verb, das mit einer prädikativen Adjektivphrase steht. (Z.B: "(glücklich) wirken").
  * <p>
  * Zum Verb <i>sein</i> mit Prädikativum siehe
- * {@link PraedikativumPraedikatOhneLeerstellen#praedikativumPraedikatMit(Praedikativum)}.
+ * {@link PraedikativumSemPraedikatOhneLeerstellen#praedikativumPraedikatMit(Praedikativum)}.
  */
 public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
     // Verben ohne Präfix
@@ -66,9 +66,9 @@ public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
         this.verb = verb;
     }
 
-    public PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mit(
+    public SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen mit(
             final AdjPhrOhneLeerstellen adjektivphrase) {
-        return new PraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(verb,
+        return new SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen(verb,
                 adjektivphrase);
     }
 

@@ -26,7 +26,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * ("an sich" / "sich")
  * </ul>
  */
-public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
+public enum ReflVerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstellen {
     // Verben ohne Partikel
     SICH_ANFASSEN("anfassen", AKK,
             "fasse", "fasst", "fasst", "fasst",
@@ -162,7 +162,7 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
     }
 
     @Override
-    public ReflPraedikatSubOhneLeerstellen neg(
+    public ReflSemPraedikatSubOhneLeerstellen neg(
             @Nullable final Negationspartikelphrase negationspartikelphrase) {
         return toPraedikat().neg(negationspartikelphrase);
     }
@@ -173,8 +173,8 @@ public enum ReflVerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstelle
     }
 
     @Override
-    public ReflPraedikatSubOhneLeerstellen toPraedikat() {
-        return new ReflPraedikatSubOhneLeerstellen(verb, reflKasus);
+    public ReflSemPraedikatSubOhneLeerstellen toPraedikat() {
+        return new ReflSemPraedikatSubOhneLeerstellen(verb, reflKasus);
     }
 
     @Nullable

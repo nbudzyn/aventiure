@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 
 /**
  * Ein Verb wie "... an sich nehmen" oder "sich von jdm verabschieden", das
@@ -19,7 +19,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  *     "[sich] von der Zauberin [verabschieden]"
  * </ul>
  */
-public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
+public enum ReflVerbSubjObj implements VerbMitValenz, SemPraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
     AN_SICH_NEHMEN("nehmen", PraepositionMitKasus.AN_AKK, AKK,
             "nehme", "nimmst", "nimmt",
@@ -108,10 +108,10 @@ public enum ReflVerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektlee
     }
 
     @Override
-    public PraedikatReflSubjObjOhneLeerstellen mit(
-            final SubstantivischePhrase substPhr) {
-        return new PraedikatReflSubjObjOhneLeerstellen(verb, reflKasusOderPraepositionalKasus,
-                objektKasusOderPraepositionalkasus, substPhr);
+    public SemPraedikatReflSubjObjOhneLeerstellen mit(
+            final SubstantivischPhrasierbar substPhrasierbar) {
+        return new SemPraedikatReflSubjObjOhneLeerstellen(verb, reflKasusOderPraepositionalKasus,
+                objektKasusOderPraepositionalkasus, substPhrasierbar);
     }
 
     @Override

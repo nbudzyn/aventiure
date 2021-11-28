@@ -53,7 +53,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 /**
@@ -425,7 +425,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * Hier werden <i>keine Begrüßungen</i> beschrieben!
      */
     @NonNull
-    public ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
+    public ImmutableList<SemSatz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
@@ -451,7 +451,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
-    public ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    public ImmutableList<SemSatz> altReaktionWennSCGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
@@ -476,7 +476,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * Hier werden <i>keine Begrüßungen</i> beschrieben!
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionBeiBegegnungMitScSaetze(
+    private ImmutableList<SemSatz> altReaktionBeiBegegnungMitScSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
         return altReaktionBeiBegegnungSaetze(
@@ -493,7 +493,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionWennSCGehenMoechteSaetze(
+    private ImmutableList<SemSatz> altReaktionWennSCGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final FeelingTowardsType type) {
         return altReaktionWennTargetGehenMoechteSaetze(
@@ -513,7 +513,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<Satz> altSCBeiBegegnungAnsehenSaetze(
+    public ImmutableList<SemSatz> altSCBeiBegegnungAnsehenSaetze(
             final SubstantivischePhrase gameObjectSubjekt) {
         return dispatchFeelings(
                 SPIELER_CHARAKTER,
@@ -543,7 +543,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    public ImmutableList<Satz> altSpEindruckAufScBeiBegegnungSaetze(
+    public ImmutableList<SemSatz> altSpEindruckAufScBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final boolean scKannGameObjectSubjektSehen) {
         return dispatchFeelings(
@@ -631,7 +631,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * "du, die du..." oder "du, das du..." generiert wird.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
+    private ImmutableList<SemSatz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
@@ -654,7 +654,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
     @NonNull
-    private ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
+    private ImmutableList<SemSatz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final SubstantivischePhrase targetDesc,
@@ -677,7 +677,7 @@ public class FeelingsComp extends AbstractStatefulComponent<FeelingsPCD>
      *
      * @return Möglicherweise eine leere Liste (insbesondere bei extremen Gefühlen)!
      */
-    private ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
+    private ImmutableList<SemSatz> altEindruckBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final GameObjectId feelingTargetId,
             final boolean targetKannSubjektSehen,

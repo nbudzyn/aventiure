@@ -9,7 +9,7 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 
 /**
  * Ein Verb (ggf. mit Präfix), bei dem das Subjekt fehlen kann oder nur
@@ -17,7 +17,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * "Mich friert" / "Es friert mich", "Dir graut vor ihm" etc.
  */
 public enum VerbOhneSubjAusserOptionalemExpletivemEs
-        implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
+        implements VerbMitValenz, SemPraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
     DUERSTEN("dürsten", AKK, "dürstet", "gedürstet"),
     EKELN("ekeln", AKK, "ekelt", "geekelt"),
@@ -64,23 +64,24 @@ public enum VerbOhneSubjAusserOptionalemExpletivemEs
         this.kasus = kasus;
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+    public SemPraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(verb, kasus,
+        return new SemPraedikatMitEinerObjLeerstelle(verb, kasus,
                 true, advAngabe, null);
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+    public SemPraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(verb, kasus,
+        return new SemPraedikatMitEinerObjLeerstelle(verb, kasus,
                 true, null, advAngabe);
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mit(final SubstantivischePhrase substPhr) {
-        return new PraedikatSubjObjOhneLeerstellen(
+    public SemPraedikatSubjObjOhneLeerstellen mit(
+            final SubstantivischPhrasierbar substPhrasierbar) {
+        return new SemPraedikatSubjObjOhneLeerstellen(
                 verb, kasus, true,
-                substPhr);
+                substPhrasierbar);
     }
 
     @Nullable

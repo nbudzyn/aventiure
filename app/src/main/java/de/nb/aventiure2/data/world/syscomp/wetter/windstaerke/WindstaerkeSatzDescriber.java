@@ -58,7 +58,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.ReflVerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeSatzDescriber {
@@ -73,16 +73,16 @@ public class WindstaerkeSatzDescriber {
      * Gibt Sätze zurück, die beschreiben, wie die Windstaerke sich um eine Stufe
      * (Windstärkewechsel) oder um mehrere Stufen (Windstärkesprung) verändert hat.*
      */
-    public ImmutableCollection<EinzelnerSatz> altSprungOderWechsel(
+    public ImmutableCollection<EinzelnerSemSatz> altSprungOderWechsel(
             final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Windstaerke> change,
             final boolean auchZeitwechselreferenzen) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         final int delta = change.delta();
 
         // (nicht leer)
-        final ImmutableCollection<EinzelnerSatz> altStatisch =
+        final ImmutableCollection<EinzelnerSemSatz> altStatisch =
                 altSp(dateTimeChange.getNachher().getTime(), change.getNachher(),
                         true, false);
 
@@ -160,8 +160,8 @@ public class WindstaerkeSatzDescriber {
         return alt.build();
     }
 
-    private ImmutableSet<EinzelnerSatz> altWechsel(final WetterParamChange<Windstaerke> change) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+    private ImmutableSet<EinzelnerSemSatz> altWechsel(final WetterParamChange<Windstaerke> change) {
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         final int delta = change.getNachher().minus(change.getVorher());
 
@@ -244,12 +244,12 @@ public class WindstaerkeSatzDescriber {
      * Gibt Sätze zurück, wenn der SC in einen windgeschützteren Bereich kommt -
      * je nach Windstärke oft leer.
      */
-    ImmutableCollection<EinzelnerSatz> altSpAngenehmerAlsVorLocation(
+    ImmutableCollection<EinzelnerSemSatz> altSpAngenehmerAlsVorLocation(
             final Windstaerke windstaerkeFrom,
             final Windstaerke windstaerkeTo) {
         checkArgument(windstaerkeFrom.compareTo(windstaerkeTo) > 0);
 
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         if (windstaerkeFrom.compareTo(Windstaerke.WINDIG) >= 0) {
             alt.add(WINDGESCHUETZT.mitGraduativerAngabe("etwas").alsEsIstSatz()
@@ -273,9 +273,9 @@ public class WindstaerkeSatzDescriber {
     /**
      * Gibt alternative Sätze zur Windstärke zurück
      */
-    ImmutableCollection<EinzelnerSatz> altKommtNachDraussen(
+    ImmutableCollection<EinzelnerSemSatz> altKommtNachDraussen(
             final AvTime time, final Windstaerke windstaerke) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         // (nicht leer)
         alt.addAll(
@@ -297,11 +297,11 @@ public class WindstaerkeSatzDescriber {
      * @param ausschliesslichHoerbares Ob nur Sätze zurückgegeben werden, die ausschließlich
      *                                 Dinge beschreiben, die hörbar sind (dann evtl. leer)
      */
-    public ImmutableCollection<EinzelnerSatz> altSp(
+    public ImmutableCollection<EinzelnerSemSatz> altSp(
             final AvTime time, final Windstaerke windstaerke,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete,
             final boolean ausschliesslichHoerbares) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         if (!ausschliesslichHoerbares) {
             if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {

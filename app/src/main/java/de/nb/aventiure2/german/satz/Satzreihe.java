@@ -23,11 +23,11 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
 
-public class Satzreihe implements Satz {
-    private final Satz ersterSatz;
+public class Satzreihe implements SemSatz {
+    private final SemSatz ersterSemSatz;
 
     /**
      * Ob zwischen den Sätzen (vor einem eventuellen Konnektor) möglichst ein Semikolon
@@ -39,7 +39,7 @@ public class Satzreihe implements Satz {
     // Der Konnektor zwischen den beiden Sätzen ("und", "aber"...) ist einfach nur das
     // Anschlusswort der zweiten Satzes.
 
-    private final EinzelnerSatz zweiterSatz;
+    private final EinzelnerSemSatz zweiterSatz;
 
     /**
      * Verbindet diese alternativen Sätze zu alternativen Satzreihen und sorgt im Regelfall
@@ -47,22 +47,22 @@ public class Satzreihe implements Satz {
      * verbunden sind.
      */
     @NonNull
-    public static ImmutableSet<Satzreihe> altGereihtStandard(final Collection<Satz> altErste,
-                                                             final Collection<Satz> altZweite) {
+    public static ImmutableSet<Satzreihe> altGereihtStandard(final Collection<SemSatz> altErste,
+                                                             final Collection<SemSatz> altZweite) {
         final ImmutableSet.Builder<Satzreihe> alt = ImmutableSet.builder();
-        for (final Satz ersterSatz : altErste) {
-            for (final Satz zweiterSatz : altZweite) {
+        for (final SemSatz ersterSemSatz : altErste) {
+            for (final SemSatz zweiterSemSatz : altZweite) {
                 // FIXME Wenn das Subjekt gleich ist (gleicher Text, gleiches Bezugsobjekt, kein
                 //  Personalprononomen-ohne-Bezugsobjekt-außer-Expletivem-Es)
                 //  und getPraedikatSofern...() != null
                 //  zurückgibt, sollte man die *Prädikate* reihen
-                //  (vgl. ZweiPraedikateOhneLeerstellen):
+                //  (vgl. ZweiPraedikateOhneLeerstellenSem):
                 //  - Statt "Du gehst um die Ecke und du siehst einen Drachen" besser
                 //    "Du gehst um die Ecke und siehst einen Drachen"
                 //  - Statt "Es ist kalt und es ist windig" besser "Es ist kalt und windig".
                 //  (Dann ist Satzreihe wohl nicht mehr der richtige Ort für diese Methode!)
 
-                alt.add(gereihtStandard(ersterSatz, zweiterSatz));
+                alt.add(gereihtStandard(ersterSemSatz, zweiterSemSatz));
             }
         }
 
@@ -75,24 +75,24 @@ public class Satzreihe implements Satz {
      * verbunden sind.
      */
     @NonNull
-    static Satzreihe gereihtStandard(final Satz ersterSatz, final Satz zweiterSatz) {
-        if (zweiterSatz instanceof EinzelnerSatz) {
-            return gereihtStandard(ersterSatz, (EinzelnerSatz) zweiterSatz);
+    static Satzreihe gereihtStandard(final SemSatz ersterSemSatz, final SemSatz zweiterSemSatz) {
+        if (zweiterSemSatz instanceof EinzelnerSemSatz) {
+            return gereihtStandard(ersterSemSatz, (EinzelnerSemSatz) zweiterSemSatz);
         }
 
-        if (zweiterSatz instanceof Satzreihe) {
-            final Satzreihe zweiterSatzAlsSatzreihe = (Satzreihe) zweiterSatz;
+        if (zweiterSemSatz instanceof Satzreihe) {
+            final Satzreihe zweiterSatzAlsSatzreihe = (Satzreihe) zweiterSemSatz;
 
             return gereihtStandard(
-                    gereihtStandard(ersterSatz, zweiterSatzAlsSatzreihe.ersterSatz),
+                    gereihtStandard(ersterSemSatz, zweiterSatzAlsSatzreihe.ersterSemSatz),
                     zweiterSatzAlsSatzreihe.moeglichstSemikolon
                             || NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld
                             .traegtBedeutung(
-                                    zweiterSatzAlsSatzreihe.ersterSatz.getAnschlusswort()),
+                                    zweiterSatzAlsSatzreihe.ersterSemSatz.getAnschlusswort()),
                     zweiterSatzAlsSatzreihe.zweiterSatz);
         }
 
-        throw new IllegalStateException("Unexpected subtype of Satz: " + zweiterSatz);
+        throw new IllegalStateException("Unexpected subtype of SemSatz: " + zweiterSemSatz);
     }
 
     /**
@@ -101,19 +101,19 @@ public class Satzreihe implements Satz {
      * verbunden sind.
      */
     @NonNull
-    private static Satzreihe gereihtStandard(final Satz ersterSatz,
-                                             final EinzelnerSatz zweiterSatz) {
-        if (ersterSatz instanceof Satzreihe
+    private static Satzreihe gereihtStandard(final SemSatz ersterSemSatz,
+                                             final EinzelnerSemSatz zweiterSatz) {
+        if (ersterSemSatz instanceof Satzreihe
                 && NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung(
-                ((Satzreihe) ersterSatz).zweiterSatz.getAnschlusswort())) {
+                ((Satzreihe) ersterSemSatz).zweiterSatz.getAnschlusswort())) {
             // "..., aber ...; ..."
-            return gereihtStandard(ersterSatz, true, zweiterSatz);
+            return gereihtStandard(ersterSemSatz, true, zweiterSatz);
         }
 
         // "... und ..."
         // "... und ..., aber..."
         // "..., ... und ..."
-        return gereihtStandard(ersterSatz, false, zweiterSatz);
+        return gereihtStandard(ersterSemSatz, false, zweiterSatz);
     }
 
     /**
@@ -124,71 +124,71 @@ public class Satzreihe implements Satz {
      * @param moeglichstSemikolonUndKeinUnd Ob die Sätze möglichst mit einem Semikolon verbunden
      *                                      werden sollen. In diesem Fall wird kein "und"
      *                                      eingefügt, und ein eventuell abschließendes "und" im
-     *                                      ersten Satz bleibt erhalten
+     *                                      ersten SemSatz bleibt erhalten
      */
     @NonNull
-    private static Satzreihe gereihtStandard(final Satz ersterSatz,
+    private static Satzreihe gereihtStandard(final SemSatz ersterSemSatz,
                                              final boolean moeglichstSemikolonUndKeinUnd,
-                                             final EinzelnerSatz zweiterSatz) {
+                                             final EinzelnerSemSatz zweiterSatz) {
         if (moeglichstSemikolonUndKeinUnd
                 || NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung(
                 zweiterSatz.getAnschlusswort())) {
             // "...; ..."
             // "... und ..., aber..."
-            return new Satzreihe(ersterSatz, moeglichstSemikolonUndKeinUnd, zweiterSatz);
+            return new Satzreihe(ersterSemSatz, moeglichstSemikolonUndKeinUnd, zweiterSatz);
         }
 
         // "..., ... und ..."
-        return new Satzreihe(ohneUndKonnektor(ersterSatz),
+        return new Satzreihe(ohneUndKonnektor(ersterSemSatz),
                 zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort());
     }
 
     @NonNull
-    private static Satz ohneUndKonnektor(final Satz satz) {
-        if (!(satz instanceof Satzreihe)) {
-            return satz;
+    private static SemSatz ohneUndKonnektor(final SemSatz semSatz) {
+        if (!(semSatz instanceof Satzreihe)) {
+            return semSatz;
         }
 
-        return ((Satzreihe) satz).ohneUndKonnektor();
+        return ((Satzreihe) semSatz).ohneUndKonnektor();
     }
 
     /**
      * Erzeugt eine neue Satzreihe mit diesem Konnektor. Es ist Verantwortung des Aufrufers,
      * unerwünschte Dopplungen wie "... und ... und ..." oder unschöne
-     * Folgen wie "..., aber ..., aber ..." zu vermeiden, indem der erste Satz, wenn er
+     * Folgen wie "..., aber ..., aber ..." zu vermeiden, indem der erste SemSatz, wenn er
      * ebenfalls eine Satzreihe ist, z.B. keinen Konnektor enthält.
      */
     public Satzreihe(
-            final Satz ersterSatz,
+            final SemSatz ersterSemSatz,
             final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
-            final EinzelnerSatz zweiterSatz) {
-        this(ersterSatz, false, konnektor, zweiterSatz);
+            final EinzelnerSemSatz zweiterSatz) {
+        this(ersterSemSatz, false, konnektor, zweiterSatz);
     }
 
     private Satzreihe(
-            final Satz ersterSatz,
+            final SemSatz ersterSemSatz,
             final boolean moeglichstSemikolon,
             final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
-            final EinzelnerSatz zweiterSatz) {
-        this(ersterSatz, moeglichstSemikolon, zweiterSatz.mitAnschlusswort(konnektor));
+            final EinzelnerSemSatz zweiterSatz) {
+        this(ersterSemSatz, moeglichstSemikolon, zweiterSatz.mitAnschlusswort(konnektor));
     }
 
-    public Satzreihe(final Satz ersterSatz, final EinzelnerSatz zweiterSatz) {
-        this(ersterSatz, false, zweiterSatz);
+    public Satzreihe(final SemSatz ersterSemSatz, final EinzelnerSemSatz zweiterSatz) {
+        this(ersterSemSatz, false, zweiterSatz);
     }
 
     public Satzreihe(
-            final Satz ersterSatz,
+            final SemSatz ersterSemSatz,
             final boolean moeglichstSemikolon,
-            final EinzelnerSatz zweiterSatz) {
-        this.ersterSatz = ersterSatz;
+            final EinzelnerSemSatz zweiterSatz) {
+        this.ersterSemSatz = ersterSemSatz;
         this.moeglichstSemikolon = moeglichstSemikolon;
         this.zweiterSatz = zweiterSatz;
     }
 
     @Override
     public Satzreihe ohneAnschlusswort() {
-        return (Satzreihe) Satz.super.ohneAnschlusswort();
+        return (Satzreihe) SemSatz.super.ohneAnschlusswort();
     }
 
     @Override
@@ -231,7 +231,7 @@ public class Satzreihe implements Satz {
     @NonNull
     private Satzreihe mitKonnektorUndFallsKeinKonnektor() {
         return new Satzreihe(
-                ersterSatz,
+                ersterSemSatz,
                 zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort());
     }
 
@@ -240,12 +240,12 @@ public class Satzreihe implements Satz {
             return this;
         }
 
-        return new Satzreihe(ersterSatz, moeglichstSemikolon, zweiterSatz.ohneAnschlusswort());
+        return new Satzreihe(ersterSemSatz, moeglichstSemikolon, zweiterSatz.ohneAnschlusswort());
     }
 
     @Override
     public Satzreihe perfekt() {
-        return new Satzreihe(ersterSatz.perfekt(), zweiterSatz.perfekt());
+        return new Satzreihe(ersterSemSatz.perfekt(), zweiterSatz.perfekt());
     }
 
     @Override
@@ -259,21 +259,21 @@ public class Satzreihe implements Satz {
 
         // "wie die Grillen zirpen und ob und der Wind rauscht"
         return mitKonnektorUndFallsKeinKonnektor()
-                .mapJoinToKonstituentenfolge(Satz::getIndirekteFrage, false);
+                .mapJoinToKonstituentenfolge(SemSatz::getIndirekteFrage, false);
     }
 
     @Nullable
     private Konstituentenfolge getZusammengefassteIndirekteFrageWennMoeglich() {
-        @Nullable final PraedikatOhneLeerstellen
+        @Nullable final SemPraedikatOhneLeerstellen
                 erstesPraedikatWennOhneInformationsverlustMoeglich =
-                ersterSatz.getPraedikatWennOhneInformationsverlustMoeglich();
+                ersterSemSatz.getPraedikatWennOhneInformationsverlustMoeglich();
         if (erstesPraedikatWennOhneInformationsverlustMoeglich == null) {
             return null;
         }
 
-        @Nullable final PraedikatOhneLeerstellen
+        @Nullable final SemPraedikatOhneLeerstellen
                 zweitesPraedikatWennOhneInformationsverlustMoeglich =
-                ersterSatz.getPraedikatWennOhneInformationsverlustMoeglich();
+                ersterSemSatz.getPraedikatWennOhneInformationsverlustMoeglich();
         if (zweitesPraedikatWennOhneInformationsverlustMoeglich == null) {
             return null;
         }
@@ -294,14 +294,14 @@ public class Satzreihe implements Satz {
         if (erstesInterrogativwortErsterSatz == null) {
             // "ob die Grillen zirpen und der Wind rauscht"
             return joinToKonstituentenfolge(
-                    ersterSatz.getIndirekteFrage(), // "ob die Grillen zirpen"
+                    ersterSemSatz.getIndirekteFrage(), // "ob die Grillen zirpen"
                     zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort()
                             .getVerbletztsatz()); // "und der Wind rauscht"
         }
 
         // "wie die Grillen zirpen und der Wind rauscht"
         return joinToKonstituentenfolge(
-                ersterSatz.getIndirekteFrage(), // "wie die Grillen zirpen"
+                ersterSemSatz.getIndirekteFrage(), // "wie die Grillen zirpen"
                 zweiterSatz.mitAnschlusswortUndFallsKeinAnschlusswort()
                         .getVerbletztsatz()
                         .cutFirst(
@@ -314,14 +314,14 @@ public class Satzreihe implements Satz {
         //  "den du mir geschenkt und im Garten versteckt hast"
 
         return mitKonnektorUndFallsKeinKonnektor()
-                .mapJoinToKonstituentenfolge(Satz::getRelativsatz, false);
+                .mapJoinToKonstituentenfolge(SemSatz::getRelativsatz, false);
     }
 
     @Override
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         return mapJoinToKonstituentenfolge(
-                Satz::getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption,
-                EinzelnerSatz::getVerbzweitsatzStandard);
+                SemSatz::getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption,
+                EinzelnerSemSatz::getVerbzweitsatzStandard);
     }
 
     @NonNull
@@ -329,7 +329,7 @@ public class Satzreihe implements Satz {
     public ImmutableList<Konstituentenfolge> altVerzweitsaetze() {
         final ImmutableList.Builder<Konstituentenfolge> res = ImmutableList.builder();
 
-        for (final Konstituentenfolge ersterVerbzweitsatz : ersterSatz.altVerzweitsaetze()) {
+        for (final Konstituentenfolge ersterVerbzweitsatz : ersterSemSatz.altVerzweitsaetze()) {
             for (final Konstituentenfolge zweiterVerbzweitsatz : zweiterSatz.altVerzweitsaetze()) {
                 res.add(joinToKonstituentenfolge(ersterVerbzweitsatz, zweiterVerbzweitsatz));
             }
@@ -340,55 +340,55 @@ public class Satzreihe implements Satz {
 
     @Override
     public Konstituentenfolge getVerbzweitsatzStandard() {
-        return mapJoinToKonstituentenfolge(Satz::getVerbzweitsatzStandard);
+        return mapJoinToKonstituentenfolge(SemSatz::getVerbzweitsatzStandard);
     }
 
     @Override
     public Konstituentenfolge getVerbzweitsatzMitVorfeld(final String vorfeld) {
         return mapJoinToKonstituentenfolge(
                 ersterEinzelnerSatz -> ersterEinzelnerSatz.getVerbzweitsatzMitVorfeld(vorfeld),
-                EinzelnerSatz::getVerbzweitsatzStandard);
+                EinzelnerSemSatz::getVerbzweitsatzStandard);
     }
 
     @Override
     public Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma() {
         return mapJoinToKonstituentenfolge(
-                Satz::getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma, false);
+                SemSatz::getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma, false);
     }
 
     @Override
     public Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma() {
         return mapJoinToKonstituentenfolge(
-                Satz::getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma, false);
+                SemSatz::getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma, false);
     }
 
     @Override
     public Konstituentenfolge getVerbletztsatz() {
         return mitKonnektorUndFallsKeinKonnektor()
-                .mapJoinToKonstituentenfolge(Satz::getVerbletztsatz, false);
+                .mapJoinToKonstituentenfolge(SemSatz::getVerbletztsatz, false);
     }
 
     @Override
     public boolean hasSubjektDuBelebt() {
-        return bothMatch(Satz::hasSubjektDuBelebt);
+        return bothMatch(SemSatz::hasSubjektDuBelebt);
     }
 
     @Nullable
     @Override
-    public PraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
-        @Nullable final PraedikatOhneLeerstellen erstesPraedikat =
-                ersterSatz.getPraedikatWennOhneInformationsverlustMoeglich();
+    public SemPraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
+        @Nullable final SemPraedikatOhneLeerstellen erstesPraedikat =
+                ersterSemSatz.getPraedikatWennOhneInformationsverlustMoeglich();
         if (erstesPraedikat == null) {
             return null;
         }
 
-        @Nullable final PraedikatOhneLeerstellen zweitesPraedikatOhneAnschlusswort =
+        @Nullable final SemPraedikatOhneLeerstellen zweitesPraedikatOhneAnschlusswort =
                 zweiterSatz.ohneAnschlusswort().getPraedikatWennOhneInformationsverlustMoeglich();
         if (zweitesPraedikatOhneAnschlusswort == null) {
             return null;
         }
 
-        return new ZweiPraedikateOhneLeerstellen(
+        return new ZweiPraedikateOhneLeerstellenSem(
                 erstesPraedikat,
                 zweiterSatz.getAnschlusswort(),
                 zweitesPraedikatOhneAnschlusswort);
@@ -409,60 +409,60 @@ public class Satzreihe implements Satz {
     @Override
     @Nullable
     public SubstantivischePhrase getErstesSubjekt() {
-        return ersterSatz.getErstesSubjekt();
+        return ersterSemSatz.getErstesSubjekt();
     }
 
     @Override
     public boolean hatAngabensatz() {
-        return anyMatch(Satz::hatAngabensatz);
+        return anyMatch(SemSatz::hatAngabensatz);
     }
 
     private Konstituentenfolge mapJoinToKonstituentenfolge(
-            final Function<Satz, Konstituentenfolge> function) {
+            final Function<SemSatz, Konstituentenfolge> function) {
         return mapJoinToKonstituentenfolge(function, true);
     }
 
     private Konstituentenfolge mapJoinToKonstituentenfolge(
-            final Function<Satz, Konstituentenfolge> function,
+            final Function<SemSatz, Konstituentenfolge> function,
             final boolean semikolonErlaubt) {
         return mapJoinToKonstituentenfolge(function, function::apply, semikolonErlaubt);
     }
 
     private Konstituentenfolge mapJoinToKonstituentenfolge(
-            final Function<Satz, ?> functionFuerErstenSatz,
-            final Function<EinzelnerSatz, Konstituentenfolge> functionFuerZweitenSatz) {
+            final Function<SemSatz, ?> functionFuerErstenSatz,
+            final Function<EinzelnerSemSatz, Konstituentenfolge> functionFuerZweitenSatz) {
         return mapJoinToKonstituentenfolge(functionFuerErstenSatz, functionFuerZweitenSatz, true);
     }
 
     private Konstituentenfolge mapJoinToKonstituentenfolge(
-            final Function<Satz, ?> functionFuerErstenSatz,
-            final Function<EinzelnerSatz, Konstituentenfolge> functionFuerZweitenSatz,
+            final Function<SemSatz, ?> functionFuerErstenSatz,
+            final Function<EinzelnerSemSatz, Konstituentenfolge> functionFuerZweitenSatz,
             final boolean semikolonErlaubt) {
         return joinToKonstituentenfolge(
-                functionFuerErstenSatz.apply(ersterSatz),
+                functionFuerErstenSatz.apply(ersterSemSatz),
                 semikolonErlaubt && moeglichstSemikolon ? ";" : null,
                 functionFuerZweitenSatz.apply(zweiterSatz)
                         .withVorkommaNoetigMin(!zweiterSatz.hasAnschlusswort()));
     }
 
-    private Satzreihe mapFirst(final Function<Satz, Satz> function) {
+    private Satzreihe mapFirst(final Function<SemSatz, SemSatz> function) {
         return new Satzreihe(
-                function.apply(ersterSatz),
+                function.apply(ersterSemSatz),
                 zweiterSatz);
     }
 
-    private boolean anyMatch(final Predicate<Satz> predicate) {
-        return Stream.of(ersterSatz, zweiterSatz).anyMatch(predicate);
+    private boolean anyMatch(final Predicate<SemSatz> predicate) {
+        return Stream.of(ersterSemSatz, zweiterSatz).anyMatch(predicate);
     }
 
-    private boolean bothMatch(final Predicate<Satz> predicate) {
-        return Stream.of(ersterSatz, zweiterSatz).allMatch(predicate);
+    private boolean bothMatch(final Predicate<SemSatz> predicate) {
+        return Stream.of(ersterSemSatz, zweiterSatz).allMatch(predicate);
     }
 
     @Override
     @Nullable
     public NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld getAnschlusswort() {
-        return ersterSatz.getAnschlusswort();
+        return ersterSemSatz.getAnschlusswort();
     }
 
     @NonNull
@@ -480,13 +480,13 @@ public class Satzreihe implements Satz {
             return false;
         }
         final Satzreihe that = (Satzreihe) o;
-        return ersterSatz.equals(that.ersterSatz) &&
+        return ersterSemSatz.equals(that.ersterSemSatz) &&
                 moeglichstSemikolon == that.moeglichstSemikolon &&
                 zweiterSatz.equals(that.zweiterSatz);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ersterSatz, zweiterSatz);
+        return Objects.hash(ersterSemSatz, zweiterSatz);
     }
 }

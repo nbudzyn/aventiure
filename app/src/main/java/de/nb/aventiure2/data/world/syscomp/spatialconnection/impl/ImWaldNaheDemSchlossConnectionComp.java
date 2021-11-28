@@ -68,7 +68,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * An implementation of {@link AbstractSpatialConnectionComp}
@@ -370,9 +370,9 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
      * aktuelle Wetter informiert wurde.
      */
     @NonNull
-    private ImmutableCollection<Satz> altWiederImSchlossgartenWetterHinweisSaetze(
+    private ImmutableCollection<SemSatz> altWiederImSchlossgartenWetterHinweisSaetze(
             final AvTimeSpan wegZeit) {
-        final ImmutableCollection<Satz> altSpWetterhinweisSaetze =
+        final ImmutableCollection<SemSatz> altSpWetterhinweisSaetze =
                 world.loadWetter().wetterComp().altSpWetterhinweisSaetze(
                         timeTaker.now().plus(wegZeit), DRAUSSEN_VOR_DEM_SCHLOSS,
                         // Damit vermeidet man "temporalsemantische Doppelbesetzungen" wie

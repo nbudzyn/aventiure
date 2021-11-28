@@ -24,7 +24,7 @@ import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.praedikat.PartizipIIPhrase;
 import de.nb.aventiure2.german.praedikat.Perfektbildung;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 
 class DescriptionCombiner {
     private DescriptionCombiner() {
@@ -103,7 +103,7 @@ class DescriptionCombiner {
         //  "Du kommst unten an" + "Du bist ziemlich erschöpft" ->
         //  "Unten angekommen bist du ziemlich erschöpft"
 
-        @Nullable final PraedikatOhneLeerstellen firstPraedikat =
+        @Nullable final SemPraedikatOhneLeerstellen firstPraedikat =
                 first.getPraedikatWennOhneInformationsverlustMoeglich();
         if (firstPraedikat != null
                 && firstPraedikat.kannPartizipIIPhraseAmAnfangOderMittenImSatzVerwendetWerden()

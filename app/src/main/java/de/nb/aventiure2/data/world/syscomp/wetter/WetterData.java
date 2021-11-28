@@ -136,9 +136,9 @@ import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 @SuppressWarnings("DuplicateBranchesInSwitch")
 @Immutable
@@ -362,7 +362,7 @@ public class WetterData {
      *                                                                         werden
      *                                                                         sollen
      */
-    ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+    ImmutableCollection<SemSatz> altSpWetterhinweisSaetze(
             final AvTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
@@ -534,7 +534,7 @@ public class WetterData {
      *                                                                 nicht beschrieben werden
      *                                                                 sollen
      */
-    private ImmutableCollection<Satz> altSpWetterHinweisSaetzeFuerDraussen(
+    private ImmutableCollection<SemSatz> altSpWetterHinweisSaetzeFuerDraussen(
             final AvTime time, final boolean unterOffenemHimmel,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
@@ -542,7 +542,7 @@ public class WetterData {
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         // FIXME Blitz und Donner berücksichtigen
 
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         final DrinnenDraussen drinnenDraussen =
                 unterOffenemHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL : DRAUSSEN_GESCHUETZT;
@@ -680,7 +680,7 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Es weht ein kühler Wind, der Himmel ist bewölkt"
-        final ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze =
+        final ImmutableCollection<SemSatz> altStatischeWindUndTemperaturSaetze =
                 altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
                         false);
         alt.addAll(altNeueSaetze(
@@ -776,19 +776,19 @@ public class WetterData {
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
      */
-    private ImmutableCollection<Satz>
+    private ImmutableCollection<SemSatz>
     altSpStatischeWindBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
             final AvTime time,
             final Windstaerke windstaerke,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Es weht ein kühler Wind, der Himmel ist bewölkt"
-        final ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze =
+        final ImmutableCollection<SemSatz> altStatischeWindUndTemperaturSaetze =
                 altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
                         nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete);
 
@@ -940,12 +940,12 @@ public class WetterData {
     /**
      * Gibt Sätze zu Wind und Temperatur zurück.
      */
-    private static ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze(
+    private static ImmutableCollection<SemSatz> altStatischeWindUndTemperaturSaetze(
             final AvTime time,
             final Windstaerke windstaerke,
             final Temperatur temperatur,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         final ImmutableList<AdjPhrOhneLeerstellen> tempAltAdjPhrPraedikativ =
                 TEMPERATUR_PRAEDIKATIVUM_DESCRIBER.altAdjPhr(
@@ -1059,7 +1059,7 @@ public class WetterData {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
+    ImmutableCollection<EinzelnerSemSatz> altSpWindgeraeuscheSaetze(
             final AvTime time, final boolean unterOffenemHimmel) {
         final Windstaerke windstaerke = windstaerkeUnterOffenemHimmel
                 .getLokaleWindstaerkeDraussen(unterOffenemHimmel);
@@ -1121,7 +1121,7 @@ public class WetterData {
                 time, locationTemperaturRange,
                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben));
 
-        final ImmutableCollection<Satz> heuteOderDerTagSaetze =
+        final ImmutableCollection<SemSatz> heuteOderDerTagSaetze =
                 TEMPERATUR_SATZ_DESCRIBER
                         .altSpDraussenHeuteDerTagSofernSinnvoll(
                                 temperatur,
@@ -1176,7 +1176,7 @@ public class WetterData {
                         auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben,
                         false).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
-                        .filter(EinzelnerSatz.class::isInstance)
+                        .filter(EinzelnerSemSatz.class::isInstance)
                         .collect(toImmutableSet()),
                 BEWOELKUNG_SATZ_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
@@ -1361,10 +1361,10 @@ public class WetterData {
         final Temperatur temperatur = getLokaleTemperatur(time, locationTemperaturRange);
 
         // "Draußen weht ein kühler Wind, der Himmel ist bewölkt"
-        final ImmutableCollection<Satz> altStatischeWindUndTemperaturSaetze =
+        final ImmutableCollection<SemSatz> altStatischeWindUndTemperaturSaetze =
                 altStatischeWindUndTemperaturSaetze(time, windstaerke, temperatur,
                         true);
-        final ImmutableCollection<Satz> altKommtNachDraussenWindUndTemperaturSaetze =
+        final ImmutableCollection<SemSatz> altKommtNachDraussenWindUndTemperaturSaetze =
                 altStatischeWindUndTemperaturSaetze.stream()
                         .map(s -> s.mitAdvAngabe(new AdvAngabeSkopusSatz("draußen")))
                         .collect(toImmutableSet());
@@ -1614,13 +1614,13 @@ public class WetterData {
                         true
                         , auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben).stream()
                         // Bandwurmsätze vermeiden - Ergebnis ist nicht leer!
-                        .filter(EinzelnerSatz.class::isInstance)
+                        .filter(EinzelnerSemSatz.class::isInstance)
                         .collect(toImmutableSet()),
                 BEWOELKUNG_SATZ_DESCRIBER
                         .altUnterOffenemHimmel(bewoelkung, time,
                                 auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben)));
 
-        final ImmutableCollection<Satz> altSpHeuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
+        final ImmutableCollection<SemSatz> altSpHeuteOderDerTagSaetze = TEMPERATUR_SATZ_DESCRIBER
                 .altSpDraussenHeuteDerTagSofernSinnvoll(
                         temperatur,
                         !locationTemperaturRange.isInRange(getAktuelleGenerelleTemperatur(time)),
@@ -2325,7 +2325,7 @@ public class WetterData {
     }
 
 
-    // IDEA: altWann() analog zu altWetterhinweiseWoDraussen(), aber mit Satz-Skopus, und keine
+    // IDEA: altWann() analog zu altWetterhinweiseWoDraussen(), aber mit SemSatz-Skopus, und keine
     //  vollwertigen Wetterhinweise! (Flags nicht zurücksetzen!)
     //  - "mit Sonnenaufgang (machts du dich auf den Weg...)"
     //  - "Bei Sonnenaufgang kommt schon..."
@@ -2657,11 +2657,11 @@ public class WetterData {
                                                     false)
                                                     .stream()
                                                     // Bandwurmsätze vermeiden
-                                                    .filter(EinzelnerSatz.class::isInstance)
+                                                    .filter(EinzelnerSemSatz.class::isInstance)
                                                     .map(tempSatz ->
                                                             new Satzreihe(
                                                                     windSatz,
-                                                                    (EinzelnerSatz) tempSatz)))
+                                                                    (EinzelnerSemSatz) tempSatz)))
                                     .collect(toImmutableSet())))
                     .addAll(altNeueSaetze(WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
                             change, windstaerkeChangeSofernRelevant,
@@ -2703,11 +2703,11 @@ public class WetterData {
                                                             false)
                                                     .stream()
                                                     // Bandwurmsätze vermeiden
-                                                    .filter(EinzelnerSatz.class::isInstance)
+                                                    .filter(EinzelnerSemSatz.class::isInstance)
                                                     .map(bewSatz ->
                                                             new Satzreihe(
                                                                     windSatz,
-                                                                    (EinzelnerSatz) bewSatz)))
+                                                                    (EinzelnerSemSatz) bewSatz)))
                                     .collect(toImmutableSet())))
                     .addAll(altNeueSaetze(
                             WINDSTAERKE_DESC_DESCRIBER.altSprungOderWechsel(
@@ -2734,7 +2734,7 @@ public class WetterData {
                             drinnenDraussen,
                             auchZeitwechselreferenzen && drinnenDraussen.isDraussen())
                             .stream()
-                            .filter(EinzelnerSatz.class::isInstance)
+                            .filter(EinzelnerSemSatz.class::isInstance)
                             .flatMap(tempSatz ->
                                     BEWOELKUNG_SATZ_DESCRIBER
                                             .altSpSprungOderWechselUnterOffenemHimmel(
@@ -2743,11 +2743,11 @@ public class WetterData {
                                                     false)
                                             .stream()
                                             // Bandwurmsätze vermeiden
-                                            .filter(EinzelnerSatz.class::isInstance)
+                                            .filter(EinzelnerSemSatz.class::isInstance)
                                             .map(bewSatz ->
                                                     new Satzreihe(
                                                             tempSatz,
-                                                            (EinzelnerSatz) bewSatz)))
+                                                            (EinzelnerSemSatz) bewSatz)))
                             .collect(toImmutableSet()))
                     .addAll(altNeueSaetze(
                             TEMPERATUR_DESC_DESCRIBER.altSprungOderWechsel(
@@ -2776,7 +2776,7 @@ public class WetterData {
                                 temperaturChangeSofernRelevant,
                                 drinnenDraussen, false)
                                 .stream()
-                                .filter(EinzelnerSatz.class::isInstance)
+                                .filter(EinzelnerSemSatz.class::isInstance)
                                 .flatMap(tempSatz ->
                                         BEWOELKUNG_SATZ_DESCRIBER
                                                 .altSpSprungOderWechselUnterOffenemHimmel(
@@ -2785,11 +2785,11 @@ public class WetterData {
                                                         false)
                                                 .stream()
                                                 // Bandwurmsätze vermeiden
-                                                .filter(EinzelnerSatz.class::isInstance)
+                                                .filter(EinzelnerSemSatz.class::isInstance)
                                                 .map(bewSatz ->
                                                         new Satzreihe(
                                                                 tempSatz,
-                                                                (EinzelnerSatz) bewSatz)))))
+                                                                (EinzelnerSemSatz) bewSatz)))))
                 .addAll(altNeueSaetze("Das Wetter ist umgeschwungen:",
                         SENTENCE,
                         WINDSTAERKE_SATZ_DESCRIBER.altSprungOderWechsel(
@@ -2801,10 +2801,10 @@ public class WetterData {
                                                 drinnenDraussen,
                                                 false)
                                                 .stream()
-                                                .filter(EinzelnerSatz.class::isInstance)
+                                                .filter(EinzelnerSemSatz.class::isInstance)
                                                 .map(tempSatz ->
                                                         new Satzreihe(windSatz,
-                                                                (EinzelnerSatz) tempSatz))),
+                                                                (EinzelnerSemSatz) tempSatz))),
                         SENTENCE,
                         BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(
                                 change, bewoelkungChangeSofernRelevant,

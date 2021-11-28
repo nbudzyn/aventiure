@@ -54,7 +54,7 @@ import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Component for {@link World#RAPUNZELS_ZAUBERIN}: Der Spieler
@@ -177,7 +177,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     private void zauberinReagiertAufAnsprechen() {
         final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, true);
 
-        final ImmutableList<Satz> altReaktionSaetze =
+        final ImmutableList<SemSatz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         n.narrateAlt(altSaetze(altReaktionSaetze).schonLaenger(), secs(5));

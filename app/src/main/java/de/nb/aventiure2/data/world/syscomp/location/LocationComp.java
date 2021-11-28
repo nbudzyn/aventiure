@@ -13,7 +13,7 @@ import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ICanHaveOuterMostLocation;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
 
 /**
  * Component for a {@link GameObject}: The game object
@@ -302,7 +302,7 @@ public class LocationComp extends AbstractStatefulComponent<LocationPCD>
      *                   (z.B. viele Äste)
      */
     @Nullable
-    public PraedikatMitEinerObjektleerstelle getMitnehmenPraedikat(final boolean vielteilig) {
+    public SemPraedikatMitEinerObjektleerstelle getMitnehmenPraedikat(final boolean vielteilig) {
         if (getLocation() == null) {
             return null;
         }

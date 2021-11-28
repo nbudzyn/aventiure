@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
  * <p>
  * "Die vom Subjekt bezeichnete Person will oder will nicht die Handlung
  * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
- * Der Satz, S. 356 (Kapitel 11.2)
+ * Der SemSatz, S. 356 (Kapitel 11.2)
  *
  * @see IntentionalesReflVerb
  */
@@ -46,9 +46,9 @@ public enum IntentionalesVerb
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
     @Override
-    public PraedikatIntentionalesVerbOhneLeerstellen mitLexikalischemKern(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
-        return new PraedikatIntentionalesVerbOhneLeerstellen(verb,
+    public SemPraedikatIntentionalesVerbOhneLeerstellen mitLexikalischemKern(
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
+        return new SemPraedikatIntentionalesVerbOhneLeerstellen(verb,
                 lexikalischerKern);
     }
 

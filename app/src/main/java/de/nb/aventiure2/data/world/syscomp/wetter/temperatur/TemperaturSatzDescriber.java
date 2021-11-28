@@ -46,9 +46,9 @@ import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Nominalphrase.npArtikellos;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
-import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
-import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitPraedikativum;
-import static de.nb.aventiure2.german.praedikat.DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumWerdenMitDat;
+import static de.nb.aventiure2.german.praedikat.DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitDat;
+import static de.nb.aventiure2.german.praedikat.DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumMitPraedikativum;
+import static de.nb.aventiure2.german.praedikat.DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen.dativPraedikativumWerdenMitDat;
 import static de.nb.aventiure2.german.praedikat.ReflVerbSubj.SICH_ABKUEHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ABKUEHLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ANBRECHEN;
@@ -92,13 +92,13 @@ import de.nb.aventiure2.german.praedikat.VerbOhneSubjAusserOptionalemExpletivemE
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
- * Beschreibt die {@link Temperatur} jeweils als {@link de.nb.aventiure2.german.satz.Satz}.
+ * Beschreibt die {@link Temperatur} jeweils als {@link SemSatz}.
  * <p>
  * Diese Sätze sind für jede Bewölkung sinnvoll (wobei manchmal die Bewölkung
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
@@ -127,10 +127,10 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<EinzelnerSatz> altTemperaturSprungOderWechselUndTageszeitenwechselDraussen(
+    ImmutableCollection<EinzelnerSemSatz> altTemperaturSprungOderWechselUndTageszeitenwechselDraussen(
             final Tageszeit newTageszeit,
             final Temperatur currentTemperatur) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         final ImmutableCollection<AdjPhrOhneLeerstellen>
                 altAdjPhrTemperaturaenderungAuchAttributiv =
@@ -199,14 +199,14 @@ public class TemperaturSatzDescriber {
      *               verbringt den kühlen Ort genau in dem Moment verlässt, wenn der
      *               Tag sich wieder abkühlt. Zurzeit berücksichtigen wir diese Fälle
      */
-    public ImmutableCollection<Satz> altSprungOderWechsel(
+    public ImmutableCollection<SemSatz> altSprungOderWechsel(
             final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Temperatur> change,
             final DrinnenDraussen drinnenDraussen,
             final boolean auchZeitwechselreferenzen) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
-        final ImmutableCollection<EinzelnerSatz> altStatisch = alt(
+        final ImmutableCollection<EinzelnerSemSatz> altStatisch = alt(
                 change.getNachher(), dateTimeChange.getNachher().getTageszeit(), drinnenDraussen,
                 true);
 
@@ -377,12 +377,12 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
-    private ImmutableCollection<Satz> altSprung(final AvDateTime time,
-                                                final WetterParamChange<Temperatur> change,
-                                                final DrinnenDraussen drinnenDraussen) {
+    private ImmutableCollection<SemSatz> altSprung(final AvDateTime time,
+                                                   final WetterParamChange<Temperatur> change,
+                                                   final DrinnenDraussen drinnenDraussen) {
         final int delta = change.delta();
 
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturaenderung(
                 change, false),
@@ -524,11 +524,11 @@ public class TemperaturSatzDescriber {
      *                                                                (z.B. "gegen Mitternacht"
      *                                                                geeignet sind)
      */
-    private ImmutableCollection<Satz> altWechselAnstieg(
+    private ImmutableCollection<SemSatz> altWechselAnstieg(
             final Tageszeit tageszeit,
             final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturanstieg(
                 endTemperatur, false),
@@ -628,11 +628,11 @@ public class TemperaturSatzDescriber {
      *                                                                (z.B. "gegen Mitternacht"
      *                                                                geeignet sind)
      */
-    private ImmutableCollection<Satz> altWechselAbfall(
+    private ImmutableCollection<SemSatz> altWechselAbfall(
             final Tageszeit tageszeit,
             final Temperatur endTemperatur, final DrinnenDraussen drinnenDraussen,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(praedikativumDescriber.altAdjPhrTemperaturabfall(
                 endTemperatur, false),
@@ -724,8 +724,8 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
-    private ImmutableCollection<EinzelnerSatz> altWirdEtwasWaermer() {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+    private ImmutableCollection<EinzelnerSemSatz> altWirdEtwasWaermer() {
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(TemperaturPraedikativumDescriber.altAdjPhrEtwasWaermer(),
                 Praedikativum::alsEsWirdSatz));
@@ -733,8 +733,8 @@ public class TemperaturSatzDescriber {
         return alt.build();
     }
 
-    private ImmutableCollection<EinzelnerSatz> altWirdEtwasKuehler() {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+    private ImmutableCollection<EinzelnerSemSatz> altWirdEtwasKuehler() {
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(mapToSet(TemperaturPraedikativumDescriber.altAdjPhrEtwasKuehler(),
                 Praedikativum::alsEsWirdSatz));
@@ -746,16 +746,16 @@ public class TemperaturSatzDescriber {
 
     /**
      * Gibt Sätze zurück wie "draußen ist es kalt" - es in jedem Fall auch mindesten ein
-     * {@link EinzelnerSatz} dabei.
+     * {@link EinzelnerSemSatz} dabei.
      */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    public ImmutableCollection<Satz> altKommtNachDraussen(
+    public ImmutableCollection<SemSatz> altKommtNachDraussen(
             final Temperatur temperatur,
             final AvTime time,
             final boolean unterOffenenHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         final DrinnenDraussen kommtNachDrinnenDraussen =
                 unterOffenenHimmel ? DRAUSSEN_UNTER_OFFENEM_HIMMEL :
@@ -801,17 +801,17 @@ public class TemperaturSatzDescriber {
 
     /**
      * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
-     * {@link EinzelnerSatz} dabei. Gibt ggf. auch Sätze zurück zu "heute", "der Tag"
+     * {@link EinzelnerSemSatz} dabei. Gibt ggf. auch Sätze zurück zu "heute", "der Tag"
      * oder zur Sonnenhitze.
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> alt(
+    public ImmutableCollection<SemSatz> alt(
             final Temperatur temperatur,
             final AvTime time, final DrinnenDraussen drinnenDraussen,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
             final boolean auchHeuteDerTagWennSinnvoll) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         // "Es ist kühl", "es ist warmes Wetter"
         alt.addAll(altOhneHeuteDerTagSonnenhitze(temperatur, time, drinnenDraussen,
@@ -838,10 +838,10 @@ public class TemperaturSatzDescriber {
 
     /**
      * Gibt Sätze zurück wie "es ist kalt" - es in jedem Fall auch mindesten ein
-     * {@link EinzelnerSatz} dabei. Gibt keine Sätze zurück zu "heute", "der Tag"
+     * {@link EinzelnerSemSatz} dabei. Gibt keine Sätze zurück zu "heute", "der Tag"
      * oder zur Sonnenhitze.
      *
-     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der Satz auch für eine
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der SemSatz auch für eine
      *                                                                zusätzliche  adverbiale
      *                                                                Angabe mit
      *                                                                Satzskopus geeignet
@@ -857,13 +857,13 @@ public class TemperaturSatzDescriber {
      *                                                                Wetter").
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altOhneHeuteDerTagSonnenhitze(
+    public ImmutableCollection<SemSatz> altOhneHeuteDerTagSonnenhitze(
             final Temperatur temperatur,
             final AvTime time,
             final DrinnenDraussen drinnenDraussen,
             final boolean auchEinmaligeErlebnisseDraussenNachTageszeitenwechselBeschreiben,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(alt(temperatur, time.getTageszeit(), drinnenDraussen,
                 nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete));
@@ -884,7 +884,7 @@ public class TemperaturSatzDescriber {
     /**
      * Erzeugt alternative Sätze zur Temperatur.
      *
-     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der Satz auch für eine
+     * @param nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete Ob der SemSatz auch für eine
      *                                                                zusätzliche  adverbiale
      *                                                                Angabe mit
      *                                                                Satzskopus geeignet sein soll
@@ -898,12 +898,12 @@ public class TemperaturSatzDescriber {
      */
     @SuppressWarnings("DuplicateBranchesInSwitch")
     @CheckReturnValue
-    private ImmutableCollection<EinzelnerSatz> alt(
+    private ImmutableCollection<EinzelnerSemSatz> alt(
             final Temperatur temperatur,
             final Tageszeit tageszeit,
             final DrinnenDraussen drinnenDraussen,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         if (nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
             alt.addAll(mapToList(praedikativumDescriber.altAdjPhr(
@@ -985,12 +985,12 @@ public class TemperaturSatzDescriber {
      * Gibt Alternativen zurück wie "es ist schon dunkel und ziemlich kühl" - oder eine leere
      * {@link java.util.Collection}.
      */
-    private ImmutableCollection<Satz> altSpMitTageszeitLichtverhaeltnissen(
+    private ImmutableCollection<SemSatz> altSpMitTageszeitLichtverhaeltnissen(
             final Temperatur temperatur,
             final AvTime time,
             final boolean unterOffenemHimmel,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
-        final ImmutableCollection.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableCollection.Builder<SemSatz> alt = ImmutableSet.builder();
 
         // "schon dunkel" / "dunkel"
         final ImmutableCollection<AdjPhrOhneLeerstellen> altSpSchonBereitsNochDunkelAdjPhr =
@@ -1042,7 +1042,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<Satz> altSpDraussenHeuteDerTagSofernSinnvoll(
+    public ImmutableCollection<SemSatz> altSpDraussenHeuteDerTagSofernSinnvoll(
             final Temperatur temperatur,
             final boolean generelleTemperaturOutsideLocationTemperaturRange,
             final AvTime time,
@@ -1055,10 +1055,10 @@ public class TemperaturSatzDescriber {
         return altSpDraussenHeuteDerTag(temperatur, time, sonneNichtErwaehnen);
     }
 
-    private ImmutableList<Satz> altSpDraussenHeuteDerTag(final Temperatur temperatur,
-                                                         final AvTime time,
-                                                         final boolean sonneNichtErwaehnen) {
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+    private ImmutableList<SemSatz> altSpDraussenHeuteDerTag(final Temperatur temperatur,
+                                                            final AvTime time,
+                                                            final boolean sonneNichtErwaehnen) {
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         // "Heute ist es heiß."
         alt.addAll(
@@ -1089,7 +1089,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    private ImmutableCollection<Satz> altDerTag(final Temperatur temperatur) {
+    private ImmutableCollection<SemSatz> altDerTag(final Temperatur temperatur) {
         return praedikativumDescriber.altAdjPhr(temperatur, false).stream()
                 .map(a -> a.alsPraedikativumPraedikat().alsSatzMitSubjekt(TAG))
                 .collect(toImmutableList());
@@ -1123,7 +1123,7 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableList<EinzelnerSatz> altSchoneTageszeitUndAberSchonNochAdjPhr(
+    public ImmutableList<EinzelnerSemSatz> altSchoneTageszeitUndAberSchonNochAdjPhr(
             final Temperatur temperatur, final Tageszeit tageszeit) {
         return mapToList(praedikativumDescriber.altSchoneTageszeitUndAberSchonNochAdjPhr(
                 temperatur, tageszeit),
@@ -1136,9 +1136,9 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    public ImmutableCollection<EinzelnerSatz> altDraussenNoch(final Temperatur temperatur,
-                                                              final Tageszeit tageszeit) {
-        final ImmutableList.Builder<EinzelnerSatz> alt = ImmutableList.builder();
+    public ImmutableCollection<EinzelnerSemSatz> altDraussenNoch(final Temperatur temperatur,
+                                                                 final Tageszeit tageszeit) {
+        final ImmutableList.Builder<EinzelnerSemSatz> alt = ImmutableList.builder();
 
         // "Es ist (noch (sehr kalt))."
         alt.addAll(praedikativumDescriber
@@ -1169,14 +1169,14 @@ public class TemperaturSatzDescriber {
      */
     @NonNull
     @CheckReturnValue
-    ImmutableCollection<Satz> altSpSonnenhitzeWennHeissUndNichtNachts(
+    ImmutableCollection<SemSatz> altSpSonnenhitzeWennHeissUndNichtNachts(
             final Temperatur temperatur,
             final AvTime time, final boolean auchMitBezugAufKonkreteTageszeit) {
         if (time.getTageszeit() == NACHTS) {
             return ImmutableSet.of();
         }
 
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         if (temperatur.compareTo(Temperatur.RECHT_HEISS) == 0) {
             alt.add(SCHEINEN.alsSatzMitSubjekt(SONNE)
@@ -1209,7 +1209,7 @@ public class TemperaturSatzDescriber {
      * Gibt Sätze zurück wie "hier ist es angenehm kühl".
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altDeutlicherUnterschiedZuVorLocation(
+    public ImmutableCollection<SemSatz> altDeutlicherUnterschiedZuVorLocation(
             final Temperatur temperatur, final int delta) {
         return mapToList(
                 praedikativumDescriber

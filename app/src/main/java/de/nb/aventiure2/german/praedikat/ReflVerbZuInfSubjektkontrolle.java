@@ -46,9 +46,9 @@ public enum ReflVerbZuInfSubjektkontrolle
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
     @Override
-    public PraedikatReflZuInfSubjektkontrollen mitLexikalischemKern(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
-        return new PraedikatReflZuInfSubjektkontrollen(verb, kasus,
+    public SemPraedikatReflZuInfSubjektkontrollen mitLexikalischemKern(
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
+        return new SemPraedikatReflZuInfSubjektkontrollen(verb, kasus,
                 lexikalischerKern);
     }
 

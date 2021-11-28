@@ -8,7 +8,7 @@ import de.nb.aventiure2.german.base.WoertlicheRede;
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und wörtlicher Rede steht.
  */
 public enum VerbSubjWoertlicheRede
-        implements VerbMitValenz, PraedikatMitEinerLeerstelleFuerWoertlicheRede {
+        implements VerbMitValenz, SemPraedikatMitEinerLeerstelleFuerWoertlicheRede {
     RUFEN("rufen", "rufe", "rufst", "ruft", "ruft",
             Perfektbildung.HABEN, "gerufen");
 
@@ -33,9 +33,9 @@ public enum VerbSubjWoertlicheRede
     }
 
     @Override
-    public PraedikatWoertlicheRedeOhneLeerstellen mitWoertlicheRede(
+    public SemPraedikatWoertlicheRedeOhneLeerstellen mitWoertlicheRede(
             final WoertlicheRede woertlicheRede) {
-        return new PraedikatWoertlicheRedeOhneLeerstellen(verb,
+        return new SemPraedikatWoertlicheRedeOhneLeerstellen(verb,
                 woertlicheRede);
     }
 

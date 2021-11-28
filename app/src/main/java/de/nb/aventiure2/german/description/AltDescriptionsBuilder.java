@@ -29,7 +29,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Ein Builder für alternative {@link AbstractDescription}s.
@@ -59,26 +59,26 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
 
     @Nonnull
     @CheckReturnValue
-    public static AltDescriptionsBuilder altSaetze(final Collection<? extends Satz> saetze) {
+    public static AltDescriptionsBuilder altSaetze(final Collection<? extends SemSatz> saetze) {
         return altSaetze(WORD, saetze);
     }
 
     @Nonnull
     @CheckReturnValue
-    public static AltDescriptionsBuilder altNeueSaetze(final Satz... saetze) {
+    public static AltDescriptionsBuilder altNeueSaetze(final SemSatz... saetze) {
         return altNeueSaetze(asList(saetze));
     }
 
     @Nonnull
     @CheckReturnValue
-    public static AltDescriptionsBuilder altNeueSaetze(final Collection<? extends Satz> saetze) {
+    public static AltDescriptionsBuilder altNeueSaetze(final Collection<? extends SemSatz> saetze) {
         return altSaetze(SENTENCE, saetze);
     }
 
     @Nonnull
     @CheckReturnValue
     private static AltDescriptionsBuilder altSaetze(
-            final StructuralElement startsNew, final Collection<? extends Satz> saetze) {
+            final StructuralElement startsNew, final Collection<? extends SemSatz> saetze) {
         return alt().addAll(saetze.stream().map(s -> DescriptionBuilder.satz(startsNew, s)));
     }
 
@@ -129,8 +129,8 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
                 alt.addAll(((AltDescriptionsBuilder) other).build());
             } else if (other instanceof AbstractDescription<?>) {
                 add((AbstractDescription<?>) other);
-            } else if (other instanceof Satz) {
-                add((Satz) other);
+            } else if (other instanceof SemSatz) {
+                add((SemSatz) other);
             } else {
                 throw new IllegalArgumentException("Unexpected addition: " + other);
             }
@@ -149,9 +149,9 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
         return this;
     }
 
-    public AltDescriptionsBuilder add(final Satz... saetze) {
-        for (final Satz satz : saetze) {
-            add(DescriptionBuilder.satz(satz));
+    public AltDescriptionsBuilder add(final SemSatz... saetze) {
+        for (final SemSatz semSatz : saetze) {
+            add(DescriptionBuilder.satz(semSatz));
         }
         return this;
     }

@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Ein Adjektiv, das einen ob- oder w-Fragesatz (eine indirekte Frage) fordert:
@@ -10,7 +10,8 @@ import de.nb.aventiure2.german.satz.Satz;
  * wer zu berichten hat"
  */
 public enum AdjektivMitIndirektemFragesatz implements Adjektivphrase {
-    // "gespannt, ob du etwas zu berichten hast / was du zu berichten hast / wessen Heldentaten wer zu berichten hat"
+    // "gespannt, ob du etwas zu berichten hast / was du zu berichten hast / wessen Heldentaten
+    // wer zu berichten hat"
     GESPANNT("gespannt");
 
     /**
@@ -29,7 +30,7 @@ public enum AdjektivMitIndirektemFragesatz implements Adjektivphrase {
     }
 
     public AdjPhrMitIndirektemFragesatzOhneLeerstellen mitIndirektemFragesatz(
-            final Satz indirekterFragesatz) {
+            final SemSatz indirekterFragesatz) {
         return new AdjPhrMitIndirektemFragesatzOhneLeerstellen(adjektiv, indirekterFragesatz);
     }
 }

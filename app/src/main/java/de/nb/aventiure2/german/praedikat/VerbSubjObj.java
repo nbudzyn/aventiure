@@ -21,12 +21,12 @@ import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt und einem (Präpositional-) Objekt steht.
  */
-public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerstelle {
+public enum VerbSubjObj implements VerbMitValenz, SemPraedikatMitEinerObjektleerstelle {
     // Verben ohne Partikel
     ANTWORTEN(VerbSubjObjWoertlicheRede.ANTWORTEN, DAT, Perfektbildung.HABEN),
     BAUEN("bauen", AKK, "baue", "baust", "baut", "baut",
@@ -303,21 +303,23 @@ public enum VerbSubjObj implements VerbMitValenz, PraedikatMitEinerObjektleerste
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+    public SemPraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(
+        return new SemPraedikatMitEinerObjLeerstelle(
                 verb, kasusOderPraepositionalkasus, advAngabe, null);
     }
 
-    public PraedikatMitEinerObjLeerstelle mitAdvAngabe(
+    public SemPraedikatMitEinerObjLeerstelle mitAdvAngabe(
             @Nullable final AdvAngabeSkopusVerbWohinWoher advAngabe) {
-        return new PraedikatMitEinerObjLeerstelle(
+        return new SemPraedikatMitEinerObjLeerstelle(
                 verb, kasusOderPraepositionalkasus, null, advAngabe);
     }
 
     @Override
-    public PraedikatSubjObjOhneLeerstellen mit(final SubstantivischePhrase substPhr) {
-        return new PraedikatSubjObjOhneLeerstellen(verb, kasusOderPraepositionalkasus, substPhr);
+    public SemPraedikatSubjObjOhneLeerstellen mit(
+            final SubstantivischPhrasierbar substPhrasierbar) {
+        return new SemPraedikatSubjObjOhneLeerstellen(verb, kasusOderPraepositionalkasus,
+                substPhrasierbar);
     }
 
     @Nullable

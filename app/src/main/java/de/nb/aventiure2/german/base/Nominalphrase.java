@@ -24,11 +24,12 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SyntSatz;
 
 /**
  * Eine Nominalphrase, z.B. "ein dicker, hässlicher Frosch".
  */
+// FIXME SemNominalphrase (wegen Relativsatz)? Oder irgendwie "generisch-agnostisch"?
 public class Nominalphrase
         extends EinzelneKomplexeSubstantivischePhrase
         implements IErlaubtAttribute {
@@ -339,7 +340,7 @@ public class Nominalphrase
         // Beispiel für eine voll ausgebaute Nominalphrase:
         // "sogar ein neues Buch dieses Autors mit vielen Bildern, das uns erstaunt"
         // Die Elemente sind Artikel, Adjektivattribut, Kern (Nomen), Genitivattribut,
-        // Präpositionalattribut und Attributsatz (Eisenberg, Der Satz, S. 387ff)
+        // Präpositionalattribut und Attributsatz (Eisenberg, Der SemSatz, S. 387ff)
 
         // Komplexe Nominalphrasen in Kombination mit komplexen Adjektivphrasen:
         // "sogar ein Kritiker von Anfang an wirklich begeisterndes und Eingeweihte überraschende
@@ -555,7 +556,11 @@ public class Nominalphrase
         // Kasusendung trägt. (Ein vorangestelltes Genitivattribut gilt nicht als
         // "artikelWeglassen"!)
 
-        @Nullable final Satz attributivAnteilRelativsatz = getAttributivAnteilRelativsatz(kasus);
+        @Nullable final SyntSatz attributivAnteilRelativsatz =
+                // FIXME Sollte sich der textContext vielleicht über die Generierung
+                //  schrittweise ändern? Wie kann das passieren?
+                //  Denkbar wäre ein ein mutable textContext mit Visitor-Pattern...
+                getAttributivAnteilRelativsatz(kasus);
 
         @Nullable final AdjPhrOhneLeerstellen attributivAnteilLockererNachtrag = adjPhr != null ?
                 adjPhr.getAttributivAnteilLockererNachtrag(kasus) : null;
@@ -628,7 +633,7 @@ public class Nominalphrase
         //  "Die grüne Eidechse läuft über den Boden" - ?"Grün läuft die Eidechse über den Boden"
         //  Aber vielleicht bei praktisch allen mit w-Fragesatz oder anderweitig komplexen,
         //  für die das überhaupt nur relevant wäre? Letztlich müsste das
-        //  Prädikat dem Satz mitteilen, dass "Glücklich, Rapunzel zu sehen" ins
+        //  Prädikat dem SemSatz mitteilen, dass "Glücklich, Rapunzel zu sehen" ins
         //  Vorfeld gerückt werden sollte (getSpeziellesVorfeldSehrErwuenscht(),
         //  getSpeziellesVorfeldAlsWeitereOption()).
         //  Der attributivAnteilLockererNachtrag muss eine eigene Konstituente sein,
@@ -661,12 +666,11 @@ public class Nominalphrase
     }
 
     @Nullable
-    private Satz getAttributivAnteilRelativsatz(final Kasus kasus) {
-        @Nullable Satz attributivAnteilRelativsatz = null;
+    private SyntSatz getAttributivAnteilRelativsatz(final Kasus kasus) {
+        @Nullable SyntSatz attributivAnteilSemRelativsatz = null;
         if (adjPhr != null) {
             @Nullable final Praedikativum praedikativumFuerRelativsatz =
-                    adjPhr.getAttributivAnteilRelativsatz(
-                            kasus);
+                    adjPhr.getAttributivAnteilRelativsatz(kasus);
 
             if (praedikativumFuerRelativsatz != null) {
                 // "die"
@@ -674,12 +678,12 @@ public class Nominalphrase
                         .get(getPerson(), getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
 
                 // "die gespannt ist, was wer zu berichten hat"
-                attributivAnteilRelativsatz =
+                attributivAnteilSemRelativsatz =
                         praedikativumFuerRelativsatz.alsPraedikativumPraedikat()
                                 .alsSatzMitSubjekt(relativpronomen);
             }
         }
-        return attributivAnteilRelativsatz;
+        return attributivAnteilSemRelativsatz;
     }
 
     @Override

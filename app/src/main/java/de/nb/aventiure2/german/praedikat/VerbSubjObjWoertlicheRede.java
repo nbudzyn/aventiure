@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -8,8 +10,6 @@ import org.jetbrains.annotations.Contract;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
-
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Objekt und wörtlicher Rede
@@ -73,25 +73,25 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
 
     @NonNull
     @Contract(value = "_ -> new", pure = true)
-    public PraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle mitObjekt(
+    public SemPraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle mitObjekt(
             final SubstantivischePhrase objekt) {
-        return new PraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle(verb,
+        return new SemPraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle(verb,
                 kasusOderPraepositionalkasus, objekt);
     }
 
     /**
      * Füllt die Leerstelle mit dieser Woertlichen Rede.
      */
-    public PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
+    public SemPraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
             final String woertlicheRede) {
         return mitWoertlicheRede(new WoertlicheRede(woertlicheRede));
     }
 
     @NonNull
     @Contract(value = "_ -> new", pure = true)
-    private PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
+    private SemPraedikatObjWoertlicheRedeMitEinerObjektLeerstelle mitWoertlicheRede(
             final WoertlicheRede woertlicheRede) {
-        return new PraedikatObjWoertlicheRedeMitEinerObjektLeerstelle(verb,
+        return new SemPraedikatObjWoertlicheRedeMitEinerObjektLeerstelle(verb,
                 kasusOderPraepositionalkasus, woertlicheRede);
     }
 

@@ -60,7 +60,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
 import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -213,7 +213,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
         }
 
         narrateAndDoHochwerfenAuffangen(mapToList(sc.feelingsComp().altAdvAngabenSkopusSatz(),
-                a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellen(
+                a -> du(PARAGRAPH, new ZweiPraedikateOhneLeerstellenSem(
                         WERFEN.mit(anaph)
                                 .mitAdvAngabe(a)
                                 .mitAdvAngabe(

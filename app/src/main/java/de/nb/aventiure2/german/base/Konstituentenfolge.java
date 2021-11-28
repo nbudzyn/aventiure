@@ -729,15 +729,15 @@ public class Konstituentenfolge
                                                 final StructuralElement brreak,
                                                 final boolean kommaStehtAus,
                                                 final Konstituente konstituente) {
-        // Vordoppelpunkt ist in neuem Satz, Absatz, ... nicht nötig
+        // Vordoppelpunkt ist in neuem SemSatz, Absatz, ... nicht nötig
         if (!firstKonstituente && brreak != CHAPTER && brreak != PARAGRAPH
                 && konstituente.vordoppelpunktNoetig()) {
             stringBuilder.append(satzzeichenToString(":", konstituente.getText()));
 
-            return brreak != WORD; // Danach Großschreibung, wenn mindestens ein Satz beginnt
+            return brreak != WORD; // Danach Großschreibung, wenn mindestens ein SemSatz beginnt
         }
 
-        // Vorkomma ist in neuem Satz, Absatz, ... nicht nötig
+        // Vorkomma ist in neuem SemSatz, Absatz, ... nicht nötig
         if (kommaStehtAus && brreak == WORD
                 || (!firstKonstituente && brreak == WORD && konstituente.vorkommaNoetig()
                 && !endeDecktKommaAb(stringBuilder))) {
@@ -747,7 +747,7 @@ public class Konstituentenfolge
 
         appendBreak(stringBuilder, brreak, konstituente.getText());
         return !firstKonstituente && brreak != WORD; // Danach Großschreibung, wenn mindestens
-        // ein Satz beginnt, außer bei der ersten Konstituente
+        // ein SemSatz beginnt, außer bei der ersten Konstituente
     }
 
     private static StructuralElement appendKonstituente(final StringBuilder stringBuilder,
@@ -874,7 +874,7 @@ public class Konstituentenfolge
     private Konstituentenfolge withKommaStehtAus() {
         if (konstituenten.get(konstituenten.size() - 1) instanceof StructuralElement) {
             // WORD kann nicht enthalten sein, am Ende der Konstituentenfolge endet also
-            // der Satz.
+            // der SemSatz.
             // Kein Komma nötig.
             return this;
         }
@@ -901,7 +901,7 @@ public class Konstituentenfolge
         if (!vorkommaNoetigMin || konstituenten.get(0) instanceof StructuralElement) {
             // WORD kann nicht enthalten sein, mit der Konstituentenfolge beginnt also
             // ein neuer
-            // Satz. Kein Komma nötig.
+            // SemSatz. Kein Komma nötig.
             return this;
         }
 

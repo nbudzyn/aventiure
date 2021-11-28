@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.adjektiv;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 
 /**
  * Ein Adjektiv, das einen zu-Infinitiv fordert: "glücklich, Peter zu sehen".
@@ -32,7 +32,7 @@ public enum AdjektivMitZuInfinitiv implements Adjektivphrase {
     }
 
     public AdjPhrMitZuInfinitivOhneLeerstellen mitLexikalischerKern(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
         return new AdjPhrMitZuInfinitivOhneLeerstellen(adjektiv, lexikalischerKern);
     }
 }

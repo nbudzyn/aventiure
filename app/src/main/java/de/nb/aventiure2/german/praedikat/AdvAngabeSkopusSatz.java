@@ -6,7 +6,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 
 /**
- * Eine adverbiale Angabe, die sich eher auf den gesamten Satz bezieht, z.B.
+ * Eine adverbiale Angabe, die sich eher auf den gesamten SemSatz bezieht, z.B.
  * "LEIDER kannst du schlecht singen" /
  * "Du kannst LEIDER schlecht singen".
  * <p>
@@ -19,7 +19,7 @@ public class AdvAngabeSkopusSatz
         extends AbstractAdvAngabe
         implements IAdvAngabeOderInterrogativSkopusSatz {
     /**
-     * Erzeugt eine adverbiale Bestimmung mit dem Skopus Satz; der Text darf
+     * Erzeugt eine adverbiale Bestimmung mit dem Skopus SemSatz; der Text darf
      * keine zu-Infinitive, keine Angabensätze (z.B. zum Adjektiv) und keine Ergönzungssätze
      * (z.B. zum Adjektiv) enthalten.
      */

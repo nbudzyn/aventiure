@@ -103,15 +103,15 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
 import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Beschreibt die {@link Bewoelkung}, evtl. auch Tageszeit und tageszeitliche
- * Lichtverhältnisse, jeweils als {@link de.nb.aventiure2.german.satz.Satz}.
+ * Lichtverhältnisse, jeweils als {@link SemSatz}.
  * <p>
  * Diese Phrasen sind für jede Temperatur sinnvoll (wobei manchmal die Temperatur
  * oder andere Wetteraspekte wichtiger sind und man dann diese Sätze
@@ -138,7 +138,7 @@ public class BewoelkungSatzDescriber {
      * Tageszeit gewechselt hat: "Die Sonne geht auf" o.Ä.
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altSpTageszeitenwechsel(
+    public ImmutableCollection<SemSatz> altSpTageszeitenwechsel(
             final Bewoelkung bewoelkung,
             final Tageszeit neueTageszeit, final boolean unterOffenemHimmel) {
         // Leere Menge als Ergebnis bei:
@@ -147,7 +147,7 @@ public class BewoelkungSatzDescriber {
         // - ABENDS und nicht unter offenem Himmel und bewölkung > BEWOELKT
         // - NACHTS und BEDECKT
 
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         if (neueTageszeit == MORGENS) {
             if (bewoelkung.compareTo(LEICHT_BEWOELKT) <= 0 && unterOffenemHimmel) {
@@ -222,13 +222,13 @@ public class BewoelkungSatzDescriber {
      * Gibt Alternativen zurück, die beschreiben, wie die Bewölkung sich eine Stufe
      * (Bewölkungswechsel) oder mehrere Stufen (Bewölkungssprung) verändert hat.
      */
-    public ImmutableCollection<Satz> altSpSprungOderWechselUnterOffenemHimmel(
+    public ImmutableCollection<SemSatz> altSpSprungOderWechselUnterOffenemHimmel(
             final Change<AvDateTime> dateTimeChange,
             final WetterParamChange<Bewoelkung> change, final boolean auchZeitwechselreferenzen) {
         // Leeres Ergebnis zumindest bei
         // - delta (0 oder 1) und endBewoelkung <= LEICHT_BEWOELKT und NACHTS in einigen Fällen
 
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         final int delta = change.delta();
         if (Math.abs(delta) <= 1) {
@@ -324,12 +324,12 @@ public class BewoelkungSatzDescriber {
                 alt.addAll(mapToSet(altSpWechselAnstiegUnterOffenemHimmel(
                         dateTimeChange.getNachher().getTageszeit(), change.getNachher()
                         ),
-                        EinzelnerSatz::perfekt));
+                        EinzelnerSemSatz::perfekt));
             } else {
                 alt.addAll(mapToSet(altWechselAbfallUnterOffenemHimmel(
                         dateTimeChange.getNachher().getTageszeit(), change.getNachher(),
                         false),
-                        Satz::perfekt));
+                        SemSatz::perfekt));
 
                 if (change.getNachher() == BEWOELKT) {
                     // "Der Himmel hat sich stark bewölkt"
@@ -356,12 +356,12 @@ public class BewoelkungSatzDescriber {
      *
      * @param endBewoelkung Die Bewölkung nach dem Anstieg
      */
-    private ImmutableCollection<EinzelnerSatz> altSpWechselAnstiegUnterOffenemHimmel(
+    private ImmutableCollection<EinzelnerSemSatz> altSpWechselAnstiegUnterOffenemHimmel(
             final Tageszeit tageszeit,
             final Bewoelkung endBewoelkung) {
         // Leeres Ergebnis bei endBewoelkung <=LEICHT_BEWOELKT und NACHTS
 
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
         switch (endBewoelkung) {
             case WOLKENLOS: // Kann gar nicht sein
                 // fall-through
@@ -429,11 +429,11 @@ public class BewoelkungSatzDescriber {
      *                                                                (z.B. "gegen Mitternacht"
      *                                                                geeignet sind)
      */
-    private ImmutableCollection<Satz> altWechselAbfallUnterOffenemHimmel(
+    private ImmutableCollection<SemSatz> altWechselAbfallUnterOffenemHimmel(
             final Tageszeit tageszeit,
             final Bewoelkung endBewoelkung,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-        final ImmutableSet.Builder<Satz> alt = ImmutableSet.builder();
+        final ImmutableSet.Builder<SemSatz> alt = ImmutableSet.builder();
 
         switch (endBewoelkung) {
             case WOLKENLOS:
@@ -463,7 +463,7 @@ public class BewoelkungSatzDescriber {
                     //  "Die düstere Wolkendecke reißt auf"
                     alt.add(AUFREISSEN.alsSatzMitSubjekt(WOLKENDECKE.mit(DUESTER)));
                     if (!nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
-                        alt.add(new ZweiPraedikateOhneLeerstellen(
+                        alt.add(new ZweiPraedikateOhneLeerstellenSem(
                                 AUFREISSEN.mitAdvAngabe(
                                         new AdvAngabeSkopusVerbAllg("wieder")),
                                 FREIGEBEN.mit(BLICK_AUF_DEN_STERNENHIMMEL)
@@ -493,7 +493,7 @@ public class BewoelkungSatzDescriber {
      *                                                                 auftreten
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altKommtUnterOffenenHimmel(
+    public ImmutableCollection<SemSatz> altKommtUnterOffenenHimmel(
             final Bewoelkung bewoelkung,
             final AvTime time, final boolean warVorherDrinnen,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -501,7 +501,7 @@ public class BewoelkungSatzDescriber {
         // sollen (z.B. bei "schon", "inzwischen", "eben", "xyz ist passiert" etc.), dann
         // nur bei auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben schreiben!
 
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         if (warVorherDrinnen) {
             alt.addAll(mapToList(altUnterOffenemHimmel(bewoelkung, time,
@@ -546,7 +546,7 @@ public class BewoelkungSatzDescriber {
      *                                                                 einmalig auftreten
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altUnterOffenemHimmel(
+    public ImmutableCollection<SemSatz> altUnterOffenemHimmel(
             final Bewoelkung bewoelkung,
             final AvTime time,
             final boolean auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben) {
@@ -554,7 +554,7 @@ public class BewoelkungSatzDescriber {
         // sollen (z.B. bei "schon", "inzwischen", "eben", "xyz ist passiert" etc.), dann
         // nur bei auchEinmaligeErlebnisseNachTageszeitenwechselBeschreiben schreiben!
 
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         alt.addAll(altUnterOffenemHimmel(bewoelkung, time.getTageszeit()));
 
@@ -651,14 +651,14 @@ public class BewoelkungSatzDescriber {
      * Gibt alternative Beschreibungen unter offenem Himmel zurück.
      */
     @CheckReturnValue
-    private ImmutableCollection<Satz> altUnterOffenemHimmel(
+    private ImmutableCollection<SemSatz> altUnterOffenemHimmel(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit) {
         //  IDEA
         //   - "Der Mond glänzt auf dem Weiher"
         //   - "der Weiher liegt ruhig da und (nur) der Mond glänzt darauf."
         //   - "der Weiher liegt so ruhig wie zuvor, und nur der Mond glänzt darauf."
-        final ImmutableList.Builder<Satz> alt = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> alt = ImmutableList.builder();
 
         // "der Himmel ist wolkenlos"
         alt.addAll(mapToSet(praedikativumDescriber.altSpHimmelAdjPhr(bewoelkung, tageszeit),

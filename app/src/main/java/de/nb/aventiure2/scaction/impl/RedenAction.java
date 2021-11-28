@@ -28,9 +28,9 @@ import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.Praedikat;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikat;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -119,37 +119,37 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                                     final Narrator n, final World world,
                                     final TALKER talker,
                                     final SCTalkAction talkStep) {
-        final PraedikatOhneLeerstellen praedikatOhneLeerstellen =
+        final SemPraedikatOhneLeerstellen semPraedikatOhneLeerstellen =
                 fuelleGgfPraedikatLeerstelleMitCreature(world, talkStep.getName(), talker);
 
         return buildAction(scActionStepCountDao, timeTaker, n, world, talker,
                 talkStep,
-                praedikatOhneLeerstellen);
+                semPraedikatOhneLeerstellen);
     }
 
     @SuppressWarnings("ChainOfInstanceofChecks")
-    private static PraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
+    private static SemPraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
             final World worldervice,
-            final Praedikat praedikat,
+            final SemPraedikat semPraedikat,
             final IDescribableGO talker) {
-        if (praedikat instanceof PraedikatOhneLeerstellen) {
-            return (PraedikatOhneLeerstellen) praedikat;
+        if (semPraedikat instanceof SemPraedikatOhneLeerstellen) {
+            return (SemPraedikatOhneLeerstellen) semPraedikat;
         }
 
-        if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
+        if (semPraedikat instanceof SemPraedikatMitEinerObjektleerstelle) {
             final EinzelneSubstantivischePhrase creatureDesc =
                     worldervice.getPOVDescription(textContext, SPIELER_CHARAKTER, talker,
                             NICHT_POSSESSIV, true);
 
-            return ((PraedikatMitEinerObjektleerstelle) praedikat).mit(creatureDesc);
+            return ((SemPraedikatMitEinerObjektleerstelle) semPraedikat).mit(creatureDesc);
         }
 
-        throw new IllegalArgumentException("Unexpected type of Prädikat: " + praedikat);
+        throw new IllegalArgumentException("Unexpected type of Prädikat: " + semPraedikat);
     }
 
     /**
      * Erzeugt eine <code>RedenAction</code>
-     * mit diesem {@link PraedikatOhneLeerstellen}.
+     * mit diesem {@link SemPraedikatOhneLeerstellen}.
      */
     @NonNull
     private static <TALKER extends IDescribableGO & ILocatableGO & ITalkerGO<?>>
@@ -159,14 +159,14 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
             final Narrator n, final World world,
             final TALKER talker,
             final SCTalkAction talkStep,
-            final PraedikatOhneLeerstellen praedikatOhneLeerstellen) {
+            final SemPraedikatOhneLeerstellen semPraedikatOhneLeerstellen) {
         return new RedenAction<>(scActionStepCountDao, timeTaker, n, world, talker,
                 talkStep,
                 // "Dem Frosch Angebote machen"
                 // "Das Angebot von *dir* weisen"
                 joinToKonstituentenfolge(
                         SENTENCE,
-                        praedikatOhneLeerstellen.getInfinitiv(P2, SG))
+                        semPraedikatOhneLeerstellen.getInfinitiv(P2, SG))
                         .joinToString());
     }
 

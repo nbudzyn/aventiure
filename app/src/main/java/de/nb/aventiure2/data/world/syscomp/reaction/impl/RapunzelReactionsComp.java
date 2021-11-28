@@ -90,7 +90,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * "Reaktionen" von Rapunzel, z.B. darauf, dass Zeit vergeht
@@ -529,7 +529,7 @@ public class RapunzelReactionsComp
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        final ImmutableList<Satz> altReaktionSaetze =
+        final ImmutableList<SemSatz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         alt.addAll(altSaetze(altReaktionSaetze).schonLaenger().timed(secs(5)));
@@ -553,7 +553,7 @@ public class RapunzelReactionsComp
 
         final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, true);
 
-        final ImmutableList<Satz> altReaktionSaetze =
+        final ImmutableList<SemSatz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         alt.addAll(altSaetze(altReaktionSaetze).schonLaenger().timed(secs(5)));

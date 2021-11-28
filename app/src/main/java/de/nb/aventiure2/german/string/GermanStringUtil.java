@@ -1,18 +1,18 @@
 package de.nb.aventiure2.german.string;
 
-import androidx.annotation.NonNull;
-
-import java.util.Locale;
-
-import de.nb.aventiure2.german.base.GermanUtil;
-import de.nb.aventiure2.german.base.StructuralElement;
-
 import static de.nb.aventiure2.german.base.GermanUtil.getWhatsNeededToStartNewChapter;
 import static de.nb.aventiure2.german.base.GermanUtil.newLineNeededToStartNewParagraph;
 import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+
+import androidx.annotation.NonNull;
+
+import java.util.Locale;
+
+import de.nb.aventiure2.german.base.GermanUtil;
+import de.nb.aventiure2.german.base.StructuralElement;
 
 public class GermanStringUtil {
     /**
@@ -64,7 +64,7 @@ public class GermanStringUtil {
      * Gibt den String zurück, mit dem die noch offene wörtliche Rede abgeschlossen wird.
      * Dies können ein Leerstring, "“" oder ".“" sein.
      *
-     * @param satzende Ob der Satz damit beendet werden soll
+     * @param satzende Ob der SemSatz damit beendet werden soll
      */
     public static String schliesseWoertlicheRede(
             final String base, final String addition, final boolean satzende) {

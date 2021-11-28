@@ -24,8 +24,8 @@ import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.praedikat.PraedikativumSemPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
@@ -35,14 +35,14 @@ import de.nb.aventiure2.german.satz.Satz;
  * </ul>
  */
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
-    default Satz alsPraedikativumRelativsatz(final Person personBezugselement,
-                                             final NumerusGenus numerusGenusBezugselement,
-                                             final Belebtheit belebtheitBezugselement,
-                                             @Nullable final
-                                             IBezugsobjekt bezugsobjektBezugselement) {
+    default SemSatz alsPraedikativumRelativsatz(final Person personBezugselement,
+                                                final NumerusGenus numerusGenusBezugselement,
+                                                final Belebtheit belebtheitBezugselement,
+                                                @Nullable final
+                                                IBezugsobjekt bezugsobjektBezugselement) {
 
         // "gespannt sein, was wer zu berichten hat"
-        final PraedikativumPraedikatOhneLeerstellen praedikativumPraedikat =
+        final PraedikativumSemPraedikatOhneLeerstellen praedikativumPraedikat =
                 alsPraedikativumPraedikat();
 
         // "die"

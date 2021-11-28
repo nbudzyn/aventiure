@@ -82,9 +82,9 @@ class TextDescriptionBuilder {
     private static ImmutableList<TextDescription> toTextDescriptionsUnveraendert(
             final AbstractDescription<?> desc) {
         if (desc instanceof AbstractFlexibleDescription) {
-            // Eine AbstractFlexibleDescription entspricht einem eigenständigen Satz(beginn -
+            // Eine AbstractFlexibleDescription entspricht einem eigenständigen SemSatz(beginn -
             // vielleicht auch mehreren Sätzen). Daher soll hier, wo kein Anschluss
-            // zum vorhergehenden Text hergestellt wurde, ein neuer Satz begonnen werden.
+            // zum vorhergehenden Text hergestellt wurde, ein neuer SemSatz begonnen werden.
             return mapToList(desc.altTextDescriptions(), d -> d.beginntZumindest(SENTENCE));
         }
         // else: Ansonsten könnte die AbstractDescription auch einfach ein paar Wörter sein,
@@ -110,9 +110,9 @@ class TextDescriptionBuilder {
         final TextDescription res =
                 desc.toTextDescriptionMitKonjunktionaladverbWennNoetig("dann");
         if (desc instanceof AbstractFlexibleDescription) {
-            // Eine AbstractFlexibleDescription entspricht einem eigenständigen Satz(beginn -
+            // Eine AbstractFlexibleDescription entspricht einem eigenständigen SemSatz(beginn -
             // vielleicht auch mehreren Sätzen). Daher soll hier, wo kein Anschluss
-            // zum vorhergehenden Text hergestellt wurde, ein neuer Satz begonnen werden.
+            // zum vorhergehenden Text hergestellt wurde, ein neuer SemSatz begonnen werden.
             res.beginntZumindest(SENTENCE);
         }
         // else: Ansonsten könnte die AbstractDescription auch einfach ein paar Wörter sein,

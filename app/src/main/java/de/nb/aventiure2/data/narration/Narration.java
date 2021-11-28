@@ -38,7 +38,7 @@ public class Narration {
      * ein Absatzende, ...
      */
     private final StructuralElement endedBy;
-    
+
     @PrimaryKey
     @NonNull
     private final String text;
@@ -49,9 +49,9 @@ public class Narration {
      * gibt es zwei Möglichkeiten, fortzufahren:
      * <ol>
      * <li>Es folgt (wenn noch kein Satzzeichen geschrieben wurde) ein Punkt, danach
-     * das schließende Anführungszeichen - damit ist der Satz beendet.
+     * das schließende Anführungszeichen - damit ist der SemSatz beendet.
      * <li>Es folgt kein Punkt, sondern direkt  das schließende Anführungszeichen. Damit kann
-     * der Satz fortgesetzt werden (es sei denn, vor dem Anfürhungszeichen wäre bereits ein
+     * der SemSatz fortgesetzt werden (es sei denn, vor dem Anfürhungszeichen wäre bereits ein
      * Punkt geschrieben).
      * </ol>
      */
@@ -220,7 +220,7 @@ public class Narration {
      * Gibt den String zurück, mit dem die wörtliche Rede abgeschlossen wird - falls überhaupt
      * eine wörtliche Rede noch offen ist. Dies können ein Leerstring, "“" oder ".“" sein.
      *
-     * @param satzende Ob der Satz damit beendet werden soll
+     * @param satzende Ob der SemSatz damit beendet werden soll
      */
     private String schliesseWoertlicheRedeFallsNoetig(
             final String base, final String addition, final boolean satzende) {

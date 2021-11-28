@@ -1,11 +1,11 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
@@ -30,7 +30,7 @@ public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
         return joinToString(
                 "„",
                 woertlicheRedeTextOhnePunkt); // Der "Punkt" wird je nachdem später als
-        // ".“" (Satzende) oder "“" (im Satz) ausgegeben.
+        // ".“" (Satzende) oder "“" (im SemSatz) ausgegeben.
     }
 
     public boolean isLangOderMehrteilig() {

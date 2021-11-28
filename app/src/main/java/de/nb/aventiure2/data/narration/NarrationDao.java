@@ -1,5 +1,13 @@
 package de.nb.aventiure2.data.narration;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.narration.DescriptionCombiner.combine;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
+import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Dao;
@@ -22,14 +30,6 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.narration.DescriptionCombiner.combine;
-import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
-import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Android Room DAO for {@link Narration}s.
@@ -285,12 +285,12 @@ public abstract class NarrationDao {
     }
 
     /**
-     * Lädt zu diesem <i>Satz von Alternativen</i>, welche der Alternativen
+     * Lädt zu diesem <i>SemSatz von Alternativen</i>, welche der Alternativen
      * bereits "verbraucht" sind. Eine Alternative wird "verbraucht", wenn
      * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
      * Wiederholungen zu vermeiden.)
      *
-     * @param alternatives Der Satz von Alternativen
+     * @param alternatives Der SemSatz von Alternativen
      */
     private ConsumedAlternatives loadConsumed(
             final ImmutableCollection<? extends TextDescription> alternatives) {

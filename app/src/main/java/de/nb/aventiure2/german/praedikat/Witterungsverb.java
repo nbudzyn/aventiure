@@ -20,9 +20,9 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
-public enum Witterungsverb implements VerbOhneLeerstellen {
+public enum Witterungsverb implements VerbOhneLeerstellenSem {
     // Verben ohne Partikel
     AUFKLAREN("aufklaren", "klart", "auf", "aufgeklart"),
     BLITZEN("blitzen", "blitzt", "geblitzt"),
@@ -72,11 +72,11 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         this.verb = verb;
     }
 
-    public EinzelnerSatz alsSatz() {
+    public EinzelnerSemSatz alsSatz() {
         return alsSatz(null);
     }
 
-    private EinzelnerSatz alsSatz(
+    private EinzelnerSemSatz alsSatz(
             final @Nullable
                     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
@@ -180,7 +180,7 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     }
 
     @Override
-    public PraedikatSubOhneLeerstellen neg(
+    public SemPraedikatSubOhneLeerstellen neg(
             @Nullable final Negationspartikelphrase negationspartikelphrase) {
         return toPraedikat().neg(negationspartikelphrase);
     }
@@ -193,8 +193,8 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     }
 
     @Override
-    public PraedikatSubOhneLeerstellen toPraedikat() {
-        return new PraedikatSubOhneLeerstellen(verb);
+    public SemPraedikatSubOhneLeerstellen toPraedikat() {
+        return new SemPraedikatSubOhneLeerstellen(verb);
     }
 
     public Konstituentenfolge getNachfeld() {

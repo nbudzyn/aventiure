@@ -28,7 +28,7 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
@@ -168,7 +168,7 @@ public class WindstaerkeDescDescriber {
                                                                             final Windstaerke windstaerke) {
         final AltDescriptionsBuilder alt = AltDescriptionsBuilder.alt();
 
-        final ImmutableCollection<EinzelnerSatz> altSaetze =
+        final ImmutableCollection<EinzelnerSemSatz> altSaetze =
                 satzDescriber.altKommtNachDraussen(time, windstaerke);
         alt.addAll(altSaetze);
 

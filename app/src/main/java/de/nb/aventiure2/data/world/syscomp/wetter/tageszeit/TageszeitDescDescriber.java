@@ -1,21 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.tageszeit;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import javax.annotation.CheckReturnValue;
-
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.base.Change;
-import de.nb.aventiure2.german.description.AbstractDescription;
-import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static de.nb.aventiure2.data.time.AvTime.oClock;
 import static de.nb.aventiure2.data.time.Tageszeit.ABENDS;
 import static de.nb.aventiure2.data.time.Tageszeit.MORGENS;
@@ -31,6 +15,22 @@ import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeue
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.paragraph;
 import static de.nb.aventiure2.util.StreamUtil.*;
+
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+import javax.annotation.CheckReturnValue;
+
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
+import de.nb.aventiure2.german.description.AbstractDescription;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Beschreibt die {@link Tageszeit} als {@link AbstractDescription}.
@@ -314,7 +314,7 @@ public class TageszeitDescDescriber {
             // "Ob es langsam Morgen wird?"
             alt.addAll(altNeueSaetze(
                     TageszeitSatzDescriber.altWechselDraussen(newTageszeit).stream()
-                            .map(Satz::getIndirekteFrage),
+                            .map(SemSatz::getIndirekteFrage),
                     "?"));
         }
 

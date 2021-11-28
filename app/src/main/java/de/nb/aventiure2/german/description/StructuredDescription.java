@@ -22,12 +22,12 @@ import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
- * A description based on a structured data structure: A {@link EinzelnerSatz}.
+ * A description based on a structured data structure: A {@link EinzelnerSemSatz}.
  * Somehting like "Du gehst in den Wald" or "Peter liebt Petra"
  */
 public class StructuredDescription extends AbstractFlexibleDescription<StructuredDescription> {
@@ -40,7 +40,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
      */
     private final StructuralElement endsThis;
 
-    private final Satz satz;
+    private final SemSatz semSatz;
 
     /**
      * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
@@ -69,49 +69,49 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     private PhorikKandidat phorikKandidat;
 
     StructuredDescription(final StructuralElement startsNew,
-                          final Satz satz,
+                          final SemSatz semSatz,
                           final StructuralElement endsThis) {
         super();
         // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
         // Bei Bedarf kann man das in den Params noch überschreiben.
-        phorikKandidat = guessPhorikKandidat(startsNew, satz, endsThis);
+        phorikKandidat = guessPhorikKandidat(startsNew, semSatz, endsThis);
         this.startsNew = startsNew;
-        this.satz = satz;
+        this.semSatz = semSatz;
         this.endsThis = endsThis;
     }
 
     private StructuredDescription(final DescriptionParams params,
                                   final StructuralElement startsNew,
-                                  final Satz satz,
+                                  final SemSatz semSatz,
                                   final StructuralElement endsThis) {
         super(params);
         // Das hier ist eine automatische Vorbelegung auf Basis des Satzes.
         // Bei Bedarf kann man das in den Params noch überschreiben.
-        phorikKandidat = guessPhorikKandidat(startsNew, satz, endsThis);
+        phorikKandidat = guessPhorikKandidat(startsNew, semSatz, endsThis);
         this.startsNew = startsNew;
-        this.satz = satz;
+        this.semSatz = semSatz;
         this.endsThis = endsThis;
     }
 
     private static PhorikKandidat guessPhorikKandidat(
-            final StructuralElement startsNew, final Satz satz,
+            final StructuralElement startsNew, final SemSatz semSatz,
             final StructuralElement endsThis) {
-        return toSingleKonstituente(startsNew, satz, endsThis).getPhorikKandidat();
+        return toSingleKonstituente(startsNew, semSatz, endsThis).getPhorikKandidat();
     }
 
     @Override
     @NonNull
     @CheckReturnValue
     public TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma() {
-        final Satz satzEvtlMitAnschlusswort =
+        final SemSatz semSatzEvtlMitAnschlusswort =
                 getSatz()
                         .mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd();
         final Konstituente satzanschlussMitUndAberOderOderKomma =
-                satzEvtlMitAnschlusswort
+                semSatzEvtlMitAnschlusswort
                         .getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma()
                         .joinToSingleKonstituente();
         return toTextDescriptionKeepParams(satzanschlussMitUndAberOderOderKomma)
-                .undWartest(satzEvtlMitAnschlusswort.getAnschlusswort() != UND);
+                .undWartest(semSatzEvtlMitAnschlusswort.getAnschlusswort() != UND);
     }
 
     @CheckReturnValue
@@ -140,10 +140,10 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
      */
     public StructuredDescription mitSubjektFokuspartikel(
             @Nullable final String subjektFokuspartikel) {
-        return withSatz(satz.mitSubjektFokuspartikel(subjektFokuspartikel));
+        return withSatz(semSatz.mitSubjektFokuspartikel(subjektFokuspartikel));
     }
 
-    private StructuredDescription withSatz(final Satz other) {
+    private StructuredDescription withSatz(final SemSatz other) {
         return copy(other);
     }
 
@@ -160,7 +160,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @Override
     @CheckReturnValue
     public ImmutableList<TextDescription> altTextDescriptions() {
-        return satz.altVerzweitsaetze().stream()
+        return semSatz.altVerzweitsaetze().stream()
                 .map(kf ->
                         joinToKonstituentenfolge(
                                 getStartsNew(),
@@ -175,8 +175,8 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
 
     @CheckReturnValue
-    private StructuredDescription copy(final Satz satz) {
-        return new StructuredDescription(copyParams(), getStartsNew(), satz, getEndsThis());
+    private StructuredDescription copy(final SemSatz semSatz) {
+        return new StructuredDescription(copyParams(), getStartsNew(), semSatz, getEndsThis());
     }
 
     @Override
@@ -189,7 +189,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         return
                 joinToKonstituentenfolge(
                         getStartsNew(),
-                        satz.getVerbzweitsatzMitVorfeld(vorfeld),
+                        semSatz.getVerbzweitsatzMitVorfeld(vorfeld),
                         getEndsThis()
                 )
                         .joinToSingleKonstituente();
@@ -197,16 +197,16 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Override
     public Konstituente toSingleKonstituente() {
-        return toSingleKonstituente(getStartsNew(), satz, getEndsThis());
+        return toSingleKonstituente(getStartsNew(), semSatz, getEndsThis());
     }
 
     @CheckReturnValue
     private static Konstituente toSingleKonstituente(final StructuralElement startsNew,
-                                                     final Satz satz,
+                                                     final SemSatz semSatz,
                                                      final StructuralElement endsThis) {
         return joinToKonstituentenfolge(
                 startsNew,
-                satz.getVerbzweitsatzStandard(),
+                semSatz.getVerbzweitsatzStandard(),
                 endsThis
         ).joinToSingleKonstituente();
     }
@@ -216,7 +216,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @CheckReturnValue
     protected Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
-                satz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
+                semSatz.getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
         if (speziellesVorfeld == null) {
             return null;
         }
@@ -232,7 +232,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     @CheckReturnValue
     public Konstituente toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma() {
         return joinToKonstituentenfolge(
-                satz.getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma(),
+                semSatz.getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma(),
                 getEndsThis())
                 .joinToSingleKonstituente();
     }
@@ -240,21 +240,21 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     /**
      * Gibt das Prädikat des Satzes zurück, wenn das
      * (abgesehen vom Subjekt) ohne Informationsverlust
-     * möglich ist (d.h. wenn das Satz keinen Adverbialsatz enthält, nicht
+     * möglich ist (d.h. wenn das SemSatz keinen Adverbialsatz enthält, nicht
      * mir einem Anschlusswort beginnt etc.).
      */
     @Nullable
-    public PraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
-        return satz.getPraedikatWennOhneInformationsverlustMoeglich();
+    public SemPraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich() {
+        return semSatz.getPraedikatWennOhneInformationsverlustMoeglich();
     }
 
-    public Satz getSatz() {
-        return satz;
+    public SemSatz getSatz() {
+        return semSatz;
     }
 
     @Override
     public StructuredDescription komma(final boolean kommaStehtAus) {
-        // Bewirkt nichts. Der Satz weiß schon selbst, wann ein Komma nötig ist.
+        // Bewirkt nichts. Der SemSatz weiß schon selbst, wann ein Komma nötig ist.
         // (Aber die Methode erleichert das Handling, sodass z.B. die
         // TimedDescription problemlos komma() implementieren kann etc.)
         return this;
@@ -291,12 +291,12 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
         final StructuredDescription that = (StructuredDescription) o;
         return startsNew == that.startsNew &&
                 endsThis == that.endsThis &&
-                Objects.equals(satz, that.satz) &&
+                Objects.equals(semSatz, that.semSatz) &&
                 Objects.equals(phorikKandidat, that.phorikKandidat);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), startsNew, endsThis, satz, phorikKandidat);
+        return Objects.hash(super.hashCode(), startsNew, endsThis, semSatz, phorikKandidat);
     }
 }

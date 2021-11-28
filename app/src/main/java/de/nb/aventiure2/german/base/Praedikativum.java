@@ -4,14 +4,15 @@ import androidx.annotation.Nullable;
 
 import javax.annotation.CheckReturnValue;
 
-import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.PraedikativumSemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.WerdenUtil;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 /**
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
+// FIXME SemPraedikativum? Oder irgendwie "generisch-agnostisch"? (Auch Subklassen...)
 public interface Praedikativum {
     default ZweiPraedikativa<Praedikativum> und(final Praedikativum zweitesPraedikativum) {
         return new ZweiPraedikativa<>(this, zweitesPraedikativum);
@@ -22,35 +23,35 @@ public interface Praedikativum {
                 zweitesPraedikativum);
     }
 
-    default EinzelnerSatz alsEsIstSatz() {
+    default EinzelnerSemSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
 
-    default EinzelnerSatz alsEsIstSatz(
+    default EinzelnerSemSatz alsEsIstSatz(
             @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return alsPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
     }
 
-    default EinzelnerSatz alsEsWirdSatz() {
+    default EinzelnerSemSatz alsEsWirdSatz() {
         return alsEsWirdSatz(null);
     }
 
-    default EinzelnerSatz alsEsWirdSatz(
+    default EinzelnerSemSatz alsEsWirdSatz(
             @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES)
                 .mitAnschlusswort(anschlusswort);
     }
 
-    default PraedikativumPraedikatOhneLeerstellen alsPraedikativumPraedikat() {
-        return new PraedikativumPraedikatOhneLeerstellen(SeinUtil.VERB,
+    default PraedikativumSemPraedikatOhneLeerstellen alsPraedikativumPraedikat() {
+        return new PraedikativumSemPraedikatOhneLeerstellen(SeinUtil.VERB,
                 this);
     }
 
-    default PraedikativumPraedikatOhneLeerstellen alsWerdenPraedikativumPraedikat() {
-        return new PraedikativumPraedikatOhneLeerstellen(
+    default PraedikativumSemPraedikatOhneLeerstellen alsWerdenPraedikativumPraedikat() {
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 WerdenUtil.VERB, this);
     }
 
@@ -75,7 +76,6 @@ public interface Praedikativum {
         return getPraedikativ(praedRegMerkmale, negationspartikel).cutLast(
                 getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale));
     }
-
 
     /**
      * Gibt die prädikative Form zurück: "hoch", "glücklich, dich zu sehen",

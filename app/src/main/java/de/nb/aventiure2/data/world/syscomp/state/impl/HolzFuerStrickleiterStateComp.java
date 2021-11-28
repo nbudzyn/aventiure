@@ -27,7 +27,7 @@ import de.nb.aventiure2.data.world.syscomp.state.StateModification;
 import de.nb.aventiure2.german.description.DescriptionBuilder;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
 
 public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStrickleiterState> {
     public HolzFuerStrickleiterStateComp(final AvDatabase db,
@@ -59,7 +59,7 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
     altTimedDescriptionsAndDo_holzZerbrechen() {
         return ImmutableList.of(
                 DescriptionBuilder.du(
-                        new ZweiPraedikateOhneLeerstellen(
+                        new ZweiPraedikateOhneLeerstellenSem(
                                 SICH_NEHMEN.mit(np(ETWAS, ZEIT)),
                                 BRECHEN.mit(
                                         getDescription(textContext, possessivDescriptionVorgabe))

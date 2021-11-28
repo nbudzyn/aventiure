@@ -18,7 +18,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Eine Adjektivphrase mit ob- oder w-Fragesatz, in der alle Leerstellen besetzt sind. Beispiel:
@@ -59,12 +59,12 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
      */
     @Nonnull
     @Komplement
-    private final Satz indirekterFragesatz;
+    private final SemSatz indirekterFragesatz;
 
     @Valenz
     AdjPhrMitIndirektemFragesatzOhneLeerstellen(
             final Adjektiv adjektiv,
-            final Satz indirekterFragesatz) {
+            final SemSatz indirekterFragesatz) {
         this(null, null, adjektiv, indirekterFragesatz);
     }
 
@@ -75,7 +75,7 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final GraduativeAngabe graduativeAngabe,
             final Adjektiv adjektiv,
-            final Satz indirekterFragesatz) {
+            final SemSatz indirekterFragesatz) {
         super(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
         this.indirekterFragesatz = indirekterFragesatz;
     }

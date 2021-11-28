@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
@@ -8,9 +10,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.satz.Satz;
-
-import static de.nb.aventiure2.util.StreamUtil.*;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Ein Spektrum von Gefühlen, dass ein {@link IFeelingBeingGO} gegenüber jemandem oder
@@ -39,7 +39,7 @@ public enum FeelingTowardsType {
      *
      * @return (gibt niemals eine leere Liste zurück !)
      */
-    public ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
+    public ImmutableList<SemSatz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -52,7 +52,7 @@ public enum FeelingTowardsType {
                 altEindruckBeiBegegnungAdvAngaben(
                         gameObjectSubjekt, targetDesc, feelingIntensity, targetKnown);
 
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> res = ImmutableList.builder();
         res.addAll(FeelingsSaetzeUtil.
                 toSichtbareReaktionSaetze(gameObjectSubjekt, targetDesc,
                         altEindruckAdjPhr,
@@ -74,11 +74,11 @@ public enum FeelingTowardsType {
      * <p>
      * Die Methode geht davon aus, dass Subjekt und Feeling Target einander sehen.
      */
-    public ImmutableList<Satz> altReaktionWennTargetGehenMoechteSaetze(
+    public ImmutableList<SemSatz> altReaktionWennTargetGehenMoechteSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> res = ImmutableList.builder();
 
         final ImmutableList<AdjPhrOhneLeerstellen> altEindruckAdjPhr =
                 altEindruckWennTargetGehenMoechteAdjPhr(
@@ -86,7 +86,7 @@ public enum FeelingTowardsType {
                         targetDesc, feelingIntensity, targetKnown
                 );
 
-        final ImmutableList<Satz> saetze = FeelingsSaetzeUtil.toSichtbareReaktionSaetze(
+        final ImmutableList<SemSatz> saetze = FeelingsSaetzeUtil.toSichtbareReaktionSaetze(
                 gameObjectSubjekt, targetDesc,
                 altEindruckAdjPhr);
 
@@ -97,7 +97,7 @@ public enum FeelingTowardsType {
         return res.build();
     }
 
-    public ImmutableList<Satz> altEindruckBeiBegegnungSaetze(
+    public ImmutableList<SemSatz> altEindruckBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc,
             final boolean targetKannSubjektSehen,

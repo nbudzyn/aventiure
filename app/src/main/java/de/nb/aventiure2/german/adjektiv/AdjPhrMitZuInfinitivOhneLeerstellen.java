@@ -18,7 +18,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 
 /**
  * Eine Adjektivphrase mit zu-Infinitiv, in der alle Leerstellen besetzt sind. Beispiel:
@@ -33,12 +33,12 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
      */
     @Nonnull
     @Komplement
-    private final PraedikatOhneLeerstellen lexikalischerKern;
+    private final SemPraedikatOhneLeerstellen lexikalischerKern;
 
     @Valenz
     AdjPhrMitZuInfinitivOhneLeerstellen(
             final Adjektiv adjektiv,
-            final PraedikatOhneLeerstellen lexikalischerKern) {
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
         this(null, null, adjektiv, lexikalischerKern);
     }
 
@@ -46,7 +46,7 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final GraduativeAngabe graduativeAngabe,
             final Adjektiv adjektiv,
-            final PraedikatOhneLeerstellen lexikalischerKern) {
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
         super(advAngabeSkopusSatz, graduativeAngabe, adjektiv);
         this.lexikalischerKern = lexikalischerKern;
     }

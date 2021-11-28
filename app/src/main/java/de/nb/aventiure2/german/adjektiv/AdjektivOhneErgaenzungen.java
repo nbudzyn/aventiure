@@ -14,7 +14,7 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 /**
  * Ein Adjektiv, das keine Ergänzungen fordert.
@@ -232,24 +232,24 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public EinzelnerSatz alsEsIstSatz() {
+    public EinzelnerSemSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
 
     @Override
-    public EinzelnerSatz alsEsIstSatz(
+    public EinzelnerSemSatz alsEsIstSatz(
             final @Nullable
                     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toAdjPhr().alsEsIstSatz(anschlusswort);
     }
 
     @Override
-    public EinzelnerSatz alsEsWirdSatz() {
+    public EinzelnerSemSatz alsEsWirdSatz() {
         return alsEsWirdSatz(null);
     }
 
     @Override
-    public EinzelnerSatz alsEsWirdSatz(
+    public EinzelnerSemSatz alsEsWirdSatz(
             final @Nullable
                     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return toAdjPhr().alsEsWirdSatz(anschlusswort);

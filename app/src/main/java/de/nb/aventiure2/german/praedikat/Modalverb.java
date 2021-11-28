@@ -80,9 +80,9 @@ public enum Modalverb implements VerbMitValenz, PraedikatNurMitLeerstelleFuerLex
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
     @Override
-    public PraedikatModalverbOhneLeerstellen mitLexikalischemKern(
-            final PraedikatOhneLeerstellen lexikalischerKern) {
-        return new PraedikatModalverbOhneLeerstellen(verb, lexikalischerKern);
+    public SemPraedikatModalverbOhneLeerstellen mitLexikalischemKern(
+            final SemPraedikatOhneLeerstellen lexikalischerKern) {
+        return new SemPraedikatModalverbOhneLeerstellen(verb, lexikalischerKern);
     }
 
     @Override

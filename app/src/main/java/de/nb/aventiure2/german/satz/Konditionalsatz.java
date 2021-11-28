@@ -14,15 +14,15 @@ public class Konditionalsatz {
     private final String kondition;
 
     @Nonnull
-    private final Satz satz;
+    private final SemSatz semSatz;
 
-    public Konditionalsatz(@Nonnull final String kondition, @Nonnull final Satz satz) {
+    public Konditionalsatz(@Nonnull final String kondition, @Nonnull final SemSatz semSatz) {
         this.kondition = kondition;
-        this.satz = satz;
+        this.semSatz = semSatz;
     }
 
     public Konditionalsatz perfekt() {
-        return new Konditionalsatz(kondition, satz.perfekt());
+        return new Konditionalsatz(kondition, semSatz.perfekt());
     }
 
     /**
@@ -32,9 +32,9 @@ public class Konditionalsatz {
     public Konstituentenfolge getDescription() {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 kondition, // "weil"
-                // FIXME Den Fall beachten, dass der Satz ein Anschlusswort haben könnte.
+                // FIXME Den Fall beachten, dass der SemSatz ein Anschlusswort haben könnte.
                 //  Idee: "und" weglassen, "weil aber", ...
-                satz.getVerbletztsatz() // "du etwas zu berichten hast"
+                semSatz.getVerbletztsatz() // "du etwas zu berichten hast"
         );
     }
 
@@ -61,7 +61,7 @@ public class Konditionalsatz {
         //  Troll siehst").
 
         return new Konditionalsatz(other.kondition,
-                Satzreihe.gereihtStandard(other.satz, satz));
+                Satzreihe.gereihtStandard(other.semSatz, semSatz));
         // }
     }
 }

@@ -112,9 +112,9 @@ import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.VerbSubjAkkPraep;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Component for {@link World#RAPUNZEL}: Der Spieler
@@ -314,7 +314,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 RAPUNZELS_FREIHEITSWUNSCH);
     }
 
-    private static PraedikatMitEinerObjektleerstelle bittenHaareHerunterzulassenPraedikat() {
+    private static SemPraedikatMitEinerObjektleerstelle bittenHaareHerunterzulassenPraedikat() {
         return BITTEN
                 .mitLexikalischerKern(HINUNTERLASSEN
                         .mit(np(IHR, HAARE))
@@ -503,11 +503,11 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
         final AltDescriptionsBuilder alt = alt();
 
-        final ImmutableList<Satz> altReaktionSaetze =
+        final ImmutableList<SemSatz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
 
         // Könnte leer sein
-        final ImmutableList<Satz> altEindruckSaetzeAnaphPersPron =
+        final ImmutableList<SemSatz> altEindruckSaetzeAnaphPersPron =
                 feelingsComp.altSpEindruckAufScBeiBegegnungSaetze(anaph.persPron(),
                         true);
 
@@ -606,7 +606,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "„Hallo“, antwortet",
                     anaph.nomK(),
                     altEindruckSaetzeAnaphPersPron.stream()
-                            .map(Satz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)
+                            .map(SemSatz::mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd)
             ));
             if (scBereitsZuvorSchonEinmalGetroffen) {
                 if (loadSC().locationComp().lastLocationWas(VOR_DEM_ALTEN_TURM)) {
@@ -1310,7 +1310,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             final AltDescriptionsBuilder alt = alt();
 
             if (!loadZauberin().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
-                final ImmutableList<Satz> altReaktionSaetze
+                final ImmutableList<SemSatz> altReaktionSaetze
                         = feelingsComp.altReaktionWennSCGehenMoechteSaetze(rapunzelDesc);
 
                 alt.addAll(altNeueSaetze(
@@ -1351,7 +1351,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(textContext,
                 possessivDescriptionVorgabe, true);
 
-        final ImmutableList<Satz> altReaktionSaetze
+        final ImmutableList<SemSatz> altReaktionSaetze
                 = feelingsComp.altReaktionWennSCGehenMoechteSaetze(rapunzelDesc);
 
         n.narrateAlt(altNeueSaetze(

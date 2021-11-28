@@ -47,8 +47,8 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Veränderliche (und daher persistente) Daten der {@link WetterComp}-Komponente.
@@ -296,7 +296,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+    ImmutableCollection<SemSatz> altSpWetterhinweisSaetze(
             final AvDateTime time,
             final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
@@ -309,7 +309,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
             return ImmutableList.of();
         }
 
-        final ImmutableCollection<Satz> alt =
+        final ImmutableCollection<SemSatz> alt =
                 wetter.altSpWetterhinweisSaetze(time.getTime(),
                         drinnenDraussen,
                         locationTemperaturRange,
@@ -329,7 +329,7 @@ public class WetterPCD extends AbstractPersistentComponentData {
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
+    ImmutableCollection<EinzelnerSemSatz> altSpWindgeraeuscheSaetze(
             final AvTime time, final boolean unterOffenemHimmel) {
         return wetter.altSpWindgeraeuscheSaetze(time, unterOffenemHimmel);
     }

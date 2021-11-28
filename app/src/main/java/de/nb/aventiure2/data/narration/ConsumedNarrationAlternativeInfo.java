@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.narration;
 
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 
@@ -10,10 +12,8 @@ import java.util.Objects;
 
 import de.nb.aventiure2.german.description.TextDescription;
 
-import static de.nb.aventiure2.util.StreamUtil.*;
-
 /**
- * Angabe, dass zu einem <i>Satz von Alternativen</i>
+ * Angabe, dass zu einem <i>SemSatz von Alternativen</i>
  * eine Alternative bereits "verbraucht" ist. Eine Alternative
  * wird "verbraucht", wenn sie gewählt wird. (Die Alternative sollte also eher
  * nicht erneut gewählt werden, um Wiederholungen zu vermeiden.)

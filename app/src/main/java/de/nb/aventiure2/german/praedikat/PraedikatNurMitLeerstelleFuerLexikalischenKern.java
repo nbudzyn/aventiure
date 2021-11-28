@@ -5,13 +5,14 @@ public interface PraedikatNurMitLeerstelleFuerLexikalischenKern {
      * Füllt die Leerstelle für den lexikalischen Kern mit einem Prädikat mit einer
      * Objektleerstelle
      */
-    default PraedikatMitEinerObjektleerstelle mitLexikalischemKern(
-            final PraedikatMitEinerObjektleerstelle lexikalischerKern) {
-        return substPhr -> mitLexikalischemKern(lexikalischerKern.mit(substPhr));
+    default SemPraedikatMitEinerObjektleerstelle mitLexikalischemKern(
+            final SemPraedikatMitEinerObjektleerstelle lexikalischerKern) {
+        return substPhrasierbar -> mitLexikalischemKern(lexikalischerKern.mit(substPhrasierbar));
     }
 
     /**
      * Füllt die Leerstelle für den lexikalischen Kern.
      */
-    PraedikatOhneLeerstellen mitLexikalischemKern(final PraedikatOhneLeerstellen lexikalischerKern);
+    SemPraedikatOhneLeerstellen mitLexikalischemKern(
+            final SemPraedikatOhneLeerstellen lexikalischerKern);
 }

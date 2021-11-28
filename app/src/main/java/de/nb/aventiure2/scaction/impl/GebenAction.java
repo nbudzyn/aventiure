@@ -36,7 +36,7 @@ import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.StructuredDescription;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -122,7 +122,7 @@ public class GebenAction<
     }
 
     private void narrateAnbietenBzwGeben(final SCTakeAction<GIVEN> action) {
-        final ImmutableList<PraedikatOhneLeerstellen> praedikatAlt =
+        final ImmutableList<SemPraedikatOhneLeerstellen> praedikatAlt =
                 action.wirdZunaechstAngenommen() ?
                         altGebenPraedikate() : altAnbietenPraedikate();
 
@@ -134,8 +134,8 @@ public class GebenAction<
                 secs(20));
     }
 
-    private ImmutableList<PraedikatOhneLeerstellen> altAnbietenPraedikate() {
-        final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
+    private ImmutableList<SemPraedikatOhneLeerstellen> altAnbietenPraedikate() {
+        final ImmutableList.Builder<SemPraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = anaph(taker);
         final EinzelneSubstantivischePhrase givenDesc = getDescription(textContext, given, false);
@@ -163,8 +163,8 @@ public class GebenAction<
         return alt.build();
     }
 
-    private ImmutableList<PraedikatOhneLeerstellen> altGebenPraedikate() {
-        final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
+    private ImmutableList<SemPraedikatOhneLeerstellen> altGebenPraedikate() {
+        final ImmutableList.Builder<SemPraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = anaph(taker);
         final EinzelneSubstantivischePhrase givenDesc = getDescription(textContext, given, false);
@@ -184,7 +184,7 @@ public class GebenAction<
     }
 
     private static StructuredDescription toAnbietenGebenDuDescription(
-            final PraedikatOhneLeerstellen anbietenGebenPraedikat) {
+            final SemPraedikatOhneLeerstellen anbietenGebenPraedikat) {
         return du(anbietenGebenPraedikat)
                 .undWartest()
                 .dann();

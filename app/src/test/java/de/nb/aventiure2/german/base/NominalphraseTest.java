@@ -44,7 +44,7 @@ import org.junit.Test;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
 import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 @SuppressWarnings("ConstantConditions")
 public class NominalphraseTest {
@@ -260,9 +260,9 @@ public class NominalphraseTest {
 
         // WHEN
         // "Du diskutierst mit Rapunzel, die glücklich ist, dich zu sehen[,]"
-        final Satz satz = DISKUTIEREN.mit(np).alsSatzMitSubjekt(duSc());
+        final SemSatz semSatz = DISKUTIEREN.mit(np).alsSatzMitSubjekt(duSc());
 
-        final Konstituentenfolge konstituentenfolge = satz.getVerbzweitsatzStandard();
+        final Konstituentenfolge konstituentenfolge = semSatz.getVerbzweitsatzStandard();
         final Konstituente actual = konstituentenfolge.joinToSingleKonstituente();
 
         // THEN
@@ -289,9 +289,9 @@ public class NominalphraseTest {
 
         // WHEN
         // "Rapunzel, glücklich, dich zu sehen, schaut dich an"
-        final Satz satz = ANSCHAUEN.mit(duSc()).alsSatzMitSubjekt(np);
+        final SemSatz semSatz = ANSCHAUEN.mit(duSc()).alsSatzMitSubjekt(np);
 
-        final Konstituentenfolge konstituentenfolge = satz.getVerbzweitsatzStandard();
+        final Konstituentenfolge konstituentenfolge = semSatz.getVerbzweitsatzStandard();
         final Konstituente actual = konstituentenfolge.joinToSingleKonstituente();
 
         // THEN

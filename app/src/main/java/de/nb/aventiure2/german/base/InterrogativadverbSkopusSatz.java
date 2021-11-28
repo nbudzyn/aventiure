@@ -12,7 +12,7 @@ import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
 /**
  * Ein Fragewort, das nach Informationen fragt, die durch
  * ein Adverb ausgedrückt werden ("wann", ...) und sich
- * eher auf den gesamten Satz beziehen.
+ * eher auf den gesamten SemSatz beziehen.
  * <p>
  * Interrogativadverbien ersetzen also "normale" adverbiale Phrasen in Fragen und
  * indirekten Fragesätzen, z.B.:
@@ -51,7 +51,7 @@ public enum InterrogativadverbSkopusSatz
     InterrogativadverbSkopusSatz(final String string) {
         this.string = string;
     }
-    
+
     @Override
     public boolean imMittelfeldErlaubt() {
         return true;

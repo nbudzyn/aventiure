@@ -47,7 +47,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 public enum Tageszeit {
     // Reihenfolge ist relevant, nicht ändern!
@@ -156,8 +156,8 @@ public enum Tageszeit {
      * Gibt Sätze zurück wie "langsam wird es Morgen", "der Tag bricht an",
      * "langsam beginnt der Abend" o. Ä.
      */
-    public ImmutableSet<EinzelnerSatz> altLangsamBeginntSaetze() {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+    public ImmutableSet<EinzelnerSemSatz> altLangsamBeginntSaetze() {
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         if (this == TAGSUEBER) {
             // "Langsam beginnt der Tag" ist missverständlich (= der Morgen? Der Vormittag?)
@@ -185,9 +185,9 @@ public enum Tageszeit {
     }
 
     /**
-     * Gibt einen Satz zurück wie "es wird Morgen" oder "es wird Tag".
+     * Gibt einen SemSatz zurück wie "es wird Morgen" oder "es wird Tag".
      */
-    private EinzelnerSatz esWirdSatz() {
+    private EinzelnerSemSatz esWirdSatz() {
         return npArtikellos(nomenFlexionsspalte).alsWerdenPraedikativumPraedikat()
                 .alsSatzMitSubjekt(Personalpronomen.EXPLETIVES_ES);
     }

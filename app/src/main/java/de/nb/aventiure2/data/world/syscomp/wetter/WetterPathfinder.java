@@ -1,13 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter;
 
-import javax.annotation.Nullable;
-
-import de.nb.aventiure2.data.time.AvTimeSpan;
-import de.nb.aventiure2.data.world.base.Temperatur;
-import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
-import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
-import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.max;
@@ -19,8 +11,16 @@ import static de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUnd
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.LUEFTCHEN;
 import static de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke.WINDIG;
 
+import javax.annotation.Nullable;
+
+import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.data.world.base.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung;
+import de.nb.aventiure2.data.world.syscomp.wetter.blitzunddonner.BlitzUndDonner;
+import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
+
 /**
- * Ermittelt, wie man von einem "Wetter" (einem Satz von Wetter-Parametern) zu einem
+ * Ermittelt, wie man von einem "Wetter" (einem SemSatz von Wetter-Parametern) zu einem
  * anderen kommt.
  */
 class WetterPathfinder {

@@ -1,15 +1,15 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import de.nb.aventiure2.data.world.base.SpatialConnection;
-import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.german.praedikat.AbstractAngabenfaehigesPraedikatOhneLeerstellen;
-import de.nb.aventiure2.german.praedikat.Praedikat;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.Type.IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
+
+import de.nb.aventiure2.data.world.base.SpatialConnection;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.german.praedikat.AbstractAngabenfaehigesSemPraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikat;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 /**
  * Ein Redebeitrag, den der Spieler(-Charakter) an das {@link ITalkerGO} richten kann
@@ -61,10 +61,10 @@ public class SCTalkAction {
         IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET
     }
 
-    private final static PraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
+    private final static SemPraedikatMitEinerObjektleerstelle DEFAULT_ENTRY_RE_ENTRY_NAME =
             VerbSubjObj.REDEN;
 
-    private final static AbstractAngabenfaehigesPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
+    private final static AbstractAngabenfaehigesSemPraedikatOhneLeerstellen DEFAULT_EXIT_NAME =
             VerbSubjObj.BEENDEN.mit(GESPRAECH);
 
     /**
@@ -98,7 +98,7 @@ public class SCTalkAction {
     /**
      * Prädikat für den Namen des Schritts, z.B. ("Mit dem Frosch reden")
      */
-    private final Praedikat name;
+    private final SemPraedikat name;
 
     /**
      * This ist what the conversation step actually does.
@@ -116,7 +116,7 @@ public class SCTalkAction {
         return entryReEntrySt(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static SCTalkAction entryReEntrySt(final Praedikat entryName,
+    static SCTalkAction entryReEntrySt(final SemPraedikat entryName,
                                        final SCTalkAction.NarrationAndAction narrationAndAction) {
         return entryReEntrySt(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
@@ -142,7 +142,7 @@ public class SCTalkAction {
      */
     static SCTalkAction entryReEntrySt(
             final SCTalkAction.Condition condition,
-            final Praedikat entryName,
+            final SemPraedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return new SCTalkAction(SCTalkAction.Type.ENTRY_RE_ENTRY, condition,
                 entryName,
@@ -154,7 +154,7 @@ public class SCTalkAction {
         return immReEntryStSCHatteGespraechBeendet(DEFAULT_ENTRY_RE_ENTRY_NAME, narrationAndAction);
     }
 
-    static SCTalkAction immReEntryStSCHatteGespraechBeendet(final Praedikat entryName,
+    static SCTalkAction immReEntryStSCHatteGespraechBeendet(final SemPraedikat entryName,
                                                             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return immReEntryStSCHatteGespraechBeendet(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
@@ -182,7 +182,7 @@ public class SCTalkAction {
      */
     static SCTalkAction immReEntryStSCHatteGespraechBeendet(
             final SCTalkAction.Condition condition,
-            final Praedikat entryName,
+            final SemPraedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return new SCTalkAction(IMMEDIATE_RE_ENTRY_SC_HATTE_GESPRAECH_BEENDET,
                 condition,
@@ -196,7 +196,7 @@ public class SCTalkAction {
     }
 
     static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
-            final Praedikat entryName,
+            final SemPraedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return immReEntryStNSCHatteGespraechBeendet(ALWAYS_POSSIBLE, entryName, narrationAndAction);
     }
@@ -224,14 +224,14 @@ public class SCTalkAction {
      */
     static SCTalkAction immReEntryStNSCHatteGespraechBeendet(
             final SCTalkAction.Condition condition,
-            final Praedikat entryName,
+            final SemPraedikat entryName,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return new SCTalkAction(IMMEDIATE_RE_ENTRY_NSC_HATTE_GESPRAECH_BEENDET,
                 condition,
                 entryName, narrationAndAction);
     }
 
-    static SCTalkAction st(final Praedikat name,
+    static SCTalkAction st(final SemPraedikat name,
                            final SCTalkAction.NarrationAndAction narrationAndAction) {
         return st(ALWAYS_POSSIBLE, name, narrationAndAction);
     }
@@ -244,7 +244,7 @@ public class SCTalkAction {
      */
     static SCTalkAction st(
             final SCTalkAction.Condition condition,
-            final Praedikat name,
+            final SemPraedikat name,
             final SCTalkAction.NarrationAndAction narrationAndAction) {
         return new SCTalkAction(
                 SCTalkAction.Type.NORMAL, condition, name, narrationAndAction);
@@ -260,7 +260,7 @@ public class SCTalkAction {
         return exitSt(condition, DEFAULT_EXIT_NAME, narrationAndAction);
     }
 
-    static SCTalkAction exitSt(final Praedikat exitName,
+    static SCTalkAction exitSt(final SemPraedikat exitName,
                                final SCTalkAction.NarrationAndAction narrationAndAction) {
         return exitSt(ALWAYS_POSSIBLE,
                 exitName,
@@ -268,7 +268,7 @@ public class SCTalkAction {
     }
 
     static SCTalkAction exitSt(final SCTalkAction.Condition condition,
-                               final Praedikat exitName,
+                               final SemPraedikat exitName,
                                final SCTalkAction.NarrationAndAction narrationAndAction) {
         return new SCTalkAction(SCTalkAction.Type.EXIT, condition,
                 exitName,
@@ -285,7 +285,7 @@ public class SCTalkAction {
 
             final Type stepType,
             final Condition condition,
-            final Praedikat name,
+            final SemPraedikat name,
             final NarrationAndAction narrationAndAction) {
         this.stepType = stepType;
         this.condition = condition;
@@ -308,7 +308,7 @@ public class SCTalkAction {
     /**
      * Gibt den Namen des Schritts zurück (Basis für den Namen der Aktion, den der Benutzer sieht)
      */
-    public Praedikat getName() {
+    public SemPraedikat getName() {
         return name;
     }
 

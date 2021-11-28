@@ -1,14 +1,14 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+
 import androidx.annotation.NonNull;
 
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.satz.Satz;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Ein Verb wie <i>jn. fragen, ob / wer / wie /... </i> oder <i>mit jm. diskutieren, ob / wer /
@@ -48,15 +48,15 @@ public enum VerbSubjObjIndirekterFragesatz implements VerbMitValenz {
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
     }
 
-    public PraedikatSubjObjIndirekterFragesatzMitEinerIndirekterFragesatzLeerstelle mitObjekt(
+    public SemPraedikatSubjObjIndirekterFragesatzMitEinerIndirekterFragesatzLeerstelle mitObjekt(
             final SubstantivischePhrase objekt) {
-        return new PraedikatSubjObjIndirekterFragesatzMitEinerIndirekterFragesatzLeerstelle(
+        return new SemPraedikatSubjObjIndirekterFragesatzMitEinerIndirekterFragesatzLeerstelle(
                 verb, kasusOderPraepositionalkasus, objekt);
     }
 
-    public PraedikatSubjObjIndirekterFragesatzMitEinerObjektLeerstelle mitIndirekterFragesatz(
-            final Satz indirekterFragesatz) {
-        return new PraedikatSubjObjIndirekterFragesatzMitEinerObjektLeerstelle(
+    public SemPraedikatSubjObjIndirekterFragesatzMitEinerObjektLeerstelle mitIndirekterFragesatz(
+            final SemSatz indirekterFragesatz) {
+        return new SemPraedikatSubjObjIndirekterFragesatzMitEinerObjektLeerstelle(
                 verb, kasusOderPraepositionalkasus, indirekterFragesatz);
     }
 

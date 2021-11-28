@@ -34,8 +34,8 @@ import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Wetter
@@ -365,7 +365,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD>
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    public ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+    public ImmutableCollection<SemSatz> altSpWetterhinweisSaetze(
             final AvDateTime dateTime, @Nullable final GameObjectId locationId,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         return altSpWetterhinweisSaetze(dateTime, (ILocationGO) load(locationId),
@@ -382,7 +382,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD>
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    private ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+    private ImmutableCollection<SemSatz> altSpWetterhinweisSaetze(
             final AvDateTime dateTime, @Nullable final ILocationGO location,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
         return altSpWetterhinweisSaetze(
@@ -421,7 +421,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD>
      * Denn diese Methode vermerkt i.A., dass der Spieler über das aktuelle Wetter informiert wurde.
      */
     @CheckReturnValue
-    private ImmutableCollection<Satz> altSpWetterhinweisSaetze(
+    private ImmutableCollection<SemSatz> altSpWetterhinweisSaetze(
             final AvDateTime time, final DrinnenDraussen drinnenDraussen,
             final EnumRange<Temperatur> locationTemperaturRange,
             final boolean nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete) {
@@ -571,7 +571,7 @@ public class WetterComp extends AbstractStatefulComponent<WetterPCD>
     /**
      * Gibt alternative Sätze zu Windgeräuschen zurück - kann leer sein.
      */
-    public ImmutableCollection<EinzelnerSatz> altSpWindgeraeuscheSaetze(
+    public ImmutableCollection<EinzelnerSemSatz> altSpWindgeraeuscheSaetze(
             final boolean unterOffenemHimmel) {
         return requirePcd()
                 .altSpWindgeraeuscheSaetze(timeTaker.now().getTime(), unterOffenemHimmel);

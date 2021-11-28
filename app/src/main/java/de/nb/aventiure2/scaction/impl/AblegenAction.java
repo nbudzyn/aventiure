@@ -49,7 +49,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AbstractAdvAngabe;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -137,7 +137,7 @@ public class AblegenAction<GO extends IDescribableGO & ILocatableGO> extends Abs
     }
 
     @NonNull
-    private PraedikatMitEinerObjektleerstelle getPraedikat() {
+    private SemPraedikatMitEinerObjektleerstelle getPraedikat() {
         if (getWohinDetail() == null) {
             return gameObject instanceof ILivingBeingGO ? ABSETZEN : HINLEGEN;
         } else {

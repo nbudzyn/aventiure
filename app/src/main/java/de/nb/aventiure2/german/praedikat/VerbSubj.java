@@ -25,7 +25,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
-public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
+public enum VerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstellen {
     // Verben ohne Partikel
     BEGINNEN("beginnen",
             "beginne", "beginnst", "beginnt", "beginnt",
@@ -253,13 +253,13 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     }
 
     @Override
-    public PraedikatSubOhneLeerstellen neg(
+    public SemPraedikatSubOhneLeerstellen neg(
             @Nullable final Negationspartikelphrase negationspartikelphrase) {
         return toPraedikat().neg(negationspartikelphrase);
     }
 
     @Override
-    public PerfektPraedikatOhneLeerstellen perfekt() {
+    public PerfektSemPraedikatOhneLeerstellen perfekt() {
         return toPraedikat().perfekt();
     }
 
@@ -271,8 +271,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     }
 
     @Override
-    public PraedikatSubOhneLeerstellen toPraedikat() {
-        return new PraedikatSubOhneLeerstellen(verb);
+    public SemPraedikatSubOhneLeerstellen toPraedikat() {
+        return new SemPraedikatSubOhneLeerstellen(verb);
     }
 
     @Override

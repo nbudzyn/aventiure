@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.narration;
 
+import static java.util.Arrays.asList;
+
 import androidx.annotation.NonNull;
 
 import org.jetbrains.annotations.Contract;
@@ -8,8 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.nb.aventiure2.german.stemming.StemmedWords;
-
-import static java.util.Arrays.asList;
 
 class TextAdditionEvaluator {
     private static final float ERFAHRUNGSWERT = 0.0001f;
@@ -25,7 +25,7 @@ class TextAdditionEvaluator {
      * Bewertet diese Hinzufügung (<code>addition</code>) an diesen
      * Basistext. Wiederholungen gegenüber dem
      * Ende des <code>base</code>-Textes gelten als schlecht. Außerdem wird geprüft, ob
-     * derselbe Satz an Alternativen schon einmal geprüft wurde - Alternativen, die bei einem
+     * derselbe SemSatz an Alternativen schon einmal geprüft wurde - Alternativen, die bei einem
      * früheren Mal gewählt wurden, werden dann vermieden.
      *
      * @param baseStems         Der Text, dem etwas hinzugefügt werden soll (nur das Ende, und für

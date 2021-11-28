@@ -40,7 +40,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Beschreibt die {@link Temperatur} als {@link AbstractDescription}s.
@@ -414,7 +414,7 @@ public class TemperaturDescDescriber {
 
         if (unterOffenemHimmel && temperatur.compareTo(Temperatur.RECHT_HEISS) >= 0) {
             // "Heute ist es heiß / schönes Wetter."
-            final ImmutableCollection<Satz> heuteDerTagSaetze =
+            final ImmutableCollection<SemSatz> heuteDerTagSaetze =
                     satzDescriber.altSpDraussenHeuteDerTagSofernSinnvoll(
                             temperatur,
                             generelleTemperaturOutsideLocationTemperaturRange,

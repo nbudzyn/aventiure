@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -10,9 +12,7 @@ import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.satz.Satz;
-
-import static de.nb.aventiure2.util.StreamUtil.*;
+import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
  * Beschreibt das Gefühl eines Feeling Beings
@@ -53,12 +53,12 @@ interface FeelingsDescriber {
      * Diese Methode soll zumindest immer dann eine nichtleere Liste zurückgeben, wenn
      * {@link #altEindruckBeiBegegnungAdjPhr(SubstantivischePhrase, SubstantivischePhrase, int, boolean)}
      * eine leere Liste zurückgibt, so dass man durch die Kombination beider Methoden immer
-     * mindestens einen Satz erhält.
+     * mindestens einen SemSatz erhält.
      *
      * @return Möglicherweise eine leere Liste
      */
     @NonNull
-    ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
+    ImmutableList<SemSatz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             SubstantivischePhrase targetDesc, int feelingIntensity,
             final boolean targetKnown);

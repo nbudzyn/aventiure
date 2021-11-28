@@ -54,7 +54,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
 
     /**
      * Ob die wörtliche Rede noch "offen" ist.  Es steht also noch ein schließendes
-     * Anführungszeichen aus. Wenn der Satz beendet wird, muss vielleicht außerdem
+     * Anführungszeichen aus. Wenn der SemSatz beendet wird, muss vielleicht außerdem
      * noch ein Punkt nach dem Anführungszeitchen gesetzt werden.
      */
     private final boolean woertlicheRedeNochOffen;

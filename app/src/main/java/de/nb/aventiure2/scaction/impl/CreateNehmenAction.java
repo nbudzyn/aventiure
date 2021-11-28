@@ -33,7 +33,7 @@ import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 
 /**
@@ -173,7 +173,7 @@ public class CreateNehmenAction extends AbstractScAction {
 
         final EinzelneSubstantivischePhrase objectDesc =
                 getDescription(textContext, ausgerupfteBinsen, true);
-        final PraedikatOhneLeerstellen praedikatMitObjekt = AUSRUPFEN.mit(objectDesc);
+        final SemPraedikatOhneLeerstellen praedikatMitObjekt = AUSRUPFEN.mit(objectDesc);
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             n.narrate(du(praedikatMitObjekt.mitAdvAngabe(new AdvAngabeSkopusSatz("dann")))

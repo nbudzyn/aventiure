@@ -1,5 +1,10 @@
 package de.nb.aventiure2.data.world.base;
 
+import static java.util.stream.Collectors.toSet;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
+
 import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
@@ -10,12 +15,7 @@ import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALLMAEHLICH;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANGSAM;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DUNKELHEIT;
-import static java.util.stream.Collectors.toSet;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
 public enum Lichtverhaeltnisse {
     HELL(AdjektivOhneErgaenzungen.HELL,
@@ -37,8 +37,8 @@ public enum Lichtverhaeltnisse {
     /**
      * Gibt Sätze zurück wie "langsam wird es dunkel"
      */
-    public ImmutableSet<EinzelnerSatz> altLangsamWirdEsSaetze() {
-        final ImmutableSet.Builder<EinzelnerSatz> alt = ImmutableSet.builder();
+    public ImmutableSet<EinzelnerSemSatz> altLangsamWirdEsSaetze() {
+        final ImmutableSet.Builder<EinzelnerSemSatz> alt = ImmutableSet.builder();
 
         alt.addAll(Stream.of(LANGSAM, ALLMAEHLICH)
                 .map(a -> esWirdSatz().mitAdvAngabe(new AdvAngabeSkopusSatz(a)))
@@ -48,32 +48,32 @@ public enum Lichtverhaeltnisse {
     }
 
     /**
-     * Gibt einen Satz zurück wie "es wird hell".
+     * Gibt einen SemSatz zurück wie "es wird hell".
      */
-    private EinzelnerSatz esWirdSatz() {
+    private EinzelnerSemSatz esWirdSatz() {
         return esWirdSatz(null);
     }
 
     /**
-     * Gibt einen Satz zurück wie "und es wird hell".
+     * Gibt einen SemSatz zurück wie "und es wird hell".
      */
-    private EinzelnerSatz esWirdSatz(
+    private EinzelnerSemSatz esWirdSatz(
             final @Nullable
                     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return getAdjektiv().alsEsWirdSatz(anschlusswort);
     }
 
     /**
-     * Gibt einen Satz zurück wie "es ist hell".
+     * Gibt einen SemSatz zurück wie "es ist hell".
      */
-    public EinzelnerSatz esIstSatz() {
+    public EinzelnerSemSatz esIstSatz() {
         return esIstSatz(null);
     }
 
     /**
-     * Gibt einen Satz zurück wie "und es ist hell".
+     * Gibt einen SemSatz zurück wie "und es ist hell".
      */
-    private EinzelnerSatz esIstSatz(
+    private EinzelnerSemSatz esIstSatz(
             final @Nullable
                     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return getAdjektiv().alsEsIstSatz(anschlusswort);

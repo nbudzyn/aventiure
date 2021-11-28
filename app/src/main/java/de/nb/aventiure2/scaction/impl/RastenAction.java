@@ -233,7 +233,7 @@ public class RastenAction extends AbstractWartenRastenAction {
         sc.feelingsComp().requestMoodMin(Mood.ZUFRIEDEN);
 
         // IDEA "Dann" maximal dann verwenden, wenn der es einen Aktor gibt und der Aktor im letzten
-        //  Satz gleich war. (Nach dieser Logik kann man "dann" auch für Beschreibungen in
+        //  SemSatz gleich war. (Nach dieser Logik kann man "dann" auch für Beschreibungen in
         //  der dritten Person verwenden!)
 
         final Windstaerke windstaerke =

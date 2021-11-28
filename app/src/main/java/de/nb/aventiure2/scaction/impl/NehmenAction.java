@@ -54,9 +54,9 @@ import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.praedikat.PraedikatMitEinerObjektleerstelle;
-import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
+import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
+import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -192,7 +192,7 @@ public class NehmenAction
     @Override
     @NonNull
     public String getName() {
-        final PraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
+        final SemPraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
         return joinToKonstituentenfolge(
                 SENTENCE,
@@ -203,7 +203,7 @@ public class NehmenAction
     }
 
     @NonNull
-    private PraedikatMitEinerObjektleerstelle getPraedikatFuerName() {
+    private SemPraedikatMitEinerObjektleerstelle getPraedikatFuerName() {
         if (targetLocation.is(HAENDE_DES_SPIELER_CHARAKTERS)) {
             return NEHMEN
                     .mitAdvAngabe(
@@ -385,7 +385,7 @@ public class NehmenAction
     }
 
     private void narrateObject() {
-        final PraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
+        final SemPraedikatMitEinerObjektleerstelle mitnehmenPraedikat =
                 requireNonNull(gameObject.locationComp().getMitnehmenPraedikat(
                         gameObject.locationComp().isVielteilig()));
 
@@ -409,7 +409,7 @@ public class NehmenAction
                 // FIXME altDescriptions() verwenden
                 final EinzelneSubstantivischePhrase
                         objectDesc = world.getDescription(gameObject, true);
-                final PraedikatOhneLeerstellen praedikatMitObjekt =
+                final SemPraedikatOhneLeerstellen praedikatMitObjekt =
                         mitnehmenPraedikat.mit(objectDesc);
 
                 n.narrateAlt(
@@ -425,7 +425,7 @@ public class NehmenAction
             }
         }
 
-        final PraedikatOhneLeerstellen praedikatMitObjekt =
+        final SemPraedikatOhneLeerstellen praedikatMitObjekt =
                 mitnehmenPraedikat.mit(world.getDescription(gameObject, true));
         n.narrate(
                 du(PARAGRAPH, praedikatMitObjekt)
@@ -437,7 +437,7 @@ public class NehmenAction
     }
 
     private void narrateObjectDiskontinuitaet(
-            final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
+            final SemPraedikatMitEinerObjektleerstelle nehmenPraedikat) {
         final SubstantivischePhrase objectDesc = getDescription(gameObject);
         final EinzelneSubstantivischePhrase objectDescShort =
                 getDescription(textContext, gameObject, true);

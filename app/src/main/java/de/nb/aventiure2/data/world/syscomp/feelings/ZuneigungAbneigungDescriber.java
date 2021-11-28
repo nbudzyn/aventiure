@@ -1,29 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
-import androidx.annotation.NonNull;
-
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.german.adjektiv.AdjPhrMitIndirektemFragesatzOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjPhrMitZuInfinitivOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
-import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
-import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
-import de.nb.aventiure2.german.praedikat.VerbSubjObj;
-import de.nb.aventiure2.german.satz.EinzelnerSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satz;
-
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity.NEUTRAL;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUFGELEGT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.BETRUEBT;
@@ -45,6 +21,30 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ENTGEG
 import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ENTGEGENRUFEN;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
+import androidx.annotation.NonNull;
+
+import com.google.common.collect.ImmutableList;
+
+import de.nb.aventiure2.german.adjektiv.AdjPhrMitIndirektemFragesatzOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjPhrMitZuInfinitivOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.adjektiv.AdjektivMitIndirektemFragesatz;
+import de.nb.aventiure2.german.adjektiv.AdjektivMitZuInfinitiv;
+import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
+import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
+import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.NumerusGenus;
+import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.Praedikativum;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
+import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
+import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.SemSatz;
+
 /**
  * Beschreibt die Zuneigung oder Abneigung eines Feeling Beings
  * gegenüber dem Target, wenn die beiden sich begegnen.
@@ -52,7 +52,7 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 class ZuneigungAbneigungDescriber implements FeelingsDescriber {
     @Override
     @NonNull
-    public ImmutableList<Satz> altReaktionBeiBegegnungSaetze(
+    public ImmutableList<SemSatz> altReaktionBeiBegegnungSaetze(
             final SubstantivischePhrase gameObjectSubjekt,
             final SubstantivischePhrase targetDesc, final int feelingIntensity,
             final boolean targetKnown) {
@@ -60,7 +60,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
         // Keine Relativpronomen von targetDesc erzeugen - jedenfalls nicht solche
         // im Nominativ!
 
-        final ImmutableList.Builder<Satz> res = ImmutableList.builder();
+        final ImmutableList.Builder<SemSatz> res = ImmutableList.builder();
 
         res.addAll(
                 altFeelingBeiBegegnungPraedikativum(
@@ -73,7 +73,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
 
         if (feelingIntensity <= NEUTRAL) {
             //"Sie mustert dich misstrauisch"
-            res.addAll(EinzelnerSatz.altSubjObjSaetze(gameObjectSubjekt, MUSTERN, targetDesc,
+            res.addAll(EinzelnerSemSatz.altSubjObjSaetze(gameObjectSubjekt, MUSTERN, targetDesc,
                     altEindruckBeiBegegnungAdvAngaben(gameObjectSubjekt, targetDesc,
                             feelingIntensity, targetKnown)));
         }

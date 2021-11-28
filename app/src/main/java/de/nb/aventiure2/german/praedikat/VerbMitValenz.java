@@ -11,7 +11,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * der Informationen zur Valenz. Typischerweise enthält so ein Objekt ein
  * {@link Verb}-Objekt (ohne die Informationen zur Valenz.
  */
-interface VerbMitValenz extends Praedikat {
+interface VerbMitValenz extends SemPraedikat {
     @Nullable
     default String getPraesensOhnePartikel(final SubstantivischePhrase subjekt) {
         return getVerb().getPraesensOhnePartikel(subjekt);
