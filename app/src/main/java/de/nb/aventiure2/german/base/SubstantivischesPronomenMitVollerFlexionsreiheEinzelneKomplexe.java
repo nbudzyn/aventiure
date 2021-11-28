@@ -1,22 +1,23 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 
 public abstract class SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe
         extends EinzelneKomplexeSubstantivischePhrase {
     private final Flexionsreihe flexionsreihe;
 
-    SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe(final NumerusGenus numerusGenus,
-                                                                   @Nullable
-                                                                   final Negationspartikelphrase negationspartikelphrase,
-                                                                   final Flexionsreihe flexionsreihe,
-                                                                   @Nullable
-                                                                   final IBezugsobjekt bezugsobjekt) {
-        this(null, negationspartikelphrase, numerusGenus, flexionsreihe, bezugsobjekt);
+    SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe(
+            final NumerusGenus numerusGenus,
+            @Nullable final Negationspartikelphrase negationspartikelphrase,
+            final Flexionsreihe flexionsreihe,
+            final Belebtheit belebtheit,
+            @Nullable final IBezugsobjekt bezugsobjekt) {
+        this(null, negationspartikelphrase, numerusGenus, flexionsreihe,
+                belebtheit, bezugsobjekt);
     }
 
     SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe(
@@ -24,8 +25,9 @@ public abstract class SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomp
             @Nullable final Negationspartikelphrase negationspartikelphrase,
             final NumerusGenus numerusGenus,
             final Flexionsreihe flexionsreihe,
+            final Belebtheit belebtheit,
             @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt);
+        super(fokuspartikel, negationspartikelphrase, numerusGenus, belebtheit, bezugsobjekt);
         this.flexionsreihe = flexionsreihe;
     }
 

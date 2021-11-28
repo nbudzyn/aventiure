@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -15,11 +17,8 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 
 /**
  * Zwei Prädikate mit Objekt ohne Leerstellen, erzeugen einen
@@ -126,13 +125,12 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
                 // "hebst die goldene Kugel auf"
-                erstes.getVerbzweit(person, numerus),
+                erstes.getVerbzweit(praedRegMerkmale),
                 konnektor,
-                zweites.getVerbzweit(person, numerus)
-                        .withVorkommaNoetigMin(konnektor == null)
+                zweites.getVerbzweit(praedRegMerkmale).withVorkommaNoetigMin(konnektor == null)
                 // "nimmst ein Bad"
         );
     }
@@ -144,30 +142,29 @@ public class ZweiPraedikateOhneLeerstellen
                 erstes.getVerbzweitMitSubjektImMittelfeld(subjekt),
                 // "ziehst du erst noch eine Weile um die Häuser"
                 konnektor,
-                zweites.getVerbzweit(subjekt.getPerson(), subjekt.getNumerus())
+                zweites.getVerbzweit(subjekt.getPraedRegMerkmale())
                         .withVorkommaNoetigMin(konnektor == null)
                 // "fällst dann todmüde ins Bett."
         );
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getVerbletzt(person, numerus),
+                erstes.getVerbletzt(praedRegMerkmale),
                 konnektor,
-                zweites.getVerbletzt(person, numerus)
-                        .withVorkommaNoetigMin(konnektor == null));
+                zweites.getVerbletzt(praedRegMerkmale).withVorkommaNoetigMin(konnektor == null));
     }
 
     @Override
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
         PartizipIIPhrase tmp = null;
         @Nullable NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld tmpKonnektor = UND;
         for (final PartizipIIPhrase partizipIIPhrase :
-                erstes.getPartizipIIPhrasen(person, numerus)) {
+                erstes.getPartizipIIPhrasen(praedRegMerkmale)) {
             tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
                     res, tmp, tmpKonnektor, partizipIIPhrase);
             tmpKonnektor = UND;
@@ -175,7 +172,7 @@ public class ZweiPraedikateOhneLeerstellen
 
         tmpKonnektor = konnektor; // "[, ]aber"
         for (final PartizipIIPhrase partizipIIPhrase :
-                zweites.getPartizipIIPhrasen(person, numerus)) {
+                zweites.getPartizipIIPhrasen(praedRegMerkmale)) {
             tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
                     res, tmp, tmpKonnektor, partizipIIPhrase);
             tmpKonnektor = UND;
@@ -191,19 +188,19 @@ public class ZweiPraedikateOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getInfinitiv(person, numerus),
+                erstes.getInfinitiv(praedRegMerkmale),
                 konnektor,
-                zweites.getInfinitiv(person, numerus));
+                zweites.getInfinitiv(praedRegMerkmale));
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getZuInfinitiv(person, numerus),
+                erstes.getZuInfinitiv(praedRegMerkmale),
                 konnektor,
-                zweites.getZuInfinitiv(person, numerus));
+                zweites.getZuInfinitiv(praedRegMerkmale));
     }
 
     @Override
@@ -224,23 +221,22 @@ public class ZweiPraedikateOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
-        return erstes.getSpeziellesVorfeldSehrErwuenscht(person, numerus, nachAnschlusswort);
+        return erstes.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
-        return erstes.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
+        return erstes.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
-        return zweites.getNachfeld(person, numerus);
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
+        return zweites.getNachfeld(praedRegMerkmale);
     }
 
     @Nullable

@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -12,24 +14,27 @@ public class Interrogativpronomen
         implements IInterrogativwort {
     @SuppressWarnings({"unused", "RedundantSuppression"})
     public static final Interrogativpronomen WER =
-            ip(M, fr("wer", "wem", "wen"));
+            ip(M, fr("wer", "wem", "wen"), BELEBT);
     public static final Interrogativpronomen WAS =
-            ip(N, fr("was", "wem"));
+            ip(N, fr("was", "wem"), UNBELEBT);
 
     private static Interrogativpronomen ip(final NumerusGenus numerusGenus,
-                                           final Flexionsreihe flextionsreihe) {
-        return new Interrogativpronomen(numerusGenus, flextionsreihe);
+                                           final Flexionsreihe flextionsreihe,
+                                           final Belebtheit belebtheit) {
+        return new Interrogativpronomen(numerusGenus, flextionsreihe, belebtheit);
     }
 
     private Interrogativpronomen(final NumerusGenus numerusGenus,
-                                 final Flexionsreihe flextionsreihe) {
-        this(numerusGenus, null, flextionsreihe);
+                                 final Flexionsreihe flextionsreihe,
+                                 final Belebtheit belebtheit) {
+        this(numerusGenus, null, flextionsreihe, belebtheit);
     }
 
     private Interrogativpronomen(final NumerusGenus numerusGenus,
                                  @Nullable final Negationspartikelphrase negationspartikelphrase,
-                                 final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, negationspartikelphrase, flextionsreihe, null);
+                                 final Flexionsreihe flextionsreihe,
+                                 final Belebtheit belebtheit) {
+        super(numerusGenus, negationspartikelphrase, flextionsreihe, belebtheit, null);
     }
 
     /**
@@ -49,30 +54,31 @@ public class Interrogativpronomen
         }
 
         return new Interrogativpronomen(getNumerusGenus(), null,
-                getFlexionsreihe());
+                getFlexionsreihe(), getBelebtheit());
     }
 
     @Override
     public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
                                      final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
         return new Interrogativpronomen(getNumerusGenus(), negationspartikelphrase,
-                getFlexionsreihe());
+                getFlexionsreihe(), getBelebtheit());
     }
 
     @Override
     public Personalpronomen persPron() {
         // "Was...? Es..."
-        return Personalpronomen.get(P3, getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus(), getBelebtheit());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
         // "Was ändert sich?"
-        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(new PraedRegMerkmale(
+                P3, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         // "Was ist das? Sein..."
         return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
@@ -81,7 +87,7 @@ public class Interrogativpronomen
     public Relativpronomen relPron() {
         // "Wer, der... , würde...?
         // "Was, das... , würde...?
-        return Relativpronomen.get(P3, getNumerusGenus());
+        return Relativpronomen.get(P3, getNumerusGenus(), getBelebtheit());
     }
 
     @Override

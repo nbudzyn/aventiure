@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.base;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
@@ -28,6 +30,7 @@ import de.nb.aventiure2.german.string.NoLetterException;
  */
 public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     // Flexionsspalten allgemeines Nomen ohne Bezugsobjekt
+    // Belebte Dinge (Menschen, Tiere etc.) müssen als BELEBT gekennzeichnet werden.
 
     ABEND(M),
     ABENDDAEMMERUNG(F, "Abenddämmerung"),
@@ -41,9 +44,9 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     ANGEBOTE(PL_MFN, "Angebote", "Angeboten"),
     ASTGABEL(F),
     BANK(F),
-    BAEUERIN(F, "Bäuerin"),
+    BAEUERIN(F, "Bäuerin", BELEBT),
     BAUERNMARKT(M),
-    BAUERSFRAU(F),
+    BAUERSFRAU(F, BELEBT),
     BAUM(M),
     BAEUME(PL_MFN, "Bäume", "Bäumen"),
     BETT(N),
@@ -57,13 +60,13 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     DUESTERNIS(F, "Düsternis"),
     DUNKEL(N),
     DUNKELHEIT(F),
-    ELEFANTEN(PL_MFN),
+    ELEFANTEN(PL_MFN, BELEBT),
     EISESKAELTE(F, "Eiseskälte"),
     FIRMAMENT(N),
-    FLIEGEN(PL_MFN),
-    FRAU(F),
+    FLIEGEN(PL_MFN, BELEBT),
+    FRAU(F, BELEBT),
     FREUDE(F),
-    FROSCH(M),
+    FROSCH(M, BELEBT),
     FROST(M),
     FUSS(M, "Fuß"),
     GARTEN(M),
@@ -71,9 +74,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     GESPRAECH(N, "Gespräch"),
     HAAR(N),
     HAARE(PL_MFN, "Haare", "Haaren"),
-    HAENDE(PL_MFN, "Hände", "Händen"),
+    HAARZOEPFE(PL_MFN, "Haarzöpfe", "Haarzöpfen"),
+    HAENDE(PL_MFN, "Hände", "Händen", BELEBT),
     HALBDUNKEL(N),
-    HASEN(PL_MFN),
+    HASEN(PL_MFN, BELEBT),
     HELLE(N, "Helle", "Hellen"),
     HERZ(N, "Herz", "Herzen"),
     HELLEBARDE(F),
@@ -86,9 +90,9 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     KAELTE(F, "Kälte"),
     KINN(N),
     KLAUBHOLZ(N),
-    KOENIGSSOHN(M, "Königssohn"),
+    KOENIGSSOHN(M, "Königssohn", BELEBT),
     KOERBE(PL_MFN, "Körbe", "Körben"),
-    KORBFLECHTERIN(F),
+    KORBFLECHTERIN(F, BELEBT),
     KRAFT(F),
     KUEHLE(N, "Kühle", "Kühlen"),
     KUGEL(F),
@@ -97,7 +101,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     LUFT(F),
     LUFTHAUCH(M),
     LUFTZUG(M),
-    MANN(M),
+    MANN(M, BELEBT),
     MARKT(M),
     MARKTSTAENDE(PL_MFN, "Marktstände", "Marktständen"),
     MUS(N),
@@ -122,14 +126,14 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NOTLUEGE(F, "Notlüge"),
     OSTEN(M),
     PLATZ(M),
-    RABEN(PL_MFN),
-    RAPUNZEL(F, true),
+    RABEN(PL_MFN, BELEBT),
+    RAPUNZEL(F, true, BELEBT),
     RETTUNG(F),
     ROTWEINE(PL_MFN, "Rotweine", "Rotweinen"),
     RUNDHOELZER(PL_MFN, "Rundhölzer", "Rundhölzern"),
     SCHATTEN(M),
     SCHLOSSGARTEN(M),
-    SCHLOSSWACHE(F),
+    SCHLOSSWACHE(F, BELEBT),
     SCHUMMERLICHT(N),
     SONNE(F),
     SONNENHITZE(F),
@@ -138,8 +142,6 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     SONNENUNTERGANG(M),
     STUECKE(PL_MFN, "Stücke", "Stücken"),
     TISCH(M),
-    // FIXME "scheint der Mond *von dem* Sternenhimmel herab",
-    //  "steigt die sonne *an dem* Firmament empor" (-> vom, am)
     STERNENHIMMEL(M),
     STERNENLICHT(N),
     STERNENZELT(N),
@@ -163,9 +165,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     WOLKENDECKE(F),
     WOLKENFRONT(F),
     WUT(F),
-    ZAUBERIN(F),
+    ZAUBERIN(F, BELEBT),
     ZEIT(F),
     ZIEL(N),
+    ZOEPFE(PL_MFN, "Zöpfe", "Zöpfen"),
     ZWIELICHT(N);
 
     private final NumerusGenus numerusGenus;
@@ -180,6 +183,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * "eine Anna".
      */
     private final boolean grundsaetzlichArtikellos;
+
+    private final Belebtheit belebtheit;
 
     // Es gibt außerdem seltene Fälle, wo die Deklination ausfallen kann und statt
     // eines z.b. Dativs die Nominativ-Form steht. (Man könnte das
@@ -198,7 +203,15 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus) {
-        this(numerusGenus, false);
+        this(numerusGenus, UNBELEBT);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final Belebtheit belebtheit) {
+        this(numerusGenus, false, belebtheit);
     }
 
     /**
@@ -206,7 +219,27 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final String nominalNominativDativUndAkkusativ) {
-        this(numerusGenus, nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
+        this(numerusGenus, nominalNominativDativUndAkkusativ, UNBELEBT);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final boolean grundsaetzlichArtikellos,
+                        final Belebtheit belebtheit) {
+        this(numerusGenus, grundsaetzlichArtikellos, (Flexionsreihe) null,
+                belebtheit);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final String nominalNominativDativUndAkkusativ,
+                        final Belebtheit belebtheit) {
+        this(numerusGenus, nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ,
+                belebtheit);
     }
 
 
@@ -214,8 +247,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
      * Erzeugt ein Nomen ohne Bezugsobjekt.
      */
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
-                        final boolean grundsaetzlichArtikellos) {
-        this(numerusGenus, grundsaetzlichArtikellos, (Flexionsreihe) null);
+                        final boolean grundsaetzlichArtikellos,
+                        final String nominalNominativDativUndAkkusativ) {
+        this(numerusGenus, grundsaetzlichArtikellos, nominalNominativDativUndAkkusativ,
+                UNBELEBT);
     }
 
     /**
@@ -224,9 +259,11 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     @SuppressWarnings("unused")
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final boolean grundsaetzlichArtikellos,
-                        final String nominalNominativDativUndAkkusativ) {
+                        final String nominalNominativDativUndAkkusativ,
+                        final Belebtheit belebtheit) {
         this(numerusGenus, grundsaetzlichArtikellos,
-                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ);
+                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ,
+                belebtheit);
     }
 
     /**
@@ -235,10 +272,19 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final String nominalNominativUndAkkusativ,
                         final String nominalDativ) {
-        this(numerusGenus, nominalNominativUndAkkusativ, nominalDativ,
-                nominalNominativUndAkkusativ);
+        this(numerusGenus, nominalNominativUndAkkusativ, nominalDativ, UNBELEBT);
     }
 
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final String nominalNominativUndAkkusativ,
+                        final String nominalDativ,
+                        final Belebtheit belebtheit) {
+        this(numerusGenus, nominalNominativUndAkkusativ, nominalDativ,
+                nominalNominativUndAkkusativ, belebtheit);
+    }
 
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
@@ -246,11 +292,12 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final boolean grundsaetzlichArtikellos,
                         final String nominalNominativUndAkkusativ,
-                        final String nominalDativ) {
+                        final String nominalDativ,
+                        final Belebtheit belebtheit) {
         this(numerusGenus, grundsaetzlichArtikellos,
-                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ);
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
+                belebtheit);
     }
-
 
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
@@ -259,12 +306,27 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
                         final String nominalNominativ,
                         final String nominalDativ,
                         final String nominalAkkusativ) {
+        this(numerusGenus,
+                nominalNominativ,
+                nominalDativ,
+                nominalAkkusativ,
+                UNBELEBT);
+    }
+
+    /**
+     * Erzeugt ein Nomen ohne Bezugsobjekt.
+     */
+    NomenFlexionsspalte(final NumerusGenus numerusGenus,
+                        final String nominalNominativ,
+                        final String nominalDativ,
+                        final String nominalAkkusativ,
+                        final Belebtheit belebtheit) {
         this(numerusGenus, false,
                 nominalNominativ,
                 nominalDativ,
-                nominalAkkusativ);
+                nominalAkkusativ,
+                belebtheit);
     }
-
 
     /**
      * Erzeugt ein Nomen ohne Bezugsobjekt.
@@ -273,11 +335,13 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
                         final boolean grundsaetzlichArtikellos,
                         final String nominalNominativ,
                         final String nominalDativ,
-                        final String nominalAkkusativ) {
+                        final String nominalAkkusativ,
+                        final Belebtheit belebtheit) {
         this(numerusGenus, grundsaetzlichArtikellos,
                 fr(checkNoWhitespace(nominalNominativ),
                         checkNoWhitespace(nominalDativ),
-                        checkNoWhitespace(nominalAkkusativ)));
+                        checkNoWhitespace(nominalAkkusativ)),
+                belebtheit);
     }
 
     private static String checkNoWhitespace(final String kasusform) {
@@ -288,10 +352,12 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     NomenFlexionsspalte(final NumerusGenus numerusGenus,
                         final boolean grundsaetzlichArtikellos,
-                        @Nullable final Flexionsreihe flexionsreiheArtikellos) {
+                        @Nullable final Flexionsreihe flexionsreiheArtikellos,
+                        final Belebtheit belebtheit) {
         this.numerusGenus = numerusGenus;
         this.grundsaetzlichArtikellos = grundsaetzlichArtikellos;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
+        this.belebtheit = belebtheit;
     }
 
     @Override
@@ -315,7 +381,7 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     @Override
-    public SubstantivischePhrase ohneNegationspartikelphrase() {
+    public NomenFlexionsspalte ohneNegationspartikelphrase() {
         return this;
     }
 
@@ -326,8 +392,8 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     }
 
     @Override
-    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
-                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+    public Nominalphrase neg(final Negationspartikelphrase negationspartikelphrase,
+                             final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
         return toNominalphrase()
                 .neg(negationspartikelphrase, moeglichstNegativIndefiniteWoerterVerwenden);
     }
@@ -364,22 +430,23 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
 
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
+        return Personalpronomen.get(P3, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
-        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(new PraedRegMerkmale(
+                P3, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
+        return Relativpronomen.get(P3, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
@@ -431,5 +498,10 @@ public enum NomenFlexionsspalte implements EinzelneSubstantivischePhrase {
     @NonNull
     private Nominalphrase toNominalphrase() {
         return np(this);
+    }
+
+    @Override
+    public Belebtheit getBelebtheit() {
+        return belebtheit;
     }
 }

@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
@@ -9,16 +11,14 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Eine Adjektivphrase mit ob- oder w-Fragesatz, in der alle Leerstellen besetzt sind. Beispiel:
@@ -111,6 +111,7 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
     @Nullable
     @Override
     public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
+                                                      final Belebtheit belebtheit,
                                                       final Kasus kasus,
                                                       final boolean artikelwortTraegtKasusendung) {
         return null;
@@ -148,20 +149,20 @@ public class AdjPhrMitIndirektemFragesatzOhneLeerstellen extends AbstractAdjPhrO
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
-                                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt), // "immer noch"
+                getAdvAngabeSkopusSatzDescription(praedRegMerkmale),
+                // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 k(getAdjektiv().getPraedikativ()), // "gespannt"
-                getPraedikativAnteilKandidatFuerNachfeld(personSubjekt, numerusSubjekt));
+                getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale));
         // ", ob du etwas zu berichten hast[, ]"
     }
 
     @Override
     @Nullable
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.schliesseInKommaEin(
                 indirekterFragesatz.getIndirekteFrage()
                 // "[,] ob du etwas zu berichten hast[,] ", "[,] was du zu berichten hast[,] " etc.

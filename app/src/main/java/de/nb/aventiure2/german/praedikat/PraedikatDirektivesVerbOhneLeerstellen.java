@@ -1,6 +1,11 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -22,17 +27,11 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat eines <i>direktiven Verbs</i>, in dem alle Leerstellen besetzt sind. Beispiele:
@@ -192,10 +191,10 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -205,9 +204,8 @@ public class PraedikatDirektivesVerbOhneLeerstellen
         }
 
         /*
-         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
          * (Eisenberg Der Satz 5.4.2)
-         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, kasus)) {
             return null;
@@ -228,17 +226,15 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
                 getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
                 objekt.imK(kasus), // "die junge Frau"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // (kann es wohl gar nicht geben)
         );
 
@@ -254,8 +250,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         if (kasus == DAT) {
             return objekt;
         }
@@ -265,8 +260,7 @@ public class PraedikatDirektivesVerbOhneLeerstellen
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         if (kasus == AKK) {
             return objekt;
         }
@@ -281,19 +275,17 @@ public class PraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return
                 joinToKonstituentenfolge(
-                        lexikalischerKern.getZuInfinitiv(
+                        lexikalischerKern.getZuInfinitiv(objekt
                                 // Es liegt "Objektkontrolle" vor.
-                                objekt.getPerson(), objekt.getNumerusGenus().getNumerus()),
+                        ),
                         // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
                         getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
-                                personSubjekt, numerusSubjekt),
+                                praedRegMerkmale),
                         // , glücklich, dich zu sehen
-                        getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
-                                personSubjekt, numerusSubjekt)
+                        getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
                 );
     }
 

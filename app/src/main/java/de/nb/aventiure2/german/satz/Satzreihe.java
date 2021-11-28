@@ -369,8 +369,8 @@ public class Satzreihe implements Satz {
     }
 
     @Override
-    public boolean hasSubjektDu() {
-        return bothMatch(Satz::hasSubjektDu);
+    public boolean hasSubjektDuBelebt() {
+        return bothMatch(Satz::hasSubjektDuBelebt);
     }
 
     @Nullable

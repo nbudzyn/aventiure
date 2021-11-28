@@ -1,5 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -8,13 +16,6 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 /**
  * Gemütszustand
@@ -68,7 +69,9 @@ public enum Mood {
                         .map(a -> new AdvAngabeSkopusSatz(
                                 a.getPraedikativ(
                                         // irrelevant für AdjektivOhneErgaenzungen
-                                        P2, SG).joinToString()))
+                                        P2, SG,
+                                        // Wer eine "Laune" hat, wird sicher belebt sein.
+                                        BELEBT).joinToString()))
                         .collect(toList()));
     }
 

@@ -1,5 +1,10 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -21,18 +26,12 @@ import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat mit einem Objekt und wörtlicher Rede, in dem alle Leerstellen besetzt sind.
@@ -181,12 +180,10 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
-                                                           final Numerus numerusSubjekt,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
         final Konstituente speziellesVorfeldSehrErwuenschtFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(personSubjekt, numerusSubjekt,
-                        nachAnschlusswort);
+                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
         if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
             return speziellesVorfeldSehrErwuenschtFromSuper;
         }
@@ -203,19 +200,16 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                            final Numerus numerus) {
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
         /*
-         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
-         * (Eisenberg Der Satz 5.4.2)
-         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel oder
-         * Negationspartikelphrasen haben)
+         * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
+         * (Eisenberg Der Satz 5.4.2).
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
             return null;
@@ -237,25 +231,22 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 objekt.imK(kasusOderPraepositionalkasus), // "der Hexe"
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
                 // "aus einer Laune heraus"
                 kf(getModalpartikeln()),  // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
                 getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // ("mitten ins Gesicht" - sofern überhaupt möglich)
         );
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         if (kasusOderPraepositionalkasus == DAT) {
             return objekt;
         }
@@ -265,8 +256,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         if (kasusOderPraepositionalkasus == AKK) {
             return objekt;
         }
@@ -281,13 +271,10 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale),
                 k(woertlicheRede.getDescription(),
                         true,
                         true)
@@ -340,7 +327,7 @@ public class PraedikatObjWoertlicheRedeOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

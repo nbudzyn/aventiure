@@ -32,9 +32,9 @@ import de.nb.aventiure2.BuildConfig;
 import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.MainViewModel;
 import de.nb.aventiure2.databinding.MainActivityBinding;
-import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.FullWalkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.NurRapunzelWalkthrough;
+import de.nb.aventiure2.util.logger.Logger;
 
 public class MainActivity extends AppCompatActivity {
     // IDEA Risiko angehen: Spracherzeugung wie gewünscht technisch nicht (performant)

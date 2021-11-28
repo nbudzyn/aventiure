@@ -4,6 +4,8 @@ import static java.util.Arrays.asList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.VOR_DEM_NAECHSTEN_RAPUNZEL_BESUCH;
@@ -11,6 +13,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.NACH_VERWUESTUNG_WIEDER_GERICHTET_MARKTSTAENDE_OFFEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.VERWUESTET;
 import static de.nb.aventiure2.data.world.syscomp.story.impl.RapunzelStoryNode.Counter.STORY_ADVANCE;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
@@ -49,8 +52,8 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState;
 import de.nb.aventiure2.data.world.syscomp.story.IStoryNode;
 import de.nb.aventiure2.data.world.syscomp.story.Story;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
@@ -62,7 +65,7 @@ public enum RapunzelStoryNode implements IStoryNode {
     // (Letztlich mit Ja beantwortet.)
     // (Und: Gelingt es dem SC, zu ihr eine dauerhafte, engere Beziehung aufzubauen? - Letztlich
     // mit Nein beantwortet)
-    // Charaktere: SC, Rapunzel, Zauberin; Seilerin
+    // Charaktere: SC, Rapunzel, Zauberin, Korbflechterin
     // Gewünschtes Ergebnis: Rapunzel ist dauerhaft in Freiheit
     // Der SC ist Actor, Zauberin ist Resistor.
     // Schwierigkeiten:
@@ -527,7 +530,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             alt.add(paragraph(
                     "Hoffentlich ist die alte Schachtel bald weg, dass du endlich los",
                     "kommst!").schonLaenger()
-                            .phorikKandidat(F, RAPUNZELS_ZAUBERIN),
+                            .phorikKandidat(F, BELEBT, RAPUNZELS_ZAUBERIN),
                     paragraph("Nun heißt es wohl geduldig sein").schonLaenger());
         } else {
             alt.add(paragraph(
@@ -569,7 +572,7 @@ public enum RapunzelStoryNode implements IStoryNode {
             }
         }
 
-        final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(world);
+        final SubstantivischePhrase rapunzelDesc = getDescription(world);
         if (world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
             alt.add(paragraph("Wie kannst du bloß", rapunzelDesc.akkK(),
                     "in die Freiheit bringen…").schonLaenger());
@@ -607,7 +610,7 @@ public enum RapunzelStoryNode implements IStoryNode {
                             "praktische Dinge daraus machen – fällt dir gerade auf", SENTENCE));
         }
 
-        final EinzelneSubstantivischePhrase rapunzelDesc = getDescription(world);
+        final SubstantivischePhrase rapunzelDesc = getDescription(world);
         if (world.loadSC().memoryComp().isKnown(RAPUNZEL)) {
             alt.add(neuerSatz("Wie mag es nur",
                     rapunzelDesc.datK(),
@@ -618,8 +621,9 @@ public enum RapunzelStoryNode implements IStoryNode {
                     "?").schonLaenger());
         }
 
-        final EinzelneSubstantivischePhrase descHolz =
-                world.getDescription(HOLZ_FUER_STRICKLEITER);
+        final SubstantivischePhrase descHolz =
+                world.getDescription(HOLZ_FUER_STRICKLEITER,
+                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
         if (!world.hasSameVisibleOuterMostLocationAsSC(HOLZ_FUER_STRICKLEITER)) {
             alt.add(neuerSatz("Da kommt dir eine Idee", SENTENCE),
                     neuerSatz("Ein Gedanke schießt dir durch den Kopf", SENTENCE));
@@ -684,7 +688,8 @@ public enum RapunzelStoryNode implements IStoryNode {
         return world.loadRequired(RAPUNZELS_ZAUBERIN);
     }
 
-    private static EinzelneSubstantivischePhrase getDescription(final World world) {
-        return world.getDescription(RAPUNZEL);
+    private static SubstantivischePhrase getDescription(
+            final World world) {
+        return world.getDescription(RAPUNZEL, NICHT_POSSESSIV);
     }
 }

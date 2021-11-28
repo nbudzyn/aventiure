@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.narration;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -18,12 +24,6 @@ import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.SimpleDuDescription;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TextDescription;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.util.StreamUtil.*;
 
 /**
  * Builds {@link TextDescription}s from {@link AbstractDescription}s.
@@ -61,7 +61,7 @@ class TextDescriptionBuilder {
                 }
                 return res.build();
             } else if (desc instanceof StructuredDescription
-                    && ((StructuredDescription) desc).hasSubjektDu()) {
+                    && ((StructuredDescription) desc).hasSubjektDuBelebt()) {
                 final ImmutableList.Builder<TextDescription> res = ImmutableList.builder();
                 res.add(((StructuredDescription) desc)
                         .toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma());

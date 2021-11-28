@@ -17,7 +17,9 @@ import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 
 import com.google.common.collect.ImmutableMap;
 
+import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.DescriptionTriple;
 import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterStateComp;
 
@@ -28,26 +30,36 @@ import de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterStateC
  */
 public class HolzFuerStrickleiterDescriptionComp
         extends StateMapDescriptionComp<HolzFuerStrickleiterState> {
-    public HolzFuerStrickleiterDescriptionComp(final HolzFuerStrickleiterStateComp stateComp) {
+    public HolzFuerStrickleiterDescriptionComp(final CounterDao counterDao,
+                                               final HolzFuerStrickleiterStateComp stateComp) {
         super(HOLZ_FUER_STRICKLEITER, stateComp,
                 ImmutableMap.of(
                         AM_BAUM, new DescriptionTriple(
+                                counterDao,
                                 np(INDEF, AESTE, HOLZ_FUER_STRICKLEITER),
                                 np(DEF, AESTE, HOLZ_FUER_STRICKLEITER)),
                         AUF_DEM_BODEN, new DescriptionTriple(
+                                counterDao,
                                 np(PL_MFN, INDEF,
                                         "dünne und kräftige von den Bäumen gebrochene Äste",
                                         "dünnen und kräftigen von den Bäumen gebrochenen Ästen",
                                         "dünnen und kräftigen von den Bäumen gebrochenen Äste",
                                         HOLZ_FUER_STRICKLEITER),
                                 np(N, DEF, "vom Sturm abgebrochene Holz",
-                                        "vom Sturm abgebrochenen Holz", HOLZ_FUER_STRICKLEITER),
+                                        "vom Sturm abgebrochenen Holz",
+                                        // FIXME Belebtheit und id je SimpleDescriptionComp
+                                        //  nur einmal angeben lasen und nachträglich
+                                        //  in die NP setzen? (.withBelebtheit().withBezugsobjekt
+                                        //  ()).
+                                        HOLZ_FUER_STRICKLEITER),
                                 np(HOLZ, HOLZ_FUER_STRICKLEITER)),
                         HolzFuerStrickleiterState.GESAMMELT, new DescriptionTriple(
+                                counterDao,
                                 np(null, GESAMMELT, HOLZ, HOLZ_FUER_STRICKLEITER),
                                 np(DEF, GESAMMELT, HOLZ, HOLZ_FUER_STRICKLEITER),
                                 np(KLAUBHOLZ, HOLZ_FUER_STRICKLEITER)),
                         IN_STUECKE_GEBROCHEN, new DescriptionTriple(
+                                counterDao,
                                 np(PL_MFN, INDEF, "in handliche Stücke gebrochene Äste",
                                         "in handliche Stücke gebrochenen Ästen",
                                         "in handliche Stücke gebrochene Äste",

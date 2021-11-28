@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -14,11 +16,8 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat (Verb ggf. mit Präfix) bei dem das Verb mit einem Subjekt steht und keine
@@ -129,30 +128,27 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),// "aus einer Laune heraus"
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+// "aus einer Laune heraus"
                 kf(getModalpartikeln()), // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
                 getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // "in den Wald"
         );
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
@@ -164,13 +160,10 @@ public class PraedikatSubOhneLeerstellen extends AbstractAngabenfaehigesPraedika
 
     @Override
     @Nullable
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt)
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
         );
     }
 

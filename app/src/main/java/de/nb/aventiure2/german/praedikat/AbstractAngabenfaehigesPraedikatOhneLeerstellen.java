@@ -1,5 +1,16 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.impliziertZustandsaenderung;
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.isMehrteilig;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+
 import androidx.annotation.NonNull;
 import androidx.core.util.Pair;
 
@@ -20,21 +31,9 @@ import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.cutFirstOneByOne;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Negationspartikelphrase.impliziertZustandsaenderung;
-import static de.nb.aventiure2.german.base.Negationspartikelphrase.isMehrteilig;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Ein Prädikat, in dem alle Leerstellen besetzt sind und dem grundsätzlich
@@ -133,12 +132,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @Override
-    public final Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public final Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(verb.getPraesensOhnePartikel(person, numerus)),
-                getMittelfeld(person, numerus),
+                requireNonNull(verb.getPraesensOhnePartikel(
+                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
+                getMittelfeld(praedRegMerkmale),
                 verb.getPartikel(),
-                getNachfeld(person, numerus));
+                getNachfeld(praedRegMerkmale));
     }
 
     @Override
@@ -150,27 +150,28 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
                 subjekt.nomK(),
-                getMittelfeld(subjekt.getPerson(), subjekt.getNumerus()),
+                getMittelfeld(subjekt.getPraedRegMerkmale()),
                 verb.getPartikel(),
-                getNachfeld(subjekt.getPerson(), subjekt.getNumerus()));
+                getNachfeld(subjekt.getPraedRegMerkmale()));
     }
 
     @Override
-    public final Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public final Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(person, numerus),
-                requireNonNull(verb.getPraesensMitPartikel(person, numerus)),
-                getNachfeld(person, numerus));
+                getMittelfeld(praedRegMerkmale),
+                requireNonNull(verb.getPraesensMitPartikel(
+                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
+                getNachfeld(praedRegMerkmale));
     }
 
     @Override
-    public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                      final Numerus numerus) {
+    public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        getMittelfeld(person, numerus),
+                        getMittelfeld(praedRegMerkmale),
                         verb.getPartizipII(),
-                        getNachfeld(person, numerus)),
+                        getNachfeld(praedRegMerkmale)),
                 verb.getPerfektbildung()));
     }
 
@@ -179,11 +180,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public final Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+    public final Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(person, numerus),
+                getMittelfeld(praedRegMerkmale),
                 verb.getInfinitiv(),
-                getNachfeld(person, numerus));
+                getNachfeld(praedRegMerkmale));
     }
 
     /**
@@ -191,21 +192,20 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public final Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+    public final Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(person, numerus),
+                getMittelfeld(praedRegMerkmale),
                 verb.getZuInfinitiv(),
-                getNachfeld(person, numerus));
+                getNachfeld(praedRegMerkmale));
     }
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
-                                                           final Numerus numerusSubjekt,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
         if (advAngabeSkopusSatz != null) {
             return advAngabeSkopusSatz
-                    .getDescription(personSubjekt, numerusSubjekt)
+                    .getDescription(praedRegMerkmale)
                     .withVorkommaNoetig(false);
         }
 
@@ -214,16 +214,15 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person personSubjekt,
-                                                                   final Numerus numerusSubjekt) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
         if (getNegationspartikel() != null) {
             return null;
         }
 
         @Nullable final Konstituente
                 advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt);
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale);
         if (advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
             // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
             return joinToKonstituentenfolge(
@@ -235,13 +234,9 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     }
 
     @CheckReturnValue
-    private Konstituentenfolge getMittelfeld(
-            final Person personSubjekt,
-            final Numerus numerusSubjekt) {
-        @Nullable final SubstPhrOderReflexivpronomen datObjekt = getDat(personSubjekt,
-                numerusSubjekt);
-        final SubstPhrOderReflexivpronomen akkObjekt = getAkk(personSubjekt,
-                numerusSubjekt);
+    private Konstituentenfolge getMittelfeld(final PraedRegMerkmale praedRegMerkmale) {
+        @Nullable final SubstPhrOderReflexivpronomen datObjekt = getDat(praedRegMerkmale);
+        final SubstPhrOderReflexivpronomen akkObjekt = getAkk(praedRegMerkmale);
 
         // einige wenige Verben wie "jdn. etw. lehren" haben zwei Akkusativobjekte
         final SubstPhrOderReflexivpronomen zweitesAkkObjekt = getZweitesAkk();
@@ -262,8 +257,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
                 kf(unbetontePronomen),
                 // 3. Der Bereich nach der Wackernagel-Position. Hier steht alles übrige
                 cutFirstOneByOne(
-                        getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-                                personSubjekt, numerusSubjekt),
+                        getMittelfeldOhneLinksversetzungUnbetonterPronomen(praedRegMerkmale),
                         unbetontePronomen
                 ));
     }
@@ -271,9 +265,11 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
     @Override
     public final boolean hatAkkusativobjekt() {
         return getAkk(
-                // Ob es ein Akkusativobjekt gibt, sollte von Person und Numuerus
-                // unabhängig sein.
-                P2, SG) != null
+                new PraedRegMerkmale(
+                        // Ob es ein Akkusativobjekt gibt, sollte von Person, Numuerus und
+                        // Belebtheit
+                        // unabhängig sein.
+                        P2, SG, UNBELEBT)) != null
                 || getZweitesAkk() != null;
     }
 
@@ -281,8 +277,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * Gibt das Akkusativ-Objekt zurück - sofern es eines gibt.
      */
     @Nullable
-    abstract SubstPhrOderReflexivpronomen getAkk(
-            Person personSubjekt, Numerus numerusSubjekt);
+    abstract SubstPhrOderReflexivpronomen getAkk(PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt das <i>zweite</i> Akkusativ-Objekt zurück - sofern es eines gibt.
@@ -297,7 +292,7 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * Gibt das Dativ-Objekt zurück - sofern es eines gibt.
      */
     @Nullable
-    abstract SubstPhrOderReflexivpronomen getDat(Person personSubjekt, Numerus numerusSubjekt);
+    abstract SubstPhrOderReflexivpronomen getDat(PraedRegMerkmale praedRegMerkmale);
 
 
     private static Pair<SubstPhrOderReflexivpronomen, Kasus> toPair(
@@ -327,14 +322,13 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
      * etwas zurückgeben wie <i>dem Ork es geben</i>.
      * <p>
      * Die Linksversetzung der unbetonten Pronomen an die Wackernagel-Position geschieht durch
-     * die Methode {@link #getMittelfeld(Person, Numerus)} auf Basis der Methoden
-     * {@link #getAkk(Person, Numerus)}, {@link #getZweitesAkk()} und
-     * {@link #getDat(Person, Numerus)}.
+     * die Methode {@link #getMittelfeld(PraedRegMerkmale)} auf Basis der Methoden
+     * {@link #getAkk(PraedRegMerkmale)}, {@link #getZweitesAkk()} und
+     * {@link #getDat(PraedRegMerkmale)}.
      */
     @Nullable
     abstract Konstituentenfolge
-    getMittelfeldOhneLinksversetzungUnbetonterPronomen(final Person personSubjekt,
-                                                       final Numerus numerusSubjekt);
+    getMittelfeldOhneLinksversetzungUnbetonterPronomen(PraedRegMerkmale praedRegMerkmale);
 
     @NonNull
     Verb getVerb() {
@@ -347,15 +341,15 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
 
     @Nullable
     private Konstituente getAdvAngabeSkopusSatzDescription(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return advAngabeSkopusSatz != null ?
-                advAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
                 null;
     }
 
     @Nullable
     Konstituente getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         if (advAngabeSkopusSatz == null) {
             return null;
         }
@@ -364,12 +358,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusSatzDescription(praedRegMerkmale);
     }
 
     @Nullable
     Konstituente getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         if (advAngabeSkopusSatz == null) {
             return null;
         }
@@ -378,12 +372,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusSatzDescription(praedRegMerkmale);
     }
 
     @Nullable
     Konstituente getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         if (advAngabeSkopusVerbAllg == null) {
             return null;
         }
@@ -392,12 +386,12 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdvAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusVerbTextDescription(praedRegMerkmale);
     }
 
     @Nullable
     Konstituente getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         if (advAngabeSkopusVerbAllg == null) {
             return null;
         }
@@ -406,22 +400,22 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return getAdvAngabeSkopusVerbTextDescription(personSubjekt, numerusSubjekt);
+        return getAdvAngabeSkopusVerbTextDescription(praedRegMerkmale);
     }
 
 
     @Nullable
     private Konstituente getAdvAngabeSkopusVerbTextDescription(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return advAngabeSkopusVerbAllg != null ?
-                advAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt) : null;
+                advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) : null;
     }
 
     @Nullable
     Konstituente getAdvAngabeSkopusVerbWohinWoherDescription(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return advAngabeSkopusVerbWohinWoher != null ?
-                advAngabeSkopusVerbWohinWoher.getDescription(personSubjekt, numerusSubjekt) :
+                advAngabeSkopusVerbWohinWoher.getDescription(praedRegMerkmale) :
                 null;
     }
 
@@ -474,9 +468,8 @@ public abstract class AbstractAngabenfaehigesPraedikatOhneLeerstellen
             return null;
         }
 
-        return joinToKonstituentenfolge(advAngabeOderInterrogativ.getDescription(
-                // Machen bei Interrogativadverbien keinen Unterschied
-                P3, SG));
+        return joinToKonstituentenfolge(
+                ((IInterrogativadverb) advAngabeOderInterrogativ).getDescription());
     }
 
     @Override

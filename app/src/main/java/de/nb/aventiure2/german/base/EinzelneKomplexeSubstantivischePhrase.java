@@ -1,10 +1,10 @@
 package de.nb.aventiure2.german.base;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Eine ungereihte Phrase, die substantivisch verwendet werden kann, also insbesondere
@@ -37,10 +37,13 @@ public abstract class EinzelneKomplexeSubstantivischePhrase implements
     @Nullable
     private final IBezugsobjekt bezugsobjekt;
 
+    private final Belebtheit belebtheit;
+
     EinzelneKomplexeSubstantivischePhrase(
             @Nullable final String fokuspartikel,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
             final NumerusGenus numerusGenus,
+            final Belebtheit belebtheit,
             @Nullable final IBezugsobjekt bezugsobjekt) {
         checkArgument(fokuspartikel == null || !fokuspartikel.isEmpty(),
                 "Fokuspartikel ist Leerstring");
@@ -49,6 +52,7 @@ public abstract class EinzelneKomplexeSubstantivischePhrase implements
         this.negationspartikelphrase = negationspartikelphrase;
         this.numerusGenus = numerusGenus;
         this.bezugsobjekt = bezugsobjekt;
+        this.belebtheit = belebtheit;
     }
 
     /**
@@ -87,6 +91,11 @@ public abstract class EinzelneKomplexeSubstantivischePhrase implements
     }
 
     @Override
+    public Belebtheit getBelebtheit() {
+        return belebtheit;
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -99,11 +108,13 @@ public abstract class EinzelneKomplexeSubstantivischePhrase implements
         return Objects.equals(fokuspartikel, that.fokuspartikel)
                 && Objects.equals(negationspartikelphrase, that.negationspartikelphrase)
                 && numerusGenus == that.numerusGenus
-                && Objects.equals(bezugsobjekt, that.bezugsobjekt);
+                && Objects.equals(bezugsobjekt, that.bezugsobjekt)
+                && belebtheit == that.belebtheit;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt);
+        return Objects.hash(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt,
+                belebtheit);
     }
 }

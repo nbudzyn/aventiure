@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -17,15 +21,10 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 
 /**
  * Ein Prädikat, bestehend aus <i>sein</i> und einem Prädikativum ("müde sein",
@@ -157,10 +156,9 @@ public class PraedikativumPraedikatOhneLeerstellen
     @SuppressWarnings("RedundantIfStatement")
     @Override
     public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                            final Numerus numerus) {
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -175,34 +173,31 @@ public class PraedikativumPraedikatOhneLeerstellen
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
                 // "plötzlich"
                 kf(getModalpartikeln()), // "halt"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt, getNegationspartikel())
+                        praedRegMerkmale,
+                        getNegationspartikel())
                 // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr glücklich
                 // [, dich zu sehen]", "kein Esel",  "schon lange kein Verdächtiger mehr"
         );
     }
 
-    @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    @Nullable
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
-    @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    @Nullable
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
@@ -214,15 +209,12 @@ public class PraedikativumPraedikatOhneLeerstellen
 
     @Override
     @Nullable
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt), // "dich zu sehen"
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt)
+                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
+                // "dich zu sehen"
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
         );
     }
 
@@ -257,7 +249,7 @@ public class PraedikativumPraedikatOhneLeerstellen
                     // "Sie ist interessiert, wer Peter ist",
                     // "Sie ist interessiert, wer du bist",
                     // "Sie ist interessiert, wer wir sind"
-                    P2, SG);
+                    P2, SG, ((Interrogativpronomen) praedikativum).getBelebtheit());
         }
 
         return null;
@@ -270,10 +262,12 @@ public class PraedikativumPraedikatOhneLeerstellen
         if (praedikativum instanceof Relativpronomen) {
             return praedikativum.getPraedikativ(
                     // Person und Numerus spielen beim Relativpronomen keine Rolle:
-                    // "Sie ist eine die, die Professor ist",
+                    // "Sie ist die eine, die Professor ist",
                     // "Er ist derselbe, der du bist",
                     // "Sie ist diesbelbe, die wir sind"
-                    P2, SG);
+                    // "Das Kind ist daselbe, das du schon kennst"
+                    // "Das Problem ist daselbe, das du schon kennst"
+                    P2, SG, ((Relativpronomen) praedikativum).getBelebtheit());
         }
 
         return null;

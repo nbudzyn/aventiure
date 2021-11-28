@@ -43,8 +43,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(IM_WALD_BEIM_BRUNNEN) ||
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
-                !((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
-                        .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
+                !loadFroschprinz().stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
                 !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
     }
 
@@ -62,8 +61,7 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
     private TimedDescription<?> getDescTo_ImWaldBeimBrunnen(final Known newLocationKnown,
                                                             final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
-                ((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
-                        .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
+                loadFroschprinz().stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return getDescTo_ImWaldBeimBrunnenWirdTraurig();
         }
@@ -89,5 +87,10 @@ public class WaldwildnisHinterDemBrunnenConnectionComp extends AbstractSpatialCo
     private <LOC_DESC extends ILocatableGO & IDescribableGO>
     ImmutableList<LOC_DESC> getObjectsInDenBrunnenGefallen() {
         return world.loadDescribableNonLivingMovableKnownToSCRecursiveInventory(UNTEN_IM_BRUNNEN);
+    }
+
+    @NonNull
+    private IHasStateGO<FroschprinzState> loadFroschprinz() {
+        return loadRequired(FROSCHPRINZ);
     }
 }

@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.base;
 
 import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -29,7 +30,7 @@ public class Relativpronomen extends
 
     private static final ImmutableMap<Typ,
             ImmutableMap<Person, ImmutableMap<NumerusGenus, Relativpronomen>>>
-            ALL;
+            ALL_UNBELEBT;
 
     static {
         final ImmutableMap.Builder<Typ,
@@ -37,16 +38,16 @@ public class Relativpronomen extends
                 ImmutableMap.builder();
 
         final ImmutableMap<Person, ImmutableMap<NumerusGenus, Relativpronomen>> regel =
-                buildRegel();
+                buildRegelUnbelebt();
         all.put(REGEL, regel);
 
         // "alles, was"
-        all.put(WERWAS, ImmutableMap.of(P3, buildWerWas(requireNonNull(regel.get(P3)))));
+        all.put(WERWAS, ImmutableMap.of(P3, buildWerWasUnbelebt(requireNonNull(regel.get(P3)))));
 
-        ALL = all.build();
+        ALL_UNBELEBT = all.build();
     }
 
-    private static ImmutableMap<Person, ImmutableMap<NumerusGenus, Relativpronomen>> buildRegel() {
+    private static ImmutableMap<Person, ImmutableMap<NumerusGenus, Relativpronomen>> buildRegelUnbelebt() {
         final ImmutableMap.Builder<Person, ImmutableMap<NumerusGenus, Relativpronomen>> regel =
                 ImmutableMap.builder();
 
@@ -75,7 +76,7 @@ public class Relativpronomen extends
     }
 
     private static ImmutableMap<NumerusGenus, Relativpronomen>
-    buildWerWas(final ImmutableMap<NumerusGenus, Relativpronomen> regelP3) {
+    buildWerWasUnbelebt(final ImmutableMap<NumerusGenus, Relativpronomen> regelP3) {
         return ImmutableMap.of(
                 M, new Relativpronomen(P3, M,
                         fr("wer", "wem", "wen")),
@@ -111,40 +112,47 @@ public class Relativpronomen extends
     }
 
     public static Relativpronomen getWerWas(final Person person,
-                                            final NumerusGenus numerusGenus) {
-        return get(WERWAS, person, numerusGenus);
+                                            final NumerusGenus numerusGenus,
+                                            final Belebtheit belebtheit) {
+        return get(WERWAS, person, belebtheit, numerusGenus);
     }
 
     /**
      * Gibt ein Relativpronomen ohne Bezugsobjekt zurück.
      */
-    public static Relativpronomen get(final Person person, final NumerusGenus numerusGenus) {
-        return get(person, numerusGenus, null);
+    public static Relativpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                      final Belebtheit belebtheit) {
+        return get(person, numerusGenus, belebtheit, null);
     }
 
     public static Relativpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                      final Belebtheit belebtheit,
                                       @Nullable final IBezugsobjekt bezugsobjekt) {
-        return get(REGEL, person, numerusGenus, bezugsobjekt);
+        return get(REGEL, person, numerusGenus, belebtheit, bezugsobjekt);
     }
 
     public static Relativpronomen get(final Typ typ, final Person person,
+                                      final Belebtheit belebtheit,
                                       final NumerusGenus numerusGenus) {
-        return get(typ, person, numerusGenus, null);
+        return get(typ, person, numerusGenus, belebtheit, null);
     }
 
     private static Relativpronomen get(final Typ typ, final Person person,
                                        final NumerusGenus numerusGenus,
+                                       final Belebtheit belebtheit,
                                        @Nullable final IBezugsobjekt bezugsobjekt) {
         @Nullable Relativpronomen ohneBezugsobjekt = requireNonNull(
-                requireNonNull(ALL.get(typ)).get(person)).get(numerusGenus);
+                requireNonNull(ALL_UNBELEBT.get(typ)).get(person)).get(numerusGenus);
         if (ohneBezugsobjekt == null) {
             // P1 und P2 sind immer zählbar, also kein *"ich, was" oder "*"ich, der was"
             // Ersatz
-            ohneBezugsobjekt = get(REGEL, person, numerusGenus, bezugsobjekt);
+            ohneBezugsobjekt = get(REGEL, person, numerusGenus, belebtheit, bezugsobjekt);
         }
 
 
-        return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
+        return requireNonNull(ohneBezugsobjekt)
+                .mitBelebtheit(belebtheit)
+                .mitBezugsobjekt(bezugsobjekt);
     }
 
     private Relativpronomen(final Person person, final NumerusGenus numerusGenus,
@@ -165,17 +173,18 @@ public class Relativpronomen extends
     private Relativpronomen(final Person person,
                             final NumerusGenus numerusGenus,
                             final Flexionsreihe flexionsreihe) {
-        this(person, numerusGenus, flexionsreihe, null);
+        this(person, numerusGenus, flexionsreihe, UNBELEBT, null);
     }
 
     private Relativpronomen(final Person person,
                             final NumerusGenus numerusGenus,
                             final Flexionsreihe flexionsreihe,
+                            final Belebtheit belebtheit,
                             @Nullable final IBezugsobjekt bezugsobjekt) {
         super(numerusGenus,
                 // Relativpronommen können keine Negationspartikelphrasen haben:
                 // *"das Kind, nicht das..."
-                null, flexionsreihe, bezugsobjekt);
+                null, flexionsreihe, belebtheit, bezugsobjekt);
         this.person = person;
     }
 
@@ -188,13 +197,22 @@ public class Relativpronomen extends
         return this;
     }
 
-    private Relativpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
-        if (bezugsobjekt == null) {
+    private Relativpronomen mitBelebtheit(final Belebtheit belebtheit) {
+        if (belebtheit == getBelebtheit()) {
             return this;
         }
 
         return new Relativpronomen(person, getNumerusGenus(),
-                getFlexionsreihe(), bezugsobjekt);
+                getFlexionsreihe(), belebtheit, getBezugsobjekt());
+    }
+
+    private Relativpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
+        if (Objects.equals(bezugsobjekt, getBezugsobjekt())) {
+            return this;
+        }
+
+        return new Relativpronomen(person, getNumerusGenus(),
+                getFlexionsreihe(), getBelebtheit(), bezugsobjekt);
     }
 
     @Override
@@ -215,18 +233,19 @@ public class Relativpronomen extends
     @Override
     public Personalpronomen persPron() {
         // "Das Haus, das ich gesehen habe, - es ist ein schönes Haus."
-        return Personalpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
+        return Personalpronomen.get(person, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
         // "Die Sache, die ich erlebt habe, - sie fühlt sich für mich im Nachhinein immer
         // noch seltsam an."
-        return Reflexivpronomen.get(person, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(
+                new PraedRegMerkmale(person, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         return ArtikelwortFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 

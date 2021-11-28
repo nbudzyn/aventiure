@@ -40,6 +40,7 @@ import de.nb.aventiure2.scaction.impl.RastenAction;
 import de.nb.aventiure2.scaction.impl.RedenAction;
 import de.nb.aventiure2.scaction.impl.RufenAction;
 import de.nb.aventiure2.scaction.impl.SchlafenAction;
+import de.nb.aventiure2.scaction.impl.TransformAction;
 import de.nb.aventiure2.scaction.impl.UntersuchenAction;
 import de.nb.aventiure2.scaction.impl.WartenAction;
 import de.nb.aventiure2.scaction.impl.ZustandVeraendernAction;
@@ -348,6 +349,8 @@ public class ScActionService
                                     db.scActionStepCountDao(), timeTaker, db.counterDao(),
                                     n, world, location,
                                     inventoryObject));
+                    res.addAll(TransformAction.buildActions(scActionStepCountDao, timeTaker,
+                            n, world, inventoryObject));
                     res.addAll(AblegenAction.buildActions(scActionStepCountDao, timeTaker,
                             n, world, inventoryObject, location));
                 }

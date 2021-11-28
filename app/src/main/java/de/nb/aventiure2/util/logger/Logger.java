@@ -1,4 +1,4 @@
-package de.nb.aventiure2.logger;
+package de.nb.aventiure2.util.logger;
 
 import android.util.Log;
 

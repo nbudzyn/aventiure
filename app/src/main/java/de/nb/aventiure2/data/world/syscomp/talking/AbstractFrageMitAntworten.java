@@ -59,7 +59,7 @@ public abstract class AbstractFrageMitAntworten
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
     private SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        return anaph(gameObjectId, descShortIfKnown);
+        return anaph(textContext, gameObjectId, descShortIfKnown);
     }
 
     /**
@@ -82,7 +82,7 @@ public abstract class AbstractFrageMitAntworten
      */
     private EinzelneSubstantivischePhrase getDescription(
             final boolean shortIfKnown) {
-        return getDescription(gameObjectId, shortIfKnown);
+        return getDescription(textContext, gameObjectId, shortIfKnown);
     }
 
     @Override

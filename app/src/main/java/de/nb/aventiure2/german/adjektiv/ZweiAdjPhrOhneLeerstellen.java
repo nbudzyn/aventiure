@@ -6,12 +6,12 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.ZweiPraedikativa;
 
@@ -97,15 +97,16 @@ public class ZweiAdjPhrOhneLeerstellen
     @Nullable
     @Override
     public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
+                                                      final Belebtheit belebtheit,
                                                       final Kasus kasus,
                                                       final boolean artikelwortTraegtKasusendung) {
         @Nullable final String erstesAdjektivattribut =
                 getErst().getAttributivAnteilAdjektivattribut(
-                        numerusGenus, kasus, artikelwortTraegtKasusendung);
+                        numerusGenus, belebtheit, kasus, artikelwortTraegtKasusendung);
 
         @Nullable final String zweitesAdjektivattribut =
                 getZweit().getAttributivAnteilAdjektivattribut(
-                        numerusGenus, kasus, artikelwortTraegtKasusendung);
+                        numerusGenus, belebtheit, kasus, artikelwortTraegtKasusendung);
         // "große", "glücklich, dich zu sehen" ->
         // "(der )große(Mann, glücklich, dich zu sehen)"
 
@@ -187,17 +188,16 @@ public class ZweiAdjPhrOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
-                                                          final Numerus numerus) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getErst().getPraedikativ(person, numerus),
+                getErst().getPraedikativ(praedRegMerkmale),
                 konnektor != null ?
                         (gleichrangigOderAdversativAlsoKommaBeiAttributiverVerwendung ?
                                 ", " + konnektor : konnektor) :
                         // Wenn kein Konnektor angegeben ist, schreiben wir "und" -
                         // dann ist kein Komma notwendig, da "und" nicht adversativ ist.
                         "und",
-                getZweit().getPraedikativ(person, numerus)
+                getZweit().getPraedikativ(praedRegMerkmale)
         );
 
         // IDEA Hier sollte man doppelte zu-Infinitive, Fragesätze etc. verhindern:

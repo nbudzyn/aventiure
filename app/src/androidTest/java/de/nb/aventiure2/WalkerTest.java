@@ -23,7 +23,6 @@ import de.nb.aventiure2.androidtest.AndroidTestBase;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
-import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
 import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundException;
@@ -34,6 +33,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.impl.RandomActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 import de.nb.aventiure2.score.ScoreService;
+import de.nb.aventiure2.util.logger.Logger;
 
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

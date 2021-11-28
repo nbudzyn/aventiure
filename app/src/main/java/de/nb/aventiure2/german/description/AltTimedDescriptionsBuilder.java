@@ -1,6 +1,9 @@
 package de.nb.aventiure2.german.description;
 
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -11,13 +14,11 @@ import java.util.stream.Stream;
 import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
 
 /**
  * Ein Builder für alternative {@link TimedDescription}s.
@@ -134,8 +135,9 @@ public class AltTimedDescriptionsBuilder {
      */
     public AltTimedDescriptionsBuilder phorikKandidat(
             final NumerusGenus numerusGenus,
+            final Belebtheit belebtheit,
             final IBezugsobjekt bezugsobjekt) {
-        return map(d -> d.phorikKandidat(numerusGenus, bezugsobjekt));
+        return map(d -> d.phorikKandidat(numerusGenus, belebtheit, bezugsobjekt));
     }
 
     private AltTimedDescriptionsBuilder map(

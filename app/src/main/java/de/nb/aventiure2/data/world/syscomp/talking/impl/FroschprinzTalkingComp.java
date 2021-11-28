@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
@@ -42,6 +44,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzStateComp;
@@ -167,9 +170,11 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private SubstantivischePhrase getAkkShortOrPersPron(
-            final List<? extends IDescribableGO> objects) {
+            final List<? extends IDescribableGO> objects,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
         final SubstantivischePhrase description =
-                world.getDescriptionSingleOrCollective(objects, true);
+                world.getDescriptionSingleOrCollective(textContext, objects,
+                        possessivDescriptionVorgabe, true);
 
         if (objects.size() == 1) {
             return description;
@@ -267,7 +272,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
-                    world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+                    world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                            ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV);
             n.narrate(neuerSatz("„Ich weine über",
                     objectsDesc.akkK(), // die goldene Kugel
                     ",",
@@ -285,7 +291,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.narrate(neuerSatz("„",
-                    getDescription(objectInDenBrunnenGefallen).nomK(),
+                    getDescription(textContext, possessivDescriptionVorgabe,
+                            objectInDenBrunnenGefallen).nomK(),
                     "ist mir in den Brunnen hinabgefallen.“")
                     .timed(secs(10)));
             setSchonBegruesstMitSC(true);
@@ -310,9 +317,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrate(neuerSatz(PARAGRAPH, "„Sei still und " + ratschlag,
                 "“, antwortet",
-                getDescription(true).nomK(),
+                getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
                 ", „ich kann wohl Rat schaffen, aber was gibst du mir, wenn ich",
-                getAkkShortOrPersPron(objectsInDenBrunnenGefallen).akkK(),
+                getAkkShortOrPersPron(objectsInDenBrunnenGefallen, NICHT_POSSESSIV).akkK(),
                 "wieder heraufhole?“", PARAGRAPH)
                 .timed(secs(15)));
 
@@ -354,7 +361,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "essen: Wenn du mir das versprichst, so will ich",
                 "hinuntersteigen und dir",
                 // die goldene Kugel / die Dinge
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
                         .akkK(),
                 "wieder heraufholen.“", PARAGRAPH)
                 .timed(secs(15)));
@@ -398,7 +406,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "aus deinem Becherlein trinken: Wenn du mir das versprichst, so will ich",
                 "hinuntersteigen und dir",
                 // die goldene Kugel / die Dinge
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen).akkK(),
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV).akkK(),
                 " wieder herauf holen.“", PARAGRAPH)
                 .timed(secs(15)));
 
@@ -426,7 +435,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 neuerSatz(PARAGRAPH,
                         "„Ach ja“, sagst du, „ich verspreche dir alles, was du",
                         "willst, wenn du mir nur",
-                        world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                        world.getDescriptionSingleOrCollective(textContext,
+                                objectsInDenBrunnenGefallen,
+                                ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
                                 .akkStr(),
                         // IDEA Man könnte programmieren: Wenn der Text hiernach
                         //  mehr als altWohinHinausKnappUeberGefrierpunkt Wörter hat, dann gerät
@@ -447,7 +458,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrate(neuerSatz("Aber im nächsten Moment entschuldigst du dich schon:",
                 "„Nichts für ungut! Wenn du mir wirklich",
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
                         .akkStr(), // Zu viele andere Substantive danach.
                 "wieder besorgen kannst – ich verspreche dir alles, was du willst!“",
                 "Bei dir selbst denkst du:",
@@ -464,7 +476,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
 
         n.narrate(neuerSatz("Aber so einfach lässt du dich nicht abspeisen.",
                 "„Wenn du mir",
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
                         .akkStr(), // Gerät in Vergessenheit
                 "wieder besorgen kannst, verspreche ich dir alles, was du willst!“",
                 "Bei dir selbst denkst du:",
@@ -484,7 +497,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "verspreche dir alles,",
                 "was du",
                 "willst, wenn du mir nur",
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen)
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
                         .akkStr(), /// Gerät in Vergessenheit
                 "wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:",
                 "„Was der einfältige Frosch schwätzt, der sitzt im",
@@ -505,7 +519,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 getObjectsInDenBrunnenGefallen();
 
         final SubstantivischePhrase descObjectsInDenBrunnenGefallen =
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        NICHT_POSSESSIV);
 
         world.loadSC().feelingsComp().requestMoodMin(VOLLER_FREUDE);
 
@@ -589,7 +604,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                             + "dir partout nicht einfallen"),
                     neuerSatz(
                             "„Und sonst so?“, fragst du",
-                            getDescription(true).akkK(),
+                            getDescription(textContext, possessivDescriptionVorgabe, true).akkK(),
                             "etwas hilflos")
             );
         }
@@ -615,7 +630,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void ansprechen_froschErinnertAnVersprechen(final boolean immediateReEntry) {
         final AltDescriptionsBuilder alt = alt();
 
-        final EinzelneSubstantivischePhrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                possessivDescriptionVorgabe);
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
                 desc.nomK(),
                 "schon zuvor: „Wir haben eine Verabredung!“ –",
@@ -628,7 +644,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
             alt.addAll(world.loadWetter().wetterComp().altWetterplauderrede().stream()
                     .map(wetterplauderrede ->
                             du("sprichst",
-                                    getDescription(true).akkK(),
+                                    getDescription(textContext, possessivDescriptionVorgabe, true)
+                                            .akkK(),
                                     "an: „Wie läuft's, Frosch?",
                                     wetterplauderrede,
                                     "“",
@@ -641,7 +658,8 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     }
 
     private void froschAufTischDraengelt() {
-        final EinzelneSubstantivischePhrase desc = getDescription(true);
+        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                possessivDescriptionVorgabe, true);
         n.narrateAlt(
                 du("hast", "gerade Luft geholt, da schneidet dir",
                         desc.nomK(),

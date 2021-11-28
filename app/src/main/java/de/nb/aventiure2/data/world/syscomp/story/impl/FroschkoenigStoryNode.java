@@ -340,6 +340,9 @@ public enum FroschkoenigStoryNode implements IStoryNode {
             final World world) {
         final AltDescriptionsBuilder alt = alt();
 
+        // FIXME Diese Meldungen erscheinen manchmal auch, wenn der SC den
+        //  Frosch noch gar nicht getroffen hat?
+
         alt.add(paragraph("Kann es sein, dass du vor etwas davonläufst?"));
 
         alt.add(paragraph("Ein schlechtes Gewissen ist kein gutes Ruhekissen – so geht es "

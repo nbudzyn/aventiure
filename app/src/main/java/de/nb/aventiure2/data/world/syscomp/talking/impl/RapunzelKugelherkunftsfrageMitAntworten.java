@@ -54,7 +54,7 @@ class RapunzelKugelherkunftsfrageMitAntworten extends RapunzelFrageMitAntworten 
         n.narrate(neuerSatz(
                 anaph.possArt().vor(M).nomStr(), // "Ihr"
                 "Blick fällt auf",
-                getDescription(GOLDENE_KUGEL, true).akkK(),
+                getDescription(textContext, GOLDENE_KUGEL, true).akkK(),
                 "„Woher hast du die?“, fragt",
                 anaph.nomK(),
                 "dich")

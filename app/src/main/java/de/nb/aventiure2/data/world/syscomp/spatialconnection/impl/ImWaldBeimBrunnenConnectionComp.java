@@ -87,7 +87,7 @@ public class ImWaldBeimBrunnenConnectionComp extends AbstractSpatialConnectionCo
                             .dann(),
                     du("kämpfst", "dich noch einmal durch den wilden "
                             + "Wald hinter dem Brunnen, bis du den Strauch mit den "
-                            + "kleinen, violetten Früchten erreichst")
+                            + "kleinen violetten Früchten erreichst")
                             .mitVorfeldSatzglied("noch einmal")
                             .timed(mins(4))
                             .komma()

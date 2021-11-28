@@ -57,7 +57,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     @CheckReturnValue
     public abstract TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma();
 
-    public abstract boolean hasSubjektDu();
+    public abstract boolean hasSubjektDuBelebt();
 
     /**
      * Gibt zurück, ob diese Description ein Anschlusswort besitzt, das Semantik trägt

@@ -1,13 +1,7 @@
 package de.nb.aventiure2.german.base;
 
-import androidx.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-
-import java.util.Map;
-
-import javax.annotation.CheckReturnValue;
-
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.PL;
@@ -15,10 +9,18 @@ import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P1;
 import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.Person.P3;
-import static java.util.Objects.requireNonNull;
+
+import androidx.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
+import java.util.Objects;
+
+import javax.annotation.CheckReturnValue;
 
 public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
-    private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL = ImmutableMap.of(
+    private static final Map<Numerus, Map<Person, Reflexivpronomen>> ALL_UNBELEBT = ImmutableMap.of(
             SG, ImmutableMap.of(
                     P1, new Reflexivpronomen("mir", "mich"),
                     P2, new Reflexivpronomen("dir", "dich"),
@@ -32,18 +34,34 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
 
     private final String dativ;
     private final String akkusativ;
+    private final Belebtheit belebtheit;
 
-    public static Reflexivpronomen get(final Person person, final Numerus numerus) {
-        return requireNonNull(ALL.get(numerus)).get(person);
+    public static Reflexivpronomen get(final PraedRegMerkmale praedRegMerkmale) {
+        return requireNonNull(
+                requireNonNull(ALL_UNBELEBT.get(praedRegMerkmale.getNumerus()))
+                        .get(praedRegMerkmale.getPerson()))
+                .mitBelebtheit(praedRegMerkmale.getBelebtheit());
     }
 
+    /**
+     * Erzeugt ein Reflexivpronomen mit Merkmal "unbelebt".
+     */
     private Reflexivpronomen(final String dativAkkusativ) {
         this(dativAkkusativ, dativAkkusativ);
     }
 
+    /**
+     * Erzeugt ein Reflexivpronomen mit Merkmal "unbelebt".
+     */
     private Reflexivpronomen(final String dativ, final String akkusativ) {
+        this(dativ, akkusativ, UNBELEBT);
+    }
+
+    private Reflexivpronomen(final String dativ, final String akkusativ,
+                             final Belebtheit belebtheit) {
         this.dativ = dativ;
         this.akkusativ = akkusativ;
+        this.belebtheit = belebtheit;
     }
 
     @Nullable
@@ -75,6 +93,15 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     public SubstPhrOderReflexivpronomen ohneNegationspartikelphrase() {
         return this;
     }
+
+    private Reflexivpronomen mitBelebtheit(final Belebtheit belebtheit) {
+        if (Objects.equals(getBelebtheit(), belebtheit)) {
+            return this;
+        }
+
+        return new Reflexivpronomen(dat(), akk(), belebtheit);
+    }
+
 
     public String imStr(final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         // "sich" etc. etablieren wohl kaum einen Bezug auf Bezugsobjekt
@@ -112,6 +139,7 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
     public Konstituentenfolge imK(final Kasus kasus) {
         return joinToKonstituentenfolge(
                 k(imStr(kasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
+                        getBelebtheit(),
                         getBezugsobjekt()));
     }
 
@@ -129,6 +157,11 @@ public class Reflexivpronomen implements SubstPhrOderReflexivpronomen {
         // Ich glaube, ein Reflexivpronomen etabliert nicht wirklich einen Bezug
         // auf ein Bezugsobjekt.
         return null;
+    }
+
+    @Override
+    public Belebtheit getBelebtheit() {
+        return belebtheit;
     }
 
     private String dat() {

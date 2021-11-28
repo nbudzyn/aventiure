@@ -1,5 +1,10 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+
 import java.util.Collection;
 import java.util.function.BinaryOperator;
 
@@ -9,11 +14,6 @@ import de.nb.federkiel.deutsch.grammatik.wortart.flexion.SubstantivPronomenUtil;
 import de.nb.federkiel.deutsch.lexikon.GermanPOS;
 import de.nb.federkiel.interfaces.IWordForm;
 
-import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-
 /**
  * Hilfsmethoden für verschiedene Arten von {@link DeklinierbarePhrase}-Objekten.
  */
@@ -21,19 +21,19 @@ public class DeklinierbarePhraseUtil {
     /**
      * "einer" als "unbestimmtes Zahladjektiv","substantiviert" (Duden 446), Singular maskulinum
      */
-    public static final EinzelneSubstantivischePhrase EINER;
+    public static final Nominalphrase EINER_UNBELEBT;
     // IDEA: "Einer" darf nicht im Vorfeld stehen (außer als Subjekt oder
     //  mit Fokuspartikel). Vielleicht eigene Klasse dafür schaffen?
 
     /**
      * "eine" als "unbestimmtes Zahladjektiv", "substantiviert" (Duden 446), Singular femininum
      */
-    private static final EinzelneSubstantivischePhrase EINE;
+    private static final Nominalphrase EINE_UNBELEBT;
 
     /**
      * "eines" als "unbestimmtes Zahladjektiv", "substantiviert" (Duden 446), Singular neutrum
      */
-    private static final EinzelneSubstantivischePhrase EINES;
+    private static final Nominalphrase EINES_UNBELEBT;
 
 //    /**
 //     * "die einen" (vs. "die anderen") als "unbestimmtes Zahladjektiv",
@@ -49,9 +49,9 @@ public class DeklinierbarePhraseUtil {
                 SubstantivPronomenUtil.createIndefinitpronomen(POS, "einer"),
                 POS);
 
-        EINER = Nominalphrase.np(M, null, extractFlexionsreihe(wortformen, M));
-        EINE = Nominalphrase.np(F, null, extractFlexionsreihe(wortformen, F));
-        EINES = Nominalphrase.np(N, null, extractFlexionsreihe(wortformen, N));
+        EINER_UNBELEBT = Nominalphrase.np(M, null, extractFlexionsreihe(wortformen, M));
+        EINE_UNBELEBT = Nominalphrase.np(F, null, extractFlexionsreihe(wortformen, F));
+        EINES_UNBELEBT = Nominalphrase.np(N, null, extractFlexionsreihe(wortformen, N));
 
         //        adjStarkPl(lexeme, VorgabeFuerNachfolgendesAdjektiv.NICHT_ERZEUGEN, pos,
         //                stamm,
@@ -96,16 +96,17 @@ public class DeklinierbarePhraseUtil {
      * </ul>
      */
     public static SubstantivischePhrase getIndefinitAnapherZaehlbar(
-            final NumerusGenus numerusGenus) {
+            final NumerusGenus numerusGenus,
+            final Belebtheit belebtheit) {
         switch (numerusGenus) {
             case M:
-                return EINER;
+                return EINER_UNBELEBT.mitBelebheit(belebtheit);
             case F:
-                return EINE;
+                return EINE_UNBELEBT.mitBelebheit(belebtheit);
             case N:
-                return EINES;
+                return EINES_UNBELEBT.mitBelebheit(belebtheit);
             case PL_MFN:
-                return Indefinitpronomen.WELCHER.get(numerusGenus);
+                return Indefinitpronomen.getWelcher(numerusGenus, belebtheit);
             default:
                 throw new IllegalArgumentException("Unexpected numerusGenus: " + numerusGenus);
         }

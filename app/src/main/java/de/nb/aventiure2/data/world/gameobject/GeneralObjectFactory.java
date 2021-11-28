@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
+
 import androidx.annotation.NonNull;
 
 import java.util.function.Supplier;
@@ -12,14 +14,13 @@ import de.nb.aventiure2.data.world.base.EnumRange;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.base.Temperatur;
+import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-
-import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 
 /**
  * A factory for special {@link GameObject}s: Tangible objects, that might be found somewhere.
@@ -38,12 +39,29 @@ class GeneralObjectFactory extends AbstractGameObjectFactory {
     public GameObject create(final GameObjectId id,
                              final EinzelneSubstantivischePhrase descriptionAtFirstSight,
                              final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
+        final SimpleDescriptionComp descriptionComp =
+                new SimpleDescriptionComp(db.counterDao(), id, descriptionAtFirstSight,
+                        normalDescriptionWhenKnown,
+                        shortDescriptionWhenKnown);
+        return create(id, descriptionComp);
+    }
+
+    @NonNull
+    public static DescriptionObject create(final GameObjectId id,
+                                           final AbstractDescriptionComp descriptionComp) {
+        return new DescriptionObject(id, descriptionComp);
+    }
+
+    public GameObject create(final GameObjectId id,
+                             final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
                              final EinzelneSubstantivischePhrase shortDescriptionWhenKnown,
                              @Nullable final GameObjectId initialLocationId,
                              @Nullable final GameObjectId initialLastLocationId,
                              final boolean movable) {
         return new SimpleObject(id,
-                new SimpleDescriptionComp(id, descriptionAtFirstSight,
+                new SimpleDescriptionComp(db.counterDao(), id, descriptionAtFirstSight,
                         normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
@@ -134,7 +152,7 @@ class GeneralObjectFactory extends AbstractGameObjectFactory {
                 new LocationComp(id, db, world, initialLocationId, initialLastLocationId,
                         movable);
         return new StoringPlaceObject(id,
-                new SimpleDescriptionComp(id, descriptionAtFirstSight,
+                new SimpleDescriptionComp(db.counterDao(), id, descriptionAtFirstSight,
                         normalDescriptionWhenKnown,
                         shortDescriptionWhenKnown),
                 locationComp,

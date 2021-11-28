@@ -158,7 +158,7 @@ public class UntersuchenAction extends AbstractScAction {
      */
     @SuppressWarnings("SameParameterValue")
     private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return getDescription(getInspectable().getId(), shortIfKnown);
+        return getDescription(textContext, getInspectable().getId(), shortIfKnown);
     }
 
     private IInspectableGO getInspectable() {

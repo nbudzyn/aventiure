@@ -58,11 +58,13 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO>
     void narrateTakerAndDo_Sonstiges_Abgelehnt(final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = anaph(RAPUNZEL);
+        final SubstantivischePhrase rapunzelAnaph = anaph(textContext, possessivDescriptionVorgabe);
 
-        final EinzelneSubstantivischePhrase givenDesc = getDescription(given);
+        final SubstantivischePhrase givenDesc = getDescription(textContext,
+                possessivDescriptionVorgabe);
         final EinzelneSubstantivischePhrase givenDescAtFirstSight =
                 // "eine goldene Kugel" / "einige Binsen"
+                // FIXME altDescriptionsAtFirstSight verwenden!
                 getDescriptionAtFirstSight(given);
 
         n.narrateAlt(secs(10),
@@ -92,7 +94,8 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         // "zählbare Dinge" jemandem geben kann, z.B.
                         // "den Stuhl" oder "den Wein", also "einen".
                         DeklinierbarePhraseUtil.getIndefinitAnapherZaehlbar(
-                                givenDesc.getNumerusGenus()).akkK(),// "eine" / "welche"
+                                givenDesc.getNumerusGenus(),
+                                givenDesc.getBelebtheit()).akkK(),// "eine" / "welche"
                         "bekommen kann.“",
                         SENTENCE,
                         rapunzelAnaph.persPron().nomK(),
@@ -114,11 +117,14 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
             final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = anaph(RAPUNZEL);
-        final SubstantivischePhrase givenAnaph = anaph(given);
+        final SubstantivischePhrase rapunzelAnaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase givenAnaph = anaph(textContext, possessivDescriptionVorgabe,
+                given);
 
-        final EinzelneSubstantivischePhrase givenDesc = getDescription(given);
-        final EinzelneSubstantivischePhrase givenDescShort = getDescription(given, true);
+        final SubstantivischePhrase givenDesc = getDescription(textContext,
+                possessivDescriptionVorgabe, given);
+        final EinzelneSubstantivischePhrase givenDescShort =
+                getDescription(textContext, given, true);
 
         feelingsComp.upgradeFeelingsTowards(
                 SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG, 0.3f, FeelingIntensity.DEUTLICH);

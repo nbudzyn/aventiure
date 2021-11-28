@@ -54,7 +54,7 @@ public class KorbflechterinInspection implements IInspection {
     @Override
     public String getActionName() {
         return capitalize(joinToString(
-                getDescription(KORBFLECHTERIN, false).datK(),
+                getDescription(textContext, KORBFLECHTERIN, false).datK(),
                 "bei ihrer Arbeit zusehen"));
     }
 

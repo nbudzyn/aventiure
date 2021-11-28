@@ -1,6 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.story.impl;
 
 public class DasTapfereSchneiderleinStoryNode {
+    // FIXME Idee: Die Story Nodes sollten stets Zyklen dieser Art bilden:
+    //  Exposition (flache Spannung, Darstellung Konflikt)
+    //  Rising Action (steigende Spannung)
+    //  Climax (Höhepunkt)
+    //  Falling Action (die Welt hat sich geändert)
+    //  (Neue Exposition, auf höherem Level...)
+
     // FIXME hölzernes Messer, ziemlich stupf (in der Hütte auf dem Tisch)
 
     // FIXME Brot (z.B. aus Frau Holles Ofen)

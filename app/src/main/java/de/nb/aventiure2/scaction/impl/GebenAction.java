@@ -95,7 +95,7 @@ public class GebenAction<
     public String getName() {
         return capitalize(
                 GEBEN
-                        .mitDat(getDescription(taker, true))
+                        .mitDat(getDescription(textContext, taker, true))
                         .mit(getDescription(given))
                         .getInfinitiv(P2, SG).joinToString(
                 ));
@@ -138,7 +138,7 @@ public class GebenAction<
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = anaph(taker);
-        final EinzelneSubstantivischePhrase givenDesc = getDescription(given, false);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(textContext, given, false);
 
         alt.add(
                 // "Du hältst IHR DIE GOLDENE KUGEL hin"
@@ -167,7 +167,7 @@ public class GebenAction<
         final ImmutableList.Builder<PraedikatOhneLeerstellen> alt =
                 ImmutableList.builder();
         final SubstantivischePhrase takerAnaph = anaph(taker);
-        final EinzelneSubstantivischePhrase givenDesc = getDescription(given, false);
+        final EinzelneSubstantivischePhrase givenDesc = getDescription(textContext, given, false);
 
         alt.add(
                 // "Du gibst IHR DIE GOLDENE KUGEL"

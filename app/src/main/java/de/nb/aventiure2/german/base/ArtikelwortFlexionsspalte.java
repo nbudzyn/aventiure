@@ -33,8 +33,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * neben den eigentlichen Artikeln auch, Wörter wie "kein", Possessivartikel ("mein", "unser"),
  * Indefinitartikel etc.
  */
-public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
-    public enum Typ {
+public class ArtikelwortFlexionsspalte
+        implements IFlexionsspalteArtikelwortOderVorangestelltesGenitivattribut {
+    public enum Typ implements IArtikelworttypOderVorangestelltesGenitivattribut {
         /**
          * "kein( Haus)", "keine(Häuser)"
          */
@@ -43,6 +44,8 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
                 // Das hat zur Folge, dass wir keine doppelten Verneinungen in der Art
                 // "nicht kein Essen" erzeugen. Die "Negation" von "kein Essen" ist immer noch
                 // "kein Essen".
+                // Ich bin nicht sicher, warum wir das so machen.
+                // Bei VorangestelltesGenitivattribut#getNegativeForm() ist es auch so.
                 null),
         /**
          * "ein( Haus)" , "(Häuser)"
@@ -121,39 +124,27 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
             this.negativeForm = negativ ? this : negativeForm;
         }
 
+        @Override
         public ArtikelwortFlexionsspalte vor(final IErlaubtAttribute phraseDieAttributeErlaubt) {
             return get(this, phraseDieAttributeErlaubt.getNumerusGenus());
         }
 
+        @Override
         public ArtikelwortFlexionsspalte vor(final NumerusGenus numerusGenus) {
             return get(this, numerusGenus);
         }
 
+        @Override
         public boolean erlaubtVerschmelzungMitPraeposition() {
             return erlaubtVerschmelzungMitPraeposition;
         }
 
-        public static boolean isNegativ(@Nullable final Typ typ) {
-            if (typ == null) {
-                return false;
-            }
-
-            return typ.isNegativ();
-        }
-
+        @Override
         public boolean isNegativ() {
             return negativ;
         }
 
-        @Nullable
-        public static Typ getNegativeForm(@Nullable final Typ typ) {
-            if (typ == null) {
-                return null;
-            }
-
-            return typ.getNegativeForm();
-        }
-
+        @Override
         @Nullable
         public Typ getNegativeForm() {
             return negativeForm;
@@ -248,8 +239,8 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         return res.build();
     }
 
-    static Typ getPossessiv(final Person person,
-                            final NumerusGenus numerusGenusBezugsnomen) {
+    public static Typ getPossessiv(final Person person,
+                                   final NumerusGenus numerusGenusBezugsnomen) {
         switch (numerusGenusBezugsnomen.getNumerus()) {
             case SG:
                 return getPossessivSg(person, numerusGenusBezugsnomen);
@@ -275,7 +266,8 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         }
     }
 
-    private static Typ getPossessivP3(final NumerusGenus numerusGenusBezugsnomen) {
+    private static Typ getPossessivP3(
+            final NumerusGenus numerusGenusBezugsnomen) {
         switch (numerusGenusBezugsnomen) {
             case M:
             case N:
@@ -289,7 +281,8 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         }
     }
 
-    private static Typ getPossessivPl(final Person person) {
+    private static Typ getPossessivPl(
+            final Person person) {
         switch (person) {
             case P1:
                 return UNSER;
@@ -303,22 +296,13 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         }
     }
 
-    static boolean traegtKasusendung(
-            @Nullable final ArtikelwortFlexionsspalte artikelwortFlexionsspalte,
-            final Kasus kasus) {
-        if (artikelwortFlexionsspalte == null) {
-            return false;
-        }
-
-        return artikelwortFlexionsspalte.traegtKasusendung(kasus);
-    }
-
     public static @Nullable
     ArtikelwortFlexionsspalte get(@Nullable final Typ typ, final NumerusGenus numerusGenus) {
         if (typ == null) {
             return null;
         }
-        return requireNonNull(ALL.get(typ)).get(numerusGenus);
+        return requireNonNull(ALL.get(typ))
+                .get(numerusGenus);
     }
 
     private ArtikelwortFlexionsspalte(final String stammTypEin,
@@ -344,7 +328,8 @@ public class ArtikelwortFlexionsspalte implements DeklinierbarePhrase {
         this.flexionsreihe = flexionsreihe;
     }
 
-    private boolean traegtKasusendung(final Kasus kasus) {
+    @Override
+    public boolean traegtKasusendungFuerNominalphrasenkern(final Kasus kasus) {
         // "ein" ist der einzige "Artikel im engeren Sinne" ohne Kasusendung.
         // Aber auch andere Artikelwörter haben keine Kasusendung, etwa "kein", "mein" oder
         // "viel".

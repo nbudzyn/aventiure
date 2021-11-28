@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -19,17 +23,12 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat, in dem ein Akkusativobjekt und ein Präpositionalobjekt gesetzt sind
@@ -171,10 +170,9 @@ public class PraedikatAkkPraepOhneLeerstellen
 
     @Override
     public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                            final Numerus numerus) {
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -184,9 +182,8 @@ public class PraedikatAkkPraepOhneLeerstellen
         }
 
         /*
-         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
          * (Eisenberg Der Satz 5.4.2)
-         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
          */
         if (Personalpronomen.isPersonalpronomenEs(akk, AKK)) {
             return null;
@@ -209,33 +206,30 @@ public class PraedikatAkkPraepOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),// "aus einer Laune heraus"
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+// "aus einer Laune heraus"
                 getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
                 // "besser doch (nicht)"
                 getNegationspartikel(), // "nicht"
                 akk.akkK(), // "das Teil"
                 getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt),
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
                 // "aus der La main"
                 praep.imK(praepositionMitKasus)); // "nach dem Weg"
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         return akk;
     }
 
@@ -246,13 +240,10 @@ public class PraedikatAkkPraepOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt)
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
         );
     }
 

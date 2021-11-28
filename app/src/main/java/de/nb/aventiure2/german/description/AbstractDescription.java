@@ -18,6 +18,7 @@ import javax.annotation.CheckReturnValue;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituente;
@@ -224,19 +225,25 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
                         + "Person: %s. Für Phorik-Kandiaten "
                         + "ist nur 3. Person zugelassen.", substantivischePhrase,
                 substantivischePhrase.getPerson());
-        return phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+        return phorikKandidat(substantivischePhrase.getNumerusGenus(),
+                substantivischePhrase.getBelebtheit(),
+                bezugsobjekt);
     }
 
     @CanIgnoreReturnValue
     public SELF phorikKandidat(final NumerusGenus numerusGenus,
+                               final Belebtheit belebtheit,
                                final IGameObject gameObject) {
-        return phorikKandidat(numerusGenus, gameObject.getId());
+        return phorikKandidat(numerusGenus, belebtheit, gameObject.getId());
     }
 
     @CanIgnoreReturnValue
     public SELF phorikKandidat(final NumerusGenus numerusGenus,
+                               final Belebtheit belebtheit,
                                final IBezugsobjekt bezugsobjekt) {
-        return phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+        return phorikKandidat(new PhorikKandidat(numerusGenus,
+                belebtheit,
+                bezugsobjekt));
     }
 
     @CanIgnoreReturnValue

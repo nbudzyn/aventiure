@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -11,16 +17,10 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
 
 public enum Witterungsverb implements VerbOhneLeerstellen {
     // Verben ohne Partikel
@@ -87,10 +87,10 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getVerbzweit(person, numerus);
+        return toPraedikat().getVerbzweit(praedRegMerkmale);
     }
 
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld() {
@@ -106,14 +106,14 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     }
 
     public Konstituentenfolge getVerbletzt() {
-        return getVerbletzt(P3, SG);
+        return getVerbletzt(new PraedRegMerkmale(P3, SG, UNBELEBT));
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getVerbletzt(person, numerus);
+        return toPraedikat().getVerbletzt(praedRegMerkmale);
     }
 
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase() {
@@ -122,63 +122,61 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
 
     @Override
     @CheckReturnValue
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     public Konstituentenfolge getInfinitiv() {
-        return getInfinitiv(P3, SG);
+        return getInfinitiv(EXPLETIVES_ES);
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
         return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
     }
 
     public Konstituentenfolge getZuInfinitiv() {
-        return getZuInfinitiv(P3, SG);
+        return getZuInfinitiv(EXPLETIVES_ES);
     }
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }
 
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final boolean nachAnschlusswort) {
-        return getSpeziellesVorfeldSehrErwuenscht(P3, SG, nachAnschlusswort);
+        return getSpeziellesVorfeldSehrErwuenscht(P3, SG, UNBELEBT, nachAnschlusswort);
     }
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+        praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
                 nachAnschlusswort);
     }
 
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption() {
-        return getSpeziellesVorfeldAlsWeitereOption(P3, SG);
+        return getSpeziellesVorfeldAlsWeitereOption(P3, SG, UNBELEBT);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(person, numerus
-        );
+        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Override
@@ -200,13 +198,13 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
     }
 
     public Konstituentenfolge getNachfeld() {
-        return getNachfeld(P3, SG);
+        return getNachfeld(new PraedRegMerkmale(P3, SG, UNBELEBT));
     }
 
-    @Nullable
     @Override
-    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
-        Personalpronomen.checkExpletivesEs(person, numerus);
+    @Nullable
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
+        praedRegMerkmale.checkExpletivesEs();
 
         return null;
     }

@@ -316,12 +316,6 @@ public class EssenAction extends AbstractScAction {
             return;
         }
 
-        n.narrateAlt(
-                du(SENTENCE, "hast",
-                        "nur wenig Hunger und beißt lustlos in eine der Früchte")
-                        .timed(mins(3))
-                        .schonLaenger()
-                        .dann());
         if (counterDao.get(FELSENBIRNEN_SEIT_ENTER) == 0) {
             n.narrateAlt(du(SENTENCE, "lässt",
                     "dir die süßen Früchte nicht entgehen, auch wenn du kaum Hunger "
@@ -332,6 +326,13 @@ public class EssenAction extends AbstractScAction {
                     .undWartest()
                     .schonLaenger()
                     .dann());
+        } else {
+            n.narrateAlt(
+                    du(SENTENCE, "hast",
+                            "nur wenig Hunger und beißt lustlos in eine der Früchte")
+                            .timed(mins(3))
+                            .schonLaenger()
+                            .dann());
         }
     }
 

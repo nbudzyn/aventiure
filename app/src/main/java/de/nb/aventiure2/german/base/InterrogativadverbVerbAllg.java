@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.base;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
+
 /**
  * Ein Fragewort, das nach Informationen fragt, die durch
  * ein Adverb ausgedrückt werden ("wie", ...) und sich
@@ -20,18 +24,17 @@ package de.nb.aventiure2.german.base;
 public enum InterrogativadverbVerbAllg
         implements IInterrogativadverb, IAdvAngabeOderInterrogativVerbAllg {
     WIE("wie"),
-    WOMIT("womit"),
-    WORAN("woran");
+    WOMIT(MIT_DAT),
+    WORAN(AN_AKK);
 
     private final String string;
 
-    InterrogativadverbVerbAllg(final String string) {
-        this.string = string;
+    InterrogativadverbVerbAllg(final PraepositionMitKasus praepositionMitKasus) {
+        this(requireNonNull(praepositionMitKasus.getPraepositionaladverbWo()));
     }
 
-    @Override
-    public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
-        return IInterrogativadverb.super.getDescription();
+    InterrogativadverbVerbAllg(final String string) {
+        this.string = string;
     }
 
     @Override

@@ -43,8 +43,8 @@ import com.google.common.collect.ImmutableSet;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen;
-import de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.base.IArtikelworttypOderVorangestelltesGenitivattribut;
 import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -65,10 +65,11 @@ public class BewoelkungPraedikativumDescriber {
     ImmutableCollection<SubstantivischePhrase> altSpStatischTageszeitUnterOffenenHimmelMitAdj(
             final Bewoelkung bewoelkung,
             final Tageszeit tageszeit,
-            final ArtikelwortFlexionsspalte.Typ artikelTyp) {
+            final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut) {
         // "ein schummriger Morgen"
         return mapToSet(altSpStatischTageszeitUnterOffenemHimmelAdj(bewoelkung, tageszeit), a ->
-                np(artikelTyp, a, tageszeit.getNomenFlexionsspalte()));
+                np(artikelworttypOderVorangestelltesGenitivattribut, a,
+                        tageszeit.getNomenFlexionsspalte()));
     }
 
     /**

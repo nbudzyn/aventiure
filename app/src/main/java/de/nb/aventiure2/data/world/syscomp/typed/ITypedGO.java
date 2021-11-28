@@ -2,6 +2,8 @@ package de.nb.aventiure2.data.world.syscomp.typed;
 
 import javax.annotation.Nonnull;
 
+import de.nb.aventiure2.data.world.base.IGameObject;
+
 /**
  * Interface für ein Objekt, das einen Typ hat. Es gibt nur eine feste Menge von Typen.
  * Der Typ erlaubt es, alle Objekte eines Typs zu finden. Typen sind hauptsächlich
@@ -10,7 +12,7 @@ import javax.annotation.Nonnull;
  * </p>
  * Der Typ eines Objekts ist unveränderlich.
  */
-public interface ITypedGO {
+public interface ITypedGO extends IGameObject {
     @Nonnull
     TypeComp typeComp();
 }

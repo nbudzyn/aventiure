@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Negationspartikelphrase.NICHT;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
@@ -8,6 +10,7 @@ import java.util.Collection;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
@@ -17,10 +20,9 @@ import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAu
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
-
-import static de.nb.aventiure2.german.base.Negationspartikelphrase.NICHT;
 
 /**
  * Ein Prädikat im Sinne eines Verbs mit allen Ergänzungen und Angaben, jedoch ohne Subjekt, bei
@@ -166,14 +168,14 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * Subjekt wie dieses (was Person und Numerus angeht).
      */
     default Konstituentenfolge getVerbzweit(final SubstantivischePhrase subjekt) {
-        return getVerbzweit(subjekt.getPerson(), subjekt.getNumerus());
+        return getVerbzweit(subjekt.getPraedRegMerkmale());
     }
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
      */
-    Konstituentenfolge getVerbzweit(Person person, Numerus numerus);
+    Konstituentenfolge getVerbzweit(PraedRegMerkmale praedRegMerkmale);
 
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang -,
@@ -187,7 +189,33 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
      */
-    Konstituentenfolge getVerbletzt(Person person, Numerus numerus);
+    Konstituentenfolge getVerbletzt(PraedRegMerkmale praedRegMerkmale);
+
+    /**
+     * Gibt eine (oder in seltenen Fällen mehrere) unflektierte Phrase(n) mit Partizip II zurück:
+     * <i>unten angekommen</i>, <i>die Kugel genommen</i>
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat eine Partizip-II-Phrase
+     * ein Bezugswort, aus dem sich Person und Numerus ergeben - Beispiel:
+     * <i>[Ich habe] die Kugel an mich genommen</i>
+     * (nicht <i>[Ich habe] die Kugel an sich genommen</i>)
+     * <p>
+     * Auch bei mehrteiligen Prädikaten soll diese Methode nach Möglichkeit nur eine einzige
+     * {@link PartizipIIPhrase} zurückgeben, z.B. "unten angekommen und müde geworden".
+     * Wenn allerdings die Teile unterschiedliche Hilfsverben verlangen
+     * (<i>unten angekommen (sein)</i> und <i>die Kugel genommen (haben)</i>), gibt diese
+     * Methode <i>mehrere</i> Partizip-II-Phasen zurück. Der Aufrufer wird diese Phrasen
+     * in der Regel separat mit ihrem jeweiligen Hilfsverb verknüpfen müssen
+     * (<i>Du bist unten angekommen und hast die Kugel genommen</i>). Es sollte allerdings
+     * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
+     * so verlangen sie unterschiedliche Hilfsverben.
+     */
+    default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
+                                                                 final Numerus numerus,
+                                                                 final Belebtheit belebtheit) {
+        return getPartizipIIPhrasen(new PraedRegMerkmale(person, numerus, belebtheit));
+    }
+
 
     /**
      * Gibt eine (oder in seltenen Fällen mehrere) unflektierte Phrase(n) mit Partizip II zurück:
@@ -210,7 +238,7 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      */
     default ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final SubstantivischePhrase bezugswort) {
-        return getPartizipIIPhrasen(bezugswort.getPerson(), bezugswort.getNumerus());
+        return getPartizipIIPhrasen(bezugswort.getPraedRegMerkmale());
     }
 
     /**
@@ -232,8 +260,20 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
      * so verlangen sie unterschiedliche Hilfsverben.
      */
-    ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                         final Numerus numerus);
+    ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(PraedRegMerkmale praedRegMerkmale);
+
+    /**
+     * Gibt eine Infinitivkonstruktion mit diesem
+     * Prädikat zurück ("das Schwert nehmen")
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat der
+     * Infinitiv eine Person, Numerus etc. passend zu diesem Subjekt - Beispiel:
+     * "[Ich möchte] die Kugel an mich nehmen"
+     * (nicht *"[Ich möchte] die Kugel an sich nehmen")
+     */
+    default Konstituentenfolge getInfinitiv(final SubstantivischePhrase substantivischePhrase) {
+        return getInfinitiv(substantivischePhrase.getPraedRegMerkmale());
+    }
 
     /**
      * Gibt eine Infinitivkonstruktion mit diesem
@@ -244,7 +284,21 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus);
+    Konstituentenfolge getInfinitiv(PraedRegMerkmale praedRegMerkmale);
+
+    /**
+     * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
+     * Prädikat zurück ("das Schwert zu nehmen")
+     * <p>
+     * Implizit (oder bei reflexiven Verben auch explizit) hat der
+     * zu-Infinitiv Person, Numerus etc., so dass er sich auf diese substantivische
+     * Phrase beziehen könnte - Beispiel:
+     * "[Ich gedenke,] die Kugel an mich zu nehmen"
+     * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
+     */
+    default Konstituentenfolge getZuInfinitiv(final SubstantivischePhrase substantivischePhrase) {
+        return getZuInfinitiv(substantivischePhrase.getPraedRegMerkmale());
+    }
 
     /**
      * Gibt eine Infinitivkonstruktion mit dem zu-Infinitiv mit diesem
@@ -255,30 +309,37 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus);
+    Konstituentenfolge getZuInfinitiv(PraedRegMerkmale praedRegMerkmale);
+
+    default Konstituente getSpeziellesVorfeldSehrErwuenscht(
+            final Person person, final Numerus numerus, final Belebtheit belebtheit,
+            final boolean nachAnschlusswort) {
+        return getSpeziellesVorfeldSehrErwuenscht(
+                new PraedRegMerkmale(person, numerus, belebtheit), nachAnschlusswort);
+    }
 
     /**
      * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
      * der Stellung, wo das Subjekt im Vorfeld ist, vorgezogen werden sollte.
      */
     @Nullable
-    Konstituente getSpeziellesVorfeldSehrErwuenscht(Person personSubjekt, Numerus numerusSubjekt,
+    Konstituente getSpeziellesVorfeldSehrErwuenscht(PraedRegMerkmale praedRegMerkmale,
                                                     boolean nachAnschlusswort);
+
 
     /**
      * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
      * optional (um weitere Alternativen zu haben) verwendet werden kann.
      * <p>
-     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(Person, Numerus, boolean)} einen Wert
+     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(PraedRegMerkmale, boolean)} einen Wert
      * zurückgibt,
      * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
      * <p>
      * Generell gibt es gewisse Regeln für das Vorfeld, die bei der Implementierung dieser
      * Methode berücksichtigt werden müssen:
      * <ul>
-     * <li> Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+     * <li> "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
      * (Eisenberg Der Satz 5.4.2)
-     * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
      * <li>Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
      * *Sich steigern die Verluste <-> Die Verluste steigern sich.
      * <li>Der ethische Dativ ist im Vorfeld verboten:
@@ -326,9 +387,74 @@ public interface PraedikatOhneLeerstellen extends Praedikat {
      * </ul>
      */
     @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(Person personSubjekt,
-                                                            Numerus numerusSubjekt);
+    default Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final Person person, final Numerus numerus, final Belebtheit belebtheit) {
+        return getSpeziellesVorfeldAlsWeitereOption(
+                new PraedRegMerkmale(person, numerus, belebtheit));
+    }
+
+    /**
+     * Gibt ein "spezielles" Vorfeld zurück, das (bei Sätzen, die ein Vorfeld haben)
+     * optional (um weitere Alternativen zu haben) verwendet werden kann.
+     * <p>
+     * Wenn {@link #getSpeziellesVorfeldSehrErwuenscht(PraedRegMerkmale, boolean)} einen Wert
+     * zurückgibt,
+     * so sollte diese Methode etweder einen anderen oder keinen Wert zurückgeben.
+     * <p>
+     * Generell gibt es gewisse Regeln für das Vorfeld, die bei der Implementierung dieser
+     * Methode berücksichtigt werden müssen:
+     * <ul>
+     * <li> "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
+     * (Eisenberg Der Satz 5.4.2)
+     * <li>Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
+     * *Sich steigern die Verluste <-> Die Verluste steigern sich.
+     * <li>Der ethische Dativ ist im Vorfeld verboten:
+     * *Mir komm nur nicht zu spät. <-> Komm mir nur nicht zu spät.
+     * <li>"Nicht" ("Negationssupplement") ist im Vorfeld sehr, sehr selten.
+     * <li>Tendenziell enthält das Vorfeld (unmarkiert)
+     * Hintergrund-Informationen, also die Informationen,
+     * die bereits bekannt sind und auf die
+     * nicht die Aufmerksamkeit gelenkt werden soll.
+     * Daher stehen im Vorfeld zumeist das Subjekt oder
+     * adverbiale Angaben.
+     * Da Prädikatsteile (Objekte, Prädikative) in der Regel rhematisch sind
+     * (nicht Thema), sollen sie in der Regel nicht ins Vorfeld.
+     * Es gibt zwei Ausnahmen:
+     * <ol>
+     * <li>Die "Hintergrundsetzung":
+     * Der Prädikatsteil soll als neuer Hintergrund für
+     * ein (neues), im Satz folgendes Rhema gesetzt werden.
+     * Daher sind diese Vorfeldbesetzung mit Nicht-Subjekt
+     * mit Negationen im Mittelfeld natürlich:
+     * "Den Karl [neues Thema] liebt die Maria aber nicht [Rhema]"
+     * "Groß [neues Thema] ist Karl nicht [Rhema]."
+     * <li>Die "Hervorhebung":
+     * Es gibt mehrere Vorderund-Informationen, von denen
+     * eine besonders Akzeptuiert werden soll. Diese Information
+     * kann in das Vorfeld gestellt werden ("Hervorhebung").
+     * "Hervorhebungen" sind also vor allem möglich, wenn
+     * das Prädikats-Mittelfeld
+     * - mehrere weitere
+     * - oder weitere längere
+     * Elemente enthält.
+     * <li>Daher sind generell Personalpronomen ohne Fokuspartikel im Vorfeld oft
+     * eher unangebracht, wenn es sich um ein Objekt handelt. Selbst wenn
+     * das Personalpronomen in einem Präpositionalkasus steht.
+     * ?"Dich sieht die Frau überrascht an.", ?"Auf sie wartest du immer noch."
+     * </ol>
+     * <li> <i>Rhematische</i> prädikative Elemente sind im Vorfeld nur möglich,
+     * wenn sie
+     * <ol>
+     * <li>Antwort auf eine Frage sind ("Dich habe ich gesucht!")
+     * <li>oder kontrastiv ("Wir haben eine Katze. Ein Hund
+     * kommt uns nicht ins Haus.") - Phrasen (auch Personalpronomen) mit Fokuspartikel
+     * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
+     * </ol>
+     * </ul>
+     */
+    @Nullable
+    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(PraedRegMerkmale praedRegMerkmale);
 
     @Nullable
-    Konstituentenfolge getNachfeld(Person person, Numerus numerus);
+    Konstituentenfolge getNachfeld(PraedRegMerkmale praedRegMerkmale);
 }

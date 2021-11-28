@@ -8,6 +8,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
@@ -59,7 +60,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                                                            final Lichtverhaeltnisse lichtverhaeltnisseInNewLocation) {
         return !to.equals(IM_WALD_BEIM_BRUNNEN) ||
                 getObjectsInDenBrunnenGefallen().isEmpty() ||
-                !((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
+                !(loadFroschprinz())
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) ||
                 !loadSC().feelingsComp().isFroehlicherAls(TRAURIG);
 
@@ -91,7 +92,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                         neuerSatz("Hat es gerade neben dir im Unterholz geknarzt? "
                                 + "Wie auch immer, du fasst dir ein Herz und "
                                 + "stapfst durch das "
-                                + "dem Unkraut einen düsteren Trampelpfad entlang. "
+                                + "Unkraut einen düsteren Trampelpfad entlang. "
                                 + "Hinter der "
                                 + "nächsten Biegung stehst du unvermittelt vor"
                                 + " der Tür einer Holzhütte. "
@@ -143,7 +144,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         if (!getObjectsInDenBrunnenGefallen().isEmpty() &&
-                ((IHasStateGO<FroschprinzState>) loadRequired(FROSCHPRINZ))
+                loadFroschprinz()
                         .stateComp().hasState(FroschprinzState.UNAUFFAELLIG) &&
                 loadSC().feelingsComp().isFroehlicherAls(TRAURIG)) {
             return ImmutableSet.of(getDescTo_ImWaldBeimBrunnenOtherWirdTraurig());
@@ -193,7 +194,8 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         loadSC().feelingsComp().requestMoodMax(TRAURIG);
 
         final SubstantivischePhrase descObjects =
-                world.getDescriptionSingleOrCollective(objectsInDenBrunnenGefallen);
+                world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
+                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
 
         // steht
         return du("gehst",
@@ -236,5 +238,10 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
         }
 
         return "Auf dem Hauptweg tiefer in den Wald gehen";
+    }
+
+    @NonNull
+    private IHasStateGO<FroschprinzState> loadFroschprinz() {
+        return loadRequired(FROSCHPRINZ);
     }
 }

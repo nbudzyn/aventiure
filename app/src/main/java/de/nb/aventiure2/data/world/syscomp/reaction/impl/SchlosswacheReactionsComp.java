@@ -133,7 +133,8 @@ public class SchlosswacheReactionsComp
         if (!goldeneKugel.locationComp().hasRecursiveLocation(SPIELER_CHARAKTER)
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE) > 1) {
-                n.narrate(neuerSatz(getDescription(true).nomK(),
+                n.narrate(neuerSatz(
+                        getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
                         "scheint dich nicht zu bemerken")
                         .timed(secs(3)));
                 return;
@@ -281,7 +282,7 @@ public class SchlosswacheReactionsComp
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das",
                         "Schmuckstück wieder hin!“,",
                         "ruft dir",
-                        getDescription(true).nomK(),
+                        getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
                         "zu")
                         .timed(secs(5)));
 
@@ -344,7 +345,7 @@ public class SchlosswacheReactionsComp
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", während",
-                    getDescription().nomK(),
+                    getDescription(textContext, possessivDescriptionVorgabe).nomK(),
                     "gerade damit beschäftigt ist, ihre Waffen zu polieren")
                     .schonLaenger()
                     .timed(secs(3))
@@ -352,14 +353,15 @@ public class SchlosswacheReactionsComp
         } else {
             alt.add(
                     du("hast", "großes Glück, denn",
-                            getDescription().nomK(),
+                            getDescription(textContext, possessivDescriptionVorgabe).nomK(),
                             "ist gerade damit beschäftigt, ihre Waffen zu polieren")
                             .schonLaenger()
                             .komma(true).timed(secs(3))
                             .dann());
         }
 
-        alt.add(neuerSatz(getDescription().datK(), "ist anscheinend nichts aufgefallen")
+        alt.add(neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).datK(),
+                "ist anscheinend nichts aufgefallen")
                 .timed(secs(3))
                 .dann());
 
@@ -407,11 +409,11 @@ public class SchlosswacheReactionsComp
 
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
-                neuerSatz(getDescription().nomK(),
+                neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).nomK(),
                         "beoabachtet dich dabei")
                         .timed(secs(5))
                         .dann(),
-                neuerSatz(getDescription().nomK(),
+                neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).nomK(),
                         "sieht dir belustig dabei zu")
                         .timed(secs(5))
                         .dann(),

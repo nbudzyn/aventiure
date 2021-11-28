@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.satz;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -10,7 +12,6 @@ import static de.nb.aventiure2.util.StreamUtil.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -26,9 +27,8 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
@@ -124,8 +124,9 @@ public class EinzelnerSatz implements Satz {
                 Personalpronomen.checkExpletivesEs(subjekt);
             }
         } else {
-            Preconditions.checkNotNull(subjekt, "Subjekt null, fehlendes Subjekt " +
-                    "für diese Prädikat nicht möglich: %s", praedikat);
+            Objects.requireNonNull(subjekt,
+                    () -> "Subjekt null, fehlendes Subjekt " +
+                            "für diese Prädikat nicht möglich: " + praedikat);
         }
 
         this.anschlusswort = anschlusswort;
@@ -288,7 +289,8 @@ public class EinzelnerSatz implements Satz {
 
         if (relativpronomenImPraedikat == null) {
             throw new IllegalStateException("Kein (eindeutiges) Relativpronomen im Prädikat "
-                    + "gefunden: " + praedikat.getVerbzweit(DeklinierbarePhraseUtil.EINER));
+                    + "gefunden: " + praedikat
+                    .getVerbzweit(DeklinierbarePhraseUtil.EINER_UNBELEBT.mitBelebheit(BELEBT)));
         }
 
         // "das du zu berichten hast", "dem er was gegeben hat", "der kommt"
@@ -313,9 +315,7 @@ public class EinzelnerSatz implements Satz {
     @Override
     public Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption() {
         @Nullable final Konstituentenfolge speziellesVorfeld =
-                praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        getPersonFuerPraedikat(), getNumerusFuerPraedikat()
-                );
+                praedikat.getSpeziellesVorfeldAlsWeitereOption(getPraedRegMerkmale());
         if (speziellesVorfeld == null) {
             // Angabensätze können / sollten nur unter gewissen Voraussetzungen
             // ins Vorfeld gesetzt werden.
@@ -324,15 +324,6 @@ public class EinzelnerSatz implements Satz {
         }
 
         return getVerbzweitsatzMitVorfeldAusMittelOderNachfeld(speziellesVorfeld);
-    }
-
-    private Person getPersonFuerPraedikat() {
-        if (subjekt == null) {
-            // "Mich friert"
-            return P3;
-        }
-
-        return subjekt.getPerson();
     }
 
     @Override
@@ -350,8 +341,7 @@ public class EinzelnerSatz implements Satz {
         }
 
         @Nullable final Konstituentenfolge speziellesVorfeld =
-                praedikat.getSpeziellesVorfeldAlsWeitereOption(
-                        getPersonFuerPraedikat(), getNumerusFuerPraedikat());
+                praedikat.getSpeziellesVorfeldAlsWeitereOption(getPraedRegMerkmale());
         if (speziellesVorfeld != null) {
             res.add(getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption());
         }
@@ -382,7 +372,7 @@ public class EinzelnerSatz implements Satz {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und" /  "[, ]aber"
                 subjekt != null ? subjekt.nomK() : Personalpronomen.EXPLETIVES_ES.nomK(),
-                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
+                praedikat.getVerbzweit(getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge
                                 .schliesseInKommaEin(angabensatz.getDescription()) :
@@ -391,8 +381,7 @@ public class EinzelnerSatz implements Satz {
     }
 
     private Konstituente getSpeziellesVorfeldSehrErwuenscht() {
-        return praedikat.getSpeziellesVorfeldSehrErwuenscht(
-                getPersonFuerPraedikat(), getNumerusFuerPraedikat(),
+        return praedikat.getSpeziellesVorfeldSehrErwuenscht(getPraedRegMerkmale(),
                 anschlusswort != null);
     }
 
@@ -417,7 +406,7 @@ public class EinzelnerSatz implements Satz {
     private Konstituentenfolge getPraedikatVerbzweitMitSubjektImMittelfeldFallsNoetig() {
         return subjekt != null ?
                 praedikat.getVerbzweitMitSubjektImMittelfeld(subjekt) :
-                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat());
+                praedikat.getVerbzweit(getPraedRegMerkmale());
     }
 
     @Override
@@ -437,25 +426,25 @@ public class EinzelnerSatz implements Satz {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
                 subjekt != null ? subjekt.nomK() : null,
-                praedikat.getVerbletzt(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
+                praedikat.getVerbletzt(getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
     }
 
-    private Numerus getNumerusFuerPraedikat() {
+    private PraedRegMerkmale getPraedRegMerkmale() {
         if (subjekt == null) {
             // "Mich friert"
-            return SG;
+            return new PraedRegMerkmale(P3, SG, UNBELEBT);
         }
 
-        return subjekt.getNumerus();
+        return subjekt.getPraedRegMerkmale();
     }
 
     @Override
     public Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma() {
         return joinToKonstituentenfolge(
-                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
+                praedikat.getVerbzweit(getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null);
@@ -465,7 +454,7 @@ public class EinzelnerSatz implements Satz {
     public Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma() {
         return joinToKonstituentenfolge(
                 anschlusswort, // "und"
-                praedikat.getVerbzweit(getPersonFuerPraedikat(), getNumerusFuerPraedikat()),
+                praedikat.getVerbzweit(getPraedRegMerkmale()),
                 angabensatz != null ?
                         Konstituentenfolge.schliesseInKommaEin(angabensatz.getDescription()) :
                         null)
@@ -473,7 +462,7 @@ public class EinzelnerSatz implements Satz {
     }
 
     @Override
-    public boolean hasSubjektDu() {
+    public boolean hasSubjektDuBelebt() {
         return subjekt instanceof Personalpronomen
                 && subjekt.getPerson() == P2
                 && subjekt.getNumerus() == SG;

@@ -1,5 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -20,17 +24,12 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.Personalpronomen;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat wie "die Kugel an sich nehmen", das mit einer
@@ -178,18 +177,17 @@ class PraedikatReflSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person, numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
         /*
-         * Wenn "es" ein Objekt ist, darf es nicht im Vorfeld stehen.
+         * "es" allein darf es nicht im Vorfeld stehen, wenn es ein Objekt ist.
          * (Eisenberg Der Satz 5.4.2)
-         * ("es" ist nicht phrasenbildend, kann also keine Fokuspartikel haben)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, objektKasusOderPraepositionalkasus)) {
             return null;
@@ -215,31 +213,28 @@ class PraedikatReflSubjObjOhneLeerstellen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
                 // "aus einer Laune heraus"
                 getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
                 // "besser doch (nicht...)"
                 getNegationspartikel(), // "nicht"
                 objekt.imK(objektKasusOderPraepositionalkasus), // "die goldene Kugel"
                 getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
-                Reflexivpronomen.get(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
+                Reflexivpronomen.get(praedRegMerkmale)
                         .imStr(reflKasusOderPraepositionalKasus), // "an dich",
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt, numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // "in deine Jackentasche"
         );
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         if (reflKasusOderPraepositionalKasus == AKK) {
-            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+            return Reflexivpronomen.get(praedRegMerkmale);
         }
 
         if (objektKasusOderPraepositionalkasus == AKK) {
@@ -262,9 +257,9 @@ class PraedikatReflSubjObjOhneLeerstellen
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         if (reflKasusOderPraepositionalKasus == DAT) {
-            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+            return Reflexivpronomen.get(praedRegMerkmale);
         }
 
         if (objektKasusOderPraepositionalkasus == DAT) {
@@ -276,13 +271,10 @@ class PraedikatReflSubjObjOhneLeerstellen
 
     @Override
     @Nullable
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt)
+                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
         );
     }
 
@@ -330,7 +322,7 @@ class PraedikatReflSubjObjOhneLeerstellen
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public boolean equals(@Nullable final Object o) {
         if (this == o) {
             return true;
         }

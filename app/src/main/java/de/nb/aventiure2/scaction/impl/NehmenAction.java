@@ -196,7 +196,7 @@ public class NehmenAction
 
         return joinToKonstituentenfolge(
                 SENTENCE,
-                praedikat.mit(getDescription(gameObject, true))
+                praedikat.mit(getDescription(textContext, gameObject, true))
                         // Relevant für etwas wie "Die Schale an *mich* nehmen"
                         .getInfinitiv(P2, SG))
                 .joinToString();
@@ -246,7 +246,8 @@ public class NehmenAction
             return;
         }
 
-        final EinzelneSubstantivischePhrase froschDesc = getDescription(gameObject, true);
+        final EinzelneSubstantivischePhrase froschDesc =
+                getDescription(textContext, gameObject, true);
 
         n.narrateAlt(secs(10),
                 du(PARAGRAPH,
@@ -342,7 +343,7 @@ public class NehmenAction
             }
 
             final EinzelneSubstantivischePhrase froschDesc =
-                    getDescription(gameObject, false);
+                    getDescription(textContext, gameObject, false);
 
             final AltTimedDescriptionsBuilder alt = altTimed();
             alt.addAll(drueckeAusTimed(DISKONTINUITAET, false,
@@ -357,6 +358,7 @@ public class NehmenAction
         n.narrateAlt(
                 du(PARAGRAPH, "zauderst",
                         "und dein Herz klopft gewaltig, als du endlich",
+                        // FIXME Alternative altDescriptions() verwenden.
                         world.getDescription(gameObject, true).akkK(),
                         "greifst")
                         .schonLaenger()
@@ -365,6 +367,7 @@ public class NehmenAction
                         .dann(),
                 neuerSatz("Dir wird ganz angst, aber was man",
                         "versprochen hat, das muss man auch halten! Du nimmst",
+                        // FIXME Alternative altDescriptions() verwenden.
                         world.getDescription(gameObject, true).akkK(),
                         "in die Hände")
                         .timed(secs(15))
@@ -393,7 +396,7 @@ public class NehmenAction
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {
             final EinzelneSubstantivischePhrase objectDesc =
-                    getDescription(gameObject, true);
+                    getDescription(textContext, gameObject, true);
             n.narrate(neuerSatz("Dann nimmst du", objectDesc.akkK())
                     .timed(secs(5))
                     .undWartest());
@@ -403,6 +406,7 @@ public class NehmenAction
         if (sc.memoryComp().getLastAction().hasObject(gameObject)) {
             if (sc.memoryComp().getLastAction().is(Action.Type.HOCHWERFEN) &&
                     sc.feelingsComp().isEmotional()) {
+                // FIXME altDescriptions() verwenden
                 final EinzelneSubstantivischePhrase
                         objectDesc = world.getDescription(gameObject, true);
                 final PraedikatOhneLeerstellen praedikatMitObjekt =
@@ -434,9 +438,9 @@ public class NehmenAction
 
     private void narrateObjectDiskontinuitaet(
             final PraedikatMitEinerObjektleerstelle nehmenPraedikat) {
-        final EinzelneSubstantivischePhrase objectDesc = getDescription(gameObject);
+        final SubstantivischePhrase objectDesc = getDescription(gameObject);
         final EinzelneSubstantivischePhrase objectDescShort =
-                getDescription(gameObject, true);
+                getDescription(textContext, gameObject, true);
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 
@@ -453,7 +457,7 @@ public class NehmenAction
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", nur um",
                     nehmenPraedikat
-                            .mit(getDescription(gameObject, true).persPron())
+                            .mit(getDescription(textContext, gameObject, true).persPron())
                             .mitAdvAngabe(
                                     new AdvAngabeSkopusSatz("gleich erneut"))
                             .getZuInfinitiv(P2, SG))

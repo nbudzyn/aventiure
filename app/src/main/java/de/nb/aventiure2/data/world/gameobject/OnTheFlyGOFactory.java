@@ -1,5 +1,7 @@
 package de.nb.aventiure2.data.world.gameobject;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.AUSGERUPFT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
@@ -12,10 +14,17 @@ import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSENSEIL;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BINSENSEILE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.AUS;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Map;
 
 import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.TimeTaker;
@@ -25,14 +34,19 @@ import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountComp;
 import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
+import de.nb.aventiure2.data.world.syscomp.transform.GOTransformation;
+import de.nb.aventiure2.data.world.syscomp.transform.GOTransformationResult;
 import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
 import de.nb.aventiure2.data.world.syscomp.typed.TypeComp;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 
 /**
  * Eine Factory für GameObjects, die on-the-fly erzeugt werden.
@@ -44,9 +58,9 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
 
     private final CounterDao counterDao;
 
-    public OnTheFlyGOFactory(final AvDatabase db,
-                             final TimeTaker timeTaker,
-                             final World world) {
+    OnTheFlyGOFactory(final AvDatabase db,
+                      final TimeTaker timeTaker,
+                      final World world) {
         super(db, timeTaker, world);
 
         counterDao = db.counterDao();
@@ -69,7 +83,9 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                 db,
                 new TypeComp(newId, db, GameObjectType.AUSGERUPFTE_BINSEN),
                 1,
-                new AmountDescriptionComp(newId,
+                new AmountDescriptionComp(
+                        db.counterDao(),
+                        newId,
                         soundsovieleBinsen,
                         np(AUSGERUPFT, BINSEN, newId),
                         np(BINSEN, newId)),
@@ -77,14 +93,43 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                         true));
     }
 
-    // FIXME Seil flechten..
-    //  - "du [...Binsen...] flichst ein weiches Seil daraus" (Evtl. Zustandsänderungs-Aktion?)
-    //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
-    //  - Wenn zu wenige Binsen: Du erhältst nur ein sehr kurzes Seil. / Das Seil ist
-    //  nicht besonders lang, stabil sieht es auch nicht aus. / Aus den vielen Binsen flichst du
-    //  ein langes, stabiles Seil.
+    GOTransformation binsenseilFlechtenTransformation() {
+        return new GOTransformation(
+                "Die Binsen zu einem langen Seil flechten",
+                ImmutableMap.of(GameObjectType.AUSGERUPFTE_BINSEN, 3),
+                this::altAndOutputBinsenseilFlechten);
+    }
+
+    private <BINSENSEIL extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
+    GOTransformationResult altAndOutputBinsenseilFlechten(
+            final Map<GameObjectType, ITypedGO> input) {
+        final IDescribableGO ausgerupfteBinsen =
+                (IDescribableGO)
+                        requireNonNull(input.get(GameObjectType.AUSGERUPFTE_BINSEN));
+
+        final BINSENSEIL binsenseil = createEinLangesBinsenseil();
+        final ImmutableCollection<IAmountableGO> output = ImmutableList.of(binsenseil);
+
+        final AltDescriptionsBuilder alt = alt();
+
+        alt.add(
+                du(VerbSubjObj.FLECHTEN
+                        .mitAdvAngabe(new AdvAngabeSkopusSatz(
+                                // FIXME "daraus" / "aus dem Seil" / "aus der Frau"
+                                //  (jedenfalls nicht *"aus ihm" (dem Seil))
+                                AUS.mit(anaph(ausgerupfteBinsen))))
+                        .mit(anaph(binsenseil)))
+        );
+
+        // FIXME Seil flechten..
+        //  - "du [...Binsen...] flichst ein weiches Seil daraus"
+        //  - "Binsenseil", "Fingerspitzengefühl und Kraft"
+
+        return new GOTransformationResult(alt.timed(hours(2)), output);
+    }
+
     @SuppressWarnings("unchecked")
-    public <BINSENSEIL extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
+    private <BINSENSEIL extends GameObject & IDescribableGO & ILocatableGO & IAmountableGO>
     BINSENSEIL createEinLangesBinsenseil() {
         final GameObjectId newId = generateNewGameObjectId();
 
@@ -110,7 +155,9 @@ public class OnTheFlyGOFactory extends AbstractGameObjectFactory {
                 db,
                 new TypeComp(newId, db, GameObjectType.LANGES_BINSENSEIL),
                 1,
-                new AmountDescriptionComp(newId,
+                new AmountDescriptionComp(
+                        db.counterDao(),
+                        newId,
                         soundsovieleLangeBinsenseile,
                         np(LANG, BINSENSEIL, newId),
                         np(BINSENSEIL, newId)),

@@ -6,10 +6,12 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 
 /**
  * Eine Adjektivphrase, in der alle Leerstellen besetzt sind. Beispiele:
@@ -71,14 +73,19 @@ abstract class AbstractAdjPhrOhneLeerstellen implements AdjPhrOhneLeerstellen {
     }
 
     @Nullable
-    Konstituente getAdvAngabeSkopusSatzDescription(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    Konstituente getAdvAngabeSkopusSatzDescription(final Person person, final Numerus numerus,
+                                                   final Belebtheit belebtheit) {
+        return getAdvAngabeSkopusSatzDescription(new PraedRegMerkmale(
+                person, numerus, belebtheit));
+    }
+
+    @Nullable
+    Konstituente getAdvAngabeSkopusSatzDescription(final PraedRegMerkmale praedRegMerkmale) {
         if (advAngabeSkopusSatz == null) {
             return null;
         }
 
-        return advAngabeSkopusSatz
-                .getDescription(personSubjekt, numerusSubjekt); // "immer noch"
+        return advAngabeSkopusSatz.getDescription(praedRegMerkmale); // "immer noch"
     }
 
     @Nullable

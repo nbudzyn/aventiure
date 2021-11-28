@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -13,18 +19,13 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Person.P3;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Arrays.asList;
 
 /**
  * A description of something and the time it takes.
@@ -223,7 +224,9 @@ public class TimedDescription<D extends AbstractDescription<?>> {
                         + "Person: %s. Für Phorik-Kandiaten "
                         + "ist nur 3. Person zugelassen.", substantivischePhrase,
                 substantivischePhrase.getPerson());
-        getDescription().phorikKandidat(substantivischePhrase.getNumerusGenus(), bezugsobjekt);
+        getDescription().phorikKandidat(substantivischePhrase.getNumerusGenus(),
+                substantivischePhrase.getBelebtheit(),
+                bezugsobjekt);
         return this;
     }
 
@@ -232,8 +235,10 @@ public class TimedDescription<D extends AbstractDescription<?>> {
      * Phorik-Kandidaten in der dritten Person!
      */
     public TimedDescription<D> phorikKandidat(final NumerusGenus numerusGenus,
+                                              final Belebtheit belebtheit,
                                               final IBezugsobjekt bezugsobjekt) {
-        getDescription().phorikKandidat(new PhorikKandidat(numerusGenus, bezugsobjekt));
+        getDescription().phorikKandidat(new PhorikKandidat(numerusGenus,
+                belebtheit, bezugsobjekt));
         return this;
     }
 

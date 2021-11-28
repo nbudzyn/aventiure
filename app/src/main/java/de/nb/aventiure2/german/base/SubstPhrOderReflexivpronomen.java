@@ -18,7 +18,26 @@ public interface SubstPhrOderReflexivpronomen {
     Konstituentenfolge imK(Kasus kasus);
 
     @Nullable
+    default PhorikKandidat getPhorikKandidat() {
+        @Nullable final IBezugsobjekt bezugsobjekt = getBezugsobjekt();
+
+        if (bezugsobjekt == null) {
+            return null;
+        }
+
+        @Nullable final NumerusGenus numerusGenus = kannAlsBezugsobjektVerstandenWerdenFuer();
+        if (numerusGenus == null) {
+            // Kann das überhaupt sein? - Egal.
+            return null;
+        }
+
+        return new PhorikKandidat(numerusGenus, getBelebtheit(), bezugsobjekt);
+    }
+
+    @Nullable
     NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer();
+
+    Belebtheit getBelebtheit();
 
     @Nullable
     IBezugsobjekt getBezugsobjekt();

@@ -15,6 +15,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GOLDEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BRETTERTISCH;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.DINGE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.KUGEL;
@@ -56,8 +57,10 @@ import de.nb.aventiure2.data.world.gameobject.wetter.*;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveSystem;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
+import de.nb.aventiure2.data.world.syscomp.description.AmountDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.DescriptionSystem;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe;
 import de.nb.aventiure2.data.world.syscomp.feelings.EinschlafhindernisSc;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.Hunger;
@@ -65,7 +68,6 @@ import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
 import de.nb.aventiure2.data.world.syscomp.location.LocationSystem;
 import de.nb.aventiure2.data.world.syscomp.location.RoomFactory;
-import de.nb.aventiure2.data.world.syscomp.memory.IHasMemoryGO;
 import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.movement.IMovingGO;
 import de.nb.aventiure2.data.world.syscomp.movement.MovementSystem;
@@ -89,6 +91,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
+import de.nb.aventiure2.data.world.syscomp.transform.TransformationSystem;
 import de.nb.aventiure2.data.world.syscomp.typed.GameObjectType;
 import de.nb.aventiure2.data.world.syscomp.typed.ITypedGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
@@ -98,6 +101,8 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.EmptyTextContext;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * The world contains and manages all game objects.
@@ -244,11 +249,18 @@ public class World {
     // SYSTEMS
     private AliveSystem aliveSystem;
 
+    public DescriptionSystem descriptionSystem;
+
     private SpatialConnectionSystem spatialConnectionSystem;
+
+    private TransformationSystem transformationSystem;
 
     private LocationSystem locationSystem;
 
     private MovementSystem movementSystem;
+
+    private OnTheFlyGOFactory onTheFlyGOFactory;
+
 
     public static World getInstance(final AvDatabase db,
                                     final TimeTaker timeTaker,
@@ -291,6 +303,10 @@ public class World {
             aliveSystem = new AliveSystem();
         }
 
+        if (descriptionSystem == null) {
+            descriptionSystem = new DescriptionSystem();
+        }
+
         if (locationSystem == null) {
             locationSystem = new LocationSystem(db);
         }
@@ -303,8 +319,16 @@ public class World {
             spatialConnectionSystem = new SpatialConnectionSystem(this);
         }
 
+        if (transformationSystem == null) {
+            transformationSystem = new TransformationSystem();
+        }
+
         if (reactionSystem == null) {
             reactionSystem = new ReactionSystem(n, this, timeTaker);
+        }
+
+        if (onTheFlyGOFactory == null) {
+            onTheFlyGOFactory = new OnTheFlyGOFactory(db, timeTaker, this);
         }
 
         if (toBeDeleted == null) {
@@ -330,6 +354,8 @@ public class World {
         final RoomFactory room = new RoomFactory(db, timeTaker, n, this);
         final SimpleConnectionCompFactory connection =
                 new SimpleConnectionCompFactory(db, timeTaker, n, this);
+
+        transformationSystem.add(onTheFlyGOFactory.binsenseilFlechtenTransformation());
 
         all = new GameObjectIdMap();
         all.putAll(
@@ -498,8 +524,14 @@ public class World {
                 bettgestell.createInDerHuetteImWald(),
                 bett.createObenImAltenTurm(),
                 baum.createImGartenHinterDerHuetteImWald(),
-                GeneralObjectFactory.create(RAPUNZELS_HAARE)
+                creature.createRapunzelsHaare()
         );
+    }
+
+    public OnTheFlyGOFactory onTheFlyGOFactory() {
+        prepare();
+
+        return onTheFlyGOFactory;
     }
 
     /**
@@ -1395,8 +1427,30 @@ public class World {
                 .collect(toImmutableList());
     }
 
+    public ImmutableList<SubstantivischePhrase> altDescriptionsSingleOrReihung(
+            final ITextContext initialTextContext,
+            final Collection<? extends IDescribableGO> objects,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        if (objects.isEmpty()) {
+            return ImmutableList.of(Indefinitpronomen.NICHTS);
+        }
+
+        if (objects.size() == 1) {
+            final IDescribableGO object = objects.iterator().next();
+
+            return ImmutableList.copyOf(altDescriptions(initialTextContext, object,
+                    possessivDescriptionVorgabe, false));
+        }
+
+        return // IDEA altDescriptions() verwenden und ausmultiplizieren!
+                ImmutableList.of(getDescriptionSingleOrReihung(initialTextContext,
+                        objects, possessivDescriptionVorgabe));
+    }
+
     public SubstantivischePhrase getDescriptionSingleOrReihung(
-            final Collection<? extends IDescribableGO> objects) {
+            final ITextContext initialTextContext,
+            final Collection<? extends IDescribableGO> objects,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
         if (objects.isEmpty()) {
             return Indefinitpronomen.NICHTS;
         }
@@ -1404,11 +1458,20 @@ public class World {
         if (objects.size() == 1) {
             final IDescribableGO object = objects.iterator().next();
 
-            return getDescription(object, false);
+            return getDescription(initialTextContext, object, possessivDescriptionVorgabe, false);
         }
 
-        return new SubstPhrReihung(
-                mapToList(objects, o -> getDescription(o, false)));
+        final ImmutableList.Builder<SubstantivischePhrase> substantivischePhrasen =
+                ImmutableList.builder();
+        boolean first = true;
+        for (final IDescribableGO object : objects) {
+            final ITextContext textContext = first ? initialTextContext : EmptyTextContext.INSTANCE;
+            substantivischePhrasen.add(getDescription(textContext, object,
+                    possessivDescriptionVorgabe, false));
+            first = false;
+        }
+
+        return new SubstPhrReihung(substantivischePhrasen.build());
     }
 
     /**
@@ -1416,16 +1479,21 @@ public class World {
      * etwas wie "die Dinge".
      */
     public SubstantivischePhrase getDescriptionSingleOrCollective(
-            final Collection<? extends IDescribableGO> objects) {
-        return getDescriptionSingleOrCollective(objects, false);
-    }
-
-    /**
-     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
-     * etwas wie "die Dinge".
-     */
-    public SubstantivischePhrase getDescriptionSingleOrCollective(
+            final ITextContext textContext,
             final Collection<? extends IDescribableGO> objects,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        return getDescriptionSingleOrCollective(textContext, objects, possessivDescriptionVorgabe,
+                false);
+    }
+
+    /**
+     * Gibt eine Beschreibung dieses Objekts zurück - wenn es nur eines ist - sonst
+     * etwas wie "die Dinge".
+     */
+    public SubstantivischePhrase getDescriptionSingleOrCollective(
+            final ITextContext textContext,
+            final Collection<? extends IDescribableGO> objects,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
             final boolean shortIfKnown) {
         if (objects.isEmpty()) {
             return Indefinitpronomen.NICHTS;
@@ -1434,26 +1502,12 @@ public class World {
         if (objects.size() == 1) {
             final IDescribableGO object = objects.iterator().next();
 
-            return getDescription(object, shortIfKnown);
+            // FIXME Alternative altDescriptions() bauen, auch Aufrufer prüfen und
+            //  ergänzen oder auf alt...() umstellen.
+            return getDescription(textContext, object, possessivDescriptionVorgabe, shortIfKnown);
         }
 
         return DINGE;
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
-     */
-    public SubstantivischePhrase anaph(final IDescribableGO describableGO) {
-        return anaph(describableGO, true);
     }
 
     /**
@@ -1470,26 +1524,29 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die Lampe" zurück.
      */
-    public SubstantivischePhrase anaph(final GameObjectId describableId) {
-        return anaph(describableId, true);
-    }
-
-    /**
-     * Gibt das Personalpronomen zurück, mit dem ein
-     * anaphorischer Bezug auf dieses
-     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
-     * Beschreibung des Game Objects.
-     * <br/>
-     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
-     * <br/>
-     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
-     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
-     */
-    public SubstantivischePhrase anaph(
+    public EinzelneSubstantivischePhrase anaph(
+            final ITextContext textContext,
             final GameObjectId describableId,
-            final boolean descShortIfKnown) {
-        return anaph((IDescribableGO) loadRequired(describableId), descShortIfKnown);
+            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe) {
+        return anaph(textContext, describableId, descPossessivDescriptionVorgabe, true);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine kurze
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" oder "die Lampe" zurück.
+     */
+    public EinzelneSubstantivischePhrase anaph(final ITextContext textContext,
+                                               final IDescribableGO describableGO,
+                                               final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe) {
+        return anaph(textContext, describableGO, descPossessivDescriptionVorgabe, true);
     }
 
     /**
@@ -1504,8 +1561,31 @@ public class World {
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    public SubstantivischePhrase anaph(
+    public EinzelneSubstantivischePhrase anaph(
+            final ITextContext textContext,
+            final GameObjectId describableId,
+            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
+            final boolean descShortIfKnown) {
+        return anaph(textContext, (IDescribableGO) loadRequired(describableId),
+                descPossessivDescriptionVorgabe, descShortIfKnown);
+    }
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     */
+    public EinzelneSubstantivischePhrase anaph(
+            final ITextContext textContext,
             final IDescribableGO describableGO,
+            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
             final boolean descShortIfKnown) {
         // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
         //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
@@ -1513,30 +1593,39 @@ public class World {
         //  Man könnte Anaphern wie "die Frau" für alle Dinge "im Raum" erzeugen und
         //  dann darauf achten, dass es nicht zu Verwechslungen kommen kann.
 
-        @Nullable final Personalpronomen anaphPersPron = n.getAnaphPersPronWennMgl(describableGO);
+        @Nullable final Personalpronomen anaphPersPron =
+                textContext.getAnaphPersPronWennMgl(describableGO.getId());
         if (anaphPersPron != null) {
             return anaphPersPron;
         }
 
-        return getDescription(describableGO, descShortIfKnown);
+        // FIXME Alternative altAnaph() bauen, auch Aufrufer prüfen und
+        //  ergänzen oder auf alt...() umstellen.
+        return getDescription(textContext, describableGO, descPossessivDescriptionVorgabe,
+                descShortIfKnown);
     }
 
     /**
-     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * ob der Spieler das Game Object schon kennt oder nicht.
+     * Gibt eine Beschribung für das Game Object zurück.
      */
-    public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId) {
-        return getDescription((IDescribableGO) loadRequired(gameObjectId));
+    public SubstantivischePhrase getDescription(
+            final ITextContext textContext,
+            final GameObjectId describableId,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        final IDescribableGO describable = loadRequired(describableId);
+        return getDescription(textContext, describable, possessivDescriptionVorgabe);
     }
 
     /**
-     * Gibt eine (evtl. auch etwas längere) Nominalphrase zurück, die das Game Object beschreibt.
-     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
-     * der Spieler das Game Object schon kennt oder nicht.
+     * Gibt eine Beschribung für das Game Object zurück.
      */
-    public EinzelneSubstantivischePhrase getDescription(final IDescribableGO gameObject) {
-        return getDescription(gameObject, false);
+    public SubstantivischePhrase getDescription(
+            final ITextContext textContext,
+            final IDescribableGO describable,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        // FIXME Alternative altDescriptions() bauen, auch Aufrufer prüfen und
+        //  ergänzen oder auf alt...() umstellen.
+        return getDescription(textContext, describable, possessivDescriptionVorgabe, false);
     }
 
     /**
@@ -1546,11 +1635,34 @@ public class World {
      *
      * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
      *                     Game Object schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
      */
-    public EinzelneSubstantivischePhrase getDescription(final GameObjectId gameObjectId,
-                                                        final boolean shortIfKnown) {
-        return getDescription((IDescribableGO) loadRequired(gameObjectId), shortIfKnown);
+    public EinzelneSubstantivischePhrase getDescription(
+            final ITextContext textContext,
+            final GameObjectId gameObjectId,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        // FIXME Alternative altDescriptions() bauen, auch Aufrufer prüfen und
+        //  ergänzen oder auf alt...() umstellen.
+
+        return getDescription(textContext, (IDescribableGO) loadRequired(gameObjectId),
+                possessivDescriptionVorgabe, shortIfKnown);
+    }
+
+    /**
+     * Gibt alternative substantivische Phrasen zurück, die das Game Object beschreiben.
+     * Die Phrasen werden in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     */
+    public ImmutableList<EinzelneSubstantivischePhrase> altDescriptions(
+            final ITextContext textContext,
+            final IDescribableGO gameObject,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        return descriptionSystem.altPOVDescriptions(textContext, loadSC(), gameObject,
+                possessivDescriptionVorgabe, shortIfKnown);
     }
 
     /**
@@ -1560,11 +1672,15 @@ public class World {
      *
      * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
      *                     Game Object schon kennt, wird eher eine
-     *                     kürzere Beschreibung gewählt
      */
-    public EinzelneSubstantivischePhrase getDescription(final IDescribableGO gameObject,
-                                                        final boolean shortIfKnown) {
-        return getPOVDescription(loadSC(), gameObject, shortIfKnown);
+    public EinzelneSubstantivischePhrase getDescription(
+            final ITextContext textContext,
+            final IDescribableGO gameObject,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        return descriptionSystem
+                .getPOVDescription(textContext, loadSC(), gameObject, possessivDescriptionVorgabe,
+                        shortIfKnown);
     }
 
     /**
@@ -1572,43 +1688,14 @@ public class World {
      * aus Sicht das Beobachters mit der <code>observerId</code> beschreibt, ggf. kurz.
      */
     public @NonNull
-    EinzelneSubstantivischePhrase getPOVDescription(final GameObjectId observerId,
-                                                    final IDescribableGO describable,
-                                                    final boolean shortIfKnown) {
-        return getPOVDescription((IGameObject) loadRequired(observerId), describable, shortIfKnown);
-    }
-
-    /**
-     * Gibt eine beschreibende Nominalphrase zurück, die das <code>describable</code>
-     * aus Sicht des <code>observer</code>s beschreibt, ggf. kurz-
-     */
-    @NonNull
-    private static EinzelneSubstantivischePhrase getPOVDescription(final IGameObject observer,
-                                                                   final IDescribableGO describable,
-                                                                   final boolean shortIfKnown) {
-        if (observer instanceof IHasMemoryGO) {
-            return getPOVDescription((IHasMemoryGO) observer, describable,
-                    shortIfKnown);
-        }
-
-        return describable.descriptionComp().getNormalDescriptionWhenKnown();
-    }
-
-    private static EinzelneSubstantivischePhrase getPOVDescription(final IHasMemoryGO observer,
-                                                                   final IDescribableGO describable,
-                                                                   final boolean shortIfKnown) {
-        final boolean known = observer.memoryComp().isKnown(describable);
-
-        if ((describable instanceof IAmountableGO)
-                && describable.descriptionComp() instanceof AmountDescriptionComp) {
-            return ((AmountDescriptionComp) describable.descriptionComp())
-                    .getDescription(
-                            ((IAmountableGO) describable).amountComp().getAmount(),
-                            known, shortIfKnown);
-        }
-
-        return describable.descriptionComp().getDescription(
-                known, shortIfKnown);
+    EinzelneSubstantivischePhrase getPOVDescription(
+            final ITextContext textContext,
+            final GameObjectId observerId,
+            final IDescribableGO describable,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        return descriptionSystem.getPOVDescription(textContext, loadRequired(observerId),
+                describable, possessivDescriptionVorgabe, shortIfKnown);
     }
 
     public static EinzelneSubstantivischePhrase getDescriptionAtFirstSight(
@@ -1764,6 +1851,11 @@ public class World {
     }
 
     @SuppressWarnings({"unused", "RedundantSuppression"})
+    public DescriptionSystem getDescriptionSystem() {
+        return descriptionSystem;
+    }
+
+    @SuppressWarnings({"unused", "RedundantSuppression"})
     public LocationSystem getLocationSystem() {
         return locationSystem;
     }
@@ -1785,6 +1877,6 @@ public class World {
      * weibliche Adressaten ("du, die du") ausschließen.
      */
     public static Personalpronomen duSc() {
-        return Personalpronomen.get(P2, M, SPIELER_CHARAKTER);
+        return Personalpronomen.get(P2, M, BELEBT, SPIELER_CHARAKTER);
     }
 }

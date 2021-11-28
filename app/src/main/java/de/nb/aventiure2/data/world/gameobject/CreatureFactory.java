@@ -12,6 +12,7 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAEUERIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAUERSFRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
@@ -37,9 +38,10 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveComp;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.MultiDescriptionComp;
-import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzeDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzelDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.RapunzelsZauberinDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
@@ -96,7 +98,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
  * A factory for special {@link GameObject}s: Creatures.
  */
 class CreatureFactory extends AbstractNarratorGameObjectFactory {
-
     CreatureFactory(final AvDatabase db, final TimeTaker timeTaker,
                     final Narrator n, final World world) {
         super(db, timeTaker, n, world);
@@ -106,14 +107,16 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         final SchlosswacheStateComp stateComp =
                 new SchlosswacheStateComp(SCHLOSSWACHE, db, timeTaker, world);
         final AbstractDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(SCHLOSSWACHE,
+                new SimpleDescriptionComp(db.counterDao(), SCHLOSSWACHE,
                         np(F, INDEF,
                                 "Schlosswache mit langer Hellebarde",
-                                SCHLOSSWACHE),
+                                BELEBT, SCHLOSSWACHE
+                        ),
                         np(F, DEF,
                                 "Schlosswache mit ihrer "
                                         + "langen Hellebarde",
-                                SCHLOSSWACHE),
+                                BELEBT, SCHLOSSWACHE
+                        ),
                         np(NomenFlexionsspalte.SCHLOSSWACHE, SCHLOSSWACHE));
         final LocationComp locationComp =
                 new LocationComp(SCHLOSSWACHE, db, world, SCHLOSS_VORHALLE,
@@ -130,7 +133,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
     GameObject createFroschprinz() {
         final FroschprinzStateComp stateComp = new FroschprinzStateComp(db, timeTaker, world);
         final MultiDescriptionComp descriptionComp =
-                new FroschprinzDescriptionComp(stateComp);
+                new FroschprinzDescriptionComp(db.counterDao(), stateComp);
         final LocationComp locationComp =
                 new LocationComp(FROSCHPRINZ, db, world, IM_WALD_BEIM_BRUNNEN, ABZWEIG_IM_WALD,
                         true);
@@ -147,7 +150,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createLobebauer() {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(LOBEBAUER,
+                new SimpleDescriptionComp(db.counterDao(), LOBEBAUER,
                         np(INDEF,
                                 GEKLEIDET.mitAdvAngabe(new AdvAngabeSkopusSatz(EINFACH)),
                                 MANN,
@@ -171,7 +174,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createMusVerkaeuferin() {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(MUS_VERKAEUFERIN,
+                new SimpleDescriptionComp(db.counterDao(), MUS_VERKAEUFERIN,
                         np(INDEF, DICK, BAEUERIN, MUS_VERKAEUFERIN),
                         np(DICK, BAEUERIN, MUS_VERKAEUFERIN),
                         np(BAUERSFRAU, MUS_VERKAEUFERIN));
@@ -190,11 +193,14 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createTopfVerkaeuferin() {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(TOPF_VERKAEUFERIN,
+                new SimpleDescriptionComp(
+                        db.counterDao(),
+                        TOPF_VERKAEUFERIN,
                         np(F, INDEF,
                                 "junge Frau mit feinen Gesichtszügen",
                                 "jungen Frau mit feinen Gesichtszügen",
-                                TOPF_VERKAEUFERIN),
+                                BELEBT, TOPF_VERKAEUFERIN
+                        ),
                         np(new ZweiAdjPhrOhneLeerstellen(
                                         SCHOEN,
                                         false,
@@ -216,7 +222,8 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createKorbflechterin() {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(KORBFLECHTERIN,
+                new SimpleDescriptionComp(
+                        db.counterDao(), KORBFLECHTERIN,
                         np(INDEF, ALT, FRAU, KORBFLECHTERIN),
                         np(ALT, NomenFlexionsspalte.KORBFLECHTERIN, KORBFLECHTERIN),
                         np(ALT, FRAU, KORBFLECHTERIN));
@@ -234,7 +241,8 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
 
     GameObject createRapunzel() {
         final RapunzelStateComp stateComp = new RapunzelStateComp(db, timeTaker, world);
-        final AbstractDescriptionComp descriptionComp = new RapunzeDescriptionComp(world);
+        final AbstractDescriptionComp descriptionComp = new RapunzelDescriptionComp(
+                db.counterDao(), world);
         final LocationComp locationComp =
                 new LocationComp(RAPUNZEL, db, world, OBEN_IM_ALTEN_TURM, VOR_DEM_ALTEN_TURM,
                         false);
@@ -317,7 +325,7 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         final RapunzelsZauberinStateComp stateComp =
                 new RapunzelsZauberinStateComp(db, timeTaker, world);
         final AbstractDescriptionComp descriptionComp =
-                new RapunzelsZauberinDescriptionComp(world);
+                new RapunzelsZauberinDescriptionComp(db.counterDao(), world);
         final LocationComp locationComp =
                 new LocationComp(RAPUNZELS_ZAUBERIN, db, world,
                         // Muss zum Zustand der Zauberin passen!
@@ -385,6 +393,14 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
                 RAPUNZEL, ImmutableMap.of(
                         FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG,
                         (float) FeelingIntensity.DEUTLICH));
+    }
+
+    GameObject createRapunzelsHaare() {
+        final PossessivDescriptionComp descriptionComp =
+                new PossessivDescriptionComp(db.counterDao(),
+                        RAPUNZELS_HAARE, RAPUNZEL, RAPUNZELS_NAME,
+                        "Rapunzels");
+        return GeneralObjectFactory.create(RAPUNZELS_HAARE, descriptionComp);
     }
 
     private static class SimpleTalkingReactionsCreature<TALKING_COMP extends AbstractTalkingComp>

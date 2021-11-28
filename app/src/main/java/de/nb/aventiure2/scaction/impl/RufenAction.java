@@ -7,8 +7,6 @@ import static de.nb.aventiure2.data.world.syscomp.reaction.interfaces.Ruftyp.LAS
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -83,7 +81,7 @@ public class RufenAction extends AbstractScAction {
     public String getName() {
         return joinToKonstituentenfolge(
                 SENTENCE,
-                ruftyp.getName().getInfinitiv(P2, SG))
+                ruftyp.getName().getInfinitiv(duSc()))
                 .joinToString();
     }
 

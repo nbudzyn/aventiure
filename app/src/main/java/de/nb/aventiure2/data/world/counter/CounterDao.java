@@ -32,7 +32,8 @@ public abstract class CounterDao {
     }
 
     /**
-     * Erhöht diesen {@link Counter} und gibt das Ergebnis zurück.
+     * Erhöht diesen {@link Counter} und gibt das Ergebnis zurück; die Verwendung von
+     * {@link #incAndGet(Enum)} ist zumeist komfortabler und das Ergebnis übersichtlicher.
      * <p>
      * Oft wird ein <code>Counter</code> hochgezählt, damit der Spieler im Rahmen der
      * Erzählung eine bestimmte Information einmal - aber nicht immer wieder - erhält.
@@ -45,7 +46,7 @@ public abstract class CounterDao {
      * den Counter außerdem in der {@link de.nb.aventiure2.german.description.TimedDescription}
      * zu übergeben.
      */
-    private int incAndGet(final String id) {
+    public int incAndGet(final String id) {
         insert(new Counter(id, 0)); // ignore, if row already exists
 
         final int value = get(id);

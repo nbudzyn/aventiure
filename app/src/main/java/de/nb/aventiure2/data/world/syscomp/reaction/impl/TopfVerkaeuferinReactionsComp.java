@@ -114,15 +114,18 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(neuerSatz(anaph(false).nomK()
+        alt.add(neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK()
                 , "hat Töpfe und irdenes Geschirr vor sich stehen").schonLaenger());
 
         if (loadSC().memoryComp().isKnown(TOPF_VERKAEUFERIN)) {
             alt.add(
-                    neuerSatz(anaph(false).nomK(), "klappert mit ihren Töpfen"),
-                    neuerSatz(anaph(false).nomK(), "hat wohl gerade ein Schüsselchen",
+                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
+                            "klappert mit ihren Töpfen"),
+                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
+                            "hat wohl gerade ein Schüsselchen",
                             "verkauft"),
-                    neuerSatz(anaph().nomK(), "sortiert ihre irdenen Näpfe und Töpfe"));
+                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                            "sortiert ihre irdenen Näpfe und Töpfe"));
         }
 
         n.narrateAlt(alt, secs(30));
@@ -149,10 +152,12 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
             @Nullable final Personalpronomen anaphPersPronMusverkaeuferinWennMgl =
                     n.getAnaphPersPronWennMgl(MUS_VERKAEUFERIN);
 
-            final SubstantivischePhrase anaph = anaph(false);
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe,
+                    false);
 
             if (anaphPersPronMusverkaeuferinWennMgl != null) {
-                final EinzelneSubstantivischePhrase desc = getDescription();
+                final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                        possessivDescriptionVorgabe);
 
                 // "Neben ihr baut eine ... Töpfe und irdenes Geschirr vor sich auf"
                 alt.add(AUFBAUEN
@@ -196,10 +201,11 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
 
     private void verlaesstDenMarkt() {
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
-            final SubstantivischePhrase anaph = anaph();
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
 
             n.narrateAlt(NO_TIME,
-                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph())),
+                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph(textContext,
+                            possessivDescriptionVorgabe))),
                     du(PARAGRAPH, "siehst",
                             "wie", anaph.nomK(),
                             "alle",

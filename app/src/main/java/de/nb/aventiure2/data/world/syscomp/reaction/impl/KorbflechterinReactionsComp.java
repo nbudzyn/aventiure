@@ -97,10 +97,11 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
 
         final AltDescriptionsBuilder alt = alt();
 
-        alt.add(FLECHTEN.mit(np(INDEF, KOERBE)).alsSatzMitSubjekt(anaph(false)));
+        alt.add(FLECHTEN.mit(np(INDEF, KOERBE)).alsSatzMitSubjekt(anaph(textContext,
+                possessivDescriptionVorgabe, false)));
 
         if (loadSC().memoryComp().isKnown(KORBFLECHTERIN)) {
-            alt.add(neuerSatz(anaph(false).nomK(),
+            alt.add(neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                     "ist fleißig dabei, einen Korb zu flechten"));
         }
 
@@ -125,7 +126,8 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
             final AltDescriptionsBuilder alt = alt();
 
-            final SubstantivischePhrase anaph = anaph(false);
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe,
+                    false);
 
             if (!loadSC().memoryComp().isKnown(KORBFLECHTERIN)) {
                 alt.add(neuerSatz(anaph.nomK(),
@@ -152,7 +154,7 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
             final AltDescriptionsBuilder alt = alt();
 
-            final SubstantivischePhrase anaph = anaph();
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
 
             alt.add(neuerSatz(anaph.nomK(),
                     "deckt ihren Stand ab und verschnürt alles gut"));

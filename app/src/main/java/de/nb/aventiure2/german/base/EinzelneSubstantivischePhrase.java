@@ -1,9 +1,11 @@
 package de.nb.aventiure2.german.base;
 
-import javax.annotation.CheckReturnValue;
-
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+
+import androidx.annotation.Nullable;
+
+import javax.annotation.CheckReturnValue;
 
 /**
  * Eine ungereihte Phrase, die substantivisch verwendet werden kann, also insbesondere
@@ -14,14 +16,14 @@ public interface EinzelneSubstantivischePhrase extends SubstantivischePhrase {
     @CheckReturnValue
     default Konstituentenfolge artikellosDatK() {
         return joinToKonstituentenfolge(
-                k(artikellosDatStr(), getNumerusGenus(), getBezugsobjekt()));
+                k(artikellosDatStr(), getNumerusGenus(), getBelebtheit(), getBezugsobjekt()));
     }
 
     @Override
     @CheckReturnValue
     default Konstituentenfolge artikellosAkkK() {
         return joinToKonstituentenfolge(
-                k(artikellosAkkStr(), getNumerusGenus(), getBezugsobjekt()));
+                k(artikellosAkkStr(), getNumerusGenus(), getBelebtheit(), getBezugsobjekt()));
     }
 
     @Override
@@ -30,10 +32,18 @@ public interface EinzelneSubstantivischePhrase extends SubstantivischePhrase {
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         return joinToKonstituentenfolge(
                 k(imStr(kasusOderPraepositionalkasus), kannAlsBezugsobjektVerstandenWerdenFuer(),
+                        getBelebtheit(),
                         getBezugsobjekt()));
     }
 
     default SubstPhrReihung und(final SubstantivischePhrase other) {
         return new SubstPhrReihung(this, other);
     }
+
+    @Override
+    EinzelneSubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
+
+    @Override
+    EinzelneSubstantivischePhrase neg(Negationspartikelphrase negationspartikelphrase,
+                                      boolean moeglichstNegativIndefiniteWoerterVerwenden);
 }

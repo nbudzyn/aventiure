@@ -19,8 +19,8 @@ import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.ISpatiallyConnectedGO;
-import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.util.logger.Logger;
 
 public abstract class AndroidTestBase {
     // See https://proandroiddev.com/testing-the-un-testable-and-beyond-with-android-architecture

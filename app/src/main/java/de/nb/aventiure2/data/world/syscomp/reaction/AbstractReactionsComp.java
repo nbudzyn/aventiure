@@ -4,6 +4,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.base.AbstractStatelessComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObjectDescriptionMixin;
 import de.nb.aventiure2.data.world.gameobject.*;
 
 /**
@@ -13,7 +14,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
 public abstract class AbstractReactionsComp extends AbstractStatelessComponent
         implements IReactions,
         // Mixins
-        IWorldLoaderMixin, IWorldDescriptionMixin {
+        IWorldLoaderMixin, IWorldDescriptionMixin, IGameObjectDescriptionMixin {
     protected final World world;
 
     protected final Narrator n;

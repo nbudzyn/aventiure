@@ -8,6 +8,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.N
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.NEBEN_SC_AUF_EINER_BANK;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -49,12 +50,13 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
     @NonNull
     private GameObject create(final GameObjectId id) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(id,
+                new SimpleDescriptionComp(db.counterDao(), id,
                         np(M, INDEF, "Platz auf einer "
-                                + "Bank an einem Tisch", id),
+                                        + "Bank an einem Tisch",
+                                UNBELEBT, id),
                         np(M, INDEF, "Platz auf einer "
-                                + "Bank an einem Tisch", id),
-                        np(M, INDEF, "Platz an einem Tisch", id));
+                                + "Bank an einem Tisch", UNBELEBT, id),
+                        np(M, INDEF, "Platz an einem Tisch", UNBELEBT, id));
 
         final LocationComp locationComp = new LocationComp(
                 id, db, world,
@@ -129,7 +131,7 @@ class BankAmTischBeimSchlossfestFactory extends AbstractGameObjectFactory {
         // "du stehst vom Tisch auf"
         return du(VerbSubjObj.AUFSTEHEN_VON
                 .mit(getDescription(
-                        SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST, true)))
+                        textContext, SCHLOSS_VORHALLE_LANGER_TISCH_BEIM_FEST, true)))
                 .undWartest()
                 .dann();
     }

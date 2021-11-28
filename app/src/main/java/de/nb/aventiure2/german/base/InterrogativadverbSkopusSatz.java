@@ -1,5 +1,14 @@
 package de.nb.aventiure2.german.base;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.BEI_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.DURCH;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.FUER;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.HINTER_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_DAT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.UNTER_AKK;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.VOR;
+
 /**
  * Ein Fragewort, das nach Informationen fragt, die durch
  * ein Adverb ausgedrückt werden ("wann", ...) und sich
@@ -18,30 +27,31 @@ package de.nb.aventiure2.german.base;
  */
 public enum InterrogativadverbSkopusSatz
         implements IInterrogativadverb, IAdvAngabeOderInterrogativSkopusSatz {
-    WANN("wann"), WARUM("warum"),
+    WANN("wann"),
+    WARUM("warum"),
     WESHALB("weshalb"),
     WESWEGEN("weswegen"),
-    WIESO("wieso"), WO("wo"),
-    WOBEI("wobei"),
-    WODURCH("wodurch"),
-    WOFUER("wofür"),
-    WORIN("worin"),
-    WORUNTER("worunter"),
-    WOVOR("wovor"),
-    WOHINTER("wohinter"),
+    WIESO("wieso"),
+    WO("wo"),
+    WOBEI(BEI_DAT),
+    WODURCH(DURCH),
+    WOFUER(FUER),
+    WORIN(IN_DAT), // "worin"
+    WORUNTER(UNTER_AKK),
+    WOVOR(VOR),
+    WOHINTER(HINTER_DAT),
     WOZU("wozu");
 
     private final String string;
 
+    InterrogativadverbSkopusSatz(final PraepositionMitKasus praepositionMitKasus) {
+        this(requireNonNull(praepositionMitKasus.getPraepositionaladverbWo()));
+    }
+
     InterrogativadverbSkopusSatz(final String string) {
         this.string = string;
     }
-
-    @Override
-    public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
-        return IInterrogativadverb.super.getDescription();
-    }
-
+    
     @Override
     public boolean imMittelfeldErlaubt() {
         return true;

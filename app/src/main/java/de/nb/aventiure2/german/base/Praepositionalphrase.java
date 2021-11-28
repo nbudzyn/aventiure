@@ -1,12 +1,12 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
  * Eine Präpositionalphrase, also eine Präposition mit einer davon abhängigen Phrase
@@ -59,7 +59,7 @@ public class Praepositionalphrase implements Praedikativum, IAlternativeKonstitu
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+    public Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale,
                                              @Nullable final
                                              Negationspartikelphrase negationspartikelphrase) {
         return joinToKonstituentenfolge( // ("er ist")
@@ -74,8 +74,8 @@ public class Praepositionalphrase implements Praedikativum, IAlternativeKonstitu
     }
 
     @Override
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 

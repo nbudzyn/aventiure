@@ -8,6 +8,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
@@ -369,7 +370,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 neuerSatz(objectsDescription)
                         .timed(secs(numObjects * 2L))
                         .phorikKandidat(
-                                getDescription(lastObject, false),
+                                getDescription(textContext, lastObject, false),
                                 lastObject.getId()));
     }
 
@@ -439,7 +440,11 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
     private AltDescriptionsBuilder altMissingObjectsDescriptions(
             final List<? extends IDescribableGO> missingObjects) {
         final SubstantivischePhrase aufzaehlung =
-                world.getDescriptionSingleOrReihung(missingObjects);
+                // FIXME altDescirptionsSingleOrReihungVerwenden
+                //  Neue Klasse DeklinierbarList o.Ä. verwenden, die nomK() -> Immutable List
+                //  unterstützt!
+                world.getDescriptionSingleOrReihung(textContext, missingObjects,
+                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
         final String istSind = SeinUtil.VERB.getPraesensOhnePartikel(aufzaehlung);
 
         final AltDescriptionsBuilder alt = alt();
@@ -540,7 +545,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             final ILocationGO location,
             @NonNull final List<? extends IDescribableGO> movableObjectsInLocation) {
         final SubstantivischePhrase descriptionSingleOrReihung =
-                world.getDescriptionSingleOrReihung(movableObjectsInLocation);
+                world.getDescriptionSingleOrReihung(textContext, movableObjectsInLocation,
+                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
         return buildObjectInLocationDescriptionPrefix(location,
                 descriptionSingleOrReihung)
                 + " "
@@ -638,7 +644,7 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 alt.addAll(timedDescriptions.stream()
                         .filter(td -> td.getDescription() instanceof AbstractFlexibleDescription
                                 && ((AbstractFlexibleDescription<?>) td.getDescription())
-                                .hasSubjektDu()
+                                .hasSubjektDuBelebt()
                                 && isDefinitivDiskontinuitaet())
                         .flatMap(td ->
                                 toDiskontinuitaetDuSatzanschluss(td,
@@ -692,14 +698,14 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
         if (numberOfWays == ONLY_WAY
                 && timedDescription.getDescription() instanceof AbstractFlexibleDescription
                 && ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
-                .hasSubjektDu()) {
+                .hasSubjektDuBelebt()) {
 
             alt.add(timedDescription.withDescription(
                     ((AbstractFlexibleDescription<?>) timedDescription.getDescription())
                             .toTextDescriptionMitVorfeld("dann")
                             .mitPraefix(joinToKonstituentenfolge(
                                     SENTENCE,
-                                    "Du siehst dich nur kurz um"))));
+                                    "Du siehst dich nur kurz um,"))));
         } else {
             alt.addAll(timedDescription.altMitPraefix(joinToKonstituentenfolge(
                     PARAGRAPH,

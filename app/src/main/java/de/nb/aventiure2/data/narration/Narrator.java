@@ -1,5 +1,16 @@
 package de.nb.aventiure2.data.narration;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByKey;
+import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
+import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
+import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
@@ -26,31 +37,22 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.data.world.counter.CounterDao;
+import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.stemming.StemmedWords;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.data.narration.Narration.NarrationSource.REACTIONS;
-import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.distinctByKey;
-import static de.nb.aventiure2.data.narration.TextDescriptionBuilder.toTextDescriptions;
-import static de.nb.aventiure2.german.description.TimedDescription.toTimed;
-import static de.nb.aventiure2.german.description.TimedDescription.toUntimed;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
-
 @ParametersAreNonnullByDefault
-public class Narrator {
+public class Narrator implements ITextContext {
     private static volatile Narrator INSTANCE;
 
     @Nullable
@@ -196,8 +198,7 @@ public class Narrator {
         // nicht klar, wieviel Zeit jetzt (!) vergehen muss oder welcher Counter
         // jetzt (!) hochgezählt werden muss!
         final Collection<? extends TimedDescription<?>> bestAlternatives =
-                chooseBestAlternativesWithSameElapsedTimeAndCounterId(
-                        alternatives);
+                chooseBestAlternativesWithSameElapsedTimeAndCounterId(alternatives);
 
         temporaryNarration = new TemporaryNarration(narrationSourceJustInCase,
                 mapToList(bestAlternatives, TimedDescription::getDescription));
@@ -382,9 +383,11 @@ public class Narrator {
         dao.insert(narration);
     }
 
-
     /**
-     * Ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
+     * Gibt zurück, ob dieses Game Object zurzeit <i>Thema</i> ist (im Sinne von Thema - Rhema).
+     * Standen bisher Alternativen mit verschiedenen Phorik-Kandidaten im Raum, legt
+     * sich diese Methode auf eine Alternative fest - man sollte diese Methode also nicht
+     * unnötig aufrufen.
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isThema(@NonNull final GameObjectId gameObjectId) {
@@ -395,28 +398,34 @@ public class Narrator {
                 pk != null && pk.getBezugsobjekt().equals(gameObjectId));
     }
 
+    /**
+     * Gibt ein Personalpronomen  ("sie", ...) zurück, <i>wenn ein
+     * anaphorischer Bezug auf dieses Bezugsobjekt möglich ist</i> - sonst {@code null} .
+     * <p>
+     * Standen bisher Alternativen mit verschiedenen Phorik-Kandidaten im Raum, legt
+     * sich diese Methode auf eine Alternative fest - man sollte diese Methode also nicht
+     * unnötig aufrufen.
+     */
+    @Override
     @Nullable
-    public Personalpronomen getAnaphPersPronWennMgl(final IGameObject gameObject) {
-        return getAnaphPersPronWennMgl(gameObject.getId());
-    }
-
-    @Nullable
-    public Personalpronomen getAnaphPersPronWennMgl(final GameObjectId gameObjectId) {
+    public Personalpronomen getAnaphPersPronWennMgl(final IBezugsobjekt bezugsobjekt) {
         return applyToPhorikKandidat(pk ->
-                PhorikKandidat.getAnaphPersPronWennMgl(pk, gameObjectId));
+                PhorikKandidat.getAnaphPersPronWennMgl(pk, bezugsobjekt));
     }
 
     /**
-     * Ob ein anaphorischer Bezug (z.B. mit einem Personalpronomen) auf dieses
-     * Game Objekt möglich ist.
-     * <br/>
-     * Beispiel: "Du hebst du Lampe auf..." - jetzt ist ein anaphorischer Bezug
-     * auf die Lampe mittels des Personalpronomens "sie" möglich:
-     * "... und nimmst sie mit."
+     * Gibt Numerus und Genus für ein anpahorisches Pronomen ("sie", ihre", ...) zurück, <i>wenn ein
+     * anaphorischer Bezug auf dieses Bezugsobjekt möglich ist</i> - sonst {@code null} .
+     * <p>
+     * Standen bisher Alternativen mit verschiedenen Phorik-Kandidaten im Raum, legt
+     * sich diese Methode auf eine Alternative fest - man sollte diese Methode also nicht
+     * unnötig aufrufen.
      */
-    public boolean isAnaphorischerBezugMoeglich(final GameObjectId gameObjectId) {
-        return applyToPhorikKandidat(pk -> PhorikKandidat
-                .isAnaphorischerBezugMoeglich(pk, gameObjectId));
+    @Override
+    @Nullable
+    public NumerusGenus getNumerusGenusAnaphWennMgl(final IBezugsobjekt bezugsobjekt) {
+        return applyToPhorikKandidat(pk ->
+                PhorikKandidat.getNumerusGenusAnaphWennMgl(pk, bezugsobjekt));
     }
 
     /**
@@ -463,6 +472,12 @@ public class Narrator {
         return alt.iterator().next();
     }
 
+    /**
+     * Ermittelt die möglichen Phorikkandidaten und wendet diese Funktion auf sie an
+     * (null-safe). Standen bisher Alternativen mit verschiedenen Phorik-Kandidaten im Raum, legt
+     * sich diese Methode auf eine Alternative fest - man sollte diese Methode also nicht
+     * unnötig aufrufen.
+     */
     private <R> R applyToPhorikKandidat(final Function<PhorikKandidat, R> function) {
         if (temporaryNarration == null) {
             return function.apply(dao.requireNarration().getPhorikKandidat());

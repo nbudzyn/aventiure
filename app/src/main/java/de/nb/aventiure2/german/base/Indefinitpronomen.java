@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.base;
 
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -36,7 +38,7 @@ public class Indefinitpronomen
             // Dativ: "Von NICHTS kommt nichts."
             ip(N, Relativpronomen.Typ.WERWAS, fr("nichts"));
 
-    static final Map<NumerusGenus, Indefinitpronomen> WELCHER;
+    private static final Map<NumerusGenus, Indefinitpronomen> WELCHER_UNBELEBT;
 
     static {
         final IndefinitpronomenFlektierer flekt = new IndefinitpronomenFlektierer();
@@ -54,7 +56,7 @@ public class Indefinitpronomen
                     extractFlexionsreihe(wortformen, numerusGenus)));
         }
 
-        WELCHER = res.build();
+        WELCHER_UNBELEBT = res.build();
     }
 
     /**
@@ -84,15 +86,21 @@ public class Indefinitpronomen
     private Indefinitpronomen(final NumerusGenus numerusGenus,
                               final Relativpronomen.Typ relPronTyp,
                               final Flexionsreihe flextionsreihe) {
-        this(numerusGenus, null, relPronTyp, flextionsreihe);
+        this(numerusGenus, null, relPronTyp, flextionsreihe, UNBELEBT);
     }
 
     private Indefinitpronomen(final NumerusGenus numerusGenus,
                               @Nullable final Negationspartikelphrase negationspartikelphrase,
                               final Relativpronomen.Typ relPronTyp,
-                              final Flexionsreihe flextionsreihe) {
-        super(numerusGenus, negationspartikelphrase, flextionsreihe, null);
+                              final Flexionsreihe flextionsreihe,
+                              final Belebtheit belebtheit) {
+        super(numerusGenus, negationspartikelphrase, flextionsreihe, belebtheit, null);
         this.relPronTyp = relPronTyp;
+    }
+
+    public static Indefinitpronomen getWelcher(final NumerusGenus numerusGenus,
+                                               final Belebtheit belebtheit) {
+        return requireNonNull(WELCHER_UNBELEBT.get(numerusGenus)).mitBelebtheit(belebtheit);
     }
 
     /**
@@ -104,6 +112,16 @@ public class Indefinitpronomen
         return this;
     }
 
+    private Indefinitpronomen mitBelebtheit(final Belebtheit belebtheit) {
+        if (belebtheit == getBelebtheit()) {
+            return this;
+        }
+
+        return new Indefinitpronomen(getNumerusGenus(),
+                getNegationspartikelphrase(), relPronTyp, getFlexionsreihe(),
+                belebtheit);
+    }
+
     @Override
     public Indefinitpronomen ohneNegationspartikelphrase() {
         if (getNegationspartikelphrase() == null) {
@@ -111,37 +129,39 @@ public class Indefinitpronomen
         }
 
         return new Indefinitpronomen(getNumerusGenus(), null, relPronTyp,
-                getFlexionsreihe());
+                getFlexionsreihe(), getBelebtheit());
     }
 
     @Override
     public Indefinitpronomen neg(final Negationspartikelphrase negationspartikelphrase,
                                  final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
         return new Indefinitpronomen(getNumerusGenus(), negationspartikelphrase, relPronTyp,
-                getFlexionsreihe());
+                getFlexionsreihe(), getBelebtheit());
     }
 
     @Override
     public Personalpronomen persPron() {
         // "Ich habe mir alles angesehen. Es hat mir gefallen."
-        return Personalpronomen.get(P3, getNumerusGenus());
+        return Personalpronomen.get(P3, getNumerusGenus(), getBelebtheit());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
         // "Alles ändert sich"
-        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(
+                new PraedRegMerkmale(
+                        P3, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         // "[Haben wir noch Wein? - Im Keller ist noch welcher. ]Sein[ Geruch ist unverkennbar.]"
         return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(relPronTyp, P3, getNumerusGenus());
+        return Relativpronomen.get(relPronTyp, P3, getBelebtheit(), getNumerusGenus());
     }
 
     @Override

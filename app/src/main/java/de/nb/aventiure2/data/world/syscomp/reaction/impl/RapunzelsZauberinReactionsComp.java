@@ -8,6 +8,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
@@ -180,7 +181,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void narrateZauberinSiehtSCNach() {
-        final SubstantivischePhrase anaph = anaph();
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
         alt.addAll(altNachsehenHinterhersehenSaetze(anaph, duSc())
@@ -382,7 +383,8 @@ public class RapunzelsZauberinReactionsComp
         }
 
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final EinzelneSubstantivischePhrase desc = getDescription(true);
+            final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                    possessivDescriptionVorgabe, true);
             n.narrate(
                     du("siehst",
                             desc.akkK(), "an den Haarflechten hinaufsteigen")
@@ -404,23 +406,24 @@ public class RapunzelsZauberinReactionsComp
 
         n.narrateAlt(secs(15), ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST,
                 du("hörst",
-                        anaph(false).akkK(),
+                        anaph(textContext, possessivDescriptionVorgabe, false).akkK(),
                         "durchs Fenster hineinsteigen"),
                 neuerSatz("keuchend steigt",
-                        anaph(false).nomK(),
+                        anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                         "durchs Fenster hinein"));
 
         locationComp.narrateAndSetLocation(OBEN_IM_ALTEN_TURM);
         stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM);
 
         if (counterDao.get(ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST) == 1) {
-            final SubstantivischePhrase anaph = anaph();
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
             n.narrate(neuerSatz(
                     anaph.nomK(), "begrüßt",
-                    getDescription(RAPUNZEL).akkK(),
+                    getDescription(textContext, possessivDescriptionVorgabe, RAPUNZEL).akkK(),
                     ", dann ist", anaph.persPron().nomK(),
                     "auf einmal still. „Wonach riecht es hier?“, fragt",
-                    anaph(false).nomK(), "mit scharfer Stimme")
+                    anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
+                    "mit scharfer Stimme")
                     .timed(secs(20)));
             ((RapunzelReactionsComp) loadRapunzel().reactionsComp())
                     .reagiertAufFrageVonZauberinNachGeruch();
@@ -442,7 +445,8 @@ public class RapunzelsZauberinReactionsComp
     private void zauberinSteigtAnDenHaarenHerab() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             n.narrate(
-                    du("siehst", ", wie", getDescription().nomK(),
+                    du("siehst", ", wie",
+                            getDescription(textContext, possessivDescriptionVorgabe).nomK(),
                             "an den Haaren herabsteigt")
                             .timed(mins(1)).komma());
 
@@ -456,11 +460,11 @@ public class RapunzelsZauberinReactionsComp
                 return;
             }
 
-            n.narrate(neuerSatz(anaph(true).nomK(),
+            n.narrate(neuerSatz(anaph(textContext, possessivDescriptionVorgabe, true).nomK(),
                     "hat dich nicht bemerkt").timed(NO_TIME));
         } else if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz("Endlich verabschiedet sich",
-                    getDescription().nomK())
+                    getDescription(textContext, possessivDescriptionVorgabe).nomK())
                     .timed(secs(30)).komma());
 
             loadRapunzel().talkingComp().narrateZauberinIstGegangen();
@@ -644,7 +648,8 @@ public class RapunzelsZauberinReactionsComp
 
     private void zauberinRuftRapunzelspruchUndRapunzelReagiert() {
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
-            final EinzelneSubstantivischePhrase desc = getDescription(true);
+            final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                    possessivDescriptionVorgabe, true);
             n.narrate(
                     neuerSatz(PARAGRAPH, "Als",
                             desc.nomK(),
@@ -705,12 +710,12 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             final AltTimedDescriptionsBuilder alt = altTimed();
 
-            alt.add(neuerSatz(anaph(false).nomK(),
+            alt.add(neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                     "und",
-                    getDescription(RAPUNZEL).nomK(),
+                    getDescription(textContext, possessivDescriptionVorgabe, RAPUNZEL).nomK(),
                     "unterhalten sich, aber sie haben einander kaum etwas",
                     "zu sagen").timed(mins(5)),
-                    neuerSatz(anaph(false).nomK(),
+                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                             "hat Essen und Trinken mitgebracht und du hörst den",
                             "beiden bei der Mahlzeit zu",
                             loadSC().feelingsComp().getHunger() == HUNGRIG ?
@@ -718,20 +723,20 @@ public class RapunzelsZauberinReactionsComp
                                             + "bemerken" :
                                     null)
                             .timed(mins(7)),
-                    neuerSatz(anaph(false).nomK(),
+                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                             "erzählt von ihren täglichen Verrichtungen und",
-                            world.getDescription(RAPUNZEL).nomK(),
+                            descRapunzel().nomK(),
                             "hört artig zu").timed(NO_TIME));
             if (counterDao.get(NOCH_NIE_SO_LANGE_HAARE_GESEHEN_GESAGT) > 0) {
                 alt.add(du("hörst", "dem Gespräch nur mit halbem Ohr zu –",
                         "auf einmal Stille. Was hatte",
-                        world.getDescription(RAPUNZEL).nomK(),
+                        descRapunzel().nomK(),
                         "gerade gefragt? „Wie tragen die jungen Frauen draußen eigentlich ihr",
                         "Haar?“",
                         "„Warum fragst du das?“, antwortet",
-                        getDescription(true).nomK(),
+                        getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
                         "schließlich langsam. „Ach, ist auch nicht so wichtig“, plappert",
-                        world.getDescription(RAPUNZEL).nomK(),
+                        descRapunzel().nomK(),
                         "aufgedreht, „wie war das, was hattest du gestern eingekocht?“ – Du",
                         "wirst etwas nervös").timed(NO_TIME)
                         .withCounterIdIncrementedIfTextIsNarrated(
@@ -742,6 +747,10 @@ public class RapunzelsZauberinReactionsComp
 
             loadSC().feelingsComp().requestMoodMax(ANGESPANNT);
         }
+    }
+
+    private SubstantivischePhrase descRapunzel() {
+        return getDescription(textContext, RAPUNZEL, NICHT_POSSESSIV);
     }
 
     private void onTimePassed_AufDemRueckwegVonRapunzel(final AvDateTime now) {

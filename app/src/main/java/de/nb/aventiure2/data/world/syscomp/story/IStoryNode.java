@@ -50,6 +50,44 @@ public interface IStoryNode {
     // IDEA: Auf gleichwertige Entscheidungen Wert legen - Vor allem in demselbeb Märchen! -
     //  Nicht nur tun vs. Nicht tun.
 
+    // IDEA: Idee App erzeugt jedes Mal ein neues, spannendes Abenteuer, dass der Benutzer
+    //  als lineare Geschichte erleben kann ("Märchomat").
+    //  Ein "Abenteuer" ist ein Graph potenzieller Geschichten, wobei jede
+    //  Geschichte spannend ist und einer etablierten Struktur folgt (oder
+    //  Strukturen kombiniert).
+    //  Die Entscheidungen sind "meaningful" und führen zu inhaltlich oder
+    //  strukturell unterschiedlichen Geschichten.
+    //  Die Geschichte(n) erlebt der SC in einem Text- Adventure. Einzelne
+    //  Aktionen entsprechen den Story Nodes des Geschichtengraphs.
+    //  Wie erzeugt man aus dem Geschichtenbaum die Welt (Räume, Gegenstände,
+    //  NSCs) und die Aktionen (die im Geschichtsbaum voranschreiten?)
+    //  - Vermutlich braucht man mehrere Ebenen: Abstrakte Geschichtenstruktur mit
+    //    "Slots" für die konkreten Ausprägungen, gern hierarchisch:
+    //    -- Jemand ist in einer misslichen Lage -> Jemand ist in einen Frosch
+    //       verwandelt worden, der im Brunnen sitzt.
+    //    -- SC erlöst ihn von seiner misslichen Lage:...
+    //    -- Die Geschichte braucht also einen Slot für die Missliche Lage oder die
+    //       Tierart, in die verzaubert wurde.
+    //  Idee 1:
+    //  - Aus dem Geschichtenbaum wird in einem Schritt die Welt erzeugt.
+    //  -- Nachteil: Ein späteres flexibles Anpassen von Welt und Geschichtengraph
+    //   ist nicht möglich.
+    //  Idee 2:
+    //  - Die Welt wird bei jedem Knoten des Geschichtenbaums angepasst.
+    //  -- Problem: Nur Anpassungen, die die Logik der Welt nicht stören - soweit
+    //   der SC sie schon kennt. Einfachster Fall: Die Welt wird ergänzt. Oder ein
+    //   SC wird auf einen bestimmten Status gesetzt oder ein Gegenstand an einen
+    //   bestimmten Ort.
+    //  -- Der Geschichtsknotengenerator könnte sich mit der Welt abstimmen,
+    //   welche Instanziierung passend wäre.
+    //  Geschichtsgraphgenerator als neues Package oder Modul?
+    //  Letztlich brauchen wir ein Datenmodell, in dem man verschiedene Elemente
+    //  (schöne Prinzessin, Verwandlung, eine Burg, ein Magieartefakt) miteinander
+    //  und mit narrativen Strukturen kombinieren können. Und letztlich in eine
+    //  erlebbare Welt (inkl. Aktionen und Text-Rendering) umrechnen. Am besten
+    //  iterativ. Im Idealfall wird die Welt bei jeder Benutzeraktion ergänzt.
+    //  Am besten wäre es, wenn die "Variablen" einer Geschichte erst möglichst
+    //  spät besetzt würden (erst wenn sie relevant werden)
     @FunctionalInterface
     interface IHinter {
         void narrateAndDoHintAction(final AvDatabase db,

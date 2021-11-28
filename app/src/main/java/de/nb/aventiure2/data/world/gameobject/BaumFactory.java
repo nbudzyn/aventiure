@@ -58,7 +58,9 @@ public class BaumFactory extends AbstractGameObjectFactory {
     private GameObject create(
             @SuppressWarnings("SameParameterValue") final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD,
+                new SimpleDescriptionComp(
+                        db.counterDao(),
+                        World.BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD,
                         np(M, INDEF, "einzelner Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",
                                 "einzelnen Baum in der Mitte des Gartens",

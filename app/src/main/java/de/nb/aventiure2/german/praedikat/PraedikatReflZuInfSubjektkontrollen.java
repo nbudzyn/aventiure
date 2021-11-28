@@ -1,6 +1,10 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -21,14 +25,9 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
-
-import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 /**
  * Ein Prädikat eines Verbs wie "sich [Akk] freuen, zu ...". Dabei ist es das Subjekt, dass ... tut
@@ -176,24 +175,25 @@ public class PraedikatReflZuInfSubjektkontrollen
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
                 getAdvAngabeSkopusVerbAllg();
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                Reflexivpronomen.get(personSubjekt, numerusSubjekt).imK(kasus), // "dich"
+                Reflexivpronomen.get(praedRegMerkmale).imK(kasus),
+                // "dich"
                 advAngabeSkopusSatz != null &&
                         advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
                         // "aus einer Laune heraus"
                         null, // (ins Nachfeld verschieben)
                 kf(getModalpartikeln()), // "mal eben"
                 advAngabeSkopusVerbAllg != null &&
                         advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(personSubjekt,
-                                numerusSubjekt) :  // "erneut"
+                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :
+                        // "erneut"
                         null, // (ins Nachfeld verschieben)
                 getNegationspartikel(), // "nicht"
                 advAngabeSkopusVerbAllg != null &&
@@ -205,21 +205,19 @@ public class PraedikatReflZuInfSubjektkontrollen
                         Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt "Subjektkontrolle" vor.
-                                        personSubjekt, numerusSubjekt
+                                        praedRegMerkmale
                                 )) // ", Rapunzel zu sehen[, ]"
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt,
-                        numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // (kann es wohl gar nicht geben)
         );
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         if (kasus == DAT) {
-            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+            return Reflexivpronomen.get(praedRegMerkmale);
         }
 
         return null;
@@ -227,10 +225,9 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         if (kasus == AKK) {
-            return Reflexivpronomen.get(personSubjekt, numerusSubjekt);
+            return Reflexivpronomen.get(praedRegMerkmale);
         }
 
         return null;
@@ -244,8 +241,7 @@ public class PraedikatReflZuInfSubjektkontrollen
 
     @Override
     @Nullable
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
@@ -256,19 +252,18 @@ public class PraedikatReflZuInfSubjektkontrollen
                         Konstituentenfolge.schliesseInKommaEin(
                                 lexikalischerKern.getZuInfinitiv(
                                         // Es liegt Subjektkontrolle vor.
-                                        personSubjekt, numerusSubjekt
+                                        praedRegMerkmale
                                 )) // "(Du freust dich), Rapunzel zu sehen[,] "
                         // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
                         : null,
                 advAngabeSkopusVerbAllg != null
                         && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(personSubjekt, numerusSubjekt)
+                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale)
                         // "glücklich, dich zu sehen"
                         : null,
                 advAngabeSkopusSatz != null
                         && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz
-                                .getDescription(personSubjekt, numerusSubjekt)
+                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
                         : null);
     }
 

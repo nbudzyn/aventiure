@@ -27,7 +27,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
  */
 @ParametersAreNonnullByDefault
 public abstract class AbstractSpatialConnectionComp extends AbstractStatelessComponent
-        implements IWorldLoaderMixin {
+        implements IWorldLoaderMixin, IWorldDescriptionMixin {
     protected final AvDatabase db;
     protected final TimeTaker timeTaker;
     protected final Narrator n;

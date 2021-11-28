@@ -1,5 +1,12 @@
 package de.nb.aventiure2.german.base;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,13 +21,6 @@ import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.string.GermanStringUtil;
 import de.nb.aventiure2.german.string.NoLetterException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static java.util.Objects.requireNonNull;
 
 @Immutable
 public class Konstituente implements IKonstituenteOrStructuralElement {
@@ -79,11 +79,17 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     private final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer;
 
     /**
+     * Die Belebtheit (grammatikalische Kategorie, vergleichbar mit Numerus und Genus).
+     */
+    @Nullable
+    private final Belebtheit belebtheit;
+
+    /**
      * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
      * danach (<i>anaphorisch</i>) beziehen. Dazu muss dieses Pronomen (in aller Regel)
      * den Numerus und Genus besitzen, die in {@link #kannAlsBezugsobjektVerstandenWerdenFuer}
-     * angegeben sind. - Jedenfalls muss <code>kannAlsBezugsobjektVerstandenWerdenFuer</code>
-     * gesetzt sein, wenn <code>bezugsobjekt</code> gesetzt ist.
+     * angegeben sind. - Jedenfalls müssen <code>kannAlsBezugsobjektVerstandenWerdenFuer</code>
+     * und <code>belebheit</code> angegeben sein, wenn <code>bezugsobjekt</code> gesetzt ist.
      * <p>
      * Dieses Feld sollte nur gesetzt werden, wenn es keine
      * Fehlreferenzierungen, Doppeldeutigkeiten
@@ -123,7 +129,9 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public Konstituente withVorkommaNoetig(final boolean vorkommaNoetig) {
         return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus,
-                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, belebtheit,
+                bezugsobjekt
+        );
     }
 
     @CheckReturnValue
@@ -131,7 +139,9 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return new Konstituente(text, vorkommaNoetig,
                 true,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus,
-                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, belebtheit,
+                bezugsobjekt
+        );
     }
 
     @CheckReturnValue
@@ -143,25 +153,28 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public Konstituente withKommaStehtAus(final boolean kommmaStehtAus) {
         return k(text, startsNew, woertlicheRedeNochOffen, kommmaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
-                bezugsobjekt
-        );
+                belebtheit, bezugsobjekt);
     }
 
     /**
      * Erzeugt eine neue Kopie der Konstituente mit diesem Bezugsobjekt (oder keinem, wenn
      * nicht angegeben) und dieser Angabe, als was die Komponente verstanden werden könnte.
      *
+     * @param belebtheitBezugsobjekt                  Muss gesetzt sein, wenn
+     *                                                <code>bezugsobjekt</code> gesetzt ist;
+     *                                                darf ansonsten nicht gesetzt sein.
      * @param kannAlsBezugsobjektVerstandenWerdenFuer Muss gesetzt sein, wenn
      *                                                <code>bezugsobjekt</code> gesetzt ist.
      */
     @CheckReturnValue
     Konstituente withBezugsobjektUndKannVerstandenWerdenAls(
             @Nullable final IBezugsobjekt bezugsobjekt,
+            @Nullable final Belebtheit belebtheitBezugsobjekt,
             @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer) {
         return new Konstituente(text, vorkommaNoetig, vordoppelpunktNoetig,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis,
-                kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                kannAlsBezugsobjektVerstandenWerdenFuer, belebtheitBezugsobjekt, bezugsobjekt);
     }
 
     /**
@@ -173,7 +186,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      */
     @CheckReturnValue
     public static Konstituente k(final @Nonnull String text) {
-        return k(text, null, null);
+        return k(text, null,
+                null, null);
     }
 
     /**
@@ -185,7 +199,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus koennteAlsBezugsobjektVerstandenWerdenFuer) {
-        return k(text, koennteAlsBezugsobjektVerstandenWerdenFuer, null);
+        return k(text, koennteAlsBezugsobjektVerstandenWerdenFuer,
+                null, null);
     }
 
     /**
@@ -196,13 +211,14 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
     public static Konstituente k(final @Nonnull String text,
                                  @Nullable
                                  final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
+                                 @Nullable final Belebtheit belebtheit,
                                  @Nullable final IBezugsobjekt bezugsobjekt) {
         // Wenn der String mit Komma anfängt, lassen wir es in der Konsituente  stehen.
         // Damit wird das Komma definitiv ausgegeben - auch von Methoden, die das Vorkomma
         // vielleich sonst (ggf. bewusst) verschlucken. Vgl. Wortfolge#joinToNullWortfolge()
         return k(text.trim(), WORD, false, false,
-                WORD, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt
-        );
+                WORD, kannAlsBezugsobjektVerstandenWerdenFuer,
+                belebtheit, bezugsobjekt);
     }
 
     /**
@@ -215,7 +231,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                                  final boolean woertlicheRedeNochOffen,
                                  final boolean kommaStehtAus) {
         return k(text, WORD, woertlicheRedeNochOffen, kommaStehtAus,
-                WORD, null, null);
+                WORD, null, null, null);
     }
 
     @CheckReturnValue
@@ -226,11 +242,12 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                                   final StructuralElement endsThis,
                                   @Nullable
                                   final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
+                                  @Nullable final Belebtheit belebtheit,
                                   @Nullable final IBezugsobjekt bezugsobjekt) {
         return new Konstituente(text, false, false,
                 startsNew, woertlicheRedeNochOffen, kommaStehtAus, endsThis,
                 kannAlsBezugsobjektVerstandenWerdenFuer,
-                bezugsobjekt);
+                belebtheit, bezugsobjekt);
     }
 
     Konstituente(final String text, final boolean vorkommaNoetig,
@@ -239,6 +256,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                  final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
                  final StructuralElement endsThis,
                  @Nullable final NumerusGenus kannAlsBezugsobjektVerstandenWerdenFuer,
+                 @Nullable final Belebtheit belebtheit,
                  @Nullable final IBezugsobjekt bezugsobjekt) {
         checkArgument(!vorkommaNoetig || !vordoppelpunktNoetig,
                 "Vorkomma und Vordoppelpunkt können nicht gleichzeitig nötig "
@@ -252,6 +270,11 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 "Bezugsobjekt angegeben, aber kein Numerus / Genus! Bezugsobjekt: %s",
                 bezugsobjekt);
 
+        checkArgument(bezugsobjekt == null ||
+                        belebtheit != null,
+                "Bezugsobjekt angegeben, aber keine Belebtheit: %s",
+                bezugsobjekt);
+
         this.text = text;
         this.vorkommaNoetig = vorkommaNoetig;
         this.startsNew = startsNew;
@@ -260,6 +283,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         this.kommaStehtAus = kommaStehtAus;
         this.endsThis = endsThis;
         this.bezugsobjekt = bezugsobjekt;
+        this.belebtheit = belebtheit;
         this.kannAlsBezugsobjektVerstandenWerdenFuer = kannAlsBezugsobjektVerstandenWerdenFuer;
     }
 
@@ -280,7 +304,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                 resultString, vorkommaNoetig,
                 vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen, kommaStehtAus,
                 endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
-                bezugsobjekt);
+                belebtheit, bezugsobjekt);
     }
 
     /**
@@ -306,7 +330,9 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return new Konstituente(text,
                 vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
-                endsThis, phorikKandidat.getNumerusGenus(), phorikKandidat.getBezugsobjekt());
+                endsThis, phorikKandidat.getNumerusGenus(), phorikKandidat.getBelebtheit(),
+                phorikKandidat.getBezugsobjekt()
+        );
     }
 
     @CheckReturnValue
@@ -314,7 +340,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return new Konstituente(text,
                 vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
-                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, null);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer,
+                null, null);
     }
 
     /**
@@ -356,7 +383,9 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
         return new Konstituente(text,
                 vorkommaNoetig, vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
-                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+                endsThis, kannAlsBezugsobjektVerstandenWerdenFuer, belebtheit,
+                bezugsobjekt
+        );
     }
 
     @Nonnull
@@ -405,7 +434,7 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
      */
     @Nullable
     public PhorikKandidat getPhorikKandidat() {
-        if (bezugsobjekt == null) {
+        if (bezugsobjekt == null || belebtheit == null) {
             return null;
         }
 
@@ -414,7 +443,8 @@ public class Konstituente implements IKonstituenteOrStructuralElement {
                         + "kannAlsBezugsobjektVerstandenWerdenFuer! Bezugsobjekt: %s",
                 bezugsobjekt);
 
-        return new PhorikKandidat(kannAlsBezugsobjektVerstandenWerdenFuer, bezugsobjekt);
+        return new PhorikKandidat(kannAlsBezugsobjektVerstandenWerdenFuer,
+                belebtheit, bezugsobjekt);
     }
 
     boolean koennteAlsBezugsobjektVerstandenWerdenFuer(final NumerusGenus numerusGenus) {

@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.feelings;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
+import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
+
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Entity;
@@ -19,12 +25,6 @@ import de.nb.aventiure2.data.time.AvDateTime;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.AbstractPersistentComponentData;
 import de.nb.aventiure2.data.world.base.GameObjectId;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
-import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.HUNGRIG;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Hunger.SATT;
 
 /**
  * Mutable - and therefore persistent - data of the {@link FeelingsComp} component.
@@ -91,13 +91,8 @@ public class FeelingsPCD extends AbstractPersistentComponentData {
             return;
         }
 
-        @Nullable Map<FeelingTowardsType, Float> innerMap = feelingsTowards.get(target);
-
-        if (innerMap == null) {
-            innerMap = new HashMap<>(FeelingTowardsType.values().length);
-            feelingsTowards.put(target, innerMap);
-        }
-
+        final Map<FeelingTowardsType, Float> innerMap = feelingsTowards
+                .computeIfAbsent(target, k -> new HashMap<>(FeelingTowardsType.values().length));
         innerMap.put(type, intensity);
 
         if (intensity <= -FeelingIntensity.STARK) {

@@ -19,8 +19,7 @@ import javax.annotation.Nullable;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -205,8 +204,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
-        return toPraedikat().getVerbzweit(person, numerus);
+    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getVerbzweit(praedRegMerkmale);
     }
 
     @Override
@@ -216,43 +215,41 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
-        return toPraedikat().getVerbletzt(person, numerus);
+    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getVerbletzt(praedRegMerkmale);
     }
 
     @Override
     @CheckReturnValue
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
     }
 
     @Override
     @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         return new Konstituentenfolge(k(verb.getZuInfinitiv()));
     }
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
-        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
                 nachAnschlusswort);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
-        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(person, numerus
-        );
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Override
@@ -278,9 +275,8 @@ public enum VerbSubj implements VerbOhneLeerstellen, PraedikatOhneLeerstellen {
         return new PraedikatSubOhneLeerstellen(verb);
     }
 
-    @Nullable
     @Override
-    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 

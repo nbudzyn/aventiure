@@ -9,6 +9,7 @@ import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_DARKNESS;
 import static de.nb.aventiure2.data.world.base.Known.KNOWN_FROM_LIGHT;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.AUFGEDREHT;
@@ -27,8 +28,9 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.NORMA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.PAUSED_BEFORE_HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.SINGEND;
 import static de.nb.aventiure2.data.world.syscomp.talking.impl.RapunzelTalkingComp.altDannHaareFestbinden;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FUSS;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.MIT_DAT;
@@ -259,13 +261,19 @@ public class RapunzelReactionsComp
     private void onSCEnter_VonImWaldNaheSchloss_NachVorDemAltenTurm_HaareHeruntergelassen() {
         loadSC().feelingsComp().requestMoodMin(NEUTRAL);
 
+        final SubstantivischePhrase anaphRapunzelsHaare = //
+                // "lange, goldene Haarzöpfe" / "Rapunzels goldene Haare" / "sie"
+                world.anaph(textContext, RAPUNZELS_HAARE, false);
+
         if (loadSC().memoryComp().areAllKnown(RAPUNZEL, RAPUNZELS_HAARE, RAPUNZELS_NAME)) {
-            n.narrate(neuerSatz("Rapunzels goldene Haare hängen in Zöpfen aus dem kleinen",
+            n.narrate(neuerSatz(anaphRapunzelsHaare.nomK(),
+                    "hängen in Zöpfen aus dem kleinen",
                     "Fenster oben im Turm herab")
                     .timed(NO_TIME));
         } else {
-            n.narrate(neuerSatz("Aus dem kleinen "
-                    + "Fenster oben im Turm hängen lange, goldene Haarzöpfe herab")
+            n.narrate(neuerSatz("Aus dem kleinen Fenster oben im Turm hängen",
+                    anaphRapunzelsHaare.nomK(),
+                    "herab")
                     .timed(NO_TIME));
         }
 
@@ -282,7 +290,11 @@ public class RapunzelReactionsComp
                 && counterDao.get(
                 RapunzelTalkingComp.Counter.HERZ_AUSGESCHUETTET_ZAUBERIN_GESCHICHTE_ERZAEHLT)
                 > 0) {
-            final SubstantivischePhrase anaph = anaph();
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+
+            // FIXME Sollten Teile dieser Methode vielleicht -
+            //  von der Verantwortlichkeit der Komponenten her gedacht -
+            //  an eine andere Stelle verschoben werden?
 
             alt.add(neuerSatz("Als",
                     anaph.persPron().nomK(), // "sie"
@@ -336,20 +348,23 @@ public class RapunzelReactionsComp
 
         if (zuneigungRapunzelZumSc <= -FeelingIntensity.DEUTLICH) {
             alt.add(neuerSatz("„Was ist denn jetzt wieder los?“, fragt",
-                    anaph().nomK(), "genervt"));
+                    anaph(textContext, possessivDescriptionVorgabe).nomK(), "genervt"));
         }
 
         if (zuneigungRapunzelZumSc >= -FeelingIntensity.DEUTLICH
                 && zuneigungRapunzelZumSc <= FeelingIntensity.NEUTRAL) {
-            alt.add(neuerSatz("„Was soll das jetzt?“, fragt", anaph().nomK()));
+            alt.add(neuerSatz("„Was soll das jetzt?“, fragt", anaph(textContext,
+                    possessivDescriptionVorgabe).nomK()));
         }
 
         if (zuneigungRapunzelZumSc >= -FeelingIntensity.MERKLICH) {
-            alt.add(neuerSatz("„Was ist jetzt los?“, fragt", anaph().nomK()));
+            alt.add(neuerSatz("„Was ist jetzt los?“, fragt", anaph(textContext,
+                    possessivDescriptionVorgabe).nomK()));
         }
 
         if (zuneigungRapunzelZumSc >= FeelingIntensity.NUR_LEICHT) {
-            alt.add(neuerSatz("„Alles gut?“, hörst du", anaph().nomK(), "fragen"));
+            alt.add(neuerSatz("„Alles gut?“, hörst du", anaph(textContext,
+                    possessivDescriptionVorgabe).nomK(), "fragen"));
         }
 
         n.narrateAlt(alt, secs(10));
@@ -366,7 +381,8 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_tagsueber() {
         world.narrateAndUpgradeScKnownAndAssumedState(RAPUNZEL);
-        final EinzelneSubstantivischePhrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                possessivDescriptionVorgabe);
 
         // "zu ihr"
         // "sie"
@@ -408,7 +424,10 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelUnbekannt_nachts() {
         world.narrateAndUpgradeScKnownAndAssumedState(RAPUNZEL);
-        final EinzelneSubstantivischePhrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                possessivDescriptionVorgabe);
+
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
 
         n.narrate(neuerSatz("Am Fenster sitzt eine junge Frau",
                 "und schaut dich entsetzt an. Du hast sie wohl gerade aus tiefem",
@@ -417,7 +436,8 @@ public class RapunzelReactionsComp
                 desc.nomK(),
                 "ist in ein paar Decken gewickelt,",
                 desc.possArt().vor(PL_MFN).akkStr(), // "ihre"
-                "langen Haare hat sie um einen Fensterhaken gewickelt, so",
+                "langen Haare",
+                "hat sie um einen Fensterhaken gewickelt, so",
                 "konntest du",
                 "daran heraufsteigen. Mit fahrigen Handbewegungen rafft",
                 desc.persPron().nomK(), // "sie
@@ -445,8 +465,7 @@ public class RapunzelReactionsComp
 
     private void onSCEnter_ObenImAltenTurm_RapunzelBekannt() {
         loadSC().feelingsComp().requestMoodMin(AUFGEDREHT);
-        stateComp
-                .setState(NORMAL);
+        stateComp.setState(NORMAL);
 
         if (timeTaker.now().getTageszeit() == NACHTS) {
             narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Nachts();
@@ -460,7 +479,7 @@ public class RapunzelReactionsComp
     }
 
     private void narrateAndUpgradeFeelings_ScTrifftRapunzelObenImAltenTurmAn_Tagsueber() {
-        final SubstantivischePhrase anaph = anaph(true);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, true);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG,
                 1f, FeelingIntensity.MERKLICH);
@@ -532,7 +551,7 @@ public class RapunzelReactionsComp
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL,
                 ZUNEIGUNG_ABNEIGUNG, 0.5f, FeelingIntensity.DEUTLICH);
 
-        final SubstantivischePhrase anaph = anaph(true);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, true);
 
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
@@ -560,7 +579,7 @@ public class RapunzelReactionsComp
                     "Frau in ihren Decken auch sichtlich überrascht, dass du zu",
                     "dieser Nachtzeit noch einmal bei ihr vorbeischaust")
                     .timed(secs(15))
-                    .phorikKandidat(F, RAPUNZEL));
+                    .phorikKandidat(FRAU, RAPUNZEL));
         }
         n.narrateAlt(alt);
     }
@@ -599,7 +618,7 @@ public class RapunzelReactionsComp
                     SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG) <= -FeelingIntensity.MERKLICH) {
                 n.narrate(neuerSatz(
                         "„Unter meinem Bett liegt ein Einbrecher“, hörst du",
-                        getDescription(RAPUNZEL).akkK(),
+                        getDescription(textContext, possessivDescriptionVorgabe, RAPUNZEL).akkK(),
                         "sagen").timed(secs(5)));
 
                 loadZauberin().talkingComp().zauberinZaubertVergessenszauber();
@@ -609,7 +628,7 @@ public class RapunzelReactionsComp
     }
 
     private void rapunzelMoechteGoldeneKugelHaben() {
-        final SubstantivischePhrase anaph = anaph();
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
         n.narrate(neuerSatz(anaph.nomK(),
                 "sieht interessiert zu. „Darf ich auch",
                 "einmal?“, fragt", anaph.persPron().nomK(), "dich")
@@ -633,26 +652,37 @@ public class RapunzelReactionsComp
     }
 
     @NonNull
-    private static ImmutableList<TimedDescription<?>>
+    private ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_VorDemAltenTurm() {
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
+
         return ImmutableList.of(
+                // FIXME lange Haare, prächtige Haare etc. in
+                //  PossessivDescriptionComp übernehmen!
+                //  Aber Achtung: Verhindern, dass
+                //  *"Rapunzel zieht Rapunzels Haare wieder hoch" entsteht!!
                 neuerSatz("Dann verschwinden die prächtigen Haare wieder oben im Fenster",
                         PARAGRAPH)
+                        .phorikKandidat(PL_MFN, UNBELEBT, RAPUNZELS_HAARE)
                         .timed(secs(15)),
                 du("schaust", "fasziniert zu, wie die langen Haare wieder in "
                         + "das Turmfenster "
                         + "zurückgezogen werden", PARAGRAPH).mitVorfeldSatzglied("fasziniert")
                         .schonLaenger()
+                        .phorikKandidat(PL_MFN, UNBELEBT, RAPUNZELS_HAARE)
                         .timed(secs(15)),
                 neuerSatz("Nur ein paar Augenblicke, dann sind die Haare "
                         + "wieder oben im Fenster verschwunden", PARAGRAPH)
+                        .phorikKandidat(PL_MFN, UNBELEBT, RAPUNZELS_HAARE)
                         .timed(secs(10))
         );
     }
 
     private ImmutableList<TimedDescription<?>>
     altRapunzelZiehtHaareWiederHoch_ObenImAltenTurm() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
+
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
 
         return ImmutableList.of(
                 neuerSatz("Jetzt zieht",
@@ -715,6 +745,7 @@ public class RapunzelReactionsComp
             rapunzelSchiebtFremdeGegenstaendeUntersBett();
         }
 
+        world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
         stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
     }
 
@@ -726,38 +757,35 @@ public class RapunzelReactionsComp
 
         if (stateComp.hasState(SINGEND)) {
             if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
-                n.narrate(
-                        neuerSatz("Sofort hört der Gesang auf – und gleich darauf "
-                                + "fallen aus dem kleinen "
-                                + "Fenster oben im Turm lange, goldene Haarzöpfe "
-                                + "herab, sicher zwanzig Ellen tief bis auf den Boden")
-                                .timed(secs(30))
-                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
-            } else {
-                n.narrate(
-                        neuerSatz("Der Gesang hört auf, und wieder fallen "
-                                + "die wunderschönen goldenen Haare aus dem Fenster "
-                                + "bis ganz auf den Boden")
-                                .timed(secs(30))
-                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                n.narrateAlt(secs(30),
+                        neuerSatz("Sofort hört der Gesang auf – und gleich darauf",
+                                "fallen aus dem kleinen",
+                                "Fenster oben im Turm",
+                                getDescription(textContext, RAPUNZELS_HAARE, false).nomK(),
+                                "herab, sicher zwanzig Ellen tief bis auf den Boden"),
+                        neuerSatz("Der Gesang hört auf, und wieder fallen",
+                                getDescription(textContext, possessivDescriptionVorgabe,
+                                        RAPUNZELS_HAARE).nomK(),
+                                "aus dem Fenster",
+                                "bis ganz auf den Boden"));
             }
 
             world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_GESANG);
         } else {
             if (world.loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                 n.narrate(
-                        neuerSatz("Wieder fallen die langen, golden "
-                                + "glänzenden Zöpfe aus dem "
-                                + "Fenster bis zum Boden herab")
-                                .timed(secs(30))
-                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                        neuerSatz("Wieder fallen",
+                                getDescription(textContext, RAPUNZELS_HAARE, false).nomK(),
+                                "aus dem Fenster bis zum Boden herab")
+                                .timed(secs(30)));
             } else {
                 n.narrate(
-                        neuerSatz("Gleich darauf fallen aus dem kleinen "
-                                + "Fenster oben im Turm lange, goldene Haarzöpfe herab, "
-                                + "sicher zwanzig Ellen tief bis auf den Boden")
-                                .timed(secs(30))
-                                .phorikKandidat(PL_MFN, RAPUNZELS_HAARE));
+                        neuerSatz("Gleich darauf fallen aus dem kleinen",
+                                "Fenster oben im Turm",
+                                getDescription(textContext, possessivDescriptionVorgabe,
+                                        RAPUNZELS_HAARE).nomK(),
+                                "herab, sicher zwanzig Ellen tief bis auf den Boden")
+                                .timed(secs(30)));
             }
         }
 
@@ -790,13 +818,19 @@ public class RapunzelReactionsComp
 
         if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz(SCHIEBEN
-                    .mit(world.getDescriptionSingleOrReihung(gegenstaendeFuerUntersBett))
+                    .mit(
+                            // FIXME altDescirptionsSingleOrReihungVerwenden
+                            // mit(alternativen) erlauben
+                            world.getDescriptionSingleOrReihung(textContext,
+                                    gegenstaendeFuerUntersBett,
+                                    ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV))
                     .mitAdvAngabe(
                             new AdvAngabeSkopusVerbWohinWoher(UNTER_AKK.mit(
-                                    getDescription(BETT_OBEN_IM_ALTEN_TURM))))
+                                    getDescription(textContext, possessivDescriptionVorgabe,
+                                            BETT_OBEN_IM_ALTEN_TURM))))
                     .mitAdvAngabe(
                             new AdvAngabeSkopusVerbAllg(MIT_DAT.mit(FUSS)))
-                    .alsSatzMitSubjekt(anaph()))
+                    .alsSatzMitSubjekt(anaph(textContext, possessivDescriptionVorgabe)))
                     .timed(secs(5)));
         }
 
@@ -836,7 +870,7 @@ public class RapunzelReactionsComp
         if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 >= FeelingIntensity.NEUTRAL) {
             n.narrate(neuerSatz("„Oh, das… müssen wieder die Fledermäuse sein!“, sagt",
-                    anaph().nomK(),
+                    anaph(textContext, possessivDescriptionVorgabe).nomK(),
                     "und stellt sich vor das Bett. Dir pocht das Herz")
                     .timed(secs(20)));
         }
@@ -847,7 +881,10 @@ public class RapunzelReactionsComp
         if (stateComp.hasState(DO_START_HAARE_VOM_TURM_HERUNTERLASSEN)) {
             if (loadSC().locationComp().hasRecursiveLocation(OBEN_IM_ALTEN_TURM)
                     && talkingComp.scUndRapunzelKoennenEinanderSehen()) {
-                n.narrateAlt(altDannHaareFestbinden(getDescription(true)), secs(10));
+                world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
+
+                n.narrateAlt(altDannHaareFestbinden(getDescription(textContext,
+                        possessivDescriptionVorgabe, true)), secs(10));
             }
 
             stateComp.narrateAndSetState(HAARE_VOM_TURM_HERUNTERGELASSEN);
@@ -972,19 +1009,24 @@ public class RapunzelReactionsComp
 
         n.narrateAlt(
                 du(SENTENCE, "hörst",
-                        "aus dem Turmfenster die junge Frau singen. Dir wird ganz",
+                        "aus dem Turmfenster",
+                        // IDEA Hier ist Rapunzel bekannt. Trotzdem möchte man gerne
+                        //  "die junge Frau" schreiben...
+                        "die junge Frau",
+                        "singen. Dir wird ganz",
                         "warm beim Zuhören")
                         .mitVorfeldSatzglied("aus dem Turmfenster")
                         .schonLaenger()
                         .timed(secs(10))
                         .undWartest()
-                        .phorikKandidat(F, RAPUNZEL),
+                        .phorikKandidat(FRAU, RAPUNZEL),
                 du(SENTENCE, "hörst",
                         "plötzlich wieder Gesang aus dem Turmfenster. Wann wirst du",
-                        "die junge Frau endlich retten können?", PARAGRAPH)
+                        "die junge Frau",
+                        "endlich retten können?", PARAGRAPH)
                         .mitVorfeldSatzglied("plötzlich")
                         .timed(NO_TIME)
-                        .phorikKandidat(F, RAPUNZEL),
+                        .phorikKandidat(FRAU, RAPUNZEL),
                 du("hörst", "erneut die süße Stimme aus dem Turmfenster singen. Jetzt "
                         + "weißt du "
                         + "endlich, wer dort singt – und sein Vertrauen in dich setzt")

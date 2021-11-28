@@ -18,8 +18,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -109,7 +108,7 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
         // bist ein guter Mensch geworden
         // bist ein guter Mensch geworden und immer ehrlich geblieben
         // bist ein guter Mensch geworden und hast dabei viel Mühe gehabt
@@ -117,20 +116,22 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // hat ein guter Mensch werden wollen
         Konstituentenfolge res = null;
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(person, numerus);
+                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {
             final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.get(i);
             if (res == null) {
                 res = Konstituentenfolge.joinToKonstituentenfolge(
                         partizipIIPhrase.getHilfsverb()
-                                .getPraesensOhnePartikel(person, numerus), // "bist"
+                                .getPraesensOhnePartikel(praedRegMerkmale.getPerson(),
+                                        praedRegMerkmale.getNumerus()), // "bist"
                         partizipIIPhrase.getPhrase()); // "ein guter Mensch geworden"
             } else {
                 res = Konstituentenfolge.joinToKonstituentenfolge(
                         res, // "bist ein guter Mensch geworden"
                         i < partizipIIPhrasen.size() - 1 ? "," : "und",
                         partizipIIPhrase.getHilfsverb()
-                                .getPraesensOhnePartikel(person, numerus), // "hast"
+                                .getPraesensOhnePartikel(praedRegMerkmale.getPerson(),
+                                        praedRegMerkmale.getNumerus()), // "hast"
                         partizipIIPhrase.getPhrase()); // "dabei viel Mühe gehabt"
             }
         }
@@ -170,21 +171,23 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden bist
         // ein guter Mensch geworden und immer ehrlich geblieben bist
         // ein guter Mensch geworden bist und dabei viel Mühe gehabt hast
         // sich aufgeklart hat
         // ein guter Mensch hat werden wollen (!) (nicht *"ein guter Mensch werden wollen hat")
 
-        return haengeHilfsverbformAnPartizipIIPhrasenAn(person, numerus,
-                hilfsverb -> hilfsverb.getPraesensOhnePartikel(person, numerus));
+        return haengeHilfsverbformAnPartizipIIPhrasenAn(praedRegMerkmale,
+                hilfsverb -> hilfsverb.getPraesensOhnePartikel(
+                        praedRegMerkmale.getPerson(),
+                        praedRegMerkmale.getNumerus()));
     }
 
 
     @Override
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
         // Doppeltes Perfekt - man sollte schon einen sehr guten Grund haben,
         // das zu erzeugen:
         // ein guter Mensch geworden gewesen
@@ -197,7 +200,7 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasenLexKern =
-                lexikalischerKern.getPartizipIIPhrasen(person, numerus);
+                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
 
         for (int i = 0; i < partizipIIPhrasenLexKern.size(); i++) {
             final PartizipIIPhrase partizipIIPhraseLexKern = partizipIIPhrasenLexKern.get(i);
@@ -210,7 +213,7 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
                         // "gewesen"
                         partizipIIPhraseLexKern.getPerfektbildung())); // (sein)
             } else {
-                @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+                @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
                 res.add(new PartizipIIPhrase(
                         Konstituentenfolge.joinToKonstituentenfolge(
@@ -234,18 +237,19 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden sein
         // ein guter Mensch geworden und immer ehrlich geblieben sein
         // ein guter Mensch geworden sein und dabei viel Mühe gehabt haben
         // sich aufgeklart haben
         // ein guter Mensch haben werden wollen (!) (nicht *"ein guter Mensch werden wollen haben")
 
-        return haengeHilfsverbformAnPartizipIIPhrasenAn(person, numerus, Verb::getInfinitiv);
+        return haengeHilfsverbformAnPartizipIIPhrasenAn(praedRegMerkmale,
+                Verb::getInfinitiv);
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden zu sein
         // ein guter Mensch geworden und immer ehrlich geblieben zu sein
         // ein guter Mensch geworden zu sein und dabei viel Mühe gehabt zu haben
@@ -255,7 +259,8 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // FIXME "(es ist wichtig, das) sagen gewollt zu haben" (in diesem
         //  Spezialfall *keine* Umstellung und auch *kein Ersatzinfinitiv*!)
 
-        return haengeHilfsverbformAnPartizipIIPhrasenAn(person, numerus, Verb::getZuInfinitiv);
+        return haengeHilfsverbformAnPartizipIIPhrasenAn(praedRegMerkmale,
+                Verb::getZuInfinitiv);
     }
 
     @Override
@@ -277,31 +282,29 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
         // "Danach hast den Wald verlassen."
-        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
                 nachAnschlusswort);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
         // "Spannendes hat er berichtet."
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus
-        );
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         // Wir gehen oben implizit davon aus, dass - sollte der lexikalische Kern
         // mehrere Partizipien erfordern - das Nachfeld immer und ausschließlich
         // aus dem letzten der Partizipien stammt!
 
-        return lexikalischerKern.getNachfeld(person, numerus);
+        return lexikalischerKern.getNachfeld(praedRegMerkmale);
     }
 
     @Override
@@ -311,10 +314,8 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
     }
 
     private Konstituentenfolge haengeHilfsverbformAnPartizipIIPhrasenAn(
-            final Person person,
-            final Numerus numerus,
-            final Function<Verb,
-                    String> verbformBuilder) {
+            final PraedRegMerkmale praedRegMerkmale,
+            final Function<Verb, String> verbformBuilder) {
         // ein guter Mensch geworden bist
         // ein guter Mensch geworden und immer ehrlich geblieben bist
         // ein guter Mensch geworden bist und dabei viel Mühe gehabt hast
@@ -322,9 +323,9 @@ public class PerfektPraedikatOhneLeerstellen implements PraedikatOhneLeerstellen
         // ein guter Mensch hat werden wollen (!) (nicht *"ein guter Mensch werden wollen hat")
         Konstituentenfolge res = null;
         final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(person, numerus);
+                lexikalischerKern.getPartizipIIPhrasen(praedRegMerkmale);
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {
             final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.get(i);
             if (res == null) {

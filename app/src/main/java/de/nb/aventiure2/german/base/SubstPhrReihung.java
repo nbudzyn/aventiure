@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.base;
 
 import static java.util.stream.Collectors.toList;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
@@ -43,14 +45,14 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     }
 
     @Override
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+    public Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale,
                                              @Nullable
                                              final Negationspartikelphrase negationspartikel) {
         if (negationspartikel == null) {
-            return getPraedikativ(person, numerus);
+            return getPraedikativ(praedRegMerkmale);
         }
 
-        return neg(negationspartikel).getPraedikativ(person, numerus);
+        return neg(negationspartikel).getPraedikativ(praedRegMerkmale);
     }
 
     @Override
@@ -219,22 +221,26 @@ public class SubstPhrReihung implements SubstantivischePhrase {
 
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(getPerson(), getNumerusGenus(), getBezugsobjekt());
+        return Personalpronomen.get(getPerson(), getNumerusGenus(),
+                getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
-        return Reflexivpronomen.get(getPerson(), getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(
+                new PraedRegMerkmale(getPerson(), getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         return ArtikelwortFlexionsspalte.getPossessiv(getPerson(), getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(getPerson(), getNumerusGenus(), getBezugsobjekt());
+        return Relativpronomen.get(getPerson(), getNumerusGenus(),
+                getBelebtheit(),
+                getBezugsobjekt());
     }
 
     @Nullable
@@ -257,6 +263,17 @@ public class SubstPhrReihung implements SubstantivischePhrase {
     @Override
     public Person getPerson() {
         return P3;
+    }
+
+    @Override
+    public Belebtheit getBelebtheit() {
+        return isBelebt() ? BELEBT : UNBELEBT;
+    }
+
+    @Override
+    public boolean isBelebt() {
+        return elemente.stream()
+                .anyMatch(SubstantivischePhrase::isBelebt);
     }
 
     @Override

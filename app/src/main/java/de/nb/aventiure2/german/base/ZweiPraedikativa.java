@@ -1,11 +1,11 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
+
 import androidx.annotation.Nullable;
 
 import java.util.Objects;
-
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.schliesseInKommaEin;
 
 /**
  * Zwei Prädikativa, die mit <i>und</i> verbunden werden
@@ -33,28 +33,29 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
     }
 
     @Override
-    public Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
-                                             @Nullable final Negationspartikelphrase negationspartikel) {
+    public Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale,
+                                             @Nullable
+                                             final Negationspartikelphrase negationspartikel) {
         // "schon lange kein Esel mehr und schon lange nicht mehr doof"
         return Konstituentenfolge.joinToKonstituentenfolge(
-                erst.getPraedikativ(person, numerus, negationspartikel),
+                erst.getPraedikativ(praedRegMerkmale, negationspartikel),
                 schliesseInKommaEin(
                         joinToKonstituentenfolge(
                                 konnektor,
-                                zweit.getPraedikativ(person, numerus, negationspartikel)),
+                                zweit.getPraedikativ(praedRegMerkmale, negationspartikel)),
                         konnektorErfordertKommata)
         );
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge ersterNachfeldAnteil =
-                erst.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+                erst.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale);
 
         @Nullable final Konstituentenfolge zweiterNachfeldAnteil =
-                zweit.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+                zweit.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale);
 
         if (Objects.equals(ersterNachfeldAnteil, zweiterNachfeldAnteil)) {
             // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
@@ -66,7 +67,7 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
         return Konstituentenfolge.joinToKonstituentenfolge(
                 schliesseInKommaEin(
                         joinToKonstituentenfolge(
-                                konnektor, zweit.getPraedikativ(person, numerus)),
+                                konnektor, zweit.getPraedikativ(praedRegMerkmale)),
                         konnektorErfordertKommata)
         ).withVorkommaNoetig();
     }
@@ -74,23 +75,23 @@ public class ZweiPraedikativa<P extends Praedikativum> implements Praedikativum 
 
     @Nullable
     @Override
-    public Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(final Person person,
-                                                                           final Numerus numerus) {
+    public Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge ersterNachfeldAnteil =
-                erst.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+                erst.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale);
 
         @Nullable final Konstituentenfolge zweiterNachfeldAnteil =
-                zweit.getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+                zweit.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale);
 
         if (Objects.equals(ersterNachfeldAnteil, zweiterNachfeldAnteil)) {
             // -> "Sie ist glücklich und erfreut gewesen, dich zu sehen"
             return Praedikativum.super
-                    .getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus);
+                    .getPraedikativOhneAnteilKandidatFuerNachfeld(praedRegMerkmale);
         }
 
         // -> "Sie ist GLÜCKLICH, DICH ZU SEHEN, gewesen, und erfreut, dich so bald wieder zu
         // treffen"
-        return erst.getPraedikativ(person, numerus);
+        return erst.getPraedikativ(praedRegMerkmale);
     }
 
     protected P getErst() {

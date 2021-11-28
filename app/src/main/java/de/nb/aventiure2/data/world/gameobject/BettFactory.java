@@ -52,7 +52,7 @@ public class BettFactory extends AbstractGameObjectFactory {
     @NonNull
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(id,
+                new SimpleDescriptionComp(db.counterDao(), id,
                         np(INDEF, BETT, id),
                         np(BETT, id),
                         np(BETT, id));

@@ -1,5 +1,13 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
+import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REAGIEREN;
+
 import com.google.common.collect.ImmutableList;
 
 import de.nb.aventiure2.data.database.AvDatabase;
@@ -10,14 +18,6 @@ import de.nb.aventiure2.data.world.syscomp.location.LocationComp;
 import de.nb.aventiure2.data.world.syscomp.talking.AbstractTalkingComp;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.BEWEGT;
-import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.exitSt;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
-import static de.nb.aventiure2.german.praedikat.VerbSubjObj.REAGIEREN;
 
 public class LobebauerTalkingComp extends AbstractTalkingComp {
     private final SiebenJahreAnspracheMitAntwort siebenJahreAnsprache;
@@ -45,14 +45,15 @@ public class LobebauerTalkingComp extends AbstractTalkingComp {
     @Override
     protected Iterable<SCTalkAction> getSCTalkActionsWithoutCheckingConditions() {
         final ImmutableList.Builder<SCTalkAction> res = ImmutableList.builder();
-        res.add(exitSt(REAGIEREN.mit(getDescription(true)).neg(),
+        res.add(exitSt(
+                REAGIEREN.mit(getDescription(textContext, possessivDescriptionVorgabe, true)).neg(),
                 this::scReagiertNicht_Exit));
         res.addAll(siebenJahreAnsprache.getAntwortActions());
         return res.build();
     }
 
     private void scReagiertNicht_Exit() {
-        final SubstantivischePhrase anaph = anaph();
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
         n.narrateAlt(secs(10),
                 neuerSatz("Schon",
                         SeinUtil.istSind(anaph),

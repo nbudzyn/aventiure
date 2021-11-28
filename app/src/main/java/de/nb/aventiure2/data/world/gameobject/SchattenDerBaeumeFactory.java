@@ -10,6 +10,7 @@ import static de.nb.aventiure2.data.world.syscomp.storingplace.Geschlossenheit.M
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceComp.LEUCHTET_NIE;
 import static de.nb.aventiure2.data.world.syscomp.storingplace.StoringPlaceType.STAMM_EINES_BAUMS;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.SCHATTEN;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
@@ -57,9 +58,9 @@ class SchattenDerBaeumeFactory extends AbstractGameObjectFactory {
     @NonNull
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(id,
-                        np(M, DEF, "Schatten der Bäume", id),
-                        np(M, DEF, "Schatten der Bäume", id),
+                new SimpleDescriptionComp(db.counterDao(), id,
+                        np(M, DEF, "Schatten der Bäume", UNBELEBT, id),
+                        np(M, DEF, "Schatten der Bäume", UNBELEBT, id),
                         np(SCHATTEN, id));
 
         final LocationComp locationComp = new LocationComp(

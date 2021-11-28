@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -68,32 +69,33 @@ public interface SubstantivischePhrase
     SubstantivischePhrase mitFokuspartikel(@Nullable final String fokuspartikel);
 
     @Override
-    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+    default Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale,
                                               @Nullable
                                               final Negationspartikelphrase negationspartikel) {
         if (negationspartikel == null) {
-            return getPraedikativ(person, numerus);
+            return getPraedikativ(praedRegMerkmale);
         }
 
-        return neg(negationspartikel).getPraedikativ(person, numerus);
+        return neg(negationspartikel).getPraedikativ(praedRegMerkmale);
     }
 
     @Override
     @CheckReturnValue
-    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
+    default Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale) {
         // Einen Bezug auf ein Prädikatsnomen kann es wohl nicht geben:
         // *"Petra ist Professor. Er ..."
         // Also Bezug entfernen!
         return joinToKonstituentenfolge(
                 nomK().joinToSingleKonstituente()
                         .withBezugsobjektUndKannVerstandenWerdenAls(
-                                null, null));
+                                null, null,
+                                null));
     }
 
     @Override
     @Nullable
-    default Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                        final Numerus numerus) {
+    default Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
@@ -145,20 +147,6 @@ public interface SubstantivischePhrase
         }
 
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
-            // FIXME Präpositionalkasus mit "es" sind problematisch, da "es"
-            //  nicht phrasenbildend ist.
-            //  - "in es" etc. wird vertreten durch "hinein", "auf es" durch "darauf" etc.
-            //  - Man bräuchte wohl eine neue Klasse adverbialer Angaben
-            //   wie DARAUF, DARUNTER, HINEIN etc., und jede
-            //   Präposition MIT AKKUSATIV müsste zwingend
-            //   eines dieser Adverbien referenzieren, das als
-            //   Ersatz verwendet wird.
-            //  - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
-            //  ("Du willst es hineinlegen" statt *"Du willst es in es legen"?!)
-            //  - Das scheint aber nicht bei belebten Dingen möglich zu sein:
-            //  ?"Das ist unser Kind. Wir haben viel Geld hineingesteckt"
-            //  ?"Das ist unser Kind. Wir haben einen Nachtisch dafür gekauft."
-
             final PraepositionMitKasus praepositionMitKasus =
                     (PraepositionMitKasus) kasusOderPraepositionalkasus;
 
@@ -210,12 +198,16 @@ public interface SubstantivischePhrase
     /**
      * Gibt einen Possessivartikel für diese Phrase zurück.
      */
-    ArtikelwortFlexionsspalte.Typ possArt();
+    IArtikelworttypOderVorangestelltesGenitivattribut possArt();
 
     /**
      * Gibt ein Relativpronomen für diese Phrase zurück.
      */
     Relativpronomen relPron();
+
+    default PraedRegMerkmale getPraedRegMerkmale() {
+        return new PraedRegMerkmale(getPerson(), getNumerus(), getBelebtheit());
+    }
 
     default Numerus getNumerus() {
         return getNumerusGenus().getNumerus();
@@ -224,4 +216,8 @@ public interface SubstantivischePhrase
     NumerusGenus getNumerusGenus();
 
     Person getPerson();
+
+    default boolean isBelebt() {
+        return getBelebtheit() == BELEBT;
+    }
 }

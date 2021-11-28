@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.syscomp.description.DescriptionTriple;
 import de.nb.aventiure2.data.world.syscomp.state.AbstractStateComp;
 
 public class StateMapDescriptionComp<S extends Enum<S>> extends MultiDescriptionComp {
@@ -18,7 +19,7 @@ public class StateMapDescriptionComp<S extends Enum<S>> extends MultiDescription
         this.stateComp = stateComp;
         this.descriptionsByState = ImmutableMap.copyOf(descriptionsByState);
     }
-    
+
     @Override
     protected DescriptionTriple chooseDescriptionTriple() {
         return descriptionsByState.get(stateComp.getState());

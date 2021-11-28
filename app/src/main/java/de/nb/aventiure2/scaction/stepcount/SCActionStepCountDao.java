@@ -5,8 +5,8 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
+import de.nb.aventiure2.util.logger.Logger;
 
 /**
  * Room DAO for {@link SCActionStepCount}.

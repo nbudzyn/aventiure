@@ -131,14 +131,14 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
         final Kohaerenzrelation kohaerenzrelation = getKohaerenzrelationFuerUmformulierung();
 
         if (kohaerenzrelation == VERSTEHT_SICH_VON_SELBST) {
-            final SubstantivischePhrase anaph = anaph(erwartet, false);
+            final SubstantivischePhrase anaph = anaph(textContext, erwartet, false);
             n.narrateAlt(secs(5),
                     WARTEN_ODER_RASTEN_IN_FOLGE,
                     du(WARTEN.mit(anaph)).dann(),
                     du("beginnst", "auf", anaph.akkK(), "zu warten").dann());
         } else {
             final SubstantivischePhrase anaph =
-                    anaph(erwartet, true);
+                    anaph(textContext, erwartet, true);
             n.narrateAlt(
                     DescriptionUmformulierer.drueckeAus(
                             kohaerenzrelation,

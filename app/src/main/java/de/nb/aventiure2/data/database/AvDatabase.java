@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import de.nb.aventiure2.data.narration.ConsumedNarrationAlternativeInfo;
+import de.nb.aventiure2.data.narration.GameObjectIdIBezugsobjektConverters;
 import de.nb.aventiure2.data.narration.Narration;
 import de.nb.aventiure2.data.narration.NarrationDao;
 import de.nb.aventiure2.data.narration.NarrationSourceConverters;
@@ -37,8 +38,8 @@ import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountDao;
 import de.nb.aventiure2.data.world.syscomp.amount.AmountPCD;
 import de.nb.aventiure2.data.world.syscomp.amount.IAmountableGO;
+import de.nb.aventiure2.data.world.syscomp.description.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
-import de.nb.aventiure2.data.world.syscomp.description.impl.AmountDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsDao;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsPCD;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsTowardsInfo;
@@ -113,6 +114,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
         version = 1,
         exportSchema = false)
 @TypeConverters({
+        GameObjectIdIBezugsobjektConverters.class,
         GameObjectTypeConverters.class,
         BewoelkungConverters.class,
         BlitzUndDonnerConverters.class,

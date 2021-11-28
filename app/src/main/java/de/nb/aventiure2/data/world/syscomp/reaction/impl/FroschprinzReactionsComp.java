@@ -180,7 +180,8 @@ public class FroschprinzReactionsComp
         final String woFroschprinz =
                 locationComp.hasLocation(to) ? "hier" : getWoFroschprinz();
 
-        final EinzelneSubstantivischePhrase desc = getDescription();
+        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
+                possessivDescriptionVorgabe);
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
@@ -280,7 +281,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        n.narrate(du("siehst", getDescription().akkK(),
+        n.narrate(du("siehst", getDescription(textContext, possessivDescriptionVorgabe).akkK(),
                 locationComp.hasLocation(toAndPrinzLocation) ? null : getWoFroschprinz())
                 .schonLaenger()
                 .timed(NO_TIME));
@@ -353,7 +354,7 @@ public class FroschprinzReactionsComp
             // lassen, obwohl er noch mit dem Frosch verhandelt.
             n.narrate(neuerSatz(StructuralElement.PARAGRAPH,
                     "Ob",
-                    getDescription(true).nomK(),
+                    getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
                     "gerade seine glitschige Nase gerümpft hat?", PARAGRAPH)
                     .timed(secs(3)));
             return;
@@ -362,7 +363,8 @@ public class FroschprinzReactionsComp
         // Der Spieler hat die goldene Kugel letztlich in den Brunnen
         // fallen lassen, NACHDEM der Frosch schon Dinge hochgeholt hat.
         // Dann ist die Kugel jetzt WEG - PECH.
-        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(true);
+        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(textContext,
+                possessivDescriptionVorgabe, true);
         n.narrate(neuerSatz(froschprinzDesc.nomK(),
                 "schaut dich vorwurfsvoll und etwas hochnäsig an")
                 .timed(secs(5)));
@@ -389,7 +391,8 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(true);
+        final EinzelneSubstantivischePhrase froschprinzDesc = getDescription(textContext,
+                possessivDescriptionVorgabe, true);
         n.narrateAlt(secs(5),
                 neuerSatz(froschprinzDesc.nomK(), "quakt erbost"),
                 neuerSatz("Entrüstet quakt", froschprinzDesc.nomK())
@@ -404,7 +407,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final SubstantivischePhrase anaph = anaph();
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 

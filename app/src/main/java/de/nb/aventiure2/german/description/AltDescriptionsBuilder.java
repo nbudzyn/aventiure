@@ -1,5 +1,14 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.collect.ImmutableSet.builder;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.Arrays.asList;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.prependObject;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -12,6 +21,7 @@ import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.data.time.AvTimeSpan;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -20,15 +30,6 @@ import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.collect.ImmutableSet.builder;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.prependObject;
-import static java.util.Arrays.asList;
 
 /**
  * Ein Builder für alternative {@link AbstractDescription}s.
@@ -194,8 +195,9 @@ public class AltDescriptionsBuilder implements IAlternativeKonstituentenfolgable
      */
     public AltDescriptionsBuilder phorikKandidat(
             final NumerusGenus numerusGenus,
+            final Belebtheit belebtheit,
             final IBezugsobjekt bezugsobjekt) {
-        return map(d -> d.phorikKandidat(numerusGenus, bezugsobjekt));
+        return map(d -> d.phorikKandidat(numerusGenus, belebtheit, bezugsobjekt));
     }
 
     private AltDescriptionsBuilder map(final UnaryOperator<AbstractDescription<?>> op) {

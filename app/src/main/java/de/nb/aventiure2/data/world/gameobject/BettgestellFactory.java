@@ -49,7 +49,7 @@ class BettgestellFactory extends AbstractGameObjectFactory {
     @NonNull
     private GameObject create(final GameObjectId id, final GameObjectId locationId) {
         final SimpleDescriptionComp descriptionComp =
-                new SimpleDescriptionComp(id,
+                new SimpleDescriptionComp(db.counterDao(), id,
                         np(INDEF, NomenFlexionsspalte.BETTGESTELL, id),
                         np(BETTGESTELL, id),
                         np(BETTGESTELL, id));

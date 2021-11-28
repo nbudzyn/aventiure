@@ -1,17 +1,5 @@
 package de.nb.aventiure2.data.narration;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-
-import de.nb.aventiure2.data.world.base.GameObjectId;
-import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.PhorikKandidat;
-import de.nb.aventiure2.german.base.StructuralElement;
-import de.nb.aventiure2.german.description.TextDescription;
-import de.nb.aventiure2.german.string.NoLetterException;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static de.nb.aventiure2.german.base.GermanUtil.beginnDecktKommaAb;
 import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
@@ -22,6 +10,18 @@ import static de.nb.aventiure2.german.string.GermanStringUtil.appendBreak;
 import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
 import static de.nb.aventiure2.german.string.GermanStringUtil.capitalizeFirstLetter;
 import static de.nb.aventiure2.german.string.GermanStringUtil.schliesseWoertlicheRede;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.room.Embedded;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.german.base.PhorikKandidat;
+import de.nb.aventiure2.german.base.StructuralElement;
+import de.nb.aventiure2.german.description.TextDescription;
+import de.nb.aventiure2.german.string.NoLetterException;
 
 /**
  * The text of the narration, together with state relevant for going on with the narration.
@@ -38,6 +38,7 @@ public class Narration {
      * ein Absatzende, ...
      */
     private final StructuralElement endedBy;
+    
     @PrimaryKey
     @NonNull
     private final String text;
@@ -69,38 +70,14 @@ public class Narration {
     private final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt;
 
     /**
-     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) unmittelbar
-     * danach (<i>anaphorisch</i>) beziehen.
-     * <p>
-     * Dieses Feld nur gesetzt werden wenn man sich sicher ist, wenn es also keine
-     * Fehlreferenzierungen, Doppeldeutigkeiten
-     * oder unerwünschten Wiederholungen geben kann. Typische Fälle wären "Du nimmst die Lampe und
-     * zündest sie an." oder "Du stellst die Lampe auf den Tisch und zündest sie an."
-     * <p>
-     * Negatitvbeispiele wäre:
-     * <ul>
-     *     <li>"Du stellst die Lampe auf die Theke und zündest sie an." (Fehlreferenzierung)
-     *     <li>"Du nimmst den Ball und den Schuh und wirfst ihn in die Luft." (Doppeldeutigkeit)
-     *     <li>"Du nimmst die Lampe und zündest sie an. Dann stellst du sie wieder ab,
-     *     schaust sie dir aber dann noch einmal genauer an: Sie ... sie ... sie" (Unerwünschte
-     *     Wiederholung)
-     *     <li>"Du stellst die Lampe auf den Tisch. Der Tisch ist aus Holz und hat viele
-     *     schöne Gravuren - er muss sehr wertvoll sein. Dann nimmst du sie wieder in die Hand."
-     *     (Referenziertes Objekt zu weit entfernt.)
-     * </ul>
+     * Hierauf könnte sich ein Pronomen (z.B. ein Personalpronomen) beziehen kann (wenn
+     * die grammatikalischen Merkmale übereinstimmen). Der PhorikKandidat muss eine
+     * {@link GameObjectId} als {@link de.nb.aventiure2.german.base.IBezugsobjekt}
+     * enthalten.
      */
+    @Embedded
     @Nullable
-    private final GameObjectId phorikKandidatBezugsobjekt;
-
-    /**
-     * Damit sich ein Pronomen (z.B. ein Personalpronomen) auf das
-     * {@link #phorikKandidatBezugsobjekt} beziehen kann, müssen
-     * diese grammatikalischen Merkmale übereinstimmen.
-     * <p>
-     * Wir unterstützen nur Phorik-Kandidaten in der dritten Person.
-     */
-    @Nullable
-    private final NumerusGenus phorikKandidatNumerusGenus;
+    private final PhorikKandidat phorikKandidat;
 
     private final boolean dann;
 
@@ -113,26 +90,16 @@ public class Narration {
                      final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
                      final boolean dann,
                      @Nullable final PhorikKandidat phorikKandidat) {
-        this(lastNarrationSource, endedBy, text, woertlicheRedeNochOffen, kommaStehtAus,
-                allowsAdditionalDuSatzreihengliedOhneSubjekt, dann,
-                phorikKandidat != null ?
-                        ((GameObjectId) phorikKandidat.getBezugsobjekt()) : null,
-                phorikKandidat != null ?
-                        phorikKandidat.getNumerusGenus() : null);
-    }
-
-    public Narration(@NonNull final NarrationSource lastNarrationSource,
-                     @NonNull final StructuralElement endedBy,
-                     @NonNull final String text,
-                     final boolean woertlicheRedeNochOffen, final boolean kommaStehtAus,
-                     final boolean allowsAdditionalDuSatzreihengliedOhneSubjekt,
-                     final boolean dann,
-                     @Nullable final GameObjectId phorikKandidatBezugsobjekt,
-                     @Nullable final NumerusGenus phorikKandidatNumerusGenus) {
         checkArgument(!allowsAdditionalDuSatzreihengliedOhneSubjekt
                         || endedBy == WORD,
                 "!allowsAdditionalDuSatzreihengliedOhneSubjekt "
                         + "|| endsThis == StructuralElement.WORD verletzt");
+
+        checkArgument(phorikKandidat == null
+                        || phorikKandidat.getBezugsobjekt() instanceof GameObjectId,
+                "PhorikKandidat muss sich hier auf eine GameObjecktId beziehen - keine "
+                        + "anderen Bezugsobjekte erlaubt");
+
         this.woertlicheRedeNochOffen = woertlicheRedeNochOffen;
         this.lastNarrationSource = lastNarrationSource;
         this.endedBy = endedBy;
@@ -141,8 +108,7 @@ public class Narration {
         this.allowsAdditionalDuSatzreihengliedOhneSubjekt =
                 allowsAdditionalDuSatzreihengliedOhneSubjekt;
         this.dann = dann;
-        this.phorikKandidatBezugsobjekt = phorikKandidatBezugsobjekt;
-        this.phorikKandidatNumerusGenus = phorikKandidatNumerusGenus;
+        this.phorikKandidat = phorikKandidat;
     }
 
     StructuralElement getEndedBy() {
@@ -168,13 +134,7 @@ public class Narration {
 
     @Nullable
     PhorikKandidat getPhorikKandidat() {
-        if (phorikKandidatBezugsobjekt == null ||
-                phorikKandidatNumerusGenus == null) {
-            return null;
-        }
-
-        return new PhorikKandidat(phorikKandidatNumerusGenus,
-                phorikKandidatBezugsobjekt);
+        return phorikKandidat;
     }
 
     boolean dann() {
@@ -186,16 +146,6 @@ public class Narration {
         //  gleichzeitig?! Also etwas schreiben wie "zugleich"?!
         //  Ggf. schonLaenger() berücksichtigen.
         return dann;
-    }
-
-    @Nullable
-    GameObjectId getPhorikKandidatBezugsobjekt() {
-        return phorikKandidatBezugsobjekt;
-    }
-
-    @Nullable
-    NumerusGenus getPhorikKandidatNumerusGenus() {
-        return phorikKandidatNumerusGenus;
     }
 
     Narration add(final NarrationSource narrationSource,

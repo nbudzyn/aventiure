@@ -20,7 +20,6 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
-import de.nb.aventiure2.logger.Logger;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.ScActionService;
 import de.nb.aventiure2.scaction.devhelper.chooser.ExpectedActionNotFoundException;
@@ -28,6 +27,7 @@ import de.nb.aventiure2.scaction.devhelper.chooser.IActionChooser;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.Walkthrough;
 import de.nb.aventiure2.scaction.devhelper.chooser.impl.WalkthroughActionChooser;
 import de.nb.aventiure2.score.ScoreService;
+import de.nb.aventiure2.util.logger.Logger;
 
 public class MainViewModel extends AndroidViewModel {
     private static final Logger LOGGER = Logger.getLogger();

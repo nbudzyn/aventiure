@@ -1,5 +1,13 @@
 package de.nb.aventiure2.data.narration;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.Numerus.SG;
+import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+
 import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
@@ -18,13 +26,6 @@ import de.nb.aventiure2.german.praedikat.PartizipIIPhrase;
 import de.nb.aventiure2.german.praedikat.Perfektbildung;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-
 class DescriptionCombiner {
     private DescriptionCombiner() {
     }
@@ -40,11 +41,11 @@ class DescriptionCombiner {
         if (initialNarration.allowsAdditionalDuSatzreihengliedOhneSubjekt()
                 && first.getStartsNew() == WORD
                 && first instanceof AbstractFlexibleDescription
-                && ((AbstractFlexibleDescription<?>) first).hasSubjektDu()
+                && ((AbstractFlexibleDescription<?>) first).hasSubjektDuBelebt()
                 && first.isAllowsAdditionalDuSatzreihengliedOhneSubjekt()
                 && second.getStartsNew() == WORD
                 && second instanceof AbstractFlexibleDescription
-                && ((AbstractFlexibleDescription<?>) second).hasSubjektDu()
+                && ((AbstractFlexibleDescription<?>) second).hasSubjektDuBelebt()
                 && !((AbstractFlexibleDescription<?>) first).hasAnschlusswortDasBedeutungTraegt()) {
             //  "Du kommst, siehst und siegst"
             res.addAll(toDuSatzanschlussMitKommaUndAnschlusswort(
@@ -54,9 +55,9 @@ class DescriptionCombiner {
         }
 
         if (first instanceof StructuredDescription &&
-                ((StructuredDescription) first).hasSubjektDu() &&
+                ((StructuredDescription) first).hasSubjektDuBelebt() &&
                 second instanceof AbstractFlexibleDescription &&
-                ((AbstractFlexibleDescription<?>) second).hasSubjektDu()) {
+                ((AbstractFlexibleDescription<?>) second).hasSubjektDuBelebt()) {
             // Evtl. etwas wie "Unten angekommen bist du ziemlich erschöpft"
             res.addAll(combineStructuredDescUndFlexibleDescDu(
                     (StructuredDescription) first,
@@ -111,8 +112,7 @@ class DescriptionCombiner {
                 && firstPraedikat.umfasstSatzglieder()
                 && second.getStartsNew() == WORD) {
             final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                    firstPraedikat
-                            .getPartizipIIPhrasen(P2, SG);
+                    firstPraedikat.getPartizipIIPhrasen(P2, SG, BELEBT);
             if (partizipIIPhrasen.size() == 1) { // Wenn es mehrere sind, bilden sie
                 // bestimmt nicht alle das Perfekt mit "sein"!
                 // Aber es ist nur eine!

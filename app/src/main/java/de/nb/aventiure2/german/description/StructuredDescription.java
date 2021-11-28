@@ -1,5 +1,10 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -20,11 +25,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.PraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.traegtBedeutung;
 
 /**
  * A description based on a structured data structure: A {@link EinzelnerSatz}.
@@ -180,8 +180,8 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
     }
 
     @Override
-    public boolean hasSubjektDu() {
-        return getSatz().hasSubjektDu();
+    public boolean hasSubjektDuBelebt() {
+        return getSatz().hasSubjektDuBelebt();
     }
 
     @Override

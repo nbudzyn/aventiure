@@ -81,7 +81,7 @@ public class CreateNehmenAction extends AbstractScAction {
             final GameObjectType gameObjectType) {
         super(db.scActionStepCountDao(), timeTaker, n, world);
 
-        onTheFlyGOFactory = new OnTheFlyGOFactory(db, timeTaker, world);
+        onTheFlyGOFactory = world.onTheFlyGOFactory();
         this.gameObjectType = checkNotNull(gameObjectType, "gameObjectType");
     }
 
@@ -172,7 +172,7 @@ public class CreateNehmenAction extends AbstractScAction {
         }
 
         final EinzelneSubstantivischePhrase objectDesc =
-                getDescription(ausgerupfteBinsen, true);
+                getDescription(textContext, ausgerupfteBinsen, true);
         final PraedikatOhneLeerstellen praedikatMitObjekt = AUSRUPFEN.mit(objectDesc);
 
         if (sc.memoryComp().getLastAction().is(Action.Type.ABLEGEN)) {

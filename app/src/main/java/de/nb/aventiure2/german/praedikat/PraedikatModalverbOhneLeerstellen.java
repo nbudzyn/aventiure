@@ -1,6 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
 
+import static java.util.Objects.requireNonNull;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -20,11 +22,8 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Ein Prädikat mit einem Modalverb, bei dem alle Leerstellen gefüllt sind
@@ -124,14 +123,15 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbzweit(final PraedRegMerkmale praedRegMerkmale) {
         // möchtest Spannendes berichten
         // kannst dich waschen
         // möchtest sagen: "Hallo!"
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(verb.getPraesensOhnePartikel(person, numerus)), // "möchtest"
-                lexikalischerKern.getInfinitiv(person, numerus)); // "dich waschen"
+                requireNonNull(verb.getPraesensOhnePartikel(
+                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "möchtest"
+                lexikalischerKern.getInfinitiv(praedRegMerkmale)); // "dich waschen"
     }
 
     @Override
@@ -144,38 +144,38 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(subjekt)), // "möchtest"
                 subjekt.nomK(), // "du"
-                lexikalischerKern.getInfinitiv(
-                        subjekt.getPerson(), subjekt.getNumerus())); // "dich waschen"
+                lexikalischerKern.getInfinitiv(subjekt)); // "dich waschen"
     }
 
     @Override
-    public Konstituentenfolge getVerbletzt(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getVerbletzt(final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten möchtest
         // dich waschen möchtest
         // sagen möchtest: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(person, numerus).cutLast(
+                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
-                requireNonNull(verb.getPraesensMitPartikel(person, numerus)), // "möchtest"
+                requireNonNull(verb.getPraesensMitPartikel(
+                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "möchtest"
                 nachfeld); // : Odysseus ist zurück.
     }
 
     @Override
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(final Person person,
-                                                                final Numerus numerus) {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
+            final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten wollen (Ersatzinfinitiv!)
         // dich waschen wollen
         // sagen wollen: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        lexikalischerKern.getInfinitiv(person, numerus).cutLast(
+                        lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
                                 // "Spannendesberichten"
                                 nachfeld),
                         verb.getPartizipII(), // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
@@ -193,15 +193,15 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten wollen
         // dich waschen wollen
         // sagen wollen: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(person, numerus).cutLast(
+                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
                 verb.getInfinitiv(), // wollen
@@ -209,14 +209,14 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(final Person person, final Numerus numerus) {
+    public Konstituentenfolge getZuInfinitiv(final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes berichten zu wollen
         // dich waschen zu wollen
         // sagen zu wollen: "Hallo!"
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(person, numerus);
+        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
 
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(person, numerus).cutLast(
+                lexikalischerKern.getInfinitiv(praedRegMerkmale).cutLast(
                         // "Spannendes berichten"
                         nachfeld),
                 verb.getZuInfinitiv(), // zu wollen
@@ -243,27 +243,25 @@ public class PraedikatModalverbOhneLeerstellen implements PraedikatOhneLeerstell
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person person,
-                                                           final Numerus numerus,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
         // "Danach möchtest du Spannendes berichten."
-        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(person, numerus,
+        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
                 nachAnschlusswort);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(final Person person,
-                                                                   final Numerus numerus) {
+    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale) {
         // "Spannendes möchest du berichten."
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus
-        );
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Nullable
     @Override
-    public Konstituentenfolge getNachfeld(final Person person, final Numerus numerus) {
-        return lexikalischerKern.getNachfeld(person, numerus);
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
+        return lexikalischerKern.getNachfeld(praedRegMerkmale);
     }
 
     @Override

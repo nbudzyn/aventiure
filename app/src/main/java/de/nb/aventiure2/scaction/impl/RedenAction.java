@@ -1,6 +1,7 @@
 package de.nb.aventiure2.scaction.impl;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P2;
@@ -137,7 +138,8 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
         if (praedikat instanceof PraedikatMitEinerObjektleerstelle) {
             final EinzelneSubstantivischePhrase creatureDesc =
-                    worldervice.getPOVDescription(SPIELER_CHARAKTER, talker, true);
+                    worldervice.getPOVDescription(textContext, SPIELER_CHARAKTER, talker,
+                            NICHT_POSSESSIV, true);
 
             return ((PraedikatMitEinerObjektleerstelle) praedikat).mit(creatureDesc);
         }

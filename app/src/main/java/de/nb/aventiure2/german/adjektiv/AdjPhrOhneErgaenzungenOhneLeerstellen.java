@@ -1,18 +1,18 @@
 package de.nb.aventiure2.german.adjektiv;
 
 
+import static de.nb.aventiure2.german.base.Person.P3;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-
-import static de.nb.aventiure2.german.base.Person.P3;
 
 /**
  * Eine Adjektivphrase die keine Ergänzungen fordert. Beispiele:
@@ -64,10 +64,12 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
     @Nullable
     @Override
     public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
+                                                      final Belebtheit belebtheit,
                                                       final Kasus kasus,
                                                       final boolean artikelwortTraegtKasusendung) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescription(P3, numerusGenus.getNumerus()), // "immer noch"
+                getAdvAngabeSkopusSatzDescription(P3, numerusGenus.getNumerus(), belebtheit),
+                // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 getAdjektiv().getAttributiv(numerusGenus, kasus, artikelwortTraegtKasusendung)
                 // "zufriedenen"
@@ -89,10 +91,10 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
     }
 
     @Override
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person personSubjekt,
-                                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getPraedikativOderAdverbial(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescription(personSubjekt, numerusSubjekt), // "immer noch"
+                getAdvAngabeSkopusSatzDescription(praedRegMerkmale),
+                // "immer noch"
                 getGraduativeAngabe(), // "sehr"
                 getAdjektiv().getPraedikativ() // "zufrieden"
         );
@@ -100,8 +102,8 @@ public class AdjPhrOhneErgaenzungenOhneLeerstellen extends AbstractAdjPhrOhneLee
 
     @Override
     @Nullable
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 

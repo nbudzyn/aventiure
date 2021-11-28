@@ -133,7 +133,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void scSprichtAnBereitsBegruesst() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
         n.narrateAlt(secs(10),
                 neuerSatz(PARAGRAPH, "„Gute Frau“, sprichst du", anaph.akkK(), "an").dann(),
                 du(PARAGRAPH, "wendest", "dich noch einmal", anaph.datK(), "zu")
@@ -143,7 +143,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void scBegruesst() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
 
         n.narrateAlt(alt()
                         .addAll(altNeueSaetze(PARAGRAPH,
@@ -175,7 +175,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void zauberinReagiertAufAnsprechen() {
-        final SubstantivischePhrase anaph = anaph(true);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, true);
 
         final ImmutableList<Satz> altReaktionSaetze =
                 feelingsComp.altReaktionBeiBegegnungMitScSaetze(anaph);
@@ -190,7 +190,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void gespraechBeenden() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
 
         n.narrateAlt(alt()
                 .addAll(altNeueSaetze(
@@ -226,7 +226,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel_ImmReEntryNSCHatteGespraechBeendet() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
 
         n.narrateAlt(NO_TIME,
                 neuerSatz("Aber du lässt nicht locker:"),
@@ -236,7 +236,7 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
     }
 
     private void frageNachZiel() {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe, false);
 
         feelingsComp.upgradeFeelingsTowards(SPIELER_CHARAKTER,
                 ZUNEIGUNG_ABNEIGUNG, -0.34f, FeelingIntensity.DEUTLICH);

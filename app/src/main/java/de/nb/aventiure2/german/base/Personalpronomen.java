@@ -1,10 +1,10 @@
 package de.nb.aventiure2.german.base;
 
 import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
-import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -15,7 +15,6 @@ import static de.nb.aventiure2.german.base.Person.P3;
 
 import androidx.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -23,26 +22,27 @@ import java.util.Objects;
 
 public class Personalpronomen extends
         SubstantivischesPronomenMitVollerFlexionsreiheEinzelneKomplexe {
-    private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL = ImmutableMap.of(
-            P1,
-            alleGenera(P1,
-                    "ich", "mir", "mich", "wir", "uns"),
-            P2,
-            alleGenera(P2,
-                    "du", "dir", "dich", "ihr", "euch"),
-            P3,
+    private static final Map<Person, Map<NumerusGenus, Personalpronomen>> ALL_UNBELEBT =
             ImmutableMap.of(
-                    M, new Personalpronomen(P3, M,
-                            fr("er", "ihm", "ihn")),
-                    F, new Personalpronomen(P3, F,
-                            fr("sie", "ihr")),
-                    N, new Personalpronomen(P3, N,
-                            fr("es", "ihm")),
-                    PL_MFN, new Personalpronomen(P3, PL_MFN,
-                            fr("sie", "ihnen")))
-    );
+                    P1,
+                    alleGenera(P1,
+                            "ich", "mir", "mich", "wir", "uns"),
+                    P2,
+                    alleGenera(P2,
+                            "du", "dir", "dich", "ihr", "euch"),
+                    P3,
+                    ImmutableMap.of(
+                            M, new Personalpronomen(P3, M,
+                                    fr("er", "ihm", "ihn")),
+                            F, new Personalpronomen(P3, F,
+                                    fr("sie", "ihr")),
+                            N, new Personalpronomen(P3, N,
+                                    fr("es", "ihm")),
+                            PL_MFN, new Personalpronomen(P3, PL_MFN,
+                                    fr("sie", "ihnen")))
+            );
 
-    public static final Personalpronomen EXPLETIVES_ES = get(Person.P3, NumerusGenus.N);
+    public static final Personalpronomen EXPLETIVES_ES = get(Person.P3, NumerusGenus.N, UNBELEBT);
 
     private final Person person;
 
@@ -58,11 +58,11 @@ public class Personalpronomen extends
 
     private static boolean isEs(final Personalpronomen personalpronomen,
                                 final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
-        // "es" ist nicht phrasenbildend, kann also keine Fokuspartikel oder
-        //         Negationspartikelphrasen haben
         return personalpronomen.getPerson() == P3
                 && personalpronomen.getNumerusGenus() == N
-                && (kasusOderPraepositionalkasus == NOM || kasusOderPraepositionalkasus == AKK);
+                && (kasusOderPraepositionalkasus == NOM || kasusOderPraepositionalkasus == AKK)
+                && personalpronomen.getFokuspartikel() == null
+                && personalpronomen.getNegationspartikelphrase() == null;
     }
 
     private static Map<NumerusGenus, Personalpronomen>
@@ -83,15 +83,20 @@ public class Personalpronomen extends
     /**
      * Gibt das passende Personalpronomen zurück - ohne Bezugsobjekt
      */
-    public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus) {
-        return get(person, numerusGenus, null);
+    public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                       final Belebtheit belebtheit) {
+        return get(person, numerusGenus, belebtheit, null);
     }
 
     public static Personalpronomen get(final Person person, final NumerusGenus numerusGenus,
+                                       final Belebtheit belebtheit,
                                        @Nullable final IBezugsobjekt bezugsobjekt) {
-        final Personalpronomen ohneBezugsobjekt = requireNonNull(ALL.get(person)).get(numerusGenus);
+        final Personalpronomen unbelebtOhneBezugsobjekt =
+                requireNonNull(ALL_UNBELEBT.get(person)).get(numerusGenus);
 
-        return requireNonNull(ohneBezugsobjekt).mitBezugsobjekt(bezugsobjekt);
+        return requireNonNull(unbelebtOhneBezugsobjekt)
+                .mitBelebtheit(belebtheit)
+                .mitBezugsobjekt(bezugsobjekt);
     }
 
     @Override
@@ -113,7 +118,7 @@ public class Personalpronomen extends
 
         return new Personalpronomen(fokuspartikel, getNegationspartikelphrase(), person,
                 getNumerusGenus(),
-                getFlexionsreihe(), getBezugsobjekt());
+                getFlexionsreihe(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
@@ -124,7 +129,7 @@ public class Personalpronomen extends
 
         return new Personalpronomen(getFokuspartikel(), null, person,
                 getNumerusGenus(),
-                getFlexionsreihe(), getBezugsobjekt());
+                getFlexionsreihe(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
@@ -132,7 +137,17 @@ public class Personalpronomen extends
                                 final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
         return new Personalpronomen(getFokuspartikel(), negationspartikelphrase, person,
                 getNumerusGenus(),
-                getFlexionsreihe(), getBezugsobjekt());
+                getFlexionsreihe(), getBelebtheit(), getBezugsobjekt());
+    }
+
+    private Personalpronomen mitBelebtheit(final Belebtheit belebtheit) {
+        if (Objects.equals(getBelebtheit(), belebtheit)) {
+            return this;
+        }
+
+        return new Personalpronomen(getFokuspartikel(), getNegationspartikelphrase(), person,
+                getNumerusGenus(),
+                getFlexionsreihe(), belebtheit, getBezugsobjekt());
     }
 
     private Personalpronomen mitBezugsobjekt(@Nullable final IBezugsobjekt bezugsobjekt) {
@@ -142,22 +157,30 @@ public class Personalpronomen extends
 
         return new Personalpronomen(getFokuspartikel(), getNegationspartikelphrase(), person,
                 getNumerusGenus(),
-                getFlexionsreihe(), bezugsobjekt);
+                getFlexionsreihe(), getBelebtheit(), bezugsobjekt);
     }
 
     private Personalpronomen(final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe) {
-        this(null, person, numerusGenus, flexionsreihe, null);
+        this(person, numerusGenus, flexionsreihe, UNBELEBT);
+    }
+
+    private Personalpronomen(final Person person,
+                             final NumerusGenus numerusGenus,
+                             final Flexionsreihe flexionsreihe,
+                             final Belebtheit belebtheit) {
+        this(null, person, numerusGenus, flexionsreihe, belebtheit, null);
     }
 
     private Personalpronomen(@Nullable final String fokuspartikel,
                              final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe,
+                             final Belebtheit belebtheit,
                              @Nullable final IBezugsobjekt bezugsobjekt) {
         this(fokuspartikel, null, person, numerusGenus, flexionsreihe,
-                bezugsobjekt);
+                belebtheit, bezugsobjekt);
     }
 
 
@@ -166,41 +189,31 @@ public class Personalpronomen extends
                              final Person person,
                              final NumerusGenus numerusGenus,
                              final Flexionsreihe flexionsreihe,
+                             final Belebtheit belebtheit,
                              @Nullable final IBezugsobjekt bezugsobjekt) {
         super(fokuspartikel, negationspartikelphrase, numerusGenus, flexionsreihe,
-                person == P3 ? bezugsobjekt : null);
+                belebtheit, person == P3 ? bezugsobjekt : null);
         this.person = person;
     }
 
     @Override
     public final String imStr(final Kasus kasus) {
-        if (isPersonalpronomenEs(this, kasus)) {
-            // "es" ist nicht phrasenbildend - also keine Fokuspartikel erlaubt.
-            if (getFokuspartikel() != null) {
-                return ohneFokuspartikel().imStr(kasus);
-            }
-        }
-
-        // Weil "es" nicht phrasenbildend ist, ist vermutlich eigentlich auch
-        // "nicht es" falsch. Wir generieren es hier trotzdem - alles
-        // andere wäre aufwendig, man müsste stattdessen "nicht das Haus" o.Ä.
-        // erzeugen - und "das Haus" ist in dieser Komponente zurzeit
-        // gar nicht bekannt. Die einfache Alternative, dass imStr() oder imK()
-        // @Nullable wären und der Aufrufer immer mit null rechnen müsste, wäre
-        // ein Alptraum!
+        // "es" mit Fokuspartikel sollte der Aufrufer vermeiden.
+        // Auch "nicht es" sollte der Aufrufer vermeiden.
 
         return super.imStr(kasus);
     }
 
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
+        return Personalpronomen.get(person, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
         // P1 und P2 sind hier noch nicht vorgesehen
-        return Reflexivpronomen.get(person, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(
+                new PraedRegMerkmale(person, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     /**
@@ -208,14 +221,14 @@ public class Personalpronomen extends
      */
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(person, getNumerusGenus(), getBezugsobjekt());
+        return Relativpronomen.get(person, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     /**
      * "Er... sein..."
      */
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         return ArtikelwortFlexionsspalte.getPossessiv(person, getNumerusGenus());
     }
 
@@ -230,27 +243,7 @@ public class Personalpronomen extends
     }
 
     public static void checkExpletivesEs(final SubstantivischePhrase subjekt) {
-        checkExpletivesEs(subjekt.getPerson(), subjekt.getNumerus());
-
-        Preconditions.checkArgument(subjekt.getNumerusGenus() == NumerusGenus.N,
-                "Subjekt nicht Neutrum - ungültig für Wetterverben - keine expletives "
-                        + "es: %s", subjekt.getNumerusGenus());
-
-        Preconditions.checkArgument(subjekt.getBezugsobjekt() == null,
-                "Subjekt hat ein Bezugsobjekt - ungültig für Wetterverben - keine expletives "
-                        + "es: %s", subjekt.getBezugsobjekt());
-    }
-
-    public static void checkExpletivesEs(final Person person, final Numerus numerus) {
-        if (person != P3) {
-            throw new IllegalStateException(
-                    "Ungültige Person für Wetterverben, keine expletives es: " + person);
-        }
-
-        if (numerus != SG) {
-            throw new IllegalStateException(
-                    "Ungültiger Numerus für Wetterverben, keine expletives es: " + numerus);
-        }
+        subjekt.getPraedRegMerkmale().checkExpletivesEs();
     }
 
     @Override

@@ -108,7 +108,7 @@ public class DescriptionUmformulierer {
         if (desc instanceof AbstractFlexibleDescription) {
             final AbstractFlexibleDescription<?> fDesc = (AbstractFlexibleDescription<?>) desc;
 
-            if (fDesc.hasSubjektDu()) {
+            if (fDesc.hasSubjektDuBelebt()) {
                 if (!hoechstensUnauffaelligeAnpassungen) {
                     alt.add(duMitPraefixUndSatzanschluss(
                             "besinnst", "dich aber",
@@ -203,7 +203,7 @@ public class DescriptionUmformulierer {
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("wieder", fDesc));
 
             if (!(desc instanceof StructuredDescription)) {
-                if (fDesc.hasSubjektDu()) {
+                if (fDesc.hasSubjektDuBelebt()) {
                     if (!hoechstensUnauffaelligeAnpassungen) {
                         alt.add(duMitPraefixUndSatzanschluss(
                                 "gibst", "nicht auf",
@@ -269,7 +269,7 @@ public class DescriptionUmformulierer {
             alt.add(toTextDescriptionMindestensParagraphMitVorfeld("Unverdrossen", fDesc));
 
             if (!(desc instanceof StructuredDescription)) {
-                if (fDesc.hasSubjektDu()) {
+                if (fDesc.hasSubjektDuBelebt()) {
                     if (!hoechstensUnauffaelligeAnpassungen) {
                         alt.add(duMitPraefixUndSatzanschluss(
                                 "gibst", "nicht auf",

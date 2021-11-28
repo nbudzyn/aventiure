@@ -20,8 +20,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 
 /**
@@ -161,23 +160,21 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     @Nullable
     @Override
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final Person person, final Numerus numerus) {
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(person,
-                        numerus);
+                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
 
         // "Ihre Haare (versucht sie wieder hinunterzulassen)"
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(person, numerus
-        );
+        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
     @Override
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
@@ -186,14 +183,13 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 advAngabeSkopusSatz != null &&
                         advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(personSubjekt, numerusSubjekt) :
+                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
                         // "aus einer Laune heraus"
                         null, // (ins Nachfeld verschieben)
                 kf(getModalpartikeln()), // "mal eben"
                 advAngabeSkopusVerbAllg != null &&
                         advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(personSubjekt,
-                                numerusSubjekt) :  // "erneut"
+                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :  // "erneut"
                         null, // (ins Nachfeld verschieben)
                 getNegationspartikel(), // "nicht"
                 advAngabeSkopusVerbAllg != null &&
@@ -204,26 +200,23 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                         // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt Subjektkontrolle vor.
-                                personSubjekt, numerusSubjekt
+                                praedRegMerkmale
                         ) // "ihre Haare wieder hinunterzulassen"
                         : null, // (Normalfall: lexikalischer Kern im Nachfeld)
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt,
-                        numerusSubjekt)
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
                 // (kann es wohl gar nicht geben)
         );
     }
 
-    @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    @Nullable
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
-    @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    @Nullable
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
@@ -234,8 +227,7 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
@@ -245,20 +237,19 @@ public class PraedikatIntentionalesVerbOhneLeerstellen
                         || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         lexikalischerKern.getZuInfinitiv(
                                 // Es liegt Subjektkontrolle vor.
-                                personSubjekt, numerusSubjekt
+                                praedRegMerkmale
                         ) // "(Du versuchst) dich zu waschen"
                         // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
                         : null,
                 advAngabeSkopusVerbAllg != null
                         && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
                         advAngabeSkopusVerbAllg
-                                .getDescription(personSubjekt, numerusSubjekt)
+                                .getDescription(praedRegMerkmale)
                         // "glücklich, dich zu sehen"
                         : null,
                 advAngabeSkopusSatz != null
                         && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz
-                                .getDescription(personSubjekt, numerusSubjekt)
+                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
                         : null);
     }
 

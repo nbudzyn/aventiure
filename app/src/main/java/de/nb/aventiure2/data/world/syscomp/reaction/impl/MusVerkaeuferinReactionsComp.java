@@ -101,7 +101,8 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         }
 
         if (counterDao.get(BESCHREIBUNG_MUS_VERKAEUFERIN) == 1) {
-            n.narrate(neuerSatz("„Mus feil!“, ruft", anaph(false).nomK())
+            n.narrate(neuerSatz("„Mus feil!“, ruft", anaph(textContext, possessivDescriptionVorgabe,
+                    false).nomK())
                     .timed(NO_TIME)
                     .schonLaenger()
                     .withCounterIdIncrementedIfTextIsNarrated(BESCHREIBUNG_MUS_VERKAEUFERIN));
@@ -110,7 +111,8 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
         } else {
             final AltDescriptionsBuilder alt = alt();
             // "Die dicke Bäuerin verkauft Mus"
-            alt.add(VERKAUFEN.mit(npArtikellos(MUS)).alsSatzMitSubjekt(anaph(false)));
+            alt.add(VERKAUFEN.mit(npArtikellos(MUS)).alsSatzMitSubjekt(anaph(textContext,
+                    possessivDescriptionVorgabe, false)));
 
             if (loadSC().memoryComp().isKnown(MUS_VERKAEUFERIN)) {
                 alt.add(
@@ -142,7 +144,8 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
 
     private void betrittDenMarkt() {
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
-            final SubstantivischePhrase anaph = anaph(false);
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe,
+                    false);
             n.narrate(neuerSatz(anaph.nomK(),
                     "setzt sich und baut",
                     anaph.possArt().vor(NumerusGenus.PL_MFN).akkStr(), // "ihre"
@@ -154,10 +157,11 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
 
     private void verlaesstDenMarkt() {
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
-            final SubstantivischePhrase anaph = anaph();
+            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
 
             n.narrateAlt(NO_TIME,
-                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph())),
+                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph(textContext,
+                            possessivDescriptionVorgabe))),
                     neuerSatz(anaph, "kramt",
                             anaph.possArt().vor(NumerusGenus.PL_MFN).akkStr(), // "ihre"
                             "Siebensachen zusammen und geht")

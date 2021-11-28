@@ -6,13 +6,13 @@ import androidx.annotation.VisibleForTesting;
 
 import java.util.Locale;
 
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
-import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.satz.EinzelnerSatz;
 
@@ -103,6 +103,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     GESAMMELT,
     GESPANNT,
     GETRUEBT("getrübt"),
+    GLAENZEND("glänzend"),
     GLUECKLICH("glücklich"),
     GLUEHEND("glühend"),
     GLUTHEISS("glutheiß"),
@@ -269,9 +270,10 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     @Nullable
     @Override
     public String getAttributivAnteilAdjektivattribut(final NumerusGenus numerusGenus,
+                                                      final Belebtheit belebtheit,
                                                       final Kasus kasus,
                                                       final boolean artikelwortTraegtKasusendung) {
-        return toAdjPhr().getAttributivAnteilAdjektivattribut(numerusGenus, kasus,
+        return toAdjPhr().getAttributivAnteilAdjektivattribut(numerusGenus, belebtheit, kasus,
                 artikelwortTraegtKasusendung);
     }
 
@@ -291,16 +293,15 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     }
 
     @Override
-    public Konstituentenfolge getPraedikativOderAdverbial(final Person person,
-                                                          final Numerus numerus) {
-        return toAdjPhr().getPraedikativ(person, numerus);
+    public Konstituentenfolge getPraedikativOderAdverbial(final PraedRegMerkmale praedRegMerkmale) {
+        return toAdjPhr().getPraedikativ(praedRegMerkmale);
     }
 
     @Override
     @Nullable
-    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(final Person person,
-                                                                       final Numerus numerus) {
-        return toAdjPhr().getPraedikativAnteilKandidatFuerNachfeld(person, numerus);
+    public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
+            final PraedRegMerkmale praedRegMerkmale) {
+        return toAdjPhr().getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale);
     }
 
     @Override

@@ -18,6 +18,7 @@ import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
@@ -25,8 +26,7 @@ import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
@@ -210,12 +210,10 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
 
     @Nullable
     @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final Person personSubjekt,
-                                                           final Numerus numerusSubjekt,
+    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
                                                            final boolean nachAnschlusswort) {
         @Nullable final Konstituente speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(
-                        personSubjekt, numerusSubjekt, nachAnschlusswort);
+                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -239,35 +237,31 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
     @Nullable
     @CheckReturnValue
     Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+            final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 dat.datK(), // Peter
                 kf(getModalpartikeln()), // "halt"
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
                 // "plötzlich"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(personSubjekt,
-                        numerusSubjekt), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(personSubjekt,
-                        numerusSubjekt),
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale), // "erneut"
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
                 // (kann wohl nicht besetzt sein?)
                 praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt, getNegationspartikel())
+                        praedRegMerkmale, getNegationspartikel())
                 // "kalt", "nicht kalt"
         );
     }
 
     @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getDat(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
         return dat;
     }
 
-    @Nullable
     @Override
-    SubstPhrOderReflexivpronomen getAkk(
-            final Person personSubjekt, final Numerus numerusSubjekt) {
+    @Nullable
+    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
         return null;
     }
 
@@ -279,16 +273,15 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
 
     @Override
     @Nullable
-    public Konstituentenfolge getNachfeld(final Person personSubjekt,
-                                          final Numerus numerusSubjekt) {
+    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.joinToNullKonstituentenfolge(
                 praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
-                        personSubjekt, numerusSubjekt), // "dich zu sehen"
+                        praedRegMerkmale),
+                // "dich zu sehen"
                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
-                        personSubjekt,
-                        numerusSubjekt),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(personSubjekt,
-                        numerusSubjekt)
+                        praedRegMerkmale),
+                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                        praedRegMerkmale)
         );
     }
 
@@ -324,7 +317,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         if (praedikativum instanceof Interrogativpronomen) {
             return praedikativum.getPraedikativ(
                     // "Sie ist interessiert, wie euch ist",
-                    P3, SG);
+                    P3, SG, Belebtheit.UNBELEBT);
         }
 
         return null;
@@ -351,7 +344,7 @@ public class DativPraedikativumPraedikatOhneSubjAusserOptionalemExpletivemEsOhne
         if (praedikativum instanceof Relativpronomen) {
             return praedikativum.getPraedikativ(
                     // "Sie ist interessiert, wie euch ist",
-                    P3, SG);
+                    P3, SG, Belebtheit.UNBELEBT);
         }
 
         return null;

@@ -14,6 +14,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.AbstractStatefulComponent;
 import de.nb.aventiure2.data.world.base.GameObject;
 import de.nb.aventiure2.data.world.base.GameObjectId;
+import de.nb.aventiure2.data.world.base.IGameObjectDescriptionMixin;
 import de.nb.aventiure2.data.world.gameobject.*;
 
 /**
@@ -23,7 +24,7 @@ import de.nb.aventiure2.data.world.gameobject.*;
  */
 public abstract class AbstractStateComp<S extends Enum<S>>
         extends AbstractStatefulComponent<StatePCD>
-        implements IWorldLoaderMixin, IWorldDescriptionMixin {
+        implements IWorldLoaderMixin, IWorldDescriptionMixin, IGameObjectDescriptionMixin {
     private final TimeTaker timeTaker;
 
     protected final World world;
@@ -31,9 +32,6 @@ public abstract class AbstractStateComp<S extends Enum<S>>
     private final Class<S> stateEnumClass;
     private final S initialState;
 
-    /**
-     * Constructor for a {@link AbstractStateComp}.
-     */
     @SuppressWarnings("unchecked")
     protected AbstractStateComp(final GameObjectId gameObjectId,
                                 final AvDatabase db,

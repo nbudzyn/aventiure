@@ -22,7 +22,6 @@ public interface Praedikativum {
                 zweitesPraedikativum);
     }
 
-
     default EinzelnerSatz alsEsIstSatz() {
         return alsEsIstSatz(null);
     }
@@ -61,8 +60,8 @@ public interface Praedikativum {
      * ins Nachfeld gestellt werden soll.
      */
     default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
-            final Person person, final Numerus numerus) {
-        return getPraedikativOhneAnteilKandidatFuerNachfeld(person, numerus, null);
+            final PraedRegMerkmale praedRegMerkmale) {
+        return getPraedikativOhneAnteilKandidatFuerNachfeld(praedRegMerkmale, null);
     }
 
     /**
@@ -71,10 +70,10 @@ public interface Praedikativum {
      * ins Nachfeld gestellt werden soll, - und ggf. mit dieser Negationsphrase verknüpft.
      */
     default Konstituentenfolge getPraedikativOhneAnteilKandidatFuerNachfeld(
-            final Person person, final Numerus numerus,
+            final PraedRegMerkmale praedRegMerkmale,
             @Nullable final Negationspartikelphrase negationspartikel) {
-        return getPraedikativ(person, numerus, negationspartikel).cutLast(
-                getPraedikativAnteilKandidatFuerNachfeld(person, numerus));
+        return getPraedikativ(praedRegMerkmale, negationspartikel).cutLast(
+                getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale));
     }
 
 
@@ -83,7 +82,12 @@ public interface Praedikativum {
      * "glücklich, sich erheben zu dürfen"
      */
     default Konstituentenfolge getPraedikativ(final SubstantivischePhrase bezug) {
-        return getPraedikativ(bezug.getPerson(), bezug.getNumerus());
+        return getPraedikativ(bezug.getPraedRegMerkmale());
+    }
+
+    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+                                              final Belebtheit belebtheit) {
+        return getPraedikativ(new PraedRegMerkmale(person, numerus, belebtheit));
     }
 
     /**
@@ -91,8 +95,8 @@ public interface Praedikativum {
      * Person und diesem Numerus verwendet wird:
      * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher" o.Ä.
      */
-    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return getPraedikativ(person, numerus, null);
+    default Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale) {
+        return getPraedikativ(praedRegMerkmale, null);
     }
 
     /**
@@ -102,11 +106,11 @@ public interface Praedikativum {
      * "(Ich bin) ein Esel", "(Er ist) doof", "(Sie ist) ihrer selbst sicher",
      * "(Ich bin) kein Esel", "(Er ist) nicht doof)o.Ä.
      */
-    Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+    Konstituentenfolge getPraedikativ(PraedRegMerkmale praedRegMerkmale,
                                       @Nullable Negationspartikelphrase negationspartikel);
 
     /**
-     * Liefert die Teil-Konstituenten-Folge von {@link #getPraedikativ(Person, Numerus)},
+     * Liefert die Teil-Konstituenten-Folge von {@link #getPraedikativ(SubstantivischePhrase)},
      * die nach Möglichkeit in das Nachfeld gestellt werden sollte - so dass letztlich
      * eine diskontinuierliche Konstituente entsteht. Ist in einfachen Fällen leer.
      * <p>
@@ -115,6 +119,5 @@ public interface Praedikativum {
      */
     @Nullable
     @CheckReturnValue
-    Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
-            final Person person, final Numerus numerus);
+    Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(PraedRegMerkmale praedRegMerkmale);
 }

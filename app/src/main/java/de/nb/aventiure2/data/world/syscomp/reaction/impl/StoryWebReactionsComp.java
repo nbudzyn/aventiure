@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -186,8 +187,7 @@ public class StoryWebReactionsComp
                 DRAUSSEN_VOR_DEM_SCHLOSS,
                 SCHLOSS_VORHALLE,
                 SCHLOSS_VORHALLE_AM_TISCH_BEIM_FEST) &&
-                (((IHasStateGO<SchlossfestState>) loadRequired(SCHLOSSFEST))).stateComp()
-                        .hasState(SchlossfestState::schlossfestLaeuft)) {
+                loadSchlossfest().stateComp().hasState(SchlossfestState::schlossfestLaeuft)) {
             reachStoryNode(FroschkoenigStoryNode.ZUM_SCHLOSSFEST_GEGANGEN);
         }
 
@@ -198,8 +198,7 @@ public class StoryWebReactionsComp
         if (world.isOrHasRecursiveLocation(to, VOR_DEM_ALTEN_TURM)) {
             reachStoryNode(RapunzelStoryNode.TURM_GEFUNDEN);
 
-            if (((IHasStateGO<RapunzelState>) loadRequired(RAPUNZEL)).stateComp()
-                    .hasState(RapunzelState.SINGEND)) {
+            if (loadRapunzel().stateComp().hasState(RapunzelState.SINGEND)) {
                 reachStoryNode(RapunzelStoryNode.RAPUNZEL_SINGEN_GEHOERT);
             }
         }
@@ -354,5 +353,15 @@ public class StoryWebReactionsComp
         //  Am besten statt einer HintAction merken, dass bald mal eine
         //  Zeichnung schön wäre (als Belohnung fürs Durchhalten), dann Zeichnung einblenden,
         //  wenn wieder ein zur Verfügung steht? Jede Zeichnung nur 1x.
+    }
+
+    @NonNull
+    private IHasStateGO<RapunzelState> loadRapunzel() {
+        return loadRequired(RAPUNZEL);
+    }
+
+    @NonNull
+    private IHasStateGO<SchlossfestState> loadSchlossfest() {
+        return loadRequired(SCHLOSSFEST);
     }
 }

@@ -1,5 +1,11 @@
 package de.nb.aventiure2.german.description;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -14,12 +20,6 @@ import de.nb.aventiure2.german.base.IKonstituenteOrStructuralElement;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.PhorikKandidat;
 import de.nb.aventiure2.german.base.StructuralElement;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkState;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
 
 /**
  * A description - assuming the player character is the (first) subject. Somehting like
@@ -201,7 +201,11 @@ public class SimpleDuDescription extends AbstractFlexibleDescription<SimpleDuDes
     }
 
     @Override
-    public boolean hasSubjektDu() {
+    public boolean hasSubjektDuBelebt() {
+        // Zum einen kann man wohl davon ausgehen, dass etwas, das man als
+        // "du" anspricht, für den Moment als "belebt" wahrgenommen wird.
+        // Zum anderen macht das grammatische Merkmal Belebheit vermutlich nur in der
+        // 3. Person einen Unterschied.
         return true;
     }
 

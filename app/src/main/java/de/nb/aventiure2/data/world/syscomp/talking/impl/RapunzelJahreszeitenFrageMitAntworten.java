@@ -1,16 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.talking.impl;
 
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.data.narration.Narrator;
-import de.nb.aventiure2.data.world.counter.CounterDao;
-import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
-import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
-import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
-import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
-import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
-
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
@@ -22,6 +11,17 @@ import static de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction.st;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObjWoertlicheRede.ANTWORTEN;
+
+import com.google.common.collect.ImmutableList;
+
+import de.nb.aventiure2.data.narration.Narrator;
+import de.nb.aventiure2.data.world.counter.CounterDao;
+import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
+import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
+import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelStateComp;
+import de.nb.aventiure2.data.world.syscomp.talking.ITalkContext;
+import de.nb.aventiure2.data.world.syscomp.talking.RapunzelFrageMitAntworten;
 
 class RapunzelJahreszeitenFrageMitAntworten extends RapunzelFrageMitAntworten {
     @SuppressWarnings({"unused", "RedundantSuppression"})
@@ -102,7 +102,7 @@ class RapunzelJahreszeitenFrageMitAntworten extends RapunzelFrageMitAntworten {
         }
 
         n.narrate(neuerSatz(
-                "„Ich wache auf und sofort weiß ich – die Krokusse sind aufgeblüht!",
+                "„Ich wache auf und sofort weiß ich – die Krokusse sinds aufgeblüht!",
                 "Dann freue ich mich schon auf die Schwalben, die in der Mauer über",
                 "dem Fenster brüten.“")
                 .timed(secs(20))

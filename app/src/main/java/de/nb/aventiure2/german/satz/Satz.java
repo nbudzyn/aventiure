@@ -157,7 +157,7 @@ public interface Satz extends IAlternativeKonstituentenfolgable {
      */
     Konstituentenfolge getVerbletztsatz();
 
-    boolean hasSubjektDu();
+    boolean hasSubjektDuBelebt();
 
     /**
      * Gibt das Prädikat des Satzes zurück, wenn das

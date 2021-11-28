@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 
+import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
+import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
+import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
+
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.data.narration.Narrator;
@@ -11,12 +17,6 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-
-import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
-import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.alt;
-import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 
 /**
  * Beschreibt dem Spieler die Bewegung der Zauberin
@@ -37,7 +37,7 @@ public class RapunzelsZauberinMovementNarrator extends SimpleMovementNarrator {
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final EinzelneSubstantivischePhrase desc = getDescription();
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         final AltDescriptionsBuilder alt = alt();
 

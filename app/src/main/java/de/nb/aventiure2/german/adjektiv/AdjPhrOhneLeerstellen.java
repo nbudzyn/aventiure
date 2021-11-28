@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.adjektiv;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -8,14 +10,15 @@ import java.util.Collection;
 
 import javax.annotation.Nullable;
 
+import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
 import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -23,8 +26,6 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.PraedikativumPraedikatOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
-
-import static com.google.common.collect.ImmutableList.toImmutableList;
 
 /**
  * Eine Adjektivphrase, bei der alle geforderten Ergänzungen gesetzt sind:
@@ -36,6 +37,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
     default Satz alsPraedikativumRelativsatz(final Person personBezugselement,
                                              final NumerusGenus numerusGenusBezugselement,
+                                             final Belebtheit belebtheitBezugselement,
                                              @Nullable final
                                              IBezugsobjekt bezugsobjektBezugselement) {
 
@@ -45,7 +47,9 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
 
         // "die"
         final Relativpronomen relativpronomen = Relativpronomen
-                .get(personBezugselement, numerusGenusBezugselement, bezugsobjektBezugselement);
+                .get(personBezugselement, numerusGenusBezugselement,
+                        belebtheitBezugselement,
+                        bezugsobjektBezugselement);
 
         // "die gespannt ist, was wer zu berichten hat"
         return praedikativumPraedikat.alsSatzMitSubjekt(relativpronomen);
@@ -63,9 +67,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
     default boolean isGeeignetAlsAdvAngabe(final SubstantivischePhrase subjekt) {
         // "Sie schaut dich überrascht an.", aber nicht
         // *"Sie schaut dich überrascht an, dich zu sehen".
-        return getPraedikativAnteilKandidatFuerNachfeld(
-                subjekt.getPerson(),
-                subjekt.getNumerus()) == null;
+        return getPraedikativAnteilKandidatFuerNachfeld(subjekt.getPraedRegMerkmale()) == null;
     }
 
     default AdjPhrOhneLeerstellen neg(
@@ -112,7 +114,9 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * </ol>
      */
     @Nullable
-    String getAttributivAnteilAdjektivattribut(NumerusGenus numerusGenus, Kasus kasus,
+    String getAttributivAnteilAdjektivattribut(NumerusGenus numerusGenus,
+                                               Belebtheit belebtheit,
+                                               Kasus kasus,
                                                boolean artikelwortTraegtKasusendung);
 
     /**
@@ -138,7 +142,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * "Du hilfst der Frau des Herzogs, die mit dem Tag zufrieden ist" (<i>sie</i>ist mit dem Tag
      * zufrieden).
      *
-     * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
+     * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Belebtheit, Kasus, boolean)
      * @see #getAttributivAnteilLockererNachtrag(Kasus)
      */
     @Nullable
@@ -159,7 +163,7 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <li>"(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
      * </ul>
      *
-     * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Kasus, boolean)
+     * @see #getAttributivAnteilAdjektivattribut(PraedRegMerkmale, boolean)
      * @see #getAttributivAnteilRelativsatz(Kasus)
      */
     @Nullable
@@ -171,15 +175,15 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * "nicht glücklich, sich erheben zu dürfen"
      */
     @Override
-    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus,
+    default Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale,
                                               @Nullable final
                                               Negationspartikelphrase negationspartikelphrase) {
         if (negationspartikelphrase == null) {
-            return getPraedikativ(person, numerus);
+            return getPraedikativ(praedRegMerkmale);
         }
 
         return neg(negationspartikelphrase)
-                .getPraedikativ(person, numerus); // "nicht mehr lange einfach"
+                .getPraedikativ(praedRegMerkmale); // "nicht mehr lange einfach"
     }
 
     /**
@@ -187,16 +191,15 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * "glücklich, sich erheben zu dürfen"
      */
     @Override
-    default Konstituentenfolge getPraedikativ(final Person person, final Numerus numerus) {
-        return getPraedikativOderAdverbial(person, numerus);
+    default Konstituentenfolge getPraedikativ(final PraedRegMerkmale praedRegMerkmale) {
+        return getPraedikativOderAdverbial(praedRegMerkmale);
     }
 
     /**
      * Gibt die prädikative oder adverbiale Form zurück: "hoch", "glücklich, dich zu sehen",
      * "glücklich, sich erheben zu dürfen"
      */
-    Konstituentenfolge getPraedikativOderAdverbial(
-            final Person personSubjekt, final Numerus numerusSubjekt);
+    Konstituentenfolge getPraedikativOderAdverbial(PraedRegMerkmale praedRegMerkmale);
 
     default AdvAngabeSkopusSatz alsAdvAngabeSkopusSatz() {
         return new AdvAngabeSkopusSatz(this);

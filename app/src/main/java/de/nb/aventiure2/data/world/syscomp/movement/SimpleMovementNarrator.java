@@ -32,6 +32,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 
@@ -65,7 +66,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
     @Override
     public void narrateScFolgtMovingGO(
             final Collection<TimedDescription<?>> normalTimedDescriptions) {
-        final SubstantivischePhrase anaph = anaph(true);
+        final SubstantivischePhrase anaph = anaph(textContext, true);
         final AltTimedDescriptionsBuilder alt = altTimed();
 
         final AvTimeSpan someTimeElapsed =
@@ -118,7 +119,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
         alt.addAll(normalTimedDescriptions.stream()
                 .filter(d -> d.getDescription() instanceof AbstractFlexibleDescription<?>)
                 .map(d -> (TimedDescription<? extends AbstractFlexibleDescription<?>>) d)
-                .filter(d -> d.getDescription().hasSubjektDu())
+                .filter(d -> d.getDescription().hasSubjektDuBelebt())
                 .flatMap(d -> d.withAltDescriptions(
                         d.getDescription()
                                 .toTextDescriptionMitVorfeld(anaph.datStr() + " hinterher")
@@ -130,7 +131,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
         alt.addAll(normalTimedDescriptions.stream()
                 .filter(d -> d.getDescription() instanceof StructuredDescription)
                 .map(d -> (TimedDescription<? extends StructuredDescription>) d)
-                .filter(d -> d.getDescription().hasSubjektDu())
+                .filter(d -> d.getDescription().hasSubjektDuBelebt())
                 .map(d ->  // "auch du..."
                         d.withDescription(
                                 d.getDescription().mitSubjektFokuspartikel("auch"))));
@@ -224,7 +225,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
     @Override
     public void narrateScGehtMovingGOEntgegenUndLaesstEsHinterSich() {
         final EinzelneSubstantivischePhrase desc = getDescription();
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -283,7 +284,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
 
     private void narrateMovingGOKommtSCEntgegenUndGehtAnSCVorbei() {
         final EinzelneSubstantivischePhrase desc = getDescription();
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -315,7 +316,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
     private void narrateGehtWeg(
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysOut) {
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         @Nullable final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysOut);
 
@@ -394,7 +395,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
             @Nullable final SpatialConnection spatialConnection,
             final NumberOfWays numberOfWaysIn) {
         final EinzelneSubstantivischePhrase desc = getDescription();
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         @Nullable final String wo = calcWoIfNecessary(spatialConnection, numberOfWaysIn);
 
@@ -463,7 +464,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
             final FROM movingGOFrom,
             @Nullable final SpatialConnection spatialConnectionMovingGO) {
         final EinzelneSubstantivischePhrase desc = getDescription();
-        final SubstantivischePhrase anaph = anaph(false);
+        final SubstantivischePhrase anaph = anaph(textContext, false);
 
         final AltDescriptionsBuilder alt = alt();
 
@@ -555,10 +556,12 @@ public class SimpleMovementNarrator implements IMovementNarrator,
      * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
      * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
      */
-    protected final SubstantivischePhrase anaph(final boolean descShortIfKnown) {
-        final IDescribableGO describableGO = load(getGameObjectId());
+    protected final SubstantivischePhrase anaph(
+            final ITextContext textContext,
+            final boolean descShortIfKnown) {
+        final IDescribableGO describableGO = loadRequired(getGameObjectId());
 
-        return anaph(describableGO, descShortIfKnown);
+        return anaph(textContext, describableGO, descShortIfKnown);
     }
 
     /**
@@ -580,7 +583,7 @@ public class SimpleMovementNarrator implements IMovementNarrator,
      *                     kürzere Beschreibung gewählt
      */
     private EinzelneSubstantivischePhrase getDescription(final boolean shortIfKnown) {
-        return getDescription(gameObjectId, shortIfKnown);
+        return getDescription(textContext, gameObjectId, shortIfKnown);
     }
 
     private GameObjectId getGameObjectId() {

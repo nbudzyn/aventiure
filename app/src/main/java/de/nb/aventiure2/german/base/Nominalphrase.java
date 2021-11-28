@@ -1,9 +1,10 @@
 package de.nb.aventiure2.german.base;
 
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.getNegativeForm;
-import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.isNegativ;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
+import static de.nb.aventiure2.german.base.IArtikelworttypOderVorangestelltesGenitivattribut.getNegativeForm;
+import static de.nb.aventiure2.german.base.IArtikelworttypOderVorangestelltesGenitivattribut.isNegativ;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
@@ -20,6 +21,7 @@ import androidx.annotation.Nullable;
 import java.util.Objects;
 
 import javax.annotation.CheckReturnValue;
+import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.satz.Satz;
@@ -31,7 +33,8 @@ public class Nominalphrase
         extends EinzelneKomplexeSubstantivischePhrase
         implements IErlaubtAttribute {
     @Nullable
-    private final ArtikelwortFlexionsspalte.Typ artikelTyp;
+    private final IArtikelworttypOderVorangestelltesGenitivattribut
+            artikelworttypOderVorangestelltesGenitivattribut;
 
     @Nullable
     private final AdjPhrOhneLeerstellen adjPhr;
@@ -62,11 +65,13 @@ public class Nominalphrase
             np(M, DEF, "erste Strahl der aufgehenden Sonne",
                     "ersten Strahl der aufgehenden Sonne",
                     "ersten Strahl der aufgehenden Sonne");
+    // Problem hier: "erst"* ist anscheinend ein Adjektiv, kann aber nur
+    // attributiv verwendet werden. Das ist bisher nicht vorgesetzen.
     public static final Nominalphrase ERSTE_SONNENSTRAHLEN =
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
             np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
-    // Problem hier: "letzt"* ist offenbar ein Adjektiv, kann aber nur
+    // Problem hier: "letzt"* ist anscheinend ein Adjektiv, kann aber nur
     // attributiv verwendet werden. Das ist bisher nicht vorgesetzen.
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
@@ -77,72 +82,141 @@ public class Nominalphrase
                     "von der Sonne aufgeheizten stehenden Luft");
 
     /**
-     * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
+     * Erzeugt eine Nominalphrase (unbelebt) ohne Bezugsobjekt.
      */
     @NonNull
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                    @Nullable
+                                    final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                     final String nominalNominativDativUndAkkusativ) {
-        return np(numerusGenus, artikelTyp, nominalNominativDativUndAkkusativ,
-                (IBezugsobjekt) null);
-    }
-
-    @NonNull
-    public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
-                                   final String nominalNominativDativUndAkkusativ,
-                                   @Nullable final IBezugsobjekt bezugsobjekt) {
-        return np(numerusGenus, artikelTyp,
-                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ, bezugsobjekt);
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativDativUndAkkusativ,
+                UNBELEBT);
     }
 
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
+    @NonNull
+    private static Nominalphrase np(final NumerusGenus numerusGenus,
+                                    @Nullable
+                                    final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                    final String nominalNominativDativUndAkkusativ,
+                                    final Belebtheit belebtheit) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativDativUndAkkusativ,
+                belebtheit, null);
+    }
+
+    @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final String nominalNominativDativUndAkkusativ,
+                                   final Belebtheit belebtheit,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativDativUndAkkusativ, nominalNominativDativUndAkkusativ, belebtheit,
+                bezugsobjekt
+        );
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase (unbelebt) ohne Bezugsobjekt.
+     */
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                    final String nominalNominativUndAkkusativ,
                                    final String nominalDativ) {
-        return np(numerusGenus, artikelTyp, nominalNominativUndAkkusativ, nominalDativ,
-                (IBezugsobjekt) null);
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativUndAkkusativ, nominalDativ, UNBELEBT);
     }
-
-    @NonNull
-    public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
-                                   final String nominalNominativUndAkkusativ,
-                                   final String nominalDativ,
-                                   @Nullable final IBezugsobjekt bezugsobjekt) {
-        return np(numerusGenus, artikelTyp,
-                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
-                bezugsobjekt);
-    }
-
 
     /**
      * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
      */
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final String nominalNominativUndAkkusativ,
+                                   final String nominalDativ,
+                                   final Belebtheit belebtheit) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativUndAkkusativ, nominalDativ,
+                belebtheit, null);
+    }
+
+    @NonNull
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final String nominalNominativUndAkkusativ,
+                                   final String nominalDativ,
+                                   final Belebtheit belebtheit,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
+                belebtheit, bezugsobjekt);
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase (unbelebt) ohne Bezugsobjekt.
+     */
     @NonNull
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                    @Nullable
+                                    final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                     final String nominalNominativ,
                                     final String nominalDativ,
                                     final String nominalAkkusativ) {
-        return np(numerusGenus, artikelTyp, nominalNominativ, nominalDativ, nominalAkkusativ,
-                null);
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut, nominalNominativ,
+                nominalDativ, nominalAkkusativ,
+                UNBELEBT);
+    }
+
+    /**
+     * Erzeugt eine Nominalphrase ohne Bezugsobjekt.
+     */
+    @NonNull
+    private static Nominalphrase np(final NumerusGenus numerusGenus,
+                                    @Nullable
+                                    final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                    final String nominalNominativ,
+                                    final String nominalDativ,
+                                    final String nominalAkkusativ,
+                                    final Belebtheit belebtheit) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut, nominalNominativ,
+                nominalDativ, nominalAkkusativ,
+                belebtheit, null);
     }
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                    final String nominalNominativ,
                                    final String nominalDativ,
                                    final String nominalAkkusativ,
                                    @Nullable final IBezugsobjekt bezugsobjekt) {
-        return np(numerusGenus, artikelTyp,
-                fr(nominalNominativ, nominalDativ, nominalAkkusativ), bezugsobjekt);
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativ, nominalDativ, nominalAkkusativ, UNBELEBT, bezugsobjekt
+        );
     }
 
+    @NonNull
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final String nominalNominativ,
+                                   final String nominalDativ,
+                                   final String nominalAkkusativ,
+                                   final Belebtheit belebtheit,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                fr(nominalNominativ, nominalDativ, nominalAkkusativ), belebtheit, bezugsobjekt
+        );
+    }
 
     /**
      * Erzeugt eine Nominalphrase mit definitem Artikel - oder ohne Artikel,
@@ -161,16 +235,30 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(final ArtikelwortFlexionsspalte.Typ artikelTyp,
-                                   final NomenFlexionsspalte nomenFlexionsspalte) {
-        return np(artikelTyp, nomenFlexionsspalte, null);
+    public static Nominalphrase np(
+            final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+            final NomenFlexionsspalte nomenFlexionsspalte) {
+        return np(artikelworttypOderVorangestelltesGenitivattribut, nomenFlexionsspalte, null);
     }
 
     @NonNull
     public static Nominalphrase np(final NumerusGenus numerusGenus,
-                                   @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                    final Flexionsreihe flexionsreiheArtikellos) {
-        return np(numerusGenus, artikelTyp, flexionsreiheArtikellos, null);
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                flexionsreiheArtikellos, UNBELEBT);
+    }
+
+    @NonNull
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final Flexionsreihe flexionsreiheArtikellos,
+                                   final Belebtheit belebtheit) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                flexionsreiheArtikellos, belebtheit, null
+        );
     }
 
     @NonNull
@@ -198,9 +286,10 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final ArtikelwortFlexionsspalte.Typ artikeltyp,
-                                   @Nullable final AdjPhrOhneLeerstellen adjPhr,
-                                   final NomenFlexionsspalte nomenFlexionsspalte) {
+    public static Nominalphrase np(
+            @Nullable final IArtikelworttypOderVorangestelltesGenitivattribut artikeltyp,
+            @Nullable final AdjPhrOhneLeerstellen adjPhr,
+            final NomenFlexionsspalte nomenFlexionsspalte) {
         return np(artikeltyp, adjPhr, nomenFlexionsspalte, null);
     }
 
@@ -211,9 +300,10 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final ArtikelwortFlexionsspalte.Typ artikeltyp,
-                                   final NomenFlexionsspalte nomenFlexionsspalte,
-                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+    public static Nominalphrase np(
+            @Nullable final IArtikelworttypOderVorangestelltesGenitivattribut artikeltyp,
+            final NomenFlexionsspalte nomenFlexionsspalte,
+            @Nullable final IBezugsobjekt bezugsobjekt) {
         return np(artikeltyp, null, nomenFlexionsspalte, bezugsobjekt);
     }
 
@@ -241,10 +331,11 @@ public class Nominalphrase
     }
 
     @NonNull
-    public static Nominalphrase np(@Nullable final ArtikelwortFlexionsspalte.Typ artikeltyp,
-                                   @Nullable final AdjPhrOhneLeerstellen adjPhr,
-                                   final NomenFlexionsspalte nomenFlexionsspalte,
-                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+    public static Nominalphrase np(
+            @Nullable final IArtikelworttypOderVorangestelltesGenitivattribut artikeltyp,
+            @Nullable final AdjPhrOhneLeerstellen adjPhr,
+            final NomenFlexionsspalte nomenFlexionsspalte,
+            @Nullable final IBezugsobjekt bezugsobjekt) {
         // Beispiel für eine voll ausgebaute Nominalphrase:
         // "sogar ein neues Buch dieses Autors mit vielen Bildern, das uns erstaunt"
         // Die Elemente sind Artikel, Adjektivattribut, Kern (Nomen), Genitivattribut,
@@ -264,36 +355,45 @@ public class Nominalphrase
                 artikeltyp,
                 adjPhr,
                 nomenFlexionsspalte.getFlexionsreiheArtikellos(),
-                bezugsobjekt);
+                nomenFlexionsspalte.getBelebtheit(), bezugsobjekt
+        );
     }
 
 
     private static Nominalphrase np(final NumerusGenus numerusGenus,
-                                    @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                                    @Nullable
+                                    final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                                     final Flexionsreihe flexionsreiheArtikellos,
+                                    final Belebtheit belebtheit,
                                     @Nullable final IBezugsobjekt bezugsobjekt) {
-        return new Nominalphrase(numerusGenus, artikelTyp, null, flexionsreiheArtikellos,
-                bezugsobjekt);
+        return new Nominalphrase(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                null, flexionsreiheArtikellos,
+                belebtheit, bezugsobjekt);
     }
 
     private Nominalphrase(final NumerusGenus numerusGenus,
-                          @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                          @Nullable
+                          final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
-                          @Nullable final IBezugsobjekt bezugsobjekt) {
+                          final Belebtheit belebtheit, @Nullable final IBezugsobjekt bezugsobjekt) {
         this(null, null,
-                numerusGenus, artikelTyp, adjPhr, flexionsreiheArtikellos, bezugsobjekt);
+                numerusGenus, artikelworttypOderVorangestelltesGenitivattribut, adjPhr,
+                flexionsreiheArtikellos, belebtheit, bezugsobjekt
+        );
     }
 
     private Nominalphrase(final @Nullable String fokuspartikel,
                           final @Nullable Negationspartikelphrase negationspartikelphrase,
                           final NumerusGenus numerusGenus,
-                          @Nullable final ArtikelwortFlexionsspalte.Typ artikelTyp,
+                          @Nullable
+                          final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
                           @Nullable final AdjPhrOhneLeerstellen adjPhr,
                           final Flexionsreihe flexionsreiheArtikellos,
-                          @Nullable final IBezugsobjekt bezugsobjekt) {
-        super(fokuspartikel, negationspartikelphrase, numerusGenus, bezugsobjekt);
-        this.artikelTyp = artikelTyp;
+                          final Belebtheit belebtheit, @Nullable final IBezugsobjekt bezugsobjekt) {
+        super(fokuspartikel, negationspartikelphrase, numerusGenus, belebtheit, bezugsobjekt);
+        this.artikelworttypOderVorangestelltesGenitivattribut =
+                artikelworttypOderVorangestelltesGenitivattribut;
         this.adjPhr = adjPhr;
         this.flexionsreiheArtikellos = flexionsreiheArtikellos;
     }
@@ -309,22 +409,61 @@ public class Nominalphrase
         }
 
         return new Nominalphrase(fokuspartikel, getNegationspartikelphrase(),
-                getNumerusGenus(), artikelTyp,
+                getNumerusGenus(), artikelworttypOderVorangestelltesGenitivattribut,
                 adjPhr,
-                flexionsreiheArtikellos, getBezugsobjekt());
+                flexionsreiheArtikellos, getBelebtheit(), getBezugsobjekt());
+    }
+
+    public Nominalphrase mitBelebheit(final Belebtheit belebtheit) {
+        if (Objects.equals(getBelebtheit(), belebtheit)) {
+            return this;
+        }
+
+        return new Nominalphrase(getFokuspartikel(), getNegationspartikelphrase(),
+                getNumerusGenus(), artikelworttypOderVorangestelltesGenitivattribut,
+                adjPhr,
+                flexionsreiheArtikellos, belebtheit, getBezugsobjekt());
+    }
+
+    /**
+     * Gibt diese Nominalphrase zurück, allerdings mit diesem Artikelwort oder dieser
+     * Genitivphrase vorangestellt - <i>Achtung!</i>, eventuelle Adjektivphrasen
+     * werden zwar passend dekliniert, aber {@link #flexionsreiheArtikellos}
+     * wird unverändert übernommen! Das kann zu Fehlern führen,
+     * wenn {@link #flexionsreiheArtikellos} nicht nur ein übliches Nomen ist,
+     * sondern z.B. ein adjektivisch dekliniertes Nomen (setzt man bei "ein Studierender"
+     * ein definites Artikelwort ergibt sich *"der Studierender") oder
+     * wenn {@link #flexionsreiheArtikellos} in anderer Weise bereits deklinierte
+     * Elemente enthält (setzt man bei "ein silberner Mond gegen Abend"
+     * ein definites Artikelwort ergibt sich *"der silberner Mond gegen Abend").
+     */
+    @Nonnull
+    @CheckReturnValue
+    public Nominalphrase mitArtikelworttypOderVorangestelltemGenitivattribut(
+            final IArtikelworttypOderVorangestelltesGenitivattribut
+                    artikelworttypOderVorangestelltesGenitivattribut) {
+        if (Objects.equals(this.artikelworttypOderVorangestelltesGenitivattribut,
+                artikelworttypOderVorangestelltesGenitivattribut)) {
+            return this;
+        }
+
+        return new Nominalphrase(getFokuspartikel(), getNegationspartikelphrase(),
+                getNumerusGenus(), artikelworttypOderVorangestelltesGenitivattribut,
+                adjPhr,
+                flexionsreiheArtikellos, getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
-    public SubstantivischePhrase ohneNegationspartikelphrase() {
+    public Nominalphrase ohneNegationspartikelphrase() {
         return this;
     }
 
     @Override
-    public SubstantivischePhrase neg(final Negationspartikelphrase negationspartikelphrase,
-                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
-        @Nullable final ArtikelwortFlexionsspalte.Typ negativerArtikeltyp =
+    public Nominalphrase neg(final Negationspartikelphrase negationspartikelphrase,
+                             final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
+        @Nullable final IArtikelworttypOderVorangestelltesGenitivattribut negativerArtikeltyp =
                 moeglichstNegativIndefiniteWoerterVerwenden ?
-                        getNegativeForm(artikelTyp) : null;
+                        getNegativeForm(artikelworttypOderVorangestelltesGenitivattribut) : null;
 
         // Wir speichern die Negationspartikelphrase in jedem Fall - weil sie auch
         // Dinge wie "noch (nicht)" oder "(nicht) mehr" könnte.
@@ -334,19 +473,21 @@ public class Nominalphrase
                 negationspartikelphrase,
                 getNumerusGenus(), negativerArtikeltyp,
                 adjPhr,
-                flexionsreiheArtikellos, getBezugsobjekt());
+                flexionsreiheArtikellos, getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public boolean erlaubtVerschmelzungVonPraepositionMitArtikel() {
-        if (artikelTyp == null || getFokuspartikel() != null) {
+        if (artikelworttypOderVorangestelltesGenitivattribut == null
+                || getFokuspartikel() != null) {
             return false;
         }
 
         // FIXME Steht dabei ein Relativsatz, der etwas näher definiert ("zu dem Zahnarzt,
         //  der ihr gestern empfohlen wurde") ist die Verschmelzung verboten.
 
-        return artikelTyp.erlaubtVerschmelzungMitPraeposition();
+        return artikelworttypOderVorangestelltesGenitivattribut
+                .erlaubtVerschmelzungMitPraeposition();
     }
 
     @Override
@@ -362,13 +503,13 @@ public class Nominalphrase
     @Override
     @CheckReturnValue
     public Konstituentenfolge artikellosDatK() {
-        return imK(DAT, false);
+        return imK(DAT, true);
     }
 
     @Override
     @CheckReturnValue
     public Konstituentenfolge artikellosAkkK() {
-        return imK(AKK, false);
+        return imK(AKK, true);
     }
 
     @Override
@@ -383,20 +524,6 @@ public class Nominalphrase
         }
 
         if (kasusOderPraepositionalkasus instanceof PraepositionMitKasus) {
-            // FIXME Präpositionalkasus mit "es" sind problematisch, da "es"
-            //  nicht phrasenbildend ist.
-            //  - "in es" etc. wird vertreten durch "hinein", "auf es" durch "darauf" etc.
-            //  - Man bräuchte wohl eine neue Klasse adverbialer Angaben
-            //   wie DARAUF, DARUNTER, HINEIN etc., und jede
-            //   Präposition MIT AKKUSATIV müsste zwingend
-            //   eines dieser Adverbien referenzieren, das als
-            //   Ersatz verwendet wird.
-            //  - Dabei ändert sich vielleicht teilweise sogar die Zusammenschreibung?!
-            //  ("Du willst es hineinlegen" statt *"Du willst es in es legen"?!)
-            //  - Das scheint aber nicht bei belebten Dingen möglich zu sein:
-            //  ?"Das ist unser Kind. Wir haben viel Geld hineingesteckt"
-            //  ?"Das ist unser Kind. Wir haben einen Nachtisch dafür gekauft."
-
             final PraepositionMitKasus praepositionMitKasus =
                     (PraepositionMitKasus) kasusOderPraepositionalkasus;
 
@@ -410,17 +537,23 @@ public class Nominalphrase
 
     @Override
     public Konstituentenfolge imK(final Kasus kasus) {
-        return imK(kasus, true);
+        return imK(kasus, false);
     }
 
-    private Konstituentenfolge imK(final Kasus kasus, final boolean mitArtikel) {
-        @Nullable final ArtikelwortFlexionsspalte artikelwortFlexionsspalte = getArtikel();
+    private Konstituentenfolge imK(final Kasus kasus, final boolean artikelWeglassen) {
+        @Nullable final IFlexionsspalteArtikelwortOderVorangestelltesGenitivattribut
+                flexionsspalteArtikelwortOderVorangestelltesGenitivattribut =
+                IArtikelworttypOderVorangestelltesGenitivattribut
+                        .vorNumerusGenus(artikelworttypOderVorangestelltesGenitivattribut,
+                                getNumerusGenus());
 
-        final boolean artikelwortTraegtKasusendung =
-                !mitArtikel || ArtikelwortFlexionsspalte
-                        .traegtKasusendung(artikelwortFlexionsspalte, kasus);
-        // wenn kein Artikel erzeugt werden soll, steht etwas wie "zum" oder
-        // "zur" davor, dass eine Kasusendung trägt
+        final boolean artikelwortOderGenitvattributTraegtKasusendung =
+                artikelWeglassen || IFlexionsspalteArtikelwortOderVorangestelltesGenitivattribut
+                        .traegtKasusendungFuerNominalphrasenkern(
+                                flexionsspalteArtikelwortOderVorangestelltesGenitivattribut, kasus);
+        // "artikelWeglassen" bedeutet, dass etwas wie "zum" oder "zur" davor steht, dass eine
+        // Kasusendung trägt. (Ein vorangestelltes Genitivattribut gilt nicht als
+        // "artikelWeglassen"!)
 
         @Nullable final Satz attributivAnteilRelativsatz = getAttributivAnteilRelativsatz(kasus);
 
@@ -429,7 +562,7 @@ public class Nominalphrase
 
         @Nullable final String anteilNegationspartikelphraseVorArtikelUndNominalphrasenkern =
                 getNegationspartikelphrase() != null ?
-                        (isNegativ(artikelTyp) ?
+                        (isNegativ(artikelworttypOderVorangestelltesGenitivattribut) ?
                                 getNegationspartikelphrase().getVorangestellteWoerter() :
                                 // "länger( kein ... mehr)"
                                 getNegationspartikelphrase().getDescription()) :
@@ -437,7 +570,8 @@ public class Nominalphrase
                         null;
 
         @Nullable final String anteilNegationspartikelphraseNachNominalphrasenkern =
-                (getNegationspartikelphrase() != null && isNegativ(artikelTyp)) ?
+                (getNegationspartikelphrase() != null && isNegativ(
+                        artikelworttypOderVorangestelltesGenitivattribut)) ?
                         getNegationspartikelphrase().getNachgestellteWoerter() :
                         // "(länger kein ... )mehr"
                         null;
@@ -446,15 +580,21 @@ public class Nominalphrase
                 // Eine Konstituentenfolge mit nur einer Konstituente
                 joinToKonstituentenfolge(
                         getFokuspartikel(), // "sogar"
-                        !isNegativ(artikelTyp) ? getNegationspartikelphrase() : null,
+                        !isNegativ(artikelworttypOderVorangestelltesGenitivattribut) ?
+                                getNegationspartikelphrase() : null,
                         anteilNegationspartikelphraseVorArtikelUndNominalphrasenkern,
                         // "länger" (vor "kein") / "länger nicht mehr" (nicht vor "kein")
-                        mitArtikel && artikelwortFlexionsspalte != null ?
-                                artikelwortFlexionsspalte.imStr(kasus) : null,
+                        !artikelWeglassen
+                                && flexionsspalteArtikelwortOderVorangestelltesGenitivattribut
+                                != null ?
+                                flexionsspalteArtikelwortOderVorangestelltesGenitivattribut
+                                        .imStr(kasus) : null,
                         // "die" / "eine" / "keine"
                         adjPhr != null ?
-                                adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(), kasus,
-                                        artikelwortTraegtKasusendung) :
+                                adjPhr.getAttributivAnteilAdjektivattribut(getNumerusGenus(),
+                                        getBelebtheit(),
+                                        kasus,
+                                        artikelwortOderGenitvattributTraegtKasusendung) :
                                 null, // "junge"
                         flexionsreiheArtikellos.im(kasus), // "Frau"
                         anteilNegationspartikelphraseNachNominalphrasenkern, // "mehr" (nach "kein")
@@ -473,7 +613,9 @@ public class Nominalphrase
                         // Das Ganze soll eine Konstituente sein, die als Bezugsobejekt
                         // verstanden werden kann
                         .withBezugsobjektUndKannVerstandenWerdenAls(
-                                getBezugsobjekt(), getNumerusGenus()));
+                                getBezugsobjekt(),
+                                getBezugsobjekt() != null ? getBelebtheit() : null,
+                                getNumerusGenus()));
 
         // TODO Vermeiden von "Du / ich (Personalpronomen), glücklich Rapunzel zu sehen, tust dies
         //  und das" - besser "Glücklich, Rapunzel zu sehen, tust du ...".
@@ -529,7 +671,7 @@ public class Nominalphrase
             if (praedikativumFuerRelativsatz != null) {
                 // "die"
                 final Relativpronomen relativpronomen = Relativpronomen
-                        .get(getPerson(), getNumerusGenus(), getBezugsobjekt());
+                        .get(getPerson(), getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
 
                 // "die gespannt ist, was wer zu berichten hat"
                 attributivAnteilRelativsatz =
@@ -565,29 +707,25 @@ public class Nominalphrase
         return akkK().joinToSingleKonstituente().toTextOhneKontext();
     }
 
-    @Nullable
-    private ArtikelwortFlexionsspalte getArtikel() {
-        return ArtikelwortFlexionsspalte.get(artikelTyp, getNumerusGenus());
-    }
-
     @Override
     public Personalpronomen persPron() {
-        return Personalpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
+        return Personalpronomen.get(P3, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
     public Reflexivpronomen reflPron() {
-        return Reflexivpronomen.get(P3, getNumerusGenus().getNumerus());
+        return Reflexivpronomen.get(
+                new PraedRegMerkmale(P3, getNumerusGenus().getNumerus(), getBelebtheit()));
     }
 
     @Override
-    public ArtikelwortFlexionsspalte.Typ possArt() {
+    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
         return ArtikelwortFlexionsspalte.getPossessiv(P3, getNumerusGenus());
     }
 
     @Override
     public Relativpronomen relPron() {
-        return Relativpronomen.get(P3, getNumerusGenus(), getBezugsobjekt());
+        return Relativpronomen.get(P3, getNumerusGenus(), getBelebtheit(), getBezugsobjekt());
     }
 
     @Override
@@ -612,13 +750,16 @@ public class Nominalphrase
             return false;
         }
         final Nominalphrase that = (Nominalphrase) o;
-        return artikelTyp == that.artikelTyp &&
+        return artikelworttypOderVorangestelltesGenitivattribut
+                == that.artikelworttypOderVorangestelltesGenitivattribut &&
                 Objects.equals(adjPhr, that.adjPhr) &&
                 flexionsreiheArtikellos.equals(that.flexionsreiheArtikellos);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), artikelTyp, adjPhr, flexionsreiheArtikellos);
+        return Objects
+                .hash(super.hashCode(), artikelworttypOderVorangestelltesGenitivattribut, adjPhr,
+                        flexionsreiheArtikellos);
     }
 }

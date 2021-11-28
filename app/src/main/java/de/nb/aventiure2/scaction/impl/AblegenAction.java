@@ -58,9 +58,7 @@ import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
  * oder auf / in einen Gegenstand, der sich (direkt oder indirekt) in dem Raum befindet.
  */
 @SuppressWarnings("unchecked")
-public class AblegenAction
-        <GO extends IDescribableGO & ILocatableGO>
-        extends AbstractScAction {
+public class AblegenAction<GO extends IDescribableGO & ILocatableGO> extends AbstractScAction {
     private final ILocationGO location;
 
     @NonNull
@@ -126,7 +124,7 @@ public class AblegenAction
         return joinToKonstituentenfolge(
                 SENTENCE,
                 getPraedikat()
-                        .mit(getDescription(gameObject, true))
+                        .mit(getDescription(textContext, gameObject, true))
                         .mitAdvAngabe(getWohinDetail())
                         .getInfinitiv(P2, SG))
                 .joinToString();
@@ -227,7 +225,7 @@ public class AblegenAction
             return;
         }
 
-        final SubstantivischePhrase anaph = anaph(gameObject, true);
+        final SubstantivischePhrase anaph = anaph(textContext, gameObject, true);
 
         n.narrate(
                 du("setzt",
@@ -289,7 +287,7 @@ public class AblegenAction
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             @Nullable final Personalpronomen gameObjektPersPron =
-                    n.getAnaphPersPronWennMgl(gameObject);
+                    n.getAnaphPersPronWennMgl(gameObject.getId());
 
             if (gameObjektPersPron != null) {
                 if (isDefinitivDiskontinuitaet()) {
@@ -343,7 +341,7 @@ public class AblegenAction
         if (isDefinitivDiskontinuitaet()) {
             n.narrate(
                     du(PARAGRAPH, "legst",
-                            getDescription(gameObject, false)
+                            getDescription(textContext, gameObject, false)
                                     .akkK(),
                             (wohinDetail != null ? " zurück" : " wieder hin"))
                             .timed(secs(5))
@@ -354,7 +352,7 @@ public class AblegenAction
 
         n.narrate(
                 du(PARAGRAPH, "legst",
-                        getDescription(gameObject, false).akkK(),
+                        getDescription(textContext, gameObject, false).akkK(),
                         (wohinDetail == null ? k("hin") : wohinDetail.getDescription(P2, SG)))
                         .timed(secs(3))
                         .undWartest()

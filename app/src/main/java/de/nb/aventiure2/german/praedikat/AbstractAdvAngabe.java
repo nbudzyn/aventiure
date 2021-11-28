@@ -5,8 +5,7 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.adjektiv.Adjektiv;
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Numerus;
-import de.nb.aventiure2.german.base.Person;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praepositionalphrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
@@ -48,21 +47,20 @@ public abstract class AbstractAdvAngabe {
 
     @CheckReturnValue
     public Konstituente getDescription(final SubstantivischePhrase subjekt) {
-        return getDescription(subjekt.getPerson(), subjekt.getNumerus());
+        return getDescription(subjekt.getPraedRegMerkmale());
     }
 
     @CheckReturnValue
-    public Konstituente getDescription(final Person personSubjekt, final Numerus numerusSubjekt) {
+    public Konstituente getDescription(final PraedRegMerkmale praedRegMerkmale) {
         // Anscheinend muss die gesamte adverbiale Phrase kontinuierlich bleiben.
         // Dann können wir sie ohne Verlust zu einer einzigen Konstituente zusammenfassen.
-        return joinToKonstituente(adjektivphrase, personSubjekt, numerusSubjekt);
+        return joinToKonstituente(adjektivphrase, praedRegMerkmale);
     }
 
     @CheckReturnValue
     private static Konstituente joinToKonstituente(final AdjPhrOhneLeerstellen adjektivphrase,
-                                                   final Person personSubjekt,
-                                                   final Numerus numerusSubjekt) {
-        return adjektivphrase.getPraedikativOderAdverbial(personSubjekt, numerusSubjekt)
+                                                   final PraedRegMerkmale praedRegMerkmale) {
+        return adjektivphrase.getPraedikativOderAdverbial(praedRegMerkmale)
                 .joinToSingleKonstituente()
                 .withVorkommaNoetigMin(
                         // So eine adverbiale Angabe muss offenbar durch Komma

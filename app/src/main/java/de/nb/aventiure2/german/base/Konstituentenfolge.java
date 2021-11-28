@@ -1,5 +1,22 @@
 package de.nb.aventiure2.german.base;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
+import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
+import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
+import static de.nb.aventiure2.german.base.NumerusGenus.M;
+import static de.nb.aventiure2.german.base.NumerusGenus.N;
+import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
+import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
+import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
+import static de.nb.aventiure2.german.base.StructuralElement.WORD;
+import static de.nb.aventiure2.german.string.GermanStringUtil.appendBreak;
+import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Pair;
@@ -22,23 +39,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 import de.nb.aventiure2.german.string.NoLetterException;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
-import static de.nb.aventiure2.german.base.GermanUtil.endeDecktKommaAb;
-import static de.nb.aventiure2.german.base.GermanUtil.spaceNeeded;
-import static de.nb.aventiure2.german.base.NumerusGenus.F;
-import static de.nb.aventiure2.german.base.NumerusGenus.M;
-import static de.nb.aventiure2.german.base.NumerusGenus.N;
-import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
-import static de.nb.aventiure2.german.base.StructuralElement.CHAPTER;
-import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
-import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
-import static de.nb.aventiure2.german.base.StructuralElement.WORD;
-import static de.nb.aventiure2.german.string.GermanStringUtil.appendBreak;
-import static de.nb.aventiure2.german.string.GermanStringUtil.beginnStehtCapitalizeNichtImWeg;
-import static java.util.Arrays.asList;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Eine Folge von {@link Konstituente}n.
@@ -809,7 +809,7 @@ public class Konstituentenfolge
     }
 
     @NonNull
-    public IKonstituenteOrStructuralElement buildKonstituenteOrStructuralElement(
+    private IKonstituenteOrStructuralElement buildKonstituenteOrStructuralElement(
             final String text,
             final boolean vorkommaNoetig,
             final boolean vordoppelpunktNoetig,
@@ -845,6 +845,7 @@ public class Konstituentenfolge
                 vordoppelpunktNoetig, startsNew, woertlicheRedeNochOffen,
                 kommaStehtAus,
                 brreak, resKannAlsBezugsobjektVerstandenWerdenFuer,
+                resPhorikKandidat != null ? resPhorikKandidat.getBelebtheit() : null,
                 resPhorikKandidat != null ? resPhorikKandidat.getBezugsobjekt() : null
         );
     }
