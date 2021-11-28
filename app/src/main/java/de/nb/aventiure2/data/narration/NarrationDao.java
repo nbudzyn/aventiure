@@ -290,7 +290,7 @@ public abstract class NarrationDao {
      * sie gewählt wird. (Die Alternative sollte also eher nicht erneut gewählt werden, um
      * Wiederholungen zu vermeiden.)
      *
-     * @param alternatives Der SemSatz von Alternativen
+     * @param alternatives Der Satz von Alternativen
      */
     private ConsumedAlternatives loadConsumed(
             final ImmutableCollection<? extends TextDescription> alternatives) {

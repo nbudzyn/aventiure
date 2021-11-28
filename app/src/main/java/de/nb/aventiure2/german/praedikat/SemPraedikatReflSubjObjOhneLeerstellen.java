@@ -187,7 +187,7 @@ class SemPraedikatReflSubjObjOhneLeerstellen
 
         /*
          * "es" allein darf es nicht im Vorfeld stehen, wenn es ein Objekt ist.
-         * (Eisenberg Der SemSatz 5.4.2)
+         * (Eisenberg Der Satz 5.4.2)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, objektKasusOderPraepositionalkasus)) {
             return null;

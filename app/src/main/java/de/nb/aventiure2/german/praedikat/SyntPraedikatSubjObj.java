@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -16,9 +15,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 
 /**
@@ -76,17 +73,6 @@ class SyntPraedikatSubjObj extends AbstractAngabenfaehigesSyntPraedikat {
                 negationspartikelphrase, advAngabeSkopusVerbAllg, advAngabeSkopusVerbWohinWoher);
         this.kasusOderPraepositionalkasus = kasusOderPraepositionalkasus;
         this.objekt = objekt;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (objekt instanceof Relativpronomen) {
-            return objekt.imK(kasusOderPraepositionalkasus);
-        }
-
-        return null;
     }
 
     @Override

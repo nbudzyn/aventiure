@@ -11,7 +11,7 @@ import de.nb.aventiure2.german.base.Kasus;
  * <p>
  * "Die vom Subjekt bezeichnete Person will oder will nicht die Handlung
  * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
- * Der SemSatz, S. 356 (Kapitel 11.2) - wobei es sich um ein reflexives Verb handelt.
+ * Der Satz, S. 356 (Kapitel 11.2) - wobei es sich um ein reflexives Verb handelt.
  *
  * @see IntentionalesVerb
  */

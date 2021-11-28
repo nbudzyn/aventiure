@@ -42,7 +42,7 @@ import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
  * <p>
  * "Die vom Subjekt bezeichnete Person will oder will nicht die Handlung
  * ausführen, die im Komplement genannt ist", siehe Peter Eisenberg,
- * Der SemSatz, S. 356 (Kapitel 11.2)
+ * Der Satz, S. 356 (Kapitel 11.2)
  *
  * @see SemPraedikatIntentionalesVerbOhneLeerstellen
  */

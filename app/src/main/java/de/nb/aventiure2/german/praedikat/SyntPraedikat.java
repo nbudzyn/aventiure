@@ -1,10 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
-import javax.annotation.CheckReturnValue;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 
 /**
  * Ein eigentliches ("syntaktisches") Prädikat, in dem alle Diskursreferenten (Personen, Objekte
@@ -14,7 +10,4 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
  */
 @Immutable
 interface SyntPraedikat {
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getRelativpronomen();
 }

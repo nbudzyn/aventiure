@@ -2466,7 +2466,7 @@ public class WetterData {
     // IDEA Wetterbeschreibungen als "Ortsangaben"
     //  "du liegst in der Sonne ausgestreckt"
 
-    // IDEA Wetterbeschreibung als "Relativsatz" (im weiteren Sinne):
+    // IDEA Wetterbeschreibung als "RelativSemSatz" (im weiteren Sinne):
     //  "und als du erwachst und wieder zu dir selber kommst, bist
     //   du auf einer schönen Wiese, wo die Sonne scheint"
 

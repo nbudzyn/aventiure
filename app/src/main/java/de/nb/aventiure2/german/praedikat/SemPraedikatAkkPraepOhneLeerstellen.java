@@ -184,7 +184,7 @@ public class SemPraedikatAkkPraepOhneLeerstellen
 
         /*
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
-         * (Eisenberg Der SemSatz 5.4.2)
+         * (Eisenberg Der Satz 5.4.2)
          */
         if (Personalpronomen.isPersonalpronomenEs(akk, AKK)) {
             return null;

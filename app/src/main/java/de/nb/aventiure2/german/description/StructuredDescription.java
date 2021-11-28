@@ -254,7 +254,7 @@ public class StructuredDescription extends AbstractFlexibleDescription<Structure
 
     @Override
     public StructuredDescription komma(final boolean kommaStehtAus) {
-        // Bewirkt nichts. Der SemSatz weiß schon selbst, wann ein Komma nötig ist.
+        // Bewirkt nichts. Der Satz weiß schon selbst, wann ein Komma nötig ist.
         // (Aber die Methode erleichert das Handling, sodass z.B. die
         // TimedDescription problemlos komma() implementieren kann etc.)
         return this;

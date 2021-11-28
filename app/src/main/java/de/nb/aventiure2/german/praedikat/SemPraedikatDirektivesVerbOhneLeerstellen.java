@@ -43,7 +43,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * <p>
  * Adverbiale Angaben ("aus einer Laune heraus") können immer noch eingefügt werden.
  * <p>
- * Zu direktiven Verben siehe Peter Eisenberg, Der SemSatz, S. 357 (Kapitel 11.2)
+ * Zu direktiven Verben siehe Peter Eisenberg, Der Satz, S. 357 (Kapitel 11.2)
  */
 public class SemPraedikatDirektivesVerbOhneLeerstellen
         extends AbstractAngabenfaehigesSemPraedikatOhneLeerstellen {
@@ -206,7 +206,7 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
 
         /*
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
-         * (Eisenberg Der SemSatz 5.4.2)
+         * (Eisenberg Der Satz 5.4.2)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, kasus)) {
             return null;

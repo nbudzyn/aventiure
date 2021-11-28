@@ -12,7 +12,7 @@ import de.nb.aventiure2.german.base.Kasus;
 /**
  * Ein Verb wie bitten, anregen, warnen, zwingen etc.
  * <p>
- * Zu direktiven Verben siehe Peter Eisenberg, Der SemSatz, S. 357 (Kapitel 11.2)
+ * Zu direktiven Verben siehe Peter Eisenberg, Der Satz, S. 357 (Kapitel 11.2)
  */
 public enum DirektivesVerb implements VerbMitValenz {
     // "Rapunzel bitten, die Haare herunterzulassen"

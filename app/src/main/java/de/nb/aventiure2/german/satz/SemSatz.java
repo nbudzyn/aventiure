@@ -106,6 +106,21 @@ public interface SemSatz
     Konstituentenfolge getIndirekteFrage();
 
     /**
+     * Gibt einen RelativSemSatz zurück: Etwas wie
+     * <ul>
+     * <li>das du zu berichten hast
+     * <li>der etwas zu berichten hat
+     * <li>der was zu berichten hat
+     * <li>mit dem sie sich treffen wird
+     * <li>dessen Heldentaten wer zu berichten hat
+     * <li>das zu erzählen du beginnen wirst
+     * <li>das du zu erzählen beginnen wirst
+     * <li>der wie geholfen hat
+     * </ul>
+     */
+    Konstituentenfolge getRelativsatz();
+
+    /**
      * Gibt den SemSatz als Verbzweitsatz aus, bei dem nach Möglichkeit ein "spezielles"
      * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "am Abend hast du etwas zu berichten"
      */

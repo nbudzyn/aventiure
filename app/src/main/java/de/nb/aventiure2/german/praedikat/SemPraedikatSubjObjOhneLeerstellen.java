@@ -27,6 +27,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
+import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -239,7 +240,7 @@ public class SemPraedikatSubjObjOhneLeerstellen
 
         /*
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
-         * (Eisenberg Der SemSatz 5.4.2)
+         * (Eisenberg Der Satz 5.4.2)
          */
         if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
             return null;
@@ -337,6 +338,17 @@ public class SemPraedikatSubjObjOhneLeerstellen
         }
 
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
+    }
+    
+    @Nullable
+    @Override
+    @CheckReturnValue
+    public Konstituentenfolge getRelativpronomen() {
+        if (objekt instanceof Relativpronomen) {
+            return objekt.imK(kasusOderPraepositionalkasus);
+        }
+
+        return null;
     }
 
     @Override

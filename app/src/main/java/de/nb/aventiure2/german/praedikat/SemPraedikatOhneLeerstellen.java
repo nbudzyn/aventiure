@@ -151,6 +151,10 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
     @CheckReturnValue
     Konstituentenfolge getErstesInterrogativwort();
 
+    @Nullable
+    @CheckReturnValue
+    Konstituentenfolge getRelativpronomen();
+
     // FIXME -> SubstantivischPhrasierbar!
     default EinzelnerSemSatz alsSatzMitSubjekt(@Nullable final SubstantivischePhrase subjekt) {
         return alsSatzMitSubjekt(null, subjekt);
@@ -341,7 +345,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * Methode berücksichtigt werden müssen:
      * <ul>
      * <li> "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
-     * (Eisenberg Der SemSatz 5.4.2)
+     * (Eisenberg Der Satz 5.4.2)
      * <li>Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
      * *Sich steigern die Verluste <-> Die Verluste steigern sich.
      * <li>Der ethische Dativ ist im Vorfeld verboten:
@@ -407,7 +411,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * Methode berücksichtigt werden müssen:
      * <ul>
      * <li> "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
-     * (Eisenberg Der SemSatz 5.4.2)
+     * (Eisenberg Der Satz 5.4.2)
      * <li>Auch obligatorisch Reflexsivpronomen sind im Vorfeld unmöglich:
      * *Sich steigern die Verluste <-> Die Verluste steigern sich.
      * <li>Der ethische Dativ ist im Vorfeld verboten:
