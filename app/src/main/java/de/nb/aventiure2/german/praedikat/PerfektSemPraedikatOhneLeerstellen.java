@@ -193,6 +193,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
                         hilfsverb -> hilfsverb.getPraesensOhnePartikel(
                                 praedRegMerkmale.getPerson(),
                                 praedRegMerkmale.getNumerus())),
+                // FIXME Verbletzt o.Ä. zunächste einmalig erzeugen!
                 getNachfeld(praedRegMerkmale));
     }
 
@@ -253,6 +254,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         return Konstituentenfolge.joinToKonstituentenfolge(
                 haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(praedRegMerkmale,
                         Verb::getInfinitiv),
+                // FIXME Infinitiv zunächst einmalig erzeugen!
                 getNachfeld(praedRegMerkmale));
     }
 
@@ -272,6 +274,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         return Konstituentenfolge.joinToKonstituentenfolge(
                 haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(praedRegMerkmale,
                         Verb::getZuInfinitiv),
+                // FIXME ZuInfinitiv zunächst einmalig erzeugen!
                 getNachfeld(praedRegMerkmale));
     }
 

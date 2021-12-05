@@ -135,7 +135,7 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
-    public Konstituentenfolge getInfinitiv(final ITextContext textContext) {
+    public Infinitiv getInfinitiv(final ITextContext textContext) {
         return getInfinitiv(textContext, EXPLETIVES_ES);
     }
 
@@ -148,8 +148,8 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return new Infinitiv(verb);
     }
 
-    public ZuInfinitiv getZuInfinitiv() {
-        return getZuInfinitiv(EXPLETIVES_ES);
+    public ZuInfinitiv getZuInfinitiv(final ITextContext textContext) {
+        return getZuInfinitiv(textContext, EXPLETIVES_ES);
     }
 
     @Override
