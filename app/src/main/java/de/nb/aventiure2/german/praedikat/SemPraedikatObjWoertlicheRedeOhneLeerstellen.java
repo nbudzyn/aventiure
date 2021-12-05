@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
@@ -29,7 +28,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -57,7 +56,7 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
      * Das Objekt
      */
     @Komplement
-    private final SubstantivischePhrase objekt;
+    private final SubstantivischPhrasierbar objekt;
 
     /**
      * Die wörtliche Rede
@@ -70,7 +69,7 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     SemPraedikatObjWoertlicheRedeOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final WoertlicheRede woertlicheRede) {
         this(verb, kasusOderPraepositionalkasus, objekt, woertlicheRede,
                 ImmutableList.of(), null, null, null, null);
@@ -79,7 +78,7 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     private SemPraedikatObjWoertlicheRedeOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final WoertlicheRede woertlicheRede,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
@@ -231,58 +230,40 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     }
 
     @Override
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                objekt.imK(kasusOderPraepositionalkasus), // "der Hexe"
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "aus einer Laune heraus"
-                kf(getModalpartikeln()),  // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // ("mitten ins Gesicht" - sofern überhaupt möglich)
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == DAT) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == AKK) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return kasusOderPraepositionalkasus == AKK;
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                k(woertlicheRede.getDescription(),
-                        true,
-                        true)
-                        .withVordoppelpunktNoetig()); // "[: ]„Kommt alle her[.“]"
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
+
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                objektPhrase.imK(kasusOderPraepositionalkasus), // "der Hexe"
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "aus einer Laune heraus"
+                                kf(getModalpartikeln()),  // "mal eben"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // ("mitten ins Gesicht" - sofern überhaupt möglich)
+                        ),
+                        objektPhrase, kasusOderPraepositionalkasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                k(woertlicheRede.getDescription(),
+                                        true,
+                                        true)
+                                        .withVordoppelpunktNoetig()))); // "[: ]„Kommt alle her[.“]"
 
         //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den
         //  -doppelpunkt-richtig-setzen/

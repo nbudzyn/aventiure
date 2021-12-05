@@ -251,6 +251,7 @@ public class Verb {
     PartizipIIPhrase getPartizipIIPhrase() {
         return new PartizipIIPhrase(
                 new Konstituentenfolge(k(getPartizipII())),
+                Nachfeld.EMPTY,
                 perfektbildung);
     }
 

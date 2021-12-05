@@ -285,7 +285,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    default Konstituentenfolge getInfinitiv(
+    default Infinitiv getInfinitiv(
             final ITextContext textContext, final SubstantivischePhrase substantivischePhrase) {
         return getInfinitiv(textContext, substantivischePhrase.getPraedRegMerkmale());
     }
@@ -299,7 +299,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich möchte] die Kugel an mich nehmen"
      * (nicht *"[Ich möchte] die Kugel an sich nehmen")
      */
-    Konstituentenfolge getInfinitiv(
+    Infinitiv getInfinitiv(
             final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     /**
@@ -312,7 +312,9 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    default Konstituentenfolge getZuInfinitiv(final SubstantivischePhrase substantivischePhrase) {
+    default ZuInfinitiv getZuInfinitiv(
+            final ITextContext textContext,
+            final SubstantivischePhrase substantivischePhrase) {
         return getZuInfinitiv(textContext, substantivischePhrase.getPraedRegMerkmale());
     }
 
@@ -325,7 +327,7 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
      */
-    Konstituentenfolge getZuInfinitiv(
+    ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     default Konstituente getSpeziellesVorfeldSehrErwuenscht(
@@ -471,7 +473,4 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      */
     @Nullable
     Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(PraedRegMerkmale praedRegMerkmale);
-
-    @Nullable
-    Konstituentenfolge getNachfeld(PraedRegMerkmale praedRegMerkmale);
 }

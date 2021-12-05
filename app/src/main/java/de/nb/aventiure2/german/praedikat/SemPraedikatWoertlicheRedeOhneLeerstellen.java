@@ -23,7 +23,6 @@ import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 import de.nb.aventiure2.german.description.ITextContext;
 
@@ -176,49 +175,36 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
     }
 
     @Override
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "aus einer Laune heraus"
-                kf(getModalpartikeln()),  // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // "in ein Kissen"
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                k(woertlicheRede.getDescription(),
-                        true,
-                        true)
-                        .withVordoppelpunktNoetig()); // "[: ]„Kommt alle her[.“]"
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "aus einer Laune heraus"
+                                kf(getModalpartikeln()),  // "mal eben"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // "in ein Kissen"
+                        )),
+                new Nachfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                k(woertlicheRede.getDescription(),
+                                        true,
+                                        true)
+                                        .withVordoppelpunktNoetig()))); // "[: ]„Kommt alle her[.“]"
 
         //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den
         //  -doppelpunkt-richtig-setzen/
@@ -252,9 +238,10 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
         return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
     }
 
+    @Override
     @Nullable
     @CheckReturnValue
-    public static Konstituentenfolge getRelativpronomen() {
+    public Konstituentenfolge getRelativpronomen() {
         return null;
     }
 

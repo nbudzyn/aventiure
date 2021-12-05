@@ -17,7 +17,6 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -128,47 +127,33 @@ public class SemPraedikatSubOhneLeerstellen
     }
 
     @Override
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+    public boolean hatAkkusativobjekt() {
+        return false;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
 // "aus einer Laune heraus"
-                kf(getModalpartikeln()), // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // "in den Wald"
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+                                kf(getModalpartikeln()), // "mal eben"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // "in den Wald"
+                        )),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Nullable

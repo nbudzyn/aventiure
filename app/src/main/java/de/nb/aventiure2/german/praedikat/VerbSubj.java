@@ -1,6 +1,5 @@
 package de.nb.aventiure2.german.praedikat;
 
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.Perfektbildung.HABEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
@@ -26,7 +25,7 @@ import de.nb.aventiure2.german.description.ITextContext;
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
-public enum VerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstellen {
+public enum VerbSubj implements VerbOhneLeerstellen, SemPraedikatOhneLeerstellen {
     // Verben ohne Partikel
     BEGINNEN("beginnen",
             "beginne", "beginnst", "beginnt", "beginnt",
@@ -234,18 +233,17 @@ public enum VerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstel
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
+        return new Infinitiv(verb);
     }
 
     @Override
-    @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return new Konstituentenfolge(k(verb.getZuInfinitiv()));
+        return new ZuInfinitiv(verb);
     }
 
     @Nullable
@@ -286,9 +284,9 @@ public enum VerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstel
         return new SemPraedikatSubOhneLeerstellen(verb);
     }
 
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
+    public TopolFelder getTopolFelder(final ITextContext textContext,
+                                      final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale);
     }
 
     @Override

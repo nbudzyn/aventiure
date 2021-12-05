@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
@@ -22,7 +21,6 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Interrogativpronomen;
-import de.nb.aventiure2.german.base.Kasus;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
@@ -188,6 +186,9 @@ public class SemPraedikatSubjObjOhneLeerstellen
         return true;
     }
 
+    // FIXME Vielleicht eine "Containerklasse" bauen, die Vorfeld, Nachfeld etc.
+    //  enthält - so wie sie zusammenpassen?! Dann wäre speziellesVorfeldSehrErwuenscht
+    //  vielleicht nur ein boolean-Parameter?!
     @Nullable
     @Override
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
@@ -248,10 +249,13 @@ public class SemPraedikatSubjObjOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Mittelfeld getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+    public boolean hatAkkusativobjekt() {
+        return kasusOderPraepositionalkasus == AKK;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
         final SubstantivischePhrase syntObjekt = objekt.alsSubstPhrase(textContext);
         // FIXME Eigentlich kann sich der Kontext vor der Auswahl, welches syntaktische
         //  Objekt geeignet ist, verändert haben! Besser sollte
@@ -263,51 +267,31 @@ public class SemPraedikatSubjObjOhneLeerstellen
         //  unbetonten Pronomen sind (oder man macht das anders mit den unbetonten
         //  Pronomen...)
 
-        return new Mittelfeld(
-                joinToKonstituentenfolge(
-                        getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+        return new TopolFelder(
+                new Mittelfeld(
+                        joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
 // "aus einer Laune heraus"
-                        getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
-                        // "besser doch (nicht)"
-                        getNegationspartikel(), // "nicht"
-                        syntObjekt.imK(kasusOderPraepositionalkasus),
-                        getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
-                        // "besser doch"
-                        getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale),
-                        // "erneut"
-                        getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale))
-                // "auf den Tisch"
-                ,
-                filterAkk(syntObjekt),
-                null,
-                filterDat(syntObjekt));
-    }
-
-    private SubstantivischePhrase filterAkk(final SubstantivischePhrase syntObjekt) {
-        return filterKasus(syntObjekt, AKK);
-    }
-
-    private SubstantivischePhrase filterDat(final SubstantivischePhrase syntObjekt) {
-        return filterKasus(syntObjekt, DAT);
-    }
-
-    @Nullable
-    private SubstantivischePhrase filterKasus(final SubstantivischePhrase syntObjekt,
-                                              final Kasus kasus) {
-        if (kasusOderPraepositionalkasus == kasus) {
-            return syntObjekt;
-        }
-
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+                                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                                // "besser doch (nicht)"
+                                getNegationspartikel(), // "nicht"
+                                syntObjekt.imK(kasusOderPraepositionalkasus),
+                                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                                // "besser doch"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // "auf den Tisch"
+                        ),
+                        syntObjekt, kasusOderPraepositionalkasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

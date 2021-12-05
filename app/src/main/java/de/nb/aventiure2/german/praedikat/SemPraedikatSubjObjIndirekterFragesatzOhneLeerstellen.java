@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 import com.google.common.collect.ImmutableList;
@@ -26,7 +25,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.SemSatz;
@@ -52,7 +51,7 @@ public class SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen
      */
     @Komplement
     @Nonnull
-    private final SubstantivischePhrase objekt;
+    private final SubstantivischPhrasierbar objekt;
 
     /**
      * "(...versucht) wie sie sich fühlt"
@@ -65,7 +64,7 @@ public class SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final SemSatz indirekterFragesatz) {
         this(verb, kasusOderPraepositionalkasus, objekt,
                 ImmutableList.of(),
@@ -76,7 +75,7 @@ public class SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     private SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus kasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
@@ -200,57 +199,40 @@ public class SemPraedikatSubjObjIndirekterFragesatzOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                objekt.imK(kasusOderPraepositionalkasus), // "die Hexe"
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "aus einer Laune heraus"
-                kf(getModalpartikeln()),  // "mal eben"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // ("mitten ins Gesicht" - sofern überhaupt möglich)
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == DAT) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasusOderPraepositionalkasus == AKK) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return kasusOderPraepositionalkasus == AKK;
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                // "[,] ob du etwas zu berichten hast[, ]"
-                // "[,] was du zu berichten hast[, ]"
-                Konstituentenfolge.schliesseInKommaEin(
-                        indirekterFragesatz.getIndirekteFrage()));
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
+
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                objektPhrase.imK(kasusOderPraepositionalkasus), // "die Hexe"
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "aus einer Laune heraus"
+                                kf(getModalpartikeln()),  // "mal eben"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // ("mitten ins Gesicht" - sofern überhaupt möglich)
+                        ),
+                        objektPhrase, kasusOderPraepositionalkasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                // "[,] ob du etwas zu berichten hast[, ]"
+                                // "[,] was du zu berichten hast[, ]"
+                                Konstituentenfolge.schliesseInKommaEin(
+                                        indirekterFragesatz.getIndirekteFrage()))));
     }
 
     @Override

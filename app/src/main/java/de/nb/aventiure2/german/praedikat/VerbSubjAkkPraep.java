@@ -6,7 +6,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SETZEN;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Präpositionalobjekt und
@@ -81,13 +81,13 @@ public enum VerbSubjAkkPraep implements VerbMitValenz {
     }
 
     public SemPraedikatMitEinerObjektleerstelle mitPraep(
-            final SubstantivischePhrase substPhrPraep) {
+            final SubstantivischPhrasierbar substPhrPraep) {
         return new SemPraedikatAkkPraepMitEinerAkkLeerstelle(
                 verb, praepositionMitKasus, substPhrPraep);
     }
 
     public SemPraedikatMitEinerObjektleerstelle mitAkk(
-            final SubstantivischePhrase substPhrAkk) {
+            final SubstantivischPhrasierbar substPhrAkk) {
         return new SemPraedikatAkkPraepMitEinerPraepLeerstelle(
                 verb, praepositionMitKasus, substPhrAkk);
     }

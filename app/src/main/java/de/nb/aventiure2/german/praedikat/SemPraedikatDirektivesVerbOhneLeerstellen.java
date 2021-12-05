@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
@@ -30,7 +29,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
@@ -58,7 +57,7 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
      * Das Objekt, an das die "Direktive" geht
      */
     @Komplement
-    private final SubstantivischePhrase objekt;
+    private final SubstantivischPhrasierbar objekt;
 
     /**
      * "(...bitten) ihre Haare wieder hinunterzulassen"
@@ -71,7 +70,7 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
     SemPraedikatDirektivesVerbOhneLeerstellen(
             final Verb verb,
             final Kasus kasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final SemPraedikatOhneLeerstellen lexikalischerKern) {
         this(verb, kasus, objekt,
                 ImmutableList.of(), null, null, null,
@@ -81,7 +80,7 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
     private SemPraedikatDirektivesVerbOhneLeerstellen(
             final Verb verb,
             final Kasus kasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
@@ -226,70 +225,51 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "aus einer Laune heraus"
-                kf(getModalpartikeln()), // "mal eben"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                objekt.imK(kasus), // "die junge Frau"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // (kann es wohl gar nicht geben)
-        );
-
-        //  Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
-        //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
-        //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
-
-        //  Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
-        //   gestellt werden (statt ins Nachfeld):
-        //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
-        //   - "Du hast die junge Frau ihre Haare wieder hinunterzulassen gebeten"
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasus == DAT) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasus == AKK) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return kasus == AKK;
     }
 
     @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return
-                joinToKonstituentenfolge(
-                        lexikalischerKern.getZuInfinitiv(objekt
-                                // Es liegt "Objektkontrolle" vor.
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
+
+        return new TopolFelder(
+                new Mittelfeld(
+                        joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "aus einer Laune heraus"
+                                kf(getModalpartikeln()), // "mal eben"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                objektPhrase.imK(kasus), // "die junge Frau"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // (kann es wohl gar nicht geben)
                         ),
-                        // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
-                        getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
-                                praedRegMerkmale),
-                        // , glücklich, dich zu sehen
-                        getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-                );
+                        objektPhrase, kasus),
+
+                //  Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
+                //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
+                //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
+
+                //  Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
+                //   gestellt werden (statt ins Nachfeld):
+                //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
+                //   - "Du hast die junge Frau ihre Haare wieder hinunterzulassen gebeten"
+                new Nachfeld(
+                        joinToKonstituentenfolge(
+                                lexikalischerKern.getZuInfinitiv(objektPhrase
+                                        // Es liegt "Objektkontrolle" vor.
+                                ),
+                                // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                // , glücklich, dich zu sehen
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

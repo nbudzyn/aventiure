@@ -1,5 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableList;
@@ -13,8 +15,6 @@ import javax.annotation.concurrent.Immutable;
 import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Eine unflektierte Phrase mit Partizip II, einschließlich der Information,
@@ -36,27 +36,32 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
     /**
      * Die eigenliche unflektierte Phrase: "unten angekommen",
-     * "die Kugel genommen".
+     * "die Kugel genommen" - allerdings ohne Nachfeld.
      * <p>
      * Implizit (oder bei reflexiven Verben auch explizit) hat diese Phrase
      * eine Person und einen Numerus - Beispiel:
      * "[Ich habe] die Kugel an mich genommen"
      * (nicht *"[Ich habe] die Kugel an sich genommen")
      */
-    private final Konstituentenfolge phrase;
+    private final Konstituentenfolge partizipIIPhraseOhneNachfeld;
+
+    private final Nachfeld nachfeld;
 
     /**
      * Welche Hilfsverb ist verlangt - "(unten angekommen) sein" oder
-     * "(die Kugel genommen) haben"? (Muss eindeutig sein).
+     * "(die Kugel genommen) haben"?
      */
     private final Perfektbildung perfektbildung;
 
-    public PartizipIIPhrase(final Konstituentenfolge phrase,
+    public PartizipIIPhrase(final Konstituentenfolge partizipIIPhraseOhneNachfeld,
+                            final Nachfeld nachfeld,
                             final Perfektbildung perfektbildung) {
-        checkNotNull(phrase, "phrase ist null");
+        checkNotNull(partizipIIPhraseOhneNachfeld, "partizipIIPhraseOhneNachfeld ist null");
+        checkNotNull(nachfeld, "nachfeld ist null");
         checkNotNull(perfektbildung, "perfektbildung ist null");
 
-        this.phrase = phrase;
+        this.partizipIIPhraseOhneNachfeld = partizipIIPhraseOhneNachfeld;
+        this.nachfeld = nachfeld;
         this.perfektbildung = perfektbildung;
     }
 
@@ -75,7 +80,9 @@ public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
                     Konstituentenfolge.joinToKonstituentenfolge(
                             tmp,
                             tmpKonnektor,
-                            partizipIIPhrase.phrase.withVorkommaNoetigMin(tmpKonnektor == null)),
+                            partizipIIPhrase.partizipIIPhraseOhneNachfeld
+                                    .withVorkommaNoetigMin(tmpKonnektor == null)),
+                    partizipIIPhrase.nachfeld,
                     tmp.getPerfektbildung());
         } else {
             // "unten angekommen (sein) und die Kugel genommen (haben)"
@@ -83,7 +90,6 @@ public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
             return partizipIIPhrase;
         }
     }
-
 
     Verb getHilfsverb() {
         switch (perfektbildung) {
@@ -98,12 +104,18 @@ public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
 
     @Override
     public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return getPhrase().toAltKonstituentenfolgen();
+        return Konstituentenfolge.joinToAltKonstituentenfolgen(
+                partizipIIPhraseOhneNachfeld,
+                nachfeld);
     }
 
     @NonNull
-    public Konstituentenfolge getPhrase() {
-        return phrase;
+    public Konstituentenfolge getPartizipIIPhraseOhneNachfeld() {
+        return partizipIIPhraseOhneNachfeld;
+    }
+
+    public Nachfeld getNachfeld() {
+        return nachfeld;
     }
 
     @NonNull
@@ -114,10 +126,9 @@ public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
     @NonNull
     @Override
     public String toString() {
-        return "PartizipIIPhrase{" +
-                "phrase=" + phrase +
-                ", perfektbildung=" + perfektbildung +
-                '}';
+        final Konstituentenfolge konstituentenfolge =
+                toAltKonstituentenfolgen().iterator().next();
+        return konstituentenfolge.joinToSingleKonstituente().toTextOhneKontext();
     }
 
     @Override
@@ -129,12 +140,12 @@ public class PartizipIIPhrase implements IAlternativeKonstituentenfolgable {
             return false;
         }
         final PartizipIIPhrase that = (PartizipIIPhrase) o;
-        return phrase.equals(that.phrase) &&
-                perfektbildung == that.perfektbildung;
+        return Objects.equals(partizipIIPhraseOhneNachfeld, that.partizipIIPhraseOhneNachfeld)
+                && nachfeld.equals(that.nachfeld) && perfektbildung == that.perfektbildung;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(phrase, perfektbildung);
+        return Objects.hash(partizipIIPhraseOhneNachfeld, nachfeld, perfektbildung);
     }
 }

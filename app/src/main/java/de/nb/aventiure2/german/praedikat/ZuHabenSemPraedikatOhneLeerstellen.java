@@ -172,15 +172,14 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // dich zu waschen gehabt
         // zu sagen gehabt: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
+        final ZuInfinitiv zuInfinitivLexKern =
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale);
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale)
-                                .cutLast(nachfeld),
+                        zuInfinitivLexKern.toKonstituentenfolgeOhneNachfeld(),
                         // "Spannendes zu berichten"
-                        HabenUtil.VERB.getPartizipII(), // "gehabt"
-                        nachfeld), // : Odysseus ist zurück.
+                        HabenUtil.VERB.getPartizipII()), // "gehabt"
+                zuInfinitivLexKern.getNachfeld(), // : Odysseus ist zurück.
                 Perfektbildung.HABEN)); // "Spannendes zu berichten gehabt haben"
     }
 
@@ -194,36 +193,23 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes zu berichten haben
-        // dich zu waschen haben
-        // zu sagen haben: "Hallo!"
-
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
-                // "Spannendes zu berichten"
-                HabenUtil.VERB.getInfinitiv(), // haben
-                nachfeld); // : Odysseus ist zurück.
+        return new Infinitiv(
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale),
+                // "Spannendes zu berichten", ": Odysseus ist zurück."
+                HabenUtil.VERB); // "haben"
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes zu berichten zu haben
-        // dich zu waschen zu haben
-        // zu sagen zu haben: "Hallo!"
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
-                // "Spannendes zu berichten"
-                HabenUtil.VERB.getZuInfinitiv(), // zu haben
-                nachfeld); // : Odysseus ist zurück.
+        return new ZuInfinitiv(
+                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale),
+                // "Spannendes zu berichten", ": Odysseus ist zurück."
+                HabenUtil.VERB); // "zu haben"
     }
 
     @Override
@@ -261,9 +247,7 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
-    @Nullable
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
+    private Nachfeld getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         // (Es könnte verschiedene Nachfeld-Optionen geben (altNachfelder()) - oder besser
         // altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert. Dabei
         // müsste allerdings die Natürlichkeit der erzeugten Sprache immer im Vordergrund stehen.)

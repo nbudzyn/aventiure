@@ -10,13 +10,17 @@ import androidx.core.util.Pair;
 
 import com.google.common.collect.ImmutableList;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
+import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Kasus;
+import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 
@@ -24,7 +28,9 @@ import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
  * Ein (syntaktisches) Mittelfeld.
  */
 @Immutable
-public class Mittelfeld {
+public class Mittelfeld implements IAlternativeKonstituentenfolgable {
+    static final Mittelfeld EMPTY = new Mittelfeld(null);
+
     @Nullable
     private final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen;
 
@@ -33,66 +39,79 @@ public class Mittelfeld {
      */
     private final ImmutableList<Konstituentenfolge> unbetontePronomen;
 
-    /**
-     * Konstruktor auf Basis der Objekte.
-     *
-     * @param zweitesAkkObjekt Manche Verben haben ein zweites Akkusativobjekt, z.B.
-     *                         "jdn. etw. lehren".
-     */
     Mittelfeld(
-            final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
-            @Nullable final SubstPhrOderReflexivpronomen akkObjekt,
-            @Nullable final SubstPhrOderReflexivpronomen zweitesAkkObjekt,
-            @Nullable final SubstPhrOderReflexivpronomen datObjekt) {
+            @Nullable final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
+            final SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         this(mittelfeldOhneLinksversetzungUnbetonterPronomen,
-                filterUnbetontePronomen(
-                        toPair(akkObjekt, Kasus.AKK),
-                        toPair(zweitesAkkObjekt, Kasus.AKK),
-                        toPair(datObjekt, Kasus.DAT)));
+                toPair(substPhrOderReflexivpronomen, kasusOderPraepositionalkasus));
+    }
+
+    Mittelfeld(
+            @Nullable final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
+            final SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen1,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus1,
+            final SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen2,
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus2) {
+        this(mittelfeldOhneLinksversetzungUnbetonterPronomen,
+                toPair(substPhrOderReflexivpronomen1, kasusOderPraepositionalkasus1),
+                toPair(substPhrOderReflexivpronomen2, kasusOderPraepositionalkasus2));
+    }
+
+    Mittelfeld(
+            @Nullable final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
+            final Pair<SubstPhrOderReflexivpronomen, KasusOderPraepositionalkasus>...
+                    substantivischePhrasenMitKasus) {
+        this(mittelfeldOhneLinksversetzungUnbetonterPronomen,
+                filterUnbetontePronomen(substantivischePhrasenMitKasus));
     }
 
     private Mittelfeld(
-            final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
+            @Nullable final Konstituentenfolge mittelfeldOhneLinksversetzungUnbetonterPronomen,
             final ImmutableList<Konstituentenfolge> unbetontePronomen) {
         this.mittelfeldOhneLinksversetzungUnbetonterPronomen =
                 mittelfeldOhneLinksversetzungUnbetonterPronomen;
         this.unbetontePronomen = unbetontePronomen;
     }
 
-    Konstituentenfolge toKonstituentenfolge() {
-        // Das Mittelfeld besteht aus drei Teilen:
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                // 1. Der Bereich vor der Wackernagel-Position. Dort kann höchstens ein
-                //   Subjekt stehen, das keine unbetontes Pronomen ist.
-                //   Das Subjekt ist hier im Prädikat noch nicht bekannt.
-                // 2. Die Wackernagelposition. Hier stehen alle unbetonten Pronomen in den
-                // reinen Kasus in der festen Reihenfolge Nom < Akk < Dat
-                kf(unbetontePronomen),
-                // 3. Der Bereich nach der Wackernagel-Position. Hier steht alles übrige
-                cutFirstOneByOne(
-                        mittelfeldOhneLinksversetzungUnbetonterPronomen,
-                        unbetontePronomen
-                ));
+    @Override
+    public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
+        return Collections.singleton(
+                // Das Mittelfeld besteht aus drei Teilen:
+                Konstituentenfolge.joinToNullKonstituentenfolge(
+                        // 1. Der Bereich vor der Wackernagel-Position. Dort kann höchstens ein
+                        //   Subjekt stehen, das keine unbetontes Pronomen ist.
+                        //   Das Subjekt ist hier im Prädikat noch nicht bekannt.
+                        // 2. Die Wackernagelposition. Hier stehen alle unbetonten Pronomen in den
+                        // reinen Kasus in der festen Reihenfolge Nom < Akk < Dat
+                        kf(unbetontePronomen),
+                        // 3. Der Bereich nach der Wackernagel-Position. Hier steht alles übrige
+                        cutFirstOneByOne(
+                                mittelfeldOhneLinksversetzungUnbetonterPronomen,
+                                unbetontePronomen
+                        )));
     }
 
-    private static Pair<SubstPhrOderReflexivpronomen, Kasus> toPair(
+    private static Pair<SubstPhrOderReflexivpronomen, KasusOderPraepositionalkasus> toPair(
             @Nullable final
             SubstPhrOderReflexivpronomen substPhrOderReflexivpronomen,
-            final Kasus kasus) {
+            final KasusOderPraepositionalkasus kasusOderPraepositionalkasus) {
         if (substPhrOderReflexivpronomen == null) {
             return null;
         }
 
-        return Pair.create(substPhrOderReflexivpronomen, kasus);
+        return Pair.create(substPhrOderReflexivpronomen, kasusOderPraepositionalkasus);
     }
 
     @SafeVarargs
     private static ImmutableList<Konstituentenfolge> filterUnbetontePronomen(
-            final Pair<SubstPhrOderReflexivpronomen, Kasus>... substantivischePhrasenMitKasus) {
+            final Pair<SubstPhrOderReflexivpronomen, KasusOderPraepositionalkasus>...
+                    substantivischePhrasenMitKasus) {
         return Stream.of(substantivischePhrasenMitKasus)
                 .filter(Objects::nonNull)
                 .filter(spk -> requireNonNull(spk.first).isUnbetontesPronomen())
-                .map(spk -> spk.first.imK(requireNonNull(spk.second)))
+                .filter(spk -> requireNonNull(spk.second) instanceof Kasus)
+                .map(spk -> spk.first.imK(requireNonNull((Kasus) spk.second)))
                 .collect(toImmutableList());
     }
 
@@ -105,8 +124,8 @@ public class Mittelfeld {
             return false;
         }
         final Mittelfeld that = (Mittelfeld) o;
-        return mittelfeldOhneLinksversetzungUnbetonterPronomen
-                .equals(that.mittelfeldOhneLinksversetzungUnbetonterPronomen) && unbetontePronomen
+        return Objects.equals(mittelfeldOhneLinksversetzungUnbetonterPronomen,
+                that.mittelfeldOhneLinksversetzungUnbetonterPronomen) && unbetontePronomen
                 .equals(that.unbetontePronomen);
     }
 
@@ -118,6 +137,12 @@ public class Mittelfeld {
     @NonNull
     @Override
     public String toString() {
-        return toKonstituentenfolge().joinToSingleKonstituente().toTextOhneKontext();
+        @Nullable final Konstituentenfolge konstituentenfolge =
+                toAltKonstituentenfolgen().iterator().next();
+        if (konstituentenfolge == null) {
+            return "";
+        }
+
+        return konstituentenfolge.joinToSingleKonstituente().toTextOhneKontext();
     }
 }

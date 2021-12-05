@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 import androidx.annotation.NonNull;
@@ -25,7 +26,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
@@ -40,20 +41,20 @@ public class SemPraedikatDatAkkOhneLeerstellen
      */
     @NonNull
     @Komplement
-    private final SubstantivischePhrase dat;
+    private final SubstantivischPhrasierbar dat;
 
     /**
      * Das Akkusativobjekte (z.B. der Frosch)
      */
     @NonNull
     @Komplement
-    private final SubstantivischePhrase akk;
+    private final SubstantivischPhrasierbar akk;
 
     @Valenz
     SemPraedikatDatAkkOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase dat,
-            final SubstantivischePhrase akk) {
+            final SubstantivischPhrasierbar dat,
+            final SubstantivischPhrasierbar akk) {
         this(verb, dat, akk,
                 ImmutableList.of(), null, null, null,
                 null);
@@ -61,8 +62,8 @@ public class SemPraedikatDatAkkOhneLeerstellen
 
     private SemPraedikatDatAkkOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase dat,
-            final SubstantivischePhrase akk,
+            final SubstantivischPhrasierbar dat,
+            final SubstantivischPhrasierbar akk,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
@@ -200,48 +201,44 @@ public class SemPraedikatDatAkkOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+    public boolean hatAkkusativobjekt() {
+        return true;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase datPhrase = dat.alsSubstPhrase(textContext);
+        final SubstantivischePhrase akkPhrase = akk.alsSubstPhrase(textContext);
+
+
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
 // "aus einer Laune heraus"
-                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
-                // "mal eben (nicht)"
-                getNegationspartikel(), // "nicht"
-                dat.datK(), // "dem Frosch"
-                getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "mal eben"
-                akk.akkK(), // "das Buch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)); // "in die Hand"
-    }
-
-    @Override
-    @Nullable
-    public SubstantivischePhrase getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return dat;
-    }
-
-    @Nullable
-    @Override
-    public SubstantivischePhrase getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return akk;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+                                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                                // "mal eben (nicht)"
+                                getNegationspartikel(), // "nicht"
+                                datPhrase.datK(), // "dem Frosch"
+                                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                                // "mal eben"
+                                akkPhrase.akkK(), // "das Buch"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // "in die Hand"
+                        ),
+                        datPhrase, DAT,
+                        akkPhrase, AKK),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

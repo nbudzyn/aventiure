@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.ZIEHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.BAUEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.KUEHLEN;
@@ -27,7 +26,7 @@ import de.nb.aventiure2.german.description.ITextContext;
  * ("an sich" / "sich")
  * </ul>
  */
-public enum ReflVerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeerstellen {
+public enum ReflVerbSubj implements VerbOhneLeerstellen, SemPraedikatOhneLeerstellen {
     // Verben ohne Partikel
     SICH_ANFASSEN("anfassen", AKK,
             "fasse", "fasst", "fasst", "fasst",
@@ -143,18 +142,17 @@ public enum ReflVerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeer
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
+        return new Infinitiv(verb);
     }
 
     @Override
-    @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return new Konstituentenfolge(k(verb.getZuInfinitiv()));
+        return new ZuInfinitiv(verb);
     }
 
     @Nullable
@@ -188,10 +186,9 @@ public enum ReflVerbSubj implements VerbOhneLeerstellenSem, SemPraedikatOhneLeer
         return new ReflSemPraedikatSubOhneLeerstellen(verb, reflKasus);
     }
 
-    @Nullable
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
+    public TopolFelder getTopolFelder(final ITextContext textContext,
+                                      final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale);
     }
 
     @Override

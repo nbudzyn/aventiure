@@ -5,13 +5,12 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SEHEN;
 import androidx.annotation.NonNull;
 
 import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
-import de.nb.aventiure2.german.base.Praedikativum;
 
 /**
  * Ein Verb, das mit einer prädikativen Adjektivphrase steht. (Z.B: "(glücklich) wirken").
  * <p>
  * Zum Verb <i>sein</i> mit Prädikativum siehe
- * {@link PraedikativumSemPraedikatOhneLeerstellen#praedikativumPraedikatMit(Praedikativum)}.
+ * {@link PraedikativumSemPraedikatOhneLeerstellen}.
  */
 public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
     // Verben ohne Präfix
@@ -25,7 +24,8 @@ public enum VerbSubjPraedikativeAdjektivphrase implements VerbMitValenz {
             "scheine", "scheinst", "scheint", "scheint",
             Perfektbildung.HABEN, "geschienen"),
     WIRKEN("wirken",
-            "wirke", "wirkst", "wirkt", "wirkt",
+            "wirke", "wirkst",
+            "wirkt", "wirkt",
             Perfektbildung.HABEN, "gewirkt"),
 
     //Präfixverben

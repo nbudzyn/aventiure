@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 import androidx.annotation.NonNull;
@@ -27,7 +26,6 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -175,99 +173,75 @@ public class SemPraedikatReflZuInfSubjektkontrollen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+    public boolean hatAkkusativobjekt() {
+        return kasus == AKK;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
                 getAdvAngabeSkopusVerbAllg();
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                Reflexivpronomen.get(praedRegMerkmale).imK(kasus),
-                // "dich"
-                advAngabeSkopusSatz != null &&
-                        advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
-                        // "aus einer Laune heraus"
-                        null, // (ins Nachfeld verschieben)
-                kf(getModalpartikeln()), // "mal eben"
-                advAngabeSkopusVerbAllg != null &&
-                        advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :
-                        // "erneut"
-                        null, // (ins Nachfeld verschieben)
-                getNegationspartikel(), // "nicht"
-                advAngabeSkopusVerbAllg != null &&
-                        !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
-                        // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
-                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
-                        ?
-                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
-                        Konstituentenfolge.schliesseInKommaEin(
-                                lexikalischerKern.getZuInfinitiv(
-                                        // Es liegt "Subjektkontrolle" vor.
-                                        textContext, praedRegMerkmale
-                                )) // ", Rapunzel zu sehen[, ]"
-                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // (kann es wohl gar nicht geben)
-        );
-    }
+        final Reflexivpronomen reflexivpronomen = Reflexivpronomen.get(praedRegMerkmale);
 
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasus == DAT) {
-            return Reflexivpronomen.get(praedRegMerkmale);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (kasus == AKK) {
-            return Reflexivpronomen.get(praedRegMerkmale);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
-                getAdvAngabeSkopusSatz();
-        @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
-                getAdvAngabeSkopusVerbAllg();
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                advAngabeSkopusVerbAllg == null
-                        || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        Konstituentenfolge.schliesseInKommaEin(
-                                lexikalischerKern.getZuInfinitiv(
-                                        // Es liegt Subjektkontrolle vor.
-                                        textContext, praedRegMerkmale
-                                )) // "(Du freust dich), Rapunzel zu sehen[,] "
-                        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
-                        : null,
-                advAngabeSkopusVerbAllg != null
-                        && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale)
-                        // "glücklich, dich zu sehen"
-                        : null,
-                advAngabeSkopusSatz != null
-                        && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
-                        : null);
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                reflexivpronomen.imK(kasus),
+                                // "dich"
+                                advAngabeSkopusSatz != null &&
+                                        advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
+                                        // "aus einer Laune heraus"
+                                        null, // (ins Nachfeld verschieben)
+                                kf(getModalpartikeln()), // "mal eben"
+                                advAngabeSkopusVerbAllg != null &&
+                                        advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :
+                                        // "erneut"
+                                        null, // (ins Nachfeld verschieben)
+                                getNegationspartikel(), // "nicht"
+                                advAngabeSkopusVerbAllg != null &&
+                                        !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
+                                        // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
+                                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen
+                                        // werden.
+                                        ?
+                                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
+                                        Konstituentenfolge.schliesseInKommaEin(
+                                                lexikalischerKern.getZuInfinitiv(
+                                                        // Es liegt "Subjektkontrolle" vor.
+                                                        textContext, praedRegMerkmale
+                                                )) // ", Rapunzel zu sehen[, ]"
+                                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // (kann es wohl gar nicht geben)
+                        ), reflexivpronomen, kasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                advAngabeSkopusVerbAllg == null
+                                        || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        Konstituentenfolge.schliesseInKommaEin(
+                                                lexikalischerKern.getZuInfinitiv(
+                                                        // Es liegt Subjektkontrolle vor.
+                                                        textContext, praedRegMerkmale
+                                                )) // "(Du freust dich), Rapunzel zu sehen[,] "
+                                        // Wir lassen die Kommata rund um den Infinitiv weg - das
+                                        // ist
+                                        // erlaubt.
+                                        : null,
+                                advAngabeSkopusVerbAllg != null
+                                        && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale)
+                                        // "glücklich, dich zu sehen"
+                                        : null,
+                                advAngabeSkopusSatz != null
+                                        && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
+                                        : null)));
     }
 
     @Override

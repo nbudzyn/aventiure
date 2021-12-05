@@ -125,48 +125,56 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
     @Override
     public final Konstituentenfolge getVerbzweit(final ITextContext textContext,
                                                  final PraedRegMerkmale praedRegMerkmale) {
+        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
+
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
-                getMittelfeld(textContext, praedRegMerkmale),
+                topolFelder.getMittelfeld(),
                 verb.getPartikel(),
-                getNachfeld(praedRegMerkmale));
+                topolFelder.getNachfeld());
     }
 
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final ITextContext textContext,
             final SubstantivischePhrase subjekt) {
+        final TopolFelder topolFelder = getTopolFelder(textContext, subjekt.getPraedRegMerkmale());
+
         return Konstituentenfolge.joinToKonstituentenfolge(
                 requireNonNull(verb.getPraesensOhnePartikel(subjekt)),
                 // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
                 // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
                 // Wackernagelposition:
                 subjekt.nomK(),
-                getMittelfeld(textContext, subjekt.getPraedRegMerkmale()),
+                topolFelder.getMittelfeld(),
                 verb.getPartikel(),
-                getNachfeld(subjekt.getPraedRegMerkmale()));
+                topolFelder.getNachfeld());
     }
 
     @Override
     public final Konstituentenfolge getVerbletzt(
             final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
+        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
+
         return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(textContext, praedRegMerkmale),
+                topolFelder.getMittelfeld(),
                 requireNonNull(verb.getPraesensMitPartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
-                getNachfeld(praedRegMerkmale));
+                topolFelder.getNachfeld());
     }
 
     @Override
     public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
+        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
+
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        getMittelfeld(textContext, praedRegMerkmale),
-                        verb.getPartizipII(),
-                        getNachfeld(praedRegMerkmale)),
+                        topolFelder.getMittelfeld(),
+                        verb.getPartizipII()),
+                topolFelder.getNachfeld(),
                 verb.getPerfektbildung()));
     }
 
@@ -175,27 +183,28 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public final Konstituentenfolge getInfinitiv(
+    public final Infinitiv getInfinitiv(
             final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(textContext, praedRegMerkmale),
-                verb.getInfinitiv(),
-                getNachfeld(praedRegMerkmale));
+        return new Infinitiv(verb, getTopolFelder(textContext, praedRegMerkmale));
     }
 
     /**
-     * Gibt eine Infinitivkonstruktion zurück mit Prädikat
-     * ("den Frosch erneut zu ignorieren", "das Leben zu genießen")
+     * Gibt eine Infinitivkonstruktion mit zu-Infinitiv zurück mit Prädikat
+     * ("den Frosch zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public final Konstituentenfolge getZuInfinitiv(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getMittelfeld(textContext, praedRegMerkmale),
-                verb.getZuInfinitiv(),
-                getNachfeld(praedRegMerkmale));
+    public final ZuInfinitiv getZuInfinitiv(
+            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
+        return new ZuInfinitiv(verb, getTopolFelder(textContext, praedRegMerkmale));
     }
+
+    /**
+     * Gibt die konkreten topologischen Felder zurück, aus denen ein (syntaktischer)
+     * Satz zusammengesetzt werden kann.
+     */
+    @CheckReturnValue
+    abstract TopolFelder getTopolFelder(ITextContext textContext,
+                                        PraedRegMerkmale praedRegMerkmale);
 
     @Nullable
     @Override
@@ -230,25 +239,6 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
 
         return null;
     }
-
-    @CheckReturnValue
-    private Konstituentenfolge getMittelfeld(final ITextContext textContext,
-                                             final PraedRegMerkmale praedRegMerkmale) {
-        return getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-                textContext, praedRegMerkmale)
-                .toKonstituentenfolge();
-    }
-
-    /**
-     * Gibt das Mittelfeld dieses Prädikats zurück. Dabei brauchen die unbetonten
-     * Pronomen der Objekte noch nicht nach links versetzt zu sein - die Methode könnte also
-     * etwas zurückgeben wie <i>dem Ork es geben</i>.
-     * <p>
-     * Die Linksversetzung der unbetonten Pronomen an die Wackernagel-Position geschieht
-     * in der Klasse {@link Mittelfeld}.
-     */
-    abstract Mittelfeld getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
     @NonNull
     Verb getVerb() {

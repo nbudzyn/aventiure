@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 
 import androidx.annotation.NonNull;
@@ -28,7 +27,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Reflexivpronomen;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
@@ -55,14 +54,14 @@ class SemPraedikatReflSubjObjOhneLeerstellen
     private final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus;
 
     @Komplement
-    private final SubstantivischePhrase objekt;
+    private final SubstantivischPhrasierbar objekt;
 
     @Valenz
     SemPraedikatReflSubjObjOhneLeerstellen(
             final Verb verb,
             final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
             final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt) {
+            final SubstantivischPhrasierbar objekt) {
         this(verb, reflKasusOderPraepositionalKasus, objektKasusOderPraepositionalkasus,
                 objekt,
                 ImmutableList.of(),
@@ -74,7 +73,7 @@ class SemPraedikatReflSubjObjOhneLeerstellen
             final Verb verb,
             final KasusOderPraepositionalkasus reflKasusOderPraepositionalKasus,
             final KasusOderPraepositionalkasus objektKasusOderPraepositionalkasus,
-            final SubstantivischePhrase objekt,
+            final SubstantivischPhrasierbar objekt,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
@@ -212,72 +211,45 @@ class SemPraedikatReflSubjObjOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "aus einer Laune heraus"
-                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
-                // "besser doch (nicht...)"
-                getNegationspartikel(), // "nicht"
-                objekt.imK(objektKasusOderPraepositionalkasus), // "die goldene Kugel"
-                getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                Reflexivpronomen.get(praedRegMerkmale)
-                        .imStr(reflKasusOderPraepositionalKasus), // "an dich",
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // "in deine Jackentasche"
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        if (reflKasusOderPraepositionalKasus == AKK) {
-            return Reflexivpronomen.get(praedRegMerkmale);
-        }
-
-        if (objektKasusOderPraepositionalkasus == AKK) {
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        if (reflKasusOderPraepositionalKasus == AKK && objektKasusOderPraepositionalkasus == AKK) {
-            // Dann ist das Objekt das zweite. (Wenn es sowas überhaupt gibt.)
-            return objekt;
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        if (reflKasusOderPraepositionalKasus == DAT) {
-            return Reflexivpronomen.get(praedRegMerkmale);
-        }
-
-        if (objektKasusOderPraepositionalkasus == DAT) {
-            return objekt;
-        }
-
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return reflKasusOderPraepositionalKasus == AKK
+                || objektKasusOderPraepositionalkasus == AKK;
     }
 
     @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final Reflexivpronomen reflexivpronomen = Reflexivpronomen.get(praedRegMerkmale);
+        final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "aus einer Laune heraus"
+                                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                                // "besser doch (nicht...)"
+                                getNegationspartikel(), // "nicht"
+                                objektPhrase.imK(objektKasusOderPraepositionalkasus),
+                                // "die goldene Kugel"
+                                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                                // "besser doch"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                reflexivpronomen.imStr(reflKasusOderPraepositionalKasus),
+                                // "an dich",
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // "in deine Jackentasche"
+                        ),
+                        reflexivpronomen, reflKasusOderPraepositionalKasus,
+                        objektPhrase, objektKasusOderPraepositionalkasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

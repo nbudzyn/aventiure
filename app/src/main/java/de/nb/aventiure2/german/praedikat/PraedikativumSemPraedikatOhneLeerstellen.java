@@ -24,7 +24,6 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -65,7 +64,7 @@ public class PraedikativumSemPraedikatOhneLeerstellen
     @Override
     public PraedikativumSemPraedikatOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
-        return new SemPraedikativumSemPraedikatOhneLeerstellen(
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 getVerb(), praedikativum,
                 Iterables.concat(getModalpartikeln(), modalpartikeln),
                 getAdvAngabeSkopusSatz(),
@@ -81,7 +80,7 @@ public class PraedikativumSemPraedikatOhneLeerstellen
             return this;
         }
 
-        return new SemPraedikativumSemPraedikatOhneLeerstellen(
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
@@ -103,7 +102,7 @@ public class PraedikativumSemPraedikatOhneLeerstellen
             return this;
         }
 
-        return new SemPraedikativumSemPraedikatOhneLeerstellen(
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
@@ -118,7 +117,7 @@ public class PraedikativumSemPraedikatOhneLeerstellen
             return this;
         }
 
-        return new SemPraedikativumSemPraedikatOhneLeerstellen(
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
@@ -135,7 +134,7 @@ public class PraedikativumSemPraedikatOhneLeerstellen
         }
 
         // Diese Position kann wohl nicht besetzt sein.
-        return new SemPraedikativumSemPraedikatOhneLeerstellen(
+        return new PraedikativumSemPraedikatOhneLeerstellen(
                 getVerb(),
                 praedikativum,
                 getModalpartikeln(),
@@ -172,54 +171,44 @@ public class PraedikativumSemPraedikatOhneLeerstellen
     }
 
     @Override
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "plötzlich"
-                kf(getModalpartikeln()), // "halt"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
-                // (kann wohl nicht besetzt sein?)
-                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        praedRegMerkmale,
-                        getNegationspartikel())
-                // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr glücklich
-                // [, dich zu sehen]", "kein Esel",  "schon lange kein Verdächtiger mehr"
-        );
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 
     @Override
-    @Nullable
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "plötzlich"
+                                kf(getModalpartikeln()), // "halt"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                // (kann wohl nicht besetzt sein?)
+                                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                                        praedRegMerkmale,
+                                        getNegationspartikel())
+                                // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr
+                                // glücklich
+                                // [, dich zu sehen]", "kein Esel",  "schon lange kein
+                                // Verdächtiger mehr"
+                        )),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                praedikativum
+                                        .getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
+                                // "dich zu sehen"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
-    @Override
-    @Nullable
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
-                // "dich zu sehen"
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
-    }
 
     @Override
     public boolean umfasstSatzglieder() {

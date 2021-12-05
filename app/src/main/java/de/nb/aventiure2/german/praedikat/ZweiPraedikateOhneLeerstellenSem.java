@@ -139,6 +139,10 @@ public class ZweiPraedikateOhneLeerstellenSem
         );
     }
 
+    // FIXME Hier kann es kein TopolFelder geben!! Man müsste
+    //  zwei TopolFelder haben?! Vielleicht ist TopolFelder auf dieser
+    //  Ebene falsch?!
+
     @Override
     public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final ITextContext textContext,
@@ -197,23 +201,32 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getInfinitiv(textContext, praedRegMerkmale),
-                konnektor,
-                zweites.getInfinitiv(textContext, praedRegMerkmale));
+        final Infinitiv zweiterInfinitiv = zweites.getInfinitiv(textContext, praedRegMerkmale);
+
+        return new Infinitiv(
+                Konstituentenfolge.joinToKonstituentenfolge(
+                        erstes.getInfinitiv(textContext, praedRegMerkmale),
+                        konnektor,
+                        zweiterInfinitiv.toKonstituentenfolgeOhneNachfeld()),
+                zweiterInfinitiv.getNachfeld());
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getZuInfinitiv(textContext, praedRegMerkmale),
-                konnektor,
-                zweites.getZuInfinitiv(textContext, praedRegMerkmale));
+        final ZuInfinitiv zweiterZuInfinitiv =
+                zweites.getZuInfinitiv(textContext, praedRegMerkmale);
+
+        return new ZuInfinitiv(
+                Konstituentenfolge.joinToKonstituentenfolge(
+                        erstes.getZuInfinitiv(textContext, praedRegMerkmale),
+                        konnektor,
+                        zweiterZuInfinitiv.toKonstituentenfolgeOhneNachfeld()),
+                zweiterZuInfinitiv.getNachfeld());
     }
 
     @Override
@@ -244,12 +257,6 @@ public class ZweiPraedikateOhneLeerstellenSem
     public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
             final PraedRegMerkmale praedRegMerkmale) {
         return erstes.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return zweites.getNachfeld(praedRegMerkmale);
     }
 
     @Nullable

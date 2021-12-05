@@ -20,7 +20,6 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -173,49 +172,40 @@ public class SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale), // "leider"
-                kf(getModalpartikeln()), // "halt"
-                getNegationspartikel(), // "nicht"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
-                // "nach außen" (?)
-                adjektivphrase.getPraedikativOhneAnteilKandidatFuerNachfeld(praedRegMerkmale)
-                // "glücklich"
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 
     @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                adjektivphrase.getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
-                // ", dich zu sehen"
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "leider"
+                                kf(getModalpartikeln()), // "halt"
+                                getNegationspartikel(), // "nicht"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                // "nach außen" (?)
+                                adjektivphrase
+                                        .getPraedikativOhneAnteilKandidatFuerNachfeld(
+                                                praedRegMerkmale)
+                                // "glücklich"
+                        )),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                adjektivphrase
+                                        .getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
+                                // ", dich zu sehen"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

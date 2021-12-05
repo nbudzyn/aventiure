@@ -7,7 +7,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.SAGEN;
 
 import androidx.annotation.NonNull;
 
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt, einem Dativobjekt und
@@ -79,12 +79,12 @@ public enum VerbSubjDatAkk implements VerbMitValenz {
     }
 
     public SemPraedikatDatAkkMitEinerAkkLeerstelle mitDat(
-            final SubstantivischePhrase substPhrDat) {
+            final SubstantivischPhrasierbar substPhrDat) {
         return new SemPraedikatDatAkkMitEinerAkkLeerstelle(verb, substPhrDat);
     }
 
     public SemPraedikatDatAkkMitEinerDatLeerstelle mitAkk(
-            final SubstantivischePhrase substPhrAkk) {
+            final SubstantivischPhrasierbar substPhrAkk) {
         return new SemPraedikatDatAkkMitEinerDatLeerstelle(verb, substPhrAkk);
     }
 

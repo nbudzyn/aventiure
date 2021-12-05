@@ -120,7 +120,8 @@ class DescriptionCombiner {
                 if (partizipIIPhrase.getPerfektbildung() == Perfektbildung.SEIN) {
                     // Und die Phrase bildet das Perfekt mit "sein"!
                     final Konstituente descriptionPartizipIIPhrase =
-                            partizipIIPhrase.getPhrase().joinToSingleKonstituente();
+                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld()
+                                    .joinToSingleKonstituente();
                     if (!descriptionPartizipIIPhrase.vordoppelpunktNoetig() &&
                             EnumSet.of(WORD, SENTENCE)
                                     .contains(descriptionPartizipIIPhrase.getEndsThis())) {

@@ -21,7 +21,6 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -173,86 +172,70 @@ public class SemPraedikatIntentionalesVerbOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+    public boolean hatAkkusativobjekt() {
+        return false;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
         @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
                 getAdvAngabeSkopusSatz();
         @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
                 getAdvAngabeSkopusVerbAllg();
 
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                advAngabeSkopusSatz != null &&
-                        advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
-                        // "aus einer Laune heraus"
-                        null, // (ins Nachfeld verschieben)
-                kf(getModalpartikeln()), // "mal eben"
-                advAngabeSkopusVerbAllg != null &&
-                        advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :  // "erneut"
-                        null, // (ins Nachfeld verschieben)
-                getNegationspartikel(), // "nicht"
-                advAngabeSkopusVerbAllg != null &&
-                        !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
-                        // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
-                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen werden.
-                        ?
-                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
-                        lexikalischerKern.getZuInfinitiv(
-                                // Es liegt Subjektkontrolle vor.
-                                textContext, praedRegMerkmale
-                        ) // "ihre Haare wieder hinunterzulassen"
-                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                // (kann es wohl gar nicht geben)
-        );
-    }
-
-    @Override
-    @Nullable
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz =
-                getAdvAngabeSkopusSatz();
-        @Nullable final IAdvAngabeOderInterrogativVerbAllg advAngabeSkopusVerbAllg =
-                getAdvAngabeSkopusVerbAllg();
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                advAngabeSkopusVerbAllg == null
-                        || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        lexikalischerKern.getZuInfinitiv(
-                                // Es liegt Subjektkontrolle vor.
-                                textContext, praedRegMerkmale
-                        ) // "(Du versuchst) dich zu waschen"
-                        // Wir lassen die Kommata rund um den Infinitiv weg - das ist erlaubt.
-                        : null,
-                advAngabeSkopusVerbAllg != null
-                        && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
-                        advAngabeSkopusVerbAllg
-                                .getDescription(praedRegMerkmale)
-                        // "glücklich, dich zu sehen"
-                        : null,
-                advAngabeSkopusSatz != null
-                        && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
-                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
-                        : null);
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                advAngabeSkopusSatz != null &&
+                                        advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusSatz.getDescription(praedRegMerkmale) :
+                                        // "aus einer Laune heraus"
+                                        null, // (ins Nachfeld verschieben)
+                                kf(getModalpartikeln()), // "mal eben"
+                                advAngabeSkopusVerbAllg != null &&
+                                        advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusVerbAllg.getDescription(praedRegMerkmale) :
+                                        // "erneut"
+                                        null, // (ins Nachfeld verschieben)
+                                getNegationspartikel(), // "nicht"
+                                advAngabeSkopusVerbAllg != null &&
+                                        !advAngabeSkopusVerbAllg.imMittelfeldErlaubt()
+                                        // Die advAngabeSkopusSatz schieben wir immer ins Nachfeld,
+                                        // daraus wird sie nach Möglichkeit ins Vorfeld gezogen
+                                        // werden.
+                                        ?
+                                        // -> Lex. Kern sollten wir aus dem Nachfeld vorziehen
+                                        lexikalischerKern.getZuInfinitiv(
+                                                // Es liegt Subjektkontrolle vor.
+                                                textContext, praedRegMerkmale
+                                        ) // "ihre Haare wieder hinunterzulassen"
+                                        : null, // (Normalfall: lexikalischer Kern im Nachfeld)
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                // (kann es wohl gar nicht geben)
+                        )),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                advAngabeSkopusVerbAllg == null
+                                        || advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        lexikalischerKern.getZuInfinitiv(
+                                                // Es liegt Subjektkontrolle vor.
+                                                textContext, praedRegMerkmale
+                                        ) // "(Du versuchst) dich zu waschen"
+                                        // Wir lassen die Kommata rund um den Infinitiv weg - das
+                                        // ist
+                                        // erlaubt.
+                                        : null,
+                                advAngabeSkopusVerbAllg != null
+                                        && !advAngabeSkopusVerbAllg.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusVerbAllg
+                                                .getDescription(praedRegMerkmale)
+                                        // "glücklich, dich zu sehen"
+                                        : null,
+                                advAngabeSkopusSatz != null
+                                        && !advAngabeSkopusSatz.imMittelfeldErlaubt() ?
+                                        advAngabeSkopusSatz.getDescription(praedRegMerkmale)
+                                        : null)));
     }
 
     @Override

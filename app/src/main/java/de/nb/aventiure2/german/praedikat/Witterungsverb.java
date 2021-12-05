@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P3;
 import static de.nb.aventiure2.german.base.Personalpronomen.EXPLETIVES_ES;
@@ -23,7 +22,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
-public enum Witterungsverb implements VerbOhneLeerstellenSem {
+public enum Witterungsverb implements VerbOhneLeerstellen {
     // Verben ohne Partikel
     AUFKLAREN("aufklaren", "klart", "auf", "aufgeklart"),
     BLITZEN("blitzen", "blitzt", "geblitzt"),
@@ -83,7 +82,7 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
     }
 
-    public Konstituentenfolge getVerbzweit() {
+    public Konstituentenfolge getVerbzweit(final ITextContext textContext) {
         return getVerbzweit(textContext, EXPLETIVES_ES);
     }
 
@@ -96,7 +95,7 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return toPraedikat().getVerbzweit(textContext, praedRegMerkmale);
     }
 
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld() {
+    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(final ITextContext textContext) {
         return getVerbzweitMitSubjektImMittelfeld(textContext, EXPLETIVES_ES);
     }
 
@@ -109,7 +108,7 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return toPraedikat().getVerbzweitMitSubjektImMittelfeld(textContext, subjekt);
     }
 
-    public Konstituentenfolge getVerbletzt() {
+    public Konstituentenfolge getVerbletzt(final ITextContext textContext) {
         return getVerbletzt(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT));
     }
 
@@ -122,7 +121,7 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return toPraedikat().getVerbletzt(textContext, praedRegMerkmale);
     }
 
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase() {
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase(final ITextContext textContext) {
         return getPartizipIIPhrasen(textContext, EXPLETIVES_ES);
     }
 
@@ -136,31 +135,30 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
-    public Konstituentenfolge getInfinitiv() {
+    public Konstituentenfolge getInfinitiv(final ITextContext textContext) {
         return getInfinitiv(textContext, EXPLETIVES_ES);
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return Konstituentenfolge.joinToKonstituentenfolge(verb.getInfinitiv());
+        return new Infinitiv(verb);
     }
 
-    public Konstituentenfolge getZuInfinitiv() {
+    public ZuInfinitiv getZuInfinitiv() {
         return getZuInfinitiv(EXPLETIVES_ES);
     }
 
     @Override
-    @CheckReturnValue
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return new Konstituentenfolge(k(verb.getZuInfinitiv()));
+        return new ZuInfinitiv(verb);
     }
 
     public Konstituente getSpeziellesVorfeldSehrErwuenscht(final boolean nachAnschlusswort) {
@@ -208,16 +206,13 @@ public enum Witterungsverb implements VerbOhneLeerstellenSem {
         return new SemPraedikatSubOhneLeerstellen(verb);
     }
 
-    public Konstituentenfolge getNachfeld() {
-        return getNachfeld(new PraedRegMerkmale(P3, SG, UNBELEBT));
+    public TopolFelder getTopolFelder(final ITextContext textContext) {
+        return getTopolFelder(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT));
     }
 
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        praedRegMerkmale.checkExpletivesEs();
-
-        return null;
+    public TopolFelder getTopolFelder(final ITextContext textContext,
+                                      final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale);
     }
 
     @Override

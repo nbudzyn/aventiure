@@ -9,6 +9,6 @@ import javax.annotation.concurrent.Immutable;
  * Implementierungen immutable sein.)
  */
 @Immutable
-public
 interface SyntSatz {
+    // FIXME Ergibt diese Interface Sinn?!
 }

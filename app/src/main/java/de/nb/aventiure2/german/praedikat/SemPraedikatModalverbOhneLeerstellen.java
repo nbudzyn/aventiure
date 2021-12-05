@@ -174,19 +174,19 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes berichten wollen (Ersatzinfinitiv!)
+        // Spannendes berichten wollen (Ersatzinfinitiv! nicht *"Spannendes berichten gewollt"!)
         // dich waschen wollen
         // sagen wollen: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
+        final Infinitiv infinitivLexKern =
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale);
         return ImmutableList.of(new PartizipIIPhrase(
                 Konstituentenfolge.joinToKonstituentenfolge(
-                        lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
-                                // "Spannendesberichten"
-                                nachfeld),
-                        verb.getPartizipII(), // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
-                        nachfeld), // : Odysseus ist zurück.
+                        infinitivLexKern.toKonstituentenfolgeOhneNachfeld(),
+                        // "Spannendes berichten"
+                        verb.getPartizipII()),
+                // "wollen" (Partizip II ist bereits Ersatzinfinitiv!)
+                infinitivLexKern.getNachfeld(), // : Odysseus ist zurück.
                 verb.getPerfektbildung()));
     }
 
@@ -200,38 +200,23 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes berichten wollen
-        // dich waschen wollen
-        // sagen wollen: "Hallo!"
-
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
-                        // "Spannendes berichten"
-                        nachfeld),
-                verb.getInfinitiv(), // wollen
-                nachfeld); // : Odysseus ist zurück.
+        return new Infinitiv(
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale),
+                // "Spannendes berichten" / ": Odysseus ist zurück."
+                verb); // "wollen"
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes berichten zu wollen
-        // dich waschen zu wollen
-        // sagen zu wollen: "Hallo!"
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
-                        // "Spannendes berichten"
-                        nachfeld),
-                verb.getZuInfinitiv(), // zu wollen
-                nachfeld); // : Odysseus ist zurück.
+        return new ZuInfinitiv(
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale),
+                // "Spannendes berichten" / ": Odysseus ist zurück."
+                verb); // "zu wollen"
     }
 
     @Override
@@ -269,9 +254,7 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
-    @Nullable
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
+    private Nachfeld getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
         return lexikalischerKern.getNachfeld(praedRegMerkmale);
     }
 

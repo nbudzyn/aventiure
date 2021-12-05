@@ -10,7 +10,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 
-public interface VerbOhneLeerstellenSem
+public interface VerbOhneLeerstellen
         extends VerbMitValenz, SemPraedikatOhneLeerstellen {
     @Override
     default SemPraedikatOhneLeerstellen mitModalpartikeln(

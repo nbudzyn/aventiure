@@ -27,7 +27,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
@@ -39,11 +39,11 @@ public class SemPraedikatAkkPraepOhneLeerstellen
         extends AbstractAngabenfaehigesSemPraedikatOhneLeerstellen {
     @Komplement
     @NonNull
-    private final SubstantivischePhrase akk;
+    private final SubstantivischPhrasierbar akk;
 
     @Komplement
     @NonNull
-    private final SubstantivischePhrase praep;
+    private final SubstantivischPhrasierbar praep;
 
     @NonNull
     private final PraepositionMitKasus praepositionMitKasus;
@@ -52,8 +52,8 @@ public class SemPraedikatAkkPraepOhneLeerstellen
     SemPraedikatAkkPraepOhneLeerstellen(
             final Verb verb,
             final PraepositionMitKasus praepositionMitKasus,
-            final SubstantivischePhrase akk,
-            final SubstantivischePhrase praep) {
+            final SubstantivischPhrasierbar akk,
+            final SubstantivischPhrasierbar praep) {
         this(verb, praepositionMitKasus, akk, praep,
                 ImmutableList.of(), null, null, null,
                 null);
@@ -62,8 +62,8 @@ public class SemPraedikatAkkPraepOhneLeerstellen
     private SemPraedikatAkkPraepOhneLeerstellen(
             final Verb verb,
             final PraepositionMitKasus praepositionMitKasus,
-            final SubstantivischePhrase akk,
-            final SubstantivischePhrase praep,
+            final SubstantivischPhrasierbar akk,
+            final SubstantivischPhrasierbar praep,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
             @Nullable final Negationspartikelphrase negationspartikelphrase,
@@ -206,48 +206,42 @@ public class SemPraedikatAkkPraepOhneLeerstellen
     }
 
     @Override
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return joinToKonstituentenfolge(
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+    public boolean hatAkkusativobjekt() {
+        return true;
+    }
+
+    @Override
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase akkPhrase = akk.alsSubstPhrase(textContext);
+        final SubstantivischePhrase praepPhrase = praep.alsSubstPhrase(textContext);
+        return new TopolFelder(
+                new Mittelfeld(
+                        joinToKonstituentenfolge(
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
 // "aus einer Laune heraus"
-                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
-                // "besser doch (nicht)"
-                getNegationspartikel(), // "nicht"
-                akk.akkK(), // "das Teil"
-                getNegationspartikel() == null ? kf(getModalpartikeln()) : null, // "besser doch"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
-                // "aus der La main"
-                praep.imK(praepositionMitKasus)); // "nach dem Weg"
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return akk;
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(praedRegMerkmale)
-        );
+                                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                                // "besser doch (nicht)"
+                                getNegationspartikel(), // "nicht"
+                                akkPhrase.akkK(), // "das Teil"
+                                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                                // "besser doch"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale),
+                                // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                // "aus der La main"
+                                praepPhrase.imK(praepositionMitKasus) // "nach dem Weg
+                        ),
+                        akkPhrase, AKK,
+                        praepPhrase, praepositionMitKasus),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override

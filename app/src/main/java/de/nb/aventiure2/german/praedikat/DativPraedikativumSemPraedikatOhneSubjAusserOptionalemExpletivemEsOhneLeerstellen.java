@@ -1,5 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.Person.P3;
@@ -29,7 +30,7 @@ import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
 import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.base.SubstPhrOderReflexivpronomen;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
@@ -48,7 +49,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
      */
     @NonNull
     @Komplement
-    private final SubstantivischePhrase dat;
+    private final SubstantivischPhrasierbar dat;
 
     /**
      * Die prädikative Adjektivphrase oder das Interrrogativpronomen
@@ -92,7 +93,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     @Valenz
     DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase dat,
+            final SubstantivischPhrasierbar dat,
             final Praedikativum praedikativum) {
         this(verb, dat, praedikativum,
                 ImmutableList.of(),
@@ -102,7 +103,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
 
     private DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsOhneLeerstellen(
             final Verb verb,
-            final SubstantivischePhrase dat,
+            final SubstantivischPhrasierbar dat,
             final Praedikativum praedikativum,
             final Iterable<Modalpartikel> modalpartikeln,
             @Nullable final IAdvAngabeOderInterrogativSkopusSatz advAngabeSkopusSatz,
@@ -235,56 +236,42 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     }
 
     @Override
-    @Nullable
-    @CheckReturnValue
-    Konstituentenfolge getMittelfeldOhneLinksversetzungUnbetonterPronomen(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                dat.datK(), // Peter
-                kf(getModalpartikeln()), // "halt"
-                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                // "plötzlich"
-                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                        praedRegMerkmale), // "erneut"
-                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
-                // (kann wohl nicht besetzt sein?)
-                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                        praedRegMerkmale, getNegationspartikel())
-                // "kalt", "nicht kalt"
-        );
-    }
-
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getDat(final PraedRegMerkmale praedRegMerkmale) {
-        return dat;
+    public boolean hatAkkusativobjekt() {
+        return false;
     }
 
     @Override
-    @Nullable
-    SubstPhrOderReflexivpronomen getAkk(final PraedRegMerkmale praedRegMerkmale) {
-        return null;
-    }
+    TopolFelder getTopolFelder(final ITextContext textContext,
+                               final PraedRegMerkmale praedRegMerkmale) {
+        final SubstantivischePhrase datPhrase = dat.alsSubstPhrase(textContext);
 
-    @Nullable
-    @Override
-    SubstPhrOderReflexivpronomen getZweitesAkk() {
-        return null;
-    }
-
-    @Override
-    @Nullable
-    public Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToNullKonstituentenfolge(
-                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
-                        praedRegMerkmale),
-                // "dich zu sehen"
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
-                        praedRegMerkmale),
-                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
-                        praedRegMerkmale)
-        );
+        return new TopolFelder(
+                new Mittelfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                datPhrase.datK(), // Peter
+                                kf(getModalpartikeln()), // "halt"
+                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                // "plötzlich"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                                        praedRegMerkmale), // "erneut"
+                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                // (kann wohl nicht besetzt sein?)
+                                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                                        praedRegMerkmale, getNegationspartikel())
+                                // "kalt", "nicht kalt"
+                        ),
+                        datPhrase, DAT
+                ),
+                new Nachfeld(
+                        Konstituentenfolge.joinToNullKonstituentenfolge(
+                                praedikativum.getPraedikativAnteilKandidatFuerNachfeld(
+                                        praedRegMerkmale),
+                                // "dich zu sehen"
+                                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale),
+                                getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
+                                        praedRegMerkmale)
+                        )));
     }
 
     @Override
