@@ -188,13 +188,21 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // sich aufgeklart hat
         // ein guter Mensch hat werden wollen (!) (nicht *"ein guter Mensch werden wollen hat")
 
+        final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
+
+        // Wir gehen oben implizit davon aus, dass - sollte der lexikalische Kern
+        // mehrere Partizipien erfordern - das Nachfeld immer und ausschließlich
+        // aus dem letzten der Partizipien stammt!
+        final Nachfeld letztesNachfeld = partizipIIPhrasen.get(partizipIIPhrasen.size() - 1)
+                .getNachfeld();
+
         return Konstituentenfolge.joinToKonstituentenfolge(
-                haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(praedRegMerkmale,
+                haengeHilfsverbformAnPartizipIIPhrasenAnOhneLetztesNachfeld(partizipIIPhrasen,
                         hilfsverb -> hilfsverb.getPraesensOhnePartikel(
                                 praedRegMerkmale.getPerson(),
                                 praedRegMerkmale.getNumerus())),
-                // FIXME Verbletzt o.Ä. zunächste einmalig erzeugen!
-                getNachfeld(praedRegMerkmale));
+                letztesNachfeld);
     }
 
 
@@ -242,7 +250,7 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getInfinitiv(
+    public Infinitiv getInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden sein
@@ -251,15 +259,24 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // sich aufgeklart haben
         // ein guter Mensch haben werden wollen (!) (nicht *"ein guter Mensch werden wollen haben")
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(praedRegMerkmale,
+        final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
+
+        // Wir gehen oben implizit davon aus, dass - sollte der lexikalische Kern
+        // mehrere Partizipien erfordern - das Nachfeld immer und ausschließlich
+        // aus dem letzten der Partizipien stammt!
+        final Nachfeld letztesNachfeld = partizipIIPhrasen.get(partizipIIPhrasen.size() - 1)
+                .getNachfeld();
+
+        return new Infinitiv(
+                haengeHilfsverbformAnPartizipIIPhrasenAnOhneLetztesNachfeld(
+                        partizipIIPhrasen,
                         Verb::getInfinitiv),
-                // FIXME Infinitiv zunächst einmalig erzeugen!
-                getNachfeld(praedRegMerkmale));
+                letztesNachfeld);
     }
 
     @Override
-    public Konstituentenfolge getZuInfinitiv(
+    public ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext,
             final PraedRegMerkmale praedRegMerkmale) {
         // ein guter Mensch geworden zu sein
@@ -271,11 +288,20 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // FIXME "(es ist wichtig, das) sagen gewollt zu haben" (in diesem
         //  Spezialfall *keine* Umstellung und auch *kein Ersatzinfinitiv*!)
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(praedRegMerkmale,
+        final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
+                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
+
+        // Wir gehen oben implizit davon aus, dass - sollte der lexikalische Kern
+        // mehrere Partizipien erfordern - das Nachfeld immer und ausschließlich
+        // aus dem letzten der Partizipien stammt!
+        final Nachfeld letztesNachfeld = partizipIIPhrasen.get(partizipIIPhrasen.size() - 1)
+                .getNachfeld();
+
+        return new ZuInfinitiv(
+                haengeHilfsverbformAnPartizipIIPhrasenAnOhneLetztesNachfeld(
+                        partizipIIPhrasen,
                         Verb::getZuInfinitiv),
-                // FIXME ZuInfinitiv zunächst einmalig erzeugen!
-                getNachfeld(praedRegMerkmale));
+                letztesNachfeld);
     }
 
     @Override
@@ -312,23 +338,14 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
     }
 
-    @Nullable
-    private Konstituentenfolge getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        // Wir gehen oben implizit davon aus, dass - sollte der lexikalische Kern
-        // mehrere Partizipien erfordern - das Nachfeld immer und ausschließlich
-        // aus dem letzten der Partizipien stammt!
-
-        return lexikalischerKern.getNachfeld(praedRegMerkmale);
-    }
-
     @Override
     public boolean inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich() {
         // "Mich hat gefroren".
         return lexikalischerKern.inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich();
     }
 
-    private Konstituentenfolge haengeHilfsverbformAnPartizipIIPhrasenAnOhneNachfeld(
-            final PraedRegMerkmale praedRegMerkmale,
+    private static Konstituentenfolge haengeHilfsverbformAnPartizipIIPhrasenAnOhneLetztesNachfeld(
+            final ImmutableList<PartizipIIPhrase> partizipIIPhrasen,
             final Function<Verb, String> verbformBuilder) {
         // ein guter Mensch geworden bist
         // ein guter Mensch geworden und immer ehrlich geblieben bist
@@ -336,52 +353,33 @@ public class PerfektSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // sich aufgeklart hat
         // ein guter Mensch hat werden wollen (!) (nicht *"ein guter Mensch werden wollen hat")
         Konstituentenfolge res = null;
-        final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                lexikalischerKern.getPartizipIIPhrasen(textContext, praedRegMerkmale);
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
         for (int i = 0; i < partizipIIPhrasen.size(); i++) {
             final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.get(i);
+            final Konstituentenfolge partizipIIPhraseGgfOhneNachfeld =
+                    i < partizipIIPhrasen.size() - 1 ?
+                            // mit Nachfeld
+                            partizipIIPhrase.toAltKonstituentenfolgen().iterator().next() :
+                            // letzte Phrase ohne Nachfeld
+                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld();
             if (res == null) {
-                if (i < partizipIIPhrasen.size() - 1) {
-                    res = Konstituentenfolge.joinToKonstituentenfolge(
-                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld(),
-                            // "ein guter Mensch geworden"
-                            verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "bist"
-                    // FIXME "ein guter Mensch hat werden wollen", nicht
-                    //  ?"ein guter Mensch werden wollen hat"
-                    //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
-                } else {
-                    res = Konstituentenfolge.joinToKonstituentenfolge(
-                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld().cutLast(nachfeld),
-                            // "gesagt"
-                            verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "hast"
-                    // FIXME "ein guter Mensch hat werden wollen", nicht
-                    //  ?"ein guter Mensch werden wollen hat"
-                    //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
-                }
+                res = Konstituentenfolge.joinToKonstituentenfolge(
+                        partizipIIPhraseGgfOhneNachfeld,
+                        // "ein guter Mensch geworden"
+                        verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "bist"
+                // FIXME "ein guter Mensch hat werden wollen", nicht
+                //  ?"ein guter Mensch werden wollen hat"
+                //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
             } else {
-                if (i < partizipIIPhrasen.size() - 1) {
-                    res = Konstituentenfolge.joinToKonstituentenfolge(
-                            res, // "ein guter Mensch geworden bist"
-                            i < partizipIIPhrasen.size() - 1 ? "," : "und",
-                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld(),
-                            // "dabei viel Mühe gehabt"
-                            verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "hast"
-                    // FIXME "ein guter Mensch hat werden wollen", nicht
-                    //  ?"ein guter Mensch werden wollen hat"
-                    //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
-                } else {
-                    res = Konstituentenfolge.joinToKonstituentenfolge(
-                            res, // "ein guter Mensch geworden bist"
-                            i < partizipIIPhrasen.size() - 1 ? "," : "und",
-                            partizipIIPhrase.getPartizipIIPhraseOhneNachfeld().cutLast(nachfeld),
-                            // "gesagt"
-                            verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "hast"
-                    // FIXME "ein guter Mensch hat werden wollen", nicht
-                    //  ?"ein guter Mensch werden wollen hat"
-                    //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
-                }
+                res = Konstituentenfolge.joinToKonstituentenfolge(
+                        res, // "ein guter Mensch geworden bist"
+                        i < partizipIIPhrasen.size() - 1 ? "," : "und",
+                        partizipIIPhraseGgfOhneNachfeld,
+                        // "dabei viel Mühe gehabt"
+                        verbformBuilder.apply(partizipIIPhrase.getHilfsverb())); // "hast"
+                // FIXME "ein guter Mensch hat werden wollen", nicht
+                //  ?"ein guter Mensch werden wollen hat"
+                //  Vielleicht .getMittelfeld() und .getRechteSatzklammer() aufrufen?
             }
         }
 
