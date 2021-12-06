@@ -17,6 +17,9 @@ public interface SubstantivischPhrasierbar {
      * Ausdrucks. Teilweise sind diese Möglichkeiten
      * vom textuellen Umfeld abhängig (also vom {@link ITextContext}). Teilweise werden die
      * Möglichkeiten auch bewusst stilistisch gewählt oder dienen nur der Abwechslung.
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach aufgerufen
+     * werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
     SubstantivischePhrase alsSubstPhrase(ITextContext textContext);
 }

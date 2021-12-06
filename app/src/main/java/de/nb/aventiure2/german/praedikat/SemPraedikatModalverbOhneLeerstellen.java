@@ -159,15 +159,14 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
         // dich waschen möchtest
         // sagen möchtest: "Hallo!"
 
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
+        final Infinitiv infinitivLexKern =
+                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale);
         return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getInfinitiv(textContext, praedRegMerkmale).cutLast(
-                        // "Spannendes berichten"
-                        nachfeld),
+                infinitivLexKern.toKonstituentenfolgeOhneNachfeld(),
+                // "Spannendes berichten"
                 requireNonNull(verb.getPraesensMitPartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "möchtest"
-                nachfeld); // : Odysseus ist zurück.
+                infinitivLexKern.getNachfeld()); // : Odysseus ist zurück.
     }
 
     @Override
@@ -252,10 +251,6 @@ public class SemPraedikatModalverbOhneLeerstellen implements SemPraedikatOhneLee
             final PraedRegMerkmale praedRegMerkmale) {
         // "Spannendes möchest du berichten."
         return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-    }
-
-    private Nachfeld getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        return lexikalischerKern.getNachfeld(praedRegMerkmale);
     }
 
     @Override

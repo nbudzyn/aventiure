@@ -201,6 +201,9 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
     /**
      * Gibt die konkreten topologischen Felder zurück, aus denen ein (syntaktischer)
      * Satz zusammengesetzt werden kann.
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
     @CheckReturnValue
     abstract TopolFelder getTopolFelder(ITextContext textContext,

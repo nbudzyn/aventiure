@@ -180,7 +180,11 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
     /**
      * Gibt das Prädikat "in Verbzweitform" zurück - das Verb steht also ganz am Anfang
      * (in einem Verbzweitsatz würde dann noch das Subjekt davor stehen).
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
+    // FIXME Aufrufer prüfen!
     Konstituentenfolge getVerbzweit(
             final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
@@ -189,14 +193,22 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * wobei dieses Subjekt zusätzlich ins Mittelfeld eingebaut wird.
      * (In einem Verbzweitsatz würde dann noch ein Satzglied vor dem Ganzen stehen, z.B.
      * eine adverbiale Angabe).
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
+    // FIXME Aufrufer prüfen!
     Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
             final ITextContext textContext, SubstantivischePhrase subjekt);
 
     /**
      * Gibt das Prädikat "in Verbletztform" zurück - das Verb steht also am Ende,
      * nur noch gefolgt vom Nachfeld.
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
+    // FIXME Aufrufer prüfen!
     Konstituentenfolge getVerbletzt(
             final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
@@ -271,7 +283,11 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * (<i>Du bist unten angekommen und hast die Kugel genommen</i>). Es sollte allerdings
      * so sein: Folgen im Ergebnis dieser Methode zwei Partizip-II-Phrasen aufeinander,
      * so verlangen sie unterschiedliche Hilfsverben.
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
+    // FIXME Aufrufer prüfen!
     ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
             PraedRegMerkmale praedRegMerkmale);
@@ -326,7 +342,11 @@ public interface SemPraedikatOhneLeerstellen extends SemPraedikat {
      * zu-Infinitiv eine Person und einen Numerus - Beispiel:
      * "[Ich gedenke,] die Kugel an mich zu nehmen"
      * (nicht *"[Ich gedenke,] die Kugel an sich zu nehmen")
+     * <p>
+     * Wenn ein syntaktisches Element erzeugt wird, darf diese Methode nicht mehrfach
+     * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
+    // FIXME Aufrufer prüfen!
     ZuInfinitiv getZuInfinitiv(
             final ITextContext textContext, PraedRegMerkmale praedRegMerkmale);
 
