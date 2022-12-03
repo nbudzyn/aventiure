@@ -4,5 +4,5 @@ import javax.annotation.concurrent.Immutable;
 
 @Immutable
 public
-interface IKonstituenteOrStructuralElement extends IAlternativeKonstituentenfolgable {
+interface IKonstituenteOrStructuralElement extends IKonstituentenfolgable {
 }

@@ -4,7 +4,7 @@ import static java.util.Arrays.asList;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState.HAARE_VOM_TURM_HERUNTERGELASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelsZauberinState.MACHT_ZURZEIT_KEINE_RAPUNZELBESUCHE;
@@ -623,7 +623,7 @@ public enum RapunzelStoryNode implements IStoryNode {
 
         final SubstantivischePhrase descHolz =
                 world.getDescription(HOLZ_FUER_STRICKLEITER,
-                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
+                        ALLES_ERLAUBT);
         if (!world.hasSameVisibleOuterMostLocationAsSC(HOLZ_FUER_STRICKLEITER)) {
             alt.add(neuerSatz("Da kommt dir eine Idee", SENTENCE),
                     neuerSatz("Ein Gedanke schießt dir durch den Kopf", SENTENCE));

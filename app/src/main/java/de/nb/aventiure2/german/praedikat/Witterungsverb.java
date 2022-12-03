@@ -12,13 +12,9 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
 
@@ -82,110 +78,60 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return toPraedikat().alsSatzMitSubjekt(anschlusswort, EXPLETIVES_ES);
     }
 
-    public Konstituentenfolge getVerbzweit(final ITextContext textContext) {
-        return getVerbzweit(textContext, EXPLETIVES_ES);
-    }
-
     @Override
-    public Konstituentenfolge getVerbzweit(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+    public AbstractFinitesPraedikat getFinit(final ITextContext textContext,
+                                             @Nullable
+                                             final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
+                                             final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return toPraedikat().getVerbzweit(textContext, praedRegMerkmale);
+        return toPraedikat().getFinit(textContext, konnektor, praedRegMerkmale);
     }
 
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(final ITextContext textContext) {
-        return getVerbzweitMitSubjektImMittelfeld(textContext, EXPLETIVES_ES);
-    }
-
-    @Override
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
+    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase(
             final ITextContext textContext,
-            final SubstantivischePhrase subjekt) {
-        Personalpronomen.checkExpletivesEs(subjekt);
-
-        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(textContext, subjekt);
-    }
-
-    public Konstituentenfolge getVerbletzt(final ITextContext textContext) {
-        return getVerbletzt(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT));
-    }
-
-    @Override
-    public Konstituentenfolge getVerbletzt(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        praedRegMerkmale.checkExpletivesEs();
-
-        return toPraedikat().getVerbletzt(textContext, praedRegMerkmale);
-    }
-
-    public ImmutableList<PartizipIIPhrase> getPartizipIIPhrase(final ITextContext textContext) {
-        return getPartizipIIPhrasen(textContext, EXPLETIVES_ES);
+            final boolean nachAnschlusswort) {
+        return getPartizipIIPhrasen(textContext, nachAnschlusswort, EXPLETIVES_ES);
     }
 
     @Override
     @CheckReturnValue
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
-    public Infinitiv getInfinitiv(final ITextContext textContext) {
-        return getInfinitiv(textContext, EXPLETIVES_ES);
+    public ImmutableList<Infinitiv> getInfinitiv(final ITextContext textContext,
+                                                 final boolean nachAnschlusswort) {
+        return getInfinitiv(textContext, nachAnschlusswort, EXPLETIVES_ES);
     }
 
     @Override
-    public Infinitiv getInfinitiv(
+    public ImmutableList<Infinitiv> getInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return new Infinitiv(verb);
+        return ImmutableList.of(
+                new EinfacherInfinitiv(null, verb));
     }
 
-    public ZuInfinitiv getZuInfinitiv(final ITextContext textContext) {
-        return getZuInfinitiv(textContext, EXPLETIVES_ES);
+    public ImmutableList<ZuInfinitiv> getZuInfinitiv(final ITextContext textContext,
+                                                     final boolean nachAnschlusswort) {
+        return getZuInfinitiv(textContext, nachAnschlusswort, EXPLETIVES_ES);
     }
 
     @Override
-    public ZuInfinitiv getZuInfinitiv(
+    public ImmutableList<ZuInfinitiv> getZuInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         praedRegMerkmale.checkExpletivesEs();
 
-        return new ZuInfinitiv(verb);
-    }
-
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final boolean nachAnschlusswort) {
-        return getSpeziellesVorfeldSehrErwuenscht(P3, SG, UNBELEBT, nachAnschlusswort);
-    }
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        praedRegMerkmale.checkExpletivesEs();
-
-        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
-                nachAnschlusswort);
-    }
-
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption() {
-        return getSpeziellesVorfeldAlsWeitereOption(P3, SG, UNBELEBT);
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        praedRegMerkmale.checkExpletivesEs();
-
-        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+        return ImmutableList.of(
+                new EinfacherZuInfinitiv(null, verb));
     }
 
     @Override
@@ -206,13 +152,16 @@ public enum Witterungsverb implements VerbOhneLeerstellen {
         return new SemPraedikatSubOhneLeerstellen(verb);
     }
 
-    public TopolFelder getTopolFelder(final ITextContext textContext) {
-        return getTopolFelder(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT));
+    public TopolFelder getTopolFelder(final ITextContext textContext,
+                                      final boolean nachAnschlusswort) {
+        return getTopolFelder(textContext, new PraedRegMerkmale(P3, SG, UNBELEBT),
+                nachAnschlusswort);
     }
 
     public TopolFelder getTopolFelder(final ITextContext textContext,
-                                      final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale);
+                                      final PraedRegMerkmale praedRegMerkmale,
+                                      final boolean nachAnschlusswort) {
+        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale, nachAnschlusswort);
     }
 
     @Override

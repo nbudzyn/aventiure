@@ -1,19 +1,20 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import java.util.Collection;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
@@ -133,18 +134,27 @@ public class SemPraedikatSubOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-// "aus einer Laune heraus"
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
+                                // "aus einer Laune heraus"
                                 kf(getModalpartikeln()), // "mal eben"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // "in den Wald"
                         )),
                 new Nachfeld(
@@ -153,31 +163,12 @@ public class SemPraedikatSubOhneLeerstellen
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        return null;
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale),
+                null,
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
     }
 }

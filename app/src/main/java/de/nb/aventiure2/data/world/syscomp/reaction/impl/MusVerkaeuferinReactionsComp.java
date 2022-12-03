@@ -157,10 +157,10 @@ public class MusVerkaeuferinReactionsComp extends AbstractDescribableReactionsCo
 
     private void verlaesstDenMarkt() {
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
-            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+            final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
             n.narrateAlt(NO_TIME,
-                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph(textContext,
+                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph(
                             possessivDescriptionVorgabe))),
                     neuerSatz(anaph, "kramt",
                             anaph.possArt().vor(NumerusGenus.PL_MFN).akkStr(), // "ihre"

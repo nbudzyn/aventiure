@@ -154,7 +154,7 @@ public class KorbflechterinReactionsComp extends AbstractDescribableReactionsCom
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
             final AltDescriptionsBuilder alt = alt();
 
-            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+            final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
             alt.add(neuerSatz(anaph.nomK(),
                     "deckt ihren Stand ab und verschnürt alles gut"));

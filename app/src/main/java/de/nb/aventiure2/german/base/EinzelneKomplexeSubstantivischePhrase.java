@@ -14,7 +14,7 @@ import java.util.Objects;
 public abstract class EinzelneKomplexeSubstantivischePhrase implements
         EinzelneSubstantivischePhrase {
     /**
-     * Etwas hinzu wie "auch", "allein", "ausgerechnet", "wenigstens" etc.
+     * Etwas wie "auch", "allein", "ausgerechnet", "wenigstens" etc.
      */
     @Nullable
     private final String fokuspartikel;

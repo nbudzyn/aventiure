@@ -48,7 +48,7 @@ public class HolzFuerStrickleiterDescriptionComp
                                 np(N, DEF, "vom Sturm abgebrochene Holz",
                                         "vom Sturm abgebrochenen Holz",
                                         // FIXME Belebtheit und id je SimpleDescriptionComp
-                                        //  nur einmal angeben lasen und nachträglich
+                                        //  nur einmal angeben lassen und nachträglich
                                         //  in die NP setzen? (.withBelebtheit().withBezugsobjekt
                                         //  ()).
                                         HOLZ_FUER_STRICKLEITER),

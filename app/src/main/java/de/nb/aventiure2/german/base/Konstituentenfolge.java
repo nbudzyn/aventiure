@@ -45,7 +45,7 @@ import de.nb.aventiure2.german.string.NoLetterException;
  */
 @Immutable
 public class Konstituentenfolge
-        implements IAlternativeKonstituentenfolgable,
+        implements IKonstituentenfolgable,
         Iterable<IKonstituenteOrStructuralElement> {
     private static final int GEDAECHTNISWEITE_PHORIK = 6;
     private static final int MAX_ANZAHL_ALTERNATIVEN_FOR_1_PART = 300;
@@ -96,6 +96,23 @@ public class Konstituentenfolge
         }
 
         return schliesseInKommaEin(input);
+    }
+
+
+    /**
+     * Gibt die Konstituentenfolge zurück, wobei ein Vorkomma und ein Folgekomma gefordert werden.
+     * Ist der Input leer, wird eine leere Konsitutenten-Liste zurückgeben.
+     */
+    @SuppressWarnings("GrazieInspection")
+    @Nullable
+    @CheckReturnValue
+    public static Konstituentenfolge schliesseInKommaEin(
+            @Nullable final IKonstituentenfolgable input) {
+        if (input == null) {
+            return null;
+        }
+
+        return schliesseInKommaEin(input.toKonstituentenfolge());
     }
 
     /**
@@ -856,7 +873,7 @@ public class Konstituentenfolge
      * Vorkommata etc.
      */
     @Nullable
-    public Konstituentenfolge cutLast(
+    Konstituentenfolge cutLast(
             @Nullable final Konstituentenfolge parts) {
         if (parts == null) {
             return this;
@@ -910,6 +927,30 @@ public class Konstituentenfolge
                         .add(((Konstituente) get(0)).withVorkommaNoetigMin(true))
                         .addAll(konstituenten.subList(1, size())) // evtl. leer
                         .build());
+    }
+
+    /**
+     * Prüft, ob diese Konstituentenfolge enthalten ist - wobei auch die enthaltenen
+     * {@link StructuralElement}s genau übereinstimmen müssen - nicht jedoch die
+     * Vorkommata etc.
+     */
+    public boolean contains(@Nullable final Konstituentenfolge part) {
+        if (part == null) {
+            return true;
+        }
+        int i = 0;
+
+        while (i < size()) {
+            if (i <= size() - part.size()
+                    && new Konstituentenfolge(konstituenten.subList(i, i + part.size()))
+                    .equals(part)) {
+                return true;
+            }
+
+            i = i + 1;
+        }
+
+        return false;
     }
 
     /**
@@ -978,9 +1019,10 @@ public class Konstituentenfolge
         return konstituenten.get(index);
     }
 
+    @Nonnull
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(this);
+    public Konstituentenfolge toKonstituentenfolge() {
+        return this;
     }
 
     @Override

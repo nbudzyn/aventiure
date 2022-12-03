@@ -1,27 +1,25 @@
 package de.nb.aventiure2.german.satz;
 
+import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.ABER;
 import static de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld.UND;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import javax.annotation.CheckReturnValue;
-import javax.annotation.Nonnull;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
+import de.nb.aventiure2.german.praedikat.AbstractFinitesPraedikat;
 import de.nb.aventiure2.german.praedikat.Modalpartikel;
 import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 
@@ -30,9 +28,15 @@ import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
  * (z.B. Diskursreferenten) noch nicht auf einzelne sprachliche Elemente
  * fixiert sind (z.B. als gewisse Nomen oder Personalpronomen).
  */
-public interface SemSatz
-        // FIXME Ist dieses Interface hier richtig?
-        extends IAlternativeKonstituentenfolgable {
+public interface SemSatz {
+    /**
+     * Gibt diesen <code>SemSatz</code> zurück, mit dem (vorangehenden) Anschlusswort "und",
+     * falls
+     * <ul>
+     * <li>der Satz kein (vorangehendes) Anschlusswort hat
+     * <li>und der Satz keine Satzreihung mit "und" ist.
+     * </ul>
+     */
     default SemSatz mitAnschlusswortUndFallsKeinAnschlusswortUndKeineSatzreihungMitUnd() {
         if (isSatzreihungMitUnd()) {
             return this;
@@ -41,6 +45,18 @@ public interface SemSatz
         return mitAnschlusswortUndFallsKeinAnschlusswort();
     }
 
+    default SemSatz mitAnschlussworHoechstensAber() {
+        if (getAnschlusswort() == ABER) {
+            return this;
+        }
+
+        return ohneAnschlusswort();
+    }
+
+    /**
+     * Gibt diesen <code>SemSatz</code> zurück, mit dem (vorangehenden) Anschlusswort "und",
+     * falls der Satz kein Anschlusswort hat.
+     */
     default SemSatz mitAnschlusswortUndFallsKeinAnschlusswort() {
         if (hasAnschlusswort()) {
             return this;
@@ -80,10 +96,12 @@ public interface SemSatz
 
     SemSatz mitAdvAngabe(@Nullable IAdvAngabeOderInterrogativWohinWoher advAngabe);
 
-    SemSatz mitAngabensatz(@Nullable final Konditionalsatz angabensatz,
+    SemSatz mitAngabensatz(@Nullable final KonditionalSemSatz angabensatz,
                            final boolean angabensatzMoeglichstVorangestellt);
 
     SemSatz perfekt();
+
+    ImmutableList<EinzelnerSyntSatz> getSyntSaetze(ITextContext textContext);
 
     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld getAnschlusswort();
 
@@ -103,7 +121,8 @@ public interface SemSatz
      * <li>wer wie geholfen hat
      * </ul>
      */
-    Konstituentenfolge getIndirekteFrage();
+    Konstituentenfolge getIndirekteFrage(
+            final ITextContext textContext);
 
     /**
      * Gibt einen RelativSemSatz zurück: Etwas wie
@@ -118,18 +137,15 @@ public interface SemSatz
      * <li>der wie geholfen hat
      * </ul>
      */
-    Konstituentenfolge getRelativsatz();
+    Konstituentenfolge getRelativsatz(
+            final ITextContext textContext);
 
     /**
      * Gibt den SemSatz als Verbzweitsatz aus, bei dem nach Möglichkeit ein "spezielles"
      * Vorfeld gewählt wird, z.B. eine adverbiale Bestimmung: "am Abend hast du etwas zu berichten"
      */
-    Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption();
-
-    @Override
-    default ImmutableCollection<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return altVerzweitsaetze();
-    }
+    Konstituentenfolge getVerbzweitsatzMitSpeziellemVorfeldAlsWeitereOption(
+            final ITextContext textContext);
 
     /**
      * Gibt den SemSatz als einige alternative Verbzweitsätze aus, z.B. "du hast
@@ -137,34 +153,49 @@ public interface SemSatz
      */
     @CheckReturnValue
     @NonNull
-    ImmutableList<Konstituentenfolge> altVerzweitsaetze();
+    ImmutableList<Konstituentenfolge> altVerzweitsaetze(
+            final ITextContext textContext);
 
     /**
      * Gibt den SemSatz als Verbzweitsatz aus, bei dem das Subjekt im Vorfeld steht, z.B. "du hast
      * am Abend etwas zu berichten" oder "du nimmst den Ast"
      */
-    Konstituentenfolge getVerbzweitsatzStandard();
+    Konstituentenfolge getVerbzweitsatzStandard(
+            final ITextContext textContext);
 
-    Konstituentenfolge getVerbzweitsatzMitVorfeld(String vorfeld);
+    Konstituentenfolge getVerbzweitsatzMitVorfeld(
+            String vorfeld, final ITextContext textContext);
 
     /**
      * Gibt den SemSatz in Verbzweitform aus, jedoch ohne Subjekt und ohne Anschlusswort
      * (d.h. ohne "und") und ohne Komma, beginnend mit dem Verb. Z.B. "hast
      * am Abend etwas zu berichten" oder "nimmst den Ast"
      */
-    Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma();
+    Konstituentenfolge getSatzanschlussOhneSubjektOhneAnschlusswortOhneVorkomma(
+            final ITextContext textContext);
 
     /**
      * Gibt den SemSatz in Verbzweitform aus, jedoch ohne Subjekt, also beginnend mit
      * dem Anschlusswort (z.B. "und" - oder aber der Angabe, dass ein Vorkomma nötig ist) und dem
      * Verb. Z.B. "und hast am Abend etwas zu berichten" oder "[, ]aber nimmst den Ast"
      */
-    Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma();
+    Konstituentenfolge getSatzanschlussOhneSubjektMitAnschlusswortOderVorkomma(
+            final ITextContext textContext);
 
     /**
      * Gibt den SemSatz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
      */
-    Konstituentenfolge getVerbletztsatz();
+    default Konstituentenfolge getVerbletztsatz(final ITextContext textContext) {
+        return getVerbletztsatz(textContext, false);
+    }
+
+    /**
+     * Gibt den SemSatz als Verbletztsatz aus, z.B. "du etwas zu berichten hast"
+     */
+    @Nullable
+    Konstituentenfolge getVerbletztsatz(
+            final ITextContext textContext,
+            final boolean anschlussAusserAberUnterdruecken);
 
     boolean hasSubjektDuBelebt();
 
@@ -177,20 +208,20 @@ public interface SemSatz
     @Nullable
     SemPraedikatOhneLeerstellen getPraedikatWennOhneInformationsverlustMoeglich();
 
-    boolean isSatzreihungMitUnd();
-
+    /**
+     * Gibt die einzelnen "finiten Prädikate" des Satzes zurück, wenn das
+     * (abgesehen vom Subjekt) ohne Informationsverlust
+     * möglich ist (z.B. wenn das SemSatz keinen Adverbialsatz enthält).
+     */
     @Nullable
-    SubstantivischePhrase getErstesSubjekt();
-
-    boolean hatAngabensatz();
+    ImmutableList<AbstractFinitesPraedikat> getFinitePraedikateWennOhneInformationsverlustMoeglich(
+            ITextContext textContext, final boolean vorLetztemZumindestUnd);
 
     /**
-     * Erzeugt aus diesem "semantischen Satz" einen eigentlichen ("syntaktischen")
-     * Satz, wobei alle Diskursreferenten (Personen, Objekte etc.) auf jeweils
-     * eine konkrete sprachliche Repräsentation (z.B. ein konkretes Nomen oder
-     * Personalpronomen) festgelegt werden.
+     * Gibt zurück, ob es sich um eine Satzreihung mit "und" handelt ("er kommt und siegt") oder
+     * nicht nicht ("er kommt", "er kommt, aber er war zu spät").
      */
-    @Nonnull
-    @CheckReturnValue
-    SyntSatz toSynt(ITextContext textContext);
+    boolean isSatzreihungMitUnd();
+
+    boolean hatAngabensatz();
 }

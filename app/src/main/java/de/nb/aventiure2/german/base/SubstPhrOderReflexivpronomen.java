@@ -2,7 +2,7 @@ package de.nb.aventiure2.german.base;
 
 import androidx.annotation.Nullable;
 
-public interface SubstPhrOderReflexivpronomen {
+public interface SubstPhrOderReflexivpronomen extends UmstellbarePhrase {
     SubstPhrOderReflexivpronomen ohneFokuspartikel();
 
     @Nullable

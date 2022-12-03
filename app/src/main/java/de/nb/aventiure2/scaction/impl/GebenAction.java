@@ -2,8 +2,10 @@ package de.nb.aventiure2.scaction.impl;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
+import static de.nb.aventiure2.data.world.syscomp.reaction.impl.RapunzelReactionsComp.Counter.NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
+import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.description.DescriptionUmformulierer.drueckeAus;
 import static de.nb.aventiure2.german.praedikat.IntentionalesVerb.VERSUCHEN;
@@ -12,7 +14,6 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.GEBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.HINHALTEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.REICHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjDatAkk.ZEIGEN;
-import static de.nb.aventiure2.german.string.GermanStringUtil.capitalize;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 import androidx.annotation.NonNull;
@@ -27,6 +28,7 @@ import java.util.Collection;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -35,6 +37,7 @@ import de.nb.aventiure2.data.world.syscomp.taking.ITakerGO;
 import de.nb.aventiure2.data.world.syscomp.taking.SCTakeAction;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.StructuredDescription;
 import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
 import de.nb.aventiure2.scaction.AbstractScAction;
@@ -63,7 +66,7 @@ public class GebenAction<
         if (world.isOrHasRecursiveLocation(taker, SPIELER_CHARAKTER)) {
             return ImmutableList.of();
         }
-
+        if (counterDao.get(NACHGERUFEN_KOMM_NICHT_WENN_DIE_ALTE_DA_IST) == 0
         if (!taker.locationComp().hasRecursiveLocation(
                 world.loadSC().locationComp().getLocation())) {
             return ImmutableList.of();
@@ -93,12 +96,21 @@ public class GebenAction<
 
     @Override
     public String getName() {
-        return capitalize(
+        final DescribableGameObject takerDGO =
+                new DescribableGameObject(world, taker.getId(),
+                        ALLES_ERLAUBT, true);
+
+        final DescribableGameObject givenDGO =
+                new DescribableGameObject(world, given.getId(),
+                        ALLES_ERLAUBT, false);
+
+        return joinToKonstituentenfolge(
+                SENTENCE,
                 GEBEN
-                        .mitDat(getDescription(textContext, taker, true))
-                        .mit(getDescription(given))
-                        .getInfinitiv(P2, SG).joinToString(
-                ));
+                        .mitDat(takerDGO)
+                        .mit(givenDGO)
+                        .getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
+                .joinToString();
     }
 
     @Override

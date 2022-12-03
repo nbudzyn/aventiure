@@ -3,6 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingTowardsType.ZUNEIGUNG_ABNEIGUNG;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altAnsehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altEindrueckSaetze;
@@ -37,7 +39,6 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SKEPTISC
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEIN;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.IHR;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToAltKonstituentenfolgen;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.GESPRAECH;
@@ -90,6 +91,7 @@ import de.nb.aventiure2.data.database.AvDatabase;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -107,6 +109,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.SimpleDuDescription;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
@@ -187,7 +190,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                                 // "Die junge Frau fragen, wie du ihr helfen kannst"
                                 FRAGEN_OB_W.mitIndirekterFragesatz(
                                         KOENNEN.mitLexikalischemKern(
-                                                HELFEN.mit(anaph(textContext,
+                                                HELFEN.mit(anaph(
                                                         possessivDescriptionVorgabe)).mitAdvAngabe(
                                                         InterrogativadverbVerbAllg.WIE))
                                                 .alsSatzMitSubjekt(duSc())),
@@ -400,7 +403,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 zuneigungRapunzelTowardsSC <= FeelingIntensity.MERKLICH ?
                         "Meinst du?" : "Stimmt schon",
                 "“, gibt",
-                anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                anaph(possessivDescriptionVorgabe).nomK(),
                 "zurück").timed(secs(15)));
 
         if (loadSC().memoryComp().isKnown(RAPUNZELS_NAME)
@@ -423,7 +426,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     ImmutableList<TimedDescription<SimpleDuDescription>> altGespraechsbeginnOhneBegruessungZuneigungMinDeutlich() {
         return ImmutableList.of(duParagraph("willst",
                 "gerade anfangen, zu sprechen, da fragt",
-                anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                anaph(possessivDescriptionVorgabe).nomK(),
                 ":",
                 "„Erzähl mir vom Wald!“ „Naja“, sagst du und erzählst etwas",
                 "langatmig",
@@ -438,7 +441,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private AltTimedDescriptionsBuilder altGespraechsbeginnOhneBegruessungNonsense() {
         return altParagraphs("„Nachts ist es kälter als draußen“, sagst du",
                 SENTENCE,
-                anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                anaph(possessivDescriptionVorgabe).nomK(),
                 scUndRapunzelKoennenEinanderSehen() ?
                         joinToAltKonstituentenfolgen(
                                 "schaut dich",
@@ -454,7 +457,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void scBegruesst() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
         final AltTimedDescriptionsBuilder alt = altTimed();
 
@@ -498,7 +501,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     private void rapunzelBeantwortetBegruessung() {
         final boolean scBereitsZuvorSchonEinmalGetroffen =
                 counterDao.get(RAPUNZEL_REAGIERT_AUF_SC_BEGRUESSUNG) > 0;
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
         @Nullable final Personalpronomen persPron = n.getAnaphPersPronWennMgl(RAPUNZEL);
 
         final AltDescriptionsBuilder alt = alt();
@@ -717,7 +720,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void scFragtNachName() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
         n.narrateAlt(secs(10),
                 du("fragst", anaph.akkK(), "nach",
                         anaph.possArt().vor(M).datStr(), "Namen"),
@@ -732,7 +735,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void rapunzelBeantwortenNamensfrage() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
         if (feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG)
                 >= FeelingIntensity.MERKLICH) {
@@ -768,7 +771,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void unterhalten_allg() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
         loadSC().feelingsComp().upgradeFeelingsTowards(RAPUNZEL, ZUNEIGUNG_ABNEIGUNG,
                 0.35f, FeelingIntensity.STARK);
@@ -868,14 +871,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                         SENTENCE,
                         scUndRapunzelKoennenEinanderSehen() ?
                                 joinToAltKonstituentenfolgen(
-                                        anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                                        anaph(possessivDescriptionVorgabe).nomK(),
                                         "zwinkert dir zu. – Oder du hast dir das eingebildet") :
                                 null);
             } else {
                 altAntworten = ImmutableList.of(
-                        joinToKonstituentenfolge("Aber", anaph(textContext,
+                        joinToKonstituentenfolge("Aber", anaph(
                                 possessivDescriptionVorgabe).nomK(), "antwortet nicht"),
-                        joinToKonstituentenfolge("Aber", anaph(textContext,
+                        joinToKonstituentenfolge("Aber", anaph(
                                 possessivDescriptionVorgabe).nomK(), "bleibt still"));
             }
 
@@ -891,7 +894,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     "dich um und dein Blick fällt auf die nackte Mauer.",
                     "„Was ist das hier eigentlich für ein Turm“, fragst du in den Raum.",
                     "„Der gehört der Zauberin“, sagt",
-                    anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                    getDescription(
+                            // "ihre Tocher" / "die Tochter der Zauberin" / "Rapunzel"
+                            ALLES_ERLAUBT
+                    ).nomK(),
                     zuneigungRapunzelZumSC >= FeelingIntensity.MERKLICH
                             && duzen() ?
                             "Der muss sehr alt sein. Und magisch, wenn du mich fragst" :
@@ -979,8 +985,10 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void herzAusschuetten() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
-        final SubstantivischePhrase desc = getDescription(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(NICHT_POSSESSIV);
+        final SubstantivischePhrase desc = getDescription(
+                // "ihre Tochter" / "die Tochter der Zauberin" / "die junge Frau"
+                ALLES_ERLAUBT);
 
         final String wovonHerzBewegtDat;
         if (loadSC().memoryComp().isKnown(RAPUNZELS_GESANG)) {
@@ -1029,7 +1037,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         n.narrate(neuerSatz(
                 "„Die Frau mit dieser… Nase – das ist deine…“ –",
                 "„Ja, sie hält mich gefangen“, antwortet",
-                anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                anaph(possessivDescriptionVorgabe).nomK(),
                 "„Aber sie ist gut zu mir.“")
                 .timed(secs(20)));
 
@@ -1042,7 +1050,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
     }
 
     private void fragenWieSCHelfenKann() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
         n.narrate(neuerSatz("Wie kannst du ihr helfen, so fragst du",
                 anaph.akkK(),
@@ -1081,7 +1089,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                     .timed(secs(10)).withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
         } else {
             n.narrate(du("siehst",
-                    anaph(textContext, possessivDescriptionVorgabe).akkK(),
+                    anaph(possessivDescriptionVorgabe).akkK(),
                     "bedeutungsschwer an: „Vertrau mir, wir bringen dich hier raus!“ –", PARAGRAPH)
                     .schonLaenger()
                     .timed(secs(10)).withCounterIdIncrementedIfTextIsNarrated(RETTUNG_ZUGESAGT));
@@ -1093,21 +1101,21 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             if ((rettungZugesagtCount <= 2 && zuneigungZuSC >= -FeelingIntensity.NUR_LEICHT)
                     || zuneigungZuSC >= FeelingIntensity.STARK) {
-                alt.addAll(altAnsehenSaetze(anaph(textContext, possessivDescriptionVorgabe), duSc(),
+                alt.addAll(altAnsehenSaetze(anaph(possessivDescriptionVorgabe), duSc(),
                         FREUDESTRAHLEND));
             }
 
             if ((rettungZugesagtCount == 3 && zuneigungZuSC >= FeelingIntensity.NEUTRAL)
                     || zuneigungZuSC >= FeelingIntensity.STARK) {
-                alt.addAll(altAnsehenSaetze(anaph(textContext, possessivDescriptionVorgabe), duSc(),
+                alt.addAll(altAnsehenSaetze(anaph(possessivDescriptionVorgabe), duSc(),
                         BEGEISTERT)
                 );
             }
 
             if (rettungZugesagtCount == 4 && zuneigungZuSC >= -FeelingIntensity.DEUTLICH) {
-                alt.add(neuerSatz(anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                alt.add(neuerSatz(anaph(possessivDescriptionVorgabe).nomK(),
                         "zieht eine Augenbraue hoch"));
-                alt.addAll(altEindrueckSaetze(anaph(textContext, possessivDescriptionVorgabe), true,
+                alt.addAll(altEindrueckSaetze(anaph(possessivDescriptionVorgabe), true,
                         SKEPTISCH.mitGraduativerAngabe("etwas"))
                 );
             }
@@ -1115,14 +1123,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if (rettungZugesagtCount == 5
                     && zuneigungZuSC >= -FeelingIntensity.DEUTLICH
                     && zuneigungZuSC <= FeelingIntensity.STARK) {
-                alt.add(neuerSatz(anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                alt.add(neuerSatz(anaph(possessivDescriptionVorgabe).nomK(),
                         "schaut dich an, und du siehst den Zweifel",
                         "in ihrem Blick"));
             }
 
             if ((rettungZugesagtCount == 6 && zuneigungZuSC <= FeelingIntensity.STARK)
                     || zuneigungZuSC <= -FeelingIntensity.DEUTLICH) {
-                alt.addAll(altEindrueckSaetze(anaph(textContext, possessivDescriptionVorgabe), true,
+                alt.addAll(altEindrueckSaetze(anaph(possessivDescriptionVorgabe), true,
                         GENERVT)
                 );
             }
@@ -1130,14 +1138,14 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             if ((rettungZugesagtCount >= 7 && zuneigungZuSC <= FeelingIntensity.STARK)
                     || zuneigungZuSC <= -FeelingIntensity.DEUTLICH) {
                 alt.add(neuerSatz("„Jaja“, sagt",
-                        anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                        anaph(possessivDescriptionVorgabe).nomK(),
                         ", „wie oft ich das schon gehört habe…“"),
                         neuerSatz("„Das wird ja doch nichts“, gibt",
-                                anaph(textContext, possessivDescriptionVorgabe).nomK(), " zurück"));
+                                anaph(possessivDescriptionVorgabe).nomK(), " zurück"));
             }
 
             alt.addIfOtherwiseEmpty(
-                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                    neuerSatz(anaph(possessivDescriptionVorgabe).nomK(),
                             "wendet den Blick ab"));
 
             n.narrateAlt(
@@ -1167,7 +1175,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
             n.narrateAlt(secs(10),
                     neuerSatz(PARAGRAPH,
                             "„Ich wollte Euch nicht belästigen“, sprichst du",
-                            anaph(textContext, possessivDescriptionVorgabe).akkK(),
+                            anaph(possessivDescriptionVorgabe).akkK(),
                             "an,",
                             "„lasst mich wieder hinunter und ich lasse Euch euren Frieden.“",
                             PARAGRAPH));
@@ -1274,14 +1282,19 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
         final int zuneigungZumSC =
                 feelingsComp.getFeelingTowards(SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
 
+        final DescribableGameObject rapunzelsHaareDGO = new DescribableGameObject(
+                world,
+                RAPUNZELS_HAARE,
+                ALLES_ERLAUBT,
+                false);
+
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             if (!loadSC().memoryComp().isKnown(RAPUNZELS_HAARE)) {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung:",
                         SENTENCE,
                         "Aus dem Turmfenster fallen auf einmal",
                         // FIXME altDescription()
-                        getDescription(textContext, possessivDescriptionVorgabe, RAPUNZELS_HAARE)
-                                .nomK(),
+                        rapunzelsHaareDGO.alsSubstPhrase(ImmutableTextContext.EMPTY).nomK(),
                         "bis zum Boden herab")
                         .timed(secs(10))
                         .dann());
@@ -1289,7 +1302,9 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 n.narrate(du(PARAGRAPH, "siehst", " über dir eine Bewegung:",
                         "Aus dem Turmfenster fallen wieder",
                         // FIXME altDescription()
-                        getDescription(textContext, possessivDescriptionVorgabe, RAPUNZELS_HAARE),
+                        rapunzelsHaareDGO.alsSubstPhrase(
+                                // Hier "sie" verhindern (nicht Wackernagel-Position)!
+                                ImmutableTextContext.EMPTY).nomK(),
                         "bis zum Boden herab")
                         .timed(secs(10))
                         .dann());
@@ -1324,7 +1339,7 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                             "„Oh, ich wünschte,",
                             duzen() ? "du könntest" : "Ihr könntet",
                             "noch einen Moment bleiben!“, antwortet",
-                            anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                            anaph(possessivDescriptionVorgabe).nomK(),
                             SENTENCE,
                             altAberDochHaareFestbinden(rapunzelDesc)
                     ));
@@ -1333,12 +1348,12 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
 
             world.loadSC().memoryComp().narrateAndUpgradeKnown(RAPUNZELS_HAARE);
 
+            final ImmutableTextContext innerTextContext = new ImmutableTextContext(rapunzelDesc);
+
             alt.add(neuerSatz(rapunzelDesc.nomK(),
                     "wickelt",
-                    rapunzelDesc.possArt().vor(PL_MFN).akkStr(), // "ihre"
-                    "Haare",
-                    "wieder um den Fensterhaken")
-                    .phorikKandidat(PL_MFN, UNBELEBT, RAPUNZELS_HAARE));
+                    rapunzelsHaareDGO.alsSubstPhrase(innerTextContext).akkStr(), // "ihre Haare"
+                    "wieder um den Fensterhaken"));
 
             n.narrateAlt(alt, secs(10));
         }
@@ -1414,45 +1429,53 @@ public class RapunzelTalkingComp extends AbstractTalkingComp {
                 feelingsComp.getFeelingTowardsForActionsMitEmpathischerSchranke(
                         SPIELER_CHARAKTER, ZUNEIGUNG_ABNEIGUNG);
         alt.add(neuerSatz("„Sie ist weg“, hörst du",
-                anaph(textContext, possessivDescriptionVorgabe).nomK(), "sagen"));
+                anaph(possessivDescriptionVorgabe).nomK(), "sagen"));
 
         if (duzen()) {
-            alt.add(neuerSatz("„Kannst rauskommen“, sagt", anaph(textContext,
+            alt.add(neuerSatz("„Kannst rauskommen“, sagt", anaph(
                     possessivDescriptionVorgabe).nomK()));
         }
 
         if (zuneigungRapunzelZuSc >= FeelingIntensity.MERKLICH) {
             alt.add(neuerSatz("„Die Luft ist rein“, flüstert",
-                    anaph(textContext, possessivDescriptionVorgabe).nomK(), "in den Raum"));
+                    anaph(possessivDescriptionVorgabe).nomK(), "in den Raum"));
         }
 
         n.narrateAlt(alt, secs(5));
     }
 
 
-    public static ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
+    public ImmutableSet<AbstractDescription<?>> altDannHaareFestbinden(
             final SubstantivischePhrase rapunzelDesc) {
+        final DescribableGameObject rapunzelsHaareDGO = new DescribableGameObject(
+                world,
+                RAPUNZELS_HAARE,
+                ALLES_ERLAUBT,
+                true);
+
+        final ImmutableTextContext textContext = new ImmutableTextContext(rapunzelDesc);
+
         return alt()
                 .add(satzanschluss(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
-                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder um den Haken am Fenster"))
+                        rapunzelsHaareDGO.alsSubstPhrase(textContext).akkStr(), // "ihre Haare"
+                        "wieder um den Haken am Fenster"))
                 .add(satzanschluss(
                         "dann knotet",
                         rapunzelDesc.persPron().nomK(), //"sie"
-                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder über den Haken am Fenster"))
+                        rapunzelsHaareDGO.alsSubstPhrase(textContext).akkStr(), // "ihre Haare"
+                        "wieder über den Haken am Fenster"))
                 .add(satzanschluss(
                         "dann knotet",
                         rapunzelDesc.persPron().nomK(), //"sie"
-                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder um den Fensterhaken"))
+                        rapunzelsHaareDGO.alsSubstPhrase(textContext).akkStr(), // "ihre Haare"
+                        "wieder um den Fensterhaken"))
                 .add(satzanschluss(
                         "dann bindet",
                         rapunzelDesc.persPron().nomK(), //"sie"
-                        rapunzelDesc.possArt().vor(PL_MFN).akkStr(),// "ihre"
-                        "Haare wieder am Fenster fest"))
+                        rapunzelsHaareDGO.alsSubstPhrase(textContext).akkStr(), // "ihre Haare"
+                        "wieder am Fenster fest"))
                 .build();
     }
 

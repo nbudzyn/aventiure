@@ -23,7 +23,7 @@ public class AdvAngabeSkopusVerbAllg
      */
     @SuppressWarnings("GrazieInspection")
     public AdvAngabeSkopusVerbAllg(final Praepositionalphrase praepositionalphrase) {
-        this(praepositionalphrase.getDescription().joinToString()
+        this(praepositionalphrase.toKonstituentenfolge().joinToString()
                 // Wenn die Präpositionalphrase später einmal einen Ergänzungs- oder
                 // Angaben-Nebensatz
                 // enthalten könnte - oder eine zu-Infinitiv-Phrase -, dann wäre sie im

@@ -36,6 +36,11 @@ public interface EinzelneSubstantivischePhrase extends SubstantivischePhrase {
                         getBezugsobjekt()));
     }
 
+    @Override
+    default Numerus getNumerus() {
+        return SubstantivischePhrase.super.getNumerus();
+    }
+
     default SubstPhrReihung und(final SubstantivischePhrase other) {
         return new SubstPhrReihung(this, other);
     }

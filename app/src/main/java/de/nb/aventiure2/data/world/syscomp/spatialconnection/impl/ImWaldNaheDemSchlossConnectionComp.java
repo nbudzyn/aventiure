@@ -67,7 +67,7 @@ import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
@@ -394,7 +394,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
         return mapToList(altSpWetterhinweisSaetze,
                 // "als du wieder im Schlossgarten stehst, ist es dunkel"
                 s -> s.mitAngabensatz(
-                        new Konditionalsatz("als",
+                        new KonditionalSemSatz("als",
                                 STEHEN
                                         .mitAdvAngabe(new AdvAngabeSkopusSatz("wieder"))
                                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
@@ -445,7 +445,7 @@ public class ImWaldNaheDemSchlossConnectionComp extends AbstractSpatialConnectio
                             .altBeiLichtImLicht(
                                     timeTaker.now().plus(timeElapsed),
                                     true).stream()
-                            .map(Praepositionalphrase::getDescription),
+                            .map(Praepositionalphrase::toKonstituentenfolge),
                     "auch nicht kürzer, aber endlich stehst du wieder vor dem alten Turm")
                     .timed(timeElapsed).build();
         }

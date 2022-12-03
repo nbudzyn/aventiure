@@ -4,6 +4,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -15,6 +16,7 @@ import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HA
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.WARTET_AUF_SC_BEIM_SCHLOSSFEST;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ZURUECKVERWANDELT_SCHLOSS_VORHALLE_VERLASSEN;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -180,8 +182,9 @@ public class FroschprinzReactionsComp
         final String woFroschprinz =
                 locationComp.hasLocation(to) ? "hier" : getWoFroschprinz();
 
-        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
-                possessivDescriptionVorgabe);
+        final EinzelneSubstantivischePhrase desc =
+                // "sein Sohn" / "des Königs Sohn" / "der eklige Frosch"
+                getDescription(ALLES_ERLAUBT);
         switch (stateComp.getState()) {
             case UNAUFFAELLIG:
             case WARTET_AUF_SC_BEIM_SCHLOSSFEST:
@@ -281,7 +284,9 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        n.narrate(du("siehst", getDescription(textContext, possessivDescriptionVorgabe).akkK(),
+        n.narrate(du("siehst", getDescription(
+                // "seinen Sohne" / "des Königs Sohn" / "den ekligen Frosch"
+                ALLES_ERLAUBT).akkK(),
                 locationComp.hasLocation(toAndPrinzLocation) ? null : getWoFroschprinz())
                 .schonLaenger()
                 .timed(NO_TIME));
@@ -293,7 +298,7 @@ public class FroschprinzReactionsComp
                     satzanschluss(", aber die Menge hat dich schon von dem",
                             "jungen Königssohn getrennt")
                             .timed(secs(15))
-                            .phorikKandidat(M, FROSCHPRINZ));
+                            .phorikKandidat(M, BELEBT, FROSCHPRINZ));
 
             prinzDraussenVorDemSchlossAngekommen();
             return;
@@ -303,7 +308,7 @@ public class FroschprinzReactionsComp
                 neuerSatz("In der Menge ist der junge Königssohn nicht mehr zu "
                         + "erkennen")
                         .timed(secs(15))
-                        .phorikKandidat(M, FROSCHPRINZ));
+                        .phorikKandidat(M, BELEBT, FROSCHPRINZ));
 
         prinzDraussenVorDemSchlossAngekommen();
     }
@@ -407,7 +412,7 @@ public class FroschprinzReactionsComp
             return;
         }
 
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
         stateComp.narrateAndSetState(BEIM_SCHLOSSFEST_AUF_TISCH_WILL_ZUSAMMEN_ESSEN);
 

@@ -2,15 +2,16 @@ package de.nb.aventiure2.german.base;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 
-import com.google.common.collect.ImmutableList;
+import androidx.annotation.NonNull;
 
 import javax.annotation.CheckReturnValue;
 
-public interface IInterrogativadverb extends IAlternativeKonstituentenfolgable, IInterrogativwort,
+public interface IInterrogativadverb extends IKonstituentenfolgable, IInterrogativwort,
         IAdvAngabeOderInterrogativ {
     @Override
-    default ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(getDescription()));
+    @NonNull
+    default Konstituentenfolge toKonstituentenfolge() {
+        return new Konstituentenfolge(getDescription());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -8,7 +9,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -17,6 +17,7 @@ import de.nb.aventiure2.german.adjektiv.AdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
@@ -154,23 +155,6 @@ public class SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
     }
 
 
-    @SuppressWarnings("RedundantIfStatement")
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        // "Glücklich wirkt sie [, dich zu sehen]" oder "Verstimmt schaut sie" wären sehr markiert.
-        // In aller Regel ist das Adjektiv das Rhema und sollte also hinten stehen.
-
-        return null;
-    }
-
     @Override
     public boolean hatAkkusativobjekt() {
         return false;
@@ -178,18 +162,26 @@ public class SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-                                // "leider"
+                                advAngabeSkopusSatzSyntFuerMittelfeld, // "leider"
                                 kf(getModalpartikeln()), // "halt"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                advAngabeSkopusVerbWohinWoherSynt,
                                 // "nach außen" (?)
                                 adjektivphrase
                                         .getPraedikativOhneAnteilKandidatFuerNachfeld(
@@ -199,42 +191,28 @@ public class SemPraedikatMitPraedikativerAdjektivphraseOhneLeerstellen
                 new Nachfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
                                 adjektivphrase
-                                        .getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
+                                        .getPraedikativAnteilKandidatFuerNachfeld(
+                                                praedRegMerkmale),
                                 // ", dich zu sehen"
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale),
+                null,
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
+
+        // "Glücklich wirkt sie [, dich zu sehen]" oder "Verstimmt schaut sie" wären sehr markiert.
+        // In aller Regel ist das Adjektiv das Rhema und sollte also hinten stehen.
     }
 
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        return null;
     }
 
     @Override

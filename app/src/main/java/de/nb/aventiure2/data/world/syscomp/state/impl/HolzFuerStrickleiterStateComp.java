@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.state.impl;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.AM_BAUM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.GESAMMELT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.HolzFuerStrickleiterState.IN_STUECKE_GEBROCHEN;
@@ -46,7 +47,8 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
                                     true))
                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                             IN_AKK.mit(np(INDEF, STUECKE))))
-                                    .getInfinitiv(textContext, duSc()).joinToString()),
+                                    .getInfinitiv(textContext, nachAnschlusswort, duSc())
+                                    .joinToString()),
                             this::altTimedDescriptionsAndDo_holzZerbrechen,
                             IN_STUECKE_GEBROCHEN)
             );
@@ -62,7 +64,10 @@ public class HolzFuerStrickleiterStateComp extends AbstractStateComp<HolzFuerStr
                         new ZweiPraedikateOhneLeerstellenSem(
                                 SICH_NEHMEN.mit(np(ETWAS, ZEIT)),
                                 BRECHEN.mit(
-                                        getDescription(textContext, possessivDescriptionVorgabe))
+                                        getDescription(
+                                                // "sein Holz" / "des Königs Holz" / "das Holz"
+                                                ALLES_ERLAUBT
+                                        ))
                                         .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                 IN_AKK.mit(np(INDEF, HANDLICH, STUECKE))))))
                         .timed(mins(10))

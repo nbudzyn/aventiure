@@ -7,242 +7,96 @@ import java.util.Objects;
 
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
-import de.nb.aventiure2.german.base.IArtikelworttypOderVorangestelltesGenitivattribut;
-import de.nb.aventiure2.german.base.IBezugsobjekt;
-import de.nb.aventiure2.german.base.Negationspartikelphrase;
-import de.nb.aventiure2.german.base.NumerusGenus;
-import de.nb.aventiure2.german.base.Person;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.base.Reflexivpronomen;
-import de.nb.aventiure2.german.base.Relativpronomen;
-import de.nb.aventiure2.german.description.EmptyTextContext;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.description.ITextContext;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 
 /**
- * Eine Game Object (Person, Gegenstand, eKonzept o.Ä.), das sich als
- * in einem {@link ITextContext} als eine {@link EinzelneSubstantivischePhrase} beziehen
- * beschreiben lässt (also ein <i>Diskursreferent</i>).
+ * Ein Game Object (Person, Gegenstand, eKonzept o.Ä.), das sich als
+ * in einem {@link ITextContext} als eine {@link EinzelneSubstantivischePhrase} beschreiben lässt
+ * (also ein <i>Diskursreferent</i>) - mit ein paar weiteren Vorgaben für die Umsetzung in die
+ * substantivische Phrase.
  * <p>
  * Im Beispiel: "Der Mann steht mitten auf der Straße. Jeder sieht ihn."
- * könnte der Mann eine {@code DescribableGameObject} sein, das sich je nach
+ * könnte der Mann ein {@code DescribableGameObject} sein, das sich je nach
  * Text-Kontext als "der Mann / dem Mann / den Mann" und als
- * "er, ihm, ihn" beschrieben wurde.
+ * "er, ihm, ihn" beschrieben wurde. Oft gibt es auch mehrere Möglichkeiten, etwas auszudrücken,
+ * und das System trifft eine Auswahl - und erzeugt so Abwechslung.
  */
-public class DescribableGameObject implements EinzelneSubstantivischePhrase,
+public class DescribableGameObject implements SubstantivischPhrasierbar,
         // Mixins
         IWorldDescriptionMixin {
     /**
      * Das eigentliche Bezugsobjekt (Diskursreferent).
      */
     private final GameObjectId describableId;
-    private final boolean moeglichstAnapher;
-    private final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe;
-    private final boolean descShortIfKnown;
-    @Nullable
-    private final String fokuspartikelOverride;
-    @Nullable
-    private final Negationspartikelphrase negationspartikelphraseOverride;
-    private final boolean moeglichstNegativIndefiniteWoerterVerwendenOverride;
 
-    // FIXME: Text-Kontext muss jeder Methode einzeln übergeben werden!!
-    private final ITextContext textContext = EmptyTextContext.INSTANCE;
+    /**
+     * Vorgabe für die Umsetzung in die substantivische Phrase, in wieweit eine
+     * <i>Possessiv-Beschreibung</i> gewünscht ist.
+     */
+    private final PossessivDescriptionVorgabe possessivDescriptionVorgabe;
+
+    /**
+     * Vorgabe für die Umsetzung in die substantivische Phrase, ob eine
+     * Kurzbeschreibung gewünscht ist, sofern das Game Object bekannt ist.
+     */
+    private final boolean shortIfKnown;
+
+    /**
+     * Fokuspartikel, die für die substantivische Phrase (nach Möglichkeit) verwendet werden soll.
+     */
+    @Nullable
+    private final String fokuspartikel;
 
     private final World world;
 
     public DescribableGameObject(
             final World world,
             final GameObjectId describableId,
-            final boolean moeglichstAnapher,
-            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
-            final boolean descShortIfKnown) {
-        this(world, describableId, moeglichstAnapher,
-                descPossessivDescriptionVorgabe, descShortIfKnown,
-                null, null, true);
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        this(world, describableId, possessivDescriptionVorgabe, shortIfKnown, null);
     }
 
     private DescribableGameObject(
             final World world,
             final GameObjectId describableId,
-            final boolean moeglichstAnapher,
-            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
-            final boolean descShortIfKnown,
-            final @Nullable String fokuspartikelOverride,
-            final @Nullable Negationspartikelphrase negationspartikelphraseOverride,
-            final boolean moeglichstNegativIndefiniteWoerterVerwendenOverride) {
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown,
+            @Nullable final String fokuspartikel) {
         this.world = world;
         this.describableId = describableId;
-        this.moeglichstAnapher = moeglichstAnapher;
-        this.descPossessivDescriptionVorgabe = descPossessivDescriptionVorgabe;
-        this.descShortIfKnown = descShortIfKnown;
-        this.fokuspartikelOverride = fokuspartikelOverride;
-        this.negationspartikelphraseOverride = negationspartikelphraseOverride;
-        this.moeglichstNegativIndefiniteWoerterVerwendenOverride =
-                moeglichstNegativIndefiniteWoerterVerwendenOverride;
-    }
-
-
-    @Override
-    public String nomStr() {
-        return getDescription().nomStr();
-    }
-
-    @Override
-    public String datStr() {
-        return getDescription().datStr();
-    }
-
-    @Override
-    public String akkStr() {
-        return getDescription().akkStr();
-    }
-
-    @Nullable
-    @Override
-    public String getFokuspartikel() {
-        return getDescription().getFokuspartikel();
-    }
-
-    @Nullable
-    @Override
-    public Negationspartikelphrase getNegationspartikelphrase() {
-        // Vielleicht etwas wie "die gar nicht unauffällige Frau"??
-        return getDescription().getNegationspartikelphrase();
-    }
-
-    @Override
-    public Belebtheit getBelebtheit() {
-        return getDescription().getBelebtheit();
-    }
-
-    @Nullable
-    @Override
-    public IBezugsobjekt getBezugsobjekt() {
-        return describableId;
-    }
-
-    @Override
-    public boolean isUnbetontesPronomen() {
-        return getDescription().isUnbetontesPronomen();
-    }
-
-    @Override
-    public DescribableGameObject ohneNegationspartikelphrase() {
-        if (negationspartikelphraseOverride == null) {
-            // Theoretisch könnte der Describer hier immer noch eine Negation
-            // vorsehen - aber was will man machen!
-            return this;
-        }
-
-        return new DescribableGameObject(world, describableId,
-                moeglichstAnapher,
-                descPossessivDescriptionVorgabe,
-                descShortIfKnown,
-                fokuspartikelOverride, null, true);
-    }
-
-    @Override
-    public DescribableGameObject neg(final Negationspartikelphrase negationspartikelphrase,
-                                     final boolean moeglichstNegativIndefiniteWoerterVerwenden) {
-        return new DescribableGameObject(world, describableId,
-                moeglichstAnapher,
-                descPossessivDescriptionVorgabe,
-                descShortIfKnown,
-                fokuspartikelOverride,
-                negationspartikelphrase, moeglichstNegativIndefiniteWoerterVerwenden);
-    }
-
-    @Override
-    public DescribableGameObject ohneFokuspartikel() {
-        if (fokuspartikelOverride == null) {
-            // Theoretisch könnte der Describer hier immer noch eine Fokuspartikel
-            // vorsehen - aber was will man machen!
-            return this;
-        }
-
-        return new DescribableGameObject(world, describableId,
-                moeglichstAnapher,
-                descPossessivDescriptionVorgabe,
-                descShortIfKnown,
-                null,
-                negationspartikelphraseOverride,
-                moeglichstNegativIndefiniteWoerterVerwendenOverride);
+        this.possessivDescriptionVorgabe = possessivDescriptionVorgabe;
+        this.shortIfKnown = shortIfKnown;
+        this.fokuspartikel = fokuspartikel;
     }
 
     @Override
     public DescribableGameObject mitFokuspartikel(@Nullable final String fokuspartikel) {
-        return new DescribableGameObject(world, describableId,
-                moeglichstAnapher,
-                descPossessivDescriptionVorgabe,
-                descShortIfKnown,
-                fokuspartikel,
-                negationspartikelphraseOverride,
-                moeglichstNegativIndefiniteWoerterVerwendenOverride);
-    }
-
-    @Override
-    public boolean erlaubtVerschmelzungVonPraepositionMitArtikel() {
-        return getDescription().erlaubtVerschmelzungVonPraepositionMitArtikel();
-    }
-
-    @Override
-    public String artikellosDatStr() {
-        return getDescription().artikellosDatStr();
-    }
-
-    @Override
-    public String artikellosAkkStr() {
-        return getDescription().artikellosAkkStr();
-    }
-
-    @Override
-    public Personalpronomen persPron() {
-        return getDescription().persPron();
-    }
-
-    @Override
-    public Reflexivpronomen reflPron() {
-        return getDescription().reflPron();
-    }
-
-    @Override
-    public IArtikelworttypOderVorangestelltesGenitivattribut possArt() {
-        return getDescription().possArt();
-    }
-
-    @Override
-    public Relativpronomen relPron() {
-        return getDescription().relPron();
-    }
-
-    @Override
-    public NumerusGenus getNumerusGenus() {
-        return getDescription().getNumerusGenus();
-    }
-
-    @Override
-    public Person getPerson() {
-        return getDescription().getPerson();
-    }
-
-    private EinzelneSubstantivischePhrase getDescription() {
-        EinzelneSubstantivischePhrase res =
-                getDescriptionWithoutOverriding();
-
-        if (fokuspartikelOverride != null) {
-            res = res.mitFokuspartikel(fokuspartikelOverride);
+        if (Objects.equals(this.fokuspartikel, fokuspartikel)) {
+            return this;
         }
 
-        if (negationspartikelphraseOverride != null) {
-            res = res.neg(negationspartikelphraseOverride,
-                    moeglichstNegativIndefiniteWoerterVerwendenOverride);
+        return new DescribableGameObject(getWorld(), describableId,
+                possessivDescriptionVorgabe, shortIfKnown,
+                fokuspartikel);
+    }
+
+    @Override
+    public EinzelneSubstantivischePhrase alsSubstPhrase(final ITextContext textContext) {
+        EinzelneSubstantivischePhrase res = getDescriptionWithoutOverriding(textContext);
+
+        if (fokuspartikel != null) {
+            res = res.mitFokuspartikel(fokuspartikel);
         }
 
         return res;
     }
 
-    private EinzelneSubstantivischePhrase getDescriptionWithoutOverriding() {
+    private EinzelneSubstantivischePhrase getDescriptionWithoutOverriding(
+            final ITextContext textContext) {
         // FIXME Hier gibt es ein ernstes Problem: Für aufeinanderfolgede
         //  Aufrufe muss oft immer dieselbe Beschreibung verwendet werden,
         //  damit Substantiv, Personalpronomen etc. zusammenpassen.
@@ -308,19 +162,13 @@ public class DescribableGameObject implements EinzelneSubstantivischePhrase,
         //   Relativpronomen etc. nicht mehr direkt. Stattdessen muss ein Aufrufer, der
         //   Nominativ, Relativpronomen etc. haben möchte erst eine Methode auf der
         //   Objektklasse aufrufen, um eine sprachliche Repräsentation festzulegen.
-        //   Diese Methode erhält als Parameter eine ITextContext. Ihr Ergebnis
+        //   Diese Methode erhält als Parameter einen ITextContext. Ihr Ergebnis
         //   ist ein Immutable. Erst dieses Immutable stellt Nominativ, Relativpronomen
         //   etc. bereit. (Verschiedene Aufrufe auf der Objekt-Klasse selbst, auch für
         //   gleiche oder ähnliche ITextContexts, können ganz unterschiedliche
         //   Immutables ergeben).
 
-        if (moeglichstAnapher) {
-            return anaph(textContext, describableId, descPossessivDescriptionVorgabe,
-                    descShortIfKnown);
-        }
-
-        return getDescription(textContext, describableId, descPossessivDescriptionVorgabe,
-                descShortIfKnown);
+        return anaph(textContext, describableId, possessivDescriptionVorgabe, shortIfKnown);
     }
 
     @Override
@@ -337,28 +185,21 @@ public class DescribableGameObject implements EinzelneSubstantivischePhrase,
             return false;
         }
         final DescribableGameObject that = (DescribableGameObject) o;
-        return moeglichstAnapher == that.moeglichstAnapher
-                && descShortIfKnown == that.descShortIfKnown
-                && moeglichstNegativIndefiniteWoerterVerwendenOverride
-                == that.moeglichstNegativIndefiniteWoerterVerwendenOverride && describableId
-                .equals(that.describableId)
-                && descPossessivDescriptionVorgabe == that.descPossessivDescriptionVorgabe
-                && Objects.equals(fokuspartikelOverride, that.fokuspartikelOverride)
-                && Objects
-                .equals(negationspartikelphraseOverride, that.negationspartikelphraseOverride)
-                && textContext.equals(that.textContext) && world.equals(that.world);
+        return shortIfKnown == that.shortIfKnown && describableId.equals(that.describableId)
+                && possessivDescriptionVorgabe == that.possessivDescriptionVorgabe && Objects
+                .equals(fokuspartikel, that.fokuspartikel) && world.equals(that.world);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(describableId, moeglichstAnapher, descPossessivDescriptionVorgabe,
-                descShortIfKnown, fokuspartikelOverride, negationspartikelphraseOverride,
-                moeglichstNegativIndefiniteWoerterVerwendenOverride, world);
+        return Objects
+                .hash(describableId, possessivDescriptionVorgabe, shortIfKnown, fokuspartikel,
+                        world);
     }
 
     @NonNull
     @Override
     public String toString() {
-        return nomStr() + " (" + describableId + ")";
+        return alsSubstPhrase(ImmutableTextContext.EMPTY).nomStr() + " (" + describableId + ")";
     }
 }

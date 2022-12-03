@@ -105,9 +105,9 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 import de.nb.aventiure2.german.satz.SemSatz;
+import de.nb.aventiure2.german.satz.SemSatzReihe;
 
 /**
  * Beschreibt die {@link Bewoelkung}, evtl. auch Tageszeit und tageszeitliche
@@ -203,7 +203,7 @@ public class BewoelkungSatzDescriber {
                     alt.add(UNTERGEHEN.alsSatzMitSubjekt(SONNE));
                     alt.add(EINBRECHEN.alsSatzMitSubjekt(NACHT));
                     if (unterOffenemHimmel) {
-                        alt.add(new Satzreihe(
+                        alt.add(new SemSatzReihe(
                                 SINKEN.alsSatzMitSubjekt(SONNE),
                                 EINBRECHEN.alsSatzMitSubjekt(NACHT)));
                     }
@@ -236,7 +236,7 @@ public class BewoelkungSatzDescriber {
             // ("Bewölkungswechsel").
 
             final ImmutableSet<AdvAngabeSkopusSatz> altSpWann;
-            final ImmutableSet<Konditionalsatz> altSpWannSaetze;
+            final ImmutableSet<KonditionalSemSatz> altSpWannSaetze;
 
             if (span(dateTimeChange).shorterThan(ONE_DAY) && auchZeitwechselreferenzen) {
                 final Change<AvTime> timeChange = dateTimeChange.map(AvDateTime::getTime);

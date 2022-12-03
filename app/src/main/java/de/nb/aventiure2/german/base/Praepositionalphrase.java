@@ -2,8 +2,6 @@ package de.nb.aventiure2.german.base;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -11,7 +9,7 @@ import javax.annotation.Nullable;
 /**
  * Eine Präpositionalphrase, also eine Präposition mit einer davon abhängigen Phrase
  */
-public class Praepositionalphrase implements Praedikativum, IAlternativeKonstituentenfolgable {
+public class Praepositionalphrase implements Praedikativum, IKonstituentenfolgable {
     /**
      * Ein Adverb oder Adjektiv, dass die Phrase modifiziert:
      * "schräg über der Tür".
@@ -80,11 +78,7 @@ public class Praepositionalphrase implements Praedikativum, IAlternativeKonstitu
     }
 
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return getDescription().toAltKonstituentenfolgen();
-    }
-
-    public Konstituentenfolge getDescription() {
+    public Konstituentenfolge toKonstituentenfolge() {
         return joinToKonstituentenfolge(
                 modAdverbOderAdjektiv,
                 praepositionMitKasus.getDescription(substPhrOderReflPron));

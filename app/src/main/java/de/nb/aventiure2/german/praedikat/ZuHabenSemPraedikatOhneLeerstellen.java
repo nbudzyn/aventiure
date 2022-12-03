@@ -8,7 +8,6 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -17,11 +16,9 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -29,7 +26,7 @@ import de.nb.aventiure2.german.description.ITextContext;
  * (z.B. <i>Spannendes zu berichten haben</i>,  <i>mit Paul zu diskutieren haben</i>,
  * <i>zu schlafen haben</i>, <i>sich zu waschen haben</i>).
  */
-public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeerstellen {
+public class ZuHabenSemPraedikatOhneLeerstellen implements EinzelnesSemPraedikatOhneLeerstellen {
     /**
      * Das Prädikat in seiner "ursprünglichen" Form (ohne "zu haben"). Die
      * "ursprüngliche Form" von <i>Spannendes zu berichten haben</i> ist z.B.
@@ -92,20 +89,6 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
                 lexikalischerKern.mitAdvAngabe(advAngabe));
     }
 
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        return lexikalischerKern.getErstesInterrogativwort();
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        return lexikalischerKern.getRelativpronomen();
-    }
-
     @Override
     public boolean hauptsatzLaesstSichBeiGleichemSubjektMitNachfolgendemVerbzweitsatzZusammenziehen() {
         // Diese Einschränkung hängt wohl hauptsächlich vom Nachfeld ab, dass
@@ -117,70 +100,48 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(
+    public AbstractFinitesPraedikat getFinit(
             final ITextContext textContext,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
             final PraedRegMerkmale praedRegMerkmale) {
-        // hast Spannendes zu berichten
-        // hast dich zu waschen
-        // hast zu sagen: "Hallo!"
+        final ImmutableList<ZuInfinitiv> lexKernZuInfinitiv =
+                lexikalischerKern.getZuInfinitiv(textContext,
+                        // Infinitiv steht nach dem Verb, nicht nach dem konnektor!
+                        false, praedRegMerkmale);
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
+        return new KomplexesFinitesPraedikat(
                 requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "hast"
-                lexikalischerKern
-                        .getZuInfinitiv(textContext, praedRegMerkmale)); // "dich zu waschen"
+                null,
+                lexKernZuInfinitiv
+        ).mitKonnektor(konnektor);
     }
 
     @Override
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
-            final ITextContext textContext,
-            final SubstantivischePhrase subjekt) {
-        // hast du Spannendes zu berichten
-        // hast du dich zu waschen
-        // hast du zu sagen: "Hallo!"
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(HabenUtil.VERB.getPraesensOhnePartikel(subjekt)), // "hast"
-                subjekt.nomK(), // "du"
-                lexikalischerKern.getZuInfinitiv(subjekt));
-        // "dich zu waschen"
-    }
-
-    @Override
-    public Konstituentenfolge getVerbletzt(
-            final ITextContext textContext,
+    public ImmutableList<PartizipIIOderErsatzInfinitivPhrase> getPartizipIIOderErsatzInfinitivPhrasen(
+            final ITextContext textContext, final boolean nachAnschlusswort,
             final PraedRegMerkmale praedRegMerkmale) {
-        // Spannendes zu berichten hast
-        // dich zu waschen hast
-        // zu sagen hast: "Hallo!"
-
-        @Nullable final Konstituentenfolge nachfeld = getNachfeld(praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale).cutLast(nachfeld),
-                // "Spannendes zu berichten"
-                requireNonNull(HabenUtil.VERB.getPraesensMitPartikel(
-                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())), // "hast"
-                nachfeld); // : Odysseus ist zurück.
+        return ImmutableList.copyOf(
+                getPartizipIIPhrasen(textContext, nachAnschlusswort, praedRegMerkmale));
     }
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         // Spannendes zu berichten gehabt
         // dich zu waschen gehabt
         // zu sagen gehabt: "Hallo!"
+        // Spannendes zu berichten und viel zu erzählen gehabt
 
-        final ZuInfinitiv zuInfinitivLexKern =
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale);
-        return ImmutableList.of(new PartizipIIPhrase(
-                Konstituentenfolge.joinToKonstituentenfolge(
-                        zuInfinitivLexKern.toKonstituentenfolgeOhneNachfeld(),
-                        // "Spannendes zu berichten"
-                        HabenUtil.VERB.getPartizipII()), // "gehabt"
-                zuInfinitivLexKern.getNachfeld(), // : Odysseus ist zurück.
-                Perfektbildung.HABEN)); // "Spannendes zu berichten gehabt haben"
+        final ImmutableList<ZuInfinitiv> zuInfinitivLexKern =
+                lexikalischerKern.getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale);
+
+        return ImmutableList.of(
+                new KomplexePartizipIIPhrase(
+                        HabenUtil.VERB.getPartizipII(), // "gehabt"
+                        HabenUtil.VERB.getHilfsverbFuerPerfekt().getPerfektbildung(), // (haben)
+                        zuInfinitivLexKern)); // "ein guter Mensch geworden"
     }
 
     @Override
@@ -193,23 +154,30 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
     }
 
     @Override
-    public Infinitiv getInfinitiv(
+    public ImmutableList<Infinitiv> getInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return new Infinitiv(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale),
-                // "Spannendes zu berichten", ": Odysseus ist zurück."
-                HabenUtil.VERB); // "haben"
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(
+                new KomplexerInfinitiv(
+                        HabenUtil.VERB.getInfinitiv(),
+                        HabenUtil.VERB.getHilfsverbFuerPerfekt().getPerfektbildung(), // (haben)
+                        lexikalischerKern
+                                .getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale)
+                        // "Spannendes zu berichten", ": Odysseus ist zurück."
+                ));  // "zu haben"
     }
 
     @Override
-    public ZuInfinitiv getZuInfinitiv(
+    public ImmutableList<ZuInfinitiv> getZuInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return new ZuInfinitiv(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale),
-                // "Spannendes zu berichten", ": Odysseus ist zurück."
-                HabenUtil.VERB); // "zu haben"
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(
+                new KomplexerZuInfinitiv(
+                        HabenUtil.VERB.getInfinitiv(),
+                        lexikalischerKern
+                                .getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale)
+                        // "Spannendes zu berichten", ": Odysseus ist zurück."
+                ));  // "zu haben"
     }
 
     @Override
@@ -228,31 +196,6 @@ public class ZuHabenSemPraedikatOhneLeerstellen implements SemPraedikatOhneLeers
         // ist kein Bezug auf den Nachzustand gegeben, weil es sich tendenziell nur um
         // eine normative Forderung handelt, nicht um eine Aktion.
         return false;
-    }
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        // "Danach hast du Spannendes zu berichten."
-        return lexikalischerKern.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
-                nachAnschlusswort);
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        // "Spannendes hat er zu berichten."
-        return lexikalischerKern.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-    }
-
-    private Nachfeld getNachfeld(final PraedRegMerkmale praedRegMerkmale) {
-        // (Es könnte verschiedene Nachfeld-Optionen geben (altNachfelder()) - oder besser
-        // altAusklammerungen(), das jeweils Paare (Vorfeld, Nachfeld) liefert. Dabei
-        // müsste allerdings die Natürlichkeit der erzeugten Sprache immer im Vordergrund stehen.)
-
-        return lexikalischerKern.getNachfeld(praedRegMerkmale);
     }
 
     @Override

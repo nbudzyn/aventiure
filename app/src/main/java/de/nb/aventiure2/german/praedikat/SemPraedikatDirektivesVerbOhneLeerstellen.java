@@ -4,6 +4,9 @@ package de.nb.aventiure2.german.praedikat;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.IInfinitesPraedikat.toKonstituentenfolge;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import androidx.annotation.NonNull;
 
@@ -13,7 +16,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -22,13 +24,11 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Kasus;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -191,11 +191,11 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
     }
 
     @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+    public Vorfeld getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale,
+            final SubstantivischePhrase objektPhrase) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                super.getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -208,7 +208,7 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
          * (Eisenberg Der Satz 5.4.2)
          */
-        if (Personalpronomen.isPersonalpronomenEs(objekt, kasus)) {
+        if (Personalpronomen.isPersonalpronomenEs(objektPhrase, kasus)) {
             return null;
         }
 
@@ -216,9 +216,9 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
          * Phrasen (auch Personalpronomen) mit Fokuspartikel
          * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
          */
-        if (objekt.getFokuspartikel() != null) {
+        if (objektPhrase.getFokuspartikel() != null) {
             // "Nur die junge Frau bittest du..."
-            return objekt.imK(kasus);
+            return new Vorfeld(objektPhrase.imK(kasus));
         }
 
         return null;
@@ -231,88 +231,80 @@ public class SemPraedikatDirektivesVerbOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
         final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
+        final Praedikatseinbindung<SubstantivischePhrase> objektEinbindung =
+                new Praedikatseinbindung<>(objektPhrase, o -> o.imK(kasus));
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+        final ImmutableList<ZuInfinitiv> lexKernZuInfinitive =
+                lexikalischerKern.getZuInfinitiv(textContext,
+                        // Infinitiv steht im Nachfeld, nicht nach dem
+                        // Anschlusswort!
+                        false,
+                        objektPhrase
+                        // Es liegt "Objektkontrolle" vor.
+                );
 
         return new TopolFelder(
                 new Mittelfeld(
                         joinToKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "aus einer Laune heraus"
                                 kf(getModalpartikeln()), // "mal eben"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
-                                objektPhrase.imK(kasus), // "die junge Frau"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                objektEinbindung, // "die junge Frau"
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // (kann es wohl gar nicht geben)
                         ),
-                        objektPhrase, kasus),
+                        objektEinbindung),
 
-                //  Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt werden:
+                //  Der lexikalische Kern könnte alternativ diskontinuierlich aufgeteilt
+                //  werden:
                 //   - "Ihre Haare die junge Frau wieder hinunterzulassen bitten"
                 //   ("Ihre Haare bittest du die junge Frau wieder hinunterzulassen")
 
-                //  Der lexikalische Kern könnte als dritte Alternative ebenfalls ins Mittelfeld
+                //  Der lexikalische Kern könnte als dritte Alternative ebenfalls ins
+                //  Mittelfeld
                 //   gestellt werden (statt ins Nachfeld):
                 //   - "Die junge Frau ihre Haare wieder hinunterzulassen bitten"
                 //   - "Du hast die junge Frau ihre Haare wieder hinunterzulassen gebeten"
                 new Nachfeld(
                         joinToKonstituentenfolge(
-                                lexikalischerKern.getZuInfinitiv(objektPhrase
-                                        // Es liegt "Objektkontrolle" vor.
-                                ),
-                                // "sich zu waschen"; wir lassen diese Kommata weg - das ist erlaubt
+                                toKonstituentenfolge(lexKernZuInfinitive),
+                                // "sich zu waschen"; wir lassen diese Kommata weg - das
+                                // ist erlaubt
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 // , glücklich, dich zu sehen
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale, objektPhrase),
+                firstRelativpronomen(objektEinbindung,
+                        lexKernZuInfinitive.get(0).getRelativpronomen()),
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        objektEinbindung,
+                        advAngabeSkopusVerbWohinWoherSynt,
+                        lexKernZuInfinitive.get(0).getErstesInterrogativwort()));
     }
 
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        if (objekt instanceof Interrogativpronomen) {
-            return objekt.imK(kasus);
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-        if (res != null) {
-            return res;
-        }
-
-        return lexikalischerKern.getErstesInterrogativwort();
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (objekt instanceof Relativpronomen) {
-            return objekt.imK(kasus);
-        }
-
-        return lexikalischerKern.getRelativpronomen();
     }
 
     @Override

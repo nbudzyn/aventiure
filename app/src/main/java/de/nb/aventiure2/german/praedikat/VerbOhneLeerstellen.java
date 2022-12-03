@@ -1,17 +1,19 @@
 package de.nb.aventiure2.german.praedikat;
 
+import com.google.common.collect.ImmutableList;
+
 import java.util.Collection;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.PraedRegMerkmale;
+import de.nb.aventiure2.german.description.ITextContext;
 
 public interface VerbOhneLeerstellen
-        extends VerbMitValenz, SemPraedikatOhneLeerstellen {
+        extends VerbMitValenz, EinzelnesSemPraedikatOhneLeerstellen {
     @Override
     default SemPraedikatOhneLeerstellen mitModalpartikeln(
             final Collection<Modalpartikel> modalpartikeln) {
@@ -36,6 +38,14 @@ public interface VerbOhneLeerstellen
         return toPraedikat().mitAdvAngabe(advAngabe);
     }
 
+    @Override
+    default ImmutableList<PartizipIIOderErsatzInfinitivPhrase> getPartizipIIOderErsatzInfinitivPhrasen(
+            final ITextContext textContext, final boolean nachAnschlusswort,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.copyOf(
+                getPartizipIIPhrasen(textContext, nachAnschlusswort, praedRegMerkmale));
+    }
+
     SemPraedikatOhneLeerstellen toPraedikat();
 
     @Override
@@ -56,19 +66,5 @@ public interface VerbOhneLeerstellen
     @Override
     default boolean hatAkkusativobjekt() {
         return false;
-    }
-
-    @Override
-    @Nullable
-    @CheckReturnValue
-    default Konstituentenfolge getErstesInterrogativwort() {
-        return null;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    default Konstituentenfolge getRelativpronomen() {
-        return null;
     }
 }

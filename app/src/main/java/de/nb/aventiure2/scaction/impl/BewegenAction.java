@@ -8,7 +8,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.BEWEGEN;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONE_IN_ONE_OUT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.NumberOfWays.ONLY_WAY;
@@ -76,6 +76,8 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AbstractFlexibleDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ITextContext;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.TextDescription;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
@@ -341,7 +343,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                             locationAndDescribables.first, excludedLocation)) {
                 descriptionsPerLocation.add(
                         //  "auf dem Boden liegen A und B"
-                        buildObjectsInLocationDescription(locationAndDescribables));
+                        buildObjectsInLocationDescription(
+                                ImmutableTextContext.EMPTY, locationAndDescribables));
 
                 numMovableObjectsInLocation += locationAndDescribables.second.size();
                 lastObjectInLocation = locationAndDescribables.second
@@ -370,7 +373,8 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
                 neuerSatz(objectsDescription)
                         .timed(secs(numObjects * 2L))
                         .phorikKandidat(
-                                getDescription(textContext, lastObject, false),
+                                getDescription(ImmutableTextContext.EMPTY, lastObject,
+                                        ALLES_ERLAUBT, false),
                                 lastObject.getId()));
     }
 
@@ -432,19 +436,20 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
             return;
         }
 
-        n.narrateAlt(altMissingObjectsDescriptions(missingObjects), NO_TIME);
+        n.narrateAlt(altMissingObjectsDescriptions(n, missingObjects), NO_TIME);
 
         sc.mentalModelComp().unsetAssumedLocations(missingObjects);
     }
 
     private AltDescriptionsBuilder altMissingObjectsDescriptions(
+            final ITextContext textContext,
             final List<? extends IDescribableGO> missingObjects) {
         final SubstantivischePhrase aufzaehlung =
                 // FIXME altDescirptionsSingleOrReihungVerwenden
                 //  Neue Klasse DeklinierbarList o.Ä. verwenden, die nomK() -> Immutable List
                 //  unterstützt!
                 world.getDescriptionSingleOrReihung(textContext, missingObjects,
-                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
+                        ALLES_ERLAUBT);
         final String istSind = SeinUtil.VERB.getPraesensOhnePartikel(aufzaehlung);
 
         final AltDescriptionsBuilder alt = alt();
@@ -459,9 +464,10 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
         if (missingObjects.size() == 2) {
             alt.add(neuerSatz("weder",
-                    getDescription(missingObjects.get(0)).nomK(),
+                    getDescription(textContext, missingObjects.get(0), ALLES_ERLAUBT).nomK(),
                     "noch",
-                    getDescription(missingObjects.get(1)).nomK(),
+                    getDescription(ImmutableTextContext.EMPTY, missingObjects.get(1), ALLES_ERLAUBT)
+                            .nomK(),
                     "ist irgendwo zu sehen"));
         }
 
@@ -502,11 +508,13 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @NonNull
     private String buildObjectsInLocationDescription(
+            final ITextContext textContext,
             @NonNull
             final Pair<ILocationGO, ? extends List<? extends IDescribableGO>> locationAndDescribables) {
         requireNonNull(locationAndDescribables.second, "locationAndDescribables.second");
 
         return buildObjectsInLocationDescription(
+                textContext,
                 requireNonNull(locationAndDescribables.first),
                 locationAndDescribables.second);
     }
@@ -542,11 +550,12 @@ public class BewegenAction<LOC_DESC extends ILocatableGO & IDescribableGO>
 
     @NonNull
     private String buildObjectsInLocationDescription(
+            final ITextContext textContext,
             final ILocationGO location,
             @NonNull final List<? extends IDescribableGO> movableObjectsInLocation) {
         final SubstantivischePhrase descriptionSingleOrReihung =
                 world.getDescriptionSingleOrReihung(textContext, movableObjectsInLocation,
-                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
+                        ALLES_ERLAUBT);
         return buildObjectInLocationDescriptionPrefix(location,
                 descriptionSingleOrReihung)
                 + " "

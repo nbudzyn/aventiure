@@ -42,7 +42,7 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.VerbSubjDatAkk;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
@@ -90,7 +90,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             VOR.mit(npArtikellos(WUT))))
                     .alsSatzMitSubjekt(gameObjectSubjekt)
                     .mitAngabensatz(
-                            new Konditionalsatz("als",
+                            new KonditionalSemSatz("als",
                                     v.mit(targetDesc)
                                             .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));
@@ -106,7 +106,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                     .mitGraduativerAngabe("ganz").alsPraedikativumPraedikat()
                     .alsSatzMitSubjekt(gameObjectSubjekt)
                     .mitAngabensatz(
-                            new Konditionalsatz("als",
+                            new KonditionalSemSatz("als",
                                     v.mit(targetDesc)
                                             .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));
@@ -143,7 +143,7 @@ class ZuneigungAbneigungDescriber implements FeelingsDescriber {
                             VOR.mit(npArtikellos(FREUDE))))
                     .alsSatzMitSubjekt(gameObjectSubjekt)
                     .mitAngabensatz(
-                            new Konditionalsatz("als",
+                            new KonditionalSemSatz("als",
                                     v.mit(targetDesc)
                                             .alsSatzMitSubjekt(gameObjectSubjekt)), false
                     )));

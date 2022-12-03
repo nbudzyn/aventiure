@@ -1,5 +1,8 @@
 package de.nb.aventiure2.activity.main;
 
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
+import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
+
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -23,9 +26,6 @@ import de.nb.aventiure2.R;
 import de.nb.aventiure2.activity.main.viewmodel.GuiAction;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.databinding.ActionBinding;
-
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
-import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.SOUTH;
 
 class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -119,6 +119,12 @@ class GuiActionsAdapter extends RecyclerView.Adapter<GuiActionsAdapter.ViewHolde
 
     @DrawableRes
     private static int getDrawable(@Nullable final CardinalDirection cardinalDirection) {
+        // IDEA Hier könnte man verschiedene
+        //  Symbole für verschiedene Aktion(stypen)
+        //  verwenden. Vielleicht Font Awesome verwenden?
+        //  https://fontawesome.com/start
+        //
+
         if (cardinalDirection == null) {
             return R.drawable.ic_button_arrow_none;
         }

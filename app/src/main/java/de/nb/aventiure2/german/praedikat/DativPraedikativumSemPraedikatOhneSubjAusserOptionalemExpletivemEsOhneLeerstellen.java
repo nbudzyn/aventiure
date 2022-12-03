@@ -1,9 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P3;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import androidx.annotation.NonNull;
 
@@ -13,23 +12,19 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
 import de.nb.aventiure2.annotations.Valenz;
-import de.nb.aventiure2.german.base.Belebtheit;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -59,7 +54,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     private final Praedikativum praedikativum;
 
     public static DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsMitEinerPraedikativumLeerstelle
-    dativPraedikativumMitDat(final SubstantivischePhrase dat) {
+    dativPraedikativumMitDat(final SubstantivischPhrasierbar dat) {
         return new
                 DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsMitEinerPraedikativumLeerstelle(
                 SeinUtil.VERB, dat
@@ -75,7 +70,7 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     }
 
     public static DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsMitEinerPraedikativumLeerstelle
-    dativPraedikativumWerdenMitDat(final SubstantivischePhrase dat) {
+    dativPraedikativumWerdenMitDat(final SubstantivischPhrasierbar dat) {
         return new
                 DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsMitEinerPraedikativumLeerstelle(
                 WerdenUtil.VERB, dat
@@ -211,11 +206,10 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
     }
 
     @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
+    private Vorfeld getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
+                                                       final SubstantivischePhrase datPhrase) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -225,10 +219,10 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
         }
 
         if (inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) { // gilt immer
-            final Konstituentenfolge vorfeldCandidate = dat.datK();
+            final Konstituentenfolge vorfeldCandidate = datPhrase.datK();
             if (vorfeldCandidate.size() == 1 && vorfeldCandidate.get(0) instanceof Konstituente) {
                 // "mir (wird warm)"
-                return (Konstituente) vorfeldCandidate.get(0);
+                return new Vorfeld((Konstituente) vorfeldCandidate.get(0));
             }
         }
 
@@ -242,25 +236,40 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
         final SubstantivischePhrase datPhrase = dat.alsSubstPhrase(textContext);
+        final Praedikatseinbindung<SubstantivischePhrase> datEinbindung =
+                new Praedikatseinbindung<>(datPhrase, SubstantivischePhrase::datK);
+
+        final Praedikatseinbindung<Praedikativum> praedikativumEinbindung =
+                new Praedikatseinbindung<>(praedikativum,
+                        p -> p.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                                praedRegMerkmale, getNegationspartikel()));
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
 
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                datPhrase.datK(), // Peter
+                                datEinbindung, // Peter
                                 kf(getModalpartikeln()), // "halt"
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "plötzlich"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale), // "erneut"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld, // "erneut"
+                                advAngabeSkopusVerbWohinWoherSynt,
                                 // (kann wohl nicht besetzt sein?)
-                                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                                        praedRegMerkmale, getNegationspartikel())
+                                praedikativumEinbindung
                                 // "kalt", "nicht kalt"
                         ),
-                        datPhrase, DAT
+                        datEinbindung
                 ),
                 new Nachfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
@@ -271,72 +280,28 @@ public class DativPraedikativumSemPraedikatOhneSubjAusserOptionalemExpletivemEsO
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, datPhrase),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale),
+                // Es gibt noch Fälle (hier und in praktisch allen anderen Verwendungen von
+                // firstRelativpronomen(), in denen das Relativpronomen im Relativsatz
+                // weder Subjekt noch Objekt (oder Präpositionalobjekt) ist, sondern
+                // adverbiale Angabe ("Letzten Freitag, DEN ich lange gearbeitet habe, hatte
+                // ich einen Gedanken") oder adverbiale Angabe, gemeinsam mit einer
+                // Präposition
+                // ("Letzten Freitag, (an DEM) ich lange gearbeitet habe, hatte
+                // ich einen Gedanken").
+                // Um das abzudecken müsste man diese Kandidaten auch an
+                // firstRelativpronomen übergeben.
+                firstRelativpronomen(datEinbindung, praedikativumEinbindung),
+                firstInterrogativwort(datEinbindung, advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt, praedikativumEinbindung));
     }
 
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        if (dat instanceof Interrogativpronomen) {
-            return dat.datK();
-        }
-
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-        if (res != null) {
-            return res;
-        }
-
-        if (praedikativum instanceof Interrogativpronomen) {
-            return praedikativum.getPraedikativ(
-                    // "Sie ist interessiert, wie euch ist",
-                    P3, SG, Belebtheit.UNBELEBT);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (dat instanceof Relativpronomen) {
-            return dat.datK();
-        }
-
-        // Es gibt noch Fälle (hier und in praktisch allen anderen Implementierung von
-        // getRelativpronomen(), in denen das Relativpronomen im Relativsatz
-        // weder Subjekt noch Objekt (oder Präpositionalobjekt) ist, sondern
-        // adverbiale Angabe ("Letzten Freitag, DEN ich lange gearbeitet habe, hatte
-        // ich einen Gedanken") oder adverbiale Angabe, gemeinsam mit einer Präposition
-        // ("Letzten Freitag, (an DEM) ich lange gearbeitet habe, hatte
-        // ich einen Gedanken").
-        // Das könnte man ähnlich lösen wie bei getErstesInterrogativwort(), also
-        // über etwas wie interroAdverbToKF().
-
-        if (praedikativum instanceof Relativpronomen) {
-            return praedikativum.getPraedikativ(
-                    // "Sie ist interessiert, wie euch ist",
-                    P3, SG, Belebtheit.UNBELEBT);
-        }
-
-        return null;
     }
 
     @Override

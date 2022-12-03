@@ -15,17 +15,15 @@ import com.google.common.collect.ImmutableList;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
  * Ein Verb (ggf. mit Präfix), das genau mit einem Subjekt steht (ohne Objekte).
  */
-public enum VerbSubj implements VerbOhneLeerstellen, SemPraedikatOhneLeerstellen {
+public enum VerbSubj implements VerbOhneLeerstellen {
     // Verben ohne Partikel
     BEGINNEN("beginnen",
             "beginne", "beginnst", "beginnt", "beginnt",
@@ -204,61 +202,34 @@ public enum VerbSubj implements VerbOhneLeerstellen, SemPraedikatOhneLeerstellen
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getVerbzweit(textContext, praedRegMerkmale);
-    }
-
-    @Override
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
-            final ITextContext textContext,
-            final SubstantivischePhrase subjekt) {
-        return toPraedikat().getVerbzweitMitSubjektImMittelfeld(textContext, subjekt);
-    }
-
-    @Override
-    public Konstituentenfolge getVerbletzt(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getVerbletzt(textContext, praedRegMerkmale);
+    public AbstractFinitesPraedikat getFinit(final ITextContext textContext,
+                                             @Nullable
+                                             final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
+                                             final PraedRegMerkmale praedRegMerkmale) {
+        return toPraedikat().getFinit(textContext, konnektor, praedRegMerkmale);
     }
 
     @Override
     @CheckReturnValue
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         return ImmutableList.of(verb.getPartizipIIPhrase());
     }
 
     @Override
-    public Infinitiv getInfinitiv(
+    public ImmutableList<Infinitiv> getInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return new Infinitiv(verb);
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(new EinfacherInfinitiv(null, verb));
     }
 
     @Override
-    public ZuInfinitiv getZuInfinitiv(
+    public ImmutableList<ZuInfinitiv> getZuInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return new ZuInfinitiv(verb);
-    }
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        return toPraedikat().getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
-                nachAnschlusswort);
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(
+                new EinfacherZuInfinitiv(null, verb));
     }
 
     @Override
@@ -285,8 +256,9 @@ public enum VerbSubj implements VerbOhneLeerstellen, SemPraedikatOhneLeerstellen
     }
 
     public TopolFelder getTopolFelder(final ITextContext textContext,
+                                      final boolean nachAnschlusswort,
                                       final PraedRegMerkmale praedRegMerkmale) {
-        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale);
+        return toPraedikat().getTopolFelder(textContext, praedRegMerkmale, nachAnschlusswort);
     }
 
     @Override

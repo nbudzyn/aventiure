@@ -8,7 +8,7 @@ import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.TRAURIG;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.EAST;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection.NORTH;
@@ -173,7 +173,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
                 timeTaker.now().plus(wegzeit), false),
                 beiLicht -> du("kehrst",
                         "zurück zum Brunnen – unter einer Linde, wie du",
-                        beiLicht.getDescription(),
+                        beiLicht.toKonstituentenfolge(),
                         "erkennen kannst. Hinter dem",
                         "Brunnen beginnt der wilde Wald").timed(wegzeit)
                         .komma());
@@ -195,7 +195,7 @@ public class AbzweigImWaldConnectionComp extends AbstractSpatialConnectionComp {
 
         final SubstantivischePhrase descObjects =
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV);
+                        ALLES_ERLAUBT);
 
         // steht
         return du("gehst",

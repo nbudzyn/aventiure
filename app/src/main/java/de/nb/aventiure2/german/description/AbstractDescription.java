@@ -19,8 +19,8 @@ import javax.annotation.CheckReturnValue;
 import de.nb.aventiure2.data.time.AvTimeSpan;
 import de.nb.aventiure2.data.world.base.IGameObject;
 import de.nb.aventiure2.german.base.Belebtheit;
-import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
 import de.nb.aventiure2.german.base.IBezugsobjekt;
+import de.nb.aventiure2.german.base.IKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NumerusGenus;
@@ -32,7 +32,7 @@ import de.nb.aventiure2.german.base.SubstantivischePhrase;
  * Abstract superclass for a description.
  */
 public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>>
-        implements IAlternativeKonstituentenfolgable {
+        implements IKonstituentenfolgable {
     private final DescriptionParams params;
 
     AbstractDescription() {
@@ -44,12 +44,13 @@ public abstract class AbstractDescription<SELF extends AbstractDescription<SELF>
     }
 
     /**
-     * Stellt das Objekt als alternative Konstituentenfolgen dar. Dabei können Informationen
+     * Stellt das Objekt als Konstituentenfolge dar. Dabei können Informationen
      * verloren gehen (vielleicht solche, wie sie in den {@link DescriptionParams} stehen)!
      */
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(toSingleKonstituente()));
+    @NonNull
+    public Konstituentenfolge toKonstituentenfolge() {
+        return new Konstituentenfolge(toSingleKonstituente());
     }
 
     public abstract StructuralElement getStartsNew();

@@ -39,7 +39,7 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.DrinnenDraussen;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.data.world.syscomp.wetter.windstaerke.Windstaerke;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
-import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.SemSatzReihe;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
 /**
@@ -266,7 +266,7 @@ public class RastenAction extends AbstractWartenRastenAction {
                             du(SENTENCE, "ruhst",
                                     "noch eine Weile aus und lauschst",
                                     schliesseInKommaEin(
-                                            new Satzreihe(
+                                            new SemSatzReihe(
                                                     ZIRPEN.alsSatzMitSubjekt(INSEKTEN)
                                                             .mitAdvAngabe(WIE),
                                                     derWindSaust.mitAdvAngabe(WIE))

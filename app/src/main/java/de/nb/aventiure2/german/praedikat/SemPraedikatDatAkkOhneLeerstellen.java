@@ -1,8 +1,9 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
-import static de.nb.aventiure2.german.base.Kasus.DAT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +13,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -20,12 +20,11 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -162,12 +161,13 @@ public class SemPraedikatDatAkkOhneLeerstellen
         return true;
     }
 
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+    @Nullable
+    public Vorfeld getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale,
+            final SubstantivischePhrase datPhrase,
+            final SubstantivischePhrase akkPhrase) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                super.getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -180,7 +180,7 @@ public class SemPraedikatDatAkkOhneLeerstellen
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist.
          * (Eisenberg Der Satz 5.4.2)
          */
-        if (Personalpronomen.isPersonalpronomenEs(akk, AKK)) {
+        if (Personalpronomen.isPersonalpronomenEs(akkPhrase, AKK)) {
             return null;
         }
 
@@ -188,13 +188,13 @@ public class SemPraedikatDatAkkOhneLeerstellen
          * Phrasen (auch Personalpronomen) mit Fokuspartikel
          * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
          */
-        if (akk.getFokuspartikel() != null) {
+        if (akkPhrase.getFokuspartikel() != null) {
             // "Nur dem Frosch gibst du die Kugel"
-            return akk.akkK();
+            return new Vorfeld(akkPhrase.akkK());
         }
-        if (dat.getFokuspartikel() != null) {
+        if (datPhrase.getFokuspartikel() != null) {
             // "Nur die Kugel gibst du dem Frosch"
-            return dat.datK();
+            return new Vorfeld(datPhrase.datK());
         }
 
         return null;
@@ -207,83 +207,63 @@ public class SemPraedikatDatAkkOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
         final SubstantivischePhrase datPhrase = dat.alsSubstPhrase(textContext);
         final SubstantivischePhrase akkPhrase = akk.alsSubstPhrase(textContext);
 
+        final Praedikatseinbindung<SubstantivischePhrase> datEinbindung =
+                new Praedikatseinbindung<>(datPhrase, SubstantivischePhrase::datK);
+
+        final Praedikatseinbindung<SubstantivischePhrase> akkEinbindung =
+                new Praedikatseinbindung<>(akkPhrase, SubstantivischePhrase::akkK);
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
 
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-// "aus einer Laune heraus"
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
+                                // "aus einer Laune heraus"
                                 getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
                                 // "mal eben (nicht)"
                                 getNegationspartikel(), // "nicht"
-                                datPhrase.datK(), // "dem Frosch"
+                                datEinbindung, // "dem Frosch"
                                 getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
                                 // "mal eben"
-                                akkPhrase.akkK(), // "das Buch"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                akkEinbindung, // "das Buch"
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // "in die Hand"
                         ),
-                        datPhrase, DAT,
-                        akkPhrase, AKK),
+                        akkEinbindung, datEinbindung), // Reihenfolge umgedreht! "es ihm"
                 new Nachfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale, datPhrase, akkPhrase),
+                firstRelativpronomen(datEinbindung, akkEinbindung),
+                // Reihenfolge normal: "wem du was gibst"
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        datEinbindung, advAngabeSkopusVerbSyntFuerMittelfeld, akkEinbindung,
+                        advAngabeSkopusVerbWohinWoherSynt));
     }
 
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        if (dat instanceof Interrogativpronomen) {
-            return dat.datK();
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        if (akk instanceof Interrogativpronomen) {
-            return akk.akkK();
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (dat instanceof Relativpronomen) {
-            return dat.datK();
-        }
-
-        if (akk instanceof Relativpronomen) {
-            return akk.akkK();
-        }
-
-        return null;
     }
 
     @Override

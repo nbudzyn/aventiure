@@ -29,6 +29,7 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.description.DescriptionBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -81,7 +82,7 @@ public class RufenAction extends AbstractScAction {
     public String getName() {
         return joinToKonstituentenfolge(
                 SENTENCE,
-                ruftyp.getName().getInfinitiv(textContext, duSc()))
+                ruftyp.getName().getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
                 .joinToString();
     }
 

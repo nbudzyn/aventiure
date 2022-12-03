@@ -206,11 +206,11 @@ public class RapunzelsZauberinTalkingComp extends AbstractTalkingComp {
                         altVerabschiedungen(),
                         // "Tschüss"
                         "“, verabschiedest du dich",
-                        PraepositionMitKasus.VON.mit(anaph).getDescription())
+                        PraepositionMitKasus.VON.mit(anaph).toKonstituentenfolge())
                         .undWartest().dann())
                 .add(du("verabschiedest",
                         "dich wieder",
-                        PraepositionMitKasus.VON.mit(anaph).getDescription())
+                        PraepositionMitKasus.VON.mit(anaph).toKonstituentenfolge())
                                 .undWartest().dann(),
                         du("sagst", anaph.datK(), "Ade")
                                 .undWartest().dann()

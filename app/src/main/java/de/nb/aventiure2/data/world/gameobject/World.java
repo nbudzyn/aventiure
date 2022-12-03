@@ -101,8 +101,8 @@ import de.nb.aventiure2.german.base.NomenFlexionsspalte;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.SubstPhrReihung;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.EmptyTextContext;
 import de.nb.aventiure2.german.description.ITextContext;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 
 /**
  * The world contains and manages all game objects.
@@ -165,6 +165,10 @@ public class World {
     public static final GameObjectId BETTGESTELL_IN_DER_HUETTE_IM_WALD = new GameObjectId(10_120);
     public static final GameObjectId BAUM_IM_GARTEN_HINTER_DER_HUETTE_IM_WALD =
             new GameObjectId(10_130);
+
+    // FIXME Als Substantivierbar... auch Substantive etc. erlauben (dann
+    //  kann ja wohl nichts mehr schief gehen?)
+
     public static final GameObjectId RAPUNZELS_HAARE = new GameObjectId(10_140);
     public static final GameObjectId BETT_OBEN_IM_ALTEN_TURM = new GameObjectId(10_150);
 
@@ -249,7 +253,7 @@ public class World {
     // SYSTEMS
     private AliveSystem aliveSystem;
 
-    public DescriptionSystem descriptionSystem;
+    private DescriptionSystem descriptionSystem;
 
     private SpatialConnectionSystem spatialConnectionSystem;
 
@@ -1465,7 +1469,8 @@ public class World {
                 ImmutableList.builder();
         boolean first = true;
         for (final IDescribableGO object : objects) {
-            final ITextContext textContext = first ? initialTextContext : EmptyTextContext.INSTANCE;
+            final ITextContext textContext = first ? initialTextContext :
+                    ImmutableTextContext.EMPTY;
             substantivischePhrasen.add(getDescription(textContext, object,
                     possessivDescriptionVorgabe, false));
             first = false;
@@ -1527,8 +1532,8 @@ public class World {
     public EinzelneSubstantivischePhrase anaph(
             final ITextContext textContext,
             final GameObjectId describableId,
-            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe) {
-        return anaph(textContext, describableId, descPossessivDescriptionVorgabe, true);
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        return anaph(textContext, describableId, possessivDescriptionVorgabe, true);
     }
 
     /**
@@ -1545,8 +1550,34 @@ public class World {
      */
     public EinzelneSubstantivischePhrase anaph(final ITextContext textContext,
                                                final IDescribableGO describableGO,
-                                               final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe) {
-        return anaph(textContext, describableGO, descPossessivDescriptionVorgabe, true);
+                                               final PossessivDescriptionVorgabe possessivDescriptionVorgabe) {
+        return anaph(textContext, describableGO, possessivDescriptionVorgabe, true);
+    }
+
+
+    /**
+     * Gibt das Personalpronomen zurück, mit dem ein
+     * anaphorischer Bezug auf dieses
+     * Game Object möglich ist - wenn das nicht möglich ist, dann eine
+     * Beschreibung des Game Objects.
+     * <br/>
+     * Beispiel 1: "Du hebst die Lampe auf..." - jetzt ist ein anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "sie" zurück.
+     * <br/>
+     * Beispiel 2: "Du zündest das Feuer an..." - jetzt ist <i>kein</i> anaphorischer Bezug
+     * auf die Lampe möglich und diese Methode gibt "die mysteriöse Lampe" zurück.
+     * <p>
+     * Als Textkontext wird implizit der aktuelle Narrator genommen.
+     * Das kann zu missverständlichen oder falschen Personalpronomen führen ("sie") - oder
+     * auch zu falschen oder missverständnlichen Possessivpronomen ("ihre Haare"), wenn das
+     * Ergebnis nicht  gleich als Nächstes am Anfang narratet wird, sondern davor andere Dinge zu
+     * stehen kommen!
+     */
+    public EinzelneSubstantivischePhrase anaph(
+            final GameObjectId describableId,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean descShortIfKnown) {
+        return anaph(n, describableId, possessivDescriptionVorgabe, descShortIfKnown);
     }
 
     /**
@@ -1564,10 +1595,10 @@ public class World {
     public EinzelneSubstantivischePhrase anaph(
             final ITextContext textContext,
             final GameObjectId describableId,
-            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
             final boolean descShortIfKnown) {
         return anaph(textContext, (IDescribableGO) loadRequired(describableId),
-                descPossessivDescriptionVorgabe, descShortIfKnown);
+                possessivDescriptionVorgabe, descShortIfKnown);
     }
 
     /**
@@ -1585,7 +1616,7 @@ public class World {
     public EinzelneSubstantivischePhrase anaph(
             final ITextContext textContext,
             final IDescribableGO describableGO,
-            final PossessivDescriptionVorgabe descPossessivDescriptionVorgabe,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
             final boolean descShortIfKnown) {
         // IDEA Auch andere "Anaphern" (im weitesten Sinne) erzeugen, nicht nur Personalpronomen:
         //  Auch Synonyme, Überbegriffe oder schlicht Wiederholung könnten Anaphern sein.
@@ -1601,7 +1632,7 @@ public class World {
 
         // FIXME Alternative altAnaph() bauen, auch Aufrufer prüfen und
         //  ergänzen oder auf alt...() umstellen.
-        return getDescription(textContext, describableGO, descPossessivDescriptionVorgabe,
+        return getDescription(textContext, describableGO, possessivDescriptionVorgabe,
                 descShortIfKnown);
     }
 
@@ -1626,6 +1657,35 @@ public class World {
         // FIXME Alternative altDescriptions() bauen, auch Aufrufer prüfen und
         //  ergänzen oder auf alt...() umstellen.
         return getDescription(textContext, describable, possessivDescriptionVorgabe, false);
+    }
+
+    /**
+     * Gibt eine Nominalphrase zurück, die das Game Object beschreibt.
+     * Die Phrase wird in der Regel unterschiedlich sein, je nachdem, ob
+     * ob der Spieler das Game Object schon kennt oder nicht.
+     * <p>
+     * Als Textkontext wird implizit der aktuelle Narrator genommen.
+     * Das kann zu missverständlichen oder falschen <i>Possessivpronomen</i> (!) führen
+     * ("ihre Haare"), wenn
+     * <ol>
+     * <li> die Beschreibung einen possessiven Anteil haben kann ("ihre Haare")
+     * <li> und die {@link PossessivDescriptionVorgabe} <i>etwas anderes als</i>
+     * {@link PossessivDescriptionVorgabe#NICHT_POSSESSIV} ist
+     * <li>und das Ergebnis nicht gleich als Nächstes am Anfang narratet wird, sondern davor
+     * andere Dinge zu stehen      kommen!
+     * </ol>
+     *
+     * @param shortIfKnown <i>Falls der Spieler(-charakter)</i> das
+     *                     Game Object schon kennt, wird eher eine
+     */
+    public EinzelneSubstantivischePhrase getDescription(
+            final GameObjectId gameObjectId,
+            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
+            final boolean shortIfKnown) {
+        // FIXME Alternative altDescriptions() bauen, auch Aufrufer prüfen und
+        //  ergänzen oder auf alt...() umstellen.
+
+        return getDescription(n, gameObjectId, possessivDescriptionVorgabe, shortIfKnown);
     }
 
     /**

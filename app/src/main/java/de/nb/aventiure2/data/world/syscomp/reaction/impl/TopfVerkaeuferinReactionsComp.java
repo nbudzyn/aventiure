@@ -4,6 +4,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState.MARKTZEIT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.IRDEN;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
@@ -124,7 +125,7 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
                     neuerSatz(anaph(textContext, possessivDescriptionVorgabe, false).nomK(),
                             "hat wohl gerade ein Schüsselchen",
                             "verkauft"),
-                    neuerSatz(anaph(textContext, possessivDescriptionVorgabe).nomK(),
+                    neuerSatz(anaph(possessivDescriptionVorgabe).nomK(),
                             "sortiert ihre irdenen Näpfe und Töpfe"));
         }
 
@@ -156,8 +157,8 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
                     false);
 
             if (anaphPersPronMusverkaeuferinWennMgl != null) {
-                final EinzelneSubstantivischePhrase desc = getDescription(textContext,
-                        possessivDescriptionVorgabe);
+                final EinzelneSubstantivischePhrase desc = getDescription(
+                        ALLES_ERLAUBT);
 
                 // "Neben ihr baut eine ... Töpfe und irdenes Geschirr vor sich auf"
                 alt.add(AUFBAUEN
@@ -201,11 +202,11 @@ public class TopfVerkaeuferinReactionsComp extends AbstractDescribableReactionsC
 
     private void verlaesstDenMarkt() {
         if (world.hasSameVisibleOuterMostLocationAsSC(getGameObjectId())) {
-            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+            final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
 
             n.narrateAlt(NO_TIME,
-                    neuerSatz(VERLASSEN.mit(MARKT).alsSatzMitSubjekt(anaph(textContext,
-                            possessivDescriptionVorgabe))),
+                    neuerSatz(VERLASSEN.mit(MARKT)
+                            .alsSatzMitSubjekt(anaph(possessivDescriptionVorgabe))),
                     du(PARAGRAPH, "siehst",
                             "wie", anaph.nomK(),
                             "alle",

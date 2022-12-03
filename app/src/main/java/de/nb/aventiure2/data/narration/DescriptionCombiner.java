@@ -112,13 +112,18 @@ class DescriptionCombiner {
                 && firstPraedikat.umfasstSatzglieder()
                 && second.getStartsNew() == WORD) {
             final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
-                    firstPraedikat.getPartizipIIPhrasen(textContext, P2, SG, BELEBT);
+                    firstPraedikat
+                            .getPartizipIIPhrasen(textContext, nachAnschlusswort, P2, SG, BELEBT);
             if (partizipIIPhrasen.size() == 1) { // Wenn es mehrere sind, bilden sie
                 // bestimmt nicht alle das Perfekt mit "sein"!
                 // Aber es ist nur eine!
                 final PartizipIIPhrase partizipIIPhrase = partizipIIPhrasen.iterator().next();
                 if (partizipIIPhrase.getPerfektbildung() == Perfektbildung.SEIN) {
                     // Und die Phrase bildet das Perfekt mit "sein"!
+
+                    // FIXME Hier wird die Partizip-II-Phrase wohl doppelt
+                    //  in eine Konstituentenfolge übersetzt - also doppelt
+                    //  die Nomen für Objekte ermittelt?! Verhindern!
                     final Konstituente descriptionPartizipIIPhrase =
                             partizipIIPhrase.getPartizipIIPhraseOhneNachfeld()
                                     .joinToSingleKonstituente();

@@ -7,18 +7,14 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -105,6 +101,17 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
+    public ImmutableList<AbstractFinitesPraedikat> getFinitePraedikate(
+            final ITextContext textContext,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort,
+            final PraedRegMerkmale praedRegMerkmale) {
+        final ImmutableList.Builder<AbstractFinitesPraedikat> res = ImmutableList.builder();
+        res.addAll(erstes.getFinitePraedikate(textContext, anschlusswort, praedRegMerkmale));
+        res.addAll(zweites.getFinitePraedikate(textContext, konnektor, praedRegMerkmale));
+        return res.build();
+    }
+
+    @Override
     // FIXME Funktioniert, aber das Konzept schließt
     //  wohl viele Möglichkeiten wie ("... und..., aber..." oder "..., ... und ...."
     //  aus. Konzept verbessern?
@@ -126,69 +133,64 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
-    public Konstituentenfolge getVerbzweit(
-            final ITextContext textContext,
+    public ImmutableList<PartizipIIOderErsatzInfinitivPhrase> getPartizipIIOderErsatzInfinitivPhrasen(
+            final ITextContext textContext, final boolean nachAnschlusswort,
             final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                // "hebst die goldene Kugel auf"
-                erstes.getVerbzweit(textContext, praedRegMerkmale),
-                konnektor,
-                zweites.getVerbzweit(textContext, praedRegMerkmale)
-                        .withVorkommaNoetigMin(konnektor == null)
-                // "nimmst ein Bad"
-        );
-    }
+        final ImmutableList.Builder<PartizipIIOderErsatzInfinitivPhrase> res =
+                ImmutableList.builder();
 
-    // FIXME Hier kann es kein TopolFelder geben!! Man müsste
-    //  zwei TopolFelder haben?! Vielleicht ist TopolFelder auf dieser
-    //  Ebene falsch?!
+        for (final PartizipIIOderErsatzInfinitivPhrase partizipIIOderErsatzInfinitivPhrase :
+                erstes.getPartizipIIOderErsatzInfinitivPhrasen(textContext, nachAnschlusswort,
+                        praedRegMerkmale)) {
+            res.add(partizipIIOderErsatzInfinitivPhrase);
+        }
 
-    @Override
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
-            final ITextContext textContext,
-            final SubstantivischePhrase subjekt) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getVerbzweitMitSubjektImMittelfeld(textContext, subjekt),
-                // "ziehst du erst noch eine Weile um die Häuser"
-                konnektor,
-                zweites.getVerbzweit(textContext, subjekt.getPraedRegMerkmale())
-                        .withVorkommaNoetigMin(konnektor == null)
-                // "fällst dann todmüde ins Bett."
-        );
-    }
+        final ImmutableList<PartizipIIOderErsatzInfinitivPhrase>
+                partizipIIOderErsatzInfinitivPhrasen =
+                zweites.getPartizipIIOderErsatzInfinitivPhrasen(textContext, nachAnschlusswort,
+                        praedRegMerkmale);
+        for (int i = 0;
+             i < partizipIIOderErsatzInfinitivPhrasen.size(); i++) {
+            final PartizipIIOderErsatzInfinitivPhrase partizipIIOderErsatzInfinitivPhrase =
+                    partizipIIOderErsatzInfinitivPhrasen.get(i);
+            res.add(
+                    i == 0 ?
+                            partizipIIOderErsatzInfinitivPhrase.mitKonnektor(konnektor)
+                            :
+                            (i == partizipIIOderErsatzInfinitivPhrasen.size() - 1 ?
+                                    partizipIIOderErsatzInfinitivPhrase
+                                            .mitKonnektorUndFallsKeinKonnektor() :
+                                    partizipIIOderErsatzInfinitivPhrase));
+        }
 
-    @Override
-    public Konstituentenfolge getVerbletzt(
-            final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                erstes.getVerbletzt(textContext, praedRegMerkmale),
-                konnektor,
-                zweites.getVerbletzt(textContext, praedRegMerkmale)
-                        .withVorkommaNoetigMin(konnektor == null));
+        return res.build();
     }
 
     @Override
     public ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
         final ImmutableList.Builder<PartizipIIPhrase> res = ImmutableList.builder();
 
-        PartizipIIPhrase tmp = null;
-        @Nullable NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld tmpKonnektor = UND;
         for (final PartizipIIPhrase partizipIIPhrase :
-                erstes.getPartizipIIPhrasen(textContext, praedRegMerkmale)) {
-            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
-                    res, tmp, tmpKonnektor, partizipIIPhrase);
-            tmpKonnektor = UND;
+                erstes.getPartizipIIPhrasen(textContext, nachAnschlusswort, praedRegMerkmale)) {
+            res.add(partizipIIPhrase);
         }
 
-        tmpKonnektor = konnektor; // "[, ]aber"
-        for (final PartizipIIPhrase partizipIIPhrase :
-                zweites.getPartizipIIPhrasen(textContext, praedRegMerkmale)) {
-            tmp = PartizipIIPhrase.joinBeiGleicherPerfektbildung(
-                    res, tmp, tmpKonnektor, partizipIIPhrase);
-            tmpKonnektor = UND;
+        final ImmutableList<PartizipIIPhrase> partizipIIPhrasen =
+                zweites.getPartizipIIPhrasen(textContext, nachAnschlusswort, praedRegMerkmale);
+        for (int i = 0;
+             i < partizipIIPhrasen.size(); i++) {
+            final PartizipIIPhrase partizipIIPhrase =
+                    partizipIIPhrasen.get(i);
+            res.add(
+                    i == 0 ?
+                            partizipIIPhrase.mitKonnektor(konnektor)
+                            :
+                            (i == partizipIIPhrasen.size() - 1 ?
+                                    partizipIIPhrase
+                                            .mitKonnektorUndFallsKeinKonnektor() :
+                                    partizipIIPhrase));
         }
 
         return res.build();
@@ -201,32 +203,61 @@ public class ZweiPraedikateOhneLeerstellenSem
     }
 
     @Override
-    public Infinitiv getInfinitiv(
+    public ImmutableList<Infinitiv> getInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        final Infinitiv zweiterInfinitiv = zweites.getInfinitiv(textContext, praedRegMerkmale);
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        final ImmutableList.Builder<Infinitiv> res = ImmutableList.builder();
 
-        return new Infinitiv(
-                Konstituentenfolge.joinToKonstituentenfolge(
-                        erstes.getInfinitiv(textContext, praedRegMerkmale),
-                        konnektor,
-                        zweiterInfinitiv.toKonstituentenfolgeOhneNachfeld()),
-                zweiterInfinitiv.getNachfeld());
+        for (final Infinitiv infinitiv :
+                erstes.getInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale)) {
+            res.add(infinitiv);
+        }
+
+        final ImmutableList<Infinitiv> infinitive =
+                zweites.getInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale);
+        for (int i = 0;
+             i < infinitive.size(); i++) {
+            final Infinitiv infinitiv = infinitive.get(i);
+            res.add(
+                    i == 0 ?
+                            infinitiv.mitKonnektor(konnektor)
+                            :
+                            (i == infinitive.size() - 1 ?
+                                    infinitiv
+                                            .mitKonnektorUndFallsKeinKonnektor() :
+                                    infinitiv));
+        }
+
+        return res.build();
     }
 
     @Override
-    public ZuInfinitiv getZuInfinitiv(
+    public ImmutableList<ZuInfinitiv> getZuInfinitiv(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        final ZuInfinitiv zweiterZuInfinitiv =
-                zweites.getZuInfinitiv(textContext, praedRegMerkmale);
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        final ImmutableList.Builder<ZuInfinitiv> res = ImmutableList.builder();
 
-        return new ZuInfinitiv(
-                Konstituentenfolge.joinToKonstituentenfolge(
-                        erstes.getZuInfinitiv(textContext, praedRegMerkmale),
-                        konnektor,
-                        zweiterZuInfinitiv.toKonstituentenfolgeOhneNachfeld()),
-                zweiterZuInfinitiv.getNachfeld());
+        for (final ZuInfinitiv zuInfinitiv :
+                erstes.getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale)) {
+            res.add(zuInfinitiv);
+        }
+
+        final ImmutableList<ZuInfinitiv> zuInfinitive =
+                zweites.getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale);
+        for (int i = 0;
+             i < zuInfinitive.size(); i++) {
+            final ZuInfinitiv zuInfinitiv = zuInfinitive.get(i);
+            res.add(
+                    i == 0 ?
+                            zuInfinitiv.mitKonnektor(konnektor)
+                            :
+                            (i == zuInfinitive.size() - 1 ?
+                                    zuInfinitiv
+                                            .mitKonnektorUndFallsKeinKonnektor() :
+                                    zuInfinitiv));
+        }
+
+        return res.build();
     }
 
     @Override
@@ -243,69 +274,6 @@ public class ZweiPraedikateOhneLeerstellenSem
     public boolean isBezugAufNachzustandDesAktantenGegeben() {
         return erstes.isBezugAufNachzustandDesAktantenGegeben() &&
                 zweites.isBezugAufNachzustandDesAktantenGegeben();
-    }
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        return erstes.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        return erstes.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        // Das hier ist etwas tricky.
-        // Denkbar wäre so etwas wie "Sie ist gespannt, was du aufhebst und mitnimmmst."
-        // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
-        // Interrogativwort angegeben sein.
-        @Nullable final Konstituentenfolge erstesInterrogativwortErsterSatz =
-                erstes.getErstesInterrogativwort();
-        @Nullable final Konstituentenfolge erstesInterrogativwortZweiterSatz =
-                zweites.getErstesInterrogativwort();
-
-        if (Objects.equals(
-                erstesInterrogativwortErsterSatz, erstesInterrogativwortZweiterSatz)) {
-            return erstesInterrogativwortErsterSatz;
-        }
-
-        // Verhindern müssen wir so etwas wie *"Sie ist gespannt, was du aufhebst und die Kugel
-        // mitnimmmst." - In dem Fall wäre nur eine indirekte ob-Frage gültig:
-        // "Sie ist gespannt, ob du was aufhebst und die Kugel mitnimmst."
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        // Das hier ist etwas tricky.
-        // Denkbar wäre so etwas wie "Sie sieht das Buch, das sie aufhebt und mitnimmmt."
-        // Dazu müsste sowohl im aufheben- als auch im mitnehmen-Prädikat dasselbe
-        // Relativpronomen ("das") angegeben sein.
-        @Nullable final Konstituentenfolge relativpronomenErsterSatz =
-                erstes.getRelativpronomen();
-        @Nullable final Konstituentenfolge relativpronomenZweiterSatz =
-                zweites.getRelativpronomen();
-
-        if (Objects.equals(relativpronomenErsterSatz, relativpronomenZweiterSatz)) {
-            // Beide gleich, vielleicht auch beide null
-            return relativpronomenErsterSatz;
-        }
-
-        // Verboten ist etwas wie  *"Sie sieht das Buch, das sie aufhebt und die Kugel
-        // mitnimmt."
-
-        return null;
     }
 
     @Override

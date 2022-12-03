@@ -12,43 +12,44 @@ public enum Modalverb implements VerbMitValenz, PraedikatNurMitLeerstelleFuerLex
     DUERFEN("dürfen",
             "darf", "darfst", "darf", "dürft",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen dürfen.
-            // ?Er hat nicht schlafen gedurft.
-            "dürfen"),
+            // "Das hat er nicht gedurft."
+            // "Er hat nicht schlafen dürfen." (Ersatzinfinitiv)
+            "gedurft"),
     // "Rapunzel kann die Haare herunterlassen"
     KOENNEN("können",
             "kann", "kannst", "kann", "könnt",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen können.
-            // *Er hat nicht schlafen gekonnt.
-            "können"),
+            // "Das hat er nicht gekannt."
+            // "Er hat nicht schlafen können." (Ersatzinfinitiv)
+            "gekonnt"),
     MOEGEN("mögen",
             "mag", "magst", "mag", "mögt",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen mögen.
-            // *Er hat nicht schlafen gemocht.
-            "mögen"),
+            // "Dass Essen hat er nicht gemocht."
+            // "Er hat nicht schlafen mögen." (Ersatzinfinitiv)
+            "gemocht"),
     MUESSEN("müssen",
             "muss", "musst", "muss", "müsst",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen müssen.
-            // *Er hat nicht schlafen gemusst.
-            "müssen"),
+            // "Das hat er nicht gemusst."
+            // "Er hat nicht schlafen müssen." (Ersatzinfinitiv)
+            "gemusst"),
     SOLLEN("sollen",
             "soll", "sollst", "soll", "sollt",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen sollen.
-            // ?Er hat nicht schlafen gesollt.
-            "sollen"),
+            // "Das hat er nicht gesollt."
+            // "Er hat nicht schlafen sollen." (Ersatzinfinitiv)
+            "gesollt"),
     WOLLEN("wollen",
             "will", "willst", "will", "wollt",
             Perfektbildung.HABEN,
-            // Er hat nicht schlafen wollen.
-            // ?Er hat nicht schlafen gewollt.
-            "wollen");
+            // "Den Schaden hat er nicht gewollt."
+            // "Er hat nicht schlafen wollen." (Ersatzinfinitiv)
+            "gewollt");
 
     // (Für brauchen / nicht brauchen, möchten, lassen, werden gibt es spezielle Regeln.
-    // Ob das Modalverben sind, ist eher Ansichtssache.)
+    // Ob das Modalverben sind, ist eher Ansichtssache. Manche erfordern
+    // Ersatzinfinitive!)
 
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne

@@ -1,20 +1,20 @@
 package de.nb.aventiure2.german.base;
 
+import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 
 import java.util.Objects;
-
-import static de.nb.aventiure2.german.base.GermanUtil.joinToString;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Eine Phrase, deren Kern die Negationspartikel "nicht" ist. Beispiele:
  * "nicht", "gar nicht", "immer noch nicht", "gar nicht mehr" etc.
  */
-public class Negationspartikelphrase implements IAlternativeKonstituentenfolgable {
+public class Negationspartikelphrase implements IKonstituentenfolgable {
     public static final Negationspartikelphrase NICHT = new Negationspartikelphrase();
 
     /**
@@ -47,8 +47,9 @@ public class Negationspartikelphrase implements IAlternativeKonstituentenfolgabl
     }
 
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(k(getDescription())));
+    @NonNull
+    public Konstituentenfolge toKonstituentenfolge() {
+        return new Konstituentenfolge(k(getDescription()));
     }
 
     public String getDescription() {
@@ -61,7 +62,7 @@ public class Negationspartikelphrase implements IAlternativeKonstituentenfolgabl
                 && negationspartikelphrase.isMehrteilig();
     }
 
-    public boolean isMehrteilig() {
+    private boolean isMehrteilig() {
         return vorangestellteWoerter != null || nachgestellteWoerter != null;
 
     }
@@ -75,19 +76,19 @@ public class Negationspartikelphrase implements IAlternativeKonstituentenfolgabl
         return negationspartikelphrase.impliziertZustandsaenderung();
     }
 
-    public boolean impliziertZustandsaenderung() {
+    private boolean impliziertZustandsaenderung() {
         // Eine Zustandsänderung wird anscheinend immer (und nur) durch nachgestellte
         // Wörter impliziert: "nicht mehr", "nicht länger" vs. "nicht", "noch nicht" etc.
         return nachgestellteWoerter != null;
     }
 
     @Nullable
-    public String getVorangestellteWoerter() {
+    String getVorangestellteWoerter() {
         return vorangestellteWoerter;
     }
 
     @Nullable
-    public String getNachgestellteWoerter() {
+    String getNachgestellteWoerter() {
         return nachgestellteWoerter;
     }
 

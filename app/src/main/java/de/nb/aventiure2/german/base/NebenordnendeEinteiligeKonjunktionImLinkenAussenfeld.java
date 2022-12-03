@@ -1,14 +1,12 @@
 package de.nb.aventiure2.german.base;
 
-import com.google.common.collect.ImmutableList;
+import static de.nb.aventiure2.german.base.Konstituente.k;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
-import java.util.Collection;
+import androidx.annotation.NonNull;
 
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
-
-import static de.nb.aventiure2.german.base.Konstituente.k;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 
 /**
  * Einteilige nebenordnende Konjunktionen ("Konnektoren", "Konjunktoren"), die im linken
@@ -20,11 +18,12 @@ import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituente
  */
 @Immutable
 public enum NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld
-        implements IAlternativeKonstituentenfolgable {
-    UND(false, "und", false),
-    ODER(false, "oder", true),
-    ABER(true, "aber", true),
-    SONDERN(true, "sondern", true);
+        implements IKonstituentenfolgable {
+    // Die Konnektoren müssen nach "Aussagekraft" geordnet sein, beginnend mit der stärksten.
+    ODER(false, "oder"),
+    SONDERN(true, "sondern"),
+    ABER(true, "aber"),
+    UND(false, "und");
 
     // Hierzu würden eigentlich auch "doch" und "denn" gehören. Hier gibt es
     // allerdings Einschränkungen. Vergleiche
@@ -55,18 +54,30 @@ public enum NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld
 
     private final String text;
 
-    private final boolean traegtBedeutung;
-
     public static boolean traegtBedeutung(
             @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld anschlusswort) {
         return anschlusswort != null && anschlusswort.traegtBedeutung();
     }
 
+    /**
+     * Gibt den "stärkeren" Konnektor der beiden zurück, also den Konnektor mit der
+     * "stärkeren Aussagekraft": "Aber" ist beispielsweise stärker als "und".
+     */
+    @Nullable
+    public static NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld getStrongest(
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld one,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld other) {
+        if (one == null || one.compareTo(other) >= 0) {
+            return other;
+        }
+
+        return other;
+    }
+
     NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld(
-            final boolean vorkommaNoetig, final String text, final boolean traegtBedeutung) {
+            final boolean vorkommaNoetig, final String text) {
         this.vorkommaNoetig = vorkommaNoetig;
         this.text = text;
-        this.traegtBedeutung = traegtBedeutung;
     }
 
     /**
@@ -78,12 +89,12 @@ public enum NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld
     }
 
     private boolean traegtBedeutung() {
-        return traegtBedeutung;
+        return compareTo(UND) < 0;
     }
 
     @Override
-    public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(
-                joinToKonstituentenfolge(k(text).withVorkommaNoetig(vorkommaNoetig)));
+    @NonNull
+    public Konstituentenfolge toKonstituentenfolge() {
+        return joinToKonstituentenfolge(k(text).withVorkommaNoetig(vorkommaNoetig));
     }
 }

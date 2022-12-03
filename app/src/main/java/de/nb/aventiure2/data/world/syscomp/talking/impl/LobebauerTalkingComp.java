@@ -53,7 +53,7 @@ public class LobebauerTalkingComp extends AbstractTalkingComp {
     }
 
     private void scReagiertNicht_Exit() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
         n.narrateAlt(secs(10),
                 neuerSatz("Schon",
                         SeinUtil.istSind(anaph),

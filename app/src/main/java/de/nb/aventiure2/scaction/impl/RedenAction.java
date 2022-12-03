@@ -1,10 +1,8 @@
 package de.nb.aventiure2.scaction.impl;
 
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.GENITIVATTRIBUT_VERBOTEN;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 
 import androidx.annotation.NonNull;
@@ -20,6 +18,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.gameobject.player.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -27,7 +26,7 @@ import de.nb.aventiure2.data.world.syscomp.mentalmodel.IHasMentalModelGO;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.CardinalDirection;
 import de.nb.aventiure2.data.world.syscomp.talking.ITalkerGO;
 import de.nb.aventiure2.data.world.syscomp.talking.impl.SCTalkAction;
-import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.praedikat.SemPraedikat;
 import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
 import de.nb.aventiure2.german.praedikat.SemPraedikatOhneLeerstellen;
@@ -129,7 +128,7 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
 
     @SuppressWarnings("ChainOfInstanceofChecks")
     private static SemPraedikatOhneLeerstellen fuelleGgfPraedikatLeerstelleMitCreature(
-            final World worldervice,
+            final World world,
             final SemPraedikat semPraedikat,
             final IDescribableGO talker) {
         if (semPraedikat instanceof SemPraedikatOhneLeerstellen) {
@@ -137,11 +136,10 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
         }
 
         if (semPraedikat instanceof SemPraedikatMitEinerObjektleerstelle) {
-            final EinzelneSubstantivischePhrase creatureDesc =
-                    worldervice.getPOVDescription(textContext, SPIELER_CHARAKTER, talker,
-                            NICHT_POSSESSIV, true);
+            final DescribableGameObject talkerDGO = new DescribableGameObject(
+                    world, talker.getId(), GENITIVATTRIBUT_VERBOTEN, true);
 
-            return ((SemPraedikatMitEinerObjektleerstelle) semPraedikat).mit(creatureDesc);
+            return ((SemPraedikatMitEinerObjektleerstelle) semPraedikat).mit(talkerDGO);
         }
 
         throw new IllegalArgumentException("Unexpected type of Prädikat: " + semPraedikat);
@@ -166,7 +164,10 @@ public class RedenAction<TALKER extends IDescribableGO & ILocatableGO & ITalkerG
                 // "Das Angebot von *dir* weisen"
                 joinToKonstituentenfolge(
                         SENTENCE,
-                        semPraedikatOhneLeerstellen.getInfinitiv(P2, SG))
+                        semPraedikatOhneLeerstellen.getInfinitiv(
+                                ImmutableTextContext.EMPTY, false,
+                                // implizites Subjekt: Der Spielercharakter
+                                duSc()))
                         .joinToString());
     }
 

@@ -67,7 +67,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubjObj.STREICHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.TREIBEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.ZAUSEN;
 import static de.nb.aventiure2.german.praedikat.Witterungsverb.STUERMEN;
-import static de.nb.aventiure2.german.satz.Satzreihe.altGereihtStandard;
+import static de.nb.aventiure2.german.satz.SemSatzReihe.altGereihtStandard;
 import static de.nb.aventiure2.util.StreamUtil.*;
 
 import androidx.annotation.NonNull;
@@ -137,8 +137,8 @@ import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
-import de.nb.aventiure2.german.satz.Satzreihe;
 import de.nb.aventiure2.german.satz.SemSatz;
+import de.nb.aventiure2.german.satz.SemSatzReihe;
 
 @SuppressWarnings("DuplicateBranchesInSwitch")
 @Immutable
@@ -979,7 +979,7 @@ public class WetterData {
                 .flatMap(kalt -> WINDSTAERKE_SATZ_DESCRIBER.altSp(time, windstaerke,
                         nurFuerZusaetzlicheAdverbialerAngabeSkopusSatzGeeignete, false)
                         .stream()
-                        .map(derWindStuermt -> new Satzreihe(
+                        .map(derWindStuermt -> new SemSatzReihe(
                                 kalt.alsPraedikativumPraedikat()
                                         .alsSatzMitSubjekt(EXPLETIVES_ES),
                                 derWindStuermt)))
@@ -1162,7 +1162,7 @@ public class WetterData {
      *                                                                 Tageszeitenwechsel nur
      *                                                                 einmalig auftreten
      */
-    private ImmutableCollection<Satzreihe>
+    private ImmutableCollection<SemSatzReihe>
     altStatischeBewoelkungUndTemperaturUnterOffenemHimmelSaetze(
             final AvTime time,
             final EnumRange<Temperatur> locationTemperaturRange,
@@ -1419,7 +1419,7 @@ public class WetterData {
                                                     .altLuftAdjPhr(temperatur,
                                                             time.getTageszeit()).stream()
                                                     .map(frisch ->
-                                                            new Satzreihe(
+                                                            new SemSatzReihe(
                                                                     blau.alsPraedikativumPraedikat()
                                                                             .alsSatzMitSubjekt(
                                                                                     HIMMEL),
@@ -1977,14 +1977,14 @@ public class WetterData {
                 .flatMap(inDieKaelte ->
                         BEWOELKUNG_PRAEP_PHR_DESCRIBER.altSpUnterOffenenHimmelAkk(
                                 bewoelkung, time.getTageszeit()).stream()
-                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                .filter(unterHimmel -> !unterHimmel.toKonstituentenfolge()
                                         .kommaStehtAus())
                                 .map(unterHimmel ->
                                         // "in den kalten Wind unter den bewölkten Himmel"
                                         new AdvAngabeSkopusVerbWohinWoher(
                                                 GermanUtil.joinToString(
-                                                        inDieKaelte.getDescription(),
-                                                        unterHimmel.getDescription()))))
+                                                        inDieKaelte.toKonstituentenfolge(),
+                                                        unterHimmel.toKonstituentenfolge()))))
                 .collect(toSet()));
 
         return alt.build();
@@ -2024,14 +2024,14 @@ public class WetterData {
                 .flatMap(inDieKaelte ->
                         BEWOELKUNG_PRAEP_PHR_DESCRIBER.altSpUnterOffenenHimmelAkk(
                                 bewoelkung, time.getTageszeit()).stream()
-                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                .filter(unterHimmel -> !unterHimmel.toKonstituentenfolge()
                                         .kommaStehtAus())
                                 .map(unterHimmel ->
                                         // "in die Kälte unter den bewölkten Himmel"
                                         new AdvAngabeSkopusVerbWohinWoher(
                                                 GermanUtil.joinToString(
-                                                        inDieKaelte.getDescription(),
-                                                        unterHimmel.getDescription()))))
+                                                        inDieKaelte.toKonstituentenfolge(),
+                                                        unterHimmel.toKonstituentenfolge()))))
                 .collect(toSet()));
 
         return alt.build();
@@ -2281,14 +2281,14 @@ public class WetterData {
                 .flatMap(inDerKaelte ->
                         BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenemHimmelDat(
                                 bewoelkung, time.getTageszeit()).stream()
-                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                .filter(unterHimmel -> !unterHimmel.toKonstituentenfolge()
                                         .kommaStehtAus())
                                 .map(unterHimmel ->
                                         // "in der Kälte unter dem bewölkten Himmel"
                                         new AdvAngabeSkopusVerbAllg(
                                                 GermanUtil.joinToString(
-                                                        inDerKaelte.getDescription(),
-                                                        unterHimmel.getDescription()))))
+                                                        inDerKaelte.toKonstituentenfolge(),
+                                                        unterHimmel.toKonstituentenfolge()))))
                 .collect(toSet()));
 
         return alt.build();
@@ -2311,14 +2311,14 @@ public class WetterData {
                 .flatMap(imKaltenWind ->
                         BEWOELKUNG_PRAEP_PHR_DESCRIBER.altUnterOffenemHimmelDat(
                                 bewoelkung, time.getTageszeit()).stream()
-                                .filter(unterHimmel -> !unterHimmel.getDescription()
+                                .filter(unterHimmel -> !unterHimmel.toKonstituentenfolge()
                                         .kommaStehtAus())
                                 .map(unterHimmel ->
                                         // "im kalten Wind unter dem bewölkten Himmel"
                                         new AdvAngabeSkopusVerbAllg(
                                                 GermanUtil.joinToString(
-                                                        imKaltenWind.getDescription(),
-                                                        unterHimmel.getDescription()))))
+                                                        imKaltenWind.toKonstituentenfolge(),
+                                                        unterHimmel.toKonstituentenfolge()))))
                 .collect(toSet()));
 
         return alt.build();
@@ -2659,7 +2659,7 @@ public class WetterData {
                                                     // Bandwurmsätze vermeiden
                                                     .filter(EinzelnerSemSatz.class::isInstance)
                                                     .map(tempSatz ->
-                                                            new Satzreihe(
+                                                            new SemSatzReihe(
                                                                     windSatz,
                                                                     (EinzelnerSemSatz) tempSatz)))
                                     .collect(toImmutableSet())))
@@ -2705,7 +2705,7 @@ public class WetterData {
                                                     // Bandwurmsätze vermeiden
                                                     .filter(EinzelnerSemSatz.class::isInstance)
                                                     .map(bewSatz ->
-                                                            new Satzreihe(
+                                                            new SemSatzReihe(
                                                                     windSatz,
                                                                     (EinzelnerSemSatz) bewSatz)))
                                     .collect(toImmutableSet())))
@@ -2745,7 +2745,7 @@ public class WetterData {
                                             // Bandwurmsätze vermeiden
                                             .filter(EinzelnerSemSatz.class::isInstance)
                                             .map(bewSatz ->
-                                                    new Satzreihe(
+                                                    new SemSatzReihe(
                                                             tempSatz,
                                                             (EinzelnerSemSatz) bewSatz)))
                             .collect(toImmutableSet()))
@@ -2787,7 +2787,7 @@ public class WetterData {
                                                 // Bandwurmsätze vermeiden
                                                 .filter(EinzelnerSemSatz.class::isInstance)
                                                 .map(bewSatz ->
-                                                        new Satzreihe(
+                                                        new SemSatzReihe(
                                                                 tempSatz,
                                                                 (EinzelnerSemSatz) bewSatz)))))
                 .addAll(altNeueSaetze("Das Wetter ist umgeschwungen:",
@@ -2803,7 +2803,7 @@ public class WetterData {
                                                 .stream()
                                                 .filter(EinzelnerSemSatz.class::isInstance)
                                                 .map(tempSatz ->
-                                                        new Satzreihe(windSatz,
+                                                        new SemSatzReihe(windSatz,
                                                                 (EinzelnerSemSatz) tempSatz))),
                         SENTENCE,
                         BEWOELKUNG_DESC_DESCRIBER.altSprungOderWechselDraussen(

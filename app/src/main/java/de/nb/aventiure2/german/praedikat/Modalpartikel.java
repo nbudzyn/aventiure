@@ -1,18 +1,16 @@
 package de.nb.aventiure2.german.praedikat;
 
+import static de.nb.aventiure2.german.base.Konstituente.k;
+
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
-import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
+import de.nb.aventiure2.german.base.IKonstituentenfolgable;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
-
-import static de.nb.aventiure2.german.base.Konstituente.k;
 
 /**
  * Eine Modalpartikel ist etwas wie "doch", "halt", "eben".
  */
-public class Modalpartikel implements IAlternativeKonstituentenfolgable {
+public class Modalpartikel implements IKonstituentenfolgable {
     private final String text;
 
     public Modalpartikel(final String text) {
@@ -20,8 +18,9 @@ public class Modalpartikel implements IAlternativeKonstituentenfolgable {
     }
 
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(k(text)));
+    @NonNull
+    public Konstituentenfolge toKonstituentenfolge() {
+        return new Konstituentenfolge(k(text));
     }
 
     public String getText() {

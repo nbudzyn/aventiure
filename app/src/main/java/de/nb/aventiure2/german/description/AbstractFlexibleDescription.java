@@ -40,7 +40,7 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
     }
 
     @Nullable
-    protected abstract Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull();
+    abstract Konstituente toSingleKonstituenteMitSpeziellemVorfeldOrNull();
 
     abstract Konstituente toSingleKonstituenteMitVorfeld(final String vorfeld);
 
@@ -53,6 +53,10 @@ public abstract class AbstractFlexibleDescription<SELF extends AbstractDescripti
 
     abstract Konstituente toSingleKonstituenteSatzanschlussOhneSubjektOhneAnschlusswortOhneKomma();
 
+    /**
+     * Erzeugt einen Satzanschluss mit Anschlusswort ("und siegst") oder Vorkomma
+     * (", sieht und siegt").
+     */
     @NonNull
     @CheckReturnValue
     public abstract TextDescription toTextDescriptionSatzanschlussMitAnschlusswortOderVorkomma();

@@ -141,5 +141,4 @@ public class KoenigDrosselbartStoryNode {
 
     //  SC erlebt mit, wie Königssohn (?) kommt und sie heiratet.
 
-
 }

@@ -4,7 +4,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.SpatialConnection.con;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.spatialconnection.impl.ObenImTurmConnectionComp.Counter.HERABGESTIEGEN;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.AN_DAT;
 import static de.nb.aventiure2.german.base.StructuralElement.WORD;
@@ -12,7 +12,6 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HINABSTEIGEN;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableList;
 
@@ -29,13 +28,10 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.base.Lichtverhaeltnisse;
 import de.nb.aventiure2.data.world.base.SpatialConnection;
 import de.nb.aventiure2.data.world.gameobject.*;
-import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.spatialconnection.AbstractSpatialConnectionComp;
 import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.RapunzelState;
-import de.nb.aventiure2.german.base.Personalpronomen;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
-import de.nb.aventiure2.german.description.ITextContext;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 
@@ -96,65 +92,70 @@ public class ObenImTurmConnectionComp extends AbstractSpatialConnectionComp {
                     .dann();
         }
 
-        final ITextContext textContext = n;
-        // FIXME Ist das richtig so?
-        //  Kann man hier vermeiden, dass man das angeben muss?
-        //  Kann nicht der TextContext beim Zusammenbau automatisch
-        //  ermittelt werden - vor allem, wenn die Sprachkomponente
-        //  den Text zusammenbaut?!
-        //  Dazu müsste allerdings die Sprachzusammenbaukomponente
-        //  wissen: "hier bitte Rapunzel einfügen" - und außerdem:
-        //  Wie ist der initiale ITextContext?
-
-        final SubstantivischePhrase anaphRapunzelsHaareMoeglichstPossessiv =
-                anaphRapunzelsHaareMoeglichstPossessiv(
-                        textContext,
-                        ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV, true);
-        // "sie" / "ihre Haare" / "Rapunzels Haare" / "die Haare"
+        final DescribableGameObject rapunzelsHaareDGO = new DescribableGameObject(
+                world,
+                RAPUNZELS_HAARE,
+                ALLES_ERLAUBT,
+                true);
 
         // "Du steigst daran hinab" / "Du steigst an ihren Haren hinab" /
         // "Du steigst an Rapunzels Haaren hinab" /
         // "Du steigst an den Haaren hinab"
         return du(WORD, HINABSTEIGEN
                 .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
-                        AN_DAT.mit(anaphRapunzelsHaareMoeglichstPossessiv))))
-                // "an den Haaren" / "daran"
+                        AN_DAT.mit(
+                                // TODO Schöner hier rapunzelsHaareDGO direkt übergeben
+                                //  und den Aufruf von und
+                                //  den Aufruf von  alsSubstPhrase() in der
+                                //  Sprachkomponente machen!
+                                rapunzelsHaareDGO.alsSubstPhrase(
+                                        n
+                                        // FIXME  Kann man hier vermeiden, dass man hier den
+                                        //  Text-Kontext angeben muss?
+                                        //  Kann nicht der TextContext beim Zusammenbau automatisch
+                                        //  ermittelt werden - vor allem, wenn die Sprachkomponente
+                                        //  den Text zusammenbaut?!
+                                        //  Schließlich könnte die Sprachzusammenbaukomponente
+                                        //  wissen:
+                                        //  "hier bitte Rapunzel einfügen" - allerdings: Wie ist
+                                        //  der initiale ITextContext?
+                                        //  Kann ImmutableTextContext eine Inspiration sein?
+                                        //  Wichtig: Beide Fälle müssen funktionieren:
+                                        //  - "Jeden Morgen wäscht Rapunzel ihre (!) Haare."
+                                        //  - "Ihre (!) Haare wäscht Rapunzel jeden Morgen."
+                                        //  Außerdem jeweils
+                                        //  - Für Texte aus der Sprachkomponente
+                                        //  - FÜr Stückchenweise zusammengesetzte Texte.
+                                        //  Die Sprachkomponente darf kein *"Rapunzel wäscht
+                                        //  Rapunzels Haare" erzeugen,
+                                        //  auch kein *"Rapunzels Haare wäscht Rapunzel."
+                                        //  Anscheinend ist das Subjekt
+                                        //  relevant für zwingende possessive Bezüge.
+                                        //  Außerdem muss die Sprachkomponente Doppeldeutigkeiten
+                                        //  auflösen.
+                                        //  - "Jeden Morgen trifft Rapunzel ihre Freundin und
+                                        //  wäscht deren (!) Haare"
+                                        //  - "Jeden Morgen trifft Rapunzel ihre Freundin und
+                                        //  wäscht ihre eigenen (!) Haare"
+                                        //  Und die Sprachkomponente muss mit externem Kontext
+                                        //  umgehen können:
+                                        //  - "Rapunzel hat einen Sohn. Jeden Morgen wäscht sie
+                                        //  seine Haare".
+                                        //  - "Rapunzel hat eine Tochter. Jeden Morgen wäscht sie
+                                        //  deren Haare".
+                                        //  - "Rapunzel hat eine Tochter. Jeden Morgen wäscht sie
+                                        //  ihre eigenen Haare".
+                                        //  Für all das ließen sich schöne Testfälle schreiben!
+                                )
+                                // "sie" / "ihre Haare" / "Rapunzels Haare" / "die Haare"
+                        )
+                        // "an den Haaren" / "an ihren Haaren" / "an Rapunzels Haaren" / "daran"
+                )))
                 .timed(mins(1))
                 .withCounterIdIncrementedIfTextIsNarrated(HERABGESTIEGEN)
                 .undWartest()
                 .dann();
     }
-
-    /**
-     * Gibt etwas zurück wie "sie" (wenn anaphorischer Bezug auf Rapunzels Haare möglich ist),
-     * "Rapunzels Haare" (wenn Rapunzel und ihr Name bekannt sind),
-     * "ihre Haare" (wenn ein anaphorischer Bezug <i>auf Rapunzel</i> möglich ist) oder
-     * "die Haare".
-     *
-     * @param descShortIfKnown Ob die Beschreibung (wenn kein Personalpronomen möglich ist)
-     *                         kurz gehalten werden soll, falls Rapunzels Haare bereits
-     *                         bekannt sind
-     */
-    private SubstantivischePhrase anaphRapunzelsHaareMoeglichstPossessiv(
-            final ITextContext textContext,
-            final PossessivDescriptionVorgabe possessivDescriptionVorgabe,
-            final boolean descShortIfKnown) {
-        final GameObjectId describableId = RAPUNZELS_HAARE;
-
-        @Nullable final Personalpronomen anaphPersPron =
-                textContext.getAnaphPersPronWennMgl(describableId);
-        if (anaphPersPron != null) {
-            return anaphPersPron; // "sie" (die Haare)
-        }
-
-        return world.descriptionSystem
-                .getPOVDescription(textContext, loadSC(), loadRequired(describableId),
-                        possessivDescriptionVorgabe,
-                        descShortIfKnown); // "ihre Haare" / "Rapunzels Haare"
-    }
-
-    // FIXME Alle Vorkommen von RAPUNZELS_HAARE suchen und prüfen, wie man
-    //  etwas wie dies hier verwenden / das hier verallgemeinern kann.
 
     @NonNull
     private IHasStateGO<RapunzelState> loadRapunzel() {

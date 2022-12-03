@@ -219,6 +219,7 @@ public enum VerbSubjObj implements VerbMitValenz, SemPraedikatMitEinerObjektleer
             "lasst",
             "hinunter",
             Perfektbildung.HABEN, "hinuntergelassen"),
+    HOCHWERFEN(WERFEN, AKK, "hoch", Perfektbildung.HABEN),
     MITNEHMEN(NEHMEN, AKK, "mit", Perfektbildung.HABEN),
     NACHBLICKEN(ANBLICKEN, DAT, "nach", Perfektbildung.HABEN),
     NACHSCHAUEN(SCHAUEN, DAT, "nach", Perfektbildung.HABEN),

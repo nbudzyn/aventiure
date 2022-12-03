@@ -1,18 +1,8 @@
 package de.nb.aventiure2.data.world.syscomp.description;
 
 import static java.util.Objects.requireNonNull;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GLAENZEND;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GOLDEN;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
-import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WUNDERSCHOEN;
-import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
-import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARZOEPFE;
-import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZOEPFE;
-import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.Person.P3;
 
 import androidx.annotation.Nullable;
@@ -27,7 +17,6 @@ import javax.annotation.Nonnull;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.syscomp.description.impl.SimpleDescriptionComp;
-import de.nb.aventiure2.german.adjektiv.ZweiAdjPhrOhneLeerstellen;
 import de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.IArtikelworttypOderVorangestelltesGenitivattribut;
@@ -35,7 +24,6 @@ import de.nb.aventiure2.german.base.Nominalphrase;
 import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.VorangestelltesGenitivattribut;
 import de.nb.aventiure2.german.description.ITextContext;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 
 /**
  * Implementierung von {@link AbstractDescriptionComp} für etwas, das
@@ -66,35 +54,36 @@ public class PossessivDescriptionComp extends SimpleDescriptionComp {
      */
     private final String besitzerGenitivattributVorangestellt;
 
+    /**
+     * Konstruktor für eine <code>PossessivDescriptionComp</code>.
+     *
+     * @param descriptionTriple {@link DescriptionTriple} <i>ohne</i> Possessivangabe
+     *                          (z.B. "Haare" / "die Haare" / "die Haare").
+     *                          Dient auch als Basis, um die possessiven
+     *                          Beschreibungen zu erzeugen ("Rapunzels
+     *                          Haare", "ihre "Haare").
+     *                          <i>Achtung!</i>, eventuelle Adjektivphrasen
+     *                          werden zwar passend dekliniert, aber die eigentliche
+     *                          Flexionsreihe wird jeweils unverändert
+     *                          übernommen! Das kann zu Fehlern führen, wenn die Flexionsreihe
+     *                          einer Nomialphrase nicht nur ein übliches Nomen ist,
+     *                          sondern z.B. ein adjektivisch dekliniertes Nomen
+     *                          ("der Große" -> *"Rapunzels Große" statt "Rapunzels Großer")
+     *                          oder wenn die Flexionsreihe in anderer Weise bereits deklinierte
+     *                          Elemente enthält ("der silberne Armreif" -> *"Rapunzels silberne
+     *                          Armreif" statt "Rapunzels silberner Armreif").
+     *                          Außerdem muss das Description-Triple in jedem der drei
+     *                          Beschreibungsbereiche (unbekannt, bekannt lang, bekannt kurz)
+     *                          mindestens eine {@link Nominalphrase} enthalten.
+     */
     public PossessivDescriptionComp(
             final CounterDao counterDao,
             final GameObjectId id,
             final GameObjectId besitzerId,
             @Nullable final GameObjectId besitzerNameId,
-            final String besitzerGenitivattributVorangestellt) {
-        super(id, new DescriptionTriple(
-                counterDao,
-                np(INDEF,
-                        new ZweiAdjPhrOhneLeerstellen(LANG,
-                                true,
-                                GOLDEN),
-                        HAARZOEPFE, id),
-                ImmutableList.of(
-                        np(DEF, GOLDEN, HAARE, id),
-                        np(DEF, LANG, HAARE, id),
-                        np(DEF,
-                                new ZweiAdjPhrOhneLeerstellen(WUNDERSCHOEN,
-                                        false,
-                                        GOLDEN),
-                                HAARE, id),
-                        np(DEF,
-                                new ZweiAdjPhrOhneLeerstellen(LANG,
-                                        true,
-                                        GLAENZEND.mitAdvAngabe(new AdvAngabeSkopusSatz(GOLDEN))),
-                                ZOEPFE, id)
-                ),
-                np(HAARE, id)
-        ));
+            final String besitzerGenitivattributVorangestellt,
+            final DescriptionTriple descriptionTriple) {
+        super(id, descriptionTriple);
         this.counterDao = counterDao;
 
         this.besitzerId = requireNonNull(besitzerId);
@@ -159,7 +148,6 @@ public class PossessivDescriptionComp extends SimpleDescriptionComp {
      * ("Rapunzels") für dieses Game Object zurück - oder {@code null}, wenn beides nicht möglich
      * oder gewünscht ist.
      *
-     * @param textContext
      * @param besitzerKnown     Ob der Besitzer bekannt ist. (In einigen Fällen
      *                          irrelevant.)
      * @param besitzerNameKnown Ob der Names des Besitzers bekannt ist - nur
@@ -185,7 +173,7 @@ public class PossessivDescriptionComp extends SimpleDescriptionComp {
         }
 
         if (possessivDescriptionVorgabe
-                == ANAPH_POSSESSIVARTIKEL_ODER_GENITIVATTRIBUT_ODER_NICHT_POSSESSIV
+                == ALLES_ERLAUBT
                 && besitzerKnown
                 && (
                 // Man muss den Namen nicht speziell kennenlernen...

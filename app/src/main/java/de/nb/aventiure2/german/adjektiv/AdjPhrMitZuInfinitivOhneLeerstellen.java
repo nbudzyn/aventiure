@@ -134,7 +134,7 @@ public class AdjPhrMitZuInfinitivOhneLeerstellen extends AbstractAdjPhrOhneLeers
     public Konstituentenfolge getPraedikativAnteilKandidatFuerNachfeld(
             final PraedRegMerkmale praedRegMerkmale) {
         return Konstituentenfolge.schliesseInKommaEin(
-                lexikalischerKern.getZuInfinitiv(textContext, praedRegMerkmale)
+                lexikalischerKern.getZuInfinitiv(textContext, nachAnschlusswort, praedRegMerkmale)
                 // "[,] sich erheben zu dürfen[,] "
         );
     }

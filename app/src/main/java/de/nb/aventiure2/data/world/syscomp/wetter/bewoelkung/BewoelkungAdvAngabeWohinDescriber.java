@@ -1,5 +1,11 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung;
 
+import static java.util.stream.Collectors.toSet;
+import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
+import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
+import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
+import static de.nb.aventiure2.util.StreamUtil.*;
+
 import androidx.annotation.NonNull;
 
 import com.google.common.collect.ImmutableCollection;
@@ -9,12 +15,6 @@ import de.nb.aventiure2.data.time.AvTime;
 import de.nb.aventiure2.data.time.Tageszeit;
 import de.nb.aventiure2.german.base.GermanUtil;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
-
-import static de.nb.aventiure2.data.time.Tageszeit.NACHTS;
-import static de.nb.aventiure2.data.world.syscomp.wetter.bewoelkung.Bewoelkung.LEICHT_BEWOELKT;
-import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
-import static de.nb.aventiure2.util.StreamUtil.*;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Beschreibt die {@link Bewoelkung} als
@@ -57,15 +57,16 @@ public class BewoelkungAdvAngabeWohinDescriber {
                                 praepPhrDescriber.altSpUnterOffenenHimmelAkk(bewoelkung,
                                         time.getTageszeit())
                                         .stream()
-                                        .filter(unterHimmel -> !unterHimmel.getDescription()
+                                        .filter(unterHimmel -> !unterHimmel.toKonstituentenfolge()
                                                 .kommaStehtAus())
                                         .map(unterHimmel ->
                                                 // "in die Morgensonne unter den blauen Himmel"
                                                 new AdvAngabeSkopusVerbWohinWoher(
                                                         GermanUtil.joinToString(
                                                                 IN_AKK.mit(gestirn)
-                                                                        .getDescription(),
-                                                                unterHimmel.getDescription()))))
+                                                                        .toKonstituentenfolge(),
+                                                                unterHimmel
+                                                                        .toKonstituentenfolge()))))
                         .collect(toSet()));
             }
         }

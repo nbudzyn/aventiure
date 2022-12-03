@@ -2,7 +2,6 @@ package de.nb.aventiure2.german.praedikat;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.federkiel.string.StringUtil.stripPrefixIfAny;
 
@@ -13,7 +12,6 @@ import com.google.common.base.Joiner;
 
 import java.util.Objects;
 
-import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Numerus;
 import de.nb.aventiure2.german.base.Person;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
@@ -249,10 +247,14 @@ public class Verb {
 
     @NonNull
     PartizipIIPhrase getPartizipIIPhrase() {
-        return new PartizipIIPhrase(
-                new Konstituentenfolge(k(getPartizipII())),
+        return new EinfachePartizipIIPhrase(
+                null,
+                Mittelfeld.EMPTY,
+                getPartizipII(),
                 Nachfeld.EMPTY,
-                perfektbildung);
+                perfektbildung,
+                null, null,
+                null, null);
     }
 
     Verb getHilfsverbFuerPerfekt() {

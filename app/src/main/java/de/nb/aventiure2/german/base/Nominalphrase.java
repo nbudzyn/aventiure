@@ -58,7 +58,7 @@ public class Nominalphrase
             np(F, DEF, "drückende Hitze der Sonne",
                     "drückenden Hitze der Sonne");
     // Problem hier: "erst"* ist offenbar ein Adjektiv, kann aber nur
-    // attributiv verwendet werden. Das ist bisher nicht vorgesetzen.
+    // attributiv verwendet werden. Das ist bisher nicht vorgeshzen.
     public static final Nominalphrase ERSTER_SONNENSTRAHL =
             np(M, DEF, "erste Sonnenstrahl",
                     "ersten Sonnenstrahl", "ersten Sonnenstrahl");
@@ -67,13 +67,13 @@ public class Nominalphrase
                     "ersten Strahl der aufgehenden Sonne",
                     "ersten Strahl der aufgehenden Sonne");
     // Problem hier: "erst"* ist anscheinend ein Adjektiv, kann aber nur
-    // attributiv verwendet werden. Das ist bisher nicht vorgesetzen.
+    // attributiv verwendet werden. Das ist bisher nicht vorgesehen.
     public static final Nominalphrase ERSTE_SONNENSTRAHLEN =
             np(PL_MFN, DEF, "ersten Sonnenstrahlen");
     public static final Nominalphrase ERSTE_STRAHLEN_DER_AUFGEHENDEN_SONNE =
             np(PL_MFN, DEF, "ersten Strahlen der aufgehenden Sonne");
     // Problem hier: "letzt"* ist anscheinend ein Adjektiv, kann aber nur
-    // attributiv verwendet werden. Das ist bisher nicht vorgesetzen.
+    // attributiv verwendet werden. Das ist bisher nicht vorgesehen.
     public static final Nominalphrase LETZTE_ZIRREN =
             np(PL_MFN, DEF, "letzten Zirren");
     public static final Nominalphrase SCHUTZ_VOR_DEM_AERGSTEN_STURM =
@@ -190,6 +190,19 @@ public class Nominalphrase
         return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut, nominalNominativ,
                 nominalDativ, nominalAkkusativ,
                 belebtheit, null);
+    }
+
+    @NonNull
+    public static Nominalphrase np(final NumerusGenus numerusGenus,
+                                   @Nullable
+                                   final IArtikelworttypOderVorangestelltesGenitivattribut artikelworttypOderVorangestelltesGenitivattribut,
+                                   final String nominalNominativUndAkkusativ,
+                                   final String nominalDativ,
+                                   @Nullable final IBezugsobjekt bezugsobjekt) {
+        return np(numerusGenus, artikelworttypOderVorangestelltesGenitivattribut,
+                nominalNominativUndAkkusativ, nominalDativ, nominalNominativUndAkkusativ,
+                bezugsobjekt
+        );
     }
 
     @NonNull
@@ -415,7 +428,7 @@ public class Nominalphrase
                 flexionsreiheArtikellos, getBelebtheit(), getBezugsobjekt());
     }
 
-    public Nominalphrase mitBelebheit(final Belebtheit belebtheit) {
+    Nominalphrase mitBelebheit(final Belebtheit belebtheit) {
         if (Objects.equals(getBelebtheit(), belebtheit)) {
             return this;
         }

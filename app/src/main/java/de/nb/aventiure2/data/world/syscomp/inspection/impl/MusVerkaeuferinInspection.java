@@ -2,6 +2,7 @@ package de.nb.aventiure2.data.world.syscomp.inspection.impl;
 
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.inspection.impl.MusVerkaeuferinInspection.Counter.BEOBACHTEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SUESS;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.EINIGE;
@@ -64,7 +65,7 @@ public class MusVerkaeuferinInspection implements IInspection,
     public String getActionName() {
         return GermanStringUtil.capitalize(
                 VerbSubjObj.BEOBACHTEN.mit(getDescription())
-                        .getInfinitiv(duSc().getPerson(), duSc().getNumerus())
+                        .getInfinitiv(duSc().getPerson(), nachAnschlusswort, duSc().getNumerus())
                         .joinToString());
     }
 
@@ -72,7 +73,9 @@ public class MusVerkaeuferinInspection implements IInspection,
     public ImmutableCollection<? extends TimedDescription<?>> altTimedDescriptions() {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        final EinzelneSubstantivischePhrase desc = getDescription(true);
+        final EinzelneSubstantivischePhrase desc = getDescription(
+                ALLES_ERLAUBT,
+                true);
         final SubstantivischePhrase anaph = anaph();
 
         final int countBeobachtet = counterDao.get(BEOBACHTEN);

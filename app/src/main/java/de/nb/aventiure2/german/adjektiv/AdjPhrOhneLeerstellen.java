@@ -163,7 +163,8 @@ public interface AdjPhrOhneLeerstellen extends Adjektivphrase, Praedikativum {
      * <li>"(die Frau), zufrieden, dich zu sehen, und gespannt, ob du etwas zu berichten hast[,]"
      * </ul>
      *
-     * @see #getAttributivAnteilAdjektivattribut(PraedRegMerkmale, boolean)
+     * @see #getAttributivAnteilAdjektivattribut(NumerusGenus, Belebtheit, Kasus,
+     * boolean artikelwortTraegtKasusendung)
      * @see #getAttributivAnteilRelativsatz(Kasus)
      */
     @Nullable

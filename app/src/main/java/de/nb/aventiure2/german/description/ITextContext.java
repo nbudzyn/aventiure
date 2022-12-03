@@ -14,9 +14,9 @@ import de.nb.aventiure2.german.base.Personalpronomen;
  * z.B. eine possessive Angabe machen möchte ("Rapunzel kämmt <i>ihre</i> Haare.",
  * aber nicht *"Rapunzel kämmt <i>Rapunzels</i> Haare").
  * <p>
- * Implementierungen dürfen durchaus einen Status besitzen und ihr auch als
+ * Implementierungen dürfen durchaus einen Status besitzen und ihn auch als
  * Seiteneffekt ändern, damit ein Aufrufer auch bei verschiedenen Aufrufen
- * in Folge konsistente Daten erhält.
+ * in Folge konsistente Ergebnisse erhält.
  */
 public interface ITextContext {
     /**
@@ -38,4 +38,21 @@ public interface ITextContext {
      */
     @Nullable
     Personalpronomen getAnaphPersPronWennMgl(final IBezugsobjekt bezugsobjekt);
+
+    // FIXME Idee: im Kontext alle Bezüge wissen, für die keine Genitivattribute verwendet werden
+    //  dürfen! Das setzt das Prädikat. Z.B. Peter sind seine Hände / die Hände kalt. (Nicht
+    //  Peters hände). Betrifft wohl Subjekt und "Dativsubjekt".
+    //  ("Anapher zwingend": Liste von Objekten, ein Merkmalsbündel (Numerus erc.)
+    //  Führt zu "ihm" und "ihre Haare" (alternativ "die Haare" - nicht "Rapunzels Haare").
+    //  Festlegen (und wieder löschen??) Im Prädikat oder häufiger im Sart: Meist das Subjekt (ggf.
+    //  A und b)))
+    //  Vielleicht hat das auch mit Peter wäscht SICH zu tun.
+
+    // FIXME Die extremste Form der Anapher wäre die Ellipse! Auch die könnte
+    //  automatisch erzeugt werden. Vergleiche:
+    //  1. Ich sehe den Mann und beleidige den Mann.
+    //  2. Ich sehe den Mann und beleidige ihn.
+    //  3. Ich sehe und beleidige den Mann.
+    //  Sowohl Anapher (2.) als auch  eine Ellipse (3.) könnten vielleicht automatisch erzeugt
+    //  werden aus den einzelnen Prädikaten "den Mann sehen" und "den Mann beleidigen".
 }

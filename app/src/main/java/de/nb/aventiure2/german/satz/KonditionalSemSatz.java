@@ -3,43 +3,34 @@ package de.nb.aventiure2.german.satz;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.description.ITextContext;
 
 /**
- * Ein Nebensatz, der mit einer Kondition beginnt. Beispiel:
+ * Ein "semantischer Nebensatz", der mit einer Kondition beginnt. Beispiel:
  * "als du das hörst"
  */
-public class Konditionalsatz {
+public class KonditionalSemSatz {
     @Nonnull
     private final String kondition;
 
     @Nonnull
     private final SemSatz semSatz;
 
-    public Konditionalsatz(@Nonnull final String kondition, @Nonnull final SemSatz semSatz) {
+    public KonditionalSemSatz(@Nonnull final String kondition, @Nonnull final SemSatz semSatz) {
         this.kondition = kondition;
         this.semSatz = semSatz;
     }
 
-    public Konditionalsatz perfekt() {
-        return new Konditionalsatz(kondition, semSatz.perfekt());
+    public KonditionalSemSatz perfekt() {
+        return new KonditionalSemSatz(kondition, semSatz.perfekt());
     }
 
-    /**
-     * Gibt den eigentlichen Konditionalsatz zurück, allerdings <i>wird kein ausstehendes
-     * Komma gefordert!</i> Das wird der Aufrufer in vielen Fällen selbst tun wollen.
-     */
-    public Konstituentenfolge getDescription() {
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                kondition, // "weil"
-                // FIXME Den Fall beachten, dass der SemSatz ein Anschlusswort haben könnte.
-                //  Idee: "und" weglassen, "weil aber", ...
-                semSatz.getVerbletztsatz() // "du etwas zu berichten hast"
-        );
+    KonditionalSyntSatz getSynt(final ITextContext textContext) {
+        return new KonditionalSyntSatz(kondition, semSatz.getSyntSaetze(textContext));
     }
 
     @Nonnull
-    Konditionalsatz stelleVoran(@Nullable final Konditionalsatz other) {
+    KonditionalSemSatz stelleVoran(@Nullable final KonditionalSemSatz other) {
         if (other == null) {
             return this;
         }
@@ -60,8 +51,8 @@ public class Konditionalsatz {
         //  besser die "Prädikate reihen" ("als du um die Ecke kommst und den
         //  Troll siehst").
 
-        return new Konditionalsatz(other.kondition,
-                Satzreihe.gereihtStandard(other.semSatz, semSatz));
+        return new KonditionalSemSatz(other.kondition,
+                SemSatzReihe.gereihtStandard(other.semSatz, semSatz));
         // }
     }
 }

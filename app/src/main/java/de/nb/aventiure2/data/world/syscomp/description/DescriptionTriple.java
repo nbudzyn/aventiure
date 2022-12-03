@@ -23,9 +23,9 @@ public class DescriptionTriple {
     @NonNull
     private final ImmutableList<EinzelneSubstantivischePhrase> altShortWhenKnown;
 
-    DescriptionTriple(final CounterDao counterDao,
-                      @NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
-                      @NonNull final EinzelneSubstantivischePhrase descriptionWhenKnown) {
+    public DescriptionTriple(final CounterDao counterDao,
+                             @NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             @NonNull final EinzelneSubstantivischePhrase descriptionWhenKnown) {
         this(counterDao, descriptionAtFirstSight, descriptionWhenKnown, descriptionWhenKnown);
     }
 
@@ -41,22 +41,25 @@ public class DescriptionTriple {
                 ImmutableList.of(shortDescriptionWhenKnown));
     }
 
-    DescriptionTriple(final CounterDao counterDao,
-                      @NonNull final Collection<? extends EinzelneSubstantivischePhrase>
-                              altAtFirstSight,
-                      @NonNull final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
-                      @NonNull final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
+    public DescriptionTriple(final CounterDao counterDao,
+                             @NonNull final Collection<? extends EinzelneSubstantivischePhrase>
+                                     altAtFirstSight,
+                             @NonNull
+                             final EinzelneSubstantivischePhrase normalDescriptionWhenKnown,
+                             @NonNull
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
         this(counterDao,
                 altAtFirstSight,
                 ImmutableList.of(normalDescriptionWhenKnown),
                 shortDescriptionWhenKnown);
     }
 
-    DescriptionTriple(final CounterDao counterDao,
-                      @NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
-                      @NonNull
-                      final Collection<? extends EinzelneSubstantivischePhrase> altNormalWhenKnown,
-                      @NonNull final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
+    public DescriptionTriple(final CounterDao counterDao,
+                             @NonNull final EinzelneSubstantivischePhrase descriptionAtFirstSight,
+                             @NonNull
+                             final Collection<? extends EinzelneSubstantivischePhrase> altNormalWhenKnown,
+                             @NonNull
+                             final EinzelneSubstantivischePhrase shortDescriptionWhenKnown) {
         this(counterDao,
                 ImmutableList.of(descriptionAtFirstSight),
                 altNormalWhenKnown,

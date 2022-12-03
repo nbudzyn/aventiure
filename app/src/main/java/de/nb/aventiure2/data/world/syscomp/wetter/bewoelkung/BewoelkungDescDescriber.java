@@ -46,7 +46,7 @@ import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 import de.nb.aventiure2.german.satz.SemSatz;
 
 /**
@@ -113,7 +113,7 @@ public class BewoelkungDescDescriber {
                     gegenMitternacht -> gegenMitternacht.getDescription(EXPLETIVES_ES));
             altSpWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
                             .altSpWannKonditionalsaetzeDraussen(timeChange),
-                    Konditionalsatz::getDescription);
+                    KonditionalSemSatz::toKonstituentenfolge);
         } else {
             altSpWann = ImmutableSet.of();
             altSpWannSaetze = ImmutableSet.of();

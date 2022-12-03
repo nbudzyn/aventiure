@@ -93,9 +93,9 @@ import de.nb.aventiure2.german.praedikat.VerbSubj;
 import de.nb.aventiure2.german.praedikat.VerbSubjObj;
 import de.nb.aventiure2.german.praedikat.Witterungsverb;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-import de.nb.aventiure2.german.satz.Satzreihe;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 import de.nb.aventiure2.german.satz.SemSatz;
+import de.nb.aventiure2.german.satz.SemSatzReihe;
 
 /**
  * Beschreibt die {@link Temperatur} jeweils als {@link SemSatz}.
@@ -217,7 +217,7 @@ public class TemperaturSatzDescriber {
             // ("Temperaturwechsel").
 
             final ImmutableSet<AdvAngabeSkopusSatz> altSpWann;
-            final ImmutableSet<Konditionalsatz> altSpWannSaetze;
+            final ImmutableSet<KonditionalSemSatz> altSpWannSaetze;
 
             if (span(dateTimeChange).shorterThan(ONE_DAY)
                     && auchZeitwechselreferenzen && drinnenDraussen.isDraussen()) {
@@ -445,7 +445,7 @@ public class TemperaturSatzDescriber {
                                             change.getNachher(), time.getTageszeit(),
                                             drinnenDraussen.isDraussen()).stream()
                                     .map(ziemlichWarm ->
-                                            new Satzreihe(
+                                            new SemSatzReihe(
                                                     (delta < 0 ? KUEHLER : WAERMER)
                                                             .mitGraduativerAngabe(deutlich)
                                                             .alsEsWirdSatz().perfekt(),
@@ -473,7 +473,7 @@ public class TemperaturSatzDescriber {
                                 change.getNachher(), time.getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         ziemlichWarm ->
-                                new Satzreihe(
+                                new SemSatzReihe(
                                         SICH_ABKUEHLEN.perfekt()
                                                 .alsSatzMitSubjekt(EXPLETIVES_ES),
                                         ABER,
@@ -496,7 +496,7 @@ public class TemperaturSatzDescriber {
                                 change.getNachher(), time.getTageszeit(),
                                 drinnenDraussen.isDraussen()),
                         ziemlichKuehl ->
-                                new Satzreihe(
+                                new SemSatzReihe(
                                         WAERMER.mitGraduativerAngabe("ein gutes Stück")
                                                 .alsEsWirdSatz().perfekt(),
                                         ABER,
@@ -547,7 +547,7 @@ public class TemperaturSatzDescriber {
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichKuehl ->
-                                            new Satzreihe(
+                                            new SemSatzReihe(
                                                     esWirdEtwasWaermer,
                                                     ABER,
                                                     esIstImmerNochZiemlichKuehl)))
@@ -651,7 +651,7 @@ public class TemperaturSatzDescriber {
                                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg(
                                                             "immer noch")))
                                     .map(esIstImmerNochZiemlichWarm ->
-                                            new Satzreihe(
+                                            new SemSatzReihe(
                                                     esWirdEtwasKuehler,
                                                     ABER,
                                                     esIstImmerNochZiemlichWarm)))
@@ -1011,7 +1011,7 @@ public class TemperaturSatzDescriber {
                             .flatMap(zweiterSatz ->
                                     altSpSchonBereitsNochDunkelAdjPhr.stream()
                                             .map(schonDunkel ->
-                                                    new Satzreihe(
+                                                    new SemSatzReihe(
                                                             schonDunkel.alsEsIstSatz(),
                                                             true,
                                                             zweiterSatz)))

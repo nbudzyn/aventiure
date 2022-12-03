@@ -14,6 +14,7 @@ import static de.nb.aventiure2.german.description.DescriptionBuilder.neuerSatz;
 import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
+import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingIntensity;
 import de.nb.aventiure2.data.world.syscomp.feelings.FeelingsComp;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
@@ -24,6 +25,7 @@ import de.nb.aventiure2.german.base.DeklinierbarePhraseUtil;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 
 public class RapunzelTakingComp extends AbstractTakingComp {
     private final RapunzelStateComp stateComp;
@@ -58,10 +60,12 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO>
     void narrateTakerAndDo_Sonstiges_Abgelehnt(final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase rapunzelAnaph = anaph(possessivDescriptionVorgabe);
 
-        final SubstantivischePhrase givenDesc = getDescription(textContext,
-                possessivDescriptionVorgabe);
+        final SubstantivischePhrase givenDesc = getDescription(
+                new ImmutableTextContext(rapunzelAnaph),
+                PossessivDescriptionVorgabe.ALLES_ERLAUBT);
+
         final EinzelneSubstantivischePhrase givenDescAtFirstSight =
                 // "eine goldene Kugel" / "einige Binsen"
                 // FIXME altDescriptionsAtFirstSight verwenden!
@@ -79,6 +83,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                         ",",
                         "„aber was mache ich damit?“ Du steckst",
                         givenDesc.akkK(),
+                        // "ihre Haarlocke" (Kontext: rapunzelAnaph)
                         "wieder ein"),
                 neuerSatz(rapunzelAnaph.nomK(),
                         "schaut kurz, aber dann scheint",
@@ -87,7 +92,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
                 neuerSatz("„Verstehe“, sagt",
                         rapunzelAnaph.nomK(),
                         ", „wenn ich einmal",
-                        givenDescAtFirstSight.akkK(),
+                        givenDescAtFirstSight.akkK(), // "eine Haarlocke"
                         "brauche,",
                         "weiß ich, wo ich",
                         // Gehen wir davon aus, dass der Benutzer nur
@@ -117,7 +122,7 @@ public class RapunzelTakingComp extends AbstractTakingComp {
 
     private <GIVEN extends IDescribableGO & ILocatableGO> void narrateTakerAndDo_GoldeneKugel(
             final GIVEN given) {
-        final SubstantivischePhrase rapunzelAnaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase rapunzelAnaph = anaph(possessivDescriptionVorgabe);
         final SubstantivischePhrase givenAnaph = anaph(textContext, possessivDescriptionVorgabe,
                 given);
 

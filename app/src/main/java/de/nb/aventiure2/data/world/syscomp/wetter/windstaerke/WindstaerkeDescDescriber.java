@@ -29,7 +29,7 @@ import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.description.AbstractDescription;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
 import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 
 @SuppressWarnings({"DuplicateBranchesInSwitch", "MethodMayBeStatic", "RedundantSuppression"})
 public class WindstaerkeDescDescriber {
@@ -78,7 +78,7 @@ public class WindstaerkeDescDescriber {
 
             altSpWannSaetze = mapToSet(tageszeitAdvAngabeWannDescriber
                             .altSpWannKonditionalsaetzeDraussen(timeChange),
-                    Konditionalsatz::getDescription);
+                    KonditionalSemSatz::toKonstituentenfolge);
         } else {
             altSpWann = ImmutableSet.of();
             altSpWannSaetze = ImmutableSet.of();

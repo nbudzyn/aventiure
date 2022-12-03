@@ -1,7 +1,6 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static java.util.Objects.requireNonNull;
-import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Negationspartikelphrase.impliziertZustandsaenderung;
 import static de.nb.aventiure2.german.base.Negationspartikelphrase.isMehrteilig;
 
@@ -14,16 +13,13 @@ import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativ;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.IInterrogativadverb;
 import de.nb.aventiure2.german.base.Konstituente;
-import de.nb.aventiure2.german.base.Konstituentenfolge;
+import de.nb.aventiure2.german.base.NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -37,7 +33,7 @@ import de.nb.aventiure2.german.description.ITextContext;
  * <p>
  */
 public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
-        implements SemPraedikatOhneLeerstellen {
+        implements EinzelnesSemPraedikatOhneLeerstellen {
     /**
      * Das Verb an sich, ohne Informationen zur Valenz, ohne Ergänzungen, ohne
      * Angaben
@@ -123,59 +119,79 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
     }
 
     @Override
-    public final Konstituentenfolge getVerbzweit(final ITextContext textContext,
-                                                 final PraedRegMerkmale praedRegMerkmale) {
-        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
+    public ImmutableList<PartizipIIOderErsatzInfinitivPhrase> getPartizipIIOderErsatzInfinitivPhrasen(
+            final ITextContext textContext, final boolean nachAnschlusswort,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.copyOf(
+                getPartizipIIPhrasen(textContext, nachAnschlusswort, praedRegMerkmale));
+    }
 
-        return Konstituentenfolge.joinToKonstituentenfolge(
+    @Override
+    public AbstractFinitesPraedikat getFinit(
+            final ITextContext textContext,
+            @Nullable final NebenordnendeEinteiligeKonjunktionImLinkenAussenfeld konnektor,
+            final PraedRegMerkmale praedRegMerkmale) {
+        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale,
+                konnektor != null);
+
+        return new EinfachesFinitesPraedikat(
+                konnektor,
                 requireNonNull(verb.getPraesensOhnePartikel(
                         praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
-                topolFelder.getMittelfeld(),
-                verb.getPartikel(),
-                topolFelder.getNachfeld());
+                topolFelder.getMittelfeld(), verb.getPartikel(),
+                topolFelder.getNachfeld(), topolFelder.getSpeziellesVorfeldSehrErwuenscht(),
+                topolFelder.getSpeziellesVorfeldAlsWeitereOption(),
+                topolFelder.getRelativpronomen(),
+                topolFelder.getErstesInterrogativwort()
+        );
     }
 
-    @Override
-    public Konstituentenfolge getVerbzweitMitSubjektImMittelfeld(
-            final ITextContext textContext,
-            final SubstantivischePhrase subjekt) {
-        final TopolFelder topolFelder = getTopolFelder(textContext, subjekt.getPraedRegMerkmale());
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                requireNonNull(verb.getPraesensOhnePartikel(subjekt)),
-                // Damit steht das Subjekt entweder als nicht-pronominales Subjekt vor der
-                // Wackernagelposition oder als unbetontes Pronomen zu Anfang der
-                // Wackernagelposition:
-                subjekt.nomK(),
-                topolFelder.getMittelfeld(),
-                verb.getPartikel(),
-                topolFelder.getNachfeld());
+    @Nullable
+    final Vorfeld getVorfeldAdvAngabeSkopusSatz(final PraedRegMerkmale praedRegMerkmale) {
+        return advAngabeSkopusSatz != null ?
+                new Vorfeld(
+                        advAngabeSkopusSatz
+                                .getDescription(praedRegMerkmale)
+                                .withVorkommaNoetig(false)) :
+                null;
     }
 
-    @Override
-    public final Konstituentenfolge getVerbletzt(
-            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
-        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
-
-        return Konstituentenfolge.joinToKonstituentenfolge(
-                topolFelder.getMittelfeld(),
-                requireNonNull(verb.getPraesensMitPartikel(
-                        praedRegMerkmale.getPerson(), praedRegMerkmale.getNumerus())),
-                topolFelder.getNachfeld());
+    @Nullable
+    final Vorfeld getGgfVorfeldAdvAngabeSkopusVerb(final PraedRegMerkmale praedRegMerkmale) {
+        if (getNegationspartikel() == null) {
+            return null;
+        } else {
+            @Nullable final Konstituente
+                    advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
+                    getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale);
+            if (advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
+                // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
+                return new Vorfeld(
+                        advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
+                                .withVorkommaNoetig(false));
+            } else {
+                return null;
+            }
+        }
     }
 
     @Override
     public final ImmutableList<PartizipIIPhrase> getPartizipIIPhrasen(
             final ITextContext textContext,
-            final PraedRegMerkmale praedRegMerkmale) {
-        final TopolFelder topolFelder = getTopolFelder(textContext, praedRegMerkmale);
+            final boolean nachAnschlusswort, final PraedRegMerkmale praedRegMerkmale) {
+        final TopolFelder topolFelder =
+                getTopolFelder(textContext, praedRegMerkmale, nachAnschlusswort);
 
-        return ImmutableList.of(new PartizipIIPhrase(
-                Konstituentenfolge.joinToKonstituentenfolge(
-                        topolFelder.getMittelfeld(),
-                        verb.getPartizipII()),
+        return ImmutableList.of(new EinfachePartizipIIPhrase(
+                null,
+                topolFelder.getMittelfeld(),
+                verb.getPartizipII(),
                 topolFelder.getNachfeld(),
-                verb.getPerfektbildung()));
+                verb.getPerfektbildung(),
+                topolFelder.getSpeziellesVorfeldSehrErwuenscht(),
+                topolFelder.getSpeziellesVorfeldAlsWeitereOption(),
+                topolFelder.getRelativpronomen(),
+                topolFelder.getErstesInterrogativwort()));
     }
 
     /**
@@ -183,9 +199,12 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * ("den Frosch ignorieren", "das Leben genießen")
      */
     @Override
-    public final Infinitiv getInfinitiv(
-            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
-        return new Infinitiv(verb, getTopolFelder(textContext, praedRegMerkmale));
+    public final ImmutableList<Infinitiv> getInfinitiv(
+            final ITextContext textContext, final boolean nachAnschlusswort,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(
+                new EinfacherInfinitiv(null,
+                        getTopolFelder(textContext, praedRegMerkmale, nachAnschlusswort), verb));
     }
 
     /**
@@ -193,9 +212,12 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * ("den Frosch zu ignorieren", "das Leben zu genießen")
      */
     @Override
-    public final ZuInfinitiv getZuInfinitiv(
-            final ITextContext textContext, final PraedRegMerkmale praedRegMerkmale) {
-        return new ZuInfinitiv(verb, getTopolFelder(textContext, praedRegMerkmale));
+    public final ImmutableList<ZuInfinitiv> getZuInfinitiv(
+            final ITextContext textContext, final boolean nachAnschlusswort,
+            final PraedRegMerkmale praedRegMerkmale) {
+        return ImmutableList.of(
+                new EinfacherZuInfinitiv(null,
+                        getTopolFelder(textContext, praedRegMerkmale, nachAnschlusswort), verb));
     }
 
     /**
@@ -206,42 +228,10 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
      * aufgerufen werden - sofern wichtig ist, dass sich immer dasselbe Ergebnis ergibt.
      */
     @CheckReturnValue
-    abstract TopolFelder getTopolFelder(ITextContext textContext,
-                                        PraedRegMerkmale praedRegMerkmale);
-
-    @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        if (advAngabeSkopusSatz != null) {
-            return advAngabeSkopusSatz
-                    .getDescription(praedRegMerkmale)
-                    .withVorkommaNoetig(false);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    public Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        if (getNegationspartikel() != null) {
-            return null;
-        }
-
-        @Nullable final Konstituente
-                advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung =
-                getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(praedRegMerkmale);
-        if (advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung != null) {
-            // "Und glücklich, sie endlich gefunden zu haben, nimmst du die Kugel."
-            return joinToKonstituentenfolge(
-                    advAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung
-                            .withVorkommaNoetig(false));
-        }
-
-        return null;
-    }
+    abstract TopolFelder getTopolFelder(
+            ITextContext textContext,
+            PraedRegMerkmale praedRegMerkmale,
+            boolean nachAnschlusswort);
 
     @NonNull
     Verb getVerb() {
@@ -372,17 +362,6 @@ public abstract class AbstractAngabenfaehigesSemPraedikatOhneLeerstellen
                 || advAngabeSkopusVerbWohinWoher != null;
 
         // Sonst ("gehen", "endlich gehen") eher nicht.
-    }
-
-    @Nullable
-    static Konstituentenfolge interroAdverbToKF(
-            @Nullable final IAdvAngabeOderInterrogativ advAngabeOderInterrogativ) {
-        if (!(advAngabeOderInterrogativ instanceof IInterrogativadverb)) {
-            return null;
-        }
-
-        return joinToKonstituentenfolge(
-                ((IInterrogativadverb) advAngabeOderInterrogativ).getDescription());
     }
 
     @Override

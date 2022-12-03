@@ -8,6 +8,7 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.time.AvTimeSpan.span;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altNachsehenHinterhersehenSaetze;
 import static de.nb.aventiure2.data.world.syscomp.feelings.FeelingsSaetzeUtil.altZusehenSaetze;
@@ -181,7 +182,7 @@ public class RapunzelsZauberinReactionsComp
     }
 
     private void narrateZauberinSiehtSCNach() {
-        final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+        final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
         final AltDescriptionsBuilder alt = alt();
         alt.add(neuerSatz(anaph.nomK(), "schickt dir böse Blicke hinterher"));
         alt.addAll(altNachsehenHinterhersehenSaetze(anaph, duSc())
@@ -416,7 +417,7 @@ public class RapunzelsZauberinReactionsComp
         stateComp.narrateAndSetState(BEI_RAPUNZEL_OBEN_IM_TURM);
 
         if (counterDao.get(ZAUBERIN_TRIFFT_OBEN_EIN_WAEHREND_SC_VERSTECKT_IST) == 1) {
-            final SubstantivischePhrase anaph = anaph(textContext, possessivDescriptionVorgabe);
+            final SubstantivischePhrase anaph = anaph(possessivDescriptionVorgabe);
             n.narrate(neuerSatz(
                     anaph.nomK(), "begrüßt",
                     getDescription(textContext, possessivDescriptionVorgabe, RAPUNZEL).akkK(),
@@ -446,7 +447,10 @@ public class RapunzelsZauberinReactionsComp
         if (loadSC().locationComp().hasRecursiveLocation(VOR_DEM_ALTEN_TURM)) {
             n.narrate(
                     du("siehst", ", wie",
-                            getDescription(textContext, possessivDescriptionVorgabe).nomK(),
+                            getDescription(
+                                    // "ihre Mutter" / "Rapunzels Mutter" / "die alte Frau"
+                                    ALLES_ERLAUBT)
+                                    .nomK(),
                             "an den Haaren herabsteigt")
                             .timed(mins(1)).komma());
 
@@ -464,7 +468,7 @@ public class RapunzelsZauberinReactionsComp
                     "hat dich nicht bemerkt").timed(NO_TIME));
         } else if (loadSC().locationComp().hasRecursiveLocation(BETT_OBEN_IM_ALTEN_TURM)) {
             n.narrate(neuerSatz("Endlich verabschiedet sich",
-                    getDescription(textContext, possessivDescriptionVorgabe).nomK())
+                    getDescription(possessivDescriptionVorgabe).nomK())
                     .timed(secs(30)).komma());
 
             loadRapunzel().talkingComp().narrateZauberinIstGegangen();

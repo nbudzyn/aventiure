@@ -3,9 +3,8 @@ package de.nb.aventiure2.scaction.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.hours;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.base.StructuralElement.SENTENCE;
 import static de.nb.aventiure2.german.description.DescriptionBuilder.du;
@@ -27,12 +26,14 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.DescriptionUmformulierer;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.Kohaerenzrelation;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
@@ -79,11 +80,15 @@ public class WartenAction<LIVGO extends IDescribableGO & ILocatableGO & ILivingB
     @NonNull
     public String getName() {
         // "Auf die magere Frau warten"
+        final DescribableGameObject erwartetDGO =
+                new DescribableGameObject(world, erwartet.getId(),
+                        ALLES_ERLAUBT, false);
+
         return joinToKonstituentenfolge(
                 SENTENCE,
                 WARTEN
-                        .mit(getDescription(erwartet))
-                        .getInfinitiv(P2, SG))
+                        .mit(erwartetDGO)
+                        .getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
                 .joinToString();
     }
 

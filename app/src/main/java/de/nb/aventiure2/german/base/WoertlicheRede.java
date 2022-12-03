@@ -5,10 +5,8 @@ import static de.nb.aventiure2.german.base.Konstituente.k;
 
 import androidx.annotation.NonNull;
 
-import com.google.common.collect.ImmutableList;
-
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
+public class WoertlicheRede implements IKonstituentenfolgable {
     private final String woertlicheRedeText;
 
     public WoertlicheRede(final String woertlicheRedeText) {
@@ -16,10 +14,12 @@ public class WoertlicheRede implements IAlternativeKonstituentenfolgable {
     }
 
     @Override
-    public ImmutableList<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return ImmutableList.of(new Konstituentenfolge(k(getDescription())));
+    @NonNull
+    public Konstituentenfolge toKonstituentenfolge() {
+        return new Konstituentenfolge(k(getDescription()));
     }
 
+    @NonNull
     public String getDescription() {
         final String woertlicheRedeTextTrimmed = woertlicheRedeText.trim();
         final String woertlicheRedeTextOhnePunkt =

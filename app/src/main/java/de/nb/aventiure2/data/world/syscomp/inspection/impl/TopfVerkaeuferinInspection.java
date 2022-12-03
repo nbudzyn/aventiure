@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.inspection.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.inspection.impl.TopfVerkaeuferinInspection.Counter.BEOBACHTEN;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
 import static de.nb.aventiure2.german.base.NumerusGenus.PL_MFN;
@@ -71,7 +72,8 @@ public class TopfVerkaeuferinInspection implements IInspection,
     public ImmutableCollection<? extends TimedDescription<?>> altTimedDescriptions() {
         final AltTimedDescriptionsBuilder alt = altTimed();
 
-        final EinzelneSubstantivischePhrase desc = getDescription(false);
+        final EinzelneSubstantivischePhrase desc = getDescription(
+                ALLES_ERLAUBT, false);
         final SubstantivischePhrase anaph = anaph();
 
         final int countBeobachtet = counterDao.get(BEOBACHTEN);

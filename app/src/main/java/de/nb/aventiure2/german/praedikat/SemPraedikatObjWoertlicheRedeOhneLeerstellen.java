@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.praedikat;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +14,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -20,14 +21,12 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.base.WoertlicheRede;
@@ -180,31 +179,28 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     }
 
     @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        final Konstituente speziellesVorfeldSehrErwuenschtFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
-        if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
-            return speziellesVorfeldSehrErwuenschtFromSuper;
+    public Vorfeld getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
+                                                      final boolean nachAnschlusswort,
+                                                      final Konstituente syntWoertlicheRede) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale);
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
         }
 
-        if (!nachAnschlusswort
-                && !woertlicheRede.isLangOderMehrteilig()) {
-            return k(woertlicheRede.getDescription(),
-                    true,
-                    true); // "„Kommt alle her[“, ]"
+        if (!nachAnschlusswort && !woertlicheRede.isLangOderMehrteilig()) {
+            return new Vorfeld(syntWoertlicheRede); // "„Kommt alle her[“, ]"
         }
 
         return null;
     }
 
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+    @Nullable
+    private Vorfeld getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale,
+            final SubstantivischePhrase objektPhrase) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                super.getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -213,7 +209,7 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
          * (Eisenberg Der Satz 5.4.2).
          */
-        if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
+        if (Personalpronomen.isPersonalpronomenEs(objektPhrase, kasusOderPraepositionalkasus)) {
             return null;
         }
 
@@ -221,9 +217,9 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
          * Phrasen (auch Personalpronomen) mit Fokuspartikel
          * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
          */
-        if (objekt.getFokuspartikel() != null) {
+        if (objektPhrase.getFokuspartikel() != null) {
             // "Nur Rapunzel sagst du:..."
-            return objekt.imK(kasusOderPraepositionalkasus);
+            return new Vorfeld(objektPhrase.imK(kasusOderPraepositionalkasus));
         }
 
         return null;
@@ -236,34 +232,57 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
         final SubstantivischePhrase objektPhrase = objekt.alsSubstPhrase(textContext);
 
+        final Praedikatseinbindung<SubstantivischePhrase> objektEinbindung =
+                new Praedikatseinbindung<>(objektPhrase,
+                        o -> objektPhrase.imK(kasusOderPraepositionalkasus));
+
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+
+        final Konstituente syntWoertlicheRede = k(woertlicheRede.getDescription(),
+                true,
+                true);
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                objektPhrase.imK(kasusOderPraepositionalkasus), // "der Hexe"
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                objektEinbindung, // "der Hexe"
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "aus einer Laune heraus"
                                 kf(getModalpartikeln()),  // "mal eben"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // ("mitten ins Gesicht" - sofern überhaupt möglich)
                         ),
-                        objektPhrase, kasusOderPraepositionalkasus),
+                        objektEinbindung),
                 new Nachfeld(
                         Konstituentenfolge.joinToKonstituentenfolge(
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
-                                k(woertlicheRede.getDescription(),
-                                        true,
-                                        true)
-                                        .withVordoppelpunktNoetig()))); // "[: ]„Kommt alle her[.“]"
+                                syntWoertlicheRede.withVordoppelpunktNoetig())),
+                getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
+                        nachAnschlusswort, syntWoertlicheRede),
+                getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale,
+                        objektPhrase), // "[: ]„Kommt alle her[.“]"
+                firstRelativpronomen(objektEinbindung),
+                firstInterrogativwort(objektEinbindung,
+                        advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
 
         //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den
         //  -doppelpunkt-richtig-setzen/
@@ -276,39 +295,6 @@ public class SemPraedikatObjWoertlicheRedeOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        if (objekt instanceof Interrogativpronomen) {
-            return objekt.imK(kasusOderPraepositionalkasus);
-        }
-
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (objekt instanceof Relativpronomen) {
-            return objekt.imK(kasusOderPraepositionalkasus);
-        }
-
-        return null;
     }
 
     @Override

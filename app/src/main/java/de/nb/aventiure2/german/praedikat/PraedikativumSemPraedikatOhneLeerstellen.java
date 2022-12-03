@@ -1,8 +1,8 @@
 package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -10,7 +10,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -18,12 +17,11 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
 import de.nb.aventiure2.german.base.Praedikativum;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.description.ITextContext;
 
 /**
@@ -153,22 +151,9 @@ public class PraedikativumSemPraedikatOhneLeerstellen
         //  "Lange nicht mehr so glücklich gewesen verlässt du das Theater.")
     }
 
-    @SuppressWarnings("RedundantIfStatement")
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
-        if (speziellesVorfeldFromSuper != null) {
-            return speziellesVorfeldFromSuper;
-        }
-
-        // "Ein Esel ist Peter", "Glücklich ist Peter" - das wäre stark markiert, wir lassen
-        // es hier aus.
-
-        return null;
-    }
+    // Spezielles Vorfeld:
+    // "Ein Esel ist Peter", "Glücklich ist Peter" - das wäre stark markiert, wir lassen
+    // es hier aus.
 
     @Override
     public boolean hatAkkusativobjekt() {
@@ -177,92 +162,64 @@ public class PraedikativumSemPraedikatOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
+        final Praedikatseinbindung<Praedikativum> praedikativumEinbindung =
+                new Praedikatseinbindung<>(praedikativum,
+                        p -> p.getPraedikativOhneAnteilKandidatFuerNachfeld(
+                                praedRegMerkmale,
+                                getNegationspartikel()));
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "plötzlich"
                                 kf(getModalpartikeln()), // "halt"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale),
+                                advAngabeSkopusVerbWohinWoherSynt,
                                 // (kann wohl nicht besetzt sein?)
-                                praedikativum.getPraedikativOhneAnteilKandidatFuerNachfeld(
-                                        praedRegMerkmale,
-                                        getNegationspartikel())
-                                // "glücklich", "ein Esel", "sich ihrer selbst gewiss", "sehr
+                                praedikativumEinbindung
+                                // "glücklich", "ein Esel", "sich ihrer selbst gewiss",
+                                // "sehr
                                 // glücklich
                                 // [, dich zu sehen]", "kein Esel",  "schon lange kein
                                 // Verdächtiger mehr"
-                        )),
+                        )
+                ),
                 new Nachfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
                                 praedikativum
-                                        .getPraedikativAnteilKandidatFuerNachfeld(praedRegMerkmale),
+                                        .getPraedikativAnteilKandidatFuerNachfeld(
+                                                praedRegMerkmale),
                                 // "dich zu sehen"
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale),
+                firstRelativpronomen(praedikativumEinbindung),
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt,
+                        praedikativumEinbindung));
     }
-
 
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-        if (res != null) {
-            return res;
-        }
-
-        if (praedikativum instanceof Interrogativpronomen) {
-            return praedikativum.getPraedikativ(
-                    // Person und Numerus spielen beim Interrogativpronomen keine Rolle:
-                    // "Sie ist interessiert, wer Peter ist",
-                    // "Sie ist interessiert, wer du bist",
-                    // "Sie ist interessiert, wer wir sind"
-                    P2, SG, ((Interrogativpronomen) praedikativum).getBelebtheit());
-        }
-
-        return null;
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (praedikativum instanceof Relativpronomen) {
-            return praedikativum.getPraedikativ(
-                    // Person und Numerus spielen beim Relativpronomen keine Rolle:
-                    // "Sie ist die eine, die Professor ist",
-                    // "Er ist derselbe, der du bist",
-                    // "Sie ist diesbelbe, die wir sind"
-                    // "Das Kind ist daselbe, das du schon kennst"
-                    // "Das Problem ist daselbe, das du schon kennst"
-                    P2, SG, ((Relativpronomen) praedikativum).getBelebtheit());
-        }
-
-        return null;
     }
 
     @Override

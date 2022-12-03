@@ -6,12 +6,14 @@ import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.DUNKEL;
 import static de.nb.aventiure2.data.world.base.Lichtverhaeltnisse.HELL;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ETWAS_GEKNICKT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.UNTROESTLICH;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_FORDERUNG_GESTELLT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_NACH_BELOHNUNG_GEFRAGT;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_SC_HILFSBEREIT_ANGESPROCHEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.UNAUFFAELLIG;
+import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HOEHE;
 import static de.nb.aventiure2.german.base.PraepositionMitKasus.IN_AKK;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
@@ -27,6 +29,7 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.ROLLEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.SCHLAGEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.VERSCHWINDEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.AUFFANGEN;
+import static de.nb.aventiure2.german.praedikat.VerbSubjObj.HOCHWERFEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubjObj.WERFEN;
 import static de.nb.aventiure2.scaction.impl.HochwerfenAction.Counter.HOCHWERFEN_ACTION_WIEDERHOLUNG;
 import static de.nb.aventiure2.util.StreamUtil.*;
@@ -45,6 +48,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.counter.CounterDao;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -55,14 +59,14 @@ import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
 import de.nb.aventiure2.german.base.EinzelneSubstantivischePhrase;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.description.TimedDescription;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SeinUtil;
 import de.nb.aventiure2.german.praedikat.ZweiPraedikateOhneLeerstellenSem;
-import de.nb.aventiure2.german.satz.Satzreihe;
-import de.nb.aventiure2.german.string.GermanStringUtil;
+import de.nb.aventiure2.german.satz.SemSatzReihe;
 import de.nb.aventiure2.scaction.AbstractScAction;
 import de.nb.aventiure2.scaction.stepcount.SCActionStepCountDao;
 
@@ -126,7 +130,16 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
     @Override
     @NonNull
     public String getName() {
-        return GermanStringUtil.capitalize(getDescription(object).akkStr()) + " hochwerfen";
+        final DescribableGameObject objectDGO =
+                new DescribableGameObject(world, object.getId(),
+                        ALLES_ERLAUBT, false);
+
+        return joinToKonstituentenfolge(
+                SENTENCE,
+                HOCHWERFEN
+                        .mit(objectDGO)
+                        .getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
+                .joinToString();
     }
 
     @Override
@@ -174,7 +187,7 @@ public class HochwerfenAction<OBJ extends IDescribableGO & ILocatableGO>
                         .alsSatzMitSubjekt(objectDescShort)
         ));
 
-        alt.add(new Satzreihe(
+        alt.add(new SemSatzReihe(
                 WERFEN.mit(objectDescShort)
                         .mitAdvAngabe(new AdvAngabeSkopusVerbWohinWoher("hoch"))
                         .alsSatzMitSubjekt(duSc()),

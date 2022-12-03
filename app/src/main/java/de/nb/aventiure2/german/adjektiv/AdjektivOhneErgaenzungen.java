@@ -150,6 +150,7 @@ public enum AdjektivOhneErgaenzungen implements AdjPhrOhneLeerstellen {
     NEU,
     OFFEN,
     PFEIFEND,
+    PRAECHTIG("prächtig"),
     RAU,
     RAUSCHEND,
     ROSA(Adjektiv.nichtFlektierbar("rosa")),

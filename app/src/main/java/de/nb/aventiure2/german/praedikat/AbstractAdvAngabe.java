@@ -24,7 +24,7 @@ public abstract class AbstractAdvAngabe {
         //  dann ist kannAlsBezugsobjektVerstandenWerdenFuer = X wohl eher nicht
         //  möglich; etwas wie "mit voller Konzentration" bewirkt nicht, dass man ein
         //  nachfolgendes "sie" auf "die Konzentration" beziehen würde.
-        this(praepositionalphrase.getDescription().joinToString());
+        this(praepositionalphrase.toKonstituentenfolge().joinToString());
     }
 
     AbstractAdvAngabe(final String text) {

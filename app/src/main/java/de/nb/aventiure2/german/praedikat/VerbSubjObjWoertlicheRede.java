@@ -8,7 +8,7 @@ import androidx.annotation.Nullable;
 import org.jetbrains.annotations.Contract;
 
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
-import de.nb.aventiure2.german.base.SubstantivischePhrase;
+import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.WoertlicheRede;
 
 /**
@@ -74,7 +74,7 @@ public enum VerbSubjObjWoertlicheRede implements VerbMitValenz {
     @NonNull
     @Contract(value = "_ -> new", pure = true)
     public SemPraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle mitObjekt(
-            final SubstantivischePhrase objekt) {
+            final SubstantivischPhrasierbar objekt) {
         return new SemPraedikatObjWoertlicheRedeMitEinerWoertlicheRedeLeerstelle(verb,
                 kasusOderPraepositionalkasus, objekt);
     }

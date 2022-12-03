@@ -3,6 +3,8 @@ package de.nb.aventiure2.german.praedikat;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstRelativpronomen;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +14,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -20,14 +21,12 @@ import de.nb.aventiure2.annotations.Valenz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
-import de.nb.aventiure2.german.base.Interrogativpronomen;
 import de.nb.aventiure2.german.base.KasusOderPraepositionalkasus;
 import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
-import de.nb.aventiure2.german.base.Relativpronomen;
 import de.nb.aventiure2.german.base.SubstantivischPhrasierbar;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.ITextContext;
@@ -186,15 +185,11 @@ public class SemPraedikatSubjObjOhneLeerstellen
         return true;
     }
 
-    // FIXME Vielleicht eine "Containerklasse" bauen, die Vorfeld, Nachfeld etc.
-    //  enthält - so wie sie zusammenpassen?! Dann wäre speziellesVorfeldSehrErwuenscht
-    //  vielleicht nur ein boolean-Parameter?!
     @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        @Nullable final Konstituente speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, nachAnschlusswort);
+    private Vorfeld getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
+                                                       final SubstantivischePhrase syntObjekt) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -204,22 +199,23 @@ public class SemPraedikatSubjObjOhneLeerstellen
         }
 
         if (inDerRegelKeinSubjektAberAlternativExpletivesEsMoeglich()) {
-            final Konstituentenfolge vorfeldCandidate = objekt.imK(kasusOderPraepositionalkasus);
+            final Konstituentenfolge vorfeldCandidate =
+                    syntObjekt.imK(kasusOderPraepositionalkasus);
             if (vorfeldCandidate.size() == 1 && vorfeldCandidate.get(0) instanceof Konstituente) {
                 // "mich (friert)"
-                return (Konstituente) vorfeldCandidate.get(0);
+                return new Vorfeld((Konstituente) vorfeldCandidate.get(0));
             }
         }
 
         return null;
     }
 
-    @Override
-    public @Nullable
-    Konstituentenfolge getSpeziellesVorfeldAlsWeitereOption(
-            final PraedRegMerkmale praedRegMerkmale) {
-        @Nullable final Konstituentenfolge speziellesVorfeldFromSuper =
-                super.getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale);
+    @Nullable
+    private Vorfeld getSpeziellesVorfeldAlsWeitereOption(
+            final PraedRegMerkmale praedRegMerkmale,
+            final SubstantivischePhrase syntObjekt) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                super.getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale);
         if (speziellesVorfeldFromSuper != null) {
             return speziellesVorfeldFromSuper;
         }
@@ -232,7 +228,7 @@ public class SemPraedikatSubjObjOhneLeerstellen
          * "es" allein darf nicht im Vorfeld stehen, wenn es ein Objekt ist
          * (Eisenberg Der Satz 5.4.2)
          */
-        if (Personalpronomen.isPersonalpronomenEs(objekt, kasusOderPraepositionalkasus)) {
+        if (Personalpronomen.isPersonalpronomenEs(syntObjekt, kasusOderPraepositionalkasus)) {
             return null;
         }
 
@@ -240,9 +236,9 @@ public class SemPraedikatSubjObjOhneLeerstellen
          * Phrasen (auch Personalpronomen) mit Fokuspartikel
          * sind häufig kontrastiv und daher oft für das Vorfeld geeignet.
          */
-        if (objekt.getFokuspartikel() != null) {
+        if (syntObjekt.getFokuspartikel() != null) {
             // "Nur die Kugel nimmst du"
-            return objekt.imK(kasusOderPraepositionalkasus);
+            return new Vorfeld(syntObjekt.imK(kasusOderPraepositionalkasus));
         }
 
         return null;
@@ -255,8 +251,22 @@ public class SemPraedikatSubjObjOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+
         final SubstantivischePhrase syntObjekt = objekt.alsSubstPhrase(textContext);
+
+        final Praedikatseinbindung<SubstantivischePhrase> objektEinbindung =
+                new Praedikatseinbindung<>(syntObjekt, o -> o.imK(kasusOderPraepositionalkasus));
+
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
         // FIXME Eigentlich kann sich der Kontext vor der Auswahl, welches syntaktische
         //  Objekt geeignet ist, verändert haben! Besser sollte
         //  joinToKonstituentenfolge() die Umwandlung in das syntaktische Objekt übernehmen!
@@ -270,69 +280,41 @@ public class SemPraedikatSubjObjOhneLeerstellen
         return new TopolFelder(
                 new Mittelfeld(
                         joinToKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
-// "aus einer Laune heraus"
-                                getNegationspartikel() != null ? kf(getModalpartikeln()) : null,
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
+                                // "aus einer Laune heraus"
+                                getNegationspartikel() != null ? kf(getModalpartikeln()) :
+                                        null,
                                 // "besser doch (nicht)"
                                 getNegationspartikel(), // "nicht"
-                                syntObjekt.imK(kasusOderPraepositionalkasus),
-                                getNegationspartikel() == null ? kf(getModalpartikeln()) : null,
+                                objektEinbindung,
+                                getNegationspartikel() == null ? kf(getModalpartikeln()) :
+                                        null,
                                 // "besser doch"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // "auf den Tisch"
                         ),
-                        syntObjekt, kasusOderPraepositionalkasus),
+                        objektEinbindung),
                 new Nachfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
                                 getAdvAngabeSkopusVerbTextDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
+                        )),
+                getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale, syntObjekt),
+                getSpeziellesVorfeldAlsWeitereOption(praedRegMerkmale, syntObjekt),
+                firstRelativpronomen(objektEinbindung),
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        objektEinbindung, advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
     }
 
     @Override
     public boolean
     umfasstSatzglieder() {
         return true;
-    }
-
-    // FIXME Diese Methode umstellen mit einer immutable State-Klasse wie Mittelfeld!
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        if (objekt instanceof Interrogativpronomen) {
-            return objekt.imK(kasusOderPraepositionalkasus);
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    // FIXME Diese Methode umstellen mit einer immutable State-Klasse wie Mittelfeld!
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        if (objekt instanceof Relativpronomen) {
-            return objekt.imK(kasusOderPraepositionalkasus);
-        }
-
-        return null;
     }
 
     @Override

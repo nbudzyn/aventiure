@@ -1,14 +1,5 @@
 package de.nb.aventiure2.data.world.syscomp.wetter.tageszeit;
 
-import com.google.common.collect.ImmutableSet;
-
-import de.nb.aventiure2.data.time.AvTime;
-import de.nb.aventiure2.data.time.Tageszeit;
-import de.nb.aventiure2.data.world.base.Change;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
-import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
-import de.nb.aventiure2.german.satz.Konditionalsatz;
-
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ABEND;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTAG;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MITTERNACHT;
@@ -25,6 +16,15 @@ import static de.nb.aventiure2.german.praedikat.VerbSubj.EINBRECHEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.HERANKOMMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.KOMMEN;
 import static de.nb.aventiure2.german.praedikat.VerbSubj.UNTERGEHEN;
+
+import com.google.common.collect.ImmutableSet;
+
+import de.nb.aventiure2.data.time.AvTime;
+import de.nb.aventiure2.data.time.Tageszeit;
+import de.nb.aventiure2.data.world.base.Change;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
+import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
+import de.nb.aventiure2.german.satz.KonditionalSemSatz;
 
 /**
  * Erzeugt tageszeitliche oder untertageszeitliche temporale Beschreibungen als
@@ -122,36 +122,36 @@ public class TageszeitAdvAngabeWannDescriber {
         return ImmutableSet.of();
     }
 
-    public ImmutableSet<Konditionalsatz> altSpWannKonditionalsaetzeDraussen(
+    public ImmutableSet<KonditionalSemSatz> altSpWannKonditionalsaetzeDraussen(
             final Change<AvTime> change) {
 
         // Untertageszeitliche Angaben (werden bevorzugt)
         if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenaufgang)) {
             return ImmutableSet.of(
                     // "noch ehe die Sonne aufgegangen ist
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "noch ehe", AUFGEHEN.alsSatzMitSubjekt(SONNE).perfekt()),
                     // "bevor der Tag anbricht
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "bevor", ANBRECHEN.alsSatzMitSubjekt(TAG)));
         }
 
         if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenaufgang)) {
             return ImmutableSet.of(
                     // "als die Sonne aufgeht
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "als", AUFGEHEN.alsSatzMitSubjekt(SONNE)),
                     // "als der Tag angebrochen ist
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "als", ANBRECHEN.alsSatzMitSubjekt(TAG).perfekt()));
         }
 
         if (change.wasntBeforeButIsAfter(AvTime::vorMittag)) {
             return ImmutableSet.of(
                     // "noch ehe es Mittag ist"
-                    new Konditionalsatz("noch ehe", npArtikellos(MITTAG).alsEsIstSatz()),
+                    new KonditionalSemSatz("noch ehe", npArtikellos(MITTAG).alsEsIstSatz()),
                     // "als es bald Mittag werden will"
-                    new Konditionalsatz("als",
+                    new KonditionalSemSatz("als",
                             WOLLEN.mitLexikalischemKern(npArtikellos(MITTAG)
                                     .alsWerdenPraedikativumPraedikat()
                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("bald")))
@@ -161,7 +161,7 @@ public class TageszeitAdvAngabeWannDescriber {
         if (change.wasntBeforeButIsAfter(AvTime::gegenMittag)) {
             return ImmutableSet.of(
                     // "als es Mittag ist"
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "als", npArtikellos(MITTAG).alsEsIstSatz()));
         }
 
@@ -171,23 +171,23 @@ public class TageszeitAdvAngabeWannDescriber {
         if (change.wasntBeforeButIsAfter(AvTime::kurzVorSonnenuntergang)) {
             return ImmutableSet.of(
                     // "als die Sonne bald untergehen will"
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "als",
                             WOLLEN.mitLexikalischemKern(UNTERGEHEN)
                                     .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("bald"))
                                     .alsSatzMitSubjekt(SONNE)),
                     // "ehe es Nacht wird"
-                    new Konditionalsatz("ehe", NACHT.alsEsWirdSatz()),
+                    new KonditionalSemSatz("ehe", NACHT.alsEsWirdSatz()),
                     // "als die Nacht herankommt"
-                    new Konditionalsatz("als", HERANKOMMEN.alsSatzMitSubjekt(NACHT)));
+                    new KonditionalSemSatz("als", HERANKOMMEN.alsSatzMitSubjekt(NACHT)));
         }
 
         if (change.wasntBeforeButIsAfter(AvTime::kurzNachSonnenuntergang)) {
             return ImmutableSet.of(
                     // "als die Sonne untergeht"
-                    new Konditionalsatz("als", UNTERGEHEN.alsSatzMitSubjekt(SONNE)),
+                    new KonditionalSemSatz("als", UNTERGEHEN.alsSatzMitSubjekt(SONNE)),
                     // "als die Nacht eingebrochen ist"
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "als", EINBRECHEN.alsSatzMitSubjekt(NACHT).perfekt()));
         }
 
@@ -196,7 +196,7 @@ public class TageszeitAdvAngabeWannDescriber {
         if (change.wasntBeforeButIsAfter(AvTime::umMitternacht)) {
             return ImmutableSet.of(
                     // "als es Mitternacht ist"
-                    new Konditionalsatz("als", npArtikellos(MITTERNACHT).alsEsIstSatz()));
+                    new KonditionalSemSatz("als", npArtikellos(MITTERNACHT).alsEsIstSatz()));
             // IDEA: "wies Mitternacht ist"
         }
 
@@ -206,11 +206,11 @@ public class TageszeitAdvAngabeWannDescriber {
         if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.MORGENS)) {
             return ImmutableSet.of(
                     // "wie der Morgen anbricht"
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "wie", ANBRECHEN
                             .alsSatzMitSubjekt(MORGEN)),
                     // "wie nun der Morgen anbricht"
-                    new Konditionalsatz(
+                    new KonditionalSemSatz(
                             "wie", ANBRECHEN
                             .mitAdvAngabe(new AdvAngabeSkopusVerbAllg("nun"))
                             .alsSatzMitSubjekt(MORGEN)));
@@ -219,18 +219,18 @@ public class TageszeitAdvAngabeWannDescriber {
         if (change.wasntBeforeButIsAfter(t -> t.getTageszeit() == Tageszeit.ABENDS)) {
             return ImmutableSet.of(
                     // "als es Abend ist"
-                    new Konditionalsatz("als", npArtikellos(ABEND).alsEsIstSatz()),
+                    new KonditionalSemSatz("als", npArtikellos(ABEND).alsEsIstSatz()),
                     // IDEA "wies nun Abend ist"
                     // "als es Abend wird"
-                    new Konditionalsatz("als", npArtikellos(ABEND).alsEsWirdSatz()),
+                    new KonditionalSemSatz("als", npArtikellos(ABEND).alsEsWirdSatz()),
                     // "als es Abend geworden ist"
-                    new Konditionalsatz("als",
+                    new KonditionalSemSatz("als",
                             npArtikellos(ABEND).alsEsWirdSatz().perfekt()),
                     // IDEA "wies Abend wird"
                     // "als der Abend kommt"
-                    new Konditionalsatz("als", KOMMEN.alsSatzMitSubjekt(ABEND)),
+                    new KonditionalSemSatz("als", KOMMEN.alsSatzMitSubjekt(ABEND)),
                     // "als der Abend einbricht"
-                    new Konditionalsatz("als", EINBRECHEN.alsSatzMitSubjekt(ABEND)));
+                    new KonditionalSemSatz("als", EINBRECHEN.alsSatzMitSubjekt(ABEND)));
         }
 
         return ImmutableSet.of();

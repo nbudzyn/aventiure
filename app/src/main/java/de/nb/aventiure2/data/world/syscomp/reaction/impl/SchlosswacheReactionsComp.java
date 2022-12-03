@@ -3,6 +3,7 @@ package de.nb.aventiure2.data.world.syscomp.reaction.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.mins;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SCHLOSSWACHE_NEHMEN_GOLDENE_KUGEL_WACHE_IST_AUFMERKSAM;
@@ -11,8 +12,8 @@ import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReac
 import static de.nb.aventiure2.data.world.syscomp.reaction.impl.SchlosswacheReactionsComp.Counter.SC_MUSS_SCLOSS_WIEDER_VERLASSEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.AUFMERKSAM;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheState.UNAUFFAELLIG;
-import static de.nb.aventiure2.german.base.Numerus.SG;
-import static de.nb.aventiure2.german.base.Person.P2;
+import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
+import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.StructuralElement.PARAGRAPH;
 import static de.nb.aventiure2.german.description.AltDescriptionsBuilder.altNeueSaetze;
 import static de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder.altTimed;
@@ -42,8 +43,8 @@ import de.nb.aventiure2.data.world.syscomp.state.IHasStateGO;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlossfestState;
 import de.nb.aventiure2.data.world.syscomp.state.impl.SchlosswacheStateComp;
 import de.nb.aventiure2.data.world.syscomp.storingplace.ILocationGO;
-import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 
 /**
@@ -134,7 +135,7 @@ public class SchlosswacheReactionsComp
                 && goldeneKugel.locationComp().hasRecursiveLocation(SCHLOSS_VORHALLE)) {
             if (counterDao.incAndGet(SCHLOSSWACHE_ON_ENTER_ROOM_SCHLOSS_VORHALLE) > 1) {
                 n.narrate(neuerSatz(
-                        getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
+                        getDescription(ALLES_ERLAUBT, true).nomK(),
                         "scheint dich nicht zu bemerken")
                         .timed(secs(3)));
                 return;
@@ -173,7 +174,7 @@ public class SchlosswacheReactionsComp
                     altSchlossVerlassenWetterhinweiseWohinAdvAngaben(
                             timeTaker.now().plus(timeElapsed))
                             .stream()
-                            .map(aa -> aa.getDescription(P2, SG)), // "in den Sonnenschein"
+                            .map(aa -> aa.getDescription(duSc())), // "in den Sonnenschein"
                     "hinaus", PARAGRAPH)
                     .timed(timeElapsed)
                     .withCounterIdIncrementedIfTextIsNarrated(SC_MUSS_SCLOSS_WIEDER_VERLASSEN));
@@ -282,7 +283,8 @@ public class SchlosswacheReactionsComp
                 neuerSatz(PARAGRAPH, "„Was treibt Ihr für einen Unfug, legt sofort das",
                         "Schmuckstück wieder hin!“,",
                         "ruft dir",
-                        getDescription(textContext, possessivDescriptionVorgabe, true).nomK(),
+                        getDescription(ImmutableTextContext.EMPTY, ALLES_ERLAUBT, true)
+                                .nomK(),
                         "zu")
                         .timed(secs(5)));
 
@@ -297,7 +299,7 @@ public class SchlosswacheReactionsComp
                 .mitVorfeldSatzglied("eingeschüchtert")
                 .timed(secs(5))
                 .undWartest()
-                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
+                .phorikKandidat(F, UNBELEBT, goldeneKugel.getId()));
 
         goldeneKugel.locationComp().narrateAndSetLocation(
                 sc.locationComp().getLocation()
@@ -330,7 +332,7 @@ public class SchlosswacheReactionsComp
                 + "wieder an ihren Platz")
                 .timed(secs(5))
                 .undWartest()
-                .phorikKandidat(NumerusGenus.F, goldeneKugel.getId()));
+                .phorikKandidat(F, UNBELEBT, goldeneKugel.getId()));
 
         // IDEA Geschichte ausspinnen: Spieler muss die Kugel selbst
         //  ablegen bzw. kommt ggf. in den Kerker
@@ -345,7 +347,10 @@ public class SchlosswacheReactionsComp
 
         if (n.allowsAdditionalDuSatzreihengliedOhneSubjekt()) {
             alt.add(satzanschluss(", während",
-                    getDescription(textContext, possessivDescriptionVorgabe).nomK(),
+                    getDescription(ALLES_ERLAUBT
+                            // Theoretisch könnte man hier etwas generieren wie "seiner Wache" oder
+                            // "des Königs Wache"
+                    ).nomK(),
                     "gerade damit beschäftigt ist, ihre Waffen zu polieren")
                     .schonLaenger()
                     .timed(secs(3))
@@ -353,14 +358,18 @@ public class SchlosswacheReactionsComp
         } else {
             alt.add(
                     du("hast", "großes Glück, denn",
-                            getDescription(textContext, possessivDescriptionVorgabe).nomK(),
+                            getDescription(
+                                    ALLES_ERLAUBT)
+                                    .nomK(),
                             "ist gerade damit beschäftigt, ihre Waffen zu polieren")
                             .schonLaenger()
                             .komma(true).timed(secs(3))
                             .dann());
         }
 
-        alt.add(neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).datK(),
+        alt.add(neuerSatz(
+                getDescription(ALLES_ERLAUBT)
+                        .datK(),
                 "ist anscheinend nichts aufgefallen")
                 .timed(secs(3))
                 .dann());
@@ -409,11 +418,15 @@ public class SchlosswacheReactionsComp
 
         loadSC().feelingsComp().requestMood(ANGESPANNT);
         n.narrateAlt(
-                neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).nomK(),
+                neuerSatz(getDescription(
+                        // "seine Wache" / "des Königs Wache" / "die Schlosswache"
+                        ALLES_ERLAUBT).nomK(),
                         "beoabachtet dich dabei")
                         .timed(secs(5))
                         .dann(),
-                neuerSatz(getDescription(textContext, possessivDescriptionVorgabe).nomK(),
+                neuerSatz(getDescription(
+                        // "seine Wache" / "des Königs Wache" / "die Schlosswache"
+                        ALLES_ERLAUBT).nomK(),
                         "sieht dir belustig dabei zu")
                         .timed(secs(5))
                         .dann(),

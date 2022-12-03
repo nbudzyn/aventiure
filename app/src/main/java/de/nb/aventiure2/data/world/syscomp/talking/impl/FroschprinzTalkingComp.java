@@ -3,7 +3,8 @@ package de.nb.aventiure2.data.world.syscomp.talking.impl;
 import static de.nb.aventiure2.data.time.AvTimeSpan.NO_TIME;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
-import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.GENITIVATTRIBUT_VERBOTEN;
 import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.NICHT_POSSESSIV;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.VOLLER_FREUDE;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -273,7 +274,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         if (world.loadSC().memoryComp().getLastAction().is(Action.Type.HEULEN)) {
             final SubstantivischePhrase objectsDesc =
                     world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                            ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV);
+                            GENITIVATTRIBUT_VERBOTEN);
             n.narrate(neuerSatz("„Ich weine über",
                     objectsDesc.akkK(), // die goldene Kugel
                     ",",
@@ -291,7 +292,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                     objectsInDenBrunnenGefallen.iterator().next();
 
             n.narrate(neuerSatz("„",
-                    getDescription(textContext, possessivDescriptionVorgabe,
+                    getDescription(textContext, ALLES_ERLAUBT,
                             objectInDenBrunnenGefallen).nomK(),
                     "ist mir in den Brunnen hinabgefallen.“")
                     .timed(secs(10)));
@@ -362,7 +363,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "hinuntersteigen und dir",
                 // die goldene Kugel / die Dinge
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
+                        GENITIVATTRIBUT_VERBOTEN)
                         .akkK(),
                 "wieder heraufholen.“", PARAGRAPH)
                 .timed(secs(15)));
@@ -407,7 +408,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "hinuntersteigen und dir",
                 // die goldene Kugel / die Dinge
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV).akkK(),
+                        GENITIVATTRIBUT_VERBOTEN).akkK(),
                 " wieder herauf holen.“", PARAGRAPH)
                 .timed(secs(15)));
 
@@ -437,7 +438,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                         "willst, wenn du mir nur",
                         world.getDescriptionSingleOrCollective(textContext,
                                 objectsInDenBrunnenGefallen,
-                                ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
+                                GENITIVATTRIBUT_VERBOTEN)
                                 .akkStr(),
                         // IDEA Man könnte programmieren: Wenn der Text hiernach
                         //  mehr als altWohinHinausKnappUeberGefrierpunkt Wörter hat, dann gerät
@@ -459,7 +460,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrate(neuerSatz("Aber im nächsten Moment entschuldigst du dich schon:",
                 "„Nichts für ungut! Wenn du mir wirklich",
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
+                        GENITIVATTRIBUT_VERBOTEN)
                         .akkStr(), // Zu viele andere Substantive danach.
                 "wieder besorgen kannst – ich verspreche dir alles, was du willst!“",
                 "Bei dir selbst denkst du:",
@@ -477,7 +478,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
         n.narrate(neuerSatz("Aber so einfach lässt du dich nicht abspeisen.",
                 "„Wenn du mir",
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
+                        GENITIVATTRIBUT_VERBOTEN)
                         .akkStr(), // Gerät in Vergessenheit
                 "wieder besorgen kannst, verspreche ich dir alles, was du willst!“",
                 "Bei dir selbst denkst du:",
@@ -498,7 +499,7 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
                 "was du",
                 "willst, wenn du mir nur",
                 world.getDescriptionSingleOrCollective(textContext, objectsInDenBrunnenGefallen,
-                        ANAPH_POSSESSIVARTIKEL_ODER_NICHT_POSSESSIV)
+                        GENITIVATTRIBUT_VERBOTEN)
                         .akkStr(), /// Gerät in Vergessenheit
                 "wiederbringst.“ – Was du dir eigentlich überlegt hast, ist:",
                 "„Was der einfältige Frosch schwätzt, der sitzt im",
@@ -630,8 +631,9 @@ public class FroschprinzTalkingComp extends AbstractTalkingComp {
     private void ansprechen_froschErinnertAnVersprechen(final boolean immediateReEntry) {
         final AltDescriptionsBuilder alt = alt();
 
-        final EinzelneSubstantivischePhrase desc = getDescription(textContext,
-                possessivDescriptionVorgabe);
+        final EinzelneSubstantivischePhrase desc = getDescription(
+                // "seine Sohn" / "des Königs Sohn" / "die eklige Frosch"
+                ALLES_ERLAUBT);
         alt.add(du(SENTENCE, "holst", "Luft, aber da kommt dir",
                 desc.nomK(),
                 "schon zuvor: „Wir haben eine Verabredung!“ –",

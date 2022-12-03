@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
 
 import androidx.annotation.NonNull;
 
@@ -10,7 +11,6 @@ import com.google.common.collect.Iterables;
 
 import java.util.Collection;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Valenz;
@@ -18,6 +18,7 @@ import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativSkopusSatz;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativVerbAllg;
 import de.nb.aventiure2.german.base.IAdvAngabeOderInterrogativWohinWoher;
 import de.nb.aventiure2.german.base.Kasus;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 import de.nb.aventiure2.german.base.Negationspartikelphrase;
 import de.nb.aventiure2.german.base.PraedRegMerkmale;
@@ -150,22 +151,30 @@ public class ReflSemPraedikatSubOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
         final Reflexivpronomen reflexivpronomen = Reflexivpronomen.get(praedRegMerkmale);
+
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "aus einer Laune heraus"
                                 kf(getModalpartikeln()), // "mal eben"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
-                                // "erneut"
+                                advAngabeSkopusVerbSyntFuerMittelfeld, // "erneut"
                                 reflexivpronomen.imK(reflKasus),
                                 // "sich" - wird nach links versetzt :-)
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
-                                // "in den Wald"
+                                advAngabeSkopusVerbWohinWoherSynt // "in den Wald"
                         ),
                         reflexivpronomen, reflKasus
                 ),
@@ -175,31 +184,14 @@ public class ReflSemPraedikatSubOhneLeerstellen
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale)
-                        )));
-    }
+                        )),
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale),
+                null,
+                // Reihenfolge normal: "wem du was gibst"
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
 
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        return null;
     }
 }

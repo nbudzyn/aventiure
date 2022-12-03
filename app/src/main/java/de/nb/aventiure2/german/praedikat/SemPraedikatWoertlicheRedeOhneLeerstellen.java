@@ -2,6 +2,7 @@ package de.nb.aventiure2.german.praedikat;
 
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.kf;
+import static de.nb.aventiure2.german.praedikat.Praedikatseinbindung.firstInterrogativwort;
 
 import androidx.annotation.NonNull;
 
@@ -11,7 +12,6 @@ import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Objects;
 
-import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
 
 import de.nb.aventiure2.annotations.Komplement;
@@ -150,14 +150,13 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
     }
 
     @Nullable
-    @Override
-    public Konstituente getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
-                                                           final boolean nachAnschlusswort) {
-        final Konstituente speziellesVorfeldSehrErwuenschtFromSuper =
-                super.getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
-                        nachAnschlusswort);
-        if (speziellesVorfeldSehrErwuenschtFromSuper != null) {
-            return speziellesVorfeldSehrErwuenschtFromSuper;
+    public Vorfeld getSpeziellesVorfeldSehrErwuenscht(final PraedRegMerkmale praedRegMerkmale,
+                                                      final boolean nachAnschlusswort,
+                                                      final Konstituente syntWoertlicheRede) {
+        @Nullable final Vorfeld speziellesVorfeldFromSuper =
+                getVorfeldAdvAngabeSkopusSatz(praedRegMerkmale);
+        if (speziellesVorfeldFromSuper != null) {
+            return speziellesVorfeldFromSuper;
         }
 
         if (getNegationspartikel() != null) {
@@ -166,9 +165,7 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
 
         if (!nachAnschlusswort
                 && !woertlicheRede.isLangOderMehrteilig()) {
-            return k(woertlicheRede.getDescription(),
-                    true,
-                    true); // "„Kommt alle her[“, ]"
+            return new Vorfeld(syntWoertlicheRede); // "„Kommt alle her[“, ]"
         }
 
         return null;
@@ -181,18 +178,29 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
 
     @Override
     TopolFelder getTopolFelder(final ITextContext textContext,
-                               final PraedRegMerkmale praedRegMerkmale) {
+                               final PraedRegMerkmale praedRegMerkmale,
+                               final boolean nachAnschlusswort) {
+        final Konstituente advAngabeSkopusSatzSyntFuerMittelfeld =
+                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbSyntFuerMittelfeld =
+                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
+                        praedRegMerkmale);
+        final Konstituente advAngabeSkopusVerbWohinWoherSynt =
+                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale);
+
+        final Konstituente syntWoertlicheRede = k(woertlicheRede.getDescription(),
+                true,
+                true);
         return new TopolFelder(
                 new Mittelfeld(
                         Konstituentenfolge.joinToNullKonstituentenfolge(
-                                getAdvAngabeSkopusSatzDescriptionFuerMittelfeld(praedRegMerkmale),
+                                advAngabeSkopusSatzSyntFuerMittelfeld,
                                 // "aus einer Laune heraus"
                                 kf(getModalpartikeln()),  // "mal eben"
-                                getAdvAngabeSkopusVerbTextDescriptionFuerMittelfeld(
-                                        praedRegMerkmale),
+                                advAngabeSkopusVerbSyntFuerMittelfeld,
                                 // "erneut"
                                 getNegationspartikel(), // "nicht"
-                                getAdvAngabeSkopusVerbWohinWoherDescription(praedRegMerkmale)
+                                advAngabeSkopusVerbWohinWoherSynt
                                 // "in ein Kissen"
                         )),
                 new Nachfeld(
@@ -201,10 +209,15 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
                                         praedRegMerkmale),
                                 getAdvAngabeSkopusSatzDescriptionFuerZwangsausklammerung(
                                         praedRegMerkmale),
-                                k(woertlicheRede.getDescription(),
-                                        true,
-                                        true)
-                                        .withVordoppelpunktNoetig()))); // "[: ]„Kommt alle her[.“]"
+                                syntWoertlicheRede.withVordoppelpunktNoetig())),
+                getSpeziellesVorfeldSehrErwuenscht(praedRegMerkmale,
+                        nachAnschlusswort,
+                        syntWoertlicheRede),
+                getGgfVorfeldAdvAngabeSkopusVerb(praedRegMerkmale), // "[: ]„Kommt alle her[.“]"
+                null,
+                firstInterrogativwort(advAngabeSkopusSatzSyntFuerMittelfeld,
+                        advAngabeSkopusVerbSyntFuerMittelfeld,
+                        advAngabeSkopusVerbWohinWoherSynt));
 
         //  Laut http://www.pro-publish.com/korrektor/zeichensetzung-interpunktion/den
         //  -doppelpunkt-richtig-setzen/
@@ -217,32 +230,6 @@ public class SemPraedikatWoertlicheRedeOhneLeerstellen
     @Override
     public boolean umfasstSatzglieder() {
         return true;
-    }
-
-
-    @Nullable
-    @Override
-    @CheckReturnValue
-    public Konstituentenfolge getErstesInterrogativwort() {
-        @Nullable
-        Konstituentenfolge res = interroAdverbToKF(getAdvAngabeSkopusSatz());
-        if (res != null) {
-            return res;
-        }
-
-        res = interroAdverbToKF(getAdvAngabeSkopusVerbAllg());
-        if (res != null) {
-            return res;
-        }
-
-        return interroAdverbToKF(getAdvAngabeSkopusVerbWohinWoher());
-    }
-
-    @Override
-    @Nullable
-    @CheckReturnValue
-    public Konstituentenfolge getRelativpronomen() {
-        return null;
     }
 
     @Override

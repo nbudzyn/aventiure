@@ -13,7 +13,7 @@ import de.nb.aventiure2.german.satz.EinzelnerSemSatz;
  * Eine Phrase, die als Prädikativum dienen kann: "(Peter ist) ein Esel", (Peter ist) doof".
  */
 // FIXME SemPraedikativum? Oder irgendwie "generisch-agnostisch"? (Auch Subklassen...)
-public interface Praedikativum {
+public interface Praedikativum extends UmstellbarePhrase {
     default ZweiPraedikativa<Praedikativum> und(final Praedikativum zweitesPraedikativum) {
         return new ZweiPraedikativa<>(this, zweitesPraedikativum);
     }

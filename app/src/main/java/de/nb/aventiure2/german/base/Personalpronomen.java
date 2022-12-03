@@ -5,6 +5,7 @@ import static de.nb.aventiure2.german.base.Belebtheit.UNBELEBT;
 import static de.nb.aventiure2.german.base.Flexionsreihe.fr;
 import static de.nb.aventiure2.german.base.Kasus.AKK;
 import static de.nb.aventiure2.german.base.Kasus.NOM;
+import static de.nb.aventiure2.german.base.Numerus.SG;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 import static de.nb.aventiure2.german.base.NumerusGenus.M;
 import static de.nb.aventiure2.german.base.NumerusGenus.N;
@@ -97,6 +98,10 @@ public class Personalpronomen extends
         return requireNonNull(unbelebtOhneBezugsobjekt)
                 .mitBelebtheit(belebtheit)
                 .mitBezugsobjekt(bezugsobjekt);
+    }
+
+    public boolean isP2SgBelebt() {
+        return person == P2 && getNumerus() == SG && isBelebt();
     }
 
     @Override
@@ -242,8 +247,12 @@ public class Personalpronomen extends
         return person;
     }
 
-    public static void checkExpletivesEs(final SubstantivischePhrase subjekt) {
-        subjekt.getPraedRegMerkmale().checkExpletivesEs();
+    public static void checkExpletivesEs(final SubstantivischePhrase substPhr) {
+        if (!(substPhr instanceof Personalpronomen)) {
+            throw new IllegalStateException("Kein expletives es: " + substPhr);
+        }
+
+        substPhr.getPraedRegMerkmale().checkExpletivesEs();
     }
 
     @Override

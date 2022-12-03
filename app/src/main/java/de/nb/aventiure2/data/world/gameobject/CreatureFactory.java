@@ -8,20 +8,29 @@ import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.ALT;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.DICK;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.EINFACH;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GEKLEIDET;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GLAENZEND;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.GOLDEN;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.JUNG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.LANG;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.PRAECHTIG;
 import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.SCHOEN;
+import static de.nb.aventiure2.german.adjektiv.AdjektivOhneErgaenzungen.WUNDERSCHOEN;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.DEF;
 import static de.nb.aventiure2.german.base.ArtikelwortFlexionsspalte.Typ.INDEF;
 import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAEUERIN;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.BAUERSFRAU;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.FRAU;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARE;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.HAARZOEPFE;
 import static de.nb.aventiure2.german.base.NomenFlexionsspalte.MANN;
+import static de.nb.aventiure2.german.base.NomenFlexionsspalte.ZOEPFE;
 import static de.nb.aventiure2.german.base.Nominalphrase.np;
 import static de.nb.aventiure2.german.base.NumerusGenus.F;
 
 import androidx.annotation.NonNull;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
@@ -38,6 +47,7 @@ import de.nb.aventiure2.data.world.base.Known;
 import de.nb.aventiure2.data.world.syscomp.alive.AliveComp;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
 import de.nb.aventiure2.data.world.syscomp.description.AbstractDescriptionComp;
+import de.nb.aventiure2.data.world.syscomp.description.DescriptionTriple;
 import de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.FroschprinzDescriptionComp;
 import de.nb.aventiure2.data.world.syscomp.description.impl.MultiDescriptionComp;
@@ -399,7 +409,40 @@ class CreatureFactory extends AbstractNarratorGameObjectFactory {
         final PossessivDescriptionComp descriptionComp =
                 new PossessivDescriptionComp(db.counterDao(),
                         RAPUNZELS_HAARE, RAPUNZEL, RAPUNZELS_NAME,
-                        "Rapunzels");
+                        "Rapunzels",
+                        new DescriptionTriple(
+                                db.counterDao(),
+                                // Die Beschreibungen die hier folgen, sind alle so gebaut,
+                                // dass der ihre Flexionsreihe nur aus einzelnen
+                                // Nomen besteht und dass diese Nomen
+                                // *nicht* adjektivisch dekliniert werden.
+                                // Daher kann die PossessivDescriptionComp fehlerfrei
+                                // possessive Beschreibungen erzeugen wie
+                                // "Rapunzels lange, goldene Haare" oder
+                                // "ihre golden glänzenden Zöpfe".
+                                np(INDEF,
+                                        new ZweiAdjPhrOhneLeerstellen(LANG,
+                                                true,
+                                                GOLDEN),
+                                        HAARZOEPFE, RAPUNZELS_HAARE),
+                                ImmutableList.of(
+                                        np(DEF, GOLDEN, HAARE, RAPUNZELS_HAARE),
+                                        np(DEF, LANG, HAARE, RAPUNZELS_HAARE),
+                                        np(DEF, PRAECHTIG, HAARE, RAPUNZELS_HAARE),
+                                        np(DEF,
+                                                new ZweiAdjPhrOhneLeerstellen(WUNDERSCHOEN,
+                                                        false,
+                                                        GOLDEN),
+                                                HAARE, RAPUNZELS_HAARE),
+                                        np(DEF,
+                                                new ZweiAdjPhrOhneLeerstellen(LANG,
+                                                        true,
+                                                        GLAENZEND.mitAdvAngabe(
+                                                                new AdvAngabeSkopusSatz(GOLDEN))),
+                                                ZOEPFE, RAPUNZELS_HAARE)
+                                ),
+                                np(HAARE, RAPUNZELS_HAARE)
+                        ));
         return GeneralObjectFactory.create(RAPUNZELS_HAARE, descriptionComp);
     }
 

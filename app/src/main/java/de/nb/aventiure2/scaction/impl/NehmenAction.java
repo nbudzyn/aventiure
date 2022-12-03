@@ -5,6 +5,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.ERWARTET_VON_SC_EINLOESUNG_SEINES_VERSPRECHENS;
@@ -39,6 +40,7 @@ import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.base.GameObjectId;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableLocationGO;
@@ -51,6 +53,7 @@ import de.nb.aventiure2.german.base.NumerusGenus;
 import de.nb.aventiure2.german.base.PraepositionMitKasus;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusSatz;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbAllg;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
@@ -194,11 +197,15 @@ public class NehmenAction
     public String getName() {
         final SemPraedikatMitEinerObjektleerstelle praedikat = getPraedikatFuerName();
 
+        final DescribableGameObject gameObjectDGO =
+                new DescribableGameObject(world, gameObject.getId(),
+                        ALLES_ERLAUBT, true);
+
         return joinToKonstituentenfolge(
                 SENTENCE,
-                praedikat.mit(getDescription(textContext, gameObject, true))
-                        // Relevant für etwas wie "Die Schale an *mich* nehmen"
-                        .getInfinitiv(P2, SG))
+                praedikat.mit(gameObjectDGO)
+                        // Relevant für etwas wie "Die Schale an *dich* nehmen"
+                        .getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
                 .joinToString();
     }
 
@@ -460,7 +467,7 @@ public class NehmenAction
                             .mit(getDescription(textContext, gameObject, true).persPron())
                             .mitAdvAngabe(
                                     new AdvAngabeSkopusSatz("gleich erneut"))
-                            .getZuInfinitiv(P2, SG))
+                            .getZuInfinitiv(P2, nachAnschlusswort, SG))
                     .timed(secs(5))
                     // "zu nehmen", "an dich zu nehmen", "aufzuheben"
                     .komma()

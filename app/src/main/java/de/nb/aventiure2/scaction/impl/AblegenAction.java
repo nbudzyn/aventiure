@@ -3,10 +3,12 @@ package de.nb.aventiure2.scaction.impl;
 import static com.google.common.base.Preconditions.checkState;
 import static de.nb.aventiure2.data.time.AvTimeSpan.secs;
 import static de.nb.aventiure2.data.world.gameobject.World.*;
+import static de.nb.aventiure2.data.world.syscomp.description.PossessivDescriptionVorgabe.ALLES_ERLAUBT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.ANGESPANNT;
 import static de.nb.aventiure2.data.world.syscomp.feelings.Mood.NEUTRAL;
 import static de.nb.aventiure2.data.world.syscomp.memory.Action.Type.NEHMEN;
 import static de.nb.aventiure2.data.world.syscomp.state.impl.FroschprinzState.HAT_HOCHHEBEN_GEFORDERT;
+import static de.nb.aventiure2.german.base.Belebtheit.BELEBT;
 import static de.nb.aventiure2.german.base.Konstituente.k;
 import static de.nb.aventiure2.german.base.Konstituentenfolge.joinToKonstituentenfolge;
 import static de.nb.aventiure2.german.base.Numerus.SG;
@@ -36,6 +38,7 @@ import de.nb.aventiure2.data.narration.Narrator;
 import de.nb.aventiure2.data.time.TimeTaker;
 import de.nb.aventiure2.data.world.gameobject.*;
 import de.nb.aventiure2.data.world.syscomp.alive.ILivingBeingGO;
+import de.nb.aventiure2.data.world.syscomp.description.DescribableGameObject;
 import de.nb.aventiure2.data.world.syscomp.description.IDescribableGO;
 import de.nb.aventiure2.data.world.syscomp.location.ILocatableGO;
 import de.nb.aventiure2.data.world.syscomp.memory.Action;
@@ -47,6 +50,7 @@ import de.nb.aventiure2.german.base.Personalpronomen;
 import de.nb.aventiure2.german.base.StructuralElement;
 import de.nb.aventiure2.german.base.SubstantivischePhrase;
 import de.nb.aventiure2.german.description.AltTimedDescriptionsBuilder;
+import de.nb.aventiure2.german.description.ImmutableTextContext;
 import de.nb.aventiure2.german.praedikat.AbstractAdvAngabe;
 import de.nb.aventiure2.german.praedikat.AdvAngabeSkopusVerbWohinWoher;
 import de.nb.aventiure2.german.praedikat.SemPraedikatMitEinerObjektleerstelle;
@@ -121,12 +125,16 @@ public class AblegenAction<GO extends IDescribableGO & ILocatableGO> extends Abs
     @Override
     @NonNull
     public String getName() {
+        final DescribableGameObject gameObjectDGO =
+                new DescribableGameObject(world, gameObject.getId(),
+                        ALLES_ERLAUBT, true);
+
         return joinToKonstituentenfolge(
                 SENTENCE,
                 getPraedikat()
-                        .mit(getDescription(textContext, gameObject, true))
+                        .mit(gameObjectDGO)
                         .mitAdvAngabe(getWohinDetail())
-                        .getInfinitiv(P2, SG))
+                        .getInfinitiv(ImmutableTextContext.EMPTY, false, duSc()))
                 .joinToString();
     }
 
@@ -251,13 +259,13 @@ public class AblegenAction<GO extends IDescribableGO & ILocatableGO> extends Abs
                     "verloren!“, und setzt den Frosch wieder ab")
                     .timed(secs(5))
                     .dann()
-                    .phorikKandidat(M, FROSCHPRINZ));
+                    .phorikKandidat(M, BELEBT, FROSCHPRINZ));
             alt.add(satzanschluss(", aber dann stellst du dir vor, die schleimigen",
                     "Patscher auf den Tisch zu stellen, und setzt den",
                     "Frosch gleich wieder ab")
                     .timed(secs(5))
                     .dann()
-                    .phorikKandidat(M, FROSCHPRINZ));
+                    .phorikKandidat(M, BELEBT, FROSCHPRINZ));
             n.narrateAlt(alt);
             return;
         }
@@ -268,7 +276,7 @@ public class AblegenAction<GO extends IDescribableGO & ILocatableGO> extends Abs
                 "und wendest dich demonstrativ ab")
                 .timed(secs(5))
                 .dann()
-                .phorikKandidat(M, FROSCHPRINZ));
+                .phorikKandidat(M, BELEBT, FROSCHPRINZ));
     }
 
     private void narrateAndDoObject() {

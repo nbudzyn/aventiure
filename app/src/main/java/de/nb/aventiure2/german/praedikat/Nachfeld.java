@@ -2,19 +2,18 @@ package de.nb.aventiure2.german.praedikat;
 
 import androidx.annotation.NonNull;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-import de.nb.aventiure2.german.base.IAlternativeKonstituentenfolgable;
+import de.nb.aventiure2.german.base.IKonstituentenfolgable;
+import de.nb.aventiure2.german.base.Konstituente;
 import de.nb.aventiure2.german.base.Konstituentenfolge;
 
 /**
  * Ein (syntaktisches) Nachfeld.
  */
-public class Nachfeld implements IAlternativeKonstituentenfolgable {
+public class Nachfeld implements IKonstituentenfolgable {
     static final Nachfeld EMPTY = new Nachfeld();
 
     @Nullable
@@ -24,16 +23,43 @@ public class Nachfeld implements IAlternativeKonstituentenfolgable {
      * Erzeugt ein leeres Nachfeld
      */
     private Nachfeld() {
-        this(null);
+        this((Konstituentenfolge) null);
+    }
+
+    public Nachfeld(@Nullable final Konstituente konstituente) {
+        this(Konstituentenfolge.joinToKonstituentenfolge(konstituente));
     }
 
     public Nachfeld(@Nullable final Konstituentenfolge konstituentenfolge) {
         this.konstituentenfolge = konstituentenfolge;
     }
 
+    public boolean contains(@Nullable final Vorfeld vorfeld) {
+        if (vorfeld == null) {
+            return true;
+        }
+
+        return contains(vorfeld.toKonstituentenfolge());
+    }
+
+    public boolean contains(@Nullable final Konstituentenfolge part) {
+        if (part == null) {
+            return true;
+        }
+
+        @Nullable final Konstituentenfolge konstituentenfolge = toKonstituentenfolge();
+
+        if (konstituentenfolge == null) {
+            return false;
+        }
+
+        return konstituentenfolge.contains(part);
+    }
+
     @Override
-    public Collection<Konstituentenfolge> toAltKonstituentenfolgen() {
-        return Collections.singleton(konstituentenfolge);
+    @Nullable
+    public Konstituentenfolge toKonstituentenfolge() {
+        return konstituentenfolge;
     }
 
     @Override
@@ -56,8 +82,6 @@ public class Nachfeld implements IAlternativeKonstituentenfolgable {
     @NonNull
     @Override
     public String toString() {
-        @Nullable final Konstituentenfolge konstituentenfolge =
-                toAltKonstituentenfolgen().iterator().next();
         if (konstituentenfolge == null) {
             return "";
         }
